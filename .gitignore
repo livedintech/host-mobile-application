@@ -12,14 +12,14 @@ yarn-error.log
 *.keystore
 *.log
 
-# Metro
+# Metro Bundler
 .metro-health-check*
 /packager-cache-*
 
-# Babel
+# Babel cache
 /babel-cache/
 
-# ESLint
+# ESLint cache
 .eslintcache
 
 # Android
@@ -61,11 +61,11 @@ ios/*.xcworkspace/xcshareddata/xcschemes.xcscheme
 # VSCode
 .vscode/
 
-# Prettier
+# Prettier config
 .prettierignore
 
 # Jest coverage
-/coverage
+/coverage/
 
 # Yarn Plug'n'Play
 .yarn/*
@@ -75,9 +75,26 @@ ios/*.xcworkspace/xcshareddata/xcschemes.xcscheme
 !.yarn/sdks
 !.yarn/versions
 
-# Reactotron
+# Reactotron (if using for debugging)
 reactotron.log
 
-# .env (if use in future)
+# .env (if used for environment variables)
 .env
 .env.*
+android/app/.cxx/
+
+# Local IDE settings
+.idea/
+
+# Temporary files
+*.swp
+*.sublime-workspace
+*.log
+
+# Build output directories
+/build/
+dist/
+out/
+
+# Other editor files (like Sublime Text, etc.)
+*.sublime-workspace
