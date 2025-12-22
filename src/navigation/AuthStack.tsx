@@ -10,8 +10,11 @@ const AuthStack = () => {
     return (
         <Navigator>
             <Screen
-                name={NavigationRoutes.AUTH_STACK.LOGIN}
-                getComponent={() => require('@/screens/auth/Login/LoginScreen').default}
+           options={{
+            headerShown: false
+           }} 
+                name={NavigationRoutes.AUTH_STACK.ON_BOARDING}
+                getComponent={() => require('@/screens/auth/Onboarding/OnboardingScreen').default}
             />
         </Navigator>
     );
