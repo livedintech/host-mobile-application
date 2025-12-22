@@ -8,12 +8,17 @@ import useOnboardingContainer, { onboardingData } from './OnboardingContainer';
 
 
 const OnboardingScreen = () => {
-    const { 
-        activeIndex, 
-        flatListRef, 
-        handleMomentumScrollEnd, 
-        handleContinue 
+    const {
+        activeIndex,
+        flatListRef,
+        handleMomentumScrollEnd,
+        handleContinue,
+        handleGetStarted,
+        loginWithPhone,
+        handleSkip
     } = useOnboardingContainer();
+
+    const isLastSlide = activeIndex === onboardingData.length - 1;
 
     const renderItem = ({ item }: any) => (
         <View style={styles.slide}>
@@ -22,27 +27,17 @@ const OnboardingScreen = () => {
 
             {/* Text Content Area */}
             <View style={styles.textSection}>
-                {item.isItalicTitle ? (
-                    <View style={styles.titleRow}>
-                        <AppText textAlign='center' fontSize={32} type='Bold' color={'#0D3D39'}>
-                            One <AppText type='BoldItalic' fontSize={32} color={'#0D3D39'}>Intelligent</AppText> Control for Every Channel
-                        </AppText>
-                    </View>
-                ) : (
-                    <AppText 
-                        text={item.title} 
-                        textAlign='center' 
-                        fontSize={32} 
-                        type='Bold' 
-                        color={'#0D3D39'} 
-                    />
-                )}
-                
-                <AppText 
-                    text={item.subtitle} 
-                    textAlign='center' 
-                    fontSize={16} 
-                    color={Colors.GRAY} 
+                <AppText
+                    text={item.title}
+                    textAlign='center'
+                    fontSize={30}
+                    color={Colors.BRUNSWICK_GREEN}
+                    type='Bold'
+                />
+                <AppText
+                    text={item.subtitle}
+                    textAlign='center'
+                    color={Colors.BLACK_60_PERCENT}
                     style={styles.description}
                 />
             </View>
@@ -65,12 +60,12 @@ const OnboardingScreen = () => {
             {/* Custom Pagination Dots */}
             <View style={styles.pagination}>
                 {onboardingData.map((_, i) => (
-                    <View 
-                        key={i} 
+                    <View
+                        key={i}
                         style={[
-                            styles.dot, 
+                            styles.dot,
                             activeIndex === i ? styles.activeDot : styles.inactiveDot
-                        ]} 
+                        ]}
                     />
                 ))}
             </View>
@@ -78,11 +73,11 @@ const OnboardingScreen = () => {
             {/* Action Buttons */}
             <View style={styles.footer}>
                 <ButtonView style={styles.btnPrimary} onPress={handleContinue}>
-                    <AppText text={onboardingData[activeIndex].primaryBtn} color={'#0D3D39'} type='Medium' fontSize={16} />
+                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular' onPress={isLastSlide ? handleGetStarted : handleContinue}/>
                 </ButtonView>
 
                 <ButtonView style={styles.btnSecondary}>
-                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={'#0D3D39'} type='Medium' fontSize={16} />
+                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular' onPress={isLastSlide ? loginWithPhone : handleSkip}/>
                 </ButtonView>
             </View>
         </ImageBackground>
@@ -104,7 +99,7 @@ const styles = StyleSheet.create({
         flex: 0.55,
     },
     textSection: {
-        flex: 0.45,
+        flex: 0.55,
         paddingHorizontal: Metrics.scale(30),
         alignItems: 'center',
     },

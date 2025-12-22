@@ -48,7 +48,7 @@ const AppText = ({
           color,
           fontSize: Metrics.generatedFontSize(fontSize),
           textAlign,
-          fontFamily: `Gilroy-${type}`,  // Use computed font family here
+          fontFamily: `RethinkSans-${type}`,
           lineHeight: lineHeight && Metrics.generatedFontSize(lineHeight),
           letterSpacing,
           textTransform,

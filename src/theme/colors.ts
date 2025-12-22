@@ -1,5 +1,10 @@
 export const Colors = {
   WHITE: '#fff',
-  BLACK: '#000',
-  BRUNSWICK_GREEN: '#1B4F44'
+  BLACK: '#000000',
+  BRUNSWICK_GREEN: '#1B4F44',
+  BLACK_60_PERCENT: '#00000099',
+  ARGENT: '#C0C0C0',
+  US_DOLLAR:'#6E8669',
+    INDIAN_RED: '#C85E5D',
+    DRAVIT_GREY:'#5D625B'
 }

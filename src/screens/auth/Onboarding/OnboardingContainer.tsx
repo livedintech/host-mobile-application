@@ -1,11 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import Metrics from '@/utility/Metrics';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export const onboardingData = [
     {
         id: '1',
-        title: 'Unlock Higher Returns\nFrom Your Property',
+        title: 'Unlock Higher Returns From Your Property',
         subtitle: 'Powered by intelligent automation',
         primaryBtn: 'Continue',
         secondaryBtn: 'Skip',
@@ -42,11 +44,26 @@ export default function useOnboardingContainer() {
             setActiveIndex(activeIndex + 1);
         }
     };
+    const loginWithPhone = useCallback(() =>{
+        navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
+    },[]);
+
+    const handleGetStarted = useCallback(() => {
+        console.log('handleGetStarted')
+        // Navigate to your desired start screen (e.g., Registration)
+    }, []);
+     const handleSkip = useCallback(() => {
+        console.log('handleSkip')
+        // Navigate to your desired start screen (e.g., Registration)
+    }, []);
 
     return {
         activeIndex,
         flatListRef,
         handleMomentumScrollEnd,
         handleContinue,
+        handleGetStarted,
+        loginWithPhone,
+        handleSkip
     };
 }

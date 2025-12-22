@@ -1,6 +1,6 @@
 const NavigationRoutes = {
   AUTH_STACK: {
-    LOGIN: 'LOGIN_SCREEN',
+    LOGIN_WITH_PHONE: 'LOGIN_WITH_PHONE_SCREEN',
     ON_BOARDING: 'ON_BOARDING_SCREEN',
 
   },
