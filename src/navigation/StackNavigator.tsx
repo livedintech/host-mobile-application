@@ -1,19 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppStack from './AppStack';
 import { useAuthStore } from '@/store/useAuthStore';
 import AuthStack from './AuthStack';
+import SplashScreen from '@/screens/splash/SplashScreen';
 
 const StackNavigator = () => {
-  const { isLoggedIn, user, setUser } = useAuthStore();
-  
-//   const shouldFetchUser = isLoggedIn && !user;
-//   const { currentUser } = useStartupContainer(shouldFetchUser);
+ const { isLoggedIn } = useAuthStore();
+  const [showSplash, setShowSplash] = useState(true);
 
-//   useEffect(() => {
-//     if (currentUser?.user && !user) {
-//       setUser(currentUser.user);
-//     }
-//   }, [currentUser, user, setUser]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000); // 3 seconds tak splash dikhayein
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return isLoggedIn ? <AppStack /> : <AuthStack />;
 };
