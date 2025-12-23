@@ -18,11 +18,23 @@ export interface SpacingProps {
 }
 
 export interface AppTextProps extends SpacingProps {
-  onPress?: ()=> void, 
+  onPress?: () => void;
   text: string;
   color?: string;
   fontSize?: number;
-  type?: 'Regular'| 'Medium' | 'Bold' | 'SemiBold' | 'Light';  // New prop for font weight style
+  type?:
+    | 'Regular'
+    | 'Medium'
+    | 'Bold'
+    | 'SemiBold'
+    | 'Light'
+    | 'BoldItalic'
+    | 'ExtraBold'
+    | 'ExtraBoldItalic'
+    | 'Italic'
+    | 'MediumItalic'
+    | 'SemiBoldItalic';
+  italic?: boolean; // ✅ NEW
   textAlign?: TextStyle['textAlign'];
   lineHeight?: number;
   letterSpacing?: number;

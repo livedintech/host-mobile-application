@@ -50,11 +50,10 @@ export default function useOnboardingContainer() {
 
     const handleGetStarted = useCallback(() => {
         console.log('handleGetStarted')
-        // Navigate to your desired start screen (e.g., Registration)
+        navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN)
     }, []);
      const handleSkip = useCallback(() => {
-        console.log('handleSkip')
-        // Navigate to your desired start screen (e.g., Registration)
+        navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
     }, []);
 
     return {

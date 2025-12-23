@@ -6,6 +6,7 @@ import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import ChevronDownIcon from '@/assets/icons/chevron-down.svg';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface DropdownItem {
     label: string;
@@ -34,7 +35,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 
     return (
         <View style={styles.wrapper}>
-            <AppText text={label} style={styles.label} />
+            {label && (
+                <AppText text={label} style={styles.label} />
+            ) }
             <Controller
                 control={control}
                 name={name}
@@ -53,7 +56,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
                         value={value}
                         onChange={item => onChange(item.value)}
                         disable={disabled}
-                        renderRightIcon={() => <ChevronDownIcon width={18} height={18} />}
+                        renderRightIcon={() => <Svgicons path='ChevronDownIcon' width={18} height={18} />}
                         autoScroll={false}
                     />
                 )}
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
         marginBottom: Metrics.verticalScale(18),
     },
     label: {
-        color: Colors.GRAY,
+        color: Colors.BRUNSWICK_GREEN,
         marginBottom: 8,
         fontSize: Metrics.generatedFontSize(14),
     },
@@ -78,25 +81,26 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 16,
         borderWidth: 1,
-        borderColor: Colors.GAINSBORO,
+        borderColor: Colors.BRUNSWICK_GREEN,
     },
     disabled: {
-        backgroundColor: Colors.ANTI_FLASH_WHITE,
+        backgroundColor: Colors.SUPER_GREY,
     },
     errorBorder: {
         borderColor: Colors.INDIAN_RED,
     },
     placeholderStyle: {
-        fontSize: 16,
-        color: Colors.GRAY,
+        fontSize: Metrics.generatedFontSize(12),
+        color: Colors.MIDNIGHT,
+        fontWeight:'500'
     },
     selectedTextStyle: {
-        fontSize: 16,
-        color: Colors.EERIE_BLACK,
+         fontSize: Metrics.generatedFontSize(12),
+        color: Colors.MIDNIGHT,
     },
     itemTextStyle: {
-        fontSize: 16,
-        color: Colors.EERIE_BLACK,
+         fontSize: Metrics.generatedFontSize(12),
+        color: Colors.MIDNIGHT,
     },
     errorText: {
         marginTop: 5,
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
         color: Colors.INDIAN_RED,
     },
     inputSearchStyle: {
-        color: Colors.EERIE_BLACK,
+        color: Colors.MIDNIGHT,
     },
 });
 

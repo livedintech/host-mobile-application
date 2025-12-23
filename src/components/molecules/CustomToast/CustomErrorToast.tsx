@@ -7,7 +7,7 @@ import { BaseToastProps } from 'react-native-toast-message';
 
 export const CustomErrorToast: React.FC<BaseToastProps> = ({ text1 }) => (
     <View style={styles.container}>
-        <AppText text={text1 || ''} style={styles.text} color={Colors.CHINESE_BLACK} fontSize={13} type='Bold' numberOfLines={2}/>
+        <AppText text={text1 || ''} style={styles.text} color={Colors.BLACK} fontSize={13} type='Bold' numberOfLines={2}/>
     </View>
 );
 
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         borderLeftWidth:5,
-        borderColor: Colors.PORTLAND_ORANGE
+        borderColor: Colors.INDIAN_RED
 
     },
     text: {

@@ -82,17 +82,17 @@ const CustomInput = ({
   // Interpolate animated values
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.GAINSBORO, Colors.CORAL_REEF], // grey → coral
+    outputRange: [Colors.SMOOTH_GREY, Colors.BLACK], // grey → coral
   });
 
   const animatedBackgroundColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.CULTURED, Colors.WHITE], // cultured → white
+    outputRange: [Colors.WHITE, Colors.WHITE], // cultured → white
   });
 
   return (
     <View style={styles.wrapper}>
-      {label && <AppText text={label} mb={8} color={Colors.GRAY} fontSize={14} />}
+      {label && <AppText text={label} mb={8} color={Colors.BLACK} fontSize={14} type='Medium'/>}
 
       <Animated.View
         style={[
@@ -108,7 +108,7 @@ const CustomInput = ({
 
         <TextInput
           multiline={multiline}
-          selectionColor={Colors.FELDGRAU}
+          selectionColor={Colors.SUPER_GREY}
           secureTextEntry={secureTextEntry}
           style={[
             styles.input,
@@ -119,7 +119,7 @@ const CustomInput = ({
           ]}
 
           placeholder={placeholder}
-          placeholderTextColor={Colors.GRAY}
+          placeholderTextColor={Colors.SUPER_GREY}
           value={value}
           onChangeText={onChangeText}
           onFocus={handleFocus}

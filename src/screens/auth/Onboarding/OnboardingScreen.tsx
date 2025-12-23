@@ -72,12 +72,12 @@ const OnboardingScreen = () => {
 
             {/* Action Buttons */}
             <View style={styles.footer}>
-                <ButtonView style={styles.btnPrimary} onPress={handleContinue}>
-                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular' onPress={isLastSlide ? handleGetStarted : handleContinue}/>
+                <ButtonView style={styles.btnPrimary} onPress={isLastSlide ? handleGetStarted : handleContinue}>
+                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular'/>
                 </ButtonView>
 
-                <ButtonView style={styles.btnSecondary}>
-                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular' onPress={isLastSlide ? loginWithPhone : handleSkip}/>
+                <ButtonView style={styles.btnSecondary} onPress={isLastSlide ? loginWithPhone : handleSkip}>
+                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular' />
                 </ButtonView>
             </View>
         </ImageBackground>

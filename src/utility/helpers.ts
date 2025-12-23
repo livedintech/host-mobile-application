@@ -45,3 +45,21 @@ export const formatStatus = (status: string | null | undefined): string => {
     // For all other cases (like 'todo', 'completed'), just capitalize the first letter
     return status.charAt(0).toUpperCase() + status.slice(1);
 };
+
+export const maskPhoneNumber = (number:string) => {
+  if (!number) return '';
+
+  // sirf digits rakho
+  const cleaned = number.replace(/\D/g, '');
+
+  // last 9 digits local number
+  const localNumber = cleaned.slice(-9);
+
+  // country code auto detect
+  const countryCode = cleaned.slice(0, cleaned.length - 9);
+
+  // first digit visible, baqi mask
+  const firstDigit = localNumber.charAt(0);
+
+  return `(+${countryCode}) ${firstDigit}XX XXX XXX`;
+};

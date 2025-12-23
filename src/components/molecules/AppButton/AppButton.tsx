@@ -20,6 +20,7 @@ const AppButton = ({
     style,
     m, mt, mb, ml, mr, mx, my,
     p, pt, pb, pl, pr, px, py,
+    type ='Regular'
 }: ButtonProps) => {
     const spacingStyles = {
         margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
@@ -50,7 +51,7 @@ const AppButton = ({
             {loading ? (
                 <ActivityIndicator color={color} />
             ) : (
-                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} type='Regular'/>
+                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} type={type}/>
             )}
         </ButtonView>
     );
