@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import {CreateAccountPayload, ForgotPasswordPayload, ForgotPasswordResponse, LoginPayload, ResetPasswordPayload, VerifyOtpPayload, } from "@/types/api/authTypes";
+import { CreateAccountPayload, ForgotPasswordPayload, LoginPayload, ResetPasswordPayload, VerifyOtpPayload } from "@/types/api/authTypes";
 
 // Check User
 export const CheckUserApi = async (payload: LoginPayload) => {
@@ -85,3 +85,57 @@ export const createAccountApi = async (payload: CreateAccountPayload) => {
     }
     throw response;
 };
+
+//Get Cities 
+export const getCitiesApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.AUTH.CITIES
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
+
+//Get Districts
+export const getDistrictsApi = async (city?: string | never[]) => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.AUTH.DISTRICTS,
+        { city }
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
+
+//Get ChartData
+export const getChartDataApi = async (
+  city?: string,
+  location?: string,
+  bedrooms?: string
+) => {
+  try {
+    const { ok, response, data } = await apiService.get(
+      SERVICE_CONFIG_URLS.AUTH.CHART_DATA,
+      { city, location, bedrooms }
+    );
+      console.log('data:::',data);
+    if (ok && data) {
+  
+        
+      return data; 
+    }
+
+    // fallback if data is missing
+    return { monthly: '0', yearly: '0', months: [] };
+  } catch (error) {
+    console.error('Chart API error:', error);
+    return { monthly: '0', yearly: '0', months: [] };
+  }
+};
+
