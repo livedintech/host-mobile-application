@@ -58,6 +58,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
                         disable={disabled}
                         renderRightIcon={() => <Svgicons path='ChevronDownIcon' width={18} height={18} />}
                         autoScroll={false}
+                        searchPlaceholder='Search...'
                     />
                 )}
             />
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.BRUNSWICK_GREEN,
     },
     disabled: {
-        backgroundColor: Colors.SUPER_GREY,
+        backgroundColor: Colors.ANTI_FLASH_WHITE,
     },
     errorBorder: {
         borderColor: Colors.INDIAN_RED,

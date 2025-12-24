@@ -1,0 +1,7 @@
+const STORAGE_CONST = {
+    CITIES: 'CITIES',
+    DISTRICTS: 'DISTRICTS',
+    CHART_DATA: 'CHART_DATA',
+}
+
+export default STORAGE_CONST;

@@ -9,5 +9,9 @@ export const SERVICE_CONFIG_URLS = {
     SEND_OTP: `${authController}/send-otp`,
     RESET_PASSWORD: `${authController}/reset-password`,
     CREATE_ACCOUNT: `${authController}/register`,
+    CITIES: `${authController}/external-cities`,
+   DISTRICTS: `${authController}/external-districts`,
+   CHART_DATA: `${authController}/external-get-amount-latest-mom`
+
   },
 };

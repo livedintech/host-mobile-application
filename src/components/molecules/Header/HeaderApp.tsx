@@ -55,14 +55,14 @@ const styles = StyleSheet.create({
     paddingTop: Metrics.verticalScale(15)
   },
   langBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: Metrics.scale(40),
+    height: Metrics.scale(40),
+    borderRadius: 100,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: Metrics.scale(8),
   },
   getStartedBtn: {
     paddingHorizontal: Metrics.scale(33),

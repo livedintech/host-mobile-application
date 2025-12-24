@@ -4,34 +4,19 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Pagination from '@/components/molecules/Pagination/Pagination';
 import usePropertyCanEarnContainer from './PropertyCanEarnContainer';
 import Metrics from '@/utility/Metrics';
-import { LineChart } from 'react-native-wagmi-charts';
-
-
-const data = [
-  { timestamp: 0, value: 10000 },
-  { timestamp: 1, value: 25000 }, // Jan
-  { timestamp: 2, value: 22000 },
-  { timestamp: 3, value: 45000 }, // Feb Peak (Dot here)
-  { timestamp: 4, value: 38000 },
-  { timestamp: 5, value: 42000 }, // Mar
-  { timestamp: 6, value: 32000 },
-  { timestamp: 7, value: 45000 }, // Apr
-  { timestamp: 8, value: 35000 },
-  { timestamp: 9, value: 20000 }, // May
-];
+import { bedroomOptions } from '@/constants/dropdownOptions';
+import PropertyAreaChart from '../../../components/organisms/PropertyAreaChart/PropertyAreaChart';
 
 const PropertyCanEarnScreen = () => {
-  const { control, errors, handleSubmit, showResults, isLoading, goTologinWithPhone, goToConnectAccountIntro } =
+  const { control, errors, handleSubmit, showResults, isLoading, goTologinWithPhone, availableCityItems, availableDistrictItems, selectedcity, chartPoints, roundedMax,yAxisLabels,xAxisLabels,chartData } =
     usePropertyCanEarnContainer();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-
         {/* Title */}
         <View style={styles.titleSection}>
           <AppText
@@ -52,7 +37,8 @@ const PropertyCanEarnScreen = () => {
             text="Calculate your estimated monthly revenue with Livedin versus standard listings."
             textAlign="center"
             color={Colors.PINE_FOREST}
-            mt={10}
+            mt={13}
+            mb={58}
             fontSize={15}
             px={40}
           />
@@ -75,7 +61,7 @@ const PropertyCanEarnScreen = () => {
                 label=""
                 control={control}
                 errors={errors}
-                data={[{ label: 'Riyadh', value: '1' }]}
+                data={availableCityItems}
                 placeholder="Select your city"
               />
               <DropdownField
@@ -83,8 +69,9 @@ const PropertyCanEarnScreen = () => {
                 label=""
                 control={control}
                 errors={errors}
-                data={[{ label: 'Al Olaya', value: '1' }]}
+                data={availableDistrictItems}
                 placeholder="Select District"
+                disabled={!selectedcity?.length}
               />
               <AppText
                 text="Number of Bedrooms"
@@ -98,7 +85,7 @@ const PropertyCanEarnScreen = () => {
                 label=""
                 control={control}
                 errors={errors}
-                data={[{ label: '2 Bedrooms', value: '2' }]}
+                data={bedroomOptions}
                 placeholder="Number Of Bedrooms"
               />
 
@@ -117,8 +104,7 @@ const PropertyCanEarnScreen = () => {
             <View style={styles.resultContainer}>
               <AppText
                 text="Your Estimated Earnings"
-                fontSize={20}
-                type="Bold"
+                fontSize={18}
                 textAlign="center"
                 color={Colors.BRUNSWICK_GREEN}
               />
@@ -126,28 +112,30 @@ const PropertyCanEarnScreen = () => {
                 <View style={styles.statBox}>
                   <AppText
                     text="Monthly Income"
-                    fontSize={12}
-                    color="#707070"
+                    fontSize={11}
+                    color={Colors.PINE_FOREST}
                   />
                   <AppText
-                    text="SAR 1,810"
-                    type="Bold"
+                    text={`SAR ${chartData?.monthly}`}
                     color={Colors.BRUNSWICK_GREEN}
                   />
                 </View>
                 <View style={styles.statBox}>
-                  <AppText text="Yearly Income" fontSize={12} color="#707070" />
+                  <AppText text="Yearly Income" fontSize={11} color={Colors.PINE_FOREST}/>
                   <AppText
-                    text="SAR 16,871"
-                    type="Bold"
+                     text={`SAR ${chartData?.yearly}`}
                     color={Colors.BRUNSWICK_GREEN}
                   />
                 </View>
               </View>
 
               {/* Placeholder for Graph */}
-              {/* <View style={styles.graphPlaceholder} /> */}
-              <PropertyAreaChart />
+              <PropertyAreaChart
+                chartPoints={chartPoints}
+                roundedMax={roundedMax}
+                yAxisLabels={yAxisLabels}
+                xAxisLabels={xAxisLabels}
+              />
 
               <AppButton
                 title="Unlock This Revenue"
@@ -162,55 +150,6 @@ const PropertyCanEarnScreen = () => {
 
       {/* Pagination Footer */}
       <Pagination activeIndex={0} />
-    </SafeAreaView>
-  );
-};
-
-const PropertyAreaChart = () => {
-  const chartHeight = 180;
-  const yAxisLabels = ['SAR 60K', 'SAR 50K', 'SAR 40K', 'SAR 30K', 'SAR 20K', 'SAR 10K', '0'];
-  const xAxisLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
-
-  return (
-    <View style={styles.mainWrapper}>
-      <View style={styles.chartRow}>
-
-        {/* 1. Left Y-Axis Labels */}
-        <View style={[styles.yAxis, { height: chartHeight }]}>
-          {yAxisLabels.map((label, index) => (
-            <Text key={index} style={styles.axisText}>{label}</Text>
-          ))}
-        </View>
-
-        {/* 2. Chart Area */}
-        <View style={styles.chartContainer}>
-          <LineChart.Provider data={data}>
-            <LineChart height={chartHeight} width={Metrics.screenWidth - 120}>
-              {/* Background Grid Lines */}
-              {[10000, 20000, 30000, 40000, 50000, 60000].map((val) => (
-                <LineChart.HorizontalLine
-                  key={val}
-                  at={{ value: val }}
-                  color="#E0E0E0"
-                />
-              ))}
-              <LineChart.Path color={Colors.BRUNSWICK_GREEN} width={2}>
-                <LineChart.Gradient color={Colors.BRUNSWICK_GREEN + '30'} />
-              </LineChart.Path>
-              <LineChart.CursorCrosshair color={Colors.PINE_FOREST}>
-                <LineChart.Tooltip />
-              </LineChart.CursorCrosshair>
-            </LineChart>
-          </LineChart.Provider>
-        </View>
-      </View>
-
-      {/* 3. Bottom X-Axis Labels */}
-      <View style={styles.xAxis}>
-        {xAxisLabels.map((month, index) => (
-          <Text key={index} style={styles.axisText}>{month}</Text>
-        ))}
-      </View>
     </View>
   );
 };
@@ -219,14 +158,12 @@ export default PropertyCanEarnScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  headerRight: { flexDirection: 'row' },
+scrollContent: { 
+  paddingHorizontal: 20, 
+  paddingBottom: 40,
+  paddingTop: Metrics.verticalScale(20), // add some top padding
+},
+
   arBtn: {
     width: 40,
     height: 40,
@@ -245,13 +182,12 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     justifyContent: 'center',
   },
-  titleSection: { marginTop: Metrics.verticalScale(40), alignItems: 'center' },
-
+  titleSection: { alignItems: 'center' },
   card: {
     backgroundColor: Colors.WHITE,
     borderRadius: 20,
     padding: 20,
-    marginTop: Metrics.verticalScale(58),
+  
     borderWidth: 1,
     borderColor: '#E0E0E0',
     elevation: 2,
