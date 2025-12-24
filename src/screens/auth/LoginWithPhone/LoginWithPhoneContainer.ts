@@ -14,8 +14,11 @@ import Toast from 'react-native-toast-message';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useState } from 'react';
+import { usePhoneStore } from '@/store/usePhoneStore';
 
 export default function useLoginWithPhoneContainer() {
+    const setPhoneData = usePhoneStore((state) => state.setPhoneData);
+
   const [phoneNumber, setphoneNumber] = useState('');
   const {
     control,
@@ -41,7 +44,11 @@ export default function useLoginWithPhoneContainer() {
       navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, phoneNumber);
     },
     onError: error => {
+      
       if (error?.message === 'User not found') {
+        setPhoneData({
+          phoneNumber:phoneNumber
+        })
         navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING,phoneNumber);
       }
       Toast.show({

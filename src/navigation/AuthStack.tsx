@@ -102,6 +102,13 @@ const AuthStack = () => {
           require('@/screens/auth/AddCardDetail/AddCardDetailScreen').default
         }
       />
+      <Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.AUTH_STACK.TRIAL_SUCCESS}
+        getComponent={() =>
+          require('@/screens/auth/TrialSuccess/TrialSuccessScreen').default
+        }
+      />
     </Navigator>
   );
 };

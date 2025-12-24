@@ -27,7 +27,6 @@ export default function useCreateAccountContainer() {
   const { params } = useRoute();
   const phone = params?.phone;
   const listing_count = params?.listing_count;
-  console.log('listing_count',params);
   
 
   const {
@@ -50,7 +49,7 @@ export default function useCreateAccountContainer() {
     mutationFn: createAccountApi,
     onSuccess: ({ message }) => {
       Toast.show({ type: 'success', text1: message });
-      navigate(NavigationRoutes.AUTH_STACK.ON_BOARDING);
+      navigate(NavigationRoutes.AUTH_STACK.PAYMENT,{phone: phone});
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message });

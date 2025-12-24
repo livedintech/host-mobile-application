@@ -11,7 +11,8 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_ACCOUNT: `${authController}/register`,
     CITIES: `${authController}/external-cities`,
    DISTRICTS: `${authController}/external-districts`,
-   CHART_DATA: `${authController}/external-get-amount-latest-mom`
+   CHART_DATA: `${authController}/external-get-amount-latest-mom`,
+   PAYMENT_SAVE_CARD: `${authController}/save-card`
 
   },
 };

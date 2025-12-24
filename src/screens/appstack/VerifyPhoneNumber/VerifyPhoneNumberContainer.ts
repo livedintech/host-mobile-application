@@ -31,7 +31,6 @@ export default function useVerifyPhoneNumberContainer() {
   const listing_count = params?.listing_count;
 
   const isLoginScreen = params?.isLoginScreen;
-  console.log('params', params);
 
   const {
     control,
