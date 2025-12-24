@@ -26,9 +26,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{
-          headerShown: false,
-        }}
+       options={{ header: () => <HeaderApp isGoBack/> }}
         name={NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN}
         getComponent={() =>
           require('@/screens/auth/PropertyCanEarn/PropertyCanEarnScreen')
@@ -68,9 +66,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{
-          headerShown: false,
-        }}
+       options={{ header: () => <HeaderApp isGoBack/> }}
         name={NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT}
         getComponent={() =>
           require('@/screens/appstack/CreateAccount/CreateAccountScreen')
@@ -90,6 +86,20 @@ const AuthStack = () => {
         name={NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD}
         getComponent={() =>
           require('@/screens/auth/AddNewPassword/AddNewPasswordScreen').default
+        }
+      />
+      <Screen
+        options={{ header: () => <HeaderApp isGoBack/> }}
+        name={NavigationRoutes.AUTH_STACK.PAYMENT}
+        getComponent={() =>
+          require('@/screens/auth/Payment/PaymentScreen').default
+        }
+      />
+      <Screen
+        options={{ header: () => <HeaderApp isGoBack/> }}
+        name={NavigationRoutes.AUTH_STACK.ADD_CARD_DETAIL}
+        getComponent={() =>
+          require('@/screens/auth/AddCardDetail/AddCardDetailScreen').default
         }
       />
     </Navigator>

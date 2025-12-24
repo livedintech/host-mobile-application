@@ -11,9 +11,9 @@ const SplashScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar translucent backgroundColor="transparent" />
       <ImageBackground
-        source={require('@/assets/img/SplashScreen.png')} // Aapki Splash Screen V1.jpg image
+        source={require('@/assets/img/SplashScreen.png')}
         style={styles.background}
         resizeMode="cover"
       />

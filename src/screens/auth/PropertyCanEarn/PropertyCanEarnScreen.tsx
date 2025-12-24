@@ -23,18 +23,17 @@ const data = [
   { timestamp: 8, value: 35000 },
   { timestamp: 9, value: 20000 }, // May
 ];
+
 const PropertyCanEarnScreen = () => {
-  const { control, errors, handleSubmit, showResults, isLoading,goTologinWithPhone,goToConnectAccountIntro } =
+  const { control, errors, handleSubmit, showResults, isLoading, goTologinWithPhone, goToConnectAccountIntro } =
     usePropertyCanEarnContainer();
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        {/* Header */}
 
         {/* Title */}
         <View style={styles.titleSection}>
-         
           <AppText
             text="See What Your"
             fontSize={32}
@@ -87,7 +86,7 @@ const PropertyCanEarnScreen = () => {
                 data={[{ label: 'Al Olaya', value: '1' }]}
                 placeholder="Select District"
               />
-            <AppText
+              <AppText
                 text="Number of Bedrooms"
                 fontSize={18}
                 type="SemiBold"
@@ -104,7 +103,7 @@ const PropertyCanEarnScreen = () => {
               />
 
               <AppButton
-              type='Bold'
+                type='Bold'
                 onPress={handleSubmit}
                 title="Next"
                 loading={isLoading}
@@ -148,7 +147,7 @@ const PropertyCanEarnScreen = () => {
 
               {/* Placeholder for Graph */}
               {/* <View style={styles.graphPlaceholder} /> */}
-              <PropertyAreaChart/>
+              <PropertyAreaChart />
 
               <AppButton
                 title="Unlock This Revenue"
@@ -162,7 +161,7 @@ const PropertyCanEarnScreen = () => {
       </ScrollView>
 
       {/* Pagination Footer */}
-      <Pagination activeIndex={0}/>
+      <Pagination activeIndex={0} />
     </SafeAreaView>
   );
 };
@@ -175,7 +174,7 @@ const PropertyAreaChart = () => {
   return (
     <View style={styles.mainWrapper}>
       <View style={styles.chartRow}>
-        
+
         {/* 1. Left Y-Axis Labels */}
         <View style={[styles.yAxis, { height: chartHeight }]}>
           {yAxisLabels.map((label, index) => (
@@ -189,17 +188,18 @@ const PropertyAreaChart = () => {
             <LineChart height={chartHeight} width={Metrics.screenWidth - 120}>
               {/* Background Grid Lines */}
               {[10000, 20000, 30000, 40000, 50000, 60000].map((val) => (
-                <LineChart.HorizontalLine 
-                  key={val} 
-                  at={{ value: val }} 
-                  color="#E0E0E0" 
+                <LineChart.HorizontalLine
+                  key={val}
+                  at={{ value: val }}
+                  color="#E0E0E0"
                 />
               ))}
-
               <LineChart.Path color={Colors.BRUNSWICK_GREEN} width={2}>
                 <LineChart.Gradient color={Colors.BRUNSWICK_GREEN + '30'} />
               </LineChart.Path>
-              <LineChart.CursorCrosshair color={Colors.PINE_FOREST}/>
+              <LineChart.CursorCrosshair color={Colors.PINE_FOREST}>
+                <LineChart.Tooltip />
+              </LineChart.CursorCrosshair>
             </LineChart>
           </LineChart.Provider>
         </View>
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleSection: { marginTop: Metrics.verticalScale(40), alignItems: 'center' },
- 
+
   card: {
     backgroundColor: Colors.WHITE,
     borderRadius: 20,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     marginTop: Metrics.verticalScale(19),
     borderRadius: 100,
     width: Metrics.scale(128),
-    alignSelf:'center'
+    alignSelf: 'center'
   },
   resultContainer: { alignItems: 'center' },
   statsRow: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   yAxis: {
     justifyContent: 'space-between',
     paddingRight: 10,
-    width: Metrics.scale(60), 
+    width: Metrics.scale(60),
   },
   chartContainer: {
     flex: 1,

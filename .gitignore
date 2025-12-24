@@ -3,9 +3,8 @@
 
 # Node.js
 node_modules/
-npm-debug.log*
-yarn-error.log*
-yarn.lock
+npm-debug.log
+yarn-error.log
 
 # React Native
 *.jsbundle
@@ -13,14 +12,14 @@ yarn.lock
 *.keystore
 *.log
 
-# Metro Bundler
+# Metro
 .metro-health-check*
 /packager-cache-*
 
-# Babel cache
+# Babel
 /babel-cache/
 
-# ESLint cache
+# ESLint
 .eslintcache
 
 # Android
@@ -31,7 +30,6 @@ android/.idea/
 android/local.properties
 android/*.iml
 android/.cxx/
-android/.kotlin/
 
 # iOS / Xcode
 ios/build/
@@ -63,11 +61,11 @@ ios/*.xcworkspace/xcshareddata/xcschemes.xcscheme
 # VSCode
 .vscode/
 
-# Prettier config
+# Prettier
 .prettierignore
 
 # Jest coverage
-/coverage/
+/coverage
 
 # Yarn Plug'n'Play
 .yarn/*
@@ -77,22 +75,9 @@ ios/*.xcworkspace/xcshareddata/xcschemes.xcscheme
 !.yarn/sdks
 !.yarn/versions
 
-# Reactotron (if using for debugging)
+# Reactotron
 reactotron.log
 
-# Environment variables
+# .env (if use in future)
 .env
 .env.*
-
-# Local IDE settings
-.idea/
-
-# Temporary files
-*.swp
-*.sublime-workspace
-*.log
-
-# Build output directories
-/build/
-dist/
-out/
