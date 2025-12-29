@@ -2,6 +2,17 @@ const authController = 'api';
 
 export const SERVICE_CONFIG_URLS = {
   AUTH: {
-    LOGIN: `${authController}/vendor/auth`,
+    CHECK_USER: `${authController}/check-user`,
+    LOGIN: `${authController}/login`,
+    FOROGT_PASSWORD: `${authController}/forgot-password`,
+    VERIFY_OTP: `${authController}/verify-otp`,
+    SEND_OTP: `${authController}/send-otp`,
+    RESET_PASSWORD: `${authController}/reset-password`,
+    CREATE_ACCOUNT: `${authController}/register`,
+    CITIES: `${authController}/external-cities`,
+   DISTRICTS: `${authController}/external-districts`,
+   CHART_DATA: `${authController}/external-get-amount-latest-mom`,
+   PAYMENT_SAVE_CARD: `${authController}/save-card`
+
   },
 };

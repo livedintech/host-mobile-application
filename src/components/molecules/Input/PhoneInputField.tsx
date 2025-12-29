@@ -6,9 +6,7 @@ import AppText from '../AppText/AppText';
 import ButtonView from '../AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-
-import ChevronDownIcon from '@/assets/icons/arrowDown.svg';
-
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 interface PhoneInputFieldProps {
     control: Control<any>;
     errors: FieldErrors;
@@ -48,23 +46,23 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
 
     const animatedBorderColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [Colors.GAINSBORO, Colors.CORAL_REEF],
+        outputRange: [Colors.BRUNSWICK_GREEN, Colors.BRUNSWICK_GREEN],
     });
 
     const animatedBackgroundColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [Colors.CULTURED, Colors.WHITE],
+        outputRange: [Colors.WHITE, Colors.WHITE],
     });
 
     return (
         <View style={styles.wrapper}>
-            <AppText text={label} style={styles.label} />
+            <AppText text={label} style={styles.label} type='Medium'/>
 
             <Animated.View
                 style={[
                     styles.container,
                     {
-                        borderColor: hasError ? Colors.INDIAN_RED : animatedBorderColor,
+                        borderColor: hasError ? Colors.ARGENT : animatedBorderColor,
                         backgroundColor: animatedBackgroundColor,
                     },
                 ]}
@@ -90,7 +88,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                                 onClose={() => setPickerVisible(false)}
                             />
                             <AppText text={`+${value.callingCode}`} />
-                            <ChevronDownIcon stroke={Colors.GRAY} style={{ marginLeft: 5 }} />
+                            <Svgicons path='ChevronDownIcon' size={10} pl={5}/>
                         </ButtonView>
                     )}
                 />
@@ -110,7 +108,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                             onChangeText={onChange}
                             value={value}
                             placeholder="Your Phone Number"
-                            placeholderTextColor={Colors.GRAY}
+                            placeholderTextColor={Colors.DRAVIT_GREY}
                             keyboardType="phone-pad"
                         />
                     )}
@@ -133,7 +131,7 @@ const styles = StyleSheet.create({
         marginBottom: Metrics.verticalScale(18),
     },
     label: {
-        color: Colors.GRAY,
+        color: Colors.BLACK,
         marginBottom: 8,
         fontSize: Metrics.generatedFontSize(14),
     },
@@ -141,8 +139,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderRadius: 12,
-        height: Metrics.verticalScale(48),
+        borderRadius: 5,
+        height: Metrics.verticalScale(57),
         paddingHorizontal: 4,
     },
     pickerButton: {
@@ -153,7 +151,7 @@ const styles = StyleSheet.create({
     callingCodeText: {
         marginHorizontal: 8,
         fontSize: Metrics.generatedFontSize(16),
-        color: Colors.EERIE_BLACK,
+        color: Colors.BLACK,
     },
     input: {
         color: Colors.BLACK,

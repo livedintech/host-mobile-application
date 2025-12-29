@@ -7,7 +7,7 @@ import { Colors } from '@/theme/colors';
 
 export const CustomSuccessToast: React.FC<BaseToastProps> = ({ text1 }) => (
     <View style={styles.container}>
-        <AppText text={text1 || ''} style={styles.text} color={Colors.CHINESE_BLACK} fontSize={13} type='Bold' numberOfLines={2}/>
+        <AppText text={text1 || ''} style={styles.text} color={Colors.BLACK} fontSize={13} type='Bold' numberOfLines={2}/>
     </View>
 );
 

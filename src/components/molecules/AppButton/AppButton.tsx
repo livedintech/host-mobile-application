@@ -11,15 +11,16 @@ const AppButton = ({
     fontSize = 14,
     textTransform,
     onPress,
-    color = Colors.WHITE,
-    borderColor = Colors.BLACK,
-    backgroundColor = Colors.BLACK,
-    borderRadius = 8,
+    color = Colors.BRUNSWICK_GREEN,
+    borderColor = Colors.ARGENT,
+    backgroundColor = Colors.WHITE,
+    borderRadius = 100,
     disabled = false,
     loading = false,
     style,
     m, mt, mb, ml, mr, mx, my,
     p, pt, pb, pl, pr, px, py,
+    type ='Regular'
 }: ButtonProps) => {
     const spacingStyles = {
         margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
@@ -50,7 +51,7 @@ const AppButton = ({
             {loading ? (
                 <ActivityIndicator color={color} />
             ) : (
-                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} />
+                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} type={type}/>
             )}
         </ButtonView>
     );
@@ -59,10 +60,6 @@ const AppButton = ({
 export default AppButton;
 
 const styles = StyleSheet.create({
-    buttonText: {
-        fontSize: Metrics.generatedFontSize(18),
-        fontFamily: `Gilroy-SemiBold`,
-    },
     button: {
         paddingVertical: Metrics.verticalScale(10),
     },

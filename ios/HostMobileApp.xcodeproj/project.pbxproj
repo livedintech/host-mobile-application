@@ -12,6 +12,16 @@
 		1C5378653EE50A0C1D32C104 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A3EA5AAD169B40E8AE72FB4C /* RethinkSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 854FFBC71FF744E0970EAF26 /* RethinkSans-SemiBold.ttf */; };
+		19B7CE01B5BF43BB92552B92 /* RethinkSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D95C34EFAE07463C881645D6 /* RethinkSans-MediumItalic.ttf */; };
+		7F1CED45381645D1B7E46389 /* RethinkSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CCEE7D73F7504B9FA791CCF6 /* RethinkSans-ExtraBoldItalic.ttf */; };
+		8753FE9669F64B4792D9367D /* RethinkSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3377B888F634282B22DA45C /* RethinkSans-Medium.ttf */; };
+		50AD5C6515894112AA4BF4F4 /* RethinkSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC5B5C0667CA4C2994994F59 /* RethinkSans-SemiBoldItalic.ttf */; };
+		758E8C82F4AB4C978015904D /* RethinkSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 70FA7D113FF34B0791E3278F /* RethinkSans-Bold.ttf */; };
+		7F015EDFD6CE43F7AC4C2017 /* RethinkSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E5A857155F3741FE93B1B706 /* RethinkSans-Regular.ttf */; };
+		B7D4F6D7C91A40219AB5F8C2 /* RethinkSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1F563740F494877AF27F102 /* RethinkSans-Italic.ttf */; };
+		BE984DF513D44CF4AF88B7B1 /* RethinkSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9ECEE3A391E747E78D159E14 /* RethinkSans-BoldItalic.ttf */; };
+		1FF256E1A316466D948D8EE4 /* RethinkSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0279ADC9F43345B99596259D /* RethinkSans-ExtraBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +35,16 @@
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = HostMobileApp/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = HostMobileApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		854FFBC71FF744E0970EAF26 /* RethinkSans-SemiBold.ttf */ = {isa = PBXFileReference; name = "RethinkSans-SemiBold.ttf"; path = "../src/assets/fonts/RethinkSans-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D95C34EFAE07463C881645D6 /* RethinkSans-MediumItalic.ttf */ = {isa = PBXFileReference; name = "RethinkSans-MediumItalic.ttf"; path = "../src/assets/fonts/RethinkSans-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CCEE7D73F7504B9FA791CCF6 /* RethinkSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; name = "RethinkSans-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/RethinkSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D3377B888F634282B22DA45C /* RethinkSans-Medium.ttf */ = {isa = PBXFileReference; name = "RethinkSans-Medium.ttf"; path = "../src/assets/fonts/RethinkSans-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EC5B5C0667CA4C2994994F59 /* RethinkSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; name = "RethinkSans-SemiBoldItalic.ttf"; path = "../src/assets/fonts/RethinkSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		70FA7D113FF34B0791E3278F /* RethinkSans-Bold.ttf */ = {isa = PBXFileReference; name = "RethinkSans-Bold.ttf"; path = "../src/assets/fonts/RethinkSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E5A857155F3741FE93B1B706 /* RethinkSans-Regular.ttf */ = {isa = PBXFileReference; name = "RethinkSans-Regular.ttf"; path = "../src/assets/fonts/RethinkSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E1F563740F494877AF27F102 /* RethinkSans-Italic.ttf */ = {isa = PBXFileReference; name = "RethinkSans-Italic.ttf"; path = "../src/assets/fonts/RethinkSans-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9ECEE3A391E747E78D159E14 /* RethinkSans-BoldItalic.ttf */ = {isa = PBXFileReference; name = "RethinkSans-BoldItalic.ttf"; path = "../src/assets/fonts/RethinkSans-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0279ADC9F43345B99596259D /* RethinkSans-ExtraBold.ttf */ = {isa = PBXFileReference; name = "RethinkSans-ExtraBold.ttf"; path = "../src/assets/fonts/RethinkSans-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +95,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				3B666C7C1FBC40BDA3D6FA5D /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -97,6 +118,24 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		3B666C7C1FBC40BDA3D6FA5D /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				854FFBC71FF744E0970EAF26 /* RethinkSans-SemiBold.ttf */,
+				D95C34EFAE07463C881645D6 /* RethinkSans-MediumItalic.ttf */,
+				CCEE7D73F7504B9FA791CCF6 /* RethinkSans-ExtraBoldItalic.ttf */,
+				D3377B888F634282B22DA45C /* RethinkSans-Medium.ttf */,
+				EC5B5C0667CA4C2994994F59 /* RethinkSans-SemiBoldItalic.ttf */,
+				70FA7D113FF34B0791E3278F /* RethinkSans-Bold.ttf */,
+				E5A857155F3741FE93B1B706 /* RethinkSans-Regular.ttf */,
+				E1F563740F494877AF27F102 /* RethinkSans-Italic.ttf */,
+				9ECEE3A391E747E78D159E14 /* RethinkSans-BoldItalic.ttf */,
+				0279ADC9F43345B99596259D /* RethinkSans-ExtraBold.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -161,6 +200,16 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				1C5378653EE50A0C1D32C104 /* PrivacyInfo.xcprivacy in Resources */,
+				A3EA5AAD169B40E8AE72FB4C /* RethinkSans-SemiBold.ttf in Resources */,
+				19B7CE01B5BF43BB92552B92 /* RethinkSans-MediumItalic.ttf in Resources */,
+				7F1CED45381645D1B7E46389 /* RethinkSans-ExtraBoldItalic.ttf in Resources */,
+				8753FE9669F64B4792D9367D /* RethinkSans-Medium.ttf in Resources */,
+				50AD5C6515894112AA4BF4F4 /* RethinkSans-SemiBoldItalic.ttf in Resources */,
+				758E8C82F4AB4C978015904D /* RethinkSans-Bold.ttf in Resources */,
+				7F015EDFD6CE43F7AC4C2017 /* RethinkSans-Regular.ttf in Resources */,
+				B7D4F6D7C91A40219AB5F8C2 /* RethinkSans-Italic.ttf in Resources */,
+				BE984DF513D44CF4AF88B7B1 /* RethinkSans-BoldItalic.ttf in Resources */,
+				1FF256E1A316466D948D8EE4 /* RethinkSans-ExtraBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

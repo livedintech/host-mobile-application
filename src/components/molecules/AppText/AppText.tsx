@@ -12,6 +12,7 @@ const AppText = ({
   fontSize = 14,
   textAlign = 'left',
   type, // New prop for font weight style
+    italic = false, // ✅ default
   lineHeight,
   letterSpacing,
   textTransform,
@@ -22,8 +23,10 @@ const AppText = ({
   m, mt, mb, ml, mr, mx, my,
   p, pt, pb, pl, pr, px, py,
 }: AppTextProps) => {
-  // Set fontFamily dynamically based on fontWeightStyle prop
-  
+
+    const fontFamily = italic
+    ? `RethinkSans-${type}Italic`
+    : `RethinkSans-${type}`;
 
   const spacingStyles = {
     margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
@@ -48,7 +51,7 @@ const AppText = ({
           color,
           fontSize: Metrics.generatedFontSize(fontSize),
           textAlign,
-          fontFamily: `Gilroy-${type}`,  // Use computed font family here
+         fontFamily,
           lineHeight: lineHeight && Metrics.generatedFontSize(lineHeight),
           letterSpacing,
           textTransform,
