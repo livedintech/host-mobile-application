@@ -18,6 +18,10 @@ const NavigationRoutes = {
   APP_STACK: {
     ROOT_STACK: 'ROOT_STACK',
     HOME: 'HOME_SCREEN',
+    LISTING: 'LISTING_SCREEN',
+    MESSAGE:'MESSAGE_SCREEN',
+    TASK:'TASK_SCREEN',
+    MORE:'MORE_SCREEN'
   },
 
   ROOT_STACK: {},

@@ -13,6 +13,7 @@ import {
 } from '@/types/api/authTypes';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useAuthStore } from '@/store/useAuthStore';
 
 // Validation Schema
 const signInSchema = yup.object().shape({
@@ -24,6 +25,8 @@ const signInSchema = yup.object().shape({
 });
 
 export default function useEnterPasswordContainer() {
+  const { setToken, setUser } = useAuthStore();
+
   const { params } = useRoute();
 
   const {
@@ -45,7 +48,12 @@ export default function useEnterPasswordContainer() {
     isIdle,
   } = useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginApi,
-    onSuccess: ({ message }) => {
+    onSuccess: ({data, message }) => {
+      console.log('data',data);
+      
+      // setToken()
+      setToken('fake-token-123');
+      setUser({ id: 1, name: 'John Doe' });
       Toast.show({ type: 'success', text1: message });
     },
     onError: ({ message }) => {

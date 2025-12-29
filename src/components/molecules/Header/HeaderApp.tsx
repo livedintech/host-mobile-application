@@ -9,34 +9,45 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 interface HeaderApp {
   isGoBack?: boolean;
+  isGetStarted?: boolean;
+  isLogo?: boolean;
+  isLang?: boolean;
 }
 
-const HeaderApp = ({ isGoBack }: HeaderApp) => {
+const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
   }, []);
 
   return (
     <View style={styles.header}>
-      <AppText
-        text="Livedin"
-        fontSize={32}
-        type="Bold"
-        color={Colors.BRUNSWICK_GREEN}
-      />
+      {isLogo && (
+        <AppText
+          text="Livedin"
+          fontSize={32}
+          type="Bold"
+          color={Colors.BRUNSWICK_GREEN}
+        />
+      )}
+
       <View style={styles.headerRight}>
-        <View style={styles.langBtn}>
-          <AppText text="AR" fontSize={12} type="Medium" />
-        </View>
-        {isGoBack ? (
-          <ButtonView style={styles.getStartedBtn} onPress={()=>goBack()}>
+        {isLang && (
+          <View style={styles.langBtn}>
+            <AppText text="AR" fontSize={12} type="Medium" />
+          </View>
+        )}
+
+        {isGoBack && (
+          <ButtonView style={styles.getStartedBtn} onPress={() => goBack()}>
             <AppText text="Back" fontSize={12} type="Medium" />
           </ButtonView>
-        ) : (
+        )}
+        {isGetStarted && (
           <ButtonView style={styles.getStartedBtn} onPress={getStarted}>
             <AppText text="Get Started" fontSize={12} type="Medium" />
           </ButtonView>
         )}
+
       </View>
     </View>
   );

@@ -17,7 +17,8 @@ import { useState } from 'react';
 import { usePhoneStore } from '@/store/usePhoneStore';
 
 export default function useLoginWithPhoneContainer() {
-    const setPhoneData = usePhoneStore((state) => state.setPhoneData);
+  
+  const setPhoneData = usePhoneStore((state) => state.setPhoneData);
 
   const [phoneNumber, setphoneNumber] = useState('');
   const {
@@ -44,12 +45,12 @@ export default function useLoginWithPhoneContainer() {
       navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, phoneNumber);
     },
     onError: error => {
-      
+
       if (error?.message === 'User not found') {
         setPhoneData({
-          phoneNumber:phoneNumber
+          phoneNumber: phoneNumber
         })
-        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING,phoneNumber);
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phoneNumber);
       }
       Toast.show({
         type: 'error',
