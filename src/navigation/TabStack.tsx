@@ -10,29 +10,31 @@ const TabStack = () => {
   return (
     <Tab.Navigator
       tabBar={(props) => <BottomTab {...props} />}
-      screenOptions={{
-        header: () => <HeaderApp isLogo isLang />,
-      }}
     >
-      <Tab.Screen 
-        name={NavigationRoutes.APP_STACK.HOME} 
-        component={require('@/screens/appstack/Home/HomeScreen').default} 
+      <Tab.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        name={NavigationRoutes.APP_STACK.HOME}
+        component={require('@/screens/appstack/Home/HomeScreen').default}
       />
-      <Tab.Screen 
-        name={NavigationRoutes.APP_STACK.LISTING} 
-        component={require('@/screens/appstack/Listing/ListingScreen').default} 
+      <Tab.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        name={NavigationRoutes.APP_STACK.LISTING}
+        component={require('@/screens/appstack/Listing/ListingScreen').default}
       />
-      <Tab.Screen 
-        name={NavigationRoutes.APP_STACK.MESSAGE} 
-        component={require('@/screens/appstack/Message/MessageScreen').default} 
+      <Tab.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        name={NavigationRoutes.APP_STACK.MESSAGE}
+        component={require('@/screens/appstack/Message/MessageScreen').default}
       />
-      <Tab.Screen 
-        name={NavigationRoutes.APP_STACK.TASK} 
-        component={require('@/screens/appstack/Task/TaskScreen').default} 
+      <Tab.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        name={NavigationRoutes.APP_STACK.TASK}
+        component={require('@/screens/appstack/Task/TaskScreen').default}
       />
-      <Tab.Screen 
-        name={NavigationRoutes.APP_STACK.MORE} 
-        component={require('@/screens/appstack/More/MoreScreen').default} 
+      <Tab.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        name={NavigationRoutes.APP_STACK.MORE}
+        component={require('@/screens/appstack/More/MoreScreen').default}
       />
     </Tab.Navigator>
   );
