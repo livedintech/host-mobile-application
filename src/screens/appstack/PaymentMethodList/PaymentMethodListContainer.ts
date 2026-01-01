@@ -9,7 +9,7 @@ export default function usePaymentMethodListContainer() {
   const [isDefault, setIsDefault] = useState(true);
 
   const onAddNew = () => {
-    navigate(NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD)
+    navigate(NavigationRoutes.APP_STACK.SELECT_PAYMENT_METHOD)
   };
 
   return { 

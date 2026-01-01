@@ -12,6 +12,7 @@ import heartIcon from './heart_icon.svg';
 import cardIcon from './card_icon.svg';
 import starIcon from './stats_icon.svg';
 import arrowLeftIcon from './arrow-left.svg';
+import arrowRightIcon from './arrow-right.svg';
 import phoneIcon from './phone_icon.svg';
 import percentIcon from './percent_icon.svg';
 import briefcaseIcon from './briefcase_icon.svg';
@@ -41,5 +42,6 @@ export const icons = {
     calendarGridIcon: calendarGridIcon,
     listingIcon: listingIcon,
     editIcon: editIcon,
-    trashIcon:trashIcon
+    trashIcon:trashIcon,
+    arrowRightIcon:arrowRightIcon
 };
