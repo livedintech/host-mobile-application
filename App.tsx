@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { processColor, StatusBar, ActivityIndicator, View, StyleSheet } from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
@@ -15,10 +15,10 @@ import { CustomErrorToast } from '@/components/molecules/CustomToast/CustomError
 import { MFSDK } from 'myfatoorah-reactnative';
 
 // Import MyFatoorah configuration
-import myFatoorahConfig, { 
-  validateConfig, 
+import myFatoorahConfig, {
+  validateConfig,
   getEnvironmentName,
-  isProduction 
+  isProduction
 } from '@/config/myfatoorah.config';
 
 const App = () => {
@@ -33,7 +33,7 @@ const App = () => {
     try {
       // Validate configuration first
       const { isValid, errors } = validateConfig();
-      
+
       if (!isValid) {
         console.error('❌ Configuration validation failed:', errors);
         throw new Error(`Configuration Error: ${errors.join(', ')}`);
@@ -41,16 +41,16 @@ const App = () => {
 
       // Initialize MyFatoorah SDK
       await configureMyFatoorah();
-      
+
       // Setup ActionBar (optional)
       await setUpActionBar();
-      
+
       setIsSDKInitialized(true);
-      
+
       console.log('✅ App initialized successfully');
       console.log(`📱 Environment: ${getEnvironmentName()}`);
       console.log(`🌍 Country: Saudi Arabia`);
-      
+
     } catch (error: any) {
       console.error('❌ App initialization failed:', error);
       setInitializationError(error.message || 'Initialization failed');
@@ -68,12 +68,12 @@ const App = () => {
       );
 
       console.log('✅ MyFatoorah SDK initialized:', success);
-      
+
       // Warn if using production in development
       if (isProduction() && __DEV__) {
         console.warn('⚠️ WARNING: Using PRODUCTION environment in development mode!');
       }
-      
+
       return success;
     } catch (error: any) {
       console.error('❌ MyFatoorah SDK initialization error:', error);
@@ -108,9 +108,9 @@ const App = () => {
   if (!isSDKInitialized) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator 
-          size="large" 
-          color={Colors.INDIAN_RED || '#FF0000'} 
+        <ActivityIndicator
+          size="large"
+          color={Colors.INDIAN_RED || '#FF0000'}
         />
       </View>
     );
@@ -120,13 +120,19 @@ const App = () => {
   if (initializationError) {
     console.warn('⚠️ Payment system may not work properly:', initializationError);
   }
-
+  const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Colors.WHITE
+  },
+};
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <NavigationContainer ref={navigationRef}>
-            <SafeAreaView style={{ flex: 1 }}>
+          <NavigationContainer ref={navigationRef} theme={MyTheme}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
               <StatusBar
                 barStyle="dark-content"
                 backgroundColor={Colors.WHITE}
