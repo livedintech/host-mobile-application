@@ -1,8 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { navigate } from '@/services/navigationService';
 
 export default function useAccountContainer() {
-  const navigation = useNavigation();
 
   const accountOptions = [
     { id: '1', title: 'Profile Setting', route: 'PROFILE_SETTINGS' },
@@ -12,9 +11,10 @@ export default function useAccountContainer() {
   ];
 
   const handlePress = (route: string) => {
-    // Navigation logic yahan aayegi
+    if (route === 'MANAGE_BOOKING') {
+      navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)
+    }
     console.log('Navigating to:', route);
   };
-
-  return { accountOptions, handlePress, navigation };
+  return { accountOptions, handlePress };
 }

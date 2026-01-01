@@ -22,10 +22,6 @@ import myFatoorahConfig, {
 } from '@/config/myfatoorah.config';
 
 const App = () => {
-  return (
-    <Text>assadds</Text>
-  )
-  return false
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState<string | null>(null);
 

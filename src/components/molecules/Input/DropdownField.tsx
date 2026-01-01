@@ -70,6 +70,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 const styles = StyleSheet.create({
     wrapper: {
         marginBottom: Metrics.verticalScale(18),
+         zIndex: 9999,        // ensures dropdown appears above other elements
+    overflow: 'visible',  // prevents clipping inside ScrollView or parent Views
     },
     label: {
         color: Colors.BRUNSWICK_GREEN,
