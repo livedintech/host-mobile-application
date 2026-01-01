@@ -109,6 +109,14 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.ACCOUNT}
+        getComponent={() =>
+          require('@/screens/appstack/Account/AccountScreen')
+            .default
+        }
+      />
 
     </Stack.Navigator>
   );
