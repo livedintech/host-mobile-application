@@ -53,7 +53,7 @@ const AuthStack = () => {
         options={{ header: () => <HeaderApp isGoBack/> }}
         name={NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER}
         getComponent={() =>
-          require('@/screens/appstack/VerifyPhoneNumber/VerifyPhoneNumberScreen')
+          require('@/screens/auth/VerifyPhoneNumber/VerifyPhoneNumberScreen')
             .default
         }
       />
@@ -61,7 +61,7 @@ const AuthStack = () => {
         options={{ header: () => <HeaderApp /> }}
         name={NavigationRoutes.AUTH_STACK.MANAGE_LISTING}
         getComponent={() =>
-          require('@/screens/appstack/ManageListing/ManageListingScreen')
+          require('@/screens/auth/ManageListing/ManageListingScreen')
             .default
         }
       />
@@ -69,7 +69,7 @@ const AuthStack = () => {
        options={{ header: () => <HeaderApp isGoBack/> }}
         name={NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT}
         getComponent={() =>
-          require('@/screens/appstack/CreateAccount/CreateAccountScreen')
+          require('@/screens/auth/CreateAccount/CreateAccountScreen')
             .default
         }
       />
