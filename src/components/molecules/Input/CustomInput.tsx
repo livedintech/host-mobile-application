@@ -82,7 +82,7 @@ const CustomInput = ({
   // Interpolate animated values
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.SMOOTH_GREY, Colors.BLACK], // grey → coral
+    outputRange: [Colors.BRUNSWICK_GREEN, Colors.BLACK], // grey → coral
   });
 
   const animatedBackgroundColor = animation.interpolate({
@@ -153,9 +153,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: 16,
-    height: Metrics.verticalScale(48),
+    height: Metrics.verticalScale(58),
     borderWidth: 1,
   },
   input: {

@@ -24,8 +24,6 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
 }) => {
     const [pickerVisible, setPickerVisible] = React.useState(false);
 
-    const hasError = errors[countryFieldName] || errors[phoneFieldName];
-
     const animation = useRef(new Animated.Value(0)).current;
 
     const handleFocus = () => {
@@ -62,7 +60,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                 style={[
                     styles.container,
                     {
-                        borderColor: hasError ? Colors.ARGENT : animatedBorderColor,
+                         borderColor: errors[phoneFieldName] ? Colors.INDIAN_RED : animatedBorderColor,
                         backgroundColor: animatedBackgroundColor,
                     },
                 ]}
@@ -108,7 +106,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                             onChangeText={onChange}
                             value={value}
                             placeholder="Your Phone Number"
-                            placeholderTextColor={Colors.DRAVIT_GREY}
+                            placeholderTextColor={Colors.SUPER_GREY}
                             keyboardType="phone-pad"
                         />
                     )}
@@ -139,7 +137,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 12,
         height: Metrics.verticalScale(57),
         paddingHorizontal: 4,
     },

@@ -14,7 +14,9 @@ export default function useAccountContainer() {
     if (route === 'MANAGE_BOOKING') {
       navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)
     }
-    console.log('Navigating to:', route);
+     if (route === 'PROFILE_SETTINGS') {
+      navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)
+    }
   };
   return { accountOptions, handlePress };
 }
