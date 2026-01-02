@@ -21,7 +21,7 @@ import listingIcon from './listingIcon.svg';
 import editIcon from './edit_icon.svg';
 import trashIcon from './trash_icon.svg';
 import houseLineIcon from './house_line_icon.svg';
-
+import imageUploadIcon from './imageUploadIcon.svg';
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -46,5 +46,6 @@ export const icons = {
     editIcon: editIcon,
     trashIcon:trashIcon,
     arrowRightIcon:arrowRightIcon,
-    houseLineIcon:houseLineIcon
+    houseLineIcon:houseLineIcon,
+    imageUploadIcon:imageUploadIcon
 };

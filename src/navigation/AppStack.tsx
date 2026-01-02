@@ -149,6 +149,22 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.PROFILE_SETTING}
+        getComponent={() =>
+          require('@/screens/appstack/Profile/ProfileScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.CHANGE_PASSWORD}
+        getComponent={() =>
+          require('@/screens/appstack/ChangePassword/ChangePasswordScreen')
+            .default
+        }
+      />
     </Stack.Navigator>
   );
 };
