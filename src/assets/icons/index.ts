@@ -20,6 +20,8 @@ import calendarGridIcon from './calendar_grid_icon.svg';
 import listingIcon from './listingIcon.svg';
 import editIcon from './edit_icon.svg';
 import trashIcon from './trash_icon.svg';
+import houseLineIcon from './house_line_icon.svg';
+
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -43,5 +45,6 @@ export const icons = {
     listingIcon: listingIcon,
     editIcon: editIcon,
     trashIcon:trashIcon,
-    arrowRightIcon:arrowRightIcon
+    arrowRightIcon:arrowRightIcon,
+    houseLineIcon:houseLineIcon
 };

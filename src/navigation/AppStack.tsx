@@ -109,7 +109,46 @@ const AppStack = () => {
             .default
         }
       />
-
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.ACCOUNT}
+        getComponent={() =>
+          require('@/screens/appstack/Account/AccountScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
+        getComponent={() =>
+          require('@/screens/appstack/ManageBooking/ManageBookingScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false}}
+        name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
+        getComponent={() =>
+          require('@/screens/appstack/AirbnbImport/AirbnbImportScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.GATHREN_PMSID}
+        getComponent={() =>
+          require('@/screens/appstack/GathrenPmsid/GathrenPmsidScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+       options={{ headerShown: false}}
+        name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
+        getComponent={() =>
+          require('@/screens/appstack/GathernImport/GathernImportScreen')
+            .default
+        }
+      />
     </Stack.Navigator>
   );
 };

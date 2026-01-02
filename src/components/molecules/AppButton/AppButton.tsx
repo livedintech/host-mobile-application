@@ -61,7 +61,7 @@ export default AppButton;
 
 const styles = StyleSheet.create({
     button: {
-        paddingVertical: Metrics.verticalScale(10),
+        paddingVertical: Metrics.verticalScale(12),
     },
     disabledButton: {
         backgroundColor: Colors.BLACK,

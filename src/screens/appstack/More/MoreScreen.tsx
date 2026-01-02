@@ -7,10 +7,15 @@ import Metrics from '@/utility/Metrics';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const MoreScreen = () => {
+    const { logout } = useAuthStore()
     const goToBilling = useCallback(() => {
         navigate(NavigationRoutes.APP_STACK.BILLING)
+    }, []);
+    const goToAccount = useCallback(() => {
+        navigate(NavigationRoutes.APP_STACK.ACCOUNT)
     }, []);
 
     const MenuCard = ({ title, items, icon, onPress }: any) => (
@@ -41,14 +46,14 @@ const MoreScreen = () => {
             </View>
 
             <View style={styles.grid}>
-                <MenuCard title="Account" items={['Profile Settings', 'Manage Listings', 'User Management']} icon={'userIcon'} />
+                <MenuCard title="Account" items={['Profile Settings', 'Manage Listings', 'User Management']} icon={'userIcon'} onPress={goToAccount} />
                 <MenuCard title="Refer App" items={['Refer App', 'To Another', 'Host']} icon={'heartIcon'} />
                 <MenuCard title="Billing" items={['Payment Method', 'Subscription', 'Transaction History']} icon={'cardIcon'} onPress={goToBilling} />
                 <MenuCard title="General" items={['Privacy Policy', 'Terms & Conditions', 'FAQ']} icon={'starIcon'} />
             </View>
 
             <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
-                <Pressable style={styles.logoutBtn}>
+                <Pressable style={styles.logoutBtn} onPress={() => logout()}>
                     <AppText text="Logout" fontSize={24} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                     <Svgicons path='ArrowUpRightIcon' />
                 </Pressable>
