@@ -22,6 +22,9 @@ import editIcon from './edit_icon.svg';
 import trashIcon from './trash_icon.svg';
 import houseLineIcon from './house_line_icon.svg';
 import imageUploadIcon from './imageUploadIcon.svg';
+import pinLocation from './pin-location.svg';
+import pinLocationFill from './pin-location-fill.svg';
+import locateMeIcon from './locateMeIcon.svg';
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -47,5 +50,8 @@ export const icons = {
     trashIcon:trashIcon,
     arrowRightIcon:arrowRightIcon,
     houseLineIcon:houseLineIcon,
-    imageUploadIcon:imageUploadIcon
+    imageUploadIcon:imageUploadIcon,
+    pinLocationIcon:pinLocation,
+    pinLocationFillIcon:pinLocationFill,
+    locateMeIcon:locateMeIcon
 };

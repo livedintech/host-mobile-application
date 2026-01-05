@@ -14,8 +14,11 @@ export default function useAccountContainer() {
     if (route === 'MANAGE_BOOKING') {
       navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)
     }
-     if (route === 'PROFILE_SETTINGS') {
+    if (route === 'PROFILE_SETTINGS') {
       navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)
+    }
+    if (route === 'MANAGE_LISTING') {
+      navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS)
     }
   };
   return { accountOptions, handlePress };
