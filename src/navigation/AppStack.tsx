@@ -28,9 +28,9 @@ const AppStack = () => {
             .default
         }
       />
-    
-     <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang/> }}
+
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.LISTING}
         getComponent={() =>
           require('@/screens/appstack/Listing/ListingScreen')
@@ -38,7 +38,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang/> }}
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.MESSAGE}
         getComponent={() =>
           require('@/screens/appstack/Message/MessageScreen')
@@ -46,15 +46,15 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang/> }}
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
         getComponent={() =>
           require('@/screens/appstack/Task/TaskScreen')
             .default
         }
       />
-       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang/> }}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.MORE}
         getComponent={() =>
           require('@/screens/appstack/More/MoreScreen')
@@ -62,7 +62,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isGoBackAfterLogo isLang/> }}
+        options={{ header: () => <HeaderApp isLogo isGoBackAfterLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.BILLING}
         getComponent={() =>
           require('@/screens/appstack/Billing/BillingScreen')
@@ -70,7 +70,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY}
         getComponent={() =>
           require('@/screens/appstack/SubscriptionHistory/SubscriptionHistoryScreen')
@@ -78,7 +78,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.TRANSACTION_HISTORY}
         getComponent={() =>
           require('@/screens/appstack/TransactionHistory/TransactionHistoryScreen')
@@ -86,7 +86,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST}
         getComponent={() =>
           require('@/screens/appstack/PaymentMethodList/PaymentMethodListScreen')
@@ -94,7 +94,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD}
         getComponent={() =>
           require('@/screens/appstack/AddNewPaymentMethod/AddNewPaymentMethodScreen')
@@ -102,7 +102,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SELECT_PAYMENT_METHOD}
         getComponent={() =>
           require('@/screens/appstack/SelectPayment/SelectPaymentScreen')
@@ -110,7 +110,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.ACCOUNT}
         getComponent={() =>
           require('@/screens/appstack/Account/AccountScreen')
@@ -118,7 +118,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
         getComponent={() =>
           require('@/screens/appstack/ManageBooking/ManageBookingScreen')
@@ -126,7 +126,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown: false}}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
           require('@/screens/appstack/AirbnbImport/AirbnbImportScreen')
@@ -134,7 +134,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.GATHREN_PMSID}
         getComponent={() =>
           require('@/screens/appstack/GathrenPmsid/GathrenPmsidScreen')
@@ -142,7 +142,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ headerShown: false}}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
         getComponent={() =>
           require('@/screens/appstack/GathernImport/GathernImportScreen')
@@ -150,7 +150,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.PROFILE_SETTING}
         getComponent={() =>
           require('@/screens/appstack/Profile/ProfileScreen')
@@ -158,7 +158,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CHANGE_PASSWORD}
         getComponent={() =>
           require('@/screens/appstack/ChangePassword/ChangePasswordScreen')
@@ -166,7 +166,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS}
         getComponent={() =>
           require('@/screens/appstack/ManageListing/ManageListingScreen')
@@ -174,7 +174,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE}
         getComponent={() =>
           require('@/screens/appstack/CreateListingStepOne/CreateListingStepOneScreen')
@@ -182,10 +182,82 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{ headerShown: false}}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE_SET_LOCATION}
         getComponent={() =>
           require('@/screens/appstack/CreateListingStepOneLocation/CreateListingStepOneLocationScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CONFIRM_ADDRESS}
+        getComponent={() =>
+          require('@/screens/appstack/ConfirmAddress/ConfirmAddressScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.ABOUT_THE_PLACE}
+        getComponent={() =>
+          require('@/screens/appstack/AboutThePlace/AboutThePlaceScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS}
+        getComponent={() =>
+          require('@/screens/appstack/InteriorPhoto/InteriorPhotoScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS}
+        getComponent={() =>
+          require('@/screens/appstack/ExteriorPhoto/ExteriorPhotoScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS}
+        getComponent={() =>
+          require('@/screens/appstack/BathroomPhoto/BathroomPhotoScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE}
+        getComponent={() =>
+          require('@/screens/appstack/DescribeHouse/DescribeHouseScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.SET_YOUR_PRICING}
+        getComponent={() =>
+          require('@/screens/appstack/SetPricing/SetPricingScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE}
+        getComponent={() =>
+          require('@/screens/appstack/PropertyDisclosure/PropertyDisclosureScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD}
+        getComponent={() =>
+          require('@/screens/appstack/DocumentUpload/DocumentUploadScreen')
             .default
         }
       />

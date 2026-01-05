@@ -5,9 +5,9 @@ import { MultiSelect } from 'react-native-element-dropdown';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import ChevronDownIcon from '@/assets/icons/chevron-down.svg';
 import CheckboxChecked from '@/assets/icons/checkbox-primary-checked.svg';
 import CheckboxUnchecked from '@/assets/icons/checkbox-primary-unchecked.svg';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface DropdownItem {
     label: string;
@@ -48,8 +48,8 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
 
                         return (
                             <View style={styles.itemContainer}>
-                                {isSelected ? <CheckboxChecked /> : <CheckboxUnchecked />}
-                                <AppText text={item.label} fontSize={12} color={Colors.GRAY} type='SemiBold'/>
+                                {isSelected ? <Svgicons  path='CheckboxCheckedIcon'/> : <Svgicons  path='CheckboxUncheckedIcon'/> }
+                                <AppText text={item.label} fontSize={12} color={Colors.SUPER_GREY} type='SemiBold'/>
                             </View>
                         );
                     };
@@ -68,7 +68,7 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
                             value={value || []}
                             onChange={onChange}
                             disable={disabled}
-                            renderRightIcon={() => <ChevronDownIcon width={18} height={18} />}
+                            renderRightIcon={() => <Svgicons path='ChevronDownIcon' width={15} height={15} />}
                             selectedStyle={styles.selectedStyle}
                             inputSearchStyle={styles.inputSearchStyle}
                             renderItem={renderDropdownItem}
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         marginBottom: Metrics.verticalScale(18),
     },
     label: {
-        color: Colors.GRAY,
+        color: Colors.BRUNSWICK_GREEN,
         marginBottom: 8,
         fontSize: Metrics.generatedFontSize(14),
     },
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: Metrics.verticalScale(8),
         borderWidth: 1,
-        borderColor: Colors.GAINSBORO,
+        borderColor: Colors.BRUNSWICK_GREEN,
     },
     disabled: {
         backgroundColor: Colors.ANTI_FLASH_WHITE,
@@ -106,12 +106,13 @@ const styles = StyleSheet.create({
         borderColor: Colors.INDIAN_RED,
     },
     placeholderStyle: {
-        fontSize: 16,
-        color: Colors.GRAY,
+        fontSize: Metrics.generatedFontSize(12),
+                color: Colors.SUPER_GREY,
+                fontWeight: '500'
     },
     selectedTextStyle: {
         fontSize: 14,
-        color: Colors.EERIE_BLACK,
+        color: Colors.BLACK,
     },
    
     errorText: {
@@ -120,11 +121,11 @@ const styles = StyleSheet.create({
         color: Colors.INDIAN_RED,
     },
     inputSearchStyle: {
-        color: Colors.EERIE_BLACK,
+        color: Colors.BLACK,
     },
     selectedStyle: {
         borderRadius: 12,
-        backgroundColor: Colors.CULTURED,
+        backgroundColor: Colors.ANTI_FLASH_WHITE,
         paddingHorizontal: 12,
         paddingVertical: 8,
         marginVertical: 4,

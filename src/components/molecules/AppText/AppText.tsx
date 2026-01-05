@@ -11,8 +11,8 @@ const AppText = ({
   color = Colors.BLACK,
   fontSize = 14,
   textAlign = 'left',
-  type, // New prop for font weight style
-    italic = false, // ✅ default
+  type = 'Regular',
+  italic = false,
   lineHeight,
   letterSpacing,
   textTransform,
@@ -24,9 +24,12 @@ const AppText = ({
   p, pt, pb, pl, pr, px, py,
 }: AppTextProps) => {
 
-    const fontFamily = italic
+  const fontFamily = italic
     ? `RethinkSans-${type}Italic`
     : `RethinkSans-${type}`;
+
+  console.log('fontFamily', fontFamily);
+
 
   const spacingStyles = {
     margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
@@ -44,14 +47,14 @@ const AppText = ({
 
   return (
     <Text
-    onPress={onPress}
+      onPress={onPress}
       style={[
         styles.AppText,
         {
           color,
           fontSize: Metrics.generatedFontSize(fontSize),
           textAlign,
-         fontFamily,
+          fontFamily,
           lineHeight: lineHeight && Metrics.generatedFontSize(lineHeight),
           letterSpacing,
           textTransform,

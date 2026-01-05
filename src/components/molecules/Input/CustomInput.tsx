@@ -82,7 +82,7 @@ const CustomInput = ({
   // Interpolate animated values
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.BRUNSWICK_GREEN, Colors.BLACK], // grey → coral
+    outputRange: [Colors.SMOOTH_GREY, Colors.BRUNSWICK_GREEN], // grey → coral
   });
 
   const animatedBackgroundColor = animation.interpolate({
@@ -92,7 +92,7 @@ const CustomInput = ({
 
   return (
     <View style={styles.wrapper}>
-      {label && <AppText text={label} mb={8} color={Colors.BLACK} fontSize={14} type='Medium'/>}
+      {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium'/>}
 
       <Animated.View
         style={[

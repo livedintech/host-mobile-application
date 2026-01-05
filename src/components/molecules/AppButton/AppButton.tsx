@@ -42,7 +42,7 @@ const AppButton = ({
                 styles.button,
                 { backgroundColor, borderRadius, borderColor, borderWidth: 2, ...spacingStyles },
                 disabled && styles.disabledButton,
-                disabled && { borderColor: Colors.BLACK },
+                disabled && { borderColor: Colors.SMOOTH_GREY },
                 style,
             ]}
             onPress={onPress}
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
         paddingVertical: Metrics.verticalScale(12),
     },
     disabledButton: {
-        backgroundColor: Colors.BLACK,
+        backgroundColor: Colors.SMOOTH_GREY,
     },
 });

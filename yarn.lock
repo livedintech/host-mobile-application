@@ -1571,6 +1571,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/geolocation/-/geolocation-3.4.0.tgz#8b6ee024a71cf94526ab796af1e9ae140684802c"
   integrity sha512-bzZH89/cwmpkPMKKveoC72C4JH0yF4St5Ceg/ZM9pA1SqX9MlRIrIrrOGZ/+yi++xAvFDiYfihtn9TvXWU9/rA==
 
+"@react-native-documents/picker@^12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@react-native-documents/picker/-/picker-12.0.0.tgz#fbb88a9434da1fb0035a5196fd02259ff67596f9"
+  integrity sha512-7kdUaF0Kin3F6OBixHTGY7mMHG7JAejbnAWUQltC8v2xmkPN+CMli3i4sm62ZIEhYzf3QX+fCe/3kFBcr+Vb6g==
+
 "@react-native/assets-registry@0.82.1":
   version "0.82.1"
   resolved "https://registry.yarnpkg.com/@react-native/assets-registry/-/assets-registry-0.82.1.tgz#834058f9391fa7aa85404f833ece2ab70754a332"
@@ -6232,6 +6237,11 @@ react-native-gesture-handler@2.29.1:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
+
+react-native-image-crop-picker@^0.51.1:
+  version "0.51.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.51.1.tgz#1e42865454030c5194e693a9e7691bf5afe460f5"
+  integrity sha512-GIFRyXJgv1dPceKd/hraK9q9V38v45rSg2ONR6RiSePcOJemkHpc/PMU86pq6lWPilDYHSxbZmea2pNMk85ayw==
 
 react-native-is-edge-to-edge@1.2.1:
   version "1.2.1"
