@@ -165,6 +165,30 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS}
+        getComponent={() =>
+          require('@/screens/appstack/ManageListing/ManageListingScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+       options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        name={NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE}
+        getComponent={() =>
+          require('@/screens/appstack/CreateListingStepOne/CreateListingStepOneScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+       options={{ headerShown: false}}
+        name={NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE_SET_LOCATION}
+        getComponent={() =>
+          require('@/screens/appstack/CreateListingStepOneLocation/CreateListingStepOneLocationScreen')
+            .default
+        }
+      />
     </Stack.Navigator>
   );
 };
