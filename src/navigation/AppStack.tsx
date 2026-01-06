@@ -261,6 +261,22 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.PROPERTY_DETAIL}
+        getComponent={() =>
+          require('@/screens/appstack/PropertyDetail/PropertyDetailScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CONNECTED_OTA}
+        getComponent={() =>
+          require('@/screens/appstack/ConnectedOTA/ConnectedOTAScreen')
+            .default
+        }
+      />
     </Stack.Navigator>
   );
 };

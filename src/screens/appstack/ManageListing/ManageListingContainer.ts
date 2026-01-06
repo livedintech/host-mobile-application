@@ -25,11 +25,19 @@ export default function useManageListingContainer() {
       image: require('@/assets/img/property_placeholder.png'),
     },
   ]);
-  const goToCreateListingStepOne = useCallback(() =>{
+  const onCreateNew = useCallback(() =>{
     navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE)
+  },[]);
+
+   const goToPropertyDetail = useCallback(() =>{
+    navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+  },[]);
+
+
+  // const onAddExisting = () => console.log('Add New Listing');
+  const onCreateNewListing = useCallback(() =>{
+    navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   },[])
 
-  const onAddExisting = () => console.log('Add New Listing');
-
-  return { listings, onCreateNew:goToCreateListingStepOne, onAddExisting };
+  return { listings, onCreateNew, onCreateNewListing,goToPropertyDetail };
 }

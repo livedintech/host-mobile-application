@@ -8,7 +8,7 @@ import useManageListingContainer from './ManageListingContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
 const ManageListingScreen = () => {
-  const { listings, onCreateNew, onAddExisting } = useManageListingContainer();
+  const { listings, onCreateNew, onCreateNewListing,goToPropertyDetail } = useManageListingContainer();
 
   const PropertyCard = ({ item }: any) => (
   <GradientBorder borderRadius={16} style={styles.cardWrapper}>
@@ -34,7 +34,7 @@ const ManageListingScreen = () => {
 
       {/* Arrow */}
       <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
-        <Pressable style={styles.arrowCircle}>
+        <Pressable style={styles.arrowCircle} onPress={goToPropertyDetail}>
           <Svgicons path="arrowRightIcon" size={22} />
         </Pressable>
       </GradientBorder>
@@ -66,7 +66,7 @@ const ManageListingScreen = () => {
           />
           <AppButton 
             title="Add New Listing" 
-            onPress={onAddExisting} 
+            onPress={onCreateNewListing} 
             mt={15} 
           />
         </View>

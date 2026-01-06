@@ -41,7 +41,12 @@ import bookIcon from './bookIcon.svg'
 import attachmentIcon from './attachmentIcon.svg'
 import checkCircleIcon from './checkCircleIcon.svg'
 import closeIcon from './closeIcon.svg'
-
+import docIcon from './docIcon.svg'
+import infoIcon from './infoIcon.svg'
+import menuDotsIcon from './menuDots.svg'
+import channelIcon from './channelIcon.svg'
+import taskIcon from './taskIcon.svg'
+import deleteIcon from './deleteIcon.svg'
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -86,5 +91,11 @@ export const icons = {
     bookIcon:bookIcon,
     attachmentIcon:attachmentIcon,
     checkCircleIcon:checkCircleIcon,
-    closeIcon: closeIcon
+    closeIcon: closeIcon,
+    docIcon:docIcon,
+    infoIcon:infoIcon,
+    menuDotsIcon:menuDotsIcon,
+    channelIcon:channelIcon,
+    taskIcon:taskIcon,
+    deleteIcon:deleteIcon
 };
