@@ -4,6 +4,7 @@ import { Controller, Control, FieldErrors } from 'react-hook-form';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface TextareaFieldProps extends TextInputProps {
     name: string;
@@ -12,6 +13,8 @@ interface TextareaFieldProps extends TextInputProps {
     label?: string;
     leftIcon?: React.ReactNode;
     wrapperStyle?: object;
+    descriptionLength?: number
+    wordLimit?:number
 }
 
 const TextareaField: React.FC<TextareaFieldProps> = ({
@@ -23,6 +26,8 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
     wrapperStyle,
     style,
     multiline,
+    descriptionLength,
+    wordLimit,
     ...props
 }) => {
     const error = errors[name]?.message as string;
@@ -30,6 +35,11 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
     return (
         <View style={[styles.mainWrapper, wrapperStyle]}>
             {label && <AppText text={label} style={styles.label} />}
+            {wordLimit && (
+                <View style={styles.wordCounterRow}>
+                    <AppText text={`${descriptionLength}/${wordLimit} Words`} fontSize={12} color={Colors.SUPER_GREY} />
+                </View>
+            )}
 
             <View style={[
                 styles.inputContainer,
@@ -57,12 +67,15 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
                             onBlur={onBlur}
                             onChangeText={onChange}
                             value={value}
-                            placeholderTextColor={Colors.GRAY}
+                            placeholderTextColor={Colors.SUPER_GREY}
                             multiline={multiline}
                             {...props}
                         />
                     )}
                 />
+                <View style={styles.sparkleIcon}>
+                    <Svgicons path="sparkleIcon" size={17} color={Colors.BRUNSWICK_GREEN} />
+                </View>
             </View>
 
             {error && <AppText text={error} color={Colors.INDIAN_RED} style={styles.errorText} />}
@@ -76,15 +89,15 @@ const styles = StyleSheet.create({
     },
     label: {
         marginBottom: Metrics.verticalScale(8),
-        color: Colors.GRAY,
-        fontSize: 14,
+        color: Colors.PINE_FOREST,
+        fontSize: Metrics.generatedFontSize(14),
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: Colors.GAINSBORO,
+        borderColor: Colors.SMOOTH_GREY,
         minHeight: Metrics.verticalScale(56),
         backgroundColor: Colors.WHITE
     },
@@ -103,10 +116,10 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
         paddingHorizontal: Metrics.scale(16),
-        color: Colors.EERIE_BLACK,
+        color: Colors.BLACK,
         fontSize: 16,
         paddingVertical: 0,
-       
+
     },
     multilineInput: {
         height: '100%',
@@ -122,6 +135,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Colors.INDIAN_RED,
     },
+    wordCounterRow: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 5, marginTop: -Metrics.verticalScale(10), marginBottom: 15 },
+    sparkleIcon: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10
+    }
+
 });
 
 export default TextareaField;

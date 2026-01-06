@@ -5,7 +5,6 @@ import { Dropdown } from 'react-native-element-dropdown';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import ChevronDownIcon from '@/assets/icons/chevron-down.svg';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface DropdownItem {
@@ -37,7 +36,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
         <View style={styles.wrapper}>
             {label && (
                 <AppText text={label} style={styles.label} />
-            ) }
+            )}
             <Controller
                 control={control}
                 name={name}
@@ -56,7 +55,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
                         value={value}
                         onChange={item => onChange(item.value)}
                         disable={disabled}
-                        renderRightIcon={() => <Svgicons path='ChevronDownIcon' width={18} height={18} />}
+                        renderRightIcon={() => <Svgicons path='ChevronDownIcon' width={15} height={15} />}
                         autoScroll={false}
                         searchPlaceholder='Search...'
                     />
@@ -70,8 +69,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 const styles = StyleSheet.create({
     wrapper: {
         marginBottom: Metrics.verticalScale(18),
-         zIndex: 9999,        // ensures dropdown appears above other elements
-    overflow: 'visible',  // prevents clipping inside ScrollView or parent Views
+        zIndex: 9999,
+        overflow: 'visible', 
     },
     label: {
         color: Colors.BRUNSWICK_GREEN,
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 16,
         borderWidth: 1,
-        borderColor: Colors.BRUNSWICK_GREEN,
+        borderColor: Colors.SMOOTH_GREY,
     },
     disabled: {
         backgroundColor: Colors.ANTI_FLASH_WHITE,
@@ -93,16 +92,16 @@ const styles = StyleSheet.create({
         borderColor: Colors.INDIAN_RED,
     },
     placeholderStyle: {
-        fontSize: Metrics.generatedFontSize(12),
-        color: Colors.MIDNIGHT,
-        fontWeight:'500'
+        fontSize: Metrics.generatedFontSize(14),
+        color: Colors.SUPER_GREY,
+        fontWeight: '500'
     },
     selectedTextStyle: {
-         fontSize: Metrics.generatedFontSize(12),
+        fontSize: Metrics.generatedFontSize(14),
         color: Colors.MIDNIGHT,
     },
     itemTextStyle: {
-         fontSize: Metrics.generatedFontSize(12),
+        fontSize: Metrics.generatedFontSize(14),
         color: Colors.MIDNIGHT,
     },
     errorText: {

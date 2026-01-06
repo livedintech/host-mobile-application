@@ -9,7 +9,7 @@ import { Controller } from 'react-hook-form';
 import useVerifyPhoneNumberContainer from './VerifyPhoneNumberContainer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { formatPhoneNumber, maskPhoneNumber } from '@/utility/helpers';
+import { maskPhoneNumber } from '@/utility/helpers';
 
 const VerifyPhoneNumberScreen = () => {
   const {
