@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Region } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { Platform, PermissionsAndroid } from 'react-native';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export default function useCreateListingStepOneLocationContainer() {
 
@@ -56,6 +58,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
   const handleConfirm = () => {
     console.log('Final Selected Location:', region);
+    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS)
   };
 
   const handleSetManually = () => {

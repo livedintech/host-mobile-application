@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 16,
         borderWidth: 1,
-        borderColor: Colors.BRUNSWICK_GREEN,
+        borderColor: Colors.SMOOTH_GREY,
     },
     disabled: {
         backgroundColor: Colors.ANTI_FLASH_WHITE,
@@ -92,16 +92,16 @@ const styles = StyleSheet.create({
         borderColor: Colors.INDIAN_RED,
     },
     placeholderStyle: {
-        fontSize: Metrics.generatedFontSize(12),
+        fontSize: Metrics.generatedFontSize(14),
         color: Colors.SUPER_GREY,
         fontWeight: '500'
     },
     selectedTextStyle: {
-        fontSize: Metrics.generatedFontSize(12),
+        fontSize: Metrics.generatedFontSize(14),
         color: Colors.MIDNIGHT,
     },
     itemTextStyle: {
-        fontSize: Metrics.generatedFontSize(12),
+        fontSize: Metrics.generatedFontSize(14),
         color: Colors.MIDNIGHT,
     },
     errorText: {

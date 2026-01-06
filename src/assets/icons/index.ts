@@ -25,6 +25,28 @@ import imageUploadIcon from './imageUploadIcon.svg';
 import pinLocation from './pin-location.svg';
 import pinLocationFill from './pin-location-fill.svg';
 import locateMeIcon from './locateMeIcon.svg';
+import mapIcon from './mapIcon.svg';
+import homePlusIcon from './homePlusIcon.svg';
+import CheckboxCheckedIcon from './checkbox-checked.svg';
+import CheckboxUncheckedIcon from './checkbox-primary-unchecked.svg';
+import fileUploadIcon from './file_upload.svg'
+import plusIcon from './plusIcon.svg'
+import closeCircleIcon from './closeCircleIcon.svg'
+import videoIcon from './videoIcon.svg'
+import cameraIcon from './cameraIcon.svg'
+import imageIcon from './imageIcon.svg'
+import sparkleIcon from './sparkleIcon.svg'
+import homeIcon from './home_icon.svg'
+import bookIcon from './bookIcon.svg'
+import attachmentIcon from './attachmentIcon.svg'
+import checkCircleIcon from './checkCircleIcon.svg'
+import closeIcon from './closeIcon.svg'
+import docIcon from './docIcon.svg'
+import infoIcon from './infoIcon.svg'
+import menuDotsIcon from './menuDots.svg'
+import channelIcon from './channelIcon.svg'
+import taskIcon from './taskIcon.svg'
+import deleteIcon from './deleteIcon.svg'
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -53,5 +75,27 @@ export const icons = {
     imageUploadIcon:imageUploadIcon,
     pinLocationIcon:pinLocation,
     pinLocationFillIcon:pinLocationFill,
-    locateMeIcon:locateMeIcon
+    locateMeIcon:locateMeIcon,
+    mapIcon:mapIcon,
+    homePlusIcon:homePlusIcon,
+    CheckboxCheckedIcon:CheckboxCheckedIcon,
+    CheckboxUncheckedIcon:CheckboxUncheckedIcon,
+    fileUploadIcon:fileUploadIcon,
+    plusIcon:plusIcon,
+    closeCircleIcon:closeCircleIcon,
+    videoIcon:videoIcon,
+    cameraIcon:cameraIcon,
+    imageIcon:imageIcon,
+    sparkleIcon:sparkleIcon,
+    homeIcon:homeIcon,
+    bookIcon:bookIcon,
+    attachmentIcon:attachmentIcon,
+    checkCircleIcon:checkCircleIcon,
+    closeIcon: closeIcon,
+    docIcon:docIcon,
+    infoIcon:infoIcon,
+    menuDotsIcon:menuDotsIcon,
+    channelIcon:channelIcon,
+    taskIcon:taskIcon,
+    deleteIcon:deleteIcon
 };
