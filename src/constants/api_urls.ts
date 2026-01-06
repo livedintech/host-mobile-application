@@ -1,4 +1,4 @@
-const authController = 'api';
+const authController = 'api/v2';
 
 export const SERVICE_CONFIG_URLS = {
   AUTH: {
