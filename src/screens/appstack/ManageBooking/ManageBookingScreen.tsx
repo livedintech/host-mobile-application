@@ -8,6 +8,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import ManageBookingSkeleton from '@/components/Skeletons/ManageBookingSkeleton';
 
 const ManageBookingScreen = () => {
     const {
@@ -20,33 +21,42 @@ const ManageBookingScreen = () => {
         isOtaConnected
     } = useManageBookingContainer();
 
-
-    const PlatformCard = ({ type, id, name, count, status, onPress }: any) => (
-        <View style={styles.connectedCard} >
+   const PlatformCard = ({ type, id, name, count, status, onPress }: any) => (
+    <GradientBorder borderRadius={24} style={styles.cardWrapper}>
+        <View style={styles.cardInner}>
             <View style={styles.rowContent}>
                 <AppText text={`${type} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
                 <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
             </View>
+
             <View style={styles.rowContent}>
                 <AppText text="Livedin Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
                 <AppText text={name} color={Colors.PINE_FOREST} type="Medium" />
             </View>
+
             <View style={styles.rowContent}>
                 <AppText text="Total Property Count: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
                 <AppText text={count} color={Colors.PINE_FOREST} type="Medium" />
             </View>
+
             <View style={styles.statusRow}>
                 <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
                 <AppText
                     text={status}
                     color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
                 />
-                <TouchableOpacity style={styles.arrowCircle} onPress={onPress}>
-                    <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
-                </TouchableOpacity>
+
+                {/* Arrow Button */}
+                <GradientBorder borderRadius={16} style={styles.arrowWrapper}>
+                    <TouchableOpacity style={styles.arrowInner} onPress={onPress}>
+                        <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
+                    </TouchableOpacity>
+                </GradientBorder>
             </View>
         </View>
-    );
+    </GradientBorder>
+);
+
 
     return (
         <View style={styles.container}>
@@ -54,6 +64,7 @@ const ManageBookingScreen = () => {
                 isLoading={isLoading}
                 onRefresh={refetch}
                 style={styles.scrollContent}
+                skeletonComponent={<ManageBookingSkeleton />}
             >
                 {/* Header Title Switch */}
                 <View style={styles.headerSection}>
@@ -152,23 +163,38 @@ const styles = StyleSheet.create({
         borderTopColor: '#F5F5F5',
         paddingTop: 15
     },
-    arrowCircle: {
-        marginLeft: 'auto',
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: '#EBEBEB',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
+   
     btnFooter: { marginTop: 10 },
     infoCardWrapper: { marginBottom: 33 },
     infoCardInner: { padding: 25, borderRadius: 35, backgroundColor: Colors.WHITE },
     avatarContainer: { backgroundColor: Colors.ADRIANA, borderRadius: 100, width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
     avatar: { width: 46, height: 54 },
     row: { flexDirection: 'row', alignItems: 'center', },
-    activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 }
+    activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 },
+    cardWrapper: {
+    marginBottom: 20,
+},
+
+cardInner: {
+    padding: 20,
+    borderRadius: 24,
+    backgroundColor: Colors.WHITE,
+},
+arrowWrapper: {
+    marginLeft: 'auto',
+    width: 32,
+    height: 32,
+},
+
+arrowInner: {
+    flex: 1,
+    borderRadius: 16,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+
+
 });
 
 export default ManageBookingScreen;

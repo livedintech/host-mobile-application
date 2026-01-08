@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, ViewStyle } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 import Metrics from '@/utility/Metrics';
-import { icons } from '@/assets/icons'; // <- yahan import
+import { icons } from '@/assets/icons';
 
 type IconProps = {
   path: keyof typeof icons; 
