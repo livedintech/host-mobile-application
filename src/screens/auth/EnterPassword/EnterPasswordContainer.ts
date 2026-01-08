@@ -49,11 +49,8 @@ export default function useEnterPasswordContainer() {
   } = useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginApi,
     onSuccess: ({data, message }) => {
-      console.log('data',data);
-      
-      // setToken()
-      setToken('fake-token-123');
-      setUser({ id: 1, name: 'John Doe' });
+      setToken(data?.access_token);
+      setUser(data?.user)
       Toast.show({ type: 'success', text1: message });
     },
     onError: ({ message }) => {

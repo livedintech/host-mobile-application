@@ -1,53 +1,124 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useManageBookingContainer from './ManageBookingContainer';
 import Metrics from '@/utility/Metrics';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const ManageBookingScreen = () => {
-    const { handleConnect } = useManageBookingContainer();
+    const {
+        handleConnect,
+        isPending,
+        isLoading,
+        refetch,
+        response,
+        goToListing,
+        isOtaConnected
+    } = useManageBookingContainer();
+
+
+    const PlatformCard = ({ type, id, name, count, status, onPress }: any) => (
+        <View style={styles.connectedCard} >
+            <View style={styles.rowContent}>
+                <AppText text={`${type} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
+                <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
+            </View>
+            <View style={styles.rowContent}>
+                <AppText text="Livedin Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                <AppText text={name} color={Colors.PINE_FOREST} type="Medium" />
+            </View>
+            <View style={styles.rowContent}>
+                <AppText text="Total Property Count: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                <AppText text={count} color={Colors.PINE_FOREST} type="Medium" />
+            </View>
+            <View style={styles.statusRow}>
+                <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                <AppText
+                    text={status}
+                    color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
+                />
+                <TouchableOpacity style={styles.arrowCircle} onPress={onPress}>
+                    <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-
-                {/* Empty State Illustration Text */}
-                <View style={styles.illustrationSection}>
+            <RefreshableScrollView
+                isLoading={isLoading}
+                onRefresh={refetch}
+                style={styles.scrollContent}
+            >
+                {/* Header Title Switch */}
+                <View style={styles.headerSection}>
                     <AppText
-                        text="No Account Found"
+                        text={isOtaConnected ? 'Connected Booking Platform' : 'No Account Found'}
                         fontSize={32}
                         type="Bold"
                         color={Colors.BRUNSWICK_GREEN}
-                        textAlign="center"
+                        textAlign="left"
                     />
                 </View>
 
-                {/* Info Message Card */}
-                <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
-                    <View style={styles.infoCardInner}>
-                        <View style={styles.row}>
-                            <View style={styles.activeDot} />
-                            <View style={styles.avatarContainer}>
-                                <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
-                            </View>
-                            <View style={{ flex: 1, marginLeft: 15 }}>
-                                <View style={styles.rowBetween}>
-                                    <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                                    <AppText text="9:36 AM" color="#999" fontSize={12} />
+                {isOtaConnected ? (
+                    /* UI When Data Exists */
+                    <View style={styles.listContainer}>
+                        {response?.data?.map((acc: any) => (
+                            <PlatformCard
+                                key={acc.id}
+                                type="Airbnb"
+                                id={acc.id}
+                                name="Dummy"
+                                count="0"
+                                status="Active"
+                                onPress={() => goToListing(acc?.ch_channel_id)}
+                            />
+                        ))}
+                    </View>
+                ) : (
+                    /* UI When No Data */
+                    <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
+                        <View style={styles.infoCardInner}>
+                            <View style={styles.row}>
+                                <View style={styles.activeDot} />
+                                <View style={styles.avatarContainer}>
+                                    <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
                                 </View>
-                                <AppText text={'Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place.'} color={Colors.NIGHT_OPACITY} mt={5} lineHeight={20} />
+                                <View style={{ flex: 1, marginLeft: 15 }}>
+                                    <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                                    <AppText
+                                        text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+                                        color={Colors.NIGHT_OPACITY}
+                                        mt={5}
+                                        lineHeight={20}
+                                    />
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </GradientBorder>
+                    </GradientBorder>
+                )}
 
-                {/* Action Buttons */}
-                <AppButton onPress={() => handleConnect('Airbnb')} title='Connect Airbnb' mb={8} />
-                <AppButton onPress={() => handleConnect('Gathern')} title='Connect Gathern' />
-            </ScrollView>
+                {/* Bottom Connect Buttons */}
+                <View style={styles.btnFooter}>
+                    <AppButton
+                        title="Connect Airbnb"
+                        onPress={() => handleConnect('Airbnb')}
+                        disabled={isPending}
+                        mb={15}
+                    />
+                    <AppButton
+                        title="Connect Gathern"
+                        onPress={() => handleConnect('Gathern')}
+                        disabled={isPending}
+                    />
+                </View>
+            </RefreshableScrollView>
         </View>
     );
 };
@@ -55,52 +126,49 @@ const ManageBookingScreen = () => {
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.WHITE },
     scrollContent: { paddingHorizontal: 22, paddingBottom: 40 },
-    illustrationSection: { marginTop: 100, marginBottom: 50 },
-    infoCard: {
-        padding: 20,
-        borderRadius: 35,
+    headerSection: { marginTop: 50, marginBottom: 40 },
+    listContainer: { marginBottom: 20 },
+    connectedCard: {
         borderWidth: 1,
         borderColor: '#EBEBEB',
+        borderRadius: 24,
+        padding: 20,
+        marginBottom: 20,
         backgroundColor: Colors.WHITE,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 15,
-        elevation: 3
     },
-    cardHeader: { flexDirection: 'row', alignItems: 'flex-start' },
-    avatarContainer: { position: 'relative', backgroundColor: Colors.ADRIANA, borderRadius: 100, width: Metrics.scale(72), height: Metrics.scale(72), justifyContent: 'center', alignItems: 'center' },
-    avatar: { width: Metrics.scale(46), height: Metrics.verticalScale(54) },
-    onlineDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, position: 'absolute', left: -5, top: '50%', borderWidth: 2, borderColor: Colors.WHITE },
-    headerText: { flex: 1, marginLeft: 15 },
-    rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    timeRow: { flexDirection: 'row', alignItems: 'center' },
-    btnContainer: { marginTop: 40 },
-    outlineBtn: {
-        height: 58,
-        borderRadius: 30,
+    cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    rowContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: Metrics.verticalScale(8),
+        gap:5
+    },
+    deleteBtn: { padding: 5 },
+    statusRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 15,
+        borderTopWidth: 1,
+        borderTopColor: '#F5F5F5',
+        paddingTop: 15
+    },
+    arrowCircle: {
+        marginLeft: 'auto',
+        width: 32,
+        height: 32,
+        borderRadius: 16,
         borderWidth: 1,
         borderColor: '#EBEBEB',
         justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 15
+        alignItems: 'center'
     },
-    row: { flexDirection: 'row', alignItems: 'center' },
-    activeDot: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: Colors.BRUNSWICK_GREEN,
-        marginRight: 8
-    },
-    infoCardInner: {
-        padding: 20,
-        borderRadius: 35,
-        backgroundColor: Colors.WHITE,
-    },
-    infoCardWrapper: {
-        marginBottom: Metrics.verticalScale(33)
-    }
+    btnFooter: { marginTop: 10 },
+    infoCardWrapper: { marginBottom: 33 },
+    infoCardInner: { padding: 25, borderRadius: 35, backgroundColor: Colors.WHITE },
+    avatarContainer: { backgroundColor: Colors.ADRIANA, borderRadius: 100, width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
+    avatar: { width: 46, height: 54 },
+    row: { flexDirection: 'row', alignItems: 'center', },
+    activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 }
 });
 
 export default ManageBookingScreen;

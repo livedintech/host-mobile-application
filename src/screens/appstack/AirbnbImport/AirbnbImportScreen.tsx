@@ -9,67 +9,75 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
+import { shortId } from '@/utility/Utils';
+
+const PropertyCard = ({
+  id,
+  name,
+  control,
+  errors,
+  listingOptions,
+  handleIndividualImport,
+  watch,
+}: any) => {
+  const fieldName = `${id}`;
+  const selectedLivedinId = watch(fieldName);
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <View>
+          <View style={styles.infoRow}>
+            <AppText text="Airbnb Property ID: " type="Bold" color={Colors.PINE_FOREST} />
+            <AppText text={shortId(id) } color={Colors.PINE_FOREST} />
+          </View>
+
+          <View style={styles.infoRow}>
+            <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
+            <AppText text={name} color={Colors.PINE_FOREST} />
+          </View>
+
+          <View style={styles.infoRow}>
+            <AppText text="Livedin ID: " type="Bold" color={Colors.PINE_FOREST} />
+            <AppText
+              text={selectedLivedinId ? String(selectedLivedinId) : '-'}
+              color={Colors.PINE_FOREST}
+            />
+          </View>
+        </View>
+        <Svgicons path="houseLineIcon" />
+      </View>
+
+      <DropdownField
+        name={fieldName}
+        control={control}
+        errors={errors}
+        label="Existing Listing:"
+        data={listingOptions}
+        placeholder="Select.."
+      />
+
+      <AppButton
+        title="Import Listing"
+        onPress={() => handleIndividualImport(fieldName)}
+        mt={12}
+      />
+    </View>
+  );
+};
 
 const AirbnbImportScreen = () => {
   const {
     control,
     errors,
-    listingOptions,
     properties,
     handleSubmit,
     onNext,
+    handleIndividualImport,
+    refetch,
     watch,
-    handleIndividualImport
+    listingOptions,
   } = useAirbnbImportContainer();
-
-  const PropertyCard = ({ name, property }: any) => {
-    const selectedValue = watch(name);
-
-    // Sirf livedin id dropdown se aaye gi
-    const selectedListing = listingOptions.find(
-      item => item.value === selectedValue
-    );
-
-    return (
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View>
-            <View style={styles.infoRow}>
-              <AppText text="Airbnb Property ID: " type="Bold" />
-              <AppText text={property.id} />
-            </View>
-
-            <View style={styles.infoRow}>
-              <AppText text="Airbnb Listing: " type="Bold" />
-              <AppText text={property.title} />
-            </View>
-
-            <View style={styles.infoRow}>
-              <AppText text="Livedin ID: " type="Bold" />
-              <AppText text={selectedListing?.livedinId || '-'} />
-            </View>
-          </View>
-
-          <Svgicons path="houseLineIcon" />
-        </View>
-
-        <DropdownField
-          name={name}
-          control={control}
-          errors={errors}
-          label="Existing Listing:"
-          data={listingOptions}
-          placeholder="Select.."
-        />
-
-        <AppButton
-          title="Import Listing"
-          onPress={() => handleIndividualImport(name)}
-          mt={12}
-        />
-      </View>
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -77,12 +85,12 @@ const AirbnbImportScreen = () => {
       <View style={styles.fixedHeader}>
         <View style={styles.headerRow}>
           <GradientBorder style={styles.arrowCircleInner} borderRadius={16} borderWidth={1}>
-            <Pressable style={styles.arrowCircleInner} onPress={()=>goBack()}>
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={28} />
             </Pressable>
           </GradientBorder>
 
-          <AppButton title="Refresh" onPress={() => null} px={30} />
+          <AppButton title="Refresh" onPress={refetch} px={30} />
         </View>
 
         <AppText
@@ -100,19 +108,21 @@ const AirbnbImportScreen = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {properties.map(item => (
+        {properties.map((item: { id: number, title: string, type: string }) => (
           <PropertyCard
-            key={item.fieldName}
-            name={item.fieldName}
-            property={item}
+            key={item.id}
+            id={item.id}
+            name={item.title}
+            property={item.type}
+            control={control}
+            errors={errors}
+            listingOptions={listingOptions}
+            handleIndividualImport={handleIndividualImport}
+            watch={watch}   // 👈 ADD THIS
           />
         ))}
 
-        <AppButton
-          title="Next"
-          onPress={handleSubmit(onNext)}
-          mt={10}
-        />
+        <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
       </ScrollView>
     </View>
   );
@@ -126,7 +136,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   arrowCircleInner: {
@@ -135,7 +145,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Colors.WHITE,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   card: {
@@ -144,19 +154,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#EBEBEB',
     marginBottom: 20,
-    backgroundColor: Colors.WHITE
+    backgroundColor: Colors.WHITE,
   },
 
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10
+    marginBottom: 10,
   },
 
   infoRow: {
     flexDirection: 'row',
-    marginBottom: 8
-  }
+    marginBottom: 8,
+  },
 });
 
 export default AirbnbImportScreen;

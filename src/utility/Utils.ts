@@ -270,5 +270,13 @@ export const capitalize = (str: string): string => {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+export const shortId = (value: string | number) => {
+  const str = String(value);
+
+  if (str.length <= 8) return str; // choti ho to as-it-is
+
+  return `${str.slice(0, 4)}..${str.slice(-4)}`;
+};
+
 
 export default new Utility()
