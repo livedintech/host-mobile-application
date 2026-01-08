@@ -21,42 +21,47 @@ const ManageBookingScreen = () => {
         isOtaConnected
     } = useManageBookingContainer();
 
-   const PlatformCard = ({ type, id, name, count, status, onPress }: any) => (
-    <GradientBorder borderRadius={24} style={styles.cardWrapper}>
-        <View style={styles.cardInner}>
-            <View style={styles.rowContent}>
-                <AppText text={`${type} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
-                <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
+    const PlatformCard = ({ type, id, name, count, status, onPress }: any) => {
+        const pfType = type ? type : 'Airbnb'
+        return (
+            <View>
+                <AppText text={`${pfType} Account`} mb={13} color={Colors.BRUNSWICK_GREEN} fontSize={18}/>
+                <GradientBorder borderRadius={24} style={styles.cardWrapper}>
+                <View style={styles.cardInner}>
+                    <View style={styles.rowContent}>
+                        <AppText text={`${pfType} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
+                        <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
+                    </View>
+
+                    <View style={styles.rowContent}>
+                        <AppText text="Livedin Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText text={name} color={Colors.PINE_FOREST} type="Medium" />
+                    </View>
+
+                    <View style={styles.rowContent}>
+                        <AppText text="Total Property Count: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText text={count} color={Colors.PINE_FOREST} type="Medium" />
+                    </View>
+
+                    <View style={styles.statusRow}>
+                        <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText
+                            text={status}
+                            color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
+                        />
+
+                        {/* Arrow Button */}
+                        <GradientBorder borderRadius={16} style={styles.arrowWrapper}>
+                            <Pressable style={styles.arrowInner} onPress={onPress}>
+                                <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
+                            </Pressable>
+                        </GradientBorder>
+                    </View>
+                </View>
+            </GradientBorder>
             </View>
-
-            <View style={styles.rowContent}>
-                <AppText text="Livedin Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                <AppText text={name} color={Colors.PINE_FOREST} type="Medium" />
-            </View>
-
-            <View style={styles.rowContent}>
-                <AppText text="Total Property Count: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                <AppText text={count} color={Colors.PINE_FOREST} type="Medium" />
-            </View>
-
-            <View style={styles.statusRow}>
-                <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                <AppText
-                    text={status}
-                    color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
-                />
-
-                {/* Arrow Button */}
-                <GradientBorder borderRadius={16} style={styles.arrowWrapper}>
-                    <TouchableOpacity style={styles.arrowInner} onPress={onPress}>
-                        <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
-                    </TouchableOpacity>
-                </GradientBorder>
-            </View>
-        </View>
-    </GradientBorder>
-);
-
+        )
+    };
 
     return (
         <View style={styles.container}>
@@ -82,9 +87,9 @@ const ManageBookingScreen = () => {
                     <View style={styles.listContainer}>
                         {response?.data?.map((acc: any) => (
                             <PlatformCard
-                                key={acc.id}
-                                type="Airbnb"
-                                id={acc.id}
+                                key={acc?.id}
+                                type={acc?.connection_type}
+                                id={acc?.id}
                                 name="Dummy"
                                 count="0"
                                 status="Active"
@@ -152,18 +157,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: Metrics.verticalScale(8),
-        gap:5
+        gap: 5
     },
     deleteBtn: { padding: 5 },
     statusRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 15,
-        borderTopWidth: 1,
-        borderTopColor: '#F5F5F5',
-        paddingTop: 15
     },
-   
+
     btnFooter: { marginTop: 10 },
     infoCardWrapper: { marginBottom: 33 },
     infoCardInner: { padding: 25, borderRadius: 35, backgroundColor: Colors.WHITE },
@@ -172,27 +173,27 @@ const styles = StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'center', },
     activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 },
     cardWrapper: {
-    marginBottom: 20,
-},
+        marginBottom: 20,
+    },
 
-cardInner: {
-    padding: 20,
-    borderRadius: 24,
-    backgroundColor: Colors.WHITE,
-},
-arrowWrapper: {
-    marginLeft: 'auto',
-    width: 32,
-    height: 32,
-},
+    cardInner: {
+        padding: 20,
+        borderRadius: 24,
+        backgroundColor: Colors.WHITE,
+    },
+    arrowWrapper: {
+        marginLeft: 'auto',
+        width: 32,
+        height: 32,
+    },
 
-arrowInner: {
-    flex: 1,
-    borderRadius: 16,
-    backgroundColor: Colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-},
+    arrowInner: {
+        flex: 1,
+        borderRadius: 16,
+        backgroundColor: Colors.WHITE,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 
 
 });
