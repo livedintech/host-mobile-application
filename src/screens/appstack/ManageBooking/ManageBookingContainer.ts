@@ -51,8 +51,13 @@ export default function useManageBookingContainer() {
     }
   };
 
-  const goToListing = (ch_channel_id: number) => {
-    navigate(NavigationRoutes.APP_STACK.AIRBNB_IMPORT, { ch_channel_id })
+  const goToListing = (item: { connection_type: string, ch_channel_id: string }) => {
+ 
+    if (item?.connection_type === 'Gathern') {
+      navigate(NavigationRoutes.APP_STACK.GATHERN_IMPORT, { ch_channel_id: item?.ch_channel_id });
+    } else {
+      navigate(NavigationRoutes.APP_STACK.AIRBNB_IMPORT, { ch_channel_id: item?.ch_channel_id });
+    }
   }
 
   return {

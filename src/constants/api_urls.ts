@@ -17,9 +17,10 @@ export const SERVICE_CONFIG_URLS = {
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,
     GET_CHANNEX_ACCOUNT: `${authController}/channels/{user_id}`,
-    GET_CHANNEX_LISTINGS:`${authController}/channex/listings/{channel_id}`,
-    GET_USER_LISTINGS_BY_USER_ID:`${authController}/user/listings/{user}`,
-    CREATE_MAP_LISTING_BY_USER_ID:`${authController}/mapListing/{user}`,
-
+    GET_CHANNEX_LISTINGS: `${authController}/channex/listings/{channel_id}`,
+    GET_USER_LISTINGS_BY_USER_ID: `${authController}/user/listings/{user}`,
+    CREATE_MAP_LISTING_BY_USER_ID: `${authController}/mapListing/{user}`,
+    CREATE_GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel?user_id={user_id}`,
+    GET_GATHERN_LISTING: `${authController}/gathern/listings?channel_id={channel_id}`
   }
 };

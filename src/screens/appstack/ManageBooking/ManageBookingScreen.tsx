@@ -9,8 +9,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import ManageBookingSkeleton from '@/components/Skeletons/ManageBookingSkeleton';
+import useAirbnbCallback from '@/hooks/useAirbnbCallback';
 
 const ManageBookingScreen = () => {
+      useAirbnbCallback();
     const {
         handleConnect,
         isPending,
@@ -93,7 +95,7 @@ const ManageBookingScreen = () => {
                                 name="Dummy"
                                 count="0"
                                 status="Active"
-                                onPress={() => goToListing(acc?.ch_channel_id)}
+                                onPress={() => goToListing(acc)}
                             />
                         ))}
                     </View>
