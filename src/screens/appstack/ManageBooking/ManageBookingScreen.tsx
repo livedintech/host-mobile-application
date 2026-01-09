@@ -9,10 +9,8 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import ManageBookingSkeleton from '@/components/Skeletons/ManageBookingSkeleton';
-import useAirbnbCallback from '@/hooks/useAirbnbCallback';
 
 const ManageBookingScreen = () => {
-      useAirbnbCallback();
     const {
         handleConnect,
         isPending,

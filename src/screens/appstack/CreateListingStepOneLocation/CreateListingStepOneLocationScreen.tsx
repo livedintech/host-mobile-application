@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -10,22 +11,27 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 const CreateListingStepOneLocationScreen = () => {
   const {
     region,
-    searchQuery,
-    setSearchQuery,
+    mapRef,
     handleConfirm,
     handleSetManually,
     onRegionChangeComplete,
-    handleLocateMe
+    handleLocateMe,
+    handlePlaceSelect,
+    currentAddress,
+    placesRef
   } = useCreateListingStepOneLocationContainer();
 
   return (
     <View style={styles.container}>
       {/* Real Google Map Integration */}
       <MapView
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={region}
         onRegionChangeComplete={onRegionChangeComplete}
+        showsUserLocation={true}
+        showsMyLocationButton={false}
       />
 
       {/* Static Center Marker */}
@@ -34,18 +40,40 @@ const CreateListingStepOneLocationScreen = () => {
       </View>
 
       <View style={styles.overlay}>
-        {/* Search Bar */}
+        {/* Google Places Autocomplete Search Bar */}
         <View style={styles.header}>
-          <View style={styles.searchBar}>
-            <Svgicons path="pinLocationIcon" size={18} style={styles.searchIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Search Location"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholderTextColor="#999"
-            />
-          </View>
+          <GooglePlacesAutocomplete
+            placeholder="Search Location"
+            onPress={(data, details = null) => {
+              if (details) {
+                handlePlaceSelect(details);
+              }
+            }}
+            query={{
+              key: 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao', // Replace with your API key
+              language: 'en',
+            }}
+            fetchDetails={true}
+            enablePoweredByContainer={false}
+            styles={{
+              container: styles.autocompleteContainer,
+              textInputContainer: styles.searchBar,
+              textInput: styles.input,
+              listView: styles.listView,
+              row: styles.row,
+              description: styles.description,
+            }}
+            renderLeftButton={() => (
+              <Svgicons 
+                path="pinLocationIcon" 
+                size={18} 
+                style={styles.searchIcon} 
+              />
+            )}
+            textInputProps={{
+              placeholderTextColor: '#999',
+            }}
+          />
         </View>
 
         {/* Bottom Actions */}
@@ -81,7 +109,15 @@ const styles = StyleSheet.create({
     top: '50%',
   },
   overlay: { flex: 1, justifyContent: 'space-between' },
-  header: { padding: 20 },
+  header: { 
+    padding: 20,
+    zIndex: 999,
+    elevation: 999,
+  },
+  autocompleteContainer: {
+    flex: 0,
+    zIndex: 1000,
+  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -94,9 +130,39 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
   },
-  searchIcon: { marginRight: 10 },
-  input: { flex: 1, color: Colors.BLACK, fontSize: 16 },
-  footer: { padding: 20, paddingBottom: 30 },
+  searchIcon: { 
+    marginRight: 10,
+  },
+  input: { 
+    flex: 1, 
+    color: Colors.BLACK, 
+    fontSize: 16,
+    height: 50,
+  },
+  listView: {
+    backgroundColor: Colors.WHITE,
+    borderRadius: 10,
+    marginTop: 5,
+    elevation: 5,
+    zIndex: 1001,
+    position: 'absolute',
+    top: 55,
+    left: 0,
+    right: 0,
+  },
+  row: {
+    padding: 13,
+    height: 44,
+    flexDirection: 'row',
+  },
+  description: {
+    fontSize: 14,
+    color: Colors.BLACK,
+  },
+  footer: { 
+    padding: 20, 
+    paddingBottom: 30,
+  },
   locateMeBtn: {
     width: 45,
     height: 45,
