@@ -34,9 +34,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 
     return (
         <View style={styles.wrapper}>
-            {label && (
-                <AppText text={label} style={styles.label} />
-            )}
+             {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium'/>}
             <Controller
                 control={control}
                 name={name}

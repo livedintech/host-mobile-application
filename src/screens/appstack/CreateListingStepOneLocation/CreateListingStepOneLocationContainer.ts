@@ -4,6 +4,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { Platform, PermissionsAndroid, Alert } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 interface GooglePlaceDetail {
   geometry: {
@@ -18,6 +19,7 @@ interface GooglePlaceDetail {
 const GOOGLE_MAPS_APIKEY = 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao';
 
 export default function useCreateListingStepOneLocationContainer() {
+  const {updateListing}  = useCreateListingStore()
   const mapRef = useRef<any>(null);
   const placesRef = useRef<any>(null);
   const isManuallySearching = useRef(false);
@@ -167,6 +169,10 @@ export default function useCreateListingStepOneLocationContainer() {
       latitude: region.latitude,
       longitude: region.longitude,
     });
+    updateListing({
+      lat: region.latitude,
+      lng: region.longitude,
+    })
     navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
   };
 

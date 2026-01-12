@@ -8,7 +8,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
 
 const CreateListingStepOneScreen = () => {
-  const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, navigation } = useCreateListingStepOneContainer();
+  const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit } = useCreateListingStepOneContainer();
 
   return (
     <View style={styles.container}>
