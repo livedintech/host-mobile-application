@@ -1,10 +1,15 @@
 import React from 'react';
 import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
-import { useInteriorPhotoContainer } from './InteriorPhotoContainer';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 
 const InteriorPhotoScreen = () => {
-    const {handleNext,handleSaveAndExit,setMediaList,mediaList} = useInteriorPhotoContainer()
-   
+    const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
+        listingId: 123,
+        category: 'interior',
+        nextRoute: NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS
+    });
+
     return (
         <PhotoUploadTemplate
             step="Step 3"
@@ -16,13 +21,14 @@ const InteriorPhotoScreen = () => {
             onMediaChange={setMediaList}
             primaryBtnTitle="Next"
             onPrimaryPress={handleNext}
-            primaryLoading={false}
+            primaryLoading={isLoading}
             secondaryBtnTitle="Save & Exit"
             onSecondaryPress={handleSaveAndExit}
             secondaryLoading={false}
-            isFetching={false} 
+            isFetching={false}
             loading={false}
-            primaryDisable={!Boolean(mediaList.length)}
+            primaryDisable={mediaList.length === 0 || isLoading}
+            secondaryDisable={isLoading}
         />
     );
 };

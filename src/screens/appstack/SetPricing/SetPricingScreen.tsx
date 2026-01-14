@@ -73,11 +73,11 @@ const SetPricingScreen = ({ navigation }: any) => {
         <View style={styles.row}>
           <View style={styles.halfWidth}>
             <InputField
-              name="markupPrice"
+              name="security_deposit"
               control={control}
               errors={errors}
-              label="Markup Price"
-              placeholder="10.5%"
+              label="Security Deposit"
+              placeholder="SR 1000"
               keyboardType="numeric"
             />
           </View>

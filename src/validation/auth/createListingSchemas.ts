@@ -73,30 +73,30 @@ export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
 
 export const pricingSchema = yup.object().shape({
   weekdayPrice: yup
-    .number()
-    .typeError('Must be a number')
+    .string()
     .required('Weekday Price is required'),
+
   weekendPrice: yup
-    .number()
-    .typeError('Must be a number')
+    .string()
     .required('Weekend Price is required'),
+
   discount: yup
-    .number()
-    .typeError('Must be a number')
+    .string()
     .required('Discount is required'),
+
   taxVat: yup
-    .number()
-    .typeError('Must be a number')
+    .string()
     .required('Tax(VAT) is required'),
-  markupPrice: yup
-    .number()
-    .typeError('Must be a number')
-    .required('Markup Price is required'),
+
+  security_deposit: yup
+    .string()
+    .required('Security Deposit is required'),
+
   cleaningFee: yup
-    .number()
-    .typeError('Must be a number')
+    .string()
     .required('Cleaning Fee is required'),
 });
+
 
 // Infer type directly from schema
 export type PricingFormValues = yup.InferType<typeof pricingSchema>;
@@ -108,21 +108,28 @@ export const disclosureSchema = yup.object().shape({
 });
 
 export type DisclosureFormValues = yup.InferType<typeof disclosureSchema>;
+export interface DocumentPickerResult {
+  uri: string;
+  name: string;
+  type: string;
+  size: number;
+}
 
 export const documentUploadSchema = yup.object().shape({
   propertyOwnership: yup
-    .mixed()
+    .mixed<DocumentPickerResult>()
+    .nullable()
     .required('Property ownership document is required'),
 
   authorityLicense: yup
-    .mixed()
+    .mixed<DocumentPickerResult>()
     .nullable()
-    .notRequired(),
+    .required('Authority license is required'),
 
   nationalId: yup
-    .mixed()
+    .mixed<DocumentPickerResult>()
     .nullable()
-    .notRequired(),
+    .required('National ID is required'),
 });
 
 export type DocumentFormValues = yup.InferType<typeof documentUploadSchema>;

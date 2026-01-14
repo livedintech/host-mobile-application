@@ -30,3 +30,20 @@ export interface CreateListingDetailsResponse {
 
   };
 }
+
+export interface createListingPricingPayload {
+  listing_id: number;
+  prices: {
+    weekday: number;
+    weekend: number;
+    cleaning_fee: number;
+    security_deposit: number;
+  }
+}
+export interface createListingPricingResponse {
+  status: string;
+  message: string;
+  data: {
+
+  };
+}
