@@ -105,7 +105,11 @@ const ChatScreen = () => {
               {activeTab === item ? (
                 <View style={[styles.tab, styles.activeTab]}><AppText text={item} color={Colors.WHITE} fontSize={14} /></View>
               ) : (
-                <GradientBorder borderRadius={20} borderWidth={1} style={styles.flex}>
+                <GradientBorder borderRadius={20} borderWidth={1}
+                  locations={[0, 0.5, 1]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.flex} >
                   <Pressable style={styles.tab} onPress={() => setActiveTab(item)}>
                     <AppText text={item} color={Colors.BRUNSWICK_GREEN} fontSize={14} />
                   </Pressable>
