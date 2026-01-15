@@ -53,6 +53,8 @@ import sortIcon from './sortIcon.svg'
 import snoozeIcon from './snoozeIcon.svg'
 import archiveIcon from './archiveIcon.svg'
 import chevronRight from './chevronRight.svg'
+import expandIcon from './expandIcon.svg'
+
 
 
 export const icons = {
@@ -110,5 +112,6 @@ export const icons = {
     sortIcon:sortIcon,
     snoozeIcon:snoozeIcon,
     archiveIcon:archiveIcon,
-    chevronRight:chevronRight
+    chevronRight:chevronRight,
+    expandIcon:expandIcon
 };
