@@ -139,7 +139,7 @@ const App = () => {
                 barStyle="dark-content"
                 backgroundColor={Colors.WHITE}
               />
-              <MenuProvider>
+              <MenuProvider skipInstanceCheck>
                 <StackNavigator />
               </MenuProvider>
               <Toast config={toastConfig} />

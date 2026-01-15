@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, FlatList, TextInput, Image, Pressable, ListRenderItemInfo, Modal } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, { useAnimatedStyle, SharedValue } from 'react-native-reanimated';
-import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider } from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -68,110 +68,263 @@ const ChatScreen = () => {
   };
 
   return (
-    <MenuProvider skipInstanceCheck>
-      <View style={styles.container}>
-        {/* Header Section */}
-        <View style={styles.searchRow}>
-          <View style={styles.searchBox}>
-            <TextInput placeholder="Search Guest" style={styles.searchInput} placeholderTextColor={Colors.GREY_SHADOW} />
-            <Svgicons path="searchIcon" size={18} />
-          </View>
-          <ButtonView onPress={() => setFilterVisible(true)}>
-            <Svgicons path="filterIcon" size={22} color={Colors.BRUNSWICK_GREEN} ml={15} />
-          </ButtonView>
-          <Menu>
-            <MenuTrigger customStyles={{ triggerWrapper: { marginLeft: 15 } }}>
-              <Svgicons path="sortIcon" size={22} color={Colors.BLACK} />
-            </MenuTrigger>
-            <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-              {['Saved Replies', 'Automation Template', 'AI Auto Reply'].map((opt) => (
-                <MenuOption key={opt} style={styles.menuItem}>
-                  <AppText text={opt} fontSize={14} color={Colors.MIDNIGHT} />
-                  <Svgicons path="expandIcon" size={18} />
-                </MenuOption>
-              ))}
-            </MenuOptions>
-          </Menu>
+    <View style={styles.container}>
+      {/* Header Section */}
+      <View style={styles.searchRow}>
+        <View style={styles.searchBox}>
+          <TextInput placeholder="Search Guest" style={styles.searchInput} placeholderTextColor={Colors.GREY_SHADOW} />
+          <Svgicons path="searchIcon" size={18} />
         </View>
+        <ButtonView onPress={() => setFilterVisible(true)}>
+          <Svgicons path="filterIcon" size={22} color={Colors.BRUNSWICK_GREEN} ml={15} />
+        </ButtonView>
+        <Menu>
+          <MenuTrigger customStyles={{ triggerWrapper: { marginLeft: 15 } }}>
+            <Svgicons path="sortIcon" size={22} color={Colors.BLACK} />
+          </MenuTrigger>
+          <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
+            {['Saved Replies', 'Automation Template', 'AI Auto Reply'].map((opt) => (
+              <MenuOption key={opt} style={styles.menuItem}>
+                <AppText text={opt} fontSize={14} color={Colors.MIDNIGHT} />
+                <Svgicons path="expandIcon" size={18} />
+              </MenuOption>
+            ))}
+          </MenuOptions>
+        </Menu>
+      </View>
 
-        {/* Tab List */}
-        <View style={{ marginBottom: 20 }}>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={['All', 'Archived', 'Snoozed', 'Unread', 'Marketplace'] as ChatStatus[]}
-            contentContainerStyle={{ paddingLeft: 20 }}
-            renderItem={({ item }) => (
-              <View style={{ marginHorizontal: 5 }}>
-                {activeTab === item ? (
-                  <View style={[styles.tab, styles.activeTab]}><AppText text={item} color={Colors.WHITE} fontSize={14} /></View>
-                ) : (
-                  <GradientBorder borderRadius={20} borderWidth={1} style={styles.flex}>
-                    <Pressable style={styles.tab} onPress={() => setActiveTab(item)}>
-                      <AppText text={item} color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-                    </Pressable>
-                  </GradientBorder>
-                )}
-              </View>
-            )}
-          />
-        </View>
+      {/* Tab List */}
+      <View style={{ marginBottom: 20 }}>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={['All', 'Archived', 'Snoozed', 'Unread', 'Marketplace'] as ChatStatus[]}
+          contentContainerStyle={{ paddingLeft: 20 }}
+          renderItem={({ item }) => (
+            <View style={{ marginHorizontal: 5 }}>
+              {activeTab === item ? (
+                <View style={[styles.tab, styles.activeTab]}><AppText text={item} color={Colors.WHITE} fontSize={14} /></View>
+              ) : (
+                <GradientBorder borderRadius={20} borderWidth={1} style={styles.flex}>
+                  <Pressable style={styles.tab} onPress={() => setActiveTab(item)}>
+                    <AppText text={item} color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+                  </Pressable>
+                </GradientBorder>
+              )}
+            </View>
+          )}
+        />
+      </View>
 
-        <FlatList data={filteredChats} keyExtractor={item => item.id} renderItem={renderItem} showsVerticalScrollIndicator={false} />
+      <FlatList data={filteredChats} keyExtractor={item => item.id} renderItem={renderItem} showsVerticalScrollIndicator={false} />
 
-        {/* Filter Modal */}
-        <Modal visible={isFilterVisible} transparent animationType="slide" onRequestClose={() => setFilterVisible(false)}>
-          <View style={styles.modalOverlay}>
-            <Pressable style={{ flex: 1 }} onPress={() => setFilterVisible(false)} />
-            <View style={styles.modalContent}>
-              <AppText text="Apply Filter" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} mb={20} />
-              <Pressable style={styles.checkboxRow} onPress={() => setFilterAssigned(!filterAssigned)}>
-                {filterAssigned ? <Svgicons path='CheckboxCheckedIcon' size={30} /> : <Svgicons path='CheckboxUncheckedIcon' size={30} />}
-                <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
-              </Pressable>
-              <DropdownField name="reservationStatus" control={control} errors={errors} label="Reservation Status" data={STATUS_DATA} />
-              <DropdownField name="listings" control={control} errors={errors} label="Listings" data={LISTINGS_DATA} />
-              <DropdownField name="city" control={control} errors={errors} label="City" data={CITY_DATA} />
-              <DropdownField name="Apartment Type" control={control} errors={errors} label="City" data={CITY_DATA} />
-              <View style={styles.modalFooter}>
-                <AppButton onPress={handleResetAll} title="Reset" style={styles.flex} />
-                <AppButton onPress={() => setFilterVisible(false)} title="Apply Filter" style={styles.flex} />
-              </View>
+      {/* Filter Modal */}
+      <Modal visible={isFilterVisible} transparent animationType="slide" onRequestClose={() => setFilterVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <Pressable style={{ flex: 1 }} onPress={() => setFilterVisible(false)} />
+          <View style={styles.modalContent}>
+            <AppText text="Apply Filter" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} mb={20} />
+            <Pressable style={styles.checkboxRow} onPress={() => setFilterAssigned(!filterAssigned)}>
+              {filterAssigned ? <Svgicons path='CheckboxCheckedIcon' size={30} /> : <Svgicons path='CheckboxUncheckedIcon' size={30} />}
+              <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
+            </Pressable>
+            <DropdownField name="reservationStatus" control={control} errors={errors} label="Reservation Status" data={STATUS_DATA} />
+            <DropdownField name="listings" control={control} errors={errors} label="Listings" data={LISTINGS_DATA} />
+            <DropdownField name="city" control={control} errors={errors} label="City" data={CITY_DATA} />
+            <DropdownField name="Apartment Type" control={control} errors={errors} label="City" data={CITY_DATA} />
+            <View style={styles.modalFooter}>
+              <AppButton onPress={handleResetAll} title="Reset" style={styles.flex} />
+              <AppButton onPress={() => setFilterVisible(false)} title="Apply Filter" style={styles.flex} />
             </View>
           </View>
-        </Modal>
-      </View>
-    </MenuProvider>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE, paddingTop: Metrics.scale(40) },
-  searchRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginBottom: 20 },
-  searchBox: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.WHITE, borderRadius: 25, paddingHorizontal: 15, height: 48, borderWidth: 1, borderColor: Colors.ARGENT },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: Colors.BLACK },
-  popupMenu: { borderRadius: 12, padding: 10, width: 220, marginTop: Metrics.verticalScale(-90)  },
-  menuItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: '#EEE' },
-  tab: { paddingHorizontal: 20, height: 38, borderRadius: 20, backgroundColor: '#F2F2F2', justifyContent: 'center', alignItems: 'center' },
-  activeTab: { backgroundColor: '#1A3D32' },
-  chatRow: { flexDirection: 'row', padding: 18, borderBottomWidth: 1, borderBottomColor: Colors.BEAUTY_SILVER },
-  avatar: { width: 52, height: 52, borderRadius: 26 },
-  chatInfo: { flex: 1, marginLeft: 15 },
-  infoTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 },
-  infoBottom: { flexDirection: 'row', justifyContent: 'space-between' },
-  unreadBadge: { backgroundColor: '#1A3D32', width: 22, height: 22, borderRadius: 11, justifyContent: 'center', alignItems: 'center' },
-  swipeContainer: { flexDirection: 'row', width: 160 },
-  snoozeAction: { flex: 1, backgroundColor: '#B0B5C1', justifyContent: 'center', alignItems: 'center' },
-  archiveAction: { flex: 1, backgroundColor: '#1A3D32', justifyContent: 'center', alignItems: 'center' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: Colors.WHITE, borderTopLeftRadius: 30, borderTopRightRadius: 30, padding: 25, height: '75%', overflow: 'visible' },
-  checkboxRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: Colors.SMOOTH_GREY, borderRadius: 4 },
-  checked: { backgroundColor: Colors.BRUNSWICK_GREEN, borderColor: Colors.BRUNSWICK_GREEN },
-  modalFooter: { flexDirection: 'row', marginTop: 20, paddingBottom: 20 },
-  resetBtn: { flex: 1, height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#DDD', justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  applyBtn: { flex: 1.5, height: 50, borderRadius: 25, backgroundColor: Colors.BRUNSWICK_GREEN, justifyContent: 'center', alignItems: 'center' },
-  flex: { flex: 1 }
+  container: {
+    flex: 1,
+    backgroundColor: Colors.WHITE,
+    paddingTop: Metrics.verticalScale(40),
+  },
+
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Metrics.scale(20),
+    marginBottom: Metrics.verticalScale(20),
+  },
+
+  searchBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.WHITE,
+    borderRadius: Metrics.verticalScale(25),
+    paddingHorizontal: Metrics.scale(15),
+    height: Metrics.verticalScale(48),
+    borderWidth: Metrics.horizontalLineHeight,
+    borderColor: Colors.ARGENT,
+  },
+
+  searchInput: {
+    flex: 1,
+    marginLeft: Metrics.scale(10),
+    fontSize: Metrics.generatedFontSize(14),
+    color: Colors.BLACK,
+  },
+
+  popupMenu: {
+    borderRadius: Metrics.verticalScale(12),
+    padding: Metrics.scale(10),
+    width: Metrics.scale(220),
+    marginTop: Metrics.verticalScale(30),
+  },
+
+  menuItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: Metrics.verticalScale(12),
+    borderBottomWidth: Metrics.horizontalLineHeight,
+    borderBottomColor: '#EEE',
+  },
+
+  tab: {
+    paddingHorizontal: Metrics.scale(20),
+    height: Metrics.verticalScale(38),
+    borderRadius: Metrics.verticalScale(20),
+    backgroundColor: '#F2F2F2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  activeTab: {
+    backgroundColor: '#1A3D32',
+  },
+
+  chatRow: {
+    flexDirection: 'row',
+    padding: Metrics.scale(18),
+    borderBottomWidth: Metrics.horizontalLineHeight,
+    borderBottomColor: Colors.BEAUTY_SILVER,
+  },
+
+  avatar: {
+    width: Metrics.images.large,
+    height: Metrics.images.large,
+    borderRadius: Metrics.images.large / 2,
+  },
+
+  chatInfo: {
+    flex: 1,
+    marginLeft: Metrics.scale(15),
+  },
+
+  infoTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: Metrics.verticalScale(5),
+  },
+
+  infoBottom: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  unreadBadge: {
+    backgroundColor: '#1A3D32',
+    width: Metrics.verticalScale(22),
+    height: Metrics.verticalScale(22),
+    borderRadius: Metrics.verticalScale(11),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  swipeContainer: {
+    flexDirection: 'row',
+    width: Metrics.scale(160),
+  },
+
+  snoozeAction: {
+    flex: 1,
+    backgroundColor: '#B0B5C1',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  archiveAction: {
+    flex: 1,
+    backgroundColor: '#1A3D32',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+
+  modalContent: {
+    backgroundColor: Colors.WHITE,
+    borderTopLeftRadius: Metrics.verticalScale(30),
+    borderTopRightRadius: Metrics.verticalScale(30),
+    padding: Metrics.scale(25),
+    height: '75%',
+  },
+
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Metrics.verticalScale(20),
+  },
+
+  checkbox: {
+    width: Metrics.verticalScale(20),
+    height: Metrics.verticalScale(20),
+    borderWidth: Metrics.horizontalLineHeight,
+    borderColor: Colors.SMOOTH_GREY,
+    borderRadius: Metrics.verticalScale(4),
+  },
+
+  checked: {
+    backgroundColor: Colors.BRUNSWICK_GREEN,
+    borderColor: Colors.BRUNSWICK_GREEN,
+  },
+
+  modalFooter: {
+    flexDirection: 'row',
+    marginTop: Metrics.verticalScale(20),
+    paddingBottom: Metrics.verticalScale(20),
+  },
+
+  resetBtn: {
+    flex: 1,
+    height: Metrics.verticalScale(50),
+    borderRadius: Metrics.verticalScale(25),
+    borderWidth: Metrics.horizontalLineHeight,
+    borderColor: '#DDD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Metrics.scale(10),
+  },
+
+  applyBtn: {
+    flex: 1.5,
+    height: Metrics.verticalScale(50),
+    borderRadius: Metrics.verticalScale(25),
+    backgroundColor: Colors.BRUNSWICK_GREEN,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  flex: {
+    flex: 1,
+  },
 });
+
 
 export default ChatScreen;
