@@ -47,6 +47,13 @@ import menuDotsIcon from './menuDots.svg'
 import channelIcon from './channelIcon.svg'
 import taskIcon from './taskIcon.svg'
 import deleteIcon from './deleteIcon.svg'
+import searchIcon from './searchIcon.svg'
+import filterIcon from './filterIcon.svg'
+import sortIcon from './sortIcon.svg'
+import snoozeIcon from './snoozeIcon.svg'
+import archiveIcon from './archiveIcon.svg'
+import chevronRight from './chevronRight.svg'
+
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -97,5 +104,11 @@ export const icons = {
     menuDotsIcon:menuDotsIcon,
     channelIcon:channelIcon,
     taskIcon:taskIcon,
-    deleteIcon:deleteIcon
+    deleteIcon:deleteIcon,
+    searchIcon: searchIcon,
+    filterIcon:filterIcon,
+    sortIcon:sortIcon,
+    snoozeIcon:snoozeIcon,
+    archiveIcon:archiveIcon,
+    chevronRight:chevronRight
 };
