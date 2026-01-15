@@ -15,9 +15,10 @@ interface HeaderApp {
   isGetStarted?: boolean;
   isLogo?: boolean;
   isLang?: boolean;
+  addIconAfterisGoBack?:string
 }
 
-const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo }: HeaderApp) => {
+const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo,addIconAfterisGoBack }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
   }, []);
@@ -55,11 +56,17 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo }
         </View>
       </View>
       {isGoBackAfterLogo && (
-        <GradientBorder borderRadius={16} borderWidth={1} style={[styles.arrowCircleInner, { marginTop: Metrics.verticalScale(16) }]} >
-          <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-            <Svgicons path='arrowLeftIcon' size={24} />
-          </Pressable>
-        </GradientBorder>
+        <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path='arrowLeftIcon' size={24} />
+            </Pressable>
+          </GradientBorder>
+          {addIconAfterisGoBack && (
+             <Svgicons path='mapIcon' size={35} />
+          )}
+        </View>
+
       )}
 
     </View>
@@ -76,7 +83,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   header: {
     paddingHorizontal: Metrics.baseMargin,

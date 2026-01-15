@@ -1,38 +1,62 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
-import { AddressFormValues, addressSchema } from '@/validation/auth/createListingSchemas';
+import { addressSchema } from '@/validation/auth/createListingSchemas';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
+
+export type AddressFormValues = {
+  name: string;
+  country_code: string;
+  state: string;
+  city: string;
+  street: string;
+  apt?: string;
+};
 
 export default function useConfirmAddressContainer() {
+  const { updateListing } = useCreateListingStore();
   const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<AddressFormValues>({
-    resolver: yupResolver(addressSchema),
+  } = useForm({
+    resolver: yupResolver(addressSchema) as any,
     defaultValues: {
-      country: 'Saudi Arabia',
-      state: 'Al Madinah',
-      city: 'Medina',
-      district: 'Al riyaad',
-      address: '',
-      postalAddress: '',
+      name: '',
+      country_code: null,
+      state: '',
+      city: '',
+      street: '',
+      apt: '',
     },
   });
 
   const onNext = (data: AddressFormValues) => {
-    console.log('Address Confirmed:', data);
-    navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE)
-    // navigation.navigate('NextStep');
+    updateListing({
+      name: data.name,
+      country_code: data.country_code?.cca2 || '',
+      state: data.state,
+      city: data.city,
+      street: data.street,
+      apt: data.apt,
+    });
+    navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
   };
 
   const onSaveExit = () => {
     console.log('Progress Saved. Exiting...');
   };
 
-  return { control, errors, handleSubmit, onNext, onSaveExit, navigation };
+  return {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    navigation,
+  };
 }

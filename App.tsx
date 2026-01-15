@@ -20,6 +20,7 @@ import myFatoorahConfig, {
   getEnvironmentName,
   isProduction
 } from '@/config/myfatoorah.config';
+import linking from '@/navigation/linkingConfig';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -131,7 +132,7 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <NavigationContainer ref={navigationRef} theme={MyTheme}>
+          <NavigationContainer ref={navigationRef} theme={MyTheme} linking={linking} >
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
               <StatusBar
                 barStyle="dark-content"

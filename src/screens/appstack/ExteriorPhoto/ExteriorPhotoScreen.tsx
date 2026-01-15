@@ -1,9 +1,16 @@
 import React from 'react';
 import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import { useExteriorPhotoContainer } from './ExteriorPhotoContainer';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 
 const ExteriorPhotoScreen = () => {
-    const {handleNext,handleSaveAndExit,setMediaList,mediaList} = useExteriorPhotoContainer()
+    // const {handleNext,handleSaveAndExit,setMediaList,mediaList} = useExteriorPhotoContainer()
+    const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
+        listingId: 123,
+        category: 'exterior',
+        nextRoute: NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS
+    });
    
     return (
         <PhotoUploadTemplate
@@ -15,13 +22,14 @@ const ExteriorPhotoScreen = () => {
             onMediaChange={setMediaList}
             primaryBtnTitle="Next"
             onPrimaryPress={handleNext}
-            primaryLoading={false}
+             primaryLoading={isLoading}
             secondaryBtnTitle="Save & Exit"
             onSecondaryPress={handleSaveAndExit}
             secondaryLoading={false}
             isFetching={false} 
             loading={false}
-            primaryDisable={!Boolean(mediaList.length)}
+            primaryDisable={mediaList.length === 0 || isLoading}
+            secondaryDisable={isLoading}
         />
     );
 };
