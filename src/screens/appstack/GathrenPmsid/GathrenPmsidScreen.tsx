@@ -7,7 +7,7 @@ import useGathrenPMSIdContainer from './GathrenPmsidContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 
 const PMSIdScreen = () => {
-  const { control, errors, handleSubmit, onNext, onCreateAccount } = useGathrenPMSIdContainer();
+  const { control, errors, handleSubmit, onNext, onCreateAccount,isLoading } = useGathrenPMSIdContainer();
 
   return (
     <View style={styles.container}>
@@ -52,9 +52,8 @@ const PMSIdScreen = () => {
 
         {/* Bottom Buttons */}
         <View style={styles.footer}>
-          <AppButton onPress={handleSubmit(onNext)} title='Next' mb={10} />
-          <AppButton onPress={onCreateAccount} title='Create New Account' />
-
+<AppButton loading={isLoading} onPress={handleSubmit(onNext)} title='Next' mb={10}/>
+          <AppButton disabled={isLoading} onPress={onCreateAccount} title='Create New Account' />
         </View>
       </View>
     </View>

@@ -118,7 +118,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo addIconAfterisGoBack='mapIcon'/> }}
         name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
         getComponent={() =>
           require('@/screens/appstack/ManageBooking/ManageBookingScreen')

@@ -28,9 +28,6 @@ const AppText = ({
     ? `RethinkSans-${type}Italic`
     : `RethinkSans-${type}`;
 
-  console.log('fontFamily', fontFamily);
-
-
   const spacingStyles = {
     margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
     marginTop: mt !== undefined ? Metrics.verticalScale(mt) : my !== undefined ? Metrics.verticalScale(my) : undefined,

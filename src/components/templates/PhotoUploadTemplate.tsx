@@ -27,7 +27,6 @@ interface PhotoUploadTemplateProps {
     onPrimaryPress: () => void;
     primaryLoading?: boolean;
     primaryDisable?: boolean;
-
 }
 
 const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {

@@ -1,93 +1,126 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import STORAGE_CONST from '@/constants/storage';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  createMapListingbyUserIDApi,
+  getChannexListingsById,
+  getUserListingsByUserIDApi,
+} from '@/services/bookingManagementApi';
+import { useAuthStore } from '@/store/useAuthStore';
+import { queryClient } from '@/services/api';
+import { createMapListingbyUserIDType } from '@/types/api/bookingManagementTypes';
+import { CreateAccountResponse } from '@/types/api/authTypes';
+import Toast from 'react-native-toast-message';
 
 type FormValues = {
-  property_1: string;
-  property_2: string;
-  property_3: string;
+  [key: string]: string;
 };
 
+type RouteParams = {
+  ch_channel_id: string;
+};
 
 export default function useAirbnbImportContainer() {
-  const navigation = useNavigation();
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
+  const channelId = route.params?.ch_channel_id;
+  const { user } = useAuthStore();
 
-  // Dropdown sirf livedin mapping ke liye
-  const listingOptions = [
-    {
-      label: 'Livedin Alpha',
-      value: 'alpha_house',
-      livedinId: '45084593',
-    },
-    {
-      label: 'Livedin Omega',
-      value: 'omega_house',
-      livedinId: '45084594',
-    },
-    {
-      label: 'Livedin Beta',
-      value: 'beta_villa',
-      livedinId: '45084595',
-    },
-  ];
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
+    queryFn: () =>
+      getChannexListingsById({
+        channel_id: channelId!,
+      }),
+    enabled: Boolean(channelId),
+  });
 
-  // Airbnb properties (fixed data)
-  const [properties] = useState([
-    {
-      id: '7084593',
-      title: 'Alpha House',
-      fieldName: 'property_1',
+  const { data: apiResponse } = useQuery({
+    queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+    queryFn: () =>
+      getUserListingsByUserIDApi({
+        user: user?.id!,
+      }),
+    enabled: Boolean(user?.id),
+  });
+
+const { mutate: createMapListingbyUserID, isPending } =
+  useMutation<CreateAccountResponse, Error, { listing_id: number }>({
+    mutationFn: (payload) =>
+      createMapListingbyUserIDApi({
+        user: user!.id,
+        listing_id: payload.listing_id,
+      }),
+
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+      });
+
+      Toast.show({ type: 'success', text1: message });
     },
-    {
-      id: '7084594',
-      title: 'Omega House',
-      fieldName: 'property_2',
+
+    onError: (error) => {
+      Toast.show({ type: 'error', text1: error.message });
     },
-    {
-      id: '7084595',
-      title: 'Beta Villa',
-      fieldName: 'property_3',
-    },
-  ]);
+  });
+
+
+  const listingOptions =
+    apiResponse?.data?.map((item: { title: string, id: number }) => ({
+      label: item.title,
+      value: item.id,
+    })) ?? [];
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm({
-    defaultValues: {
-      property_1: '',
-      property_2: '',
-      property_3: 'omega_house',
-    }
+  } = useForm<FormValues>({
+    defaultValues: {},
   });
 
-const handleIndividualImport = (fieldName: keyof FormValues) => {
-    const selectedValue = watch(fieldName);
-    console.log('Importing:', {
-      fieldName,
-      livedinMapping: selectedValue,
-    });
-  };
+  const handleIndividualImport = (fieldName: number) => {
+  const selectedValue = watch(fieldName);
+  const airbnbListingId = Number(fieldName);
+
+  if (selectedValue) {
+    const payload = {
+      airbnb_listing_id: airbnbListingId,
+      livedin_listing_id: selectedValue,
+    };
+
+    console.log('Mapping existing listing:', payload);
+    return;
+  }
+
+  createMapListingbyUserID({
+    listing_id: airbnbListingId,
+  });
+};
 
 
-  const onNext = (data: any) => {
+  const onNext = (data: FormValues) => {
     console.log('Final form submit:', data);
-    navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)
+    navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   };
 
   return {
     control,
     errors,
-    properties,
+    properties: data?.listings ?? [],
     listingOptions,
+    isLoading,
     handleSubmit,
     onNext,
-    watch,
     handleIndividualImport,
-    navigation
+    refetch,
+    watch
   };
 }
