@@ -277,6 +277,14 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CHAT_DETAIL}
+        getComponent={() =>
+          require('@/screens/appstack/ChatDetail/ChatDetailScreen')
+            .default
+        }
+      />
     </Stack.Navigator>
   );
 };

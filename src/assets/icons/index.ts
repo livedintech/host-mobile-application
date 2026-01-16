@@ -31,6 +31,8 @@ import CheckboxCheckedIcon from './checkbox-checked.svg';
 import CheckboxUncheckedIcon from './checkbox-primary-unchecked.svg';
 import fileUploadIcon from './file_upload.svg'
 import plusIcon from './plusIcon.svg'
+import plusWhiteIcon from './plusWhiteIcon.svg'
+
 import closeCircleIcon from './closeCircleIcon.svg'
 import videoIcon from './videoIcon.svg'
 import cameraIcon from './cameraIcon.svg'
@@ -54,6 +56,8 @@ import snoozeIcon from './snoozeIcon.svg'
 import archiveIcon from './archiveIcon.svg'
 import chevronRight from './chevronRight.svg'
 import expandIcon from './expandIcon.svg'
+import sendIcon from './sendIcon.svg'
+
 
 
 
@@ -113,5 +117,7 @@ export const icons = {
     snoozeIcon:snoozeIcon,
     archiveIcon:archiveIcon,
     chevronRight:chevronRight,
-    expandIcon:expandIcon
+    expandIcon:expandIcon,
+    sendIcon:sendIcon,
+    plusWhiteIcon:plusWhiteIcon
 };

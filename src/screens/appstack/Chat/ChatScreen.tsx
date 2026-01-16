@@ -13,6 +13,8 @@ import { useChatContainer } from './ChatContainer';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 // --- Dummy Data for Dropdowns ---
 const STATUS_DATA = [{ label: 'Confirmed', value: 'confirmed' }, { label: 'Pending', value: 'pending' }];
@@ -48,7 +50,9 @@ const ChatScreen = () => {
       <Swipeable friction={2} rightThreshold={40} renderRightActions={renderRightActions}>
         <View style={styles.chatRow}>
           <Image source={item.img} style={styles.avatar} />
-          <View style={styles.chatInfo}>
+          <Pressable style={styles.chatInfo} onPress={()=>{
+            navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL)
+          }}>
             <View style={styles.infoTop}>
               <AppText text={item.name} type="SemiBold" fontSize={16} color={Colors.MIDNIGHT} />
               <AppText text={item.date} fontSize={12} color={Colors.GREY_SHADOW} />
@@ -61,7 +65,7 @@ const ChatScreen = () => {
                 <Svgicons path="chevronRight" size={12} color={Colors.GREY_SHADOW} />
               )}
             </View>
-          </View>
+          </Pressable>
         </View>
       </Swipeable>
     );
