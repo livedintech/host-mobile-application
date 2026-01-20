@@ -23,8 +23,8 @@ const TabStack = () => {
       />
       <Tab.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
-        name={NavigationRoutes.APP_STACK.MESSAGE}
-        component={require('@/screens/appstack/Message/MessageScreen').default}
+        name={NavigationRoutes.APP_STACK.CHAT}
+        component={require('@/screens/appstack/Chat/ChatScreen').default}
       />
       <Tab.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}

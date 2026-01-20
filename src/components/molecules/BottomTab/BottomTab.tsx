@@ -19,7 +19,7 @@ const BottomTab = ({ state, descriptors, navigation }: any) => {
           switch (route.name) {
             case 'HOME_SCREEN': return require('@/assets/img/home_icon.png');
             case 'LISTING_SCREEN': return require('@/assets/img/calendar_icon.png');
-            case 'MESSAGE_SCREEN': return require('@/assets/img/inbox_icon.png');
+            case 'CHAT_SCREEN': return require('@/assets/img/inbox_icon.png');
             case 'TASK_SCREEN': return require('@/assets/img/task_icon.png');
             case 'MORE_SCREEN': return require('@/assets/img/more_icon.png');
             default: return require('@/assets/img/home_icon.png');

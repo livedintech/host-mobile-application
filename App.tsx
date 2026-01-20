@@ -21,6 +21,7 @@ import myFatoorahConfig, {
   isProduction
 } from '@/config/myfatoorah.config';
 import linking from '@/navigation/linkingConfig';
+import { MenuProvider } from 'react-native-popup-menu';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -122,12 +123,12 @@ const App = () => {
     console.warn('⚠️ Payment system may not work properly:', initializationError);
   }
   const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: Colors.WHITE
-  },
-};
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: Colors.WHITE
+    },
+  };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -138,7 +139,9 @@ const App = () => {
                 barStyle="dark-content"
                 backgroundColor={Colors.WHITE}
               />
-              <StackNavigator />
+              <MenuProvider skipInstanceCheck>
+                <StackNavigator />
+              </MenuProvider>
               <Toast config={toastConfig} />
             </SafeAreaView>
           </NavigationContainer>

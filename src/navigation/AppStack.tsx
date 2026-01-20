@@ -39,9 +39,9 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
-        name={NavigationRoutes.APP_STACK.MESSAGE}
+        name={NavigationRoutes.APP_STACK.CHAT}
         getComponent={() =>
-          require('@/screens/appstack/Message/MessageScreen')
+          require('@/screens/appstack/Chat/ChatScreen')
             .default
         }
       />
@@ -274,6 +274,14 @@ const AppStack = () => {
         name={NavigationRoutes.APP_STACK.CONNECTED_OTA}
         getComponent={() =>
           require('@/screens/appstack/ConnectedOTA/ConnectedOTAScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CHAT_DETAIL}
+        getComponent={() =>
+          require('@/screens/appstack/ChatDetail/ChatDetailScreen')
             .default
         }
       />

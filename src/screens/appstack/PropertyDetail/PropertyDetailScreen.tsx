@@ -5,12 +5,12 @@ import {
   MenuOptions,
   MenuOption,
   MenuTrigger,
-  MenuProvider,
 } from 'react-native-popup-menu';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import usePropertyDetailContainer from './PropertyDetailContainer';
+import Metrics from '@/utility/Metrics';
 
 const PropertyDetailScreen = () => {
   const { propertyData, handleEditSection, handleMenuAction } = usePropertyDetailContainer();
@@ -38,7 +38,6 @@ const PropertyDetailScreen = () => {
   );
 
   return (
-    <MenuProvider skipInstanceCheck>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           
@@ -159,7 +158,6 @@ const PropertyDetailScreen = () => {
           </View>
         </ScrollView>
       </View>
-    </MenuProvider>
   );
 };
 
@@ -173,7 +171,7 @@ const optionsStyles = {
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    marginTop: 0,
+    marginTop: Metrics.verticalScale(40),
   },
 };
 
