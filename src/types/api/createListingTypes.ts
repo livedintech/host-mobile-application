@@ -47,3 +47,21 @@ export interface createListingPricingResponse {
 
   };
 }
+
+export interface CreateListingResponse {
+  status: string;
+  message: string;
+  data: {
+    listing_id: string
+  };
+}
+
+export interface CreateListingPayload {
+  user_id: number;
+  payload:{
+    listing:{
+      property_type_category: string;
+      name: string
+    }
+  }
+}

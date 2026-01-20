@@ -77,7 +77,7 @@ export default function useAboutThePlaceContainer() {
   updateListing(currentStepData);
 
   const payload: CreateListingDetailsPayload = {
-    user_id: user?.id,
+    user_id: Number(user?.id),
     listing_id: 123,
     listing: updatedListing,
   };
