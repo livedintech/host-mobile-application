@@ -25,6 +25,6 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_LISTING: `${authController}/channelmanagement/create-listing`,
     CREATE_LISTING_DETAILS: `${authController}/channelmanagement/create-listing/details`,
     CREATE_LISTING_PRICING: `${authController}/channelmanagement/create-listing/pricing`,
-    
+    GET_MANAGE_YOUR_LISTINGS: `${authController}/user/listings/{user}`,
   }
 };

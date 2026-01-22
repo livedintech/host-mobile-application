@@ -15,13 +15,13 @@ const SetPricingScreen = ({ navigation }: any) => {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Step Header */}
         <AppText text="Step 5" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
-        
+
         <View style={styles.subTitleRow}>
           <AppText text="Set Your Pricing" fontSize={24} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
           <Svgicons path="cardIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
         </View>
 
-        {/* Pricing Row 1: Weekday & Weekend */}
+        {/* Row 1: Weekday & Weekend */}
         <View style={styles.row}>
           <View style={styles.halfWidth}>
             <InputField
@@ -29,7 +29,7 @@ const SetPricingScreen = ({ navigation }: any) => {
               control={control}
               errors={errors}
               label="Weekday Base Price*"
-              placeholder="SAR 500"
+              placeholder="500"
               keyboardType="numeric"
             />
           </View>
@@ -39,21 +39,21 @@ const SetPricingScreen = ({ navigation }: any) => {
               control={control}
               errors={errors}
               label="Weekend Base Price*"
-              placeholder="SAR 200"
+              placeholder="700"
               keyboardType="numeric"
             />
           </View>
         </View>
 
-        {/* Pricing Row 2: Discount & Tax */}
+        {/* Row 2: Discount & Tax */}
         <View style={styles.row}>
           <View style={styles.halfWidth}>
             <InputField
               name="discount"
               control={control}
               errors={errors}
-              label="Discount"
-              placeholder="10.5%"
+              label="Discount (%)"
+              placeholder="10"
               keyboardType="numeric"
             />
           </View>
@@ -62,22 +62,22 @@ const SetPricingScreen = ({ navigation }: any) => {
               name="taxVat"
               control={control}
               errors={errors}
-              label="Tax(VAT)"
-              placeholder="2.0%"
+              label="Tax (VAT %)"
+              placeholder="15"
               keyboardType="numeric"
             />
           </View>
         </View>
 
-        {/* Pricing Row 3: Markup & Cleaning Fee */}
+        {/* Row 3: Markup & Cleaning Fee */}
         <View style={styles.row}>
           <View style={styles.halfWidth}>
             <InputField
-              name="security_deposit"
+              name="markup"
               control={control}
               errors={errors}
-              label="Security Deposit"
-              placeholder="SR 1000"
+              label="Markup (%)"
+              placeholder="10"
               keyboardType="numeric"
             />
           </View>
@@ -87,7 +87,21 @@ const SetPricingScreen = ({ navigation }: any) => {
               control={control}
               errors={errors}
               label="Cleaning Fee"
-              placeholder="2.0%"
+              placeholder="50"
+              keyboardType="numeric"
+            />
+          </View>
+        </View>
+
+        {/* Row 4: Security Deposit */}
+        <View style={styles.row}>
+          <View style={styles.halfWidth}>
+            <InputField
+              name="security_deposit"
+              control={control}
+              errors={errors}
+              label="Security Deposit"
+              placeholder="100"
               keyboardType="numeric"
             />
           </View>
@@ -95,15 +109,15 @@ const SetPricingScreen = ({ navigation }: any) => {
 
         {/* Footer Buttons */}
         <View style={styles.footer}>
-          <AppButton 
-            title="Next" 
-            onPress={handleSubmit(onSubmit)} 
-            loading={isLoading} 
+          <AppButton
+            title="Next"
+            onPress={handleSubmit(onSubmit)}
+            loading={isLoading}
           />
-          <AppButton 
-            title="Save & Exit" 
-            onPress={() => navigation.goBack()} 
-            mt={15} 
+          <AppButton
+            title="Save & Exit"
+            onPress={() => navigation.goBack()}
+            mt={15}
           />
         </View>
       </ScrollView>
@@ -124,7 +138,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 5,
+    marginBottom: 15,
   },
   halfWidth: { width: '48%' },
   footer: { marginTop: 40 },

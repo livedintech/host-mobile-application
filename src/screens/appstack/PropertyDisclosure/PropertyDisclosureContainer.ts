@@ -3,8 +3,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DisclosureFormValues, disclosureSchema } from '@/validation/auth/createListingSchemas';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useMutation } from '@tanstack/react-query';
+import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
+import Toast from 'react-native-toast-message';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { createListingDetailsApi } from '@/services/ createListingService';
 
 export default function usePropertyDisclosureContainer() {
+    const { user } = useAuthStore();
+    const { listing_id, channel_id, listing } = useCreateListingStore();
+
     const {
         control,
         handleSubmit,
@@ -18,13 +27,53 @@ export default function usePropertyDisclosureContainer() {
         },
     });
 
+    const {
+        mutate: createListingDetailsPayload,
+        isPending,
+        isIdle,
+    } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+        mutationFn: createListingDetailsApi,
+        onSuccess: ({ message }) => {
+            Toast.show({
+                type: 'success',
+                text1: message || 'Property disclosure saved successfully',
+            });
+            navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
+        },
+        onError: error => {
+            Toast.show({
+                type: 'error',
+                text1: error.message || 'Something went wrong',
+            });
+        },
+    });
+
     const onSubmit = (data: DisclosureFormValues) => {
-        console.log('onSubmit', data);
-        navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD)
+        if (!listing_id) {
+            Toast.show({ type: 'error', text1: 'Listing ID is missing' });
+            return;
+        }
+
+        const payload: CreateListingDetailsPayload = {
+            channel_id: channel_id,
+            listing_id,
+            user_id: Number(user?.id),
+            listing: {
+                name: listing?.name,
+                disclosures: {
+                    cameras: data.securityCameras === 'Yes',
+                    noise: data.noiseMonitor === 'Yes',
+                    weapons: data.weaponsOnProperty === 'Yes',
+                }
+            }
+        };
+
+        console.log('Property Disclosure Payload:', payload);
+        createListingDetailsPayload(payload);
     };
 
     return {
-        isLoading: false,
+        isLoading: isPending && !isIdle,
         control,
         errors,
         handleSubmit,

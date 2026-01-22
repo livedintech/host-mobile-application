@@ -5,29 +5,35 @@ import { addressSchema } from '@/validation/auth/createListingSchemas';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useMutation } from '@tanstack/react-query';
+import { createListingDetailsApi } from '@/services/ createListingService';
+import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
+import Toast from 'react-native-toast-message';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export type AddressFormValues = {
   name: string;
-  country_code: string;
+  country_code: { cca2: string };
   state: string;
   city: string;
   street: string;
-  apt?: string;
+  apt: string;
 };
 
 export default function useConfirmAddressContainer() {
-  const { updateListing } = useCreateListingStore();
+  const { updateListing, listing_id,channel_id } = useCreateListingStore();
+  const { user } = useAuthStore()
   const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: yupResolver(addressSchema) as any,
+  } = useForm<AddressFormValues>({
+    resolver: yupResolver(addressSchema),
     defaultValues: {
-      name: '',
-      country_code: null,
+      name: 'New Listing',
+      country_code: { cca2: '' },
       state: '',
       city: '',
       street: '',
@@ -35,16 +41,50 @@ export default function useConfirmAddressContainer() {
     },
   });
 
+  const {
+    mutate: createListingDetailsPayload,
+    isPending,
+    isIdle,
+  } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+    mutationFn: createListingDetailsApi,
+    onSuccess: ({ message }) => {
+      Toast.show({
+        type: 'success',
+        text1: message || 'Something went wrong',
+      });
+      navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Something went wrong',
+      });
+    },
+  });
+
+
   const onNext = (data: AddressFormValues) => {
     updateListing({
-      name: data.name,
       country_code: data.country_code?.cca2 || '',
       state: data.state,
       city: data.city,
       street: data.street,
       apt: data.apt,
     });
-    navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
+    const payload = {
+      channel_id,
+      listing_id,
+      user_id: Number(user?.id),
+      listing: {
+        country_code: data.country_code?.cca2 || '',
+        state: data.state,
+        city: data.city,
+        street: data.street,
+        apt: data.apt,
+        name: 'New Listing',
+      }
+    }
+    createListingDetailsPayload(payload)
   };
 
   const onSaveExit = () => {
@@ -58,5 +98,6 @@ export default function useConfirmAddressContainer() {
     onNext,
     onSaveExit,
     navigation,
+    isLoading: isPending && !isIdle
   };
 }

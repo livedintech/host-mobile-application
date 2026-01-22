@@ -20,18 +20,17 @@ export type AddressFormValues = {
   apt?: string;
 };
 
-export const addressSchema = yup.object().shape({
-  name: yup.string().required('Property name is required'),
-  country_code: yup
-    .object()
-    .nullable()
-    .required('Country is required')
-    .typeError('Country is required'),
+export const addressSchema = yup.object({
+  name:yup.string().required('Name is required'),
+  country_code: yup.object({
+    cca2: yup.string().required('Country is required'),
+  }).required('Country is required'),
   state: yup.string().required('State is required'),
   city: yup.string().required('City is required'),
   street: yup.string().required('Street address is required'),
   apt: yup.string().required('Apartment / Unit is required'),
 });
+
 
 export const stepTwoSchema = yup.object({
   bedrooms: yup.string().required('Bedrooms is required'),
@@ -58,15 +57,11 @@ export type StepTwoFormValues = {
 };
 
 export const describeHouseSchema = yup.object().shape({
-  title: yup.string().required('House title is required'),
-  description: yup.string()
+  name: yup.string().required('House title is required'),
+  listing_descriptions: yup.string()
     .required('Description is required')
     .min(10, 'Must be at least 10 characters')
     .max(250, 'Cannot exceed 250 characters'),
-  bookingType: yup.string().required('Required'),
-  guestEligibility: yup.string().required('Required'),
-  checkInTime: yup.string().required('Required'),
-  checkOutTime: yup.string().required('Required'),
 });
 
 export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
@@ -88,6 +83,10 @@ export const pricingSchema = yup.object().shape({
     .string()
     .required('Tax(VAT) is required'),
 
+  markup: yup
+    .string()
+    .required('Markup is required'),
+
   security_deposit: yup
     .string()
     .required('Security Deposit is required'),
@@ -96,6 +95,7 @@ export const pricingSchema = yup.object().shape({
     .string()
     .required('Cleaning Fee is required'),
 });
+
 
 
 // Infer type directly from schema

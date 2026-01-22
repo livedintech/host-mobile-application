@@ -11,6 +11,10 @@ import {
     DocumentFormValues,
     DocumentPickerResult
 } from '@/validation/auth/createListingSchemas';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const BASE_URL = BASE_URL_DEV;
 
@@ -20,6 +24,8 @@ interface ApiDocument {
 }
 
 export default function useDocumentUploadContainer() {
+    const { user } = useAuthStore();
+    const { listing_id, channel_id, updateListing } = useCreateListingStore();
     const [loading, setLoading] = useState(false);
 
     const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<DocumentFormValues>({
@@ -70,7 +76,7 @@ export default function useDocumentUploadContainer() {
                 setValue(fieldName, mappedFile);
             }
         } catch (err: any) {
-                console.log('Picker Error');
+            console.log('Picker Error');
         }
     };
 
@@ -90,7 +96,7 @@ export default function useDocumentUploadContainer() {
                     if (b64) {
                         documentsArray.push({
                             url: `data:application/pdf;base64,${b64}`,
-                            type: slug 
+                            type: slug
                         });
                     }
                 }
@@ -109,7 +115,7 @@ export default function useDocumentUploadContainer() {
             }
 
             const body = {
-                listing_id: 123, 
+                listing_id,
                 documents: documentsArray,
             };
 
@@ -123,6 +129,7 @@ export default function useDocumentUploadContainer() {
 
             if (response.ok) {
                 Toast.show({ type: 'success', text1: result?.message });
+                navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS)
             } else {
                 throw new Error(result.message || "Upload failed");
             }

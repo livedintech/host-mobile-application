@@ -33,6 +33,9 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
   const [pickerVisible, setPickerVisible] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
 
+  console.log('errors',errors);
+  
+
   const handleFocus = () => {
     Animated.timing(animation, {
       toValue: 1,
@@ -57,7 +60,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
   const animatedBackgroundColor = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [Colors.WHITE, Colors.WHITE],
-  });
+  });  
 
   return (
     <View style={styles.wrapper}>
@@ -123,9 +126,9 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
         }}
       />
 
-      {errors[name] && (
+      {errors[name]?.cca2 && (
         <AppText
-          text={errors[name]?.message as string}
+          text={errors[name]?.cca2?.message as string}
           color={Colors.INDIAN_RED}
           style={styles.errorText}
         />

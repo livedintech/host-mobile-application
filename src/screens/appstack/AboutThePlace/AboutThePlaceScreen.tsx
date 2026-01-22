@@ -17,7 +17,8 @@ const AboutThePlaceScreen = () => {
     numberOptions,
     handleSubmit,
     onNext,
-    navigation
+    navigation,
+    isLoading
   } = useAboutThePlaceContainer();
 
   return (
@@ -84,8 +85,8 @@ const AboutThePlaceScreen = () => {
           />
 
           <View style={styles.footer}>
-            <AppButton title="Next" onPress={handleSubmit(onNext)} />
-            <AppButton title="Save & Exit" onPress={() => navigation.goBack()} mt={15} />
+            <AppButton title="Next" onPress={handleSubmit(onNext)} loading={isLoading}/>
+            <AppButton title="Save & Exit" onPress={() => navigation.goBack()} mt={15} disabled={isLoading}/>
           </View>
         </View>
       </ScrollView>

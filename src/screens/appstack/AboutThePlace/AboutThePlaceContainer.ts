@@ -12,8 +12,8 @@ import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/typ
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useAboutThePlaceContainer() {
-  const {user} = useAuthStore()
-  const { updateListing,listing } = useCreateListingStore();
+  const { user } = useAuthStore()
+  const { listing_id, channel_id } = useCreateListingStore();
   const navigation = useNavigation();
 
   const binaryOptions = [
@@ -39,15 +39,18 @@ export default function useAboutThePlaceContainer() {
     },
   });
 
-    const {
+  const {
     mutate: createListingDetailsPayload,
     isPending,
     isIdle,
   } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
     mutationFn: createListingDetailsApi,
-    onSuccess: data => {
-      // navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
-      // navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, phoneNumber);
+    onSuccess: ({ message }) => {
+      Toast.show({
+        type: 'success',
+        text1: message || 'Something went wrong',
+      });
+      navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
     },
     onError: error => {
 
@@ -59,33 +62,24 @@ export default function useAboutThePlaceContainer() {
   });
 
   const onNext = (data: StepTwoFormValues) => {
-  const currentStepData = {
-    bedrooms: Number(data.bedrooms),
-    beds: Number(data.beds),
-    bathrooms: Number(data.bathrooms),
-    min_nights: Number(data.min_nights),
-    check_in_time: data.check_in_time,
-    check_out_time: data.check_out_time,
-    instant_booking: data.instant_booking === 'true',
-  };
+    const payload = {
+      channel_id,
+      listing_id,
+      user_id: Number(user?.id),
+      listing: {
+        bedrooms: Number(data.bedrooms),
+        beds: Number(data.beds),
+        bathrooms: Number(data.bathrooms),
+        min_nights: Number(data.min_nights),
+        check_in_time: data.check_in_time,
+        check_out_time: data.check_out_time,
+        instant_booking: data.instant_booking === 'true',
+        name: 'New Listing',
+      }
+    };
+    createListingDetailsPayload(payload);
+  }
 
-  const updatedListing = {
-    ...listing,
-    ...currentStepData,
-  };
-
-  updateListing(currentStepData);
-
-  const payload: CreateListingDetailsPayload = {
-    user_id: Number(user?.id),
-    listing_id: 123,
-    listing: updatedListing,
-  };
-navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
-  // createListingDetailsPayload(payload);
-
-  console.log('Final API Payload:', payload);
-};
 
 
 
@@ -96,6 +90,7 @@ navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
     numberOptions,
     handleSubmit,
     onNext,
-    navigation
+    navigation,
+    isLoading: isPending && !isIdle
   };
 }

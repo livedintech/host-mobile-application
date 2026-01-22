@@ -18,7 +18,8 @@ const CreateListingStepOneLocationScreen = () => {
     handleLocateMe,
     handlePlaceSelect,
     currentAddress,
-    placesRef
+    placesRef,
+    isLoading
   } = useCreateListingStepOneLocationContainer();
 
   return (
@@ -50,7 +51,7 @@ const CreateListingStepOneLocationScreen = () => {
               }
             }}
             query={{
-              key: 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao', // Replace with your API key
+              key: 'AIzaSyA8teM2pHaQIGaaChl1_VEWEUgYssku7rI', 
               language: 'en',
             }}
             fetchDetails={true}
@@ -64,10 +65,10 @@ const CreateListingStepOneLocationScreen = () => {
               description: styles.description,
             }}
             renderLeftButton={() => (
-              <Svgicons 
-                path="pinLocationIcon" 
-                size={18} 
-                style={styles.searchIcon} 
+              <Svgicons
+                path="pinLocationIcon"
+                size={18}
+                style={styles.searchIcon}
               />
             )}
             textInputProps={{
@@ -82,14 +83,16 @@ const CreateListingStepOneLocationScreen = () => {
             <Svgicons path="locateMeIcon" size={32} color={Colors.BRUNSWICK_GREEN} />
           </ButtonView>
 
-          <AppButton 
-            title="Confirm" 
-            onPress={handleConfirm} 
+          <AppButton
+            loading={isLoading}
+            title="Confirm"
+            onPress={handleConfirm}
             style={styles.actionBtn}
           />
-          <AppButton 
-            title="Set Manually" 
-            onPress={handleSetManually} 
+          <AppButton
+            disabled={isLoading}
+            title="Set Manually"
+            onPress={handleSetManually}
             style={[styles.actionBtn, { marginTop: 12 }]}
           />
         </View>
@@ -109,7 +112,7 @@ const styles = StyleSheet.create({
     top: '50%',
   },
   overlay: { flex: 1, justifyContent: 'space-between' },
-  header: { 
+  header: {
     padding: 20,
     zIndex: 999,
     elevation: 999,
@@ -130,12 +133,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
   },
-  searchIcon: { 
+  searchIcon: {
     marginRight: 10,
   },
-  input: { 
-    flex: 1, 
-    color: Colors.BLACK, 
+  input: {
+    flex: 1,
+    color: Colors.BLACK,
     fontSize: 16,
     height: 50,
   },
@@ -159,8 +162,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.BLACK,
   },
-  footer: { 
-    padding: 20, 
+  footer: {
+    padding: 20,
     paddingBottom: 30,
   },
   locateMeBtn: {

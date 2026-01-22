@@ -13,7 +13,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export default function useCreateListingStepOneContainer() {
   const { user } = useAuthStore()
-  const { updateListing } = useCreateListingStore()
+  const { updateListing, setListingId,setChannelId } = useCreateListingStore()
   const navigation = useNavigation();
 
   const propertyOptions = [
@@ -37,14 +37,13 @@ export default function useCreateListingStepOneContainer() {
     isIdle,
   } = useMutation<CreateListingResponse, Error, CreateListingPayload>({
     mutationFn: createListingApi,
+    retry: false,
     onSuccess: ({ message, data }) => {
-      updateListing({
-        property_type_category: data?.listing_id
-      })
       Toast.show({
         type: 'success',
-        text1: message || 'Something went wrong',
+        text1: message || 'Listing created successfully',
       });
+      setListingId(data?.listing_id);
       navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE_SET_LOCATION);
     },
     onError: error => {
@@ -55,20 +54,26 @@ export default function useCreateListingStepOneContainer() {
     },
   });
 
-  const onNext = (data: StepOneFormValues) => {
 
+  const onNext = (data: StepOneFormValues) => {
+    updateListing({
+      property_type_category: data?.propertyType,
+    });
+    setChannelId("9bd50e4a-9336-44a2-93b9-dac6f9f8b57b")
     const payload = {
+      channel_id:"9bd50e4a-9336-44a2-93b9-dac6f9f8b57b",
       user_id: Number(user?.id),
       payload: {
         listing: {
           property_type_category: data?.propertyType,
-          name: 'New Listing'
-        }
-      }
-      // property_type_category: data?.propertyType
-    }
-    createListingPayload(payload)
+          name: 'New Listing',
+        },
+      },
+    };
+
+    createListingPayload(payload);
   };
+
 
   const onSaveExit = () => {
     console.log('Saving and Exiting...');
