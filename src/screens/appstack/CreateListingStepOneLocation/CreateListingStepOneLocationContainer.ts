@@ -5,6 +5,11 @@ import { Platform, PermissionsAndroid, Alert } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useMutation } from '@tanstack/react-query';
+import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
+import Toast from 'react-native-toast-message';
+import { createListingDetailsApi } from '@/services/ createListingService';
 
 interface GooglePlaceDetail {
   geometry: {
@@ -16,17 +21,20 @@ interface GooglePlaceDetail {
   formatted_address: string;
 }
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao';
+const GOOGLE_MAPS_APIKEY = 'AIzaSyA8teM2pHaQIGaaChl1_VEWEUgYssku7rI';
 
 export default function useCreateListingStepOneLocationContainer() {
-  const {updateListing}  = useCreateListingStore()
+  const { updateListing, listing_id } = useCreateListingStore();
+  console.log('testing', listing_id);
+
+  const { user } = useAuthStore()
   const mapRef = useRef<any>(null);
   const placesRef = useRef<any>(null);
   const isManuallySearching = useRef(false);
 
   const [region, setRegion] = useState<Region>({
-    latitude: 24.4672,
-    longitude: 39.6111,
+    latitude: 24.7136,
+    longitude: 46.6753,
     latitudeDelta: 0.015,
     longitudeDelta: 0.0121,
   });
@@ -44,12 +52,12 @@ export default function useCreateListingStepOneLocationContainer() {
       if (data.results && data.results.length > 0) {
         const address = data.results[0].formatted_address;
         setCurrentAddress(address);
-        
+
         // Update GooglePlacesAutocomplete input
         if (placesRef.current) {
           placesRef.current.setAddressText(address);
         }
-        
+
         console.log('Address:', address);
         return address;
       }
@@ -129,7 +137,7 @@ export default function useCreateListingStepOneLocationContainer() {
   // 🔹 Handle Google Places selection
   const handlePlaceSelect = (details: GooglePlaceDetail) => {
     isManuallySearching.current = true;
-    
+
     const { lat, lng } = details.geometry.location;
 
     const newRegion: Region = {
@@ -141,7 +149,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
     // Update region state
     setRegion(newRegion);
-    
+
     // Update address
     setCurrentAddress(details.formatted_address);
 
@@ -162,6 +170,27 @@ export default function useCreateListingStepOneLocationContainer() {
     }, 1500);
   };
 
+  const {
+    mutate: createListingDetailsPayload,
+    isPending,
+    isIdle,
+  } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+    mutationFn: createListingDetailsApi,
+    onSuccess: ({ message }) => {
+      Toast.show({
+        type: 'success',
+        text1: message || 'Something went wrong',
+      });
+      navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Something went wrong',
+      });
+    },
+  });
+
   const handleConfirm = () => {
     console.log('Final Selected Location:', region);
     console.log('Address:', currentAddress);
@@ -173,7 +202,21 @@ export default function useCreateListingStepOneLocationContainer() {
       lat: region.latitude,
       lng: region.longitude,
     })
+    const payload = {
+      user_id: Number(user?.id),
+      listing_id: listing_id,
+      listing: {
+        // lat: region.latitude,
+        // lng: region.longitude,
+        lat: 24.7254554,
+        lng: 46.492878,
+        street: '',
+        name: 'New Listing'
+      }
+    }
+    // createListingDetailsPayload(payload)
     navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
+
   };
 
   const handleSetManually = () => {
@@ -183,13 +226,13 @@ export default function useCreateListingStepOneLocationContainer() {
 
   const onRegionChangeComplete = (newRegion: Region) => {
     setRegion(newRegion);
-    
+
     // Only update address if user is not actively searching
     if (!isManuallySearching.current) {
       // Get address for new location with debounce
       getAddressFromCoordinates(newRegion.latitude, newRegion.longitude);
     }
-    
+
     console.log('Map moved to:', {
       latitude: newRegion.latitude,
       longitude: newRegion.longitude,
@@ -211,5 +254,6 @@ export default function useCreateListingStepOneLocationContainer() {
     onRegionChangeComplete,
     handleLocateMe,
     handlePlaceSelect,
+    isLoading: isPending && !isIdle
   };
 }

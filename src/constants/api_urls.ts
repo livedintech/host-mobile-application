@@ -22,8 +22,9 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_MAP_LISTING_BY_USER_ID: `${authController}/mapListing/{user}`,
     CREATE_GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel?user_id={user_id}`,
     GET_GATHERN_LISTING: `${authController}/gathern/listings?channel_id={channel_id}`,
+    CREATE_LISTING: `${authController}/channelmanagement/create-listing`,
     CREATE_LISTING_DETAILS: `${authController}/channelmanagement/create-listing/details`,
     CREATE_LISTING_PRICING: `${authController}/channelmanagement/create-listing/pricing`,
-    
+    GET_MANAGE_YOUR_LISTINGS: `${authController}/user/listings/{user}`,
   }
 };
