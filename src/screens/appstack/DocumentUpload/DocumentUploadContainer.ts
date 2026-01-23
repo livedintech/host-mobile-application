@@ -13,7 +13,7 @@ import {
 } from '@/validation/auth/createListingSchemas';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { navigate } from '@/services/navigationService';
+import { navigate, reset } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const BASE_URL = BASE_URL_DEV;
@@ -129,7 +129,7 @@ export default function useDocumentUploadContainer() {
 
             if (response.ok) {
                 Toast.show({ type: 'success', text1: result?.message });
-                navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS)
+                reset(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS)
             } else {
                 throw new Error(result.message || "Upload failed");
             }
