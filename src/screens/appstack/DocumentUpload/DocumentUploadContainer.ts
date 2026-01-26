@@ -13,8 +13,9 @@ import {
 } from '@/validation/auth/createListingSchemas';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { navigate, reset } from '@/services/navigationService';
+import { goBack, reset } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useRoute } from '@react-navigation/native';
 
 const BASE_URL = BASE_URL_DEV;
 
@@ -25,20 +26,25 @@ interface ApiDocument {
 
 export default function useDocumentUploadContainer() {
     const { user } = useAuthStore();
-    const { listing_id, channel_id, updateListing } = useCreateListingStore();
+    const { params } = useRoute();
+    const routeListing = params?.paramData?.payload?.listing;
+    const isEdit = Boolean(routeListing?.listing_id);
+
+    const { listing_id, channel_id } = useCreateListingStore();
     const [loading, setLoading] = useState(false);
 
     const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<DocumentFormValues>({
         resolver: yupResolver(documentUploadSchema),
         defaultValues: {
-            propertyOwnership: null,
-            authorityLicense: null,
-            nationalId: null,
+            propertyOwnership: routeListing?.documents?.ownership || null,
+            authorityLicense: routeListing?.documents?.license || null,
+            nationalId: routeListing?.documents?.national_id || null,
         } as any,
     });
 
     const files = watch();
 
+    // Convert file to Base64
     const getBase64 = async (uri: string): Promise<string | null> => {
         try {
             let filePath = uri;
@@ -76,43 +82,45 @@ export default function useDocumentUploadContainer() {
                 setValue(fieldName, mappedFile);
             }
         } catch (err: any) {
-            console.log('Picker Error');
+            console.log('Picker Error', err);
         }
     };
 
     const removeFile = (fieldName: keyof DocumentFormValues) => {
-        // ✅ Fix: 'as any' use karne se null assignability error khatam ho jayega
         setValue(fieldName, null as any);
+    };
+
+    // DRY helper to process all files
+    const processFiles = async (data: DocumentFormValues): Promise<ApiDocument[]> => {
+        const documentsArray: ApiDocument[] = [];
+
+        const processFile = async (file: DocumentPickerResult | null | undefined, slug: string) => {
+            if (file?.uri) {
+                const b64 = await getBase64(file.uri);
+                if (b64) {
+                    documentsArray.push({
+                        url: `data:application/pdf;base64,${b64}`,
+                        type: slug
+                    });
+                }
+            }
+        };
+
+        await processFile(data.propertyOwnership, "ownership");
+        await processFile(data.authorityLicense, "license");
+        await processFile(data.nationalId, "national_id");
+
+        if (documentsArray.length < 3) {
+            throw new Error("All three documents are required.");
+        }
+
+        return documentsArray;
     };
 
     const onSubmit = async (data: DocumentFormValues) => {
         setLoading(true);
         try {
-            const documentsArray: ApiDocument[] = [];
-
-            const processFile = async (file: DocumentPickerResult | null | undefined, slug: string) => {
-                if (file?.uri) {
-                    const b64 = await getBase64(file.uri);
-                    if (b64) {
-                        documentsArray.push({
-                            url: `data:application/pdf;base64,${b64}`,
-                            type: slug
-                        });
-                    }
-                }
-            };
-
-            // Teeno files mandatory processing
-            await processFile(data.propertyOwnership, "ownership");
-            await processFile(data.authorityLicense, "license");
-            await processFile(data.nationalId, "national_id");
-
-            // Final safety check (validation already ensures this)
-            if (documentsArray.length < 3) {
-                Alert.alert("Error", "All three documents are required.");
-                setLoading(false);
-                return;
-            }
+            const documentsArray = await processFiles(data);
 
             const body = {
                 listing_id,
@@ -128,8 +136,8 @@ export default function useDocumentUploadContainer() {
             const result = await response.json();
 
             if (response.ok) {
-                Toast.show({ type: 'success', text1: result?.message });
-                reset(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS)
+                Toast.show({ type: 'success', text1: result?.message || 'Documents uploaded successfully' });
+                reset(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
             } else {
                 throw new Error(result.message || "Upload failed");
             }
@@ -140,5 +148,36 @@ export default function useDocumentUploadContainer() {
         }
     };
 
-    return { control, errors, handleSubmit, onSubmit, handleDocumentPick, removeFile, files, loading };
+    const onSaveExit = async (data: DocumentFormValues) => {
+        setLoading(true);
+        try {
+            const documentsArray = await processFiles(data);
+
+            const body = {
+                listing_id: routeListing?.listing_id || listing_id,
+                documents: documentsArray,
+            };
+
+            const response = await fetch(`${BASE_URL}api/v2/channelmanagement/create-listing/documents`, {
+                method: 'PUT', // edit existing documents
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Toast.show({ type: 'success', text1: result?.message || 'Documents updated successfully' });
+                goBack();
+            } else {
+                throw new Error(result.message || "Update failed");
+            }
+        } catch (error: any) {
+            Alert.alert("Update Error", error.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { control, errors, handleSubmit, onSubmit, onSaveExit, handleDocumentPick, removeFile, files, loading,isEdit };
 }

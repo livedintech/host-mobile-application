@@ -32,3 +32,8 @@ export interface creatGathernChannelResponse {
     }
   };
 }
+
+export interface getManageListingDetailByIdApiTypePayload {
+  listing_id: number;
+  user_id: number,
+}

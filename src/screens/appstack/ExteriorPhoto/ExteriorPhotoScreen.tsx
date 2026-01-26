@@ -3,15 +3,16 @@ import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import { useExteriorPhotoContainer } from './ExteriorPhotoContainer';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 const ExteriorPhotoScreen = () => {
-    // const {handleNext,handleSaveAndExit,setMediaList,mediaList} = useExteriorPhotoContainer()
+    const { listing_id } = useCreateListingStore();
     const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
-        listingId: 123,
+        listingId: listing_id,
         category: 'exterior',
         nextRoute: NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS
     });
-   
+
     return (
         <PhotoUploadTemplate
             screenTitle="Add Photos & Videos"
@@ -22,11 +23,11 @@ const ExteriorPhotoScreen = () => {
             onMediaChange={setMediaList}
             primaryBtnTitle="Next"
             onPrimaryPress={handleNext}
-             primaryLoading={isLoading}
+            primaryLoading={isLoading}
             secondaryBtnTitle="Save & Exit"
             onSecondaryPress={handleSaveAndExit}
             secondaryLoading={false}
-            isFetching={false} 
+            isFetching={false}
             loading={false}
             primaryDisable={mediaList.length === 0 || isLoading}
             secondaryDisable={isLoading}

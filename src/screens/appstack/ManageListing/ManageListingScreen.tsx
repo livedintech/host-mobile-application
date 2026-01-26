@@ -6,71 +6,80 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useManageListingContainer from './ManageListingContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { ManageListingItem, ManageListingMapItem } from '@/types/api/createListingTypes';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const ManageListingScreen = () => {
-  const { listings, onCreateNew, onCreateNewListing,goToPropertyDetail } = useManageListingContainer();
+  const { listings, onCreateNew, onCreateNewListing, goToPropertyDetail, isLoading, refetch } = useManageListingContainer();
 
-  const PropertyCard = ({ item }: any) => (
-  <GradientBorder borderRadius={16} style={styles.cardWrapper}>
-    <View style={styles.cardInner}>
-      <Image source={item.image} style={styles.propertyImg} />
-      
-      <View style={styles.cardInfo}>
-        <View style={styles.infoRow}>
-          <AppText text="Property Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-          <AppText text={item.name} color={Colors.PINE_FOREST} fontSize={14} />
-        </View>
-        
-        <View style={styles.infoRow}>
-          <AppText text="Property ID: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-          <AppText text={item.id} color={Colors.PINE_FOREST} fontSize={14} />
-        </View>
 
-        <View style={styles.addressSection}>
-          <AppText text="Address:" type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-          <AppText text={item.address} color={Colors.PINE_FOREST} fontSize={14} mt={2} />
-        </View>
-      </View>
+  const PropertyCard = ({ item }: ManageListingMapItem) => {
 
-      {/* Arrow */}
-      <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
-        <Pressable style={styles.arrowCircle} onPress={goToPropertyDetail}>
-          <Svgicons path="arrowRightIcon" size={22} />
-        </Pressable>
+    return (
+      <GradientBorder borderRadius={16} style={styles.cardWrapper}>
+        <View style={styles.cardInner}>
+          {/* {details.image && (
+        <Image source={details.image} style={styles.propertyImg} />
+      )} */}
+
+          <View style={styles.cardInfo}>
+            <View style={styles.infoRow}>
+              <AppText text="Property Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+              <AppText text={item?.details.name} color={Colors.PINE_FOREST} fontSize={14} />
+            </View>
+
+            <View style={styles.infoRow}>
+              <AppText text="Property ID: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+              <AppText text={item?.details?.id?.toString()} color={Colors.PINE_FOREST} fontSize={14} />
+            </View>
+
+            <View style={styles.infoRow}>
+              <AppText text="Address:" type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+              <AppText text={item?.details?.apt} color={Colors.PINE_FOREST} fontSize={14} />
+            </View>
+          </View>
+
+          {/* Arrow */}
+          <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
+            <Pressable style={styles.arrowCircle} onPress={() => goToPropertyDetail(item?.details)}>
+              <Svgicons path="arrowRightIcon" size={22} />
+            </Pressable>
+          </GradientBorder>
+        </View>
       </GradientBorder>
-    </View>
-  </GradientBorder>
-);
+    )
+  };
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <AppText 
-          text="Manage Your Listings" 
-          fontSize={30} 
-          type="Bold" 
-          color={Colors.BRUNSWICK_GREEN} 
-          textAlign="center" 
-          mb={30} 
+      <RefreshableScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} isLoading={isLoading}
+        onRefresh={refetch}>
+        <AppText
+          text="Manage Your Listings"
+          fontSize={30}
+          type="Bold"
+          color={Colors.BRUNSWICK_GREEN}
+          textAlign="center"
+          mb={30}
         />
 
-        {listings.map((item) => (
-          <PropertyCard key={item.id} item={item} />
+        {listings?.data.map((item) => (
+          <PropertyCard key={item.details?.id} item={item} />
         ))}
 
         <View style={styles.footer}>
-          <AppButton 
-            title="Create New Listing" 
-            onPress={onCreateNew} 
-            mt={20} 
+          <AppButton
+            title="Create New Listing"
+            onPress={onCreateNew}
+            mt={20}
           />
-          <AppButton 
-            title="Add New Listing" 
-            onPress={onCreateNewListing} 
-            mt={15} 
+          <AppButton
+            title="Add New Listing"
+            onPress={onCreateNewListing}
+            mt={15}
           />
         </View>
-      </ScrollView>
+      </RefreshableScrollView>
     </View>
   );
 };
@@ -81,16 +90,16 @@ const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: 20,
   },
-  cardInner: { 
-    flexDirection: 'row', 
-    padding: 15, 
-    borderRadius: 16, 
+  cardInner: {
+    flexDirection: 'row',
+    padding: 15,
+    borderRadius: 16,
     backgroundColor: Colors.WHITE,
     alignItems: 'center'
   },
-  propertyImg: { 
-    width: 90, 
-    height: 90, 
+  propertyImg: {
+    width: 90,
+    height: 90,
     borderRadius: 12
   },
   cardInfo: { flex: 1, marginLeft: 15, justifyContent: 'center' },

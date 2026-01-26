@@ -7,8 +7,8 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useSetPricingContainer from './SetPricingContainer';
 import InputField from '@/components/molecules/Input/InputField';
 
-const SetPricingScreen = ({ navigation }: any) => {
-  const { control, errors, handleSubmit, onSubmit, isLoading } = useSetPricingContainer();
+const SetPricingScreen = () => {
+  const { control, errors, handleSubmit, onNext, isLoading,isEdit,onSaveExit } = useSetPricingContainer();
 
   return (
     <View style={styles.container}>
@@ -109,17 +109,21 @@ const SetPricingScreen = ({ navigation }: any) => {
 
         {/* Footer Buttons */}
         <View style={styles.footer}>
-          <AppButton
-            title="Next"
-            onPress={handleSubmit(onSubmit)}
-            loading={isLoading}
-          />
-          <AppButton
-            title="Save & Exit"
-            onPress={() => navigation.goBack()}
-            mt={15}
-          />
-        </View>
+  {isEdit ? (
+    <AppButton
+      title="Save & Exit"
+      onPress={handleSubmit(onSaveExit)}
+      loading={isLoading}
+    />
+  ) : (
+    <AppButton
+      title="Next"
+      onPress={handleSubmit(onNext)}
+      loading={isLoading}
+    />
+  )}
+</View>
+
       </ScrollView>
     </View>
   );

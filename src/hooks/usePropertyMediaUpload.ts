@@ -14,7 +14,7 @@ export interface MediaItem {
 }
 
 interface UseMediaUploadProps {
-  listingId: number | string;
+  listingId: number | null;
   category: 'interior' | 'exterior' | 'bedroom' | 'bathroom' | 'other';
   nextRoute: string;
   description?: string;

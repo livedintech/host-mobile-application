@@ -8,13 +8,12 @@ import { CreateListingPayload, CreateListingResponse } from '@/types/api/createL
 import Toast from 'react-native-toast-message';
 import { createListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export default function useCreateListingStepOneContainer() {
   const { user } = useAuthStore()
-  const { updateListing, setListingId,setChannelId } = useCreateListingStore()
-  const navigation = useNavigation();
+  const { updateListing, setListingId, setChannelId } = useCreateListingStore()
 
   const propertyOptions = [
     { label: 'Apartment', value: 'apartment' },
@@ -56,12 +55,14 @@ export default function useCreateListingStepOneContainer() {
 
 
   const onNext = (data: StepOneFormValues) => {
+
     updateListing({
       property_type_category: data?.propertyType,
+      name:''
     });
     setChannelId("9bd50e4a-9336-44a2-93b9-dac6f9f8b57b")
     const payload = {
-      channel_id:"9bd50e4a-9336-44a2-93b9-dac6f9f8b57b",
+      channel_id: "9bd50e4a-9336-44a2-93b9-dac6f9f8b57b",
       user_id: Number(user?.id),
       payload: {
         listing: {
@@ -77,10 +78,10 @@ export default function useCreateListingStepOneContainer() {
 
   const onSaveExit = () => {
     console.log('Saving and Exiting...');
-    navigation.goBack();
+    goBack();
   };
 
   return {
-    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, navigation, isLoading: isPending && !isIdle,
+    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading: isPending && !isIdle,
   };
 }
