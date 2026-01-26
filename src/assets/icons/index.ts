@@ -57,9 +57,11 @@ import archiveIcon from './archiveIcon.svg'
 import chevronRight from './chevronRight.svg'
 import expandIcon from './expandIcon.svg'
 import sendIcon from './sendIcon.svg'
-
-
-
+import userManagementIcon from "./user_management.svg"
+import TrashFullIcon from "./Trash_Full.svg";
+import editIconUserManagement from "./Edit_Pencil.svg";
+import roleIcon from "./role_icon.svg"
+import buildingIcon from "./buildingIcon.svg"
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -119,5 +121,10 @@ export const icons = {
     chevronRight:chevronRight,
     expandIcon:expandIcon,
     sendIcon:sendIcon,
-    plusWhiteIcon:plusWhiteIcon
+    plusWhiteIcon:plusWhiteIcon,
+    userManagementIcon : userManagementIcon,
+    TrashFull : TrashFullIcon,
+    editIconUserManagement ,
+    roleIcon ,
+    buildingIcon ,
 };

@@ -10,12 +10,10 @@ const { Navigator, Screen } = Stack;
 
 const AppStack = () => {
   return (
-    <Stack.Navigator
-      initialRouteName={NavigationRoutes.APP_STACK.ROOT_STACK}
-    >
+    <Stack.Navigator initialRouteName={NavigationRoutes.APP_STACK.ROOT_STACK}>
       <Stack.Screen
         options={{
-          headerShown: false
+          headerShown: false,
         }}
         name={NavigationRoutes.APP_STACK.ROOT_STACK}
         component={TabStack}
@@ -24,8 +22,7 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.HOME}
         getComponent={() =>
-          require('@/screens/appstack/Home/HomeScreen')
-            .default
+          require('@/screens/appstack/Home/HomeScreen').default
         }
       />
 
@@ -33,40 +30,37 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.LISTING}
         getComponent={() =>
-          require('@/screens/appstack/Listing/ListingScreen')
-            .default
+          require('@/screens/appstack/Listing/ListingScreen').default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.CHAT}
         getComponent={() =>
-          require('@/screens/appstack/Chat/ChatScreen')
-            .default
+          require('@/screens/appstack/Chat/ChatScreen').default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
         getComponent={() =>
-          require('@/screens/appstack/Task/TaskScreen')
-            .default
+          require('@/screens/appstack/Task/TaskScreen').default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.MORE}
         getComponent={() =>
-          require('@/screens/appstack/More/MoreScreen')
-            .default
+          require('@/screens/appstack/More/MoreScreen').default
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isGoBackAfterLogo isLang /> }}
+        options={{
+          header: () => <HeaderApp isLogo isGoBackAfterLogo isLang />,
+        }}
         name={NavigationRoutes.APP_STACK.BILLING}
         getComponent={() =>
-          require('@/screens/appstack/Billing/BillingScreen')
-            .default
+          require('@/screens/appstack/Billing/BillingScreen').default
         }
       />
       <Stack.Screen
@@ -113,12 +107,15 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.ACCOUNT}
         getComponent={() =>
-          require('@/screens/appstack/Account/AccountScreen')
-            .default
+          require('@/screens/appstack/Account/AccountScreen').default
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo addIconAfterisGoBack='mapIcon'/> }}
+        options={{
+          header: () => (
+            <HeaderApp isGoBackAfterLogo addIconAfterisGoBack="mapIcon" />
+          ),
+        }}
         name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
         getComponent={() =>
           require('@/screens/appstack/ManageBooking/ManageBookingScreen')
@@ -129,16 +126,14 @@ const AppStack = () => {
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
-          require('@/screens/appstack/AirbnbImport/AirbnbImportScreen')
-            .default
+          require('@/screens/appstack/AirbnbImport/AirbnbImportScreen').default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.GATHREN_PMSID}
         getComponent={() =>
-          require('@/screens/appstack/GathrenPmsid/GathrenPmsidScreen')
-            .default
+          require('@/screens/appstack/GathrenPmsid/GathrenPmsidScreen').default
         }
       />
       <Stack.Screen
@@ -153,8 +148,7 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.PROFILE_SETTING}
         getComponent={() =>
-          require('@/screens/appstack/Profile/ProfileScreen')
-            .default
+          require('@/screens/appstack/Profile/ProfileScreen').default
         }
       />
       <Stack.Screen
@@ -241,8 +235,7 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SET_YOUR_PRICING}
         getComponent={() =>
-          require('@/screens/appstack/SetPricing/SetPricingScreen')
-            .default
+          require('@/screens/appstack/SetPricing/SetPricingScreen').default
         }
       />
       <Stack.Screen
@@ -273,15 +266,29 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CONNECTED_OTA}
         getComponent={() =>
-          require('@/screens/appstack/ConnectedOTA/ConnectedOTAScreen')
-            .default
+          require('@/screens/appstack/ConnectedOTA/ConnectedOTAScreen').default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CHAT_DETAIL}
         getComponent={() =>
-          require('@/screens/appstack/ChatDetail/ChatDetailScreen')
+          require('@/screens/appstack/ChatDetail/ChatDetailScreen').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.USER_MANAGEMENT}
+        getComponent={() =>
+          require('@/screens/appstack/UserManagement/screens/UserManagementScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM}
+        getComponent={() =>
+          require('@/screens/appstack/UserManagement/screens/UserFormScreen')
             .default
         }
       />
