@@ -9,7 +9,7 @@ import useConfirmAddressContainer from './ConfirmAddressContainer';
 import CountryPickerField from '@/components/molecules/Input/CountryPickerField';
 
 const ConfirmAddressScreen = () => {
-  const { control, errors, handleSubmit, onNext, onSaveExit,isLoading } = useConfirmAddressContainer();
+  const { control, errors, handleSubmit, onNext, onSaveExit,isLoading,isEdit } = useConfirmAddressContainer();
 
   return (
     <View style={styles.container}>
@@ -63,8 +63,12 @@ const ConfirmAddressScreen = () => {
           />
 
           <View style={styles.footer}>
-            <AppButton title="Next" onPress={handleSubmit(onNext)} loading={isLoading}/>
-            <AppButton title="Save & Exit" onPress={onSaveExit} mt={15} disabled={isLoading}/>
+            {!isEdit && (
+              <AppButton title="Next" onPress={handleSubmit(onNext)} loading={isLoading}/>
+            )}
+            {isEdit && (
+            <AppButton title="Save & Exit" onPress={handleSubmit(onSaveExit)} mt={15} disabled={isLoading}/>
+            )}
           </View>
         </View>
 

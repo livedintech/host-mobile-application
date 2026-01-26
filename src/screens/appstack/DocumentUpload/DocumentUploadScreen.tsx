@@ -16,7 +16,9 @@ const DocumentUploadScreen = () => {
         handleDocumentPick,
         removeFile,
         files,
-        loading
+        loading,
+        onSaveExit,
+        isEdit
     } = useDocumentUploadContainer();
 
     const renderUploadField = (label: string, fieldName: keyof DocumentFormValues, isRequired = false) => {
@@ -91,16 +93,21 @@ const DocumentUploadScreen = () => {
                 {renderUploadField("Aqama / National ID", "nationalId", true)}
 
                 <View style={styles.footer}>
-                    <AppButton
+                    
+                    {isEdit ? (
+                         <AppButton
+                        title="Save & Exit"
+                        onPress={handleSubmit(onSaveExit)}
+                        mt={15}
+                    />
+                    ) : (
+                        <AppButton
                         title="Upload & Save"
                         onPress={handleSubmit(onSubmit)}
                         loading={loading}
                     />
-                    <AppButton
-                        title="Save & Exit"
-                        onPress={() => goBack()}
-                        mt={15}
-                    />
+                    )}
+                   
                 </View>
             </ScrollView>
         </View>

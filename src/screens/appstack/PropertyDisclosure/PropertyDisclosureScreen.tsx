@@ -8,7 +8,7 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import usePropertyDisclosureContainer from './PropertyDisclosureContainer';
 
 const PropertyDisclosureScreen = ({ navigation }: any) => {
-  const { control, errors, handleSubmit, onSubmit, isLoading } = usePropertyDisclosureContainer();
+  const { control, errors, handleSubmit, onNext, isEdit, onSaveExit, isLoading } = usePropertyDisclosureContainer();
 
   const options = [
     { label: 'Yes', value: 'Yes' },
@@ -20,7 +20,7 @@ const PropertyDisclosureScreen = ({ navigation }: any) => {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <AppText text="Step 6" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
-        
+
         <View style={styles.subTitleRow}>
           <AppText text="Add Property Disclosure Details" fontSize={22} type="SemiBold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
           <Svgicons path="bookIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
@@ -29,43 +29,47 @@ const PropertyDisclosureScreen = ({ navigation }: any) => {
         {/* Disclosure Dropdowns */}
         <View style={styles.inputSection}>
           <DropdownField
-            name="securityCameras" 
-            control={control} 
-            errors={errors} 
-            label="Exterior Security Cameras Present" 
-            data={options} 
+            name="securityCameras"
+            control={control}
+            errors={errors}
+            label="Exterior Security Cameras Present"
+            data={options}
           />
 
-          <DropdownField 
-            name="noiseMonitor" 
-            control={control} 
-            errors={errors} 
-            label="Noise Decibel Monitor" 
-            data={options} 
+          <DropdownField
+            name="noiseMonitor"
+            control={control}
+            errors={errors}
+            label="Noise Decibel Monitor"
+            data={options}
           />
 
-          <DropdownField 
-            name="weaponsOnProperty" 
-            control={control} 
-            errors={errors} 
-            label="Weapons On Property" 
-            data={options} 
+          <DropdownField
+            name="weaponsOnProperty"
+            control={control}
+            errors={errors}
+            label="Weapons On Property"
+            data={options}
           />
         </View>
 
         {/* Action Buttons */}
         <View style={styles.footer}>
-          <AppButton 
-            title="Next" 
-            onPress={handleSubmit(onSubmit)} 
-            loading={isLoading} 
-          />
-          <AppButton 
-            title="Save & Exit" 
-            onPress={() => navigation.goBack()} 
-            mt={15} 
-          />
+          {isEdit ? (
+            <AppButton
+              title="Save & Exit"
+              onPress={handleSubmit(onSaveExit)}
+              loading={isLoading}
+            />
+          ) : (
+            <AppButton
+              title="Next"
+              onPress={handleSubmit(onNext)}
+              loading={isLoading}
+            />
+          )}
         </View>
+
       </ScrollView>
     </View>
   );
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
   inputSection: {
     marginBottom: 20,
   },
-  footer: { 
+  footer: {
     marginTop: 'auto',
     paddingTop: 40
   },

@@ -24,9 +24,7 @@ interface GooglePlaceDetail {
 const GOOGLE_MAPS_APIKEY = 'AIzaSyA8teM2pHaQIGaaChl1_VEWEUgYssku7rI';
 
 export default function useCreateListingStepOneLocationContainer() {
-  const { updateListing, listing_id } = useCreateListingStore();
-  console.log('testing', listing_id);
-
+  const { updateListing, listing_id,channel_id } = useCreateListingStore();
   const { user } = useAuthStore()
   const mapRef = useRef<any>(null);
   const placesRef = useRef<any>(null);
@@ -203,14 +201,15 @@ export default function useCreateListingStepOneLocationContainer() {
       lng: region.longitude,
     })
     const payload = {
+      channel_id,
+      listing_id,
       user_id: Number(user?.id),
-      listing_id: listing_id,
       listing: {
-        // lat: region.latitude,
-        // lng: region.longitude,
-        lat: 24.7254554,
-        lng: 46.492878,
-        street: '',
+        lat: region.latitude,
+        lng: region.longitude,
+        // lat: 24.7254554,
+        // lng: 46.492878,
+        // street: '',
         name: 'New Listing'
       }
     }

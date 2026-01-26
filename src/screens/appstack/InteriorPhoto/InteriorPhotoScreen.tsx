@@ -2,10 +2,13 @@ import React from 'react';
 import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 const InteriorPhotoScreen = () => {
+    const { listing_id } = useCreateListingStore();
+
     const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
-        listingId: 123,
+        listingId: listing_id,
         category: 'interior',
         nextRoute: NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS
     });

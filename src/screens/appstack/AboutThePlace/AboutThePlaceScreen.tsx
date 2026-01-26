@@ -17,8 +17,9 @@ const AboutThePlaceScreen = () => {
     numberOptions,
     handleSubmit,
     onNext,
-    navigation,
-    isLoading
+    isLoading,
+    isEdit,
+    onSaveExit
   } = useAboutThePlaceContainer();
 
   return (
@@ -60,7 +61,7 @@ const AboutThePlaceScreen = () => {
                 control={control}
                 errors={errors}
                 placeholder="HH:MM"
-                
+
               />
             </View>
             <View style={styles.half}>
@@ -85,8 +86,22 @@ const AboutThePlaceScreen = () => {
           />
 
           <View style={styles.footer}>
-            <AppButton title="Next" onPress={handleSubmit(onNext)} loading={isLoading}/>
-            <AppButton title="Save & Exit" onPress={() => navigation.goBack()} mt={15} disabled={isLoading}/>
+            <View style={styles.footer}>
+              {isEdit ? (
+                <AppButton
+                  title="Save & Exit"
+                  onPress={handleSubmit(onSaveExit)}
+                  loading={isLoading}
+                />
+              ) : (
+                <AppButton
+                  title="Next"
+                  onPress={handleSubmit(onNext)}
+                  loading={isLoading}
+                />
+              )}
+            </View>
+
           </View>
         </View>
       </ScrollView>

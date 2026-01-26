@@ -9,7 +9,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import TextareaField from '@/components/molecules/Input/TextareaField';
 
 const DescribeHouseScreen = () => {
-    const { control, errors, handleSubmit, onSubmit, isLoading, descriptionLength } = useDescribeHouseContainer();
+    const { control, errors, handleSubmit, onSubmit, isLoading, descriptionLength, isEdit, onSaveExit } = useDescribeHouseContainer();
 
     return (
         <View style={styles.container}>
@@ -45,9 +45,21 @@ const DescribeHouseScreen = () => {
                     />
                 </View>
                 <View style={styles.footer}>
-                    <AppButton title="Next" onPress={handleSubmit(onSubmit)} loading={isLoading} />
-                    <AppButton title="Save & Exit" mt={15} onPress={() => { }} disabled={isLoading}/>
+                    {isEdit ? (
+                        <AppButton
+                            title="Save & Exit"
+                            onPress={handleSubmit(onSaveExit)}
+                            loading={isLoading}
+                        />
+                    ) : (
+                        <AppButton
+                            title="Next"
+                            onPress={handleSubmit(onSubmit)}
+                            loading={isLoading}
+                        />
+                    )}
                 </View>
+
             </ScrollView>
         </View>
     );

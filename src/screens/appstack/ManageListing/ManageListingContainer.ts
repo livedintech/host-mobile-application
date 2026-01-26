@@ -6,10 +6,12 @@ import STORAGE_CONST from '@/constants/storage';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getManageYourListings } from '@/services/ createListingService';
+import { ManageListingsResponse } from '@/types/api/createListingTypes';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 export default function useManageListingContainer() {
-    const { user } = useAuthStore();
-  
+  const { user } = useAuthStore();
+  const { updateListing, setListingId, setChannelId } = useCreateListingStore()
 
   const [listings] = useState([
     {
@@ -31,7 +33,7 @@ export default function useManageListingContainer() {
       image: require('@/assets/img/property_placeholder.png'),
     },
   ]);
-   const { data } = useQuery({
+  const { data,refetch,isLoading } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
     queryFn: () =>
       getManageYourListings({
@@ -39,19 +41,23 @@ export default function useManageListingContainer() {
       }),
     enabled: Boolean(user?.id),
   });
-  const onCreateNew = useCallback(() =>{
+  const onCreateNew = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE)
-  },[]);
+  }, []);
 
-   const goToPropertyDetail = useCallback(() =>{
+  const goToPropertyDetail = ({ id, name }: { name: string; id: number }) => {
+    updateListing({
+      name,
+    })
+    setChannelId("9bd50e4a-9336-44a2-93b9-dac6f9f8b57b")
+    setListingId(id)
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
-  },[]);
-
+  };
 
   // const onAddExisting = () => console.log('Add New Listing');
-  const onCreateNewListing = useCallback(() =>{
+  const onCreateNewListing = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
-  },[])
+  }, [])
 
-  return { listings, onCreateNew, onCreateNewListing,goToPropertyDetail };
+  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail,refetch,isLoading };
 }

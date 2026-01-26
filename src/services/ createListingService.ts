@@ -2,7 +2,7 @@ import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import { CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload } from "@/types/api/createListingTypes";
 import Utils from "@/utility/Utils";
-import { getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 
 export const createListingApi = async (payload: CreateListingPayload) => {
     const { ok, response, data } = await apiService.post(
@@ -49,4 +49,50 @@ export const getManageYourListings = async (payload: getUserListingsByUserID) =>
         return data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// Manage Listing Details By ID
+export const getManageListingDetailById = async (
+  payload: getManageListingDetailByIdApiTypePayload,
+) => {
+  // replace only PATH param
+  let url = Utils.createDynamicUrl(
+    SERVICE_CONFIG_URLS.APP.GET_MANAGE_YOUR_LISTING_DETAIL,
+    { listing_id: payload.listing_id },
+  );
+
+  // append QUERY param
+  if (payload.user_id) {
+    url += `?user_id=${payload.user_id}`;
+  }
+
+  const { ok, response, data } = await apiService.get(url);
+
+  if (ok) {
+    return data;
+  }
+
+  throw new Error(response.message || 'Failed to fetch listing details');
+};
+
+export const editListingApi = async (payload: CreateListingDetailsPayload) => {
+    const { ok, response, data } = await apiService.put(
+        SERVICE_CONFIG_URLS.APP.EDIT_MANAGE_YOUR_LISTING_DETAIL,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const editListingPriceApi = async (payload: createListingPricingPayload) => {
+    const { ok, response, data } = await apiService.put(
+        SERVICE_CONFIG_URLS.APP.EDIT_MANAGE_YOUR_LISTING_DETAIL_PRICE,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
 };

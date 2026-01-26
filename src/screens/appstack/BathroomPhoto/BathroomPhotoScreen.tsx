@@ -2,10 +2,12 @@ import React from 'react';
 import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 const ExteriorPhotoScreen = () => {
+    const { listing_id } = useCreateListingStore();
     const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
-        listingId: 123,
+        listingId: listing_id,
         category: 'bathroom',
         nextRoute: NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE
     });
@@ -28,7 +30,7 @@ const ExteriorPhotoScreen = () => {
             secondaryDisable={isLoading}
             isFetching={false}
             loading={false}
-            
+
         />
     );
 };

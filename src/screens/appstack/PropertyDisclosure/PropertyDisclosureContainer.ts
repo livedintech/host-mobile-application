@@ -8,11 +8,15 @@ import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/typ
 import Toast from 'react-native-toast-message';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { createListingDetailsApi } from '@/services/ createListingService';
+import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
+import { useRoute } from '@react-navigation/native';
 
 export default function usePropertyDisclosureContainer() {
     const { user } = useAuthStore();
     const { listing_id, channel_id, listing } = useCreateListingStore();
+    const { params } = useRoute();
+    const routeListing = params?.paramData?.payload?.listing;
+    const isEdit = Boolean(routeListing?.listing_id);
 
     const {
         control,
@@ -21,11 +25,12 @@ export default function usePropertyDisclosureContainer() {
     } = useForm<DisclosureFormValues>({
         resolver: yupResolver(disclosureSchema),
         defaultValues: {
-            securityCameras: '',
-            noiseMonitor: '',
-            weaponsOnProperty: '',
+            securityCameras: routeListing?.disclosures?.cameras ? 'Yes' : '',
+            noiseMonitor: routeListing?.disclosures?.noise ? 'Yes' : '',
+            weaponsOnProperty: routeListing?.disclosures?.weapons ? 'Yes' : '',
         },
     });
+
 
     const {
         mutate: createListingDetailsPayload,
@@ -48,7 +53,28 @@ export default function usePropertyDisclosureContainer() {
         },
     });
 
-    const onSubmit = (data: DisclosureFormValues) => {
+    const {
+        mutate: updateListingDisclosure,
+        isPending: isUpdating,
+    } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+        mutationFn: editListingApi,
+        onSuccess: ({ message }) => {
+            Toast.show({
+                type: 'success',
+                text1: message || 'Updated successfully',
+            });
+            navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+        },
+        onError: error => {
+            Toast.show({
+                type: 'error',
+                text1: error.message || 'Something went wrong',
+            });
+        },
+    });
+
+
+    const onNext = (data: DisclosureFormValues) => {
         if (!listing_id) {
             Toast.show({ type: 'error', text1: 'Listing ID is missing' });
             return;
@@ -72,11 +98,33 @@ export default function usePropertyDisclosureContainer() {
         createListingDetailsPayload(payload);
     };
 
+    const onSaveExit = (data: DisclosureFormValues) => {
+        const payload: CreateListingDetailsPayload = {
+            channel_id: channel_id!,
+            listing_id: routeListing?.listing_id,
+            user_id: Number(user?.id),
+            listing: {
+                name: listing?.name,
+                disclosures: {
+                    cameras: data.securityCameras === 'Yes',
+                    noise: data.noiseMonitor === 'Yes',
+                    weapons: data.weaponsOnProperty === 'Yes',
+                },
+            },
+        };
+
+        updateListingDisclosure(payload);
+    };
+
+
     return {
-        isLoading: isPending && !isIdle,
+        isEdit,
+        isLoading: isPending || isUpdating,
         control,
         errors,
         handleSubmit,
-        onSubmit,
+        onNext,
+        onSaveExit,
     };
+
 }

@@ -1,53 +1,121 @@
+import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { getManageListingDetailById } from '@/services/ createListingService';
 import { navigate } from '@/services/navigationService';
-import { useState } from 'react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useQuery } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 
 export default function usePropertyDetailContainer() {
-  // Mock data as per Step 4, 5, 6 and Manage Listing designs
-  const [propertyData] = useState({
-    title: "Alpha House",
-    address: "King Fahd Road, Al Madinah Al Munawarah, Al Madinah Province 42311, Saudi Arabia",
-    placeInfo: {
-      size: "500 Sqm",
-      bedrooms: 3,
-      beds: 5,
-      kitchen: "Yes",
-      pool: "No",
-      longTerm: "Yes",
-      minStay: 2,
-      features: "Microwave, Kettle"
-    },
-    houseDetails: {
-      description: "Alpha House is located in Madinah, close to the city center. Built in 2012, the property features minimalist and modern architecture, making it a comfortable and suitable choice for families.",
-      bookingType: "Instant Booking",
-      guestEligibility: "Any Guest",
-      checkIn: "09:00",
-      checkOut: "22:00"
-    },
-    pricing: {
-      weekday: "SAR 500",
-      weekend: "Any Guest",
-      discount: "10.5%",
-      tax: "2.0%",
-      markup: "10.5%",
-      cleaning: "2.0%"
-    },
-    disclosure: {
-      cameras: "Yes",
-      noiseMonitor: "Yes",
-      weapons: "10.5%"
-    }
+  const { user } = useAuthStore();
+  const { listing_id } = useCreateListingStore();
+  const { data, refetch, isLoading } = useQuery({
+    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+    queryFn: () =>
+      getManageListingDetailById({
+        listing_id: listing_id!,
+        user_id: user?.id!,
+      }),
+    enabled: Boolean(listing_id),
   });
 
+
+  const listing = data?.data?.payload?.listing;
+  const photos = data?.data?.payload?.photos || [];
+  const documents = data?.data?.payload?.documents || [];
+
+  const propertyData = {
+    title: listing?.name || '',
+    address: [
+      listing?.street,
+      listing?.apt,
+      listing?.city,
+      listing?.state,
+      listing?.country_code,
+    ]
+      .filter(Boolean)
+      .join(', '),
+
+    placeInfo: {
+      size: '',
+      bedrooms: listing?.bedrooms ?? '',
+      beds: listing?.beds ?? '',
+      kitchen: '',
+      pool: '',
+      longTerm: '',
+      minStay: listing?.min_nights ?? '',
+      features: Array.isArray(listing?.amenities)
+        ? listing.amenities.join(', ')
+        : '',
+
+    },
+    houseDetails: {
+      description: '',
+      bookingType: listing?.instant_booking ? 'Instant Booking' : 'Request to Book',
+      guestEligibility: '',
+      checkIn: listing?.check_in_time || '',
+      checkOut: listing?.check_out_time || '',
+    },
+    pricing: {
+      weekday: listing?.prices?.weekday
+        ? `SAR ${listing.prices.weekday}`
+        : '',
+      weekend: listing?.prices?.weekend
+        ? `SAR ${listing.prices.weekend}`
+        : '',
+      discount: '',
+      tax: '',
+      markup: '',
+      cleaning: listing?.prices?.cleaning_fee
+        ? `SAR ${listing.prices.cleaning_fee}`
+        : '',
+    },
+    disclosure: {
+      cameras: listing?.disclosures?.cameras ?? '',
+      noiseMonitor: listing?.disclosures?.noise_monitor ?? '',
+      weapons: listing?.disclosures?.weapons ?? '',
+    },
+
+    photos,
+    documents,
+  };
+
   const handleEditSection = (section: string) => {
-    console.log("Navigating to edit section:", section);
+
+    if (section === 'Address') {
+      navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, { paramData: data?.data })
+    }
+    if (section === 'PlaceInfo') {
+      navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE, { paramData: data?.data })
+    }
+    if (section === 'HouseDetails') {
+      navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE, { paramData: data?.data })
+    }
+    if (section === 'Pricing') {
+      navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING, { paramData: data?.data })
+    }
+    if (section === 'Disclosure') {
+      navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, { paramData: data?.data })
+    }
+    if (section === 'Interior') {
+      navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS, { paramData: data?.data })
+    }
+    if (section === 'Exterior') {
+      navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, { paramData: data?.data })
+    }
+    if (section === 'Bathroom') {
+      navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS, { paramData: data?.data })
+    }
+    if (section === 'Documents') {
+      navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, { paramData: data?.data })
+    }
   };
 
   const handleMenuAction = (action: string) => {
     switch (action) {
       case 'channel':
-           navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA)
+        navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA)
         break;
       case 'delete':
         Alert.alert("Delete Property", "Are you sure you want to delete this listing?", [
@@ -60,7 +128,7 @@ export default function usePropertyDetailContainer() {
         break;
     }
   };
-  const goToConnectedOTA = () =>{
+  const goToConnectedOTA = () => {
     navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA)
   }
 
@@ -68,6 +136,9 @@ export default function usePropertyDetailContainer() {
     propertyData,
     handleEditSection,
     handleMenuAction,
-    goToConnectedOTA
+    goToConnectedOTA,
+    isLoading,
+    refetch,
+    data
   };
 }
