@@ -61,7 +61,11 @@ import userManagementIcon from "./user_management.svg"
 import TrashFullIcon from "./Trash_Full.svg";
 import editIconUserManagement from "./Edit_Pencil.svg";
 import roleIcon from "./role_icon.svg"
-import buildingIcon from "./buildingIcon.svg"
+import buildingIcon from "./buildingIcon.svg";
+import menu from "./menu.svg";
+import listingCalendar from "./listing_calendar.svg";
+import reservationDetail from "./reservation_detail.svg";
+import note from "./note.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -127,4 +131,8 @@ export const icons = {
     editIconUserManagement ,
     roleIcon ,
     buildingIcon ,
+    menu,
+    listingCalendar,
+    reservationDetail,
+    note
 };
