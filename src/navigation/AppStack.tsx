@@ -270,7 +270,8 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        // options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CHAT_DETAIL}
         getComponent={() =>
           require('@/screens/appstack/ChatDetail/ChatDetailScreen').default
