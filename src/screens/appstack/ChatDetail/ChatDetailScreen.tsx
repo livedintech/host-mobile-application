@@ -10,7 +10,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Linking
 } from 'react-native';
 import {
   Menu,
@@ -26,6 +25,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
+
 
 interface SavedReply {
   id: number;
@@ -96,18 +96,6 @@ const ChatScreen = () => {
     setIsImageViewerVisible,
   } = useChatContainer();
 
-  // Handle document preview
-const handleDocumentPreview = (document: ChatMessage['document']) => {
-  if (!document) return;
-
-  try {
-    const uri = Platform.OS === 'android' ? `file://${document.uri}` : document.uri;
-    Linking.openURL(uri).catch(() => {
-    });
-  } catch (error) {
-    console.log('Document preview error:', error);
-  }
-};
 
 
 
@@ -153,7 +141,7 @@ const handleDocumentPreview = (document: ChatMessage['document']) => {
             isAutomated && styles.automatedBubble,
           ]}
         >
-        {/* Document Message */}
+          {/* Document Message */}
           {item.document && (
             <View style={styles.documentContainer}>
               <View
@@ -167,7 +155,6 @@ const handleDocumentPreview = (document: ChatMessage['document']) => {
               </View>
               <Pressable
                 style={styles.documentInfo}
-                onPress={() => handleDocumentPreview(item.document)}
               >
                 <AppText
                   text={item.document.name}
@@ -183,15 +170,6 @@ const handleDocumentPreview = (document: ChatMessage['document']) => {
               </Pressable>
             </View>
           )}
-
-          {/* Image Message */}
-          {/* {item.image && !item.document && (
-            <Image
-              source={{ uri: item.image }}
-              style={styles.messageImage}
-              resizeMode="cover"
-            />
-          )} */}
 
           {/* Image Message with Preview */}
           {item.image && !item.document && (
