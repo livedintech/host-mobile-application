@@ -1,42 +1,36 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
-import { useWatch } from 'react-hook-form'; // Add this import
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import InputField from '@/components/molecules/Input/InputField';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
-import useUserManagementContainer, {
-  ROLE_OPTIONS,
-  LISTING_OPTIONS,
-  STAFF_TYPE_OPTIONS,
-} from '../containers/UserManagementContainer';
-import { goBack } from '@/services/navigationService';
-
+import useUserManagementContainer from '../containers/UserManagementContainer';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import { useWatch } from 'react-hook-form';
+import PasswordField from '@/components/molecules/Input/PasswordField';
 interface UserFormProps {
   mode: 'create' | 'edit';
-  userId?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ mode, userId }) => {
-  const { control, errors, handleSubmit, onFormSubmit } =
-    useUserManagementContainer(mode, userId);
+const UserForm: React.FC<UserFormProps> = ({ mode }) => {
 
-  // WATCH HERE: MultiSelect returns an array, so we check if 'owner' is IN the array
-  const selectedRoles = useWatch({
+
+  const { control, errors, handleSubmit, onFormSubmit, isLoading, listingOptions, rolesOptions, roles } =
+    useUserManagementContainer(mode);
+
+  const selectedRoleId = useWatch({
     control,
     name: 'role',
   });
 
-  // Check if selectedRoles is an array and contains 'owner'
-  const showStaffRoleType =
-    Array.isArray(selectedRoles) && selectedRoles.includes('owner');
+  const selectedRole = roles?.find(
+    (item: { id: string }) => String(item.id) === String(selectedRoleId),
+  );
+  const isOperator = selectedRole?.role_type === 'operator';
 
   const isEdit = mode === 'edit';
-
-  console.log('Current Selected Roles:', selectedRoles);
-  console.log('showStaffRoleType:', showStaffRoleType);
 
   return (
     <View style={styles.container}>
@@ -57,21 +51,20 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId }) => {
 
         <View style={styles.formContainer}>
           <InputField
-            name="username"
-            label="Username"
+            name="name"
+            label="Name"
             control={control}
             errors={errors}
             placeholder="Ali Ahmed"
-            rules={{ required: 'Username is required' }}
           />
           <InputField
-            name="phoneNumber"
+            name="phone"
             label="Phone Number"
             control={control}
             errors={errors}
             placeholder="+966 501234 235"
             keyboardType="phone-pad"
-            rules={{ required: 'Phone number is required' }}
+            editable={!isEdit}
           />
           <InputField
             name="email"
@@ -80,45 +73,33 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId }) => {
             errors={errors}
             placeholder="ali@example.com"
             keyboardType="email-address"
-            rules={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address',
-              },
-            }}
+            editable={!isEdit}
           />
+          {isOperator && (
+            <PasswordField
+              name="password"
+              label="Password"
+              control={control}
+              errors={errors}
+              placeholder="Enter password"
+            />
+          )}
 
-          <MultiSelectDropdownField
+          <DropdownField
             name="role"
             label="Role Assignment"
             control={control}
             errors={errors}
-            data={ROLE_OPTIONS}
+            data={rolesOptions}
             placeholder="Select Role"
-            rules={{ required: 'Please select a role' }}
           />
-
-          {showStaffRoleType && (
-            <MultiSelectDropdownField
-              name="staffRoleType"
-              label="Staff Role Type"
-              control={control}
-              errors={errors}
-              data={STAFF_TYPE_OPTIONS}
-              placeholder="Select Staff Roles"
-              rules={{ required: 'Please select at least one staff type' }}
-            />
-          )}
-
           <MultiSelectDropdownField
             name="listings"
             label="Listing Selection"
             control={control}
             errors={errors}
-            data={LISTING_OPTIONS}
+            data={listingOptions}
             placeholder="Select Multiple Options"
-            rules={{ required: 'Please select at least one listing' }}
           />
         </View>
       </ScrollView>
@@ -130,6 +111,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId }) => {
           backgroundColor={Colors.WHITE}
           borderColor={Colors.ARGENT}
           color={Colors.PINE_FOREST}
+          loading={isLoading}
         />
       </View>
     </View>
