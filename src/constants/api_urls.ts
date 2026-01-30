@@ -29,6 +29,17 @@ export const SERVICE_CONFIG_URLS = {
     GET_MANAGE_YOUR_LISTING_DETAIL: `${authController}/listing-details/{listing_id}`,
     EDIT_MANAGE_YOUR_LISTING_DETAIL: `${authController}/channelmanagement/create-listing/details`,
     EDIT_MANAGE_YOUR_LISTING_DETAIL_PRICE: `${authController}/channelmanagement/create-listing/pricing`,
+    GET_CHAT_LIST:`${authController}/chat/inbox`,
+    CREATE_CHAT_INBOX_ARCHIVE:`${authController}/chat/inbox/{conversation_id}/archive`,
+    CREATE_CHAT_INBOX_UNARCHIVE:`${authController}/chat/inbox/{conversation_id}/unarchive`,
+    CREATE_CHAT_INBOX_SNOOZE:`${authController}/chat/inbox/{conversation_id}/snooze`,
+    CREATE_CHAT_INBOX_UNSNOOZE:`${authController}/chat/inbox/{conversation_id}/unsnooze`,
+    CREATE_USER_MANAGEMENT:`${authController}/host/users`,
+    GET_USER_MANAGEMENT_LISTING:`${authController}/host/users/listings`,
+    GET_USER_MANAGEMENT_ROLE:`${authController}/host/users/role`,
+    GET_USER_MANAGEMENT:`${authController}/host/users`,
+    EDIT_USER_MANAGEMENT:`${authController}/host/users/{id}`,
+    DELETE_USER_MANAGEMENT:`${authController}/host/users/{id}`,
 
   }
 };
