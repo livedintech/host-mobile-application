@@ -1,7 +1,8 @@
-// ChatContainer.tsx - Custom Chat Hook with Full State Management
-import { useState, useCallback, useEffect } from 'react';
+// ChatContainer.tsx - With Reply/Quote Message Functionality + Scroll to Message
+import { useState, useCallback, useEffect, useRef } from 'react';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
+import { FlatList } from 'react-native';
 
 export interface ChatMessage {
   _id: string | number;
@@ -19,7 +20,51 @@ export interface ChatMessage {
     type: string;
     size: number;
   };
+  // NEW: Reply functionality
+  replyTo?: {
+    _id: string | number;
+    text: string;
+    userName: string;
+  };
 }
+
+interface SavedReply {
+  id: number;
+  label: string;
+  value: string;
+}
+
+const SAVED_REPLIES: SavedReply[] = [
+  {
+    id: 1,
+    label: 'Wifi Pass',
+    value: 'Here is the Wi-Fi password for your stay: 12345678',
+  },
+  {
+    id: 2,
+    label: 'Cleaning',
+    value: 'Cleaning will be done daily between 10 AM and 12 PM.',
+  },
+  {
+    id: 3,
+    label: 'Check in',
+    value: 'You can check in anytime after 3:00 PM.',
+  },
+  { id: 4, label: 'Check out', value: 'Please check out before 11:00 AM.' },
+  {
+    id: 5,
+    label: 'Bathroom',
+    value: 'Fresh towels and toiletries are provided in the bathroom.',
+  },
+  { id: 6, label: 'Bedsheet', value: 'Bedsheets are changed every 3 days.' },
+  { id: 7, label: 'Timings', value: 'Breakfast is served from 8 AM to 10 AM.' },
+  { id: 8, label: 'Booking', value: 'Your booking has been confirmed.' },
+  {
+    id: 9,
+    label: 'Microwave',
+    value: 'The microwave is available in the kitchen.',
+  },
+];
 
 export const useChatContainer = () => {
   // Core Chat State
@@ -41,6 +86,18 @@ export const useChatContainer = () => {
   // State to handle image preview
   const [previewImageUri, setPreviewImageUri] = useState<string | null>(null);
   const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
+
+  // Message State
+  const [selectedMessageData, setSelectedMessageData] =
+    useState<ChatMessage | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, isHost: false });
+
+  // Reply State
+  const [replyingToMessage, setReplyingToMessage] =
+    useState<ChatMessage | null>(null);
+
+  // NEW: Ref for FlatList to control scrolling
+  const flatListRef = useRef<FlatList>(null);
 
   // Initialize with sample messages
   useEffect(() => {
@@ -111,14 +168,23 @@ export const useChatContainer = () => {
       text: inputText.trim(),
       createdAt: new Date(),
       user: { _id: 1, name: 'Host' },
+      // NEW: Add reply info if replying to a message
+      replyTo: replyingToMessage
+        ? {
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
+        : undefined,
     };
 
     addMessage(newMessage);
     setInputText('');
+    setReplyingToMessage(null); // Clear reply
     setShowAiSuggestion(false);
     setShowSavedReplies(false);
     setShowAttachmentMenu(false);
-  }, [inputText, addMessage]);
+  }, [inputText, addMessage, replyingToMessage]);
 
   // Send saved reply
   const sendSavedReply = useCallback(
@@ -128,14 +194,22 @@ export const useChatContainer = () => {
         text: replyText,
         createdAt: new Date(),
         user: { _id: 1, name: 'Host' },
+        replyTo: replyingToMessage
+          ? {
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
+          : undefined,
       };
 
       addMessage(newMessage);
       setInputText('');
+      setReplyingToMessage(null); // Clear reply
       setShowSavedReplies(false);
       setShowAttachmentMenu(false);
     },
-    [addMessage],
+    [addMessage, replyingToMessage],
   );
 
   // Send AI suggestion
@@ -151,6 +225,48 @@ export const useChatContainer = () => {
   }, [addMessage]);
 
   // Message Actions
+  const handleMessageSelect = (message: ChatMessage) => {
+    if (selectedMessageId === message._id) {
+      setSelectedMessageId(null);
+      setSelectedMessageData(null);
+    } else {
+      setSelectedMessageId(message._id);
+      setSelectedMessageData(message);
+      setMenuPosition({
+        top: 0,
+        isHost: message.user._id === 1,
+      });
+    }
+  };
+
+  // Handle reply action
+  const handleReplyToMessage = useCallback((message: ChatMessage) => {
+    setReplyingToMessage(message);
+    setSelectedMessageId(null);
+    setSelectedMessageData(null);
+  }, []);
+
+  // Cancel reply
+  const cancelReply = useCallback(() => {
+    setReplyingToMessage(null);
+  }, []);
+
+  // NEW: Scroll to specific message
+  const scrollToMessage = useCallback((messageId: string | number, messages: ChatMessage[]) => {
+    const messageIndex = messages.findIndex(msg => msg._id === messageId);
+    
+    if (messageIndex !== -1 && flatListRef.current) {
+      // Small delay to ensure layout is complete
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          index: messageIndex,
+          animated: true,
+          viewPosition: 0.5, // Center the message in view
+        });
+      }, 100);
+    }
+  }, []);
+
   const handleCopyText = useCallback((text: string) => {
     console.log('Copy text:', text);
     setSelectedMessageId(null);
@@ -189,14 +305,22 @@ export const useChatContainer = () => {
         createdAt: new Date(),
         user: { _id: 1, name: 'Host' },
         image: image.path,
+        replyTo: replyingToMessage
+          ? {
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
+          : undefined,
       };
 
       addMessage(message);
+      setReplyingToMessage(null);
       setShowAttachmentMenu(false);
     } catch (error) {
       console.log('Camera Error:', error);
     }
-  }, [addMessage]);
+  }, [addMessage, replyingToMessage]);
 
   const handleVideo = useCallback(async () => {
     try {
@@ -212,9 +336,17 @@ export const useChatContainer = () => {
         createdAt: new Date(),
         user: { _id: 1, name: 'Host' },
         video: video.path,
+        replyTo: replyingToMessage
+          ? {
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
+          : undefined,
       };
 
       addMessage(message);
+      setReplyingToMessage(null);
       setShowAttachmentMenu(false);
     } catch (error: any) {
       if (error?.code === 'E_PICKER_CANCELLED') {
@@ -223,7 +355,7 @@ export const useChatContainer = () => {
 
       console.log('Video Error:', error);
     }
-  }, [addMessage]);
+  }, [addMessage, replyingToMessage]);
 
   const handleGallery = useCallback(async () => {
     try {
@@ -243,14 +375,22 @@ export const useChatContainer = () => {
         user: { _id: 1, name: 'Host' },
         image: media.mime?.includes('video') ? undefined : media.path,
         video: media.mime?.includes('video') ? media.path : undefined,
+        replyTo: replyingToMessage
+          ? {
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
+          : undefined,
       };
 
       addMessage(message);
+      setReplyingToMessage(null);
       setShowAttachmentMenu(false);
     } catch (error) {
       console.log('Gallery Error:', error);
     }
-  }, [addMessage]);
+  }, [addMessage, replyingToMessage]);
 
   const handleDocument = useCallback(async () => {
     try {
@@ -270,15 +410,23 @@ export const useChatContainer = () => {
             type: res.type || 'application/octet-stream',
             size: res.size || 0,
           },
+          replyTo: replyingToMessage
+            ? {
+                _id: replyingToMessage._id,
+                text: replyingToMessage.text || 'Media message',
+                userName: replyingToMessage.user.name,
+              }
+            : undefined,
         };
 
         addMessage(message);
+        setReplyingToMessage(null);
         setShowAttachmentMenu(false);
       }
     } catch (error) {
       console.log('Document Error:', error);
     }
-  }, [addMessage]);
+  }, [addMessage, replyingToMessage]);
 
   return {
     // State
@@ -293,7 +441,12 @@ export const useChatContainer = () => {
     setPreviewImageUri,
     isImageViewerVisible,
     setIsImageViewerVisible,
-
+    selectedMessageData,
+    setSelectedMessageData,
+    menuPosition,
+    replyingToMessage,
+    flatListRef, // NEW: Expose ref
+    
     // Setters
     setInputText,
     setShowAiSuggestion,
@@ -314,5 +467,11 @@ export const useChatContainer = () => {
     handleVideo,
     handleGallery,
     handleDocument,
+    handleMessageSelect,
+    handleReplyToMessage,
+    cancelReply,
+    scrollToMessage, 
+
+    SAVED_REPLIES,
   };
 };
