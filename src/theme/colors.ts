@@ -24,6 +24,6 @@ export const Colors = {
   BEAUTY_SILVER:'#D7D8D7',
   SECRET_CHOCOLATE: '#514343',
   CHARCOAL: '#222428',
-
+ TRANSLUCENT_NAVY: '#20281EB0',
 
 };

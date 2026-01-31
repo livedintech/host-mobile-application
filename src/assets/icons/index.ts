@@ -66,6 +66,18 @@ import menu from "./menu.svg";
 import listingCalendar from "./listing_calendar.svg";
 import reservationDetail from "./reservation_detail.svg";
 import note from "./note.svg";
+import File_Document from "./File_Document.svg";
+import Calendar_Days from "./Calendar_Days.svg";
+import Clock from "./Clock.svg";
+import bedroom from "./bedroom.svg";
+import bathroom from "./bathroom.svg";
+import chevronUp from "./chevron-up.svg";
+import chevronDown from "./chevron-down.svg";
+import edit_icon_2 from "./edit_icon_2.svg";
+import taskManagementIcon from "./taskManagementIcon.svg";
+import taskManagementFilterIcon from "./taskManagementFilterIcon.svg";
+
+
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -134,5 +146,15 @@ export const icons = {
     menu,
     listingCalendar,
     reservationDetail,
-    note
+    note,
+    File_Document,
+    Calendar_Days,
+    Clock,
+    bedroom,
+    bathroom,
+    chevronUp, 
+    chevronDown,
+    edit_icon_2,
+    taskManagementIcon,
+    taskManagementFilterIcon
 };
