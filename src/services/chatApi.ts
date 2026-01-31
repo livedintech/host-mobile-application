@@ -1,0 +1,91 @@
+import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
+import Utils from "@/utility/Utils";
+import apiService from "./apiService";
+import { createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType } from "@/types/api/chatTypes";
+type ChatListParams = {
+  page?: number;
+  limit?: number;
+  unread?: boolean;
+  archived?: boolean;
+  snoozed?: boolean;
+  marketplace?: boolean;
+};
+2
+export const getChatListApi = async ({
+  page = 1,
+  limit = 10,
+  ...filters
+}: ChatListParams) => {
+  const url = Utils.createDynamicUrl(
+    SERVICE_CONFIG_URLS.APP.GET_CHAT_LIST,
+    {},
+  );
+  const res = await apiService.get(url, {
+    page,
+    limit,
+    ...filters,
+  });
+
+  if (res.ok) {
+    return res.data.data;
+  }
+
+  throw new Error(res.response.message);
+};
+
+
+// Archive Chat
+export const createInboxArchiveApi = async (payload: createChatArchiveByConversationIdPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_ARCHIVE,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.post(url, {}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// Archive Chat
+export const createInboxUnArchiveApi = async (payload: createChatArchiveByConversationIdPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_UNARCHIVE,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.post(url, {}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// Snooze Chat
+export const createInboxSnoozeApi = async (payload: createChatSnoozeByConversationIdPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_SNOOZE,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.post(url, {}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// UnSnooze Chat
+export const createInboxUnSnoozeApi = async (payload: createChatSnoozeByConversationIdPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_UNSNOOZE,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.post(url, {}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
