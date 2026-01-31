@@ -15,6 +15,9 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import dayjs from 'dayjs';
 
 // --- Dummy Data for Dropdowns ---
 const STATUS_DATA = [{ label: 'Confirmed', value: 'confirmed' }, { label: 'Pending', value: 'pending' }];
@@ -23,10 +26,14 @@ const CITY_DATA = [{ label: 'Dubai', value: 'dubai' }, { label: 'Sharjah', value
 
 const ChatScreen = () => {
   const {
-    activeTab, setActiveTab, filteredChats, handleAction,
+    activeTab, setActiveTab, handleAction,
     setFilterVisible, isFilterVisible,
     filterAssigned, setFilterAssigned,
-    handleResetAll, control, errors
+    handleResetAll, control, errors,
+    data,
+    isLoading,
+    dataQuery,
+    isFetching
   } = useChatContainer();
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
@@ -49,18 +56,31 @@ const ChatScreen = () => {
     return (
       <Swipeable friction={2} rightThreshold={40} renderRightActions={renderRightActions}>
         <View style={styles.chatRow}>
-          <Image source={item.img} style={styles.avatar} />
-          <Pressable style={styles.chatInfo} onPress={()=>{
-            navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL)
-          }}>
+          {/* API response me image field hai ya default */}
+          <Image source={item.img ? { uri: item.img } : require('@/assets/img/dummy/livedin.png')} style={styles.avatar} />
+          <Pressable style={styles.chatInfo} onPress={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL,{
+            thread_id: item?.thread_id
+          })}>
             <View style={styles.infoTop}>
-              <AppText text={item.name} type="SemiBold" fontSize={16} color={Colors.MIDNIGHT} />
-              <AppText text={item.date} fontSize={12} color={Colors.GREY_SHADOW} />
+              {/* API response me name */}
+              <View style={{
+                flex: 1,
+                marginRight: Metrics.scale(10)
+              }}>
+                <AppText text={item.name || 'Unknown'} type="SemiBold" fontSize={16} color={Colors.MIDNIGHT} numberOfLines={1} />
+              </View>
+              {/* API response me date */}
+              <AppText text={dayjs(item.last_message_at).format('MM/DD/YY') || 'N/A'} fontSize={12} color={Colors.GREY_SHADOW} />
             </View>
+
             <View style={styles.infoBottom}>
-              <AppText text={item.message} fontSize={13} color={Colors.GREY_SHADOW} numberOfLines={1} style={{ flex: 0.85 }} />
+              {/* API response me message */}
+                <AppText text={item.last_message_content || 'No message'} fontSize={13} color={Colors.GREY_SHADOW} numberOfLines={1} style={{ flex: 0.85 }} />
+              {/* Unread count */}
               {item.unreadCount ? (
-                <View style={styles.unreadBadge}><AppText text={String(item.unreadCount)} color={Colors.WHITE} fontSize={11} type="Bold" /></View>
+                <View style={styles.unreadBadge}>
+                  <AppText text={String(item.unreadCount)} color={Colors.WHITE} fontSize={11} type="Bold" />
+                </View>
               ) : (
                 <Svgicons path="chevronRight" size={12} color={Colors.GREY_SHADOW} />
               )}
@@ -70,6 +90,7 @@ const ChatScreen = () => {
       </Swipeable>
     );
   };
+
 
   return (
     <View style={styles.container}>
@@ -124,7 +145,15 @@ const ChatScreen = () => {
         />
       </View>
 
-      <FlatList data={filteredChats} keyExtractor={item => item.id} renderItem={renderItem} showsVerticalScrollIndicator={false} />
+      <FlatListHandler
+        isLoading={isLoading || isFetching}
+        data={data}
+        meta={dataQuery}
+        listEmptyText="No Chat found"
+        renderItem={renderItem}
+       keyExtractor={(item) => String(item.id)}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
 
       {/* Filter Modal */}
       <Modal visible={isFilterVisible} transparent animationType="slide" onRequestClose={() => setFilterVisible(false)}>
@@ -331,6 +360,10 @@ const styles = StyleSheet.create({
 
   flex: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 25,
+    paddingBottom: 100
   },
 });
 

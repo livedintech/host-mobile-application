@@ -1,7 +1,26 @@
 import { useMemo } from 'react';
 
-export default function useInfiniteListData<T>(pages?: { data: T[] }[]) {
+export default function useInfiniteListData<T extends { id: string | number }>(
+  pages?: any[],
+) {
   return useMemo(() => {
-    return pages?.flatMap(page => page.data) || [];
+    if (!pages) return [];
+
+    const map = new Map<string | number, T>();
+
+    pages.forEach(page => {
+      const list =
+        page?.data ||
+        page?.items ||
+        page?.results ||
+        page?.chats ||
+        [];
+
+      list.forEach((item: T) => {
+        map.set(item.id, item); // duplicates override
+      });
+    });
+
+    return Array.from(map.values());
   }, [pages]);
 }
