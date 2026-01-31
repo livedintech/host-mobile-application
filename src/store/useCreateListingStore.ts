@@ -20,14 +20,14 @@ type Listing = {
 };
 
 type CreateListingState = {
-  user_id: number | null;
-  listing_id: number | null;
-  channel_id: string | null; // <-- added
+  user_id: string;
+  listing_id: string;
+  channel_id: string
   listing: Listing;
 
   // actions
-  setUserId: (id: number) => void;
-  setListingId: (id: number) => void;
+  setUserId: (id: string) => void;
+  setListingId: (id: string) => void;
   setChannelId: (id: string) => void; // <-- added
   updateListing: (data: Partial<Listing>) => void;
   resetListing: () => void;
@@ -53,9 +53,9 @@ const initialListing: Listing = {
 };
 
 export const useCreateListingStore = create<CreateListingState>((set) => ({
-  user_id: null,
-  listing_id: null,
-  channel_id: null,
+  user_id: '',
+  listing_id: '',
+  channel_id: '',
   listing: initialListing,
 
   setUserId: (id) => set({ user_id: id }),
@@ -72,9 +72,9 @@ export const useCreateListingStore = create<CreateListingState>((set) => ({
 
   resetListing: () =>
     set({
-      user_id: null,
-      listing_id: null,
-      channel_id: null,
+      user_id: '',
+      listing_id: '',
+      channel_id: '',
       listing: initialListing,
     }),
 }));

@@ -15,7 +15,7 @@ import STORAGE_CONST from '@/constants/storage';
 
 export type AddressFormValues = {
   name: string;
-  country_code: { cca2: string };
+  country_code: { cca2?: string, name?: string, callingCode?:number };
   state: string;
   city: string;
   street: string;
@@ -38,7 +38,7 @@ export default function useConfirmAddressContainer() {
     resolver: yupResolver(addressSchema),
     defaultValues: {
       name: listing?.name || 'New Listing',
-      country_code: { cca2: listing?.country_code || '', },
+      country_code: { cca2: listing?.country_code || '',name: listing?.country_name },
       state: listing?.state || '',
       city: listing?.city || '',
       street: listing?.street || '',
@@ -46,7 +46,8 @@ export default function useConfirmAddressContainer() {
     },
   });
 
-  console.log('errors',errors);
+
+  console.log('errors',propertyDetail?.name);
   
 
   const {
@@ -126,7 +127,7 @@ export default function useConfirmAddressContainer() {
       listing_id,
       user_id: Number(user?.id),
       listing: {
-        country_code: data.country_code?.cca2 || '',
+        country_code: data.country_code?.cca2,
         state: data.state,
         city: data.city,
         street: data.street,

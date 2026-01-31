@@ -70,6 +70,7 @@ const UserManagementScreen = () => {
         renderItem={renderUser}
         listEmptyText="No users found"
         onRefresh={refetch}
+        keyExtractor={(item) => item?.details?.id?.toString()}
         contentContainerStyle={styles.scrollContent}
         HeaderComponent={
           <View style={styles.titleRow}>

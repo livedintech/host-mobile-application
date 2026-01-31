@@ -21,10 +21,10 @@ interface GooglePlaceDetail {
   formatted_address: string;
 }
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyA8teM2pHaQIGaaChl1_VEWEUgYssku7rI';
+const GOOGLE_MAPS_APIKEY = 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao';
 
 export default function useCreateListingStepOneLocationContainer() {
-  const { updateListing, listing_id,channel_id } = useCreateListingStore();
+  const { updateListing, listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore()
   const mapRef = useRef<any>(null);
   const placesRef = useRef<any>(null);
@@ -203,13 +203,10 @@ export default function useCreateListingStepOneLocationContainer() {
     const payload = {
       channel_id,
       listing_id,
-      user_id: Number(user?.id),
+      user_id: user?.id,
       listing: {
         lat: region.latitude,
         lng: region.longitude,
-        // lat: 24.7254554,
-        // lng: 46.492878,
-        // street: '',
         name: 'New Listing'
       }
     }
