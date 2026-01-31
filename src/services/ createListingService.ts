@@ -76,7 +76,7 @@ export const getManageListingDetailById = async (
 };
 
 export const editListingApi = async (payload: CreateListingDetailsPayload) => {
-    const { ok, response, data } = await apiService.put(
+    const { ok, response, data } = await apiService.post(
         SERVICE_CONFIG_URLS.APP.EDIT_MANAGE_YOUR_LISTING_DETAIL,
         payload,
     );
@@ -87,7 +87,7 @@ export const editListingApi = async (payload: CreateListingDetailsPayload) => {
 };
 
 export const editListingPriceApi = async (payload: createListingPricingPayload) => {
-    const { ok, response, data } = await apiService.put(
+    const { ok, response, data } = await apiService.post(
         SERVICE_CONFIG_URLS.APP.EDIT_MANAGE_YOUR_LISTING_DETAIL_PRICE,
         payload,
     );

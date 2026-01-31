@@ -16,6 +16,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const PropertyDetailScreen = () => {
   const { propertyData, handleEditSection, handleMenuAction, refetch, isLoading } = usePropertyDetailContainer();
+  const isDocumentExist = propertyData?.documents?.length > 0
 
   const InfoCard = ({ title, icon, onEdit, children }: any) => (
     <View style={styles.card}>
@@ -41,44 +42,45 @@ const PropertyDetailScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* Header with Menu Dots */}
+      <View style={styles.header}>
+        <AppText text={propertyData.title} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+
+        <Menu>
+          <MenuTrigger>
+            <View style={{ padding: 5 }}>
+              <Svgicons path="menuDotsIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
+            </View>
+          </MenuTrigger>
+
+          <MenuOptions customStyles={optionsStyles}>
+            <MenuOption onSelect={() => handleMenuAction('channel')} style={styles.menuItem}>
+              <AppText text="Channel" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
+              <Svgicons path="channelIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
+            </MenuOption>
+
+            <MenuOption onSelect={() => handleMenuAction('task')} style={styles.menuItem}>
+              <AppText text="Task" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
+              <Svgicons path="taskIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
+            </MenuOption>
+
+            <MenuOption onSelect={() => handleMenuAction('calendar')} style={styles.menuItem}>
+              <AppText text="Calendar" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
+              <Svgicons path="calendarGridIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
+            </MenuOption>
+
+            <MenuOption onSelect={() => handleMenuAction('delete')} style={styles.menuItem}>
+              <AppText text="Delete Property" fontSize={16} color={Colors.INDIAN_RED} style={styles.menuText} />
+              <Svgicons path="deleteIcon" size={20} color={Colors.INDIAN_RED} />
+            </MenuOption>
+          </MenuOptions>
+        </Menu>
+      </View>
       <RefreshableScrollView
         isLoading={isLoading}
         onRefresh={refetch} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        {/* Header with Menu Dots */}
-        <View style={styles.header}>
-          <AppText text={propertyData.title} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
 
-          <Menu>
-            <MenuTrigger>
-              <View style={{ padding: 5 }}>
-                <Svgicons path="menuDotsIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
-              </View>
-            </MenuTrigger>
-
-            <MenuOptions customStyles={optionsStyles}>
-              <MenuOption onSelect={() => handleMenuAction('channel')} style={styles.menuItem}>
-                <AppText text="Channel" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="channelIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
-              </MenuOption>
-
-              <MenuOption onSelect={() => handleMenuAction('task')} style={styles.menuItem}>
-                <AppText text="Task" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="taskIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
-              </MenuOption>
-
-              <MenuOption onSelect={() => handleMenuAction('calendar')} style={styles.menuItem}>
-                <AppText text="Calendar" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="calendarGridIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
-              </MenuOption>
-
-              <MenuOption onSelect={() => handleMenuAction('delete')} style={styles.menuItem}>
-                <AppText text="Delete Property" fontSize={16} color={Colors.INDIAN_RED} style={styles.menuText} />
-                <Svgicons path="deleteIcon" size={20} color={Colors.INDIAN_RED} />
-              </MenuOption>
-            </MenuOptions>
-          </Menu>
-        </View>
 
         {/* Address Card */}
         <InfoCard title="Address" icon="pinLocationIcon" onEdit={() => handleEditSection('Address')}>
@@ -105,8 +107,8 @@ const PropertyDetailScreen = () => {
               <Svgicons path="imageIcon" size={20} color={Colors.BRUNSWICK_GREEN} ml={8} />
             </View>
           </View>
-          <ButtonView style={styles.mediaButton} onPress={() => handleEditSection('Interior')}>
-            <Svgicons path="attachmentIcon" size={18} />
+          <ButtonView style={[styles.mediaButton, { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Interior')}>
+            <Svgicons path="checkCircleIcon" size={18} />
             <AppText text="Update Interior Images" ml={10} />
           </ButtonView>
           <ButtonView style={styles.mediaButton} onPress={() => handleEditSection('Exterior')}>
@@ -156,9 +158,12 @@ const PropertyDetailScreen = () => {
               <Svgicons path="docIcon" size={20} color={Colors.BRUNSWICK_GREEN} ml={8} />
             </View>
           </View>
-          <ButtonView style={styles.docButton} onPress={() => handleEditSection('Documents')}><AppText text="Update Property Ownership Doc" /></ButtonView>
-          <ButtonView style={styles.docButton} onPress={() => handleEditSection('Documents')}><AppText text="Update Authority License" /></ButtonView>
-          <ButtonView style={styles.docButton} onPress={() => handleEditSection('Documents')}><AppText text="Update Aqama/National ID" /></ButtonView>
+          <ButtonView style={[styles.docButton, isDocumentExist && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>
+            <AppText text="Update Property Ownership Doc" color={isDocumentExist ? Colors.WHITE : Colors.BLACK} />
+            {isDocumentExist && <Svgicons path="CheckboxCheckedIcon" size={30} />}
+          </ButtonView>
+          <ButtonView style={[styles.docButton, isDocumentExist && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}><AppText text="Update Authority License" color={isDocumentExist ? Colors.WHITE : Colors.BLACK} />{isDocumentExist && <Svgicons path="CheckboxCheckedIcon" size={30} />}</ButtonView>
+          <ButtonView style={[styles.docButton, isDocumentExist && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}><AppText text="Update Aqama/National ID" color={isDocumentExist ? Colors.WHITE : Colors.BLACK} />{isDocumentExist && <Svgicons path="CheckboxCheckedIcon" size={30} />}</ButtonView>
         </View>
       </RefreshableScrollView>
     </View>
@@ -181,8 +186,8 @@ const optionsStyles = {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
-  scrollContent: { padding: 20, paddingBottom: 50 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
+  scrollContent: { paddingHorizontal: Metrics.baseMargin, paddingBottom: Metrics.verticalScale(50) },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25, paddingHorizontal: Metrics.baseMargin },
   card: {
     borderWidth: 1,
     borderColor: '#E0E0E0',
@@ -213,6 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 48,
     marginTop: 10,
+    flexDirection: 'row'
   },
   menuItem: {
     flexDirection: 'row',

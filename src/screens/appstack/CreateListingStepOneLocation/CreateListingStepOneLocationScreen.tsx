@@ -51,7 +51,7 @@ const CreateListingStepOneLocationScreen = () => {
               }
             }}
             query={{
-              key: 'AIzaSyA8teM2pHaQIGaaChl1_VEWEUgYssku7rI', 
+              key: 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao', 
               language: 'en',
             }}
             fetchDetails={true}

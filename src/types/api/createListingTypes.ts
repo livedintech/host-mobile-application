@@ -22,10 +22,10 @@ export interface ListingDetails {
   }
 }
 export interface CreateListingDetailsPayload {
-  user_id: number;
-  channel_id: string | null;
-  listing_id: number | null;
-  listing: ListingDetails;
+  user_id?: string;
+  channel_id?: string | null;
+  listing_id?: string | null;
+  listing?: ListingDetails;
 
 }
 export interface CreateListingDetailsResponse {
@@ -37,8 +37,8 @@ export interface CreateListingDetailsResponse {
 }
 
 export interface createListingPricingPayload {
-  channel_id: string | null;
-  listing_id: number | null;
+  channel_id: string;
+  listing_id: string
   listing_currency: string;
   user_id: number;
   prices: {
