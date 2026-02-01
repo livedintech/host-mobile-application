@@ -29,7 +29,7 @@ const CreateTaskScreen = () => {
     userOptions,
     isCleaningCategory,
     wordCount,
-    proceedToChecklist
+    // proceedToChecklist
   } = CreateTaskContainer();
 
   return (

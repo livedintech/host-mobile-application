@@ -34,7 +34,7 @@ export const USER_OPTIONS = [
 ];
 
 const CreateTaskContainer = () => {
-  const setDraft = useTaskDraftStore(s => s.setDraft);
+  const { setDraft, isCleaningCategory } = useTaskDraftStore();
 
   const {
     control,
@@ -58,17 +58,30 @@ const CreateTaskContainer = () => {
 
   const [wordCount, setWordCount] = useState(0);
 
-  const selectedCategory = watch('category');
   const taskDescription = watch('taskDescription');
+  const selectedCategory = watch('category');
 
+  // 🔹 Sync category → store
+  useEffect(() => {
+    if (selectedCategory) {
+      setDraft({ category: selectedCategory });
+
+      // auto-clear date/time when cleaning
+      if (selectedCategory === 'cleaning') {
+        setValue('selectDate', '');
+        setValue('selectStartTime', '');
+        setValue('selectEndTime', '');
+      }
+    }
+  }, [selectedCategory]);
+
+  // 🔹 Word count
   useEffect(() => {
     const words = taskDescription
       ? taskDescription.trim().split(/\s+/).length
       : 0;
     setWordCount(words);
   }, [taskDescription]);
-
-  const isCleaningCategory = selectedCategory === 'cleaning';
 
   const onSubmit = (data: CreateTaskFormData) => {
     setDraft({
@@ -77,20 +90,11 @@ const CreateTaskContainer = () => {
       category: data.category,
       listingSelection: data.listingSelection,
       assignTask: data.assignTask,
-      selectDate: data.selectDate || '',
-      selectStartTime: data.selectStartTime || '',
-      selectEndTime: data.selectEndTime || '',
+      selectDate: data.selectDate,
+      selectStartTime: data.selectStartTime,
+      selectEndTime: data.selectEndTime,
     });
 
-    setValue('selectDate', '');
-    setValue('selectStartTime', '');
-    setValue('selectEndTime', '');
-
-    navigate(NavigationRoutes.APP_STACK.CREATE_CHECKLIST);
-  };
-
-  //
-  const proceedToChecklist = () => {
     navigate(NavigationRoutes.APP_STACK.CREATE_CHECKLIST);
   };
 
@@ -101,11 +105,8 @@ const CreateTaskContainer = () => {
     categoryOptions: CATEGORY_OPTIONS,
     listingOptions: LISTING_OPTIONS,
     userOptions: USER_OPTIONS,
-    selectedCategory,
     isCleaningCategory,
     wordCount,
-    setValue,
-    proceedToChecklist,
   };
 };
 

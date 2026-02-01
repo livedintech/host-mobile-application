@@ -18,6 +18,7 @@ import { useTaskStore } from '@/store/taskStore';
 import { Task } from '@/types/api/taskManagentType';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
+import { useTaskDraftStore } from '@/store/taskDraftStore';
 
 const TaskListScreen: React.FC = () => {
   const {
@@ -32,6 +33,9 @@ const TaskListScreen: React.FC = () => {
     handleSubmit,
   } = TaskListContainer();
   const { tasks } = useTaskStore();
+  const {draft} = useTaskDraftStore();
+  console.log("getAllTask",tasks);
+  console.log("draft",draft)
 
   const dropdownData = [
     { label: 'Option 1', value: '1' },

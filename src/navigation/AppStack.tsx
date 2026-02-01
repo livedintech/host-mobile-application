@@ -316,6 +316,16 @@ const AppStack = () => {
             .default
         }
       />
+            <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.EDIT_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/EditTask/EditTaskScreen')
+            .default
+        }
+      />
+      {/* TASK MANAGAMENT ROUTES END*/}
+
     </Stack.Navigator>
   );
 };

@@ -1,17 +1,17 @@
 import { create } from 'zustand';
-
-import {TaskStatus,Task} from "@/types/api/taskManagentType"
+import { Task, TaskStatus } from "@/types/api/taskManagentType";
 
 interface TaskStore {
   tasks: Task[];
   addTask: (task: Omit<Task, 'id' | 'status'>) => void;
+  updateTaskStatus: (id: string, status: TaskStatus) => void;
 }
 
-export const useTaskStore = create<TaskStore>(set => ({
+export const useTaskStore = create<TaskStore>((set) => ({
   tasks: [],
 
-  addTask: task =>
-    set(state => ({
+  addTask: (task) =>
+    set((state) => ({
       tasks: [
         ...state.tasks,
         {
@@ -20,5 +20,10 @@ export const useTaskStore = create<TaskStore>(set => ({
           ...task,
         },
       ],
+    })),
+
+  updateTaskStatus: (id, status) =>
+    set((state) => ({
+      tasks: state.tasks.map((t) => (t.id === id ? { ...t, status } : t)),
     })),
 }));

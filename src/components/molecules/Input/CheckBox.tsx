@@ -10,6 +10,7 @@ interface CheckboxProps {
 const Checkbox = ({ isChecked, onPress }: CheckboxProps) => (
   <TouchableOpacity 
     onPress={onPress} 
+    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     style={[styles.container, isChecked && styles.checkedContainer]}
   >
     {/* {isChecked && <Icon name="check" size={14} color="#FFF" />} */}
