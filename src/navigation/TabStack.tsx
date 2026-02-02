@@ -29,7 +29,8 @@ const TabStack = () => {
       <Tab.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
-        component={require('@/screens/appstack/Task/TaskScreen').default}
+        // component={require('@/screens/appstack/Task/TaskScreen').default}
+        component={require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen').default}
       />
       <Tab.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}

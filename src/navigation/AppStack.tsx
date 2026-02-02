@@ -43,8 +43,13 @@ const AppStack = () => {
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
+        // getComponent={() =>
+        //   require('@/screens/appstack/Task/TaskScreen').default
+        // }
+
         getComponent={() =>
-          require('@/screens/appstack/Task/TaskScreen').default
+          require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen')
+            .default
         }
       />
       <Stack.Screen
@@ -293,6 +298,34 @@ const AppStack = () => {
             .default
         }
       />
+      {/* TASK MANAGAMENT ROUTES */}
+
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/CreateTask/CreateTaskScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_CHECKLIST}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/CreateChecklist/CreateChecklistScreen')
+            .default
+        }
+      />
+            <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.EDIT_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/EditTask/EditTaskScreen')
+            .default
+        }
+      />
+      {/* TASK MANAGAMENT ROUTES END*/}
+
     </Stack.Navigator>
   );
 };

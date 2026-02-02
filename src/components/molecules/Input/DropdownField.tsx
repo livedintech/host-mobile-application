@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { Controller, Control, FieldErrors , RegisterOptions} from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -19,6 +19,7 @@ interface DropdownFieldProps {
     data: DropdownItem[];
     placeholder?: string;
     disabled?: boolean;
+    rules?: RegisterOptions;
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
@@ -29,6 +30,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
     data,
     placeholder = 'Select',
     disabled = false,
+      rules,
+
 }) => {
     const error = errors[name]?.message as string;
 
@@ -38,6 +41,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             <Controller
                 control={control}
                 name={name}
+                    rules={rules}
                 render={({ field: { onChange, value } }) => (
                     <Dropdown
                         inputSearchStyle={styles.inputSearchStyle}
