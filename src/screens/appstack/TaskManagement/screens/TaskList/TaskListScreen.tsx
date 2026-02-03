@@ -33,9 +33,9 @@ const TaskListScreen: React.FC = () => {
     handleSubmit,
   } = TaskListContainer();
   const { tasks } = useTaskStore();
-  const {draft} = useTaskDraftStore();
-  console.log("getAllTask",tasks);
-  console.log("draft",draft)
+  const { draft } = useTaskDraftStore();
+  console.log('getAllTask', tasks);
+  console.log('draft', draft);
 
   const dropdownData = [
     { label: 'Option 1', value: '1' },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: 100, // Adjusted to leave room for the bottom tab bar if needed
+    bottom: 20,
     left: 20,
     right: 20,
   },

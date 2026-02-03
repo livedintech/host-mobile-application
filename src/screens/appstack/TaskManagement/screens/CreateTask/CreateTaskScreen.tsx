@@ -29,7 +29,6 @@ const CreateTaskScreen = () => {
     userOptions,
     isCleaningCategory,
     wordCount,
-    // proceedToChecklist
   } = CreateTaskContainer();
 
   return (
@@ -78,13 +77,13 @@ const CreateTaskScreen = () => {
           multiline
           descriptionLength={wordCount}
           wordLimit={250}
-        //   rules={{
-        //     required: 'Description is required',
-        //     minLength: {
-        //       value: 10,
-        //       message: 'Description must be at least 10 characters',
-        //     },
-        //   }}
+          //   rules={{
+          //     required: 'Description is required',
+          //     minLength: {
+          //       value: 10,
+          //       message: 'Description must be at least 10 characters',
+          //     },
+          //   }}
         />
 
         {/* Category Dropdown */}
@@ -171,18 +170,15 @@ const CreateTaskScreen = () => {
           </>
         )}
 
-        {/* Assign Task Field - Only show if cleaning */}
-        {isCleaningCategory && (
-          <DropdownField
-            name="assignTask"
-            control={control}
-            errors={errors}
-            label="Assign Task"
-            data={userOptions}
-            placeholder="Select User"
-            rules={{ required: 'User assignment is required' }}
-          />
-        )}
+        <DropdownField
+          name="assignTask"
+          control={control}
+          errors={errors}
+          label="Assign Task"
+          data={userOptions}
+          placeholder="Select User"
+          rules={{ required: 'User assignment is required' }}
+        />
 
         {/* Next Button */}
         <AppButton
