@@ -1,4 +1,5 @@
 const authController = 'api/v2';
+const api = 'api';
 
 export const SERVICE_CONFIG_URLS = {
   AUTH: {
@@ -61,5 +62,11 @@ export const SERVICE_CONFIG_URLS = {
     EDIT_STATUS_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}/status`,
 
 
+    GET_CATEGORY_TASK_MANAGEMENT:`${api}/task-types`,
+    GET_LISTING_TASK_MANAGEMENT:`${api}/host-active-listings`,
+    GET_VENDOR_TASK_MANAGEMENT:`${api}/host-vendors`,
+    CREATE_TASK_MANAGEMENT:`${api}/host-create-task`,
+GET_TASK_MANAGEMENT_CHECKLIST: `${api}/get-task-checklist/{id}/{tasktype}`,
+    
   }
 };

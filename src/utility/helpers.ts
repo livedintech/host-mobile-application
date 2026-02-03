@@ -54,3 +54,18 @@ export const maskPhoneNumber = (number: string) => {
 
 //   return `(+${countryCode}) ${firstDigit}XX XXX XXX`;
 // };
+
+
+
+export const convertTo24Hour = (time12h?: string) => {
+  if (!time12h) return '';
+  const [time, modifier] = time12h.split(' ');
+  let [hours, minutes] = time.split(':').map(Number);
+
+  if (modifier.toLowerCase() === 'pm' && hours < 12) hours += 12;
+  if (modifier.toLowerCase() === 'am' && hours === 12) hours = 0;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}`;
+};

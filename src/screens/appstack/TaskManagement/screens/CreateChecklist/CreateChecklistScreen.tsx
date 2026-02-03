@@ -19,6 +19,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import CreateChecklistContainer, {
 } from '../../containers/CreateChecklist/CreateChecklistContainer';
 import { ChecklistSection } from '@/types/api/taskManagentType';
+import { useTaskDraftStore } from '@/store/taskDraftStore';
 
 const CreateChecklistScreen = () => {
   const {
@@ -38,8 +39,10 @@ const CreateChecklistScreen = () => {
     onConfirmAddSection,
     activeSectionId,
   } = CreateChecklistContainer();
+ 
 
   const renderHeader = () => (
+    
     <View style={styles.topHeader}>
       <View style={styles.titleRow}>
         <AppText text="Check-list Managment" type="Bold" fontSize={24} color={Colors.PINE_FOREST} />

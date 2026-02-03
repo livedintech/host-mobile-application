@@ -37,7 +37,7 @@ export const useTaskDraftStore = create<TaskDraftStore>((set) => ({
 
       return {
         draft: nextDraft,
-        isCleaningCategory: nextDraft.category === 'cleaning',
+        isCleaningCategory: Number(nextDraft.category) === 18,
       };
     }),
 

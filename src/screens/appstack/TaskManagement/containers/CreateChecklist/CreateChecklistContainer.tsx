@@ -40,7 +40,12 @@ const CreateChecklistContainer = () => {
   const addTask = useTaskStore(s => s.addTask);
   const {draft, clearDraft, setDraft, isCleaningCategory} = useTaskDraftStore();
 
-  const [data, setData] = useState<ChecklistSection[]>(MOCK_DATA);
+  console.log("draftChecklist",draft?.checklistData)
+  
+
+  // const [data, setData] = useState<ChecklistSection[]>(MOCK_DATA);
+    const [data, setData] = useState<ChecklistSection[]>([]);
+
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(['1']);
@@ -53,6 +58,9 @@ const CreateChecklistContainer = () => {
         selectedChecklistItems: selectedItems 
     });
   }, [data, selectedItems]);
+
+
+  
 
 
   const {
