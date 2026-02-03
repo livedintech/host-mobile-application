@@ -35,7 +35,7 @@ const ManageListingScreen = () => {
             />
             <View style={{ flex: 1 }}>
               <AppText
-                text={item?.details?.name}
+                text={item?.name}
                 color={Colors.PINE_FOREST}
                 fontSize={14}
               />
@@ -50,7 +50,7 @@ const ManageListingScreen = () => {
             />
             <View style={{ flex: 1 }}>
               <AppText
-                text={item?.details?.id?.toString()}
+                text={item?.id?.toString()}
                 color={Colors.PINE_FOREST}
                 fontSize={14}
               />
@@ -66,7 +66,7 @@ const ManageListingScreen = () => {
             />
             <View style={{ flex: 1 }}>
               <AppText
-                text={`${item?.details?.name},${item?.details?.apt},${item?.details?.state},${item?.details?.city}  `}
+                text={`${item?.name},${item?.apt},${item?.state},${item?.city}  `}
                 color={Colors.PINE_FOREST}
                 fontSize={14}
                 numberOfLines={1}
@@ -79,7 +79,7 @@ const ManageListingScreen = () => {
         <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
           <Pressable
             style={styles.arrowCircle}
-            onPress={() => goToPropertyDetail(item?.details)}
+            onPress={() => goToPropertyDetail(item)}
           >
             <Svgicons path="arrowRightIcon" size={22} />
           </Pressable>

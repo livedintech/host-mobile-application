@@ -10,7 +10,7 @@ type ChatListParams = {
   snoozed?: boolean;
   marketplace?: boolean;
 };
-2
+
 export const getChatListApi = async ({
   page = 1,
   limit = 10,
@@ -20,6 +20,7 @@ export const getChatListApi = async ({
     SERVICE_CONFIG_URLS.APP.GET_CHAT_LIST,
     {},
   );
+
   const res = await apiService.get(url, {
     page,
     limit,
@@ -88,4 +89,31 @@ export const createInboxUnSnoozeApi = async (payload: createChatSnoozeByConversa
         return data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// Chat Detail Api
+export const getChatDetailApi = async (payload: createChatArchiveByConversationIdPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_ARCHIVE,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.get(url, {}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+//Get Chat List City 
+export const getChatListCityApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_CHAT_LIST_CITY
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
 };

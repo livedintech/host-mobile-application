@@ -19,11 +19,13 @@ export default function usePropertyDetailContainer() {
       }),
     enabled: Boolean(listing_id),
   });
+  console.log('data...', data?.data?.listing);
 
 
-  const listing = data?.data?.payload?.listing;
-  const photos = data?.data?.payload?.photos || [];
-  const documents = data?.data?.payload?.documents || [];
+
+  const listing = data?.data?.listing;
+  const photos = data?.data?.listing?.photos || [];
+  const documents = data?.data?.listing?.documents || [];
 
   const propertyData = {
     title: listing?.name || '',
@@ -99,8 +101,12 @@ export default function usePropertyDetailContainer() {
       navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, { paramData: data?.data })
     }
     if (section === 'Interior') {
-      navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS, { paramData: data?.data })
+      navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS, {
+        isEdit: true,
+        existingPhotos: data?.data?.listing?.photos?.Interior || [],
+      });
     }
+
     if (section === 'Exterior') {
       navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, { paramData: data?.data })
     }

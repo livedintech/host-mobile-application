@@ -16,7 +16,15 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const PropertyDetailScreen = () => {
   const { propertyData, handleEditSection, handleMenuAction, refetch, isLoading } = usePropertyDetailContainer();
-  const isDocumentExist = propertyData?.documents?.length > 0
+  const isOwnership = propertyData?.documents?.ownership?.length > 0
+  const isLicense = propertyData?.documents?.license?.length > 0
+  const isNational_id = propertyData?.documents?.national_id?.length > 0
+  
+  const isInterior = propertyData?.photos?.Interior?.length > 0
+  const isExterior = propertyData?.photos?.Exterior?.length > 0
+  const isBathroom = propertyData?.photos?.Bathroom?.length > 0
+
+
 
   const InfoCard = ({ title, icon, onEdit, children }: any) => (
     <View style={styles.card}>
@@ -107,17 +115,17 @@ const PropertyDetailScreen = () => {
               <Svgicons path="imageIcon" size={20} color={Colors.BRUNSWICK_GREEN} ml={8} />
             </View>
           </View>
-          <ButtonView style={[styles.mediaButton, { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Interior')}>
-            <Svgicons path="checkCircleIcon" size={18} />
-            <AppText text="Update Interior Images" ml={10} />
+          <ButtonView style={[styles.mediaButton, isInterior && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Interior')}>
+             <Svgicons path={isInterior ? 'CheckboxCheckedIcon' : 'attachmentIcon'} size={30} />
+            <AppText text="Update Interior Images" ml={10}  color={isInterior ? Colors.WHITE : Colors.BLACK}/>
           </ButtonView>
-          <ButtonView style={styles.mediaButton} onPress={() => handleEditSection('Exterior')}>
-            <Svgicons path="attachmentIcon" size={18} />
-            <AppText text="Update Exterior Images" ml={10} />
+          <ButtonView style={[styles.mediaButton,isExterior && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Exterior')}>
+           <Svgicons path={isExterior ? 'CheckboxCheckedIcon' : 'attachmentIcon'} size={30} />
+            <AppText text="Update Exterior Images" ml={10} color={isExterior ? Colors.WHITE : Colors.BLACK}/>
           </ButtonView>
-          <ButtonView style={styles.mediaButton} onPress={() => handleEditSection('Bathroom')}>
-            <Svgicons path="attachmentIcon" size={18} />
-            <AppText text="Update Bathroom Images" ml={10} />
+          <ButtonView style={[styles.mediaButton,isBathroom && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Bathroom')}>
+            <Svgicons path={isBathroom ? 'CheckboxCheckedIcon' : 'attachmentIcon'} size={30} />
+            <AppText text="Update Bathroom Images" ml={10} color={isBathroom ? Colors.WHITE : Colors.BLACK}/>
           </ButtonView>
         </View>
 
@@ -158,12 +166,12 @@ const PropertyDetailScreen = () => {
               <Svgicons path="docIcon" size={20} color={Colors.BRUNSWICK_GREEN} ml={8} />
             </View>
           </View>
-          <ButtonView style={[styles.docButton, isDocumentExist && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>
-            <AppText text="Update Property Ownership Doc" color={isDocumentExist ? Colors.WHITE : Colors.BLACK} />
-            {isDocumentExist && <Svgicons path="CheckboxCheckedIcon" size={30} />}
+          <ButtonView style={[styles.docButton, isOwnership && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>
+             {isOwnership && <Svgicons path="CheckboxCheckedIcon" size={30} />}
+            <AppText text="Update Property Ownership Doc" color={isOwnership ? Colors.WHITE : Colors.BLACK} />
           </ButtonView>
-          <ButtonView style={[styles.docButton, isDocumentExist && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}><AppText text="Update Authority License" color={isDocumentExist ? Colors.WHITE : Colors.BLACK} />{isDocumentExist && <Svgicons path="CheckboxCheckedIcon" size={30} />}</ButtonView>
-          <ButtonView style={[styles.docButton, isDocumentExist && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}><AppText text="Update Aqama/National ID" color={isDocumentExist ? Colors.WHITE : Colors.BLACK} />{isDocumentExist && <Svgicons path="CheckboxCheckedIcon" size={30} />}</ButtonView>
+          <ButtonView style={[styles.docButton, isLicense && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>{isLicense && <Svgicons path="CheckboxCheckedIcon" size={30} />}<AppText text="Update Authority License" color={isLicense ? Colors.WHITE : Colors.BLACK} /></ButtonView>
+          <ButtonView style={[styles.docButton, isNational_id && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>{isNational_id && <Svgicons path="CheckboxCheckedIcon" size={30} />}<AppText text="Update Aqama/National ID" color={isNational_id ? Colors.WHITE : Colors.BLACK} /></ButtonView>
         </View>
       </RefreshableScrollView>
     </View>

@@ -132,7 +132,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         text1: message,
       });
       queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.Mana]
+        queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT]
       });
       goBack()
     },

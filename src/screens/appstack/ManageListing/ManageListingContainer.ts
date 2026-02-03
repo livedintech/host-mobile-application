@@ -11,28 +11,8 @@ import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 export default function useManageListingContainer() {
   const { user } = useAuthStore();
-  const { updateListing, setListingId, setChannelId } = useCreateListingStore()
+  const { updateListing, setListingId, setChannelId } = useCreateListingStore();
 
-  const [listings] = useState([
-    {
-      id: '71229342',
-      name: 'Alpha House',
-      address: 'Street XYZ, Al Madinah, Madina Saudi Arabia',
-      image: require('@/assets/img/property_placeholder.png'), // Replace with your actual image path
-    },
-    {
-      id: '71229343',
-      name: 'Alpha House',
-      address: 'Street XYZ, Al Madinah, Madina Saudi Arabia',
-      image: require('@/assets/img/property_placeholder.png'),
-    },
-    {
-      id: '71229344',
-      name: 'Alpha House',
-      address: 'Street XYZ, Al Madinah, Madina Saudi Arabia',
-      image: require('@/assets/img/property_placeholder.png'),
-    },
-  ]);
   const { data,refetch,isLoading } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
     queryFn: () =>
@@ -50,7 +30,7 @@ export default function useManageListingContainer() {
       name,
     })
     setChannelId("9bd50e4a-9336-44a2-93b9-dac6f9f8b57b")
-    setListingId(id)
+    setListingId(id.toString())
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
   };
 

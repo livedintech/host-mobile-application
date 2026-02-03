@@ -34,6 +34,6 @@ export interface creatGathernChannelResponse {
 }
 
 export interface getManageListingDetailByIdApiTypePayload {
-  listing_id: number;
+  listing_id: string;
   user_id: number,
 }

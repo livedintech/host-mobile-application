@@ -324,7 +324,62 @@ const AppStack = () => {
             .default
         }
       />
-      {/* TASK MANAGAMENT ROUTES END*/}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.SAVED_REPLIES}
+        getComponent={() =>
+          require('@/screens/appstack/SavedReplies/SavedRepliesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.SAVED_REPLIES_CREATE_EDIT}
+        getComponent={() =>
+          require('@/screens/appstack/SavedRepliesCreateEdit/SavedRepliesCreateEditScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE}
+        getComponent={() =>
+          require('@/screens/appstack/AutomationTemplate/AutomationTemplateScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_EDIT_AUTOMATION_TEMPLATE}
+        getComponent={() =>
+          require('@/screens/appstack/AutomationTemplateCreateEdit/AutomationTemplateCreateEditScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.AI_AUTO_REPLY}
+        getComponent={() =>
+          require('@/screens/appstack/AIAutoReply/AIAutoReplyScreen')
+            .default
+        }
+      />
+       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_EDIT_AI_AUTO_REPLY}
+        getComponent={() =>
+          require('@/screens/appstack/CreateEditAIRule/CreateEditAIRuleScreen')
+            .default
+        }
+      />
+       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.WHAT_AI_KNOWS}
+        getComponent={() =>
+          require('@/screens/appstack/WhatAIKnows/WhatAIKnowsScreen')
+            .default
+        }
+      />
 
     </Stack.Navigator>
   );

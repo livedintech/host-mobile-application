@@ -40,6 +40,14 @@ export const SERVICE_CONFIG_URLS = {
     GET_USER_MANAGEMENT:`${authController}/host/users`,
     EDIT_USER_MANAGEMENT:`${authController}/host/users/{id}`,
     DELETE_USER_MANAGEMENT:`${authController}/host/users/{id}`,
-
+    GET_CHAT_LIST_CITY:`${authController}/states`,
+    GET_SAVED_REPLIES:`${authController}/chat/saved-replies`,
+    CREATE_SAVED_REPLIES:`${authController}/chat/saved-replies`,
+    EDIT_SAVED_REPLIES:`${authController}/chat/saved-replies/{id}`,
+    DELETE_SAVED_REPLIES:`${authController}/chat/saved-replies/{id}`,
+    GET_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations`,
+    CREATE_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations`,
+    EDIT_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations/{id}`,
+    DELETE_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations/{id}`,
   }
 };
