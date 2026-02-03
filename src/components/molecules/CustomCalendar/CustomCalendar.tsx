@@ -1,145 +1,125 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { AirbnbIcon, GathernIcon } from './CustomIcons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const INITIAL_BOOKINGS: any = {
-  '2026-01-01': { type: 'start', color: '#D32F2F', guest: 'Ahmed Ali', ota: 'airbnb' },
-  '2026-01-02': { type: 'middle', color: '#EF9A9A' },
-  '2026-01-03': { type: 'middle', color: '#EF9A9A', guest: 'Ahmed Ali', ota: 'airbnb' },
-  '2026-01-04': { type: 'middle', color: '#EF9A9A' },
-  '2026-01-05': { type: 'end', color: '#EF9A9A' },
-  '2026-01-08': { type: 'start', color: '#D32F2F' },
-  '2026-01-09': { type: 'start', color: '#B39DDB', guest: 'Fayyaz Ahmed', ota: 'gathern' },
-  '2026-01-10': { type: 'middle', color: '#F3E5F5' },
+  '2026-01-01': { type: 'single', color: '#D32F2F', textColor: '#FFF' },
+  '2026-01-02': { type: 'start', color: '#F8B6B6' },
+  '2026-01-03': { type: 'middle', color: '#F8B6B6' },
+  '2026-01-04': { type: 'middle', color: '#F8B6B6', showLabel: true, guest: 'Ahmed', ota: 'airbnb' },
+  '2026-01-05': { type: 'middle', color: '#F8B6B6' },
+  '2026-01-06': { type: 'middle', color: '#F8B6B6' },
+  '2026-01-07': { type: 'end', color: '#F8B6B6' },
+  '2026-01-08': { type: 'single', color: '#D32F2F', textColor: '#FFF' },
+  '2026-01-09': { type: 'single', color: '#B39DDB', textColor: '#FFF' },
+  '2026-01-10': { type: 'start', color: '#F3E5F5' },
   '2026-01-11': { type: 'middle', color: '#F3E5F5' },
-  '2026-01-12': { type: 'end', color: '#F3E5F5' },
-};
-
-const PRICES: any = {
-  '2026-01-16': '5000',
-  'DEFAULT': '500',
+  '2026-01-12': { type: 'middle', color: '#F3E5F5', showLabel: true, guest: 'Fayyaz', ota: 'gathern' },
+  '2026-01-13': { type: 'middle', color: '#F3E5F5' },
+  '2026-01-14': { type: 'end', color: '#F3E5F5' },
+  '2026-01-15': { type: 'single', color: '#B39DDB', textColor: '#FFF' },
 };
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
-  const isSelected = !!marking;
-  const isStart = marking?.type === 'start';
-  const isEnd = marking?.type === 'end';
-  const isMiddle = marking?.type === 'middle';
-  const isActiveSelection = marking?.activeSelection;
-
-  const getBgColor = () => {
-    if (marking?.color) return marking.color;
-    if (isActiveSelection) return '#E8F2EF';
-    return 'transparent';
-  };
-
-  const dailyPrice = PRICES[date.dateString] || PRICES['DEFAULT'];
+  const isActive = !!marking;
+  const { type, color, textColor } = marking || {};
 
   return (
     <TouchableOpacity
       style={styles.dayContainer}
       onPress={() => onPress(date)}
-      activeOpacity={0.9}
+      activeOpacity={1}
     >
-      {/* 1. SELECTION/BOOKING BACKGROUND */}
-      {(marking?.color || isActiveSelection) && (
-        <View style={[
-          styles.selectionBg,
-          { backgroundColor: getBgColor() },
-          isStart && styles.startRadius,
-          isEnd && styles.endRadius,
-          isMiddle && styles.noRadius,
-          (isActiveSelection && !marking?.color) && styles.fullRadius,
-        ]} />
+      {/* BACKGROUND BAR */}
+      {isActive && (
+        <View
+          style={[
+            styles.selectionBg,
+            { backgroundColor: color },
+            type === 'single' && styles.circleBg,
+            type === 'start' && styles.startEdge,
+            type === 'middle' && styles.middleEdge,
+            type === 'end' && styles.endEdge,
+          ]}
+        />
       )}
 
-      {/* 2. FOCUS RING */}
-      {isActiveSelection && (
-        <View style={styles.userSelectionRing} />
-      )}
-
-      {/* 3. OTA BRANDING */}
-      {marking?.guest && (
-        <View style={styles.otaHeader}>
-           <Text style={styles.otaIcon}>{marking.ota === 'airbnb' ? '󰘄' : '󰠄'}</Text>
-           <Text style={styles.guestName} numberOfLines={1}>
-             {marking.guest}
-           </Text>
+      {/* CENTER LABEL (Guest Name & OTA Icon) */}
+      {marking?.showLabel && (
+        <View style={styles.overlayContainer}>
+          <View style={styles.otaRow}>
+            {marking.ota === 'airbnb' ? (
+              <AirbnbIcon size={ms(11)} />
+            ) : (
+              <GathernIcon size={ms(11)} />
+            )}
+            <Text
+              style={styles.guestNameText}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {marking.guest}
+            </Text>
+          </View>
         </View>
       )}
 
-      {/* 4. DATE NUMBER */}
-      <View style={styles.dateNumberWrapper}>
-        <Text style={[
-          styles.dayText,
-          state === 'disabled' ? styles.disabledText : styles.activeText,
-          isStart && styles.whiteText,
-          (isActiveSelection && !isStart) && { color: '#2D4A41', fontWeight: '700' },
-        ]}>
+
+      {/* DAY NUMBER */}
+      <View style={styles.dateNumberContainer}>
+        <Text
+          style={[
+            styles.dayText,
+            state === 'disabled' ? styles.disabledText : styles.activeText,
+            textColor && { color: textColor },
+          ]}
+        >
           {date.day}
         </Text>
       </View>
 
-      {/* 5. PRICING */}
-      {!marking?.color && state !== 'disabled' && (
-        <View style={styles.priceWrapper}>
-          <Text style={styles.priceText}>SAR {dailyPrice}</Text>
-        </View>
-      )}
+      {/* PRICE */}
+      {!isActive && state !== 'disabled' && <Text style={styles.priceText}>SAR 500</Text>}
+      {date.dateString === '2026-01-16' && !isActive && <Text style={styles.priceText}>SAR 5000</Text>}
     </TouchableOpacity>
   );
 };
 
 const CustomCalendar = () => {
-  const [selectedDate, setSelectedDate] = useState<string>('');
-
-  const markedDates = useMemo(() => {
-    return {
-      ...INITIAL_BOOKINGS,
-      [selectedDate]: {
-        ...(INITIAL_BOOKINGS[selectedDate] || {}),
-        activeSelection: true,
-      },
-    };
-  }, [selectedDate]);
-
   return (
     <View style={styles.card}>
       <Calendar
-        current={'2026-01-01'}
+        current="2026-01-01"
+        markingType="custom"
+        markedDates={INITIAL_BOOKINGS}
         dayComponent={({ date, state, marking }: any) => (
           <CustomDay
             date={date}
             state={state}
             marking={marking}
-            onPress={(d: any) => setSelectedDate(d.dateString)}
+            onPress={(d: any) => console.log(d.dateString)}
           />
         )}
-        markedDates={markedDates}
-        markingType={'custom'}
-        renderArrow={(dir: string) => (dir === 'left' ?
-            <ChevronLeft size={24} color="#333" /> :
-            <ChevronRight size={24} color="#333" />
-        )}
+        renderArrow={(dir) =>
+          dir === 'left' ? (
+            <ChevronLeft size={ms(22)} color="#A0A0A0" />
+          ) : (
+            <ChevronRight size={ms(22)} color="#000" />
+          )
+        }
         theme={{
-            calendarBackground: 'transparent',
-            textSectionTitleColor: '#666',
-            dayTextColor: '#333',
-            monthTextColor: '#1A332C',
-            textMonthFontWeight: '700',
-            textMonthFontSize: ms(20),
-            // @ts-ignore
-            'stylesheet.calendar.header': {
-              week: {
-                marginTop: vs(15),
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-              },
-            },
+          calendarBackground: 'transparent',
+          monthTextColor: '#000',
+          textMonthFontWeight: '500',
+          textMonthFontSize: ms(22),
+          textSectionTitleColor: '#7B8D88',
+          textDayHeaderFontSize: ms(16),
+          textDayHeaderFontWeight: '400',
         }}
       />
     </View>
@@ -149,97 +129,81 @@ const CustomCalendar = () => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFF',
-    borderRadius: ms(20),
-    padding: s(10),
-    width: SCREEN_WIDTH - s(30),
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    width: SCREEN_WIDTH,
+    paddingTop: vs(20),
   },
   dayContainer: {
-    width: (SCREEN_WIDTH - s(80)) / 7,
-    height: vs(65),
+    width: SCREEN_WIDTH / 7,
+    height: vs(60),
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'visible', // allows names to bleed out
   },
   selectionBg: {
     position: 'absolute',
-    height: vs(50),
+    height: vs(48),
     width: '100%',
     zIndex: 1,
-    top: vs(7),
   },
-  fullRadius: {
-    borderRadius: ms(25),
-    width: ms(50),
+  circleBg: {
+    width: vs(48),
+    borderRadius: vs(24),
   },
-  userSelectionRing: {
-    position: 'absolute',
-    height: vs(50),
-    width: ms(50),
-    borderRadius: ms(25),
-    borderWidth: 2,
-    borderColor: '#2D4A41',
-    zIndex: 2,
-    top: vs(7),
+  startEdge: {
+    borderTopLeftRadius: ms(20),
+    borderBottomLeftRadius: ms(20),
+    width: '105%',
+    left: '5%',
   },
-  startRadius: {
-    borderTopLeftRadius: ms(25),
-    borderBottomLeftRadius: ms(25),
+  middleEdge: {
     width: '110%',
-    left: '10%',
   },
-  endRadius: {
-    borderTopRightRadius: ms(25),
-    borderBottomRightRadius: ms(25),
-    width: '110%',
-    right: '10%',
+  endEdge: {
+    borderTopRightRadius: ms(20),
+    borderBottomRightRadius: ms(20),
+    width: '105%',
+    right: '5%',
   },
-  noRadius: {
-    borderRadius: 0,
-    width: '125%',
-  },
-  otaHeader: {
+  // <<< FIXED overlayContainer >>>
+  overlayContainer: {
     position: 'absolute',
-    top: vs(10),
-    left: s(4),
+    top: vs(10),      // inside the selection box
+    zIndex: 20,
+    minWidth: s(70),  // minimum for short names
+    maxWidth: SCREEN_WIDTH / 2, // allow longer names
+    paddingHorizontal: s(2),
+    alignItems: 'center',       // center horizontally
+  },
+  otaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    zIndex: 10,
-    maxWidth: '90%',
   },
-  otaIcon: {
-    fontSize: ms(10),
+  guestNameText: {
+    fontSize: ms(9),
     color: '#666',
-    marginRight: s(2),
+    fontWeight: '500',
+    marginLeft: s(2),
+    textAlign: 'center',
   },
-  guestName: {
-    fontSize: ms(8),
-    color: '#666',
-    fontWeight: '600',
-  },
-  dateNumberWrapper: {
-    zIndex: 5,
-    marginTop: vs(5),
+  dateNumberContainer: {
+    zIndex: 30,
+    marginTop: vs(8),
   },
   dayText: {
-    fontSize: ms(18),
-    fontWeight: '500',
+    fontSize: ms(19),
+    fontWeight: '600',
   },
-  activeText: { color: '#1A332C' },
-  disabledText: { color: '#D1D1D1' },
-  whiteText: { color: '#FFF' },
-  priceWrapper: {
-    position: 'absolute',
-    bottom: vs(2),
-    zIndex: 5,
+  activeText: {
+    color: '#1A332C',
+  },
+  disabledText: {
+    color: '#E0E0E0',
   },
   priceText: {
+    position: 'absolute',
+    bottom: vs(4),
     fontSize: ms(8),
-    color: '#999',
+    color: '#9E9E9E',
     fontWeight: '500',
   },
 });
