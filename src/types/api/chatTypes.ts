@@ -10,7 +10,7 @@ export interface createChatArchiveByConversationIdResponseType {
 }
 // Archive Chat
 export interface createChatSnoozeByConversationIdPayloadType {
-  conversation_id: string,
+  conversation_id?: string,
 }
 export interface createChatSnoozeByConversationIdResponseType {
   status: string;

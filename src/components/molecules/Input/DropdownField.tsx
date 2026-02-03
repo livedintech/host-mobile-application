@@ -20,6 +20,7 @@ interface DropdownFieldProps {
     placeholder?: string;
     disabled?: boolean;
     rules?: RegisterOptions;
+    dropdownPosition?: 'auto' | 'top' | 'bottom';
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
@@ -32,18 +33,20 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
     disabled = false,
       rules,
 
+    dropdownPosition
 }) => {
     const error = errors[name]?.message as string;
 
     return (
         <View style={styles.wrapper}>
-             {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium'/>}
+            {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium' />}
             <Controller
                 control={control}
                 name={name}
                     rules={rules}
                 render={({ field: { onChange, value } }) => (
                     <Dropdown
+                        dropdownPosition={dropdownPosition}
                         inputSearchStyle={styles.inputSearchStyle}
                         search
                         style={[styles.dropdown, !!error && styles.errorBorder, disabled && styles.disabled]}
@@ -72,7 +75,7 @@ const styles = StyleSheet.create({
     wrapper: {
         marginBottom: Metrics.verticalScale(18),
         zIndex: 9999,
-        overflow: 'visible', 
+        overflow: 'visible',
     },
     label: {
         color: Colors.BRUNSWICK_GREEN,

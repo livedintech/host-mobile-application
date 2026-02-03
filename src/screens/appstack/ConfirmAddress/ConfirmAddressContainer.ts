@@ -27,7 +27,7 @@ export default function useConfirmAddressContainer() {
   const { updateListing, listing_id, channel_id,listing:propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore()
   const navigation = useNavigation();
-  const listing = params?.paramData?.payload?.listing;
+  const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id);
 
   const {
@@ -115,6 +115,8 @@ export default function useConfirmAddressContainer() {
         city: data.city,
         street: data.street,
         apt: data.apt,
+        lat: propertyDetail.lat,
+        lng: propertyDetail.lng,
         name: 'New Listing', 
       }
     }

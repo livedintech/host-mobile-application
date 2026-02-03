@@ -207,7 +207,8 @@ export default function useCreateListingStepOneLocationContainer() {
       listing: {
         lat: region.latitude,
         lng: region.longitude,
-        name: 'New Listing'
+        name: 'New Listing',
+        
       }
     }
     // createListingDetailsPayload(payload)

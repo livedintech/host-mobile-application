@@ -33,7 +33,10 @@ const ChatScreen = () => {
     data,
     isLoading,
     dataQuery,
-    isFetching
+    isFetching,
+    transformedCities,
+    transformedListings,
+    transformedApartmentTypes
   } = useChatContainer();
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
@@ -166,9 +169,9 @@ const ChatScreen = () => {
               <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
             </Pressable>
             <DropdownField name="reservationStatus" control={control} errors={errors} label="Reservation Status" data={STATUS_DATA} />
-            <DropdownField name="listings" control={control} errors={errors} label="Listings" data={LISTINGS_DATA} />
-            <DropdownField name="city" control={control} errors={errors} label="City" data={CITY_DATA} />
-            <DropdownField name="Apartment Type" control={control} errors={errors} label="City" data={CITY_DATA} />
+            <DropdownField name="listings" control={control} errors={errors} label="Listings" data={transformedListings} />
+            <DropdownField name="city" control={control} errors={errors} label="City" data={transformedCities} />
+            <DropdownField name="apartmenttype" control={control} errors={errors} label="Apartment Type" data={transformedApartmentTypes} dropdownPosition='top'/>
             <View style={styles.modalFooter}>
               <AppButton onPress={handleResetAll} title="Reset" style={styles.flex} />
               <AppButton onPress={() => setFilterVisible(false)} title="Apply Filter" style={styles.flex} />

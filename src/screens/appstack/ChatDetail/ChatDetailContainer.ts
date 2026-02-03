@@ -3,6 +3,10 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
 import { FlatList } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import STORAGE_CONST from '@/constants/storage';
+import { getChatDetailApi } from '@/services/chatApi';
+import { useQuery } from '@tanstack/react-query';
 
 export interface ChatMessage {
   _id: string | number;
@@ -67,10 +71,14 @@ const SAVED_REPLIES: SavedReply[] = [
 ];
 
 export const useChatContainer = () => {
+  const {params} = useRoute();
+  const  {thread_id}:any =  params;
+  console.log('thread_ids',thread_id);
+  
   // Core Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   console.log('messages', messages);
   console.log('inputText', inputText);
@@ -427,6 +435,18 @@ export const useChatContainer = () => {
       console.log('Document Error:', error);
     }
   }, [addMessage, replyingToMessage]);
+
+  // Get Messages of a conversation
+    const { data, refetch, isLoading } = useQuery({
+    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, thread_id],
+    queryFn: () =>
+      getChatDetailApi({
+        conversation_id: thread_id
+      }),
+    // enabled: Boolean(thread_id),
+  });
+  console.log('data',data);
+  
 
   return {
     // State

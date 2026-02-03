@@ -7,7 +7,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import usePropertyDisclosureContainer from './PropertyDisclosureContainer';
 
-const PropertyDisclosureScreen = ({ navigation }: any) => {
+const PropertyDisclosureScreen = () => {
   const { control, errors, handleSubmit, onNext, isEdit, onSaveExit, isLoading } = usePropertyDisclosureContainer();
 
   const options = [
