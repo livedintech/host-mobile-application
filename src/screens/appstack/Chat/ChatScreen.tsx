@@ -16,13 +16,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
-import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import dayjs from 'dayjs';
 
 // --- Dummy Data for Dropdowns ---
 const STATUS_DATA = [{ label: 'Confirmed', value: 'confirmed' }, { label: 'Pending', value: 'pending' }];
-const LISTINGS_DATA = [{ label: 'Luxury Villa', value: '1' }, { label: 'City Flat', value: '2' }];
-const CITY_DATA = [{ label: 'Dubai', value: 'dubai' }, { label: 'Sharjah', value: 'sharjah' }];
 
 const ChatScreen = () => {
   const {
@@ -36,7 +33,8 @@ const ChatScreen = () => {
     isFetching,
     transformedCities,
     transformedListings,
-    transformedApartmentTypes
+    transformedApartmentTypes,
+    handlePopupMenu
   } = useChatContainer();
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
@@ -44,11 +42,11 @@ const ChatScreen = () => {
       const style = useAnimatedStyle(() => ({ transform: [{ translateX: drag.value + 160 }] }));
       return (
         <Reanimated.View style={[styles.swipeContainer, style]}>
-          <ButtonView style={styles.snoozeAction} onPress={() => handleAction(item.id, 'Snoozed')}>
+          <ButtonView style={styles.snoozeAction} onPress={() => handleAction(item, 'Snoozed')}>
             <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
             <AppText text="Snooze" color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
           </ButtonView>
-          <ButtonView style={styles.archiveAction} onPress={() => handleAction(item.id, 'Archived')}>
+          <ButtonView style={styles.archiveAction} onPress={() => handleAction(item, 'Archived')}>
             <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
             <AppText text="Archive" color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
           </ButtonView>
@@ -61,8 +59,8 @@ const ChatScreen = () => {
         <View style={styles.chatRow}>
           {/* API response me image field hai ya default */}
           <Image source={item.img ? { uri: item.img } : require('@/assets/img/dummy/livedin.png')} style={styles.avatar} />
-          <Pressable style={styles.chatInfo} onPress={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL,{
-            thread_id: item?.thread_id
+          <Pressable style={styles.chatInfo} onPress={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+            conversation_id: item?.id
           })}>
             <View style={styles.infoTop}>
               {/* API response me name */}
@@ -73,16 +71,16 @@ const ChatScreen = () => {
                 <AppText text={item.name || 'Unknown'} type="SemiBold" fontSize={16} color={Colors.MIDNIGHT} numberOfLines={1} />
               </View>
               {/* API response me date */}
-              <AppText text={dayjs(item.last_message_at).format('MM/DD/YY') || 'N/A'} fontSize={12} color={Colors.GREY_SHADOW} />
+              <AppText text={dayjs(item.last_message_date).format('MM/DD/YY') || 'N/A'} fontSize={12} color={Colors.GREY_SHADOW} />
             </View>
 
             <View style={styles.infoBottom}>
               {/* API response me message */}
-                <AppText text={item.last_message_content || 'No message'} fontSize={13} color={Colors.GREY_SHADOW} numberOfLines={1} style={{ flex: 0.85 }} />
+              <AppText text={item.last_message || 'No message'} fontSize={13} color={Colors.GREY_SHADOW} numberOfLines={1} style={{ flex: 0.85 }} />
               {/* Unread count */}
-              {item.unreadCount ? (
+              {item.unread_count ? (
                 <View style={styles.unreadBadge}>
-                  <AppText text={String(item.unreadCount)} color={Colors.WHITE} fontSize={11} type="Bold" />
+                  <AppText text={item?.unread_count} color={Colors.WHITE} fontSize={11} type="Bold" />
                 </View>
               ) : (
                 <Svgicons path="chevronRight" size={12} color={Colors.GREY_SHADOW} />
@@ -112,7 +110,7 @@ const ChatScreen = () => {
           </MenuTrigger>
           <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
             {['Saved Replies', 'Automation Template', 'AI Auto Reply'].map((opt) => (
-              <MenuOption key={opt} style={styles.menuItem}>
+              <MenuOption key={opt} style={styles.menuItem} onSelect={() => handlePopupMenu(opt)}>
                 <AppText text={opt} fontSize={14} color={Colors.MIDNIGHT} />
                 <Svgicons path="expandIcon" size={18} />
               </MenuOption>
@@ -154,7 +152,7 @@ const ChatScreen = () => {
         meta={dataQuery}
         listEmptyText="No Chat found"
         renderItem={renderItem}
-       keyExtractor={(item) => String(item.id)}
+        keyExtractor={(item) => String(item.id)}
         contentContainerStyle={{ flexGrow: 1 }}
       />
 
@@ -171,7 +169,7 @@ const ChatScreen = () => {
             <DropdownField name="reservationStatus" control={control} errors={errors} label="Reservation Status" data={STATUS_DATA} />
             <DropdownField name="listings" control={control} errors={errors} label="Listings" data={transformedListings} />
             <DropdownField name="city" control={control} errors={errors} label="City" data={transformedCities} />
-            <DropdownField name="apartmenttype" control={control} errors={errors} label="Apartment Type" data={transformedApartmentTypes} dropdownPosition='top'/>
+            <DropdownField name="apartmenttype" control={control} errors={errors} label="Apartment Type" data={transformedApartmentTypes} dropdownPosition='top' />
             <View style={styles.modalFooter}>
               <AppButton onPress={handleResetAll} title="Reset" style={styles.flex} />
               <AppButton onPress={() => setFilterVisible(false)} title="Apply Filter" style={styles.flex} />

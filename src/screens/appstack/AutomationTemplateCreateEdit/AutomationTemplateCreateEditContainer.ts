@@ -1,23 +1,27 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
 import { goBack } from '@/services/navigationService';
-import { createAutomationTemplateApi, editAutomationTemplateApi } from '@/services/automationTemplate';
+import { createAutomationTemplateApi, editAutomationTemplateApi, getAutomationTemplateEventsApi, getAutomationTemplateVariablesApi } from '@/services/automationTemplateApi';
 import { AutomationTemplateTypesApiPayload, AutomationTemplateTypesApiResponse } from '@/types/api/automationTemplateTypes';
 import STORAGE_CONST from '@/constants/storage';
 import { useRoute } from '@react-navigation/native';
+import { getManageYourListings } from '@/services/ createListingService';
+import { ManageListingsResponse } from '@/types/api/createListingTypes';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const automationSchema = yup.object().shape({
-    event: yup.string().required('Template name is required'),
-    messageContent: yup.string().required('Content is required'),
-    eventTrigger: yup.string().required('Please select an event trigger'),
-    listings: yup.array().min(1, 'Select at least one listing').required(),
-    autoCreate: yup.boolean().default(false),
+    name: yup.string().required('Template name is required'),
+    body: yup.string().required('Content is required'),
+    event: yup.string().required('Please select an event trigger'),
+    listing_ids: yup.array().optional(),
+    is_active: yup.boolean().default(false),
 });
 
 export default function useAutomationTemplateCreateEditContainer() {
+    const { user } = useAuthStore();
     const route = useRoute<any>();
     const editData = route?.params?.editData as any;
     const queryClient = useQueryClient();
@@ -25,11 +29,11 @@ export default function useAutomationTemplateCreateEditContainer() {
     const { control, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(automationSchema),
         defaultValues: {
-            event: editData?.title || '',
-            messageContent: editData?.content || '',
-            eventTrigger: editData?.trigger || '',
-            listings: editData?.listings || [],
-            autoCreate: editData?.isActive || false,
+            name: editData?.name || '',
+            body: editData?.body || '',
+            event: editData?.event || '',
+            listing_ids: editData?.listing_ids || [],
+            is_active: editData?.is_active || false,
         },
     });
 
@@ -84,8 +88,6 @@ export default function useAutomationTemplateCreateEditContainer() {
         },
     });
 
-
-
     const onSubmit = (data: any) => {
         if (editData) {
             const payload = {
@@ -103,11 +105,58 @@ export default function useAutomationTemplateCreateEditContainer() {
         }
     };
 
+    // Listing
+    const { data: listing } = useQuery<ManageListingsResponse>({
+        queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_LISTING, user?.id],
+        queryFn: () =>
+            getManageYourListings({
+                user: user?.id!,
+            }),
+        enabled: Boolean(user?.id),
+    });
+
+    // Listing
+    const transformedListing = listing?.data?.map((item: any) => ({
+        label: item.title,
+        value: item.id,
+    }));
+
+    // Message Variables Api
+    const { data: messageVariables } = useQuery({
+        queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_MESSAGE_VARIABLES],
+        queryFn: getAutomationTemplateVariablesApi,
+    });
+
+    const transformedMessageVariables = messageVariables
+        ? Object.keys(messageVariables).map(key => ({
+            key,
+            label: key,
+        }))
+        : [];
+
+    // Message Events Api
+    const { data: events } = useQuery({
+        queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_EVENTS],
+        queryFn: getAutomationTemplateEventsApi,
+    });
+
+    // Transform events from API to dropdown-friendly format
+const transformedEvents = events
+    ? events.map((item: string) => ({
+        label: item.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), // e.g., "booking_confirmation" -> "Booking Confirmation"
+        value: item, // keep original value for API
+    }))
+    : [];
+
+
     return {
         control,
         errors,
         handleSubmit: handleSubmit(onSubmit),
-        isLoading: false,
+        isLoading: isPending && !isIdle || isPendingEditSaveEdit && !isIdleEditSaveEdit,
         isEditMode: !!editData,
+        transformedListing,
+        transformedMessageVariables,
+        transformedEvents
     };
 }

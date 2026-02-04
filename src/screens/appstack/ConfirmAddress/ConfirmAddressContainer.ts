@@ -28,7 +28,9 @@ export default function useConfirmAddressContainer() {
   const { user } = useAuthStore()
   const navigation = useNavigation();
   const listing = params?.paramData?.listing;
-  const isEdit = Boolean(listing?.listing_id);
+  const isEdit = Boolean(listing?.id);
+  console.log('isEdits',listing);
+  
 
   const {
     control,
@@ -79,7 +81,10 @@ export default function useConfirmAddressContainer() {
     mutationFn: editListingApi,
     onSuccess: ({ message }) => {
        queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, listing_id],
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
       Toast.show({
         type: 'success',

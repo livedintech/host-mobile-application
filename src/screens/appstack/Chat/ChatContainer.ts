@@ -10,6 +10,8 @@ import Toast from 'react-native-toast-message';
 import { createChatArchiveByConversationIdPayloadType, createChatArchiveByConversationIdResponseType, createChatSnoozeByConversationIdPayloadType, createChatSnoozeByConversationIdResponseType } from '@/types/api/chatTypes';
 import { getUserListingsByUserIDApi } from '@/services/bookingManagementApi';
 import { useAuthStore } from '@/store/useAuthStore';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
@@ -133,11 +135,22 @@ export const useChatContainer = () => {
       },
     });
 
-  const handleAction = (id: string, newStatus: ChatStatus) => {
+  const handleAction = (item: ChatMessage, newStatus: ChatStatus) => {
     if (newStatus === 'Archived') {
-      chatArchivePayload({ conversation_id: id })
-    } else if (newStatus === 'Snoozed') {
-      chatSnoozePayload({ conversation_id: id })
+      if (item?.is_archived) {
+        chatUnArchivePayload({ conversation_id: item?.id })
+      } else {
+        chatArchivePayload({ conversation_id: item?.id })
+      }
+    }
+    if (newStatus === 'Snoozed') {
+      if (item?.is_mute) {
+        chatUnSnoozePayload({ conversation_id: item?.id })
+      } else {
+        chatSnoozePayload({ conversation_id: item?.id })
+
+      }
+
     }
   };
 
@@ -160,7 +173,7 @@ export const useChatContainer = () => {
   const transformedCities = citiesData.map((item: { name: string, id: string }) => ({
     label: item.name,
     value: item.id,
-  }));  
+  }));
 
   // Listings Transformed
   const transformedListings = listings?.data.map((item: { title: string, id: string }) => ({
@@ -168,13 +181,22 @@ export const useChatContainer = () => {
     value: item.id,
   }));
 
-   // Listings Transformed
+  // Listings Transformed
   const transformedApartmentTypes = listings?.data.map((item: { type: string, id: string }) => ({
     label: item.type,
     value: item.id,
   }));
   // console.log('transformedListings', transformedListings);
-
+  const handlePopupMenu = (selected: string) => {
+    if (selected === 'Saved Replies') {
+      navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES)
+    } else if (selected === 'Automation Template') {
+      navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE)
+    }
+    else if (selected === 'AI Auto Reply') {
+      navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY)
+    }
+  }
 
   return {
     data,
@@ -193,6 +215,7 @@ export const useChatContainer = () => {
     errors,
     transformedCities,
     transformedListings,
-    transformedApartmentTypes
+    transformedApartmentTypes,
+    handlePopupMenu
   };
 };

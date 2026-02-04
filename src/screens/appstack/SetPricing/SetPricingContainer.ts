@@ -15,8 +15,8 @@ export default function useSetPricingContainer() {
     const { user } = useAuthStore();
     const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
     const { params } = useRoute<any>();
-    const listing = params?.paramData?.payload?.listing;
-    const isEdit = Boolean(listing?.listing_id);
+    const listing = params?.paramData?.listing;
+    const isEdit = Boolean(listing?.id);
 
     const {
         control,

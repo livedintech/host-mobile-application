@@ -7,26 +7,23 @@ import Metrics from '@/utility/Metrics';
 import useAIAutoReplyContainer from './AIAutoReplyContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
+import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 
 const AIAutoReplyScreen = () => {
-    const { replies, toggleSwitch, handleCreateNew, handleEdit, handleKnowledgeBase } = useAIAutoReplyContainer();
+    const { data, dataQuery, isFetching, isLoading, toggleSwitch, handleCreateNew, handleEdit, handleKnowledgeBase, Item, confirm, openRemoveConfirmSheet, isLoadingRemoved, removeSheetRef, isLoadingStatus } = useAIAutoReplyContainer();
 
     const renderItem = ({ item }: { item: any }) => (
         <View style={styles.card}>
             <View style={styles.topRow}>
                 <View style={styles.leftInfo}>
-                    <Switch
-                        trackColor={{ false: Colors.SMOOTH_GREY, true: Colors.BRUNSWICK_GREEN }}
-                        thumbColor={Colors.WHITE}
-                        onValueChange={() => toggleSwitch(item.id)}
-                        value={item.isActive}
-                        style={styles.switchStyle}
-                    />
-                    <AppText text={item.title} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={Metrics.scale(10)} />
+                    <CustomSwitch onToggle={() => toggleSwitch(item)} value={item.is_enabled} disabled={isLoadingStatus} isLoading={item?.id === Item?.id ? isLoadingStatus : false} />
+                    <AppText text={item.name} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={Metrics.scale(10)} />
                 </View>
 
                 <View style={styles.actions}>
-                    <ButtonView onPress={() => console.log('Delete', item.id)} px={5}>
+                    <ButtonView onPress={() => openRemoveConfirmSheet(item)} px={5}>
                         <Svgicons path="TrashFull" size={20} color={Colors.BRUNSWICK_GREEN} />
                     </ButtonView>
                     <ButtonView onPress={() => handleEdit(item)} px={5} ml={Metrics.scale(5)}>
@@ -34,19 +31,11 @@ const AIAutoReplyScreen = () => {
                     </ButtonView>
                 </View>
             </View>
-
-            <AppText 
-                text={`Listing Access: ${item.listingAccess}`} 
-                fontSize={14} 
-                color={Colors.BRUNSWICK_GREEN} 
-                mt={Metrics.verticalScale(10)} 
-                ml={Metrics.scale(5)}
-            />
         </View>
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
                 <View style={styles.titleWrapper}>
@@ -54,11 +43,13 @@ const AIAutoReplyScreen = () => {
                     <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
                 </View>
             </View>
-
-            <FlatList
-                data={replies}
+            <FlatListHandler
+                isLoading={isLoading || isFetching}
+                data={data}
+                meta={dataQuery}
+                listEmptyText="No data found"
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => String(item.id)}
                 contentContainerStyle={styles.listContainer}
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
@@ -81,9 +72,19 @@ const AIAutoReplyScreen = () => {
                     borderColor={Colors.SMOOTH_GREY}
                     fontSize={16}
                     type="SemiBold"
+                    loading={isLoadingRemoved || isLoadingStatus}
                 />
             </View>
-        </SafeAreaView>
+            <ConfirmAction
+                ref={removeSheetRef}
+                title={`${Item?.name}`}
+                content="Are you sure you want delete?"
+                confirmText='Confirm'
+                closeText='Cancel'
+                onConfirm={confirm}
+                isLoading={isLoadingRemoved}
+            />
+        </View>
     );
 };
 
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     backBtn: { position: 'absolute', left: Metrics.scale(20), padding: 8, borderWidth: 1, borderColor: Colors.SMOOTH_GREY, borderRadius: 100 },
     titleWrapper: { flexDirection: 'row', alignItems: 'center' },
     listContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(20) },
-    
+
     /* Knowledge Card Styling */
     knowledgeCard: {
         flexDirection: 'row',

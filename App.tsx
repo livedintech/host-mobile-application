@@ -13,6 +13,8 @@ import { navigationRef } from '@/services/navigationService';
 import { CustomSuccessToast } from '@/components/molecules/CustomToast/CustomSuccessToast';
 import { CustomErrorToast } from '@/components/molecules/CustomToast/CustomErrorToast';
 import { MFSDK } from 'myfatoorah-reactnative';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
 
 // Import MyFatoorah configuration
 import myFatoorahConfig, {
@@ -133,6 +135,7 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
+          <BottomSheetModalProvider>
           <NavigationContainer ref={navigationRef} theme={MyTheme} linking={linking} >
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
               <StatusBar
@@ -145,6 +148,7 @@ const App = () => {
               <Toast config={toastConfig} />
             </SafeAreaView>
           </NavigationContainer>
+          </BottomSheetModalProvider>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

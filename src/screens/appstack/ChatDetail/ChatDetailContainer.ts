@@ -1,4 +1,4 @@
-// ChatContainer.tsx - With Reply/Quote Message Functionality + Scroll to Message
+// ChatContainer.tsx - Complete Code with Dynamic User IDs
 import { useState, useCallback, useEffect, useRef } from 'react';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
@@ -7,6 +7,7 @@ import { useRoute } from '@react-navigation/native';
 import STORAGE_CONST from '@/constants/storage';
 import { getChatDetailApi } from '@/services/chatApi';
 import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export interface ChatMessage {
   _id: string | number;
@@ -24,7 +25,6 @@ export interface ChatMessage {
     type: string;
     size: number;
   };
-  // NEW: Reply functionality
   replyTo?: {
     _id: string | number;
     text: string;
@@ -70,25 +70,58 @@ const SAVED_REPLIES: SavedReply[] = [
   },
 ];
 
+// Helper function to transform API data to ChatMessage format
+const transformApiMessages = (apiMessages: any[]): ChatMessage[] => {
+  if (!Array.isArray(apiMessages)) {
+    console.warn('apiMessages is not an array:', apiMessages);
+    return [];
+  }
+
+  return apiMessages.map(msg => ({
+    _id: msg._id,
+    text: msg.text || '',
+    createdAt: new Date(msg.created_at),
+    user: {
+      // Keep original user ID - no transformation
+      _id: Number(msg.user._id),
+      name: msg.user.name,
+    },
+    image: msg.media?.type === 'image' ? msg.media.url : undefined,
+    video: msg.media?.type === 'video' ? msg.media.url : undefined,
+    document: msg.media?.type === 'document' ? {
+      uri: msg.media.url,
+      name: msg.media.name || 'Document',
+      type: msg.media.mime_type || 'application/octet-stream',
+      size: msg.media.size || 0,
+    } : undefined,
+    replyTo: msg.reply_to ? {
+      _id: msg.reply_to._id,
+      text: msg.reply_to.text || 'Media message',
+      userName: msg.reply_to.user?.name || 'User',
+    } : undefined,
+  }));
+};
+
 export const useChatContainer = () => {
-  const {params} = useRoute();
-  const  {thread_id}:any =  params;
-  console.log('thread_ids',thread_id);
+  const { user } = useAuthStore();
   
+  // Safely get params
+  const route = useRoute();
+  const params = route?.params as { conversation_id?: string } | undefined;
+  const conversation_id = params?.conversation_id;
+
+  console.log('Logged in user:', user);
+  console.log('Conversation ID:', conversation_id);
+
   // Core Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
-  // const [isLoading, setIsLoading] = useState(false);
-
-  console.log('messages', messages);
-  console.log('inputText', inputText);
+  const [conversationData, setConversationData] = useState<any>(null);
 
   // UI State
   const [showAiSuggestion, setShowAiSuggestion] = useState(true);
   const [showSavedReplies, setShowSavedReplies] = useState(false);
-  const [selectedMessageId, setSelectedMessageId] = useState<
-    string | number | null
-  >(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | number | null>(null);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
 
   // State to handle image preview
@@ -96,71 +129,36 @@ export const useChatContainer = () => {
   const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
 
   // Message State
-  const [selectedMessageData, setSelectedMessageData] =
-    useState<ChatMessage | null>(null);
+  const [selectedMessageData, setSelectedMessageData] = useState<ChatMessage | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, isHost: false });
 
   // Reply State
-  const [replyingToMessage, setReplyingToMessage] =
-    useState<ChatMessage | null>(null);
+  const [replyingToMessage, setReplyingToMessage] = useState<ChatMessage | null>(null);
 
-  // NEW: Ref for FlatList to control scrolling
+  // Ref for FlatList to control scrolling
   const flatListRef = useRef<FlatList>(null);
 
-  // Initialize with sample messages
+  // Get Messages of a conversation
+  const { data, refetch, isLoading } = useQuery({
+    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, conversation_id],
+    queryFn: () => getChatDetailApi({ conversation_id }),
+    enabled: Boolean(conversation_id),
+  });
+
+  console.log('API Data:', data);
+
+  // Update messages when API data changes
   useEffect(() => {
-    const initialMessages: ChatMessage[] = [
-      {
-        _id: 8,
-        text: 'Yes, your details have already been shared with the gate guard.',
-        createdAt: new Date(Date.now() - 900000),
-        user: { _id: 1, name: 'Host' },
-      },
-      {
-        _id: 7,
-        text: 'Amazing, thank you! Is there parking available?',
-        createdAt: new Date(Date.now() - 1800000),
-        user: { _id: 2, name: 'Guest' },
-      },
-      {
-        _id: 6,
-        text: 'You can check in now, no problem.',
-        createdAt: new Date(Date.now() - 3400000),
-        user: { _id: 3, name: 'Automated' },
-      },
-      {
-        _id: 5,
-        text: 'You can check in now, no problem.',
-        createdAt: new Date(Date.now() - 3500000),
-        user: { _id: 1, name: 'Host' },
-      },
-      {
-        _id: 4,
-        text: "Also, can we check in a bit early? It's 1:15 PM and we're nearby.",
-        createdAt: new Date(Date.now() - 3600000),
-        user: { _id: 2, name: 'Guest' },
-      },
-      {
-        _id: 3,
-        text: 'Taxi sounds good — thanks!',
-        createdAt: new Date(Date.now() - 3600000),
-        user: { _id: 2, name: 'Guest' },
-      },
-      {
-        _id: 2,
-        text: 'You can also use Uber or Careem, both work well here.',
-        createdAt: new Date(Date.now() - 7200000),
-        user: { _id: 1, name: 'Host' },
-      },
-      {
-        _id: 1,
-        text: 'the fastest option is a taxi takes',
-        createdAt: new Date(Date.now() - 7200000),
-        user: { _id: 1, name: 'Host' },
-      },
-    ];
-    setMessages(initialMessages);
-  }, []);
+    if (data?.messages) {
+      const transformedMessages = transformApiMessages(data.messages);
+      console.log('Transformed Messages:', transformedMessages);
+      console.log('Logged-in user ID:', user?.id);
+      setMessages(transformedMessages);
+    }
+    if (data?.conversation) {
+      setConversationData(data.conversation);
+    }
+  }, [data, user?.id]);
 
   // Add message to chat
   const addMessage = useCallback((message: ChatMessage) => {
@@ -172,11 +170,13 @@ export const useChatContainer = () => {
     if (!inputText.trim()) return;
 
     const newMessage: ChatMessage = {
-      _id: Date.now(),
+      _id: `temp-${Date.now()}`,
       text: inputText.trim(),
       createdAt: new Date(),
-      user: { _id: 1, name: 'Host' },
-      // NEW: Add reply info if replying to a message
+      user: { 
+        _id: Number(user?.id),
+        name: user?.name || 'You'
+      },
       replyTo: replyingToMessage
         ? {
             _id: replyingToMessage._id,
@@ -186,22 +186,30 @@ export const useChatContainer = () => {
         : undefined,
     };
 
+    console.log('Sending message:', newMessage);
+
     addMessage(newMessage);
     setInputText('');
-    setReplyingToMessage(null); // Clear reply
+    setReplyingToMessage(null);
     setShowAiSuggestion(false);
     setShowSavedReplies(false);
     setShowAttachmentMenu(false);
-  }, [inputText, addMessage, replyingToMessage]);
+
+    // TODO: Call API to send message
+    // sendMessageApi({ conversation_id, text: inputText.trim(), reply_to: replyingToMessage?._id });
+  }, [inputText, addMessage, replyingToMessage, user]);
 
   // Send saved reply
   const sendSavedReply = useCallback(
     (replyText: string) => {
       const newMessage: ChatMessage = {
-        _id: Date.now(),
+        _id: `temp-${Date.now()}`,
         text: replyText,
         createdAt: new Date(),
-        user: { _id: 1, name: 'Host' },
+        user: { 
+          _id: Number(user?.id),
+          name: user?.name || 'You'
+        },
         replyTo: replyingToMessage
           ? {
               _id: replyingToMessage._id,
@@ -213,24 +221,31 @@ export const useChatContainer = () => {
 
       addMessage(newMessage);
       setInputText('');
-      setReplyingToMessage(null); // Clear reply
+      setReplyingToMessage(null);
       setShowSavedReplies(false);
       setShowAttachmentMenu(false);
+
+      // TODO: Call API to send message
     },
-    [addMessage, replyingToMessage],
+    [addMessage, replyingToMessage, user],
   );
 
   // Send AI suggestion
   const sendAiSuggestion = useCallback(() => {
     const aiMessage: ChatMessage = {
-      _id: Date.now(),
+      _id: `temp-${Date.now()}`,
       text: 'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival. Wi-Fi and other details are inside.',
       createdAt: new Date(),
-      user: { _id: 1, name: 'Host' },
+      user: { 
+        _id: Number(user?.id),
+        name: user?.name || 'You'
+      },
     };
     addMessage(aiMessage);
     setShowAiSuggestion(false);
-  }, [addMessage]);
+
+    // TODO: Call API to send message
+  }, [addMessage, user]);
 
   // Message Actions
   const handleMessageSelect = (message: ChatMessage) => {
@@ -242,7 +257,7 @@ export const useChatContainer = () => {
       setSelectedMessageData(message);
       setMenuPosition({
         top: 0,
-        isHost: message.user._id === 1,
+        isHost: message.user._id === Number(user?.id),
       });
     }
   };
@@ -259,17 +274,16 @@ export const useChatContainer = () => {
     setReplyingToMessage(null);
   }, []);
 
-  // NEW: Scroll to specific message
+  // Scroll to specific message
   const scrollToMessage = useCallback((messageId: string | number, messages: ChatMessage[]) => {
     const messageIndex = messages.findIndex(msg => msg._id === messageId);
     
     if (messageIndex !== -1 && flatListRef.current) {
-      // Small delay to ensure layout is complete
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({
           index: messageIndex,
           animated: true,
-          viewPosition: 0.5, // Center the message in view
+          viewPosition: 0.5,
         });
       }, 100);
     }
@@ -293,6 +307,8 @@ export const useChatContainer = () => {
   const handleDeleteMessage = useCallback((messageId: string | number) => {
     setMessages(prev => prev.filter(msg => msg._id !== messageId));
     setSelectedMessageId(null);
+    
+    // TODO: Call API to delete message
   }, []);
 
   // Media Handlers
@@ -308,10 +324,13 @@ export const useChatContainer = () => {
       });
 
       const message: ChatMessage = {
-        _id: Date.now(),
+        _id: `temp-${Date.now()}`,
         text: '',
         createdAt: new Date(),
-        user: { _id: 1, name: 'Host' },
+        user: { 
+          _id: Number(user?.id),
+          name: user?.name || 'You'
+        },
         image: image.path,
         replyTo: replyingToMessage
           ? {
@@ -325,10 +344,12 @@ export const useChatContainer = () => {
       addMessage(message);
       setReplyingToMessage(null);
       setShowAttachmentMenu(false);
+
+      // TODO: Upload image and call API
     } catch (error) {
       console.log('Camera Error:', error);
     }
-  }, [addMessage, replyingToMessage]);
+  }, [addMessage, replyingToMessage, user]);
 
   const handleVideo = useCallback(async () => {
     try {
@@ -339,10 +360,13 @@ export const useChatContainer = () => {
       });
 
       const message: ChatMessage = {
-        _id: Date.now(),
+        _id: `temp-${Date.now()}`,
         text: '',
         createdAt: new Date(),
-        user: { _id: 1, name: 'Host' },
+        user: { 
+          _id: Number(user?.id),
+          name: user?.name || 'You'
+        },
         video: video.path,
         replyTo: replyingToMessage
           ? {
@@ -356,14 +380,15 @@ export const useChatContainer = () => {
       addMessage(message);
       setReplyingToMessage(null);
       setShowAttachmentMenu(false);
+
+      // TODO: Upload video and call API
     } catch (error: any) {
       if (error?.code === 'E_PICKER_CANCELLED') {
         return;
       }
-
       console.log('Video Error:', error);
     }
-  }, [addMessage, replyingToMessage]);
+  }, [addMessage, replyingToMessage, user]);
 
   const handleGallery = useCallback(async () => {
     try {
@@ -377,10 +402,13 @@ export const useChatContainer = () => {
       });
 
       const message: ChatMessage = {
-        _id: Date.now(),
+        _id: `temp-${Date.now()}`,
         text: '',
         createdAt: new Date(),
-        user: { _id: 1, name: 'Host' },
+        user: { 
+          _id: Number(user?.id),
+          name: user?.name || 'You'
+        },
         image: media.mime?.includes('video') ? undefined : media.path,
         video: media.mime?.includes('video') ? media.path : undefined,
         replyTo: replyingToMessage
@@ -395,10 +423,12 @@ export const useChatContainer = () => {
       addMessage(message);
       setReplyingToMessage(null);
       setShowAttachmentMenu(false);
+
+      // TODO: Upload media and call API
     } catch (error) {
       console.log('Gallery Error:', error);
     }
-  }, [addMessage, replyingToMessage]);
+  }, [addMessage, replyingToMessage, user]);
 
   const handleDocument = useCallback(async () => {
     try {
@@ -408,10 +438,13 @@ export const useChatContainer = () => {
 
       if (res) {
         const message: ChatMessage = {
-          _id: Date.now(),
+          _id: `temp-${Date.now()}`,
           text: `📄 ${res.name}`,
           createdAt: new Date(),
-          user: { _id: 1, name: 'Host' },
+          user: { 
+            _id: Number(user?.id),
+            name: user?.name || 'You'
+          },
           document: {
             uri: res.uri,
             name: res.name || 'Document',
@@ -430,23 +463,13 @@ export const useChatContainer = () => {
         addMessage(message);
         setReplyingToMessage(null);
         setShowAttachmentMenu(false);
+
+        // TODO: Upload document and call API
       }
     } catch (error) {
       console.log('Document Error:', error);
     }
-  }, [addMessage, replyingToMessage]);
-
-  // Get Messages of a conversation
-    const { data, refetch, isLoading } = useQuery({
-    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, thread_id],
-    queryFn: () =>
-      getChatDetailApi({
-        conversation_id: thread_id
-      }),
-    // enabled: Boolean(thread_id),
-  });
-  console.log('data',data);
-  
+  }, [addMessage, replyingToMessage, user]);
 
   return {
     // State
@@ -465,7 +488,8 @@ export const useChatContainer = () => {
     setSelectedMessageData,
     menuPosition,
     replyingToMessage,
-    flatListRef, // NEW: Expose ref
+    flatListRef,
+    conversationData,
     
     // Setters
     setInputText,
@@ -493,5 +517,6 @@ export const useChatContainer = () => {
     scrollToMessage, 
 
     SAVED_REPLIES,
+    refetch,
   };
 };

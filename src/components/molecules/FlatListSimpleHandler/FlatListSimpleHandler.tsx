@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, forwardRef } from 'react';
 import {
   FlatList,
   FlatListProps,
@@ -30,16 +30,22 @@ type FlatListSimpleHandlerPropType = {
   keyExtractor?: (a: any) => string;
 } & Omit<FlatListProps<any>, 'data' | 'renderItem' | 'keyExtractor'>;
 
-export default function FlatListSimpleHandler({
-  data,
-  isLoading,
-  renderItem,
-  renderSkeleton,
-  listEmptyText,
-  onRefresh,
-  keyExtractor = defaultKeyExtractor,
-  ...flatListProps
-}: FlatListSimpleHandlerPropType) {
+const FlatListSimpleHandler = forwardRef<
+  FlatList<any>,
+  FlatListSimpleHandlerPropType
+>(function FlatListSimpleHandler(
+  {
+    data,
+    isLoading,
+    renderItem,
+    renderSkeleton,
+    listEmptyText,
+    onRefresh,
+    keyExtractor = defaultKeyExtractor,
+    ...flatListProps
+  },
+  ref,
+) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -58,6 +64,7 @@ export default function FlatListSimpleHandler({
 
   return (
     <FlatList
+      ref={ref}
       bounces={Platform.OS === 'ios'}
       alwaysBounceVertical={Platform.OS === 'ios'}
       contentInsetAdjustmentBehavior="automatic"
@@ -83,4 +90,6 @@ export default function FlatListSimpleHandler({
       {...flatListProps}
     />
   );
-}
+});
+
+export default FlatListSimpleHandler;

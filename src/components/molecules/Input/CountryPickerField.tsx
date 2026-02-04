@@ -14,6 +14,7 @@ interface CountryPickerFieldProps {
   name: string;
   placeholder?: string;
   defaultCountryCode?: CountryCode;
+  disabled?: boolean;
 }
 
 export interface CountryValue {
@@ -29,12 +30,10 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
   name,
   placeholder = 'Select Country',
   defaultCountryCode = 'SA',
+  disabled
 }) => {
   const [pickerVisible, setPickerVisible] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
-
-  console.log('errors',errors);
-  
 
   const handleFocus = () => {
     Animated.timing(animation, {
@@ -60,7 +59,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
   const animatedBackgroundColor = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [Colors.WHITE, Colors.WHITE],
-  });  
+  });
 
   return (
     <View style={styles.wrapper}>
@@ -81,12 +80,14 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
                   borderColor: errors[name] ? Colors.INDIAN_RED : animatedBorderColor,
                   backgroundColor: animatedBackgroundColor,
                 },
+                disabled && {backgroundColor: Colors.ANTI_FLASH_WHITE}
               ]}
             >
               <TouchableOpacity
                 style={styles.pickerButton}
                 activeOpacity={0.7}
                 onPress={() => {
+                  if (disabled) return;
                   setPickerVisible(true);
                   handleFocus();
                 }}

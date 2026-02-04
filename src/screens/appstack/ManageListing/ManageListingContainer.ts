@@ -6,7 +6,7 @@ import STORAGE_CONST from '@/constants/storage';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getManageYourListings } from '@/services/ createListingService';
-import { ManageListingsResponse } from '@/types/api/createListingTypes';
+import { ManageListingItem, ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 export default function useManageListingContainer() {
@@ -25,7 +25,7 @@ export default function useManageListingContainer() {
     navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE)
   }, []);
 
-  const goToPropertyDetail = ({ id, name }: { name: string; id: number }) => {
+  const goToPropertyDetail = ({ id, name }: ManageListingItem) => {
     updateListing({
       name,
     })

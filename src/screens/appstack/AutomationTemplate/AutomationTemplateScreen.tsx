@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, SafeAreaView, Switch } from 'react-native';
+import { StyleSheet, View, Switch } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -7,26 +7,23 @@ import Metrics from '@/utility/Metrics';
 import useAutomationTemplateContainer from './AutomationTemplateContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
+import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 
 const AutomationTemplatesScreen = () => {
-    const { templates, toggleSwitch, deleteTemplate, editTemplate, createNewTemplate } = useAutomationTemplateContainer();
+    const { toggleSwitch, editTemplate, createNewTemplate, confirm, openRemoveConfirmSheet, removeSheetRef, isLoadingRemoved, data, dataQuery, isFetching, isLoading, Item,isLoadingStatus } = useAutomationTemplateContainer();
 
     const renderItem = ({ item }: { item: any }) => (
         <View style={styles.card}>
             <View style={styles.topRow}>
                 <View style={styles.leftInfo}>
-                    <Switch
-                        trackColor={{ false: Colors.SMOOTH_GREY, true: Colors.BRUNSWICK_GREEN }}
-                        thumbColor={Colors.WHITE}
-                        onValueChange={() => toggleSwitch(item.id)}
-                        value={item.isActive}
-                        style={styles.switchStyle}
-                    />
-                    <AppText text={item.title} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={Metrics.scale(10)} />
+                     <CustomSwitch onToggle={() => toggleSwitch(item)} value={item.is_active} disabled={isLoadingStatus} isLoading={item?.id === Item?.id ? isLoadingStatus : false} />
+                    <AppText text={item.name} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={Metrics.scale(10)} />
                 </View>
 
                 <View style={styles.actions}>
-                    <ButtonView onPress={() => deleteTemplate(item.id)} px={5}>
+                    <ButtonView onPress={() => openRemoveConfirmSheet(item)} px={5}>
                         <Svgicons path="TrashFull" size={20} color={Colors.BRUNSWICK_GREEN} />
                     </ButtonView>
                     <ButtonView onPress={() => editTemplate(item)} px={5} ml={Metrics.scale(5)}>
@@ -35,9 +32,6 @@ const AutomationTemplatesScreen = () => {
                 </View>
             </View>
 
-            <View style={styles.bottomRow}>
-                <AppText text={`Listing Access: ${item.listingAccess}`} fontSize={14} color={Colors.BRUNSWICK_GREEN} mt={Metrics.verticalScale(10)} />
-            </View>
         </View>
     );
 
@@ -52,10 +46,13 @@ const AutomationTemplatesScreen = () => {
             </View>
 
             {/* List */}
-            <FlatList
-                data={templates}
+            <FlatListHandler
+                isLoading={isLoading || isFetching}
+                data={data}
+                meta={dataQuery}
+                listEmptyText="No data found"
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => String(item.id)}
                 contentContainerStyle={styles.listContainer}
                 showsVerticalScrollIndicator={false}
             />
@@ -63,10 +60,20 @@ const AutomationTemplatesScreen = () => {
             {/* Create Button using AppButton */}
             <View style={styles.footer}>
                 <AppButton
+                loading={isLoadingRemoved || isLoadingStatus}
                     title="Create New Template"
                     onPress={createNewTemplate}
                 />
             </View>
+            <ConfirmAction
+                ref={removeSheetRef}
+                title={`${Item?.name}`}
+                content="Are you sure you want delete?"
+                confirmText='Confirm'
+                closeText='Cancel'
+                onConfirm={confirm}
+                isLoading={isLoadingRemoved}
+            />
         </View>
     );
 };

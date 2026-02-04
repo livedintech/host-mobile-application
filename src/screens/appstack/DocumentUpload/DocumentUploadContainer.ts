@@ -16,6 +16,8 @@ import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { goBack, reset } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
+import { queryClient } from '@/services/api';
+import STORAGE_CONST from '@/constants/storage';
 
 const BASE_URL = BASE_URL_DEV;
 
@@ -24,21 +26,41 @@ interface ApiDocument {
     type: string;
 }
 
+interface ExistingDocument {
+    type: string;
+    file_name: string;
+    path: string;
+}
+
 export default function useDocumentUploadContainer() {
     const { user } = useAuthStore();
     const { params } = useRoute();
-    const routeListing = params?.paramData?.payload?.listing;
-    const isEdit = Boolean(routeListing?.listing_id);
+    const routeListing = params?.paramData?.listing;
+    const isEdit = Boolean(routeListing?.id);
 
     const { listing_id, channel_id } = useCreateListingStore();
     const [loading, setLoading] = useState(false);
 
+    // Helper to convert existing documents to form format
+    const getExistingDocument = (docs: ExistingDocument[] | undefined): DocumentPickerResult | null => {
+        if (!docs || !Array.isArray(docs) || docs.length === 0) return null;
+
+        const doc = docs[0]; // Get first document from array
+        return {
+            uri: doc.path,
+            name: doc.file_name,
+            type: 'application/pdf',
+            size: 0,
+            isExisting: true // Flag to identify existing documents
+        } as DocumentPickerResult;
+    };
+
     const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<DocumentFormValues>({
         resolver: yupResolver(documentUploadSchema),
         defaultValues: {
-            propertyOwnership: routeListing?.documents?.ownership || null,
-            authorityLicense: routeListing?.documents?.license || null,
-            nationalId: routeListing?.documents?.national_id || null,
+            propertyOwnership: getExistingDocument(routeListing?.documents?.ownership),
+            authorityLicense: getExistingDocument(routeListing?.documents?.license),
+            nationalId: getExistingDocument(routeListing?.documents?.national_id),
         } as any,
     });
 
@@ -58,6 +80,7 @@ export default function useDocumentUploadContainer() {
             filePath = Platform.OS === 'android' ? uri.replace('file://', '') : decodeURI(uri.replace('file://', ''));
             return await RNFS.readFile(filePath, 'base64');
         } catch (error) {
+            console.log('Base64 conversion error:', error);
             return null;
         }
     };
@@ -77,12 +100,15 @@ export default function useDocumentUploadContainer() {
                     uri: file.uri,
                     name: file.name || 'document.pdf',
                     type: file.type || 'application/pdf',
-                    size: file.size || 0
+                    size: file.size || 0,
+                    isExisting: false
                 };
                 setValue(fieldName, mappedFile);
             }
         } catch (err: any) {
-            console.log('Picker Error', err);
+            if (!DocumentPicker.isCancel(err)) {
+                console.log('Picker Error', err);
+            }
         }
     };
 
@@ -90,12 +116,22 @@ export default function useDocumentUploadContainer() {
         setValue(fieldName, null as any);
     };
 
-    // DRY helper to process all files
+    // Process files - handle both new uploads and existing documents
     const processFiles = async (data: DocumentFormValues): Promise<ApiDocument[]> => {
         const documentsArray: ApiDocument[] = [];
 
         const processFile = async (file: DocumentPickerResult | null | undefined, slug: string) => {
-            if (file?.uri) {
+            if (!file) return;
+
+            // If it's an existing document (already uploaded), use the path
+            if ((file as any).isExisting) {
+                documentsArray.push({
+                    url: file.uri, // This is the path from server
+                    type: slug
+                });
+            }
+            // If it's a new upload, convert to base64
+            else if (file.uri) {
                 const b64 = await getBase64(file.uri);
                 if (b64) {
                     documentsArray.push({
@@ -123,43 +159,12 @@ export default function useDocumentUploadContainer() {
             const documentsArray = await processFiles(data);
 
             const body = {
-                listing_id,
-                documents: documentsArray,
-            };
-
-            const response = await fetch(`${BASE_URL}api/v2/channelmanagement/create-listing/documents`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                Toast.show({ type: 'success', text1: result?.message || 'Documents uploaded successfully' });
-                reset(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-            } else {
-                throw new Error(result.message || "Upload failed");
-            }
-        } catch (error: any) {
-            Alert.alert("Upload Error", error.message || "Something went wrong");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const onSaveExit = async (data: DocumentFormValues) => {
-        setLoading(true);
-        try {
-            const documentsArray = await processFiles(data);
-
-            const body = {
                 listing_id: routeListing?.listing_id || listing_id,
                 documents: documentsArray,
             };
 
             const response = await fetch(`${BASE_URL}api/v2/channelmanagement/create-listing/documents`, {
-                method: 'PUT', // edit existing documents
+                method: isEdit ? 'POST' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
             });
@@ -167,17 +172,42 @@ export default function useDocumentUploadContainer() {
             const result = await response.json();
 
             if (response.ok) {
-                Toast.show({ type: 'success', text1: result?.message || 'Documents updated successfully' });
-                goBack();
+                Toast.show({
+                    type: 'success',
+                    text1: result?.message || (isEdit ? 'Documents updated successfully' : 'Documents uploaded successfully')
+                });
+                queryClient.invalidateQueries({
+                    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+                });
+
+                // Navigate based on mode
+                if (isEdit) {
+                    goBack();
+                } else {
+                    reset(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+                }
             } else {
-                throw new Error(result.message || "Update failed");
+                throw new Error(result.message || (isEdit ? "Update failed" : "Upload failed"));
             }
         } catch (error: any) {
-            Alert.alert("Update Error", error.message || "Something went wrong");
+            Alert.alert(isEdit ? "Update Error" : "Upload Error", error.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
     };
 
-    return { control, errors, handleSubmit, onSubmit, onSaveExit, handleDocumentPick, removeFile, files, loading,isEdit };
+    return {
+        control,
+        errors,
+        handleSubmit,
+        onSubmit,
+        handleDocumentPick,
+        removeFile,
+        files,
+        loading,
+        isEdit
+    };
 }

@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import Utils from "@/utility/Utils";
-import { AutomationTemplateTypesApiPayload, deleteAutomationTemplateTypesApiPayload } from "@/types/api/automationTemplateTypes";
+import { automationTemplateEditStatusTypesApiPayload, AutomationTemplateTypesApiPayload, deleteAutomationTemplateTypesApiPayload } from "@/types/api/automationTemplateTypes";
 
 // Get List
 export const getAutomationTemplateApi = async ({
@@ -64,3 +64,43 @@ export const deleteAutomationTemplateApi = async (payload: deleteAutomationTempl
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+//Get Message Templates Variables
+export const getAutomationTemplateVariablesApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_AUTOMATIONS_TEMPLATE_MESSAGE_VARIABLES
+    );
+
+    if (ok) {
+        return data;
+    }
+
+    throw response.message;
+};
+
+//Get Message Templates Variables
+export const getAutomationTemplateEventsApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_AUTOMATIONS_TEMPLATE_EVENTS
+    );
+
+    if (ok) {
+        return data;
+    }
+
+    throw response.message;
+};
+
+// Edit Status Saved Replies
+export const editStatusAutomationTemplateApi = async (payload: automationTemplateEditStatusTypesApiPayload) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.EDIT_STATUS_AUTOMATIONS_TEMPLATE,
+        { id: payload.id },
+    );
+
+    const { ok, response, data } = await apiService.patch(url, {...payload}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+}; 

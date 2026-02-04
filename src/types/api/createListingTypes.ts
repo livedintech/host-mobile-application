@@ -84,15 +84,57 @@ export interface ManageListingsResponse {
   data: ManageListingItem[];
 }
 export interface ManageListingItem {
-  details: ManageListingDetails;
-  is_sync: boolean | null;
+  id: string | number;
+  type: string | null;
+  name: string;
+  city?: string | null;
+  country_code?: string | null;
+  apt?:string;
+  state?:string;
+  occupancies: number[];
+
+  rate_plan_enabled: boolean | null;
+  synchronization_category: string | null;
+
+  is_sync: string | null;
+
+  link_repository: unknown[];
+
+  rooms?: Rooms;
 }
+export interface Rooms {
+  id: number;
+  title: string;
+
+  max_children: number | null;
+
+  rates: Rate[];
+}
+export interface Rate {
+  id: number;
+  title: string;
+
+  readonly: boolean;
+
+  derived_rate_plan_ids: number[];
+
+  occupancies: number[];
+
+  price_1: number | null;
+
+  pricing: string;
+
+  parent_rate_id: string;
+
+  max_persons: number;
+}
+
+
+
 export interface ManageListingMapItem {
-  item: {
-    details: ManageListingDetails;
-    is_sync: boolean | null;
-  }
+  item: ManageListingItem;
 }
+
 export interface ManageListingDetails {
   id: number;
   name: string;

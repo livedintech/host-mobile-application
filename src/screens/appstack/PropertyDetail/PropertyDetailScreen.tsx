@@ -19,12 +19,9 @@ const PropertyDetailScreen = () => {
   const isOwnership = propertyData?.documents?.ownership?.length > 0
   const isLicense = propertyData?.documents?.license?.length > 0
   const isNational_id = propertyData?.documents?.national_id?.length > 0
-  
   const isInterior = propertyData?.photos?.Interior?.length > 0
   const isExterior = propertyData?.photos?.Exterior?.length > 0
   const isBathroom = propertyData?.photos?.Bathroom?.length > 0
-
-
 
   const InfoCard = ({ title, icon, onEdit, children }: any) => (
     <View style={styles.card}>
@@ -52,8 +49,11 @@ const PropertyDetailScreen = () => {
     <View style={styles.container}>
       {/* Header with Menu Dots */}
       <View style={styles.header}>
-        <AppText text={propertyData.title} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-
+        <View style={{
+          flex:1
+        }}>
+        <AppText text={propertyData?.title} fontSize={28} lineHeight={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+        </View>
         <Menu>
           <MenuTrigger>
             <View style={{ padding: 5 }}>
@@ -87,8 +87,6 @@ const PropertyDetailScreen = () => {
       <RefreshableScrollView
         isLoading={isLoading}
         onRefresh={refetch} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-
 
         {/* Address Card */}
         <InfoCard title="Address" icon="pinLocationIcon" onEdit={() => handleEditSection('Address')}>

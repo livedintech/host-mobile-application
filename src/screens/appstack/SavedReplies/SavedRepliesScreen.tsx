@@ -1,33 +1,26 @@
 import React from 'react';
-import { StyleSheet, View, Switch, Pressable, FlatList } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useSavedRepliesContainer } from './SavedRepliesContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
+import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 
 const SavedRepliesScreen = () => {
-    const { replies, toggleSwitch, deleteReply, editReply, createNewReply,data,dataQuery,isFetching,isLoading } = useSavedRepliesContainer();
+    const { toggleSwitch, editReply, createNewReply, data, dataQuery, isFetching, isLoading, confirm, openRemoveConfirmSheet, removeSheetRef, isLoadingRemoved, Item, isLoadingStatus } = useSavedRepliesContainer();
 
     const renderItem = ({ item }: { item: any }) => {
         return (
             <View style={styles.card}>
                 <View style={styles.leftSection}>
-                    <Switch
-                        trackColor={{ false: '#D1D1D1', true: Colors.BRUNSWICK_GREEN }}
-                        thumbColor={'#FFF'}
-                        ios_backgroundColor="#D1D1D1"
-                        onValueChange={() => toggleSwitch(item.id)}
-                        value={item.isActive}
-                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                    />
+                    <CustomSwitch onToggle={() => toggleSwitch(item)} value={item.is_active} disabled={isLoadingStatus} isLoading={item?.id === Item?.id ? isLoadingStatus : false} />
                     <AppText text={item.title} fontSize={18} type="Medium" color={Colors.BRUNSWICK_GREEN} ml={10} />
                 </View>
-
                 <View style={styles.rightSection}>
-                    <Pressable onPress={() => deleteReply(item.id)} style={styles.iconBtn}>
+                    <Pressable onPress={() => openRemoveConfirmSheet(item)} style={styles.iconBtn}>
                         <Svgicons path="TrashFull" size={20} color={Colors.BRUNSWICK_GREEN} />
                     </Pressable>
                     <Pressable onPress={() => editReply(item)} style={styles.iconBtn}>
@@ -48,27 +41,28 @@ const SavedRepliesScreen = () => {
             </View>
 
             {/* List */}
-            {/* <FlatListHandler
-                    isLoading={isLoading || isFetching}
-                    data={data}
-                    meta={dataQuery}
-                    listEmptyText="No Chat found"
-                    renderItem={renderItem}
-                    keyExtractor={(item) => String(item.id)}
-                    contentContainerStyle={{ flexGrow: 1 }}
-                  /> */}
-            <FlatListSimpleHandler
-                data={replies}
+            <FlatListHandler
+                isLoading={isLoading || isFetching}
+                data={data}
+                meta={dataQuery}
+                listEmptyText="No data found"
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => String(item.id)}
                 contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                isLoading={false}
             />
             {/* Footer Button */}
             <View style={styles.footer}>
-                <AppButton onPress={createNewReply} title='Create New Saved Reply' />
+                <AppButton onPress={createNewReply} title='Create New Saved Reply' loading={isLoadingRemoved || isLoadingStatus}/>
             </View>
+            <ConfirmAction
+                ref={removeSheetRef}
+                title={`${Item?.title}`}
+                content="Are you sure you want delete?"
+                confirmText='Confirm'
+                closeText='Cancel'
+                onConfirm={confirm}
+                isLoading={isLoadingRemoved}
+            />
         </View>
     );
 };

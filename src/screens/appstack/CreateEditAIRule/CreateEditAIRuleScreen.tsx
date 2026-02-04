@@ -12,35 +12,34 @@ import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDr
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { useRoute } from '@react-navigation/native';
 
-const LISTING_DATA = [
-    { label: 'LivedIn_Guest_204', value: '1' },
-    { label: 'Al Hammd Villa', value: '2' },
-];
 
-const CreateEditAIRuleScreen = ({ route, navigation }: any) => {
-    const editData = route?.params?.editData;
-    const { 
-        control, 
-        errors, 
-        handleSubmit, 
-        isLoading, 
-        isEditMode, 
-        descriptionLength 
+
+const CreateEditAIRuleScreen = () => {
+    const { params } = useRoute() as any
+    const editData = params?.editData;
+    const {
+        control,
+        errors,
+        handleSubmit,
+        isLoading,
+        isEditMode,
+        transformedListing,
     } = useCreateEditAIRuleContainer(editData);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                
+
                 {/* Header Section */}
                 <View style={styles.header}>
                     <View style={styles.titleWrapper}>
-                        <AppText 
-                            text={isEditMode ? "Edit AI Auto Reply" : "Create AI Auto Reply"} 
-                            fontSize={22} 
-                            type="Bold" 
-                            color={Colors.BRUNSWICK_GREEN} 
+                        <AppText
+                            text={isEditMode ? "Edit AI Auto Reply" : "Create AI Auto Reply"}
+                            fontSize={22}
+                            type="Bold"
+                            color={Colors.BRUNSWICK_GREEN}
                         />
                         <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
                     </View>
@@ -50,46 +49,43 @@ const CreateEditAIRuleScreen = ({ route, navigation }: any) => {
                 <View style={styles.form}>
                     <InputField
                         label="Rule Name:"
-                        name="ruleName"
+                        name="name"
                         control={control}
                         errors={errors}
                         placeholder="Check-in Reminder"
                     />
-
                     <TextareaField
                         label="Define Rule Instructions"
-                        name="ruleInstructions"
+                        name="template"
                         control={control}
                         errors={errors}
-                        placeholder="When a guest has an upcoming check-in, send a friendly reminder including..."
+                        placeholder="Send a polite check-in reminder with guest name, listing info, date/time, Wi-Fi details, and door code."
                         multiline
                     />
-
                     <MultiSelectDropdownField
                         label="Listing Selection"
-                        name="listings"
+                        name="listing_id"
                         control={control}
                         errors={errors}
-                        data={LISTING_DATA}
-                        placeholder="Select Multiple Options"
+                        data={transformedListing || []}
+                        placeholder="Select Listing"
                     />
-
                     {/* Auto-Create for New Listings */}
                     <Controller
                         control={control}
-                        name="autoCreate"
+                        name="auto_send"
                         render={({ field: { onChange, value } }) => (
                             <ButtonView
-                                style={styles.autoCreateRow} 
+                                style={styles.autoCreateRow}
                                 onPress={() => onChange(!value)}
                             >
                                 <Checkbox isChecked={value} onPress={() => onChange(!value)} />
-                                <AppText 
-                                    text="Auto-Create for New Listings" 
-                                    ml={Metrics.scale(2)} 
-                                    color={Colors.PINE_FOREST} 
-                                    fontSize={14} 
-                                    type="Medium" 
+                                <AppText
+                                    text="Auto Send Reply"
+                                    ml={Metrics.scale(2)}
+                                    color={Colors.PINE_FOREST}
+                                    fontSize={14}
+                                    type="Medium"
                                 />
                             </ButtonView>
                         )}
@@ -110,7 +106,7 @@ const CreateEditAIRuleScreen = ({ route, navigation }: any) => {
                 />
 
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 
@@ -123,21 +119,21 @@ const styles = StyleSheet.create({
         paddingVertical: Metrics.verticalScale(20),
         justifyContent: 'center',
     },
-    backBtn: { 
-        position: 'absolute', 
-        left: 0, 
-        padding: Metrics.scale(8), 
-        borderWidth: 1, 
-        borderColor: Colors.SMOOTH_GREY, 
-        borderRadius: 100 
+    backBtn: {
+        position: 'absolute',
+        left: 0,
+        padding: Metrics.scale(8),
+        borderWidth: 1,
+        borderColor: Colors.SMOOTH_GREY,
+        borderRadius: 100
     },
     titleWrapper: { flexDirection: 'row', alignItems: 'center' },
     form: { marginTop: Metrics.verticalScale(10) },
-    autoCreateRow: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
+    autoCreateRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginTop: Metrics.verticalScale(5),
-        marginLeft: Metrics.scale(-10) 
+        marginLeft: Metrics.scale(-10)
     },
 });
 
