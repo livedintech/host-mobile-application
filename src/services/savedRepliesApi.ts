@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import Utils from "@/utility/Utils";
-import { deleteSavedRepliesTypesApiPayload, savedRepliesTypesApiPayload } from "@/types/api/savedRepliesTypes";
+import { deleteSavedRepliesTypesApiPayload, editStatusSavedRepliesTypesApiPayload, savedRepliesTypesApiPayload } from "@/types/api/savedRepliesTypes";
 
 
 
@@ -52,6 +52,7 @@ export const editSaveReplyApi = async (payload: savedRepliesTypesApiPayload) => 
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 }; 
+
 // Delete
 export const deleteSaveReplyApi = async (payload: deleteSavedRepliesTypesApiPayload) => {
     const url = Utils.createDynamicUrl(
@@ -65,3 +66,17 @@ export const deleteSaveReplyApi = async (payload: deleteSavedRepliesTypesApiPayl
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+// Edit Status Saved Replies
+export const editStatusSaveReplyApi = async (payload: editStatusSavedRepliesTypesApiPayload) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.EDIT_STATUS_SAVED_REPLIES,
+        { id: payload.id },
+    );
+
+    const { ok, response, data } = await apiService.patch(url, {...payload}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+}; 

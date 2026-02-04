@@ -1,55 +1,127 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
+import { createAiAutoReplyApi, editAiAutoReplyApi } from '@/services/aiAutoReplyApi';
+import { aiAutoReplyTypesApiPayload, aiAutoReplyTypesApiResponse, editAiAutoReplyTypesApiPayload } from '@/types/api/aiAutoReplyTypes';
+import STORAGE_CONST from '@/constants/storage';
+import { ManageListingsResponse } from '@/types/api/createListingTypes';
+import { getManageYourListings } from '@/services/ createListingService';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const aiRuleSchema = yup.object().shape({
-    ruleName: yup.string().required('Rule Name is required'),
-    ruleInstructions: yup.string().required('Instructions are required'),
-    listings: yup.array().min(1, 'Select at least one listing').required(),
-    autoCreate: yup.boolean().default(false),
+    name: yup.string().required('Rule name is required'),
+    listing_id: yup.array().optional(),
+    template: yup.string().required('Template is required'),
+    auto_send: yup.boolean().default(false),
+    is_enabled: yup.boolean().default(true),
 });
 
 export default function useCreateEditAIRuleContainer(editData?: any) {
+    const { user } = useAuthStore();
     const queryClient = useQueryClient();
 
-    const { control, handleSubmit, watch, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(aiRuleSchema),
         defaultValues: {
-            ruleName: editData?.title || '',
-            ruleInstructions: editData?.instructions || '',
-            listings: editData?.listings || [],
-            autoCreate: editData?.isActive || false,
+            name: editData?.name || '',
+            template: editData?.template || '',
+            listing_id: editData?.listing_ids || [],
+            auto_send: editData?.auto_send ?? false,
         },
     });
 
-    const instructionValue = watch('ruleInstructions');
-
-    const { mutate: saveRule, isPending } = useMutation({
-        mutationFn: async (data: any) => data, // API Call replace here
-        onSuccess: () => {
-            Toast.show({ 
-                type: 'success', 
-                text1: editData ? 'Rule Updated Successfully' : 'Rule Created Successfully' 
+    // Create
+    const {
+        mutate: createAiAutoReplyPayload,
+        isPending,
+        isIdle,
+    } = useMutation<aiAutoReplyTypesApiResponse, Error, aiAutoReplyTypesApiPayload>({
+        mutationFn: createAiAutoReplyApi,
+        onSuccess: ({ message }) => {
+            Toast.show({
+                type: 'success',
+                text1: message,
             });
-            queryClient.invalidateQueries({ queryKey: ['aiRules'] });
-            navigate('AIAutoReply');
+            queryClient.invalidateQueries({
+                queryKey: [STORAGE_CONST.GET_AI_AUTO_REPLY]
+            });
+            goBack()
         },
-        onError: (error: any) => {
-            Toast.show({ type: 'error', text1: error?.message || 'Failed to save rule' });
-        }
+        onError: error => {
+            Toast.show({
+                type: 'error',
+                text1: error.message || 'Something went wrong',
+            });
+        },
     });
 
-    const onSubmit = (data: any) => saveRule(data);
+    // Edit
+    const {
+        mutate: editAiAutoReplyPayload,
+        isPending: isPendingEditSaveEdit,
+        isIdle: isIdleEditSaveEdit,
+    } = useMutation<aiAutoReplyTypesApiResponse, Error, editAiAutoReplyTypesApiPayload>({
+        mutationFn: editAiAutoReplyApi,
+        onSuccess: ({ message }) => {
+            Toast.show({
+                type: 'success',
+                text1: message,
+            });
+            queryClient.invalidateQueries({
+                queryKey: [STORAGE_CONST.GET_AI_AUTO_REPLY]
+            });
+            goBack()
+        },
+        onError: error => {
+            Toast.show({
+                type: 'error',
+                text1: error.message || 'Something went wrong',
+            });
+        },
+    });
+
+    const onSubmit = (data: any) => {
+        if (editData) {
+            const payload = {
+                id: editData.id,
+                ...data,
+            };
+
+            editAiAutoReplyPayload(payload);
+        } else {
+            const payload = {
+                ...data,
+            };
+
+            createAiAutoReplyPayload(payload);
+        }
+    };
+
+     // Listing
+    const { data:listing, refetch, isLoading } = useQuery<ManageListingsResponse>({
+        queryKey: [STORAGE_CONST.GET_AI_AUTO_REPLY_LISTING, user?.id],
+        queryFn: () =>
+            getManageYourListings({
+                user: user?.id!,
+            }),
+        enabled: Boolean(user?.id),
+    });
+    
+    // Listing
+      const transformedListing = listing?.data.map((item: any) => ({
+        label: item.title,
+        value: item.id,
+      }));
 
     return {
         control,
         errors,
         handleSubmit: handleSubmit(onSubmit),
-        isLoading: isPending,
+        isLoading: isPending && !isIdle || isPendingEditSaveEdit && isIdleEditSaveEdit,
         isEditMode: !!editData,
-        descriptionLength: instructionValue?.length || 0
+        transformedListing
     };
 }

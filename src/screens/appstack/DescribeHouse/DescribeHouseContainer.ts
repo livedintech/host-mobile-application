@@ -17,9 +17,11 @@ export default function useDescribeHouseContainer() {
   const { params } = useRoute();
   const { updateListing, listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore()
-  const listing = params?.paramData?.payload?.listing;
-  const isEdit = Boolean(listing?.listing_id);
-
+  const listing = params?.paramData?.listing;
+  const isEdit = Boolean(listing?.id);
+  const listing_description = listing.listing_descriptions[0]; 
+  const listing_descriptionParsed = JSON.parse(listing_description);
+  
   const {
     control,
     handleSubmit,
@@ -29,7 +31,7 @@ export default function useDescribeHouseContainer() {
     resolver: yupResolver(describeHouseSchema),
     defaultValues: {
       name: listing?.name || '',
-      listing_descriptions: '',
+      listing_descriptions: listing_descriptionParsed?.[0]?.description || '',
     },
   });
 
@@ -107,8 +109,6 @@ export default function useDescribeHouseContainer() {
         name: data?.name,
       },
     };
-    console.log('payload', payload);
-
     updateListingDetails(payload);
   };
 

@@ -14,7 +14,8 @@ interface TextareaFieldProps extends TextInputProps {
     leftIcon?: React.ReactNode;
     wrapperStyle?: object;
     descriptionLength?: number
-    wordLimit?:number
+    wordLimit?: number;
+    sparkleIcon?: boolean
 }
 
 const TextareaField: React.FC<TextareaFieldProps> = ({
@@ -28,13 +29,14 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
     multiline,
     descriptionLength,
     wordLimit,
+    sparkleIcon,
     ...props
 }) => {
     const error = errors[name]?.message as string;
 
     return (
         <View style={[styles.mainWrapper, wrapperStyle]}>
-            {label && <AppText text={label} style={styles.label} />}
+            {label && <AppText text={label} style={styles.label} fontSize={14} type='Medium' />}
             {wordLimit && (
                 <View style={styles.wordCounterRow}>
                     <AppText text={`${descriptionLength}/${wordLimit} Words`} fontSize={12} color={Colors.SUPER_GREY} />
@@ -74,7 +76,9 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
                     )}
                 />
                 <View style={styles.sparkleIcon}>
-                    <Svgicons path="sparkleIcon" size={17} color={Colors.BRUNSWICK_GREEN} />
+                    {sparkleIcon && (
+                        <Svgicons path="sparkleIcon" size={17} color={Colors.BRUNSWICK_GREEN} />
+                    )}
                 </View>
             </View>
 

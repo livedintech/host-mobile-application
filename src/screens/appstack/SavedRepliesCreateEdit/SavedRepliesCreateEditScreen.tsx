@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -10,20 +10,10 @@ import TextareaField from '@/components/molecules/Input/TextareaField';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { useRoute } from '@react-navigation/native';
-
-const LISTING_DATA = [
-    { label: 'LivedIn_Guest_204', value: '1' },
-    { label: 'Ocean View Apartment', value: '2' },
-    { label: 'Downtown Studio', value: '3' },
-    { label: 'Downtown', value: '4' },
-
-];
+import Metrics from '@/utility/Metrics';
 
 const CreateSavedReplyScreen = () => {
-    
-    const { control, errors, handleSubmit, isLoading, isEditMode } = useSavedRepliesCreateEditContainer();
-
+    const { control, errors, handleSubmit, isLoading, isEditMode, transformedListing } = useSavedRepliesCreateEditContainer();
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -60,7 +50,7 @@ const CreateSavedReplyScreen = () => {
                         name="listing_ids"
                         control={control}
                         errors={errors}
-                        data={LISTING_DATA}
+                        data={transformedListing || []}
                         placeholder="Select Multiple Options"
                     />
 
@@ -90,8 +80,8 @@ const CreateSavedReplyScreen = () => {
 
                 {/* Action Button */}
                 <AppButton onPress={handleSubmit}
-                    disabled={isLoading}
-                    title={isLoading ? "Processing..." : isEditMode ? "Update Now" : "Create Now"}
+                    loading={isLoading}
+                    title={ isEditMode ? "Update Now" : "Create Now"}
                     mt={40}
                 />
 
@@ -101,35 +91,34 @@ const CreateSavedReplyScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#FFF' },
-    scrollContainer: { paddingHorizontal: 20, paddingBottom: 40 },
+    container: { flex: 1, backgroundColor: Colors.WHITE },
+    scrollContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(40) },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 20,
+        paddingVertical: Metrics.verticalScale(20),
         justifyContent: 'center',
-        marginBottom: 10
+        marginBottom: Metrics.verticalScale(10)
     },
-    backBtn: { position: 'absolute', left: 0, padding: 8, borderWidth: 1, borderColor: '#EEE', borderRadius: 25 },
     titleWrapper: { flexDirection: 'row', alignItems: 'center' },
     form: { marginTop: 10 },
     autoCreateRow: {
-        marginTop: 5,
-        marginLeft: -10 // Checkbox ke internal padding ko adjust karne ke liye
+        marginTop: Metrics.verticalScale(5),
+        marginLeft: Metrics.scale(-10)
     },
     checkboxWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     mainBtn: {
-        marginTop: 40,
-        height: 56,
+        marginTop: Metrics.verticalScale(40),
+        height: Metrics.verticalScale(56),
         borderRadius: 30,
         borderWidth: 1,
         borderColor: Colors.SMOOTH_GREY,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FFF'
+        backgroundColor: Colors.WHITE
     }
 });
 

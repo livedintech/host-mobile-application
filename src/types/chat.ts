@@ -4,11 +4,11 @@ export type ChatStatus = 'All' | 'Archived' | 'Snoozed' | 'Unread' | 'Marketplac
 
 export interface ChatMessage {
   id: string;
-  thread_id: string;
   name: string;
-  last_message_at: string;
-  last_message_content: string;
-  status: ChatStatus;
-  unreadCount?: number;
-  img: ImageSourcePropType;
+  img: string;
+  is_mute?:boolean;
+  is_archived?:boolean;
+  unread_count?:string;
+  last_message?:string;
+  last_message_date?:string;
 }

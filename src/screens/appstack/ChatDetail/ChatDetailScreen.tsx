@@ -25,6 +25,8 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface MessageWithTimeLabel extends ChatMessage {
   showTimeLabel?: boolean;
@@ -127,6 +129,8 @@ const processMessagesWithTimeLabels = (
 };
 
 const ChatScreen = () => {
+    const {user} = useAuthStore();
+  
   const {
     messages,
     inputText,
@@ -165,6 +169,8 @@ const ChatScreen = () => {
     handleMessageSelect,
     flatListRef, // NEW
     SAVED_REPLIES,
+    isLoading,
+    refetch
   } = useChatContainer();
 
   // NEW: State for highlighting scrolled message
@@ -196,7 +202,7 @@ const ChatScreen = () => {
   // NEW: Handle clicking on reply quote to scroll to original message
   const handleReplyQuotePress = (replyToId: string | number) => {
     scrollToMessage(replyToId, messagesWithTimeLabels);
-    
+
     // Highlight the message briefly
     setHighlightedMessageId(replyToId);
     setTimeout(() => {
@@ -209,7 +215,7 @@ const ChatScreen = () => {
     if (!replyTo) return null;
 
     return (
-      <Pressable 
+      <Pressable
         onPress={() => handleReplyQuotePress(replyTo._id)}
         style={styles.replyQuoteContainer}
       >
@@ -233,10 +239,13 @@ const ChatScreen = () => {
   };
 
   const renderMessage = ({ item }: { item: MessageWithTimeLabel }) => {
-    const isHost = item.user._id === 1;
+    const isHost = item.user._id === user?.id;
     const isAutomated = item.user._id === 3;
     const isSelected = selectedMessageId === item._id;
     const isHighlighted = highlightedMessageId === item._id; // NEW
+
+      console.log('Message user ID:', item.user._id, 'Logged-in user ID:', user?.id, 'isHost:', isHost); // Debug
+
 
     return (
       <View>
@@ -369,10 +378,10 @@ const ChatScreen = () => {
   }) => {
     const wait = new Promise(resolve => setTimeout(resolve, 500));
     wait.then(() => {
-      flatListRef.current?.scrollToIndex({ 
-        index: info.index, 
+      flatListRef.current?.scrollToIndex({
+        index: info.index,
         animated: true,
-        viewPosition: 0.5 
+        viewPosition: 0.5
       });
     });
   };
@@ -443,7 +452,7 @@ const ChatScreen = () => {
         </View>
 
         {/* Messages List */}
-        <FlatList
+        {/* <FlatList
           ref={flatListRef}
           data={messagesWithTimeLabels}
           renderItem={renderMessage}
@@ -453,6 +462,20 @@ const ChatScreen = () => {
           scrollEnabled={messagesWithTimeLabels.length > 5}
           keyboardShouldPersistTaps="handled"
           onScrollToIndexFailed={handleScrollToIndexFailed} // NEW
+        /> */}
+        <FlatListSimpleHandler
+          ref={flatListRef}
+          data={messagesWithTimeLabels}
+          isLoading={isLoading}
+          renderItem={renderMessage}
+          listEmptyText=""
+          onRefresh={refetch}
+          keyExtractor={(item) => item._id.toString()}
+          inverted
+          contentContainerStyle={styles.messagesList}
+          scrollEnabled={messagesWithTimeLabels.length > 5}
+          keyboardShouldPersistTaps="handled"
+          onScrollToIndexFailed={handleScrollToIndexFailed}
         />
 
         {/* Context Menu */}
@@ -568,7 +591,11 @@ const ChatScreen = () => {
                 mb={10}
               />
               <View style={styles.aiFooter}>
-                <Pressable onPress={() => setShowAiSuggestion(false)}>
+                <Pressable onPress={() =>{
+                   setShowAiSuggestion(false);
+                   setInputText('Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.');
+                }
+                   }>
                   <AppText
                     text="Edit"
                     fontSize={12}

@@ -15,7 +15,7 @@ export default function usePropertyDisclosureContainer() {
     const { user } = useAuthStore();
     const { listing_id, channel_id, listing } = useCreateListingStore();
     const { params } = useRoute();
-    const routeListing = params?.paramData?.payload?.listing;
+    const routeListing = params?.paramData?.listing;
     const isEdit = Boolean(routeListing?.listing_id);
 
     const {

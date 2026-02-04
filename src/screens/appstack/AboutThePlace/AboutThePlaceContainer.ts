@@ -16,7 +16,7 @@ export default function useAboutThePlaceContainer() {
   const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const navigation = useNavigation();
   const { params } = useRoute();
-  const listing = params?.paramData?.payload?.listing;
+  const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id);
 
   const binaryOptions = [

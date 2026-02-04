@@ -6,7 +6,6 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useDocumentUploadContainer from './DocumentUploadContainer';
 import { DocumentFormValues } from '@/validation/auth/createListingSchemas';
-import { goBack } from '@/services/navigationService';
 
 const DocumentUploadScreen = () => {
     const {
@@ -17,7 +16,6 @@ const DocumentUploadScreen = () => {
         removeFile,
         files,
         loading,
-        onSaveExit,
         isEdit
     } = useDocumentUploadContainer();
 
@@ -35,7 +33,10 @@ const DocumentUploadScreen = () => {
                 />
 
                 <Pressable style={styles.uploadBox} onPress={() => handleDocumentPick(fieldName)}>
-                    <AppText text="Upload Pdf" color={Colors.BRUNSWICK_GREEN} />
+                    <AppText 
+                        text={file ? "Change Document" : "Upload Pdf"} 
+                        color={Colors.BRUNSWICK_GREEN} 
+                    />
                     <Svgicons path="attachmentIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
                 </Pressable>
 
@@ -75,7 +76,7 @@ const DocumentUploadScreen = () => {
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <AppText
-                    text="Upload Ownership Licence Documents"
+                    text={isEdit ? "Update Ownership Licence Documents" : "Upload Ownership Licence Documents"}
                     fontSize={24}
                     type="Bold"
                     color={Colors.BRUNSWICK_GREEN}
@@ -93,21 +94,11 @@ const DocumentUploadScreen = () => {
                 {renderUploadField("Aqama / National ID", "nationalId", true)}
 
                 <View style={styles.footer}>
-                    
-                    {isEdit ? (
-                         <AppButton
-                        title="Save & Exit"
-                        onPress={handleSubmit(onSaveExit)}
-                        mt={15}
-                    />
-                    ) : (
-                        <AppButton
-                        title="Upload & Save"
+                    <AppButton
+                        title={isEdit ? "Save & Exit" : "Upload & Save"}
                         onPress={handleSubmit(onSubmit)}
                         loading={loading}
                     />
-                    )}
-                   
                 </View>
             </ScrollView>
         </View>

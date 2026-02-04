@@ -19,13 +19,27 @@ export default function usePropertyDetailContainer() {
       }),
     enabled: Boolean(listing_id),
   });
-  console.log('data...', data?.data?.listing);
+
 
 
 
   const listing = data?.data?.listing;
   const photos = data?.data?.listing?.photos || [];
   const documents = data?.data?.listing?.documents || [];
+const rawDescription =
+  data?.data?.listing?.listing_descriptions?.[0];
+
+const listing_descriptionParsed =
+  typeof rawDescription === 'string'
+    ? (() => {
+        try {
+          return JSON.parse(rawDescription);
+        } catch {
+          return [];
+        }
+      })()
+    : [];
+
 
   const propertyData = {
     title: listing?.name || '',
@@ -50,10 +64,9 @@ export default function usePropertyDetailContainer() {
       features: Array.isArray(listing?.amenities)
         ? listing.amenities.join(', ')
         : '',
-
     },
     houseDetails: {
-      description: '',
+     description: listing_descriptionParsed?.[0]?.description || '',
       bookingType: listing?.instant_booking ? 'Instant Booking' : 'Request to Book',
       guestEligibility: '',
       checkIn: listing?.check_in_time || '',
@@ -108,10 +121,16 @@ export default function usePropertyDetailContainer() {
     }
 
     if (section === 'Exterior') {
-      navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, { paramData: data?.data })
+       navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, {
+        isEdit: true,
+        existingPhotos: data?.data?.listing?.photos?.Exterior || [],
+      });
     }
     if (section === 'Bathroom') {
-      navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS, { paramData: data?.data })
+      navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS, {
+        isEdit: true,
+        existingPhotos: data?.data?.listing?.photos?.Bathroom || [],
+      });
     }
     if (section === 'Documents') {
       navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, { paramData: data?.data })

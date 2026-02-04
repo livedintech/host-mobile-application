@@ -44,10 +44,22 @@ export const SERVICE_CONFIG_URLS = {
     GET_SAVED_REPLIES:`${authController}/chat/saved-replies`,
     CREATE_SAVED_REPLIES:`${authController}/chat/saved-replies`,
     EDIT_SAVED_REPLIES:`${authController}/chat/saved-replies/{id}`,
+    EDIT_STATUS_SAVED_REPLIES:`${authController}/chat/saved-replies/{id}/status`,
     DELETE_SAVED_REPLIES:`${authController}/chat/saved-replies/{id}`,
     GET_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations`,
     CREATE_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations`,
     EDIT_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations/{id}`,
     DELETE_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations/{id}`,
+    GET_AUTOMATIONS_TEMPLATE_MESSAGE_VARIABLES:`${authController}/chat/message-templates/variables`,
+    GET_AUTOMATIONS_TEMPLATE_EVENTS:`${authController}/chat/automations/events`,
+    EDIT_STATUS_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations/{id}/status`,
+    GET_CHAT_DETAIL:`${authController}/chat/inbox/{conversation_id}`,
+    GET_AI_AUTO_REPLY:`${authController}/chat/ai/rules`,
+    CREATE_AI_AUTO_REPLY:`${authController}/chat/ai/rules`,
+    EDIT_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}`,
+    DELETE_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}`,
+    EDIT_STATUS_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}/status`,
+
+
   }
 };

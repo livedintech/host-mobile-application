@@ -38,6 +38,7 @@ const ManageListingScreen = () => {
                 text={item?.name}
                 color={Colors.PINE_FOREST}
                 fontSize={14}
+                numberOfLines={1}
               />
             </View>
           </View>
@@ -91,34 +92,34 @@ const ManageListingScreen = () => {
   return (
     <View style={styles.container}>
       <AppText
-            text="Manage Your Listings"
-            fontSize={30}
-            type="Bold"
-            color={Colors.BRUNSWICK_GREEN}
-            textAlign="center"
-            mb={30}
-          />
+        text="Manage Your Listings"
+        fontSize={30}
+        type="Bold"
+        color={Colors.BRUNSWICK_GREEN}
+        textAlign="center"
+        mb={30}
+      />
       <FlatListSimpleHandler
         data={data}
         isLoading={isLoading}
         renderItem={renderProperty}
         listEmptyText="No listings found"
         onRefresh={refetch}
-        keyExtractor={(item) => item?.details?.id?.toString()}
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.scrollContent}
       />
-        <View style={styles.footer}>
-            <AppButton
-              title="Create New Listing"
-              onPress={onCreateNew}
-              mt={20}
-            />
-            <AppButton
-              title="Add New Listing"
-              onPress={onCreateNewListing}
-              mt={15}
-            />
-          </View>
+      <View style={styles.footer}>
+        <AppButton
+          title="Create New Listing"
+          onPress={onCreateNew}
+          mt={20}
+        />
+        <AppButton
+          title="Add New Listing"
+          onPress={onCreateNewListing}
+          mt={15}
+        />
+      </View>
     </View>
   );
 };

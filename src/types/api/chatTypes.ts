@@ -1,5 +1,5 @@
 export interface createChatArchiveByConversationIdPayloadType {
-  conversation_id?: string,
+  conversation_id?: string | undefined,
 }
 export interface createChatArchiveByConversationIdResponseType {
   status: string;

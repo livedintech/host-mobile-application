@@ -1,31 +1,37 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack } from '@/services/navigationService';
 import STORAGE_CONST from '@/constants/storage';
 import { savedRepliesTypesApiPayload, savedRepliesTypesApiResponse } from '@/types/api/savedRepliesTypes';
-import { createSaveReplyApi, editSaveReplyApi } from '@/services/savedReplies';
+import { createSaveReplyApi, editSaveReplyApi } from '@/services/savedRepliesApi';
 import { useRoute } from '@react-navigation/native';
+import { getManageYourListings } from '@/services/ createListingService';
+import { ManageListingsResponse } from '@/types/api/createListingTypes';
+import { useAuthStore } from '@/store/useAuthStore';
 interface SavedReply {
     id: string;
     title: string;
     body: string;
-    isActive: boolean;
+    is_active: boolean;
+    listing_ids?: string[]
 }
 
 const savedReplySchema = yup.object().shape({
     title: yup.string().required('Message Name is required'),
     body: yup.string().required('Message Content is required'),
-    listing_ids: yup.array().min(1, 'Please select at least one listing').required(),
+    listing_ids: yup.array().optional(),
     auto_apply_new_listings: yup.boolean().default(false),
 });
 
 export default function useSavedRepliesCreateEditContainer() {
+    const { user } = useAuthStore();
     const route = useRoute<any>();
     const editData = route?.params?.editData as SavedReply;
     const queryClient = useQueryClient();
+
 
     const {
         control,
@@ -37,7 +43,7 @@ export default function useSavedRepliesCreateEditContainer() {
             title: editData?.title || '',
             body: editData?.body || '',
             listing_ids: editData?.listing_ids || [],
-            auto_apply_new_listings: editData?.isActive || false,
+            auto_apply_new_listings: editData?.is_active || false,
         },
     });
 
@@ -66,6 +72,7 @@ export default function useSavedRepliesCreateEditContainer() {
         },
     });
 
+    //Edit
     const {
         mutate: editSaveReplyPayload,
         isPending: isPendingEditSaveEdit,
@@ -78,7 +85,7 @@ export default function useSavedRepliesCreateEditContainer() {
                 text1: message,
             });
             queryClient.invalidateQueries({
-                queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT]
+                queryKey: [STORAGE_CONST.GET_SAVED_REPLIES]
             });
             goBack()
         },
@@ -90,6 +97,7 @@ export default function useSavedRepliesCreateEditContainer() {
         },
     });
 
+   
 
     const onSubmit = (data: any) => {
         if (editData) {
@@ -107,13 +115,29 @@ export default function useSavedRepliesCreateEditContainer() {
             createSaveReplyPayload(payload);
         }
     };
+    // Listing
+    const { data:listing, refetch, isLoading } = useQuery<ManageListingsResponse>({
+        queryKey: [STORAGE_CONST.GET_SAVED_REPLIES_LISTING, user?.id],
+        queryFn: () =>
+            getManageYourListings({
+                user: user?.id!,
+            }),
+        enabled: Boolean(user?.id),
+    });
+    
+    // Listing
+      const transformedListing = listing?.data.map((item: any) => ({
+        label: item.title,
+        value: item.id,
+      }));
 
 
     return {
         control,
         errors,
         handleSubmit: handleSubmit(onSubmit),
-        isLoading: isPending || isPendingEditSaveEdit,
+        isLoading: isPending && !isIdle || isPendingEditSaveEdit && !isIdleEditSaveEdit,
         isEditMode: !!editData,
+        transformedListing
     };
 }

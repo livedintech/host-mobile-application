@@ -1,3 +1,7 @@
+export interface automationTemplateEditStatusTypesApiPayload {
+    id: string;
+    is_active: boolean
+}
 export interface AutomationTemplateTypesApiPayload {
     id?: string;
     title: string;

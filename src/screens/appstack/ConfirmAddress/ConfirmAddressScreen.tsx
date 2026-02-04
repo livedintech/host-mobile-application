@@ -28,6 +28,7 @@ const ConfirmAddressScreen = () => {
             control={control}
             errors={errors}
             placeholder="Select Country"
+            disabled={isEdit}
           />
 
           <InputField
@@ -36,6 +37,7 @@ const ConfirmAddressScreen = () => {
             control={control}
             errors={errors}
             placeholder="Riyadh"
+            editable={!isEdit}
           />
 
           <InputField
@@ -44,6 +46,7 @@ const ConfirmAddressScreen = () => {
             control={control}
             errors={errors}
             placeholder="Riyadh"
+            editable={!isEdit}
           />
 
           <InputField

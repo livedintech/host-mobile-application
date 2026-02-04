@@ -94,7 +94,7 @@ export const createInboxUnSnoozeApi = async (payload: createChatSnoozeByConversa
 // Chat Detail Api
 export const getChatDetailApi = async (payload: createChatArchiveByConversationIdPayloadType) => {
     const url = Utils.createDynamicUrl(
-        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_ARCHIVE,
+        SERVICE_CONFIG_URLS.APP.GET_CHAT_DETAIL,
         { conversation_id: payload.conversation_id }, // params
     );
 
