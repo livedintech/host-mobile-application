@@ -29,8 +29,9 @@ const CreateTaskScreen = () => {
     userOptions,
     isCleaningCategory,
     wordCount,
-    // proceedToChecklist
+    isPending
   } = CreateTaskContainer();
+
 
   return (
     <KeyboardAvoidingView
@@ -54,7 +55,7 @@ const CreateTaskScreen = () => {
 
         {/* Task Name Field */}
         <InputField
-          name="taskName"
+          name="title"
           control={control}
           errors={errors}
           label="Task Name:"
@@ -70,7 +71,7 @@ const CreateTaskScreen = () => {
 
         {/* Task Description Field */}
         <TextareaField
-          name="taskDescription"
+          name="description"
           control={control}
           errors={errors}
           label="Task Description"
@@ -78,18 +79,18 @@ const CreateTaskScreen = () => {
           multiline
           descriptionLength={wordCount}
           wordLimit={250}
-        //   rules={{
-        //     required: 'Description is required',
-        //     minLength: {
-        //       value: 10,
-        //       message: 'Description must be at least 10 characters',
-        //     },
-        //   }}
+          //   rules={{
+          //     required: 'Description is required',
+          //     minLength: {
+          //       value: 10,
+          //       message: 'Description must be at least 10 characters',
+          //     },
+          //   }}
         />
 
         {/* Category Dropdown */}
         <DropdownField
-          name="category"
+          name="task_type_id"
           control={control}
           errors={errors}
           label="Category"
@@ -100,7 +101,7 @@ const CreateTaskScreen = () => {
 
         {/* Listing Selection Dropdown */}
         <DropdownField
-          name="listingSelection"
+          name="listing_id"
           control={control}
           errors={errors}
           label="Listing Selection"
@@ -114,7 +115,7 @@ const CreateTaskScreen = () => {
           <>
             {/* Select Date Field */}
             <DateTimeInputField
-              name="selectDate"
+              name="start_date"
               control={control}
               errors={errors}
               label="Select Date"
@@ -133,11 +134,11 @@ const CreateTaskScreen = () => {
 
             {/* Select Start Time Field */}
             <DateTimeInputField
-              name="selectStartTime"
+              name="start_time"
               control={control}
               errors={errors}
               label="Select Start Time"
-              placeholder="--:-- am"
+              placeholder="--:--"
               mode="time"
               leftIcon={
                 <Svgicons
@@ -152,11 +153,11 @@ const CreateTaskScreen = () => {
 
             {/* Select End Time Field */}
             <DateTimeInputField
-              name="selectEndTime"
+              name="end_time"
               control={control}
               errors={errors}
               label="Select End Time"
-              placeholder="--:-- pm"
+              placeholder="--:--"
               mode="time"
               leftIcon={
                 <Svgicons
@@ -171,18 +172,15 @@ const CreateTaskScreen = () => {
           </>
         )}
 
-        {/* Assign Task Field - Only show if cleaning */}
-        {isCleaningCategory && (
-          <DropdownField
-            name="assignTask"
-            control={control}
-            errors={errors}
-            label="Assign Task"
-            data={userOptions}
-            placeholder="Select User"
-            rules={{ required: 'User assignment is required' }}
-          />
-        )}
+        <DropdownField
+          name="vendor_id"
+          control={control}
+          errors={errors}
+          label="Assign Task"
+          data={userOptions}
+          placeholder="Select User"
+          rules={{ required: 'User assignment is required' }}
+        />
 
         {/* Next Button */}
         <AppButton
@@ -192,6 +190,8 @@ const CreateTaskScreen = () => {
           borderColor={Colors.ARGENT}
           color={Colors.PINE_FOREST}
           style={styles.nextButton}
+          loading = {isPending}
+          disabled = {isPending}
         />
       </ScrollView>
     </KeyboardAvoidingView>

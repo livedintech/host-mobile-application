@@ -1,227 +1,533 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  Modal,
+  Dimensions,
+} from 'react-native';
+import ImageView from 'react-native-image-viewing';
+import Video from 'react-native-video';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import LinearGradient from 'react-native-linear-gradient';
+
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
-import AppButton from '@/components/molecules/AppButton/AppButton';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import Checkbox from '@/components/molecules/Input/CheckBox';
 import EditTaskContainer from '../../containers/EditTask/EditTaskContainer';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import AppButton from '@/components/molecules/AppButton/AppButton';
+
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+const { width, height } = Dimensions.get('window');
+
+interface ImageSource {
+  uri: string;
+}
 
 const EditTaskScreen = () => {
-  const { task, expandedSections, toggleSection, handleSaveChanges } = EditTaskContainer();
-  console.log("taskEditScreen",task)
+  const {
+    taskDetail,
+    isLoadingTaskDetail,
+    control,
+    errors,
+    handleSave,
+    capitalizeFirst,
+    checklists,
+    isLoadingChecklist,
+    checklistDetail,
+    isLoadingChecklistDetail,
+    expandedId,
+    toggleExpand,
+    taskStatus,
+    vendorDropdown,
+    selectedChecklistIds,
+    toggleChecklistItem,
+    isSavingVendor,
+    isSavingChecklist,
+  } = EditTaskContainer();
 
-  if (!task) return null;
+  const [isImageViewerVisible, setImageViewerVisible] = useState(false);
+  const [currentImage, setCurrentImage] = useState<ImageSource[]>([]);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [preActivityExpanded, setPreActivityExpanded] = useState(false);
 
-  const isTodo = task.status === 'To-do';
-  const isInProgress = task.status === 'In-Progress';
-  const isCompleted = task.status === 'Completed';
+  // Helper to check if file is a video
+  const checkIsVideo = (item: any) => {
+    const path = item?.file_path?.toLowerCase() || '';
+    return (
+      item.type === 'video' || path.endsWith('.mp4') || path.endsWith('.mov')
+    );
+  };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
-        {/* Header Section */}
+  const handlePreview = (item: any) => {
+    const path = item?.file_path;
+    if (!path) return;
+
+    if (checkIsVideo(item)) {
+      setVideoUrl(path);
+    } else {
+      setCurrentImage([{ uri: path }]);
+      setImageViewerVisible(true);
+    }
+  };
+
+  const toggleImageLoad = (id: string | number) => {
+    setImageLoaded(prev => ({ ...prev, [id]: true }));
+  };
+
+  // --- Header Component (Pre-Activity) ---
+  const ListHeader = useMemo(() => {
+    if (!taskDetail) return null;
+
+    const preActivityMedia = [
+      ...(taskDetail?.images || []),
+      ...(taskDetail?.video || []),
+    ];
+
+    return (
+      <View>
         <View style={styles.header}>
-          <AppText text={task.taskName} type="Bold" fontSize={26} color={Colors.PINE_FOREST} />
-          <Svgicons path="File_Document" size={28} />
-        </View>
-
-        {/* Task Details Card */}
-        <View style={styles.detailBox}>
-          <AppText text="Task Description:" type="Bold" fontSize={16} />
-          <AppText text={`"${task.description}"`} style={styles.descriptionText} />
-          
-          <AppText text="Property:" type="Bold" fontSize={16} style={styles.labelMargin} />
-          <AppText text={task.property} color={Colors.TRANSLUCENT_NAVY} />
-
-          <AppText text={isTodo ? "Assign Task" : "Task Assigned:"} type="Bold" fontSize={16} style={styles.labelMargin} />
-          {isTodo ? (
-            <TouchableOpacity style={styles.dropdownPlaceholder}>
-              <AppText text={task.assignedTask} />
-              <Svgicons path="chevronDown" size={14} />
-            </TouchableOpacity>
-          ) : (
-            <AppText text={task.assignedTask} color={Colors.TRANSLUCENT_NAVY} />
-          )}
-
-          {isInProgress && (
-            <View style={styles.statusRow}>
-              <AppText text="Task Status:" type="Bold" fontSize={16} />
-              <AppText text="In-Progress" color={Colors.GOLDEN} style={{ marginLeft: 8 }} />
-            </View>
-          )}
-        </View>
-
-        {/* Pre Activity Preview - Visible for InProgress & Completed */}
-        {(isInProgress || isCompleted) && (
-          <View style={styles.previewContainer}>
-            <View style={styles.sectionTitleRow}>
-              <AppText text="Pre Activity Preview" type="Bold" fontSize={22} color={Colors.PINE_FOREST} />
-              <Svgicons path="video_icon" size={26} />
-            </View>
-            <TouchableOpacity style={styles.mediaCollapseBtn}>
-              <AppText text="View Images/Video" />
-              <Svgicons path="chevronDown" size={14} />
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* Checklist Section */}
-        <View style={styles.sectionTitleRow}>
-          <AppText 
-            text={isCompleted ? "Post Activity Preview" : "Check-list Managment"} 
-            type="Bold" fontSize={22} color={Colors.PINE_FOREST} 
+          <AppText
+            text={capitalizeFirst(taskDetail?.title)}
+            fontSize={23}
+            type="Bold"
+            color={Colors.PINE_FOREST}
           />
-          <Svgicons path={isCompleted ? "video_icon" : "File_Document"} size={26} />
+          <Svgicons path="File_Document" size={30} ml={10} />
         </View>
 
-        {task.checklistData.map((section) => (
-          <View key={section.id} style={styles.accordionCard}>
-            <TouchableOpacity 
-              style={styles.accordionHeader} 
-              onPress={() => toggleSection(section.id)}
+        <View style={styles.infoSection}>
+          <AppText
+            text="Task Description:"
+            fontSize={14}
+            type="Medium"
+            color={Colors.PINE_FOREST}
+            mb={8}
+          />
+          <AppText
+            text={`"${taskDetail?.description || ''}"`}
+            fontSize={14}
+            color={Colors.BRUNSWICK_GREEN}
+            mb={28}
+          />
+          <AppText
+            text="Property:"
+            fontSize={14}
+            type="Medium"
+            color={Colors.PINE_FOREST}
+            mb={8}
+          />
+          <AppText
+            text={taskDetail?.listing_title || 'N/A'}
+            fontSize={14}
+            color={Colors.BRUNSWICK_GREEN}
+            mb={28}
+          />
+
+          {taskStatus === 'todo' ? (
+            <DropdownField
+              name="assignTask"
+              label="Assign Task"
+              control={control}
+              errors={errors}
+              data={vendorDropdown}
+            />
+          ) : (
+            <View>
+              <AppText
+                text="Task Assigned:"
+                fontSize={14}
+                type="Medium"
+                color={Colors.PINE_FOREST}
+                mb={8}
+              />
+              <AppText
+                text={taskDetail?.assigned_user?.name || 'N/A'}
+                fontSize={14}
+                color={Colors.BRUNSWICK_GREEN}
+                mb={28}
+              />
+            </View>
+          )}
+        </View>
+
+        <View style={styles.checklistTitleRow}>
+          <AppText
+            text="Pre Activity Preview"
+            fontSize={23}
+            type="Bold"
+            color={Colors.PINE_FOREST}
+          />
+          <Svgicons path="webcampIcon" size={30} />
+        </View>
+
+        <GradientBorder
+          style={styles.gradientWrapper}
+          borderRadius={15}
+          borderWidth={1.5}
+        >
+          <View style={styles.sectionContainer}>
+            <ButtonView
+              style={styles.sectionHeader}
+              onPress={() => setPreActivityExpanded(!preActivityExpanded)}
             >
               <View style={styles.row}>
-                <Svgicons path={section.icon} size={22} />
-                <AppText text={section.title} type="Bold" fontSize={18} style={{ marginLeft: 10 }} />
+                <Svgicons path={'bedroom'} size={24} mr={12} />
+                <AppText
+                  text="View Images/Video"
+                  fontSize={18}
+                  type="Bold"
+                  color={Colors.PINE_FOREST}
+                />
               </View>
-              <View style={styles.chevronCircle}>
-                <Svgicons path={expandedSections.includes(section.id) ? 'chevronUp' : 'chevronDown'} size={14} />
+              <View style={styles.arrowCircle}>
+                <Svgicons
+                  path="chevronDown"
+                  size={14}
+                  style={{
+                    transform: [
+                      { rotate: preActivityExpanded ? '180deg' : '0deg' },
+                    ],
+                  }}
+                />
               </View>
-            </TouchableOpacity>
+            </ButtonView>
 
-            {expandedSections.includes(section.id) && (
-              <View style={styles.accordionContent}>
-                {section.items.map((item) => (
-                  <View key={item.id} style={styles.itemContainer}>
-                    <AppText text={item.label} fontSize={14} color={Colors.TRANSLUCENT_NAVY} />
-                    
-                    {/* Media Grid logic - Design 4 */}
-                    {(isInProgress || isCompleted) && (
-                      <View style={styles.imageGrid}>
-                        <View style={styles.mediaPlaceholder} />
-                        <View style={styles.mediaPlaceholder} />
-                      </View>
-                    )}
-                  </View>
-                ))}
+            {preActivityExpanded && (
+              <View style={styles.checklistContent}>
+                <View style={styles.mediaContainer}>
+                  {preActivityMedia.map((media: any, index: number) => {
+                    const mediaId = media.id || `pre-${index}`;
+                    const isVideo = checkIsVideo(media);
+                    return (
+                      <ButtonView
+                        key={mediaId}
+                        onPress={() => handlePreview(media)}
+                        style={styles.mediaWrapper}
+                      >
+                        <ShimmerPlaceholder
+                          visible={imageLoaded[mediaId]}
+                          style={styles.shimmerStyle}
+                        >
+                          {isVideo ? (
+                            <View
+                              style={styles.videoPlaceholder}
+                              onLayout={() => toggleImageLoad(mediaId)}
+                            >
+                              <Svgicons path="webcampIcon" size={30} />
+                              <AppText
+                                text="Video"
+                                fontSize={10}
+                                color={Colors.PINE_FOREST}
+                                mt={4}
+                              />
+                            </View>
+                          ) : (
+                            <Image
+                              source={{ uri: media.file_path }}
+                              style={styles.mediaImage}
+                              onLoad={() => toggleImageLoad(mediaId)}
+                            />
+                          )}
+                        </ShimmerPlaceholder>
+                      </ButtonView>
+                    );
+                  })}
+                </View>
               </View>
             )}
           </View>
-        ))}
+        </GradientBorder>
 
-        {isCompleted && (
-          <View style={styles.completionBadge}>
-            <Svgicons path="check_circle" size={20} />
-            <AppText text="Task Completed Successfully" type="Medium" style={{ marginLeft: 8 }} />
-          </View>
-        )}
-      </ScrollView>
-
-      {!isCompleted && (
-        <View style={styles.footer}>
-          <AppButton 
-            title="Save Changes" 
-            onPress={handleSaveChanges}
-            backgroundColor={Colors.WHITE}
-            borderColor={Colors.ARGENT}
+        <View style={styles.checklistTitleRow}>
+          <AppText
+            text={
+              taskStatus === 'todo'
+                ? 'Check-list Management'
+                : 'Post Activity Preview'
+            }
+            fontSize={23}
+            type="Bold"
             color={Colors.PINE_FOREST}
+          />
+          <Svgicons
+            path={taskStatus === 'todo' ? 'File_Document' : 'webcampIcon'}
+            size={30}
+          />
+        </View>
+      </View>
+    );
+  }, [
+    taskDetail,
+    preActivityExpanded,
+    imageLoaded,
+    control,
+    errors,
+    vendorDropdown,
+  ]);
+
+  if (isLoadingTaskDetail) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={Colors.PINE_FOREST} />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <FlatListSimpleHandler
+        data={checklists}
+        isLoading={isLoadingChecklist}
+        listEmptyText="No checklists available"
+        contentContainerStyle={styles.scrollContent}
+        ListHeaderComponent={ListHeader}
+        renderItem={({ item }) => (
+          <GradientBorder
+            style={styles.gradientWrapper}
+            borderRadius={15}
+            borderWidth={1.5}
+          >
+            <View style={styles.sectionContainer}>
+              <ButtonView
+                style={styles.sectionHeader}
+                onPress={() => toggleExpand(item.id)}
+              >
+                <View style={styles.row}>
+                  <Svgicons path={'bedroom'} size={24} mr={12} />
+                  <AppText
+                    text={item.name}
+                    fontSize={18}
+                    type="Bold"
+                    color={Colors.PINE_FOREST}
+                    style={{ maxWidth: 240 }}
+                  />
+                </View>
+                <View style={styles.arrowCircle}>
+                  <Svgicons
+                    path="chevronDown"
+                    size={14}
+                    style={{
+                      transform: [
+                        { rotate: expandedId === item.id ? '180deg' : '0deg' },
+                      ],
+                    }}
+                  />
+                </View>
+              </ButtonView>
+
+              {expandedId === item.id && (
+                <View style={styles.checklistContent}>
+                  {isLoadingChecklistDetail ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={Colors.PINE_FOREST}
+                    />
+                  ) : (
+                    checklistDetail?.items?.map((check: any) => (
+                      <View key={check.id} style={styles.checkItemContainer}>
+                        <View style={styles.checkItemRow}>
+                          {taskStatus === 'todo' && (
+                            <Checkbox
+                              isChecked={
+                                selectedChecklistIds.includes(check.id) ||
+                                !!check.completed
+                              }
+                              onPress={() => toggleChecklistItem(check.id)}
+                            />
+                          )}
+                          <AppText
+                            text={check.name}
+                            fontSize={12}
+                            color={Colors.PINE_FOREST}
+                            ml={taskStatus === 'todo' ? 12 : 0}
+                          />
+                        </View>
+
+                        {/* --- Post Activity / Checklist Media --- */}
+                        {check.images?.length > 0 && (
+                          <View style={styles.mediaContainer}>
+                            {check.images.map((img: any, idx: number) => {
+                              const mediaId =
+                                img.id || `check-${check.id}-${idx}`;
+                              const isVideo = checkIsVideo(img);
+                              return (
+                                <ButtonView
+                                  key={mediaId}
+                                  onPress={() => handlePreview(img)}
+                                  style={styles.mediaWrapper}
+                                >
+                                  <ShimmerPlaceholder
+                                    visible={imageLoaded[mediaId]}
+                                    style={styles.shimmerStyle}
+                                  >
+                                    {isVideo ? (
+                                      <View
+                                        style={styles.videoPlaceholder}
+                                        onLayout={() =>
+                                          toggleImageLoad(mediaId)
+                                        }
+                                      >
+                                        <Svgicons
+                                          path="webcampIcon"
+                                          size={24}
+                                        />
+                                        <AppText
+                                          text="Video"
+                                          fontSize={9}
+                                          color={Colors.PINE_FOREST}
+                                        />
+                                      </View>
+                                    ) : (
+                                      <Image
+                                        source={{ uri: img.file_path }}
+                                        style={styles.mediaImage}
+                                        onLoad={() => toggleImageLoad(mediaId)}
+                                      />
+                                    )}
+                                  </ShimmerPlaceholder>
+                                </ButtonView>
+                              );
+                            })}
+                          </View>
+                        )}
+                      </View>
+                    ))
+                  )}
+                </View>
+              )}
+            </View>
+          </GradientBorder>
+        )}
+      />
+
+      {/* MODALS */}
+      <ImageView
+        images={currentImage}
+        imageIndex={0}
+        visible={isImageViewerVisible}
+        onRequestClose={() => setImageViewerVisible(false)}
+      />
+
+      <Modal visible={!!videoUrl} transparent={false} animationType="slide">
+        <View style={styles.videoModalContainer}>
+          <ButtonView
+            style={styles.closeVideoBtn}
+            onPress={() => setVideoUrl(null)}
+          >
+            <AppText text="✕ Close" color="#FFF" type="Bold" fontSize={18} />
+          </ButtonView>
+          {videoUrl && (
+            <Video
+              source={{ uri: videoUrl }}
+              style={styles.fullVideo}
+              controls={true}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+      </Modal>
+
+      {taskStatus === 'todo' && (
+        <View style={styles.footer}>
+          <AppButton
+            title={
+              isSavingVendor || isSavingChecklist ? 'Saving...' : 'Save Changes'
+            }
+            color={Colors.PINE_FOREST}
+            onPress={handleSave}
+            disabled={isSavingVendor || isSavingChecklist}
+            loading={isSavingVendor || isSavingChecklist}
           />
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
-  header: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    gap: 10, 
-    marginTop: 20, 
-    marginBottom: 30 
-  },
-  detailBox: { marginBottom: 25 },
-  descriptionText: { marginTop: 8, color: Colors.TRANSLUCENT_NAVY, lineHeight: 22 },
-  labelMargin: { marginTop: 15 },
-  dropdownPlaceholder: {
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  scrollContent: { padding: 20, paddingBottom: 100 },
+  header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.ARGENT,
-    borderRadius: 12,
-    padding: 15,
-    marginTop: 8,
+    marginBottom: 25,
   },
-  statusRow: { flexDirection: 'row', marginTop: 15, alignItems: 'center' },
-  sectionTitleRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    gap: 12, 
-    marginTop: 30, 
-    marginBottom: 20 
-  },
-  previewContainer: { marginBottom: 10 },
-  mediaCollapseBtn: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.ARGENT,
-    borderRadius: 16,
-    padding: 18,
-  },
-  accordionCard: {
-    borderWidth: 1,
-    borderColor: Colors.ARGENT,
-    borderRadius: 16,
-    marginBottom: 15,
-    overflow: 'hidden',
-  },
-  accordionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#FFF',
-  },
-  accordionContent: { padding: 16, borderTopWidth: 1, borderTopColor: '#F0F0F0' },
-  row: { flexDirection: 'row', alignItems: 'center' },
-  chevronCircle: {
-    width: 30, height: 30, borderRadius: 15,
-    borderWidth: 1, borderColor: Colors.ARGENT,
-    justifyContent: 'center', alignItems: 'center',
-  },
-  itemContainer: { marginBottom: 20 },
-  imageGrid: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  mediaPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#F5F5F5', // Grey squares from Design 4
-    borderStyle: 'dashed',
-    borderWidth: 1,
-    borderColor: '#DDD',
-  },
-  completionBadge: {
+  infoSection: { marginBottom: 25 },
+  checklistTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
     marginTop: 20,
+    gap: 10,
   },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 20,
-    backgroundColor: '#FFF',
+  gradientWrapper: { marginBottom: 16 },
+  sectionContainer: { backgroundColor: '#FFF', paddingVertical: 8 },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
+  row: { flexDirection: 'row', alignItems: 'center' },
+  arrowCircle: {
+    width: 35,
+    height: 35,
+    borderRadius: 35,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checklistContent: { paddingHorizontal: 20, paddingBottom: 20, marginTop: 5 },
+  checkItemContainer: { marginBottom: 15 },
+  checkItemRow: { flexDirection: 'row', alignItems: 'center' },
+  mediaContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 12,
+    gap: 10,
+  },
+  mediaWrapper: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#F9F9F9',
+  },
+  shimmerStyle: { width: 80, height: 80, borderRadius: 10 },
+  mediaImage: { width: '100%', height: '100%' },
+  videoPlaceholder: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F0F4F2',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  videoModalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+  },
+  fullVideo: { width: '100%', height: '80%' },
+  closeVideoBtn: { position: 'absolute', top: 50, right: 20, zIndex: 10 },
+  footer: { padding: 20 },
 });
 
 export default EditTaskScreen;

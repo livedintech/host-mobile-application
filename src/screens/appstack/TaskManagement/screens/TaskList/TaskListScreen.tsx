@@ -1,66 +1,56 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  TouchableOpacity,
-  ListRenderItem,
-  SafeAreaView,
-} from 'react-native';
-import AppText from '@/components/molecules/AppText/AppText';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { Colors } from '@/theme/colors';
+
+import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import AppButton from '@/components/molecules/AppButton/AppButton';
-import TaskListContainer from '../../containers/TaskList/TaskListContainer';
-import NoTaskScreen from '../NoTask/NoTaskScreen';
-import { useTaskStore } from '@/store/taskStore';
-import { Task } from '@/types/api/taskManagentType';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { Colors } from '@/theme/colors';
+
+import TaskListContainer from '../../containers/TaskList/TaskListContainer';
+import { Task } from '@/types/api/taskManagentType';
+import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
-import { useTaskDraftStore } from '@/store/taskDraftStore';
+import AppButton from '@/components/molecules/AppButton/AppButton';
 
 const TaskListScreen: React.FC = () => {
   const {
+    tasks,
+    taskQuery,
     handleCreateTask,
     handleEditTask,
-    isFilterVisible,
-    toggleFilterModal,
     control,
     errors,
+    handleSubmit,
     onApplyFilter,
     onResetFilter,
-    handleSubmit,
+    isFilterVisible,
+    toggleFilterModal,
   } = TaskListContainer();
-  const { tasks } = useTaskStore();
-  const {draft} = useTaskDraftStore();
-  console.log("getAllTask",tasks);
-  console.log("draft",draft)
 
   const dropdownData = [
     { label: 'Option 1', value: '1' },
     { label: 'Option 2', value: '2' },
   ];
 
-  if (tasks.length === 0) {
-    return <NoTaskScreen />;
-  }
-
-  const renderTaskItem: ListRenderItem<Task> = ({ item }) => (
+  const renderTaskItem = ({ item }: { item: Task }) => (
     <GradientBorder borderRadius={15} style={styles.gradientWrapper}>
       <View style={styles.taskCard}>
+        {/* Header */}
         <View style={styles.cardHeader}>
           <AppText
-            text={item.taskName}
+            text={item.title}
             type="Bold"
             fontSize={18}
             color={Colors.BRUNSWICK_GREEN}
+            style={styles.flex1}
           />
           <TouchableOpacity onPress={() => handleEditTask(item)}>
-            <Svgicons path="edit_icon_2" size={24} />
+            <Svgicons path="edit_icon_2" size={22} />
           </TouchableOpacity>
         </View>
 
+        {/* Content */}
         <View style={styles.cardContent}>
           <View style={styles.infoRow}>
             <AppText
@@ -69,7 +59,7 @@ const TaskListScreen: React.FC = () => {
               color={Colors.PINE_FOREST}
             />
             <AppText
-              text={`"${item.description}"`}
+              text={item.description}
               color={Colors.PINE_FOREST}
               style={styles.flexShrink}
             />
@@ -78,7 +68,7 @@ const TaskListScreen: React.FC = () => {
           <View style={styles.infoRow}>
             <AppText text="Property: " type="Bold" color={Colors.PINE_FOREST} />
             <AppText
-              text={item.property}
+              text={item.listing_title}
               color={Colors.PINE_FOREST}
               style={styles.flexShrink}
             />
@@ -86,24 +76,29 @@ const TaskListScreen: React.FC = () => {
 
           <View style={styles.infoRow}>
             <AppText
-              text="Assigned Task: "
+              text="Assigned To: "
               type="Bold"
               color={Colors.PINE_FOREST}
             />
             <AppText
-              text={item.assignedTask}
+              text={item.assigned_user_name}
               color={Colors.PINE_FOREST}
-              style={styles.flexShrink}
             />
           </View>
 
           <View style={styles.infoRow}>
+            <AppText text="Status: " type="Bold" color={Colors.PINE_FOREST} />
             <AppText
-              text="Task Status: "
+              text={item.status.toUpperCase()}
+              color={
+                item.status === 'todo'
+                  ? Colors.ALERT_RED
+                  : item.status === 'inprogress'
+                  ? Colors.GOLDEN_YELLOW
+                  : Colors.TEAL_GREEN
+              }
               type="Bold"
-              color={Colors.PINE_FOREST}
             />
-            <AppText text={item.status} color="#FF4D4D" />
           </View>
         </View>
       </View>
@@ -111,31 +106,31 @@ const TaskListScreen: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Screen Title Header */}
+    <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <View style={styles.row}>
           <AppText
-            text="Task Managment"
+            text="Task Management"
             fontSize={26}
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}
           />
-          <TouchableOpacity style={styles.iconBtn}>
-            <Svgicons path="taskManagementIcon" size={25} />
-          </TouchableOpacity>
         </View>
+        {/* Filter Icon */}
         <TouchableOpacity onPress={toggleFilterModal}>
-          <Svgicons path="taskManagementFilterIcon" size={20} />
+          <Svgicons path="taskManagementFilterIcon" size={25} />
         </TouchableOpacity>
       </View>
 
-      <FlatList
+      {/* List */}
+      <FlatListHandler
         data={tasks}
+        meta={taskQuery}
+        isLoading={taskQuery.isLoading}
         renderItem={renderTaskItem}
-        keyExtractor={item => item.id}
+        listEmptyText="No tasks found"
         contentContainerStyle={styles.listPadding}
-        showsVerticalScrollIndicator={false}
       />
 
       {/* Filter Modal */}
@@ -152,7 +147,6 @@ const TaskListScreen: React.FC = () => {
               type="Bold"
               color={Colors.BRUNSWICK_GREEN}
             />
-            <Svgicons path="taskManagementFilterIcon" size={18} />
           </View>
 
           <MultiSelectDropdownField
@@ -166,7 +160,7 @@ const TaskListScreen: React.FC = () => {
 
           <MultiSelectDropdownField
             name="assignee"
-            label="Task Asignee"
+            label="Task Assignee"
             control={control}
             errors={errors}
             data={dropdownData}
@@ -200,84 +194,58 @@ const TaskListScreen: React.FC = () => {
         </View>
       </Modal>
 
+      {/* Footer */}
       <View style={styles.footer}>
-        <AppButton
-          title="Create Task"
-          onPress={handleCreateTask}
-          backgroundColor={Colors.WHITE}
-          borderColor={Colors.ARGENT}
-          color={Colors.PINE_FOREST}
-        />
+        <TouchableOpacity style={styles.createBtn} onPress={handleCreateTask}>
+          <AppText text="Create Task" type="Bold" color={Colors.PINE_FOREST} />
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
+export default TaskListScreen;
+
+// ------------------- STYLES -------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.WHITE,
     paddingHorizontal: 20,
   },
-  brandingHeader: {
+
+  /* Header */
+  header: {
+    marginTop: 20,
+    marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
   },
-  avatarCircle: {
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
+  row: { flexDirection: 'row', alignItems: 'center' },
+
+  /* List */
+  listPadding: { paddingBottom: 140 },
+  gradientWrapper: { marginBottom: 15 },
+  taskCard: { backgroundColor: Colors.WHITE, padding: 20, borderRadius: 15 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  cardContent: { gap: 6 },
+  infoRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' },
+
+  /* Footer */
+  footer: { position: 'absolute', bottom: 20, left: 20, right: 20 },
+  createBtn: {
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: Colors.WHITE,
     borderWidth: 1,
     borderColor: Colors.ARGENT,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  row: { flexDirection: 'row', alignItems: 'center' },
-  iconBtn: { marginLeft: 10 },
-  listPadding: { paddingBottom: 150 },
-  gradientWrapper: {
-    marginBottom: 15,
-  },
-  taskCard: {
-    padding: 20,
-    backgroundColor: Colors.WHITE,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  cardContent: {
-    gap: 6,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-  },
-  flexShrink: {
-    flex: 1,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 100, // Adjusted to leave room for the bottom tab bar if needed
-    left: 20,
-    right: 20,
-  },
-  // Modal Styles
-  modal: {
-    justifyContent: 'center',
-    margin: 20,
-  },
+
+  /* Modal */
+  modal: { justifyContent: 'center', margin: 20 },
   modalContent: {
     backgroundColor: Colors.WHITE,
     borderRadius: 25,
@@ -297,7 +265,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 10,
   },
-  flex1: { flex: 1 },
-});
 
-export default TaskListScreen;
+  /* Helpers */
+  flex1: { flex: 1 },
+  flexShrink: { flexShrink: 1 },
+});
