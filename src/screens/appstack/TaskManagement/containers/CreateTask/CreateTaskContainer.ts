@@ -7,7 +7,7 @@ import {
   getTaskManagementListing,
   getTaskManagementVendor,
   taskManagementCreateTaskDraft,
-  getTaskChecklist
+  getTaskChecklist,
 } from '@/services/TaskManagementApi';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
 import {
@@ -110,7 +110,6 @@ const CreateTaskContainer = () => {
     }),
   );
 
-
   const createTaskDraftMutation = useMutation<
     taskManagementCreateApiResponse,
     Error,
@@ -123,7 +122,7 @@ const CreateTaskContainer = () => {
       //   text1: draftData.message,
       // });
 
-      console.log("draftDatadraftData",draftData)
+      console.log('draftDatadraftData', draftData);
 
       // Save draft in store
       setDraft({
@@ -135,6 +134,8 @@ const CreateTaskContainer = () => {
         selectDate: variables.start_date,
         selectStartTime: variables.start_time,
         selectEndTime: variables.end_time,
+        taskType: draftData.data.task_type,
+        taskId: Number(draftData.data.id),
       });
 
       // 🔹 Call getTaskChecklist after draft creation
@@ -145,8 +146,14 @@ const CreateTaskContainer = () => {
         );
         console.log('Checklist Data:', checklistData);
 
-        setDraft( checklistData );
+        // setDraft(prev => ({
+        //   ...prev,
+        //   checklist: checklistData.data,
+        // }));
 
+        setDraft({
+          checklistApiData: checklistData, // ⬅ RAW API
+        });
       } catch (error: any) {
         Toast.show({
           type: 'error',
@@ -165,8 +172,7 @@ const CreateTaskContainer = () => {
     },
   });
 
-
- const onSubmit = (data: taskManagementCreateApiPayload) => {
+  const onSubmit = (data: taskManagementCreateApiPayload) => {
     // Base payload
     const payload: taskManagementCreateApiPayload = {
       title: data.title,
