@@ -76,6 +76,8 @@ import chevronDown from "./chevron-down.svg";
 import edit_icon_2 from "./edit_icon_2.svg";
 import taskManagementIcon from "./taskManagementIcon.svg";
 import taskManagementFilterIcon from "./taskManagementFilterIcon.svg";
+import webcampIcon from "./webcamp.svg";
+import taskCompletedIcon from "./task-completed.svg";
 
 
 
@@ -156,5 +158,7 @@ export const icons = {
     chevronDown,
     edit_icon_2,
     taskManagementIcon,
-    taskManagementFilterIcon
+    taskManagementFilterIcon,
+    webcampIcon,
+    taskCompletedIcon
 };

@@ -169,7 +169,9 @@ const CreateChecklistScreen = () => {
       >
         <View style={styles.modalContent}>
           <AppText
-            text={activeSectionId ? 'Add Items to Section' : 'Create New Section'}
+            text={
+              activeSectionId ? 'Add Items to Section' : 'Create New Section'
+            }
             type="Bold"
             fontSize={18}
             style={styles.modalTitle}
@@ -208,16 +210,10 @@ const CreateChecklistScreen = () => {
 
           {/* Modal Footer */}
           <View style={styles.modalFooter}>
-            <ButtonView
-              style={styles.cancelBtn}
-              onPress={() => toggleModal()}
-            >
+            <ButtonView style={styles.cancelBtn} onPress={() => toggleModal()}>
               <AppText text="Cancel" color={Colors.PINE_FOREST} type="Medium" />
             </ButtonView>
-            <ButtonView
-              style={styles.confirmBtn}
-              onPress={onConfirmAddSection}
-            >
+            <ButtonView style={styles.confirmBtn} onPress={onConfirmAddSection}>
               <AppText text="Confirm" color={Colors.PINE_FOREST} type="Bold" />
             </ButtonView>
           </View>
@@ -246,24 +242,100 @@ export default CreateChecklistScreen;
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20, backgroundColor: '#FFF' },
   topHeader: { marginTop: 10, marginBottom: 20 },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+  },
   subtitle: { lineHeight: 20, marginBottom: 20 },
-  addSectionBtn: { alignSelf: 'flex-end', padding: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.ARGENT },
+  addSectionBtn: {
+    alignSelf: 'flex-end',
+    padding: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+  },
   gradientWrapper: { marginBottom: 15 },
   card: { backgroundColor: '#FFF', padding: 15 },
-  collapsedCard: { borderWidth: 1, borderColor: Colors.ARGENT, borderRadius: 16, marginBottom: 15 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  chevronCircle: { width: 35, height: 35, borderRadius: 35, backgroundColor: '#fff', borderWidth: 1, borderColor: Colors.ARGENT, justifyContent: 'center', alignItems: 'center' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  collapsedCard: {
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+    borderRadius: 16,
+    marginBottom: 15,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  chevronCircle: {
+    width: 35,
+    height: 35,
+    borderRadius: 35,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, maxWidth: 240 },
   items: { marginTop: 15 },
   checkRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  addItemBtn: { borderWidth: 1, borderColor: '#EEE', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 25, alignSelf: 'flex-start', marginTop: 10 },
-  footer: { position: 'absolute', left: 20, right: 20, bottom: 20, backgroundColor: '#FFF', paddingVertical: 10 },
+  addItemBtn: {
+    borderWidth: 1,
+    borderColor: '#EEE',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 25,
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
+  footer: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#FFF',
+    paddingVertical: 10,
+  },
   modalMargin: { margin: 20, justifyContent: 'center' },
   modalContent: { backgroundColor: 'white', padding: 24, borderRadius: 24 },
-  modalTitle: { textAlign: 'center', marginBottom: 20, color: Colors.PINE_FOREST },
-  addMoreBtn: { borderWidth: 1, borderColor: Colors.ARGENT, borderRadius: 20, paddingVertical: 8, paddingHorizontal: 16, alignSelf: 'flex-start', marginTop: 15 },
-  modalFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, gap: 15 },
-  cancelBtn: { flex: 1, borderWidth: 1, borderColor: Colors.ARGENT, borderRadius: 30, padding: 15, alignItems: 'center' },
-  confirmBtn: { flex: 1, backgroundColor: Colors.WHITE, borderWidth: 1, borderColor: Colors.ARGENT, borderRadius: 30, padding: 15, alignItems: 'center' },
+  modalTitle: {
+    textAlign: 'center',
+    marginBottom: 20,
+    color: Colors.PINE_FOREST,
+  },
+  addMoreBtn: {
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignSelf: 'flex-start',
+    marginTop: 15,
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 30,
+    gap: 15,
+  },
+  cancelBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+    borderRadius: 30,
+    padding: 15,
+    alignItems: 'center',
+  },
+  confirmBtn: {
+    flex: 1,
+    backgroundColor: Colors.WHITE,
+    borderWidth: 1,
+    borderColor: Colors.ARGENT,
+    borderRadius: 30,
+    padding: 15,
+    alignItems: 'center',
+  },
 });

@@ -3,7 +3,7 @@ import { Task, TaskStatus } from "@/types/api/taskManagentType";
 
 interface TaskStore {
   tasks: Task[];
-  addTask: (task: Omit<Task, 'id' | 'status'>) => void;
+addTask: (task: Omit<Task, 'id' | 'status'>) => void;
   updateTaskStatus: (id: string, status: TaskStatus) => void;
 }
 
@@ -25,5 +25,5 @@ export const useTaskStore = create<TaskStore>((set) => ({
   updateTaskStatus: (id, status) =>
     set((state) => ({
       tasks: state.tasks.map((t) => (t.id === id ? { ...t, status } : t)),
-    })),
+    }))
 }));

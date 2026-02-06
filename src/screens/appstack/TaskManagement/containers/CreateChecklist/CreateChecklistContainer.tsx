@@ -11,6 +11,8 @@ import {
   taskManagementAddChecklist,
   taskManagementInsertChecklist,
   getTaskChecklist,
+  editChecklistItem,
+  taskCreateStatusUpdate,
 } from '@/services/TaskManagementApi';
 import {
   ChecklistSection,
@@ -23,7 +25,7 @@ interface FormValues {
 }
 
 const CreateChecklistContainer = () => {
-  const addTask = useTaskStore(s => s.addTask);
+  // const addTask = useTaskStore(s => s.addTask);
   const { draft, clearDraft, isCleaningCategory } = useTaskDraftStore();
   console.log('draftbb', draft);
 
@@ -235,32 +237,82 @@ const CreateChecklistContainer = () => {
     );
   };
 
-  const onCreateTask = () => {
-    console.log("draftselecteditem",draft,selectedItems)
-    if (!draft || !selectedItems.length) {
-      return Toast.show({ type: 'error', text1: 'Select at least one item' });
+
+  
+
+  const onCreateTask = async () => {
+    if (!draft) {
+      return Toast.show({ type: 'error', text1: 'Draft not found' });
     }
 
-    setIsLoading(true);
+    if (!selectedItems.length) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Select at least one checklist item',
+      });
+    }
 
-    addTask({
-      taskName: draft.taskName,
-      description: draft.taskDescription,
-      category: draft.category,
-      property: draft.listingSelection,
-      assignedTask: draft.assignTask || 'Unassigned',
-      selectDate: draft.selectDate,
-      selectStartTime: draft.selectStartTime,
-      selectEndTime: draft.selectEndTime,
-      isCleaningCategory,
-    });
+    const taskId = draft?.checklistApiData?.data?.tasks?.[0]?.task_id;
 
-    clearDraft();
-    Toast.show({ type: 'success', text1: 'Task Created' });
-    setTimeout(() => {
-      setIsLoading(false);
+    if (!taskId) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Task ID not found',
+      });
+    }
+
+    try {
+      setIsLoading(true);
+
+      // -----------------------------
+      // 1️⃣ UPDATE CHECKLIST ITEMS
+      // -----------------------------
+      const checklistIds = selectedItems.map(id => Number(id));
+
+      await editChecklistItem({
+        task_id: taskId,
+        ids: checklistIds,
+      });
+
+      // -----------------------------
+      // 2️⃣ UPDATE TASK STATUS
+      // -----------------------------
+      await taskCreateStatusUpdate({
+        task_id: taskId,
+        is_draft: 0,
+      });
+
+      // -----------------------------
+      // 3️⃣ LOCAL STORE UPDATE (optional)
+      // -----------------------------
+      // addTask({
+      //   taskName: draft.taskName,
+      //   description: draft.taskDescription,
+      //   category: draft.category,
+      //   property: draft.listingSelection,
+      //   assignedTask: draft.assignTask || 'Unassigned',
+      //   selectDate: draft.selectDate,
+      //   selectStartTime: draft.selectStartTime,
+      //   selectEndTime: draft.selectEndTime,
+      //   isCleaningCategory,
+      // });
+
+      clearDraft();
+
+      Toast.show({
+        type: 'success',
+        text1: 'Task created successfully',
+      });
+
       navigate(NavigationRoutes.APP_STACK.TASK);
-    }, 300);
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: error?.message || 'Failed to create task',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {

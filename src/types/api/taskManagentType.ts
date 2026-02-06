@@ -1,22 +1,26 @@
-export type TaskStatus = 'To-do' | 'In-Progress' | 'Completed';
+// export type TaskStatus = 'To-do' | 'In-Progress' | 'Completed';
 
 export interface Task {
-  id: string;
-  taskName: string;
+  id: number;
+  title: string;
   description: string;
-  category: string;
-  property: string;
-  assignedTask: string;
-  status: TaskStatus;
-  selectDate?: string;
-  selectStartTime?: string;
-  selectEndTime?: string;
-  // checklistData: ChecklistSection[];
-  isCleaningCategory: boolean;
-
-  preActivityMedia?: string[];
-  postActivityMedia?: Record<string, string[]>;
+  task_type: string;
+  task_type_key: string;
+  type: string;
+  date: string;
+  listing_id: number;
+  task_id: number;
+  property_id: string;
+  property_address: string;
+  room_code: string;
+  listing_title: string;
+  status: string;
+  priority: string;
+  assign_datetime: string;
+  assigned_user_name: string;
+  is_future_booking: boolean;
 }
+
 
 export interface ChecklistItem {
   id: string;

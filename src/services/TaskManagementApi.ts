@@ -1,139 +1,151 @@
-import {SERVICE_CONFIG_URLS} from "@/constants/api_urls";
-import apiService from "./apiService";
-import Utils from "@/utility/Utils";
-import {AddSectionPayload, InsertChecklistItemPayload, taskManagementCreateApiPayload} from "@/types/api/taskManagentType"
+import { SERVICE_CONFIG_URLS } from '@/constants/api_urls';
+import apiService from './apiService';
+import Utils from '@/utility/Utils';
+import {
+  AddSectionPayload,
+  InsertChecklistItemPayload,
+  taskManagementCreateApiPayload,
+} from '@/types/api/taskManagentType';
 
-
-
-
-//Get Category 
+//Get Category
 export const getTaskManagementCategory = async () => {
-    const { ok, response, data } = await apiService.get(
-        SERVICE_CONFIG_URLS.APP.GET_CATEGORY_TASK_MANAGEMENT
-    );
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_CATEGORY_TASK_MANAGEMENT,
+  );
 
-    if (ok) {
-        return data.data;
-    }
+  if (ok) {
+    return data.data;
+  }
 
-    throw response.message;
+  throw response.message;
 };
 
 //Get Listing
 export const getTaskManagementListing = async () => {
-    const { ok, response, data } = await apiService.get(
-        SERVICE_CONFIG_URLS.APP.GET_LISTING_TASK_MANAGEMENT
-    );
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_LISTING_TASK_MANAGEMENT,
+  );
 
-    if (ok) {
-        return data.data;
-    }
+  if (ok) {
+    return data.data;
+  }
 
-    throw response.message;
+  throw response.message;
 };
 
 //Get Vendor
 export const getTaskManagementVendor = async () => {
-    const { ok, response, data } = await apiService.get(
-        SERVICE_CONFIG_URLS.APP.GET_VENDOR_TASK_MANAGEMENT
-    );
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_VENDOR_TASK_MANAGEMENT,
+  );
 
-    if (ok) {
-        return data.data;
-    }
+  if (ok) {
+    return data.data;
+  }
 
-    throw response.message;
+  throw response.message;
 };
 
 // Create TASK DRAFT
-export const taskManagementCreateTaskDraft = async (payload: taskManagementCreateApiPayload) => {
-    const { ok, response, data } = await apiService.post(
-        SERVICE_CONFIG_URLS.APP.CREATE_TASK_MANAGEMENT,
-        payload,
-    );
-    if (ok) {
-        return data;
-    }
-    throw response;
+export const taskManagementCreateTaskDraft = async (
+  payload: taskManagementCreateApiPayload,
+) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.CREATE_TASK_MANAGEMENT,
+    payload,
+  );
+  if (ok) {
+    return data;
+  }
+  throw response;
 };
 
-//GET CHECKLIST 
-export const getTaskChecklist = async (id: number | string, taskType: string) => {
+//GET CHECKLIST
+export const getTaskChecklist = async (
+  id: number | string,
+  taskType: string,
+) => {
   if (!id || !taskType) {
     throw new Error('Both id and taskType are required');
   }
 
-  const endpoint = SERVICE_CONFIG_URLS.APP.GET_TASK_MANAGEMENT_CHECKLIST
-    .replace('{id}', String(id))
-    .replace('{tasktype}', taskType);
+  const endpoint =
+    SERVICE_CONFIG_URLS.APP.GET_TASK_MANAGEMENT_CHECKLIST.replace(
+      '{id}',
+      String(id),
+    ).replace('{tasktype}', taskType);
 
   const { ok, response, data } = await apiService.get(endpoint);
 
   if (ok) {
-    return data; 
+    return data;
   }
 
   throw response.message || 'Failed to fetch task checklist';
 };
 
-
-
-//ADD SECTION FOR CHECKLIST 
-export const taskManagementAddChecklist = async (payload : AddSectionPayload) => {
-    const { ok, response, data } = await apiService.post(
-        SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_ADD_SECTION,
-        payload,
-    );
-    if (ok) {
-        return data;
-    }
-    throw response;
+//ADD SECTION FOR CHECKLIST
+export const taskManagementAddChecklist = async (
+  payload: AddSectionPayload,
+) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_ADD_SECTION,
+    payload,
+  );
+  if (ok) {
+    return data;
+  }
+  throw response;
 };
 
-//INSERT CHECKLIST ITEM FOR THAT SECTION 
-export const taskManagementInsertChecklist = async (payload:InsertChecklistItemPayload) => {
-    const { ok, response, data } = await apiService.post(
-        SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_INSERT_CHECKLIST,
-        payload,
-    );
-    if (ok) {
-        return data;
-    }
-    throw response;
+//INSERT CHECKLIST ITEM FOR THAT SECTION
+export const taskManagementInsertChecklist = async (
+  payload: InsertChecklistItemPayload,
+) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_INSERT_CHECKLIST,
+    payload,
+  );
+  if (ok) {
+    return data;
+  }
+  throw response;
 };
-
 
 // GET CHECKLIST DETAIL
-export const getTaskChecklistDetail = async (id: number | string, taskType: string) => {
+export const getTaskChecklistDetail = async (
+  id: number | string,
+  taskType: string,
+) => {
   if (!id || !taskType) {
     throw new Error('Both id and taskType are required');
   }
 
-  const endpoint = SERVICE_CONFIG_URLS.APP.GET_TASK_MANAGEMENT_CHECKLIST_DETAIL
-    .replace('{id}', String(id))
-    .replace('{tasktype}', taskType);
+  const endpoint =
+    SERVICE_CONFIG_URLS.APP.GET_TASK_MANAGEMENT_CHECKLIST_DETAIL.replace(
+      '{id}',
+      String(id),
+    ).replace('{tasktype}', taskType);
 
   const { ok, response, data } = await apiService.get(endpoint);
 
   if (ok) {
-    return data; 
+    return data;
   }
 
   throw response.message || 'Failed to fetch task checklist';
 };
 
-// UPDATE CHECKLIST ITEM 
+//EDIT SINGLE CHECKLIST
 interface editChecklistItemPayload {
   task_id: number;
   ids: number[];
 }
 
-export const editChecklistItem = async (
-  payload: editChecklistItemPayload
-) => {
+export const editChecklistItem = async (payload: editChecklistItemPayload) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_SINGLE_CHECKLIST_ITEM_UPDATE,
-    { id: payload.task_id } 
+    { id: payload.task_id },
   );
 
   const { ok, response, data } = await apiService.put(url, payload);
@@ -143,4 +155,95 @@ export const editChecklistItem = async (
   }
 
   throw new Error(response?.message || 'Failed to edit automation template');
+};
+
+// TASK CRAETE STATUS UPDATE
+interface taskCreateStatusUpdatePayload {
+  task_id: number;
+  is_draft: 0 | 1;
+}
+export const taskCreateStatusUpdate = async (
+  payload: taskCreateStatusUpdatePayload,
+) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_STATUS_UPDATE,
+    payload,
+  );
+  if (ok) {
+    return data;
+  }
+  throw response;
+};
+
+// GET ALL TASK LIST
+
+type GetHostTaskListParams = {
+  page: number;
+  per_page: number;
+};
+
+export const getHostTaskList = async ({
+  page,
+  per_page,
+}: GetHostTaskListParams) => {
+  const { ok, data, response } = await apiService.get(
+    `${SERVICE_CONFIG_URLS.APP.GET_HOST_TASK_LIST}?page=${page}&per_page=${per_page}`,
+  );
+
+  if (ok) {
+    // 🔥 NORMALIZE FOR useInfiniteListData
+    return {
+      ...data,
+      data: data.data.data, // ⬅️ IMPORTANT
+      meta: {
+        current_page: data.data.current_page,
+        last_page: data.data.last_page,
+      },
+    };
+  }
+
+  throw response;
+};
+
+//GET TASK DETAIL
+export const getTaskDetail = async (
+  taskId: number | string,
+  taskType: string,
+) => {
+  const baseUrl = SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_TASK_DETAIL.replace(
+    '{taskid}',
+    String(taskId),
+  );
+
+  const url = `${baseUrl}?task_type=${taskType}`;
+
+  const { ok, response, data } = await apiService.get(url);
+
+  if (ok) {
+    return data?.data;
+  }
+
+  throw new Error(response?.message || 'Failed to fetch task detail');
+};
+
+// VENDOR UPDATE API
+export const vendorUpdate = async ({
+  taskId,
+  vendor_id,
+}: {
+  taskId: number | string;
+  vendor_id: number;
+}) => {
+  const url = Utils.createDynamicUrl(
+    SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_VENDOR_UPDATE,
+    { id: taskId },
+  );
+
+  const { ok, response, data } = await apiService.put(url, {
+    vendor_id, 
+  });
+
+  if (ok) return data;
+
+  throw new Error(response?.message || 'Failed to update vendor');
 };

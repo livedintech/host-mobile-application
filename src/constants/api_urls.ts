@@ -69,5 +69,9 @@ export const SERVICE_CONFIG_URLS = {
     TASK_MANAGEMENT_INSERT_CHECKLIST: `${api}/add-checklist-item`,
     TASK_MANAGEMENT_ADD_SECTION: `${api}/add-checklist-section`,
     TASK_MANAGEMENT_SINGLE_CHECKLIST_ITEM_UPDATE: `${api}/task/checklist/update`,
+    TASK_MANAGEMENT_STATUS_UPDATE: `${api}/task-draft-to-create`,
+    GET_HOST_TASK_LIST: `${api}/get-host-tasklist`,
+    TASK_MANAGEMENT_TASK_DETAIL: `${api}/gettaskdetails/{taskid}`,
+    TASK_MANAGEMENT_VENDOR_UPDATE: `${api}/host-task-edit/{id}`,
   },
 };
