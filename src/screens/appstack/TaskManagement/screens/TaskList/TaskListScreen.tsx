@@ -26,6 +26,8 @@ const TaskListScreen: React.FC = () => {
     onResetFilter,
     isFilterVisible,
     toggleFilterModal,
+    listingDropdown,
+    vendorDropdown,
   } = TaskListContainer();
 
   const dropdownData = [
@@ -154,8 +156,12 @@ const TaskListScreen: React.FC = () => {
             label="Select Listings"
             control={control}
             errors={errors}
-            data={dropdownData}
+            data={listingDropdown}
             placeholder="Select Multiple Options"
+            // rules={{
+            //   validate: (value: any[]) =>
+            //     value?.length > 0 || 'Please select at least one listing',
+            // }}
           />
 
           <MultiSelectDropdownField
@@ -163,8 +169,12 @@ const TaskListScreen: React.FC = () => {
             label="Task Assignee"
             control={control}
             errors={errors}
-            data={dropdownData}
+            data={vendorDropdown}
             placeholder="Select Multiple Options"
+            // rules={{
+            //   validate: (value: any[]) =>
+            //     value?.length > 0 || 'Please select assignee',
+            // }}
           />
 
           <MultiSelectDropdownField
@@ -172,8 +182,16 @@ const TaskListScreen: React.FC = () => {
             label="Task Status"
             control={control}
             errors={errors}
-            data={dropdownData}
+            data={[
+              { label: 'Todo', value: 'todo' },
+              { label: 'In Progress', value: 'inprogress' },
+              { label: 'Completed', value: 'completed' },
+            ]}
             placeholder="Select Multiple Options"
+            // rules={{
+            //   validate: (value: any[]) =>
+            //     value?.length > 0 || 'Please select status',
+            // }}
           />
 
           <View style={styles.modalFooter}>

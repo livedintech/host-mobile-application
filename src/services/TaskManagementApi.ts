@@ -180,21 +180,36 @@ export const taskCreateStatusUpdate = async (
 type GetHostTaskListParams = {
   page: number;
   per_page: number;
+  listing_id?: number;
+  vendor_id?: number;
+  status?: string;
 };
 
 export const getHostTaskList = async ({
   page,
   per_page,
+  listing_id,
+  vendor_id,
+  status,
 }: GetHostTaskListParams) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.append('page', String(page));
+  queryParams.append('per_page', String(per_page));
+
+  // 🔥 backend expects flat params (NOT arrays)
+  if (listing_id) queryParams.append('listing_id', String(listing_id));
+  if (vendor_id) queryParams.append('vendor_id', String(vendor_id));
+  if (status) queryParams.append('status', status);
+
   const { ok, data, response } = await apiService.get(
-    `${SERVICE_CONFIG_URLS.APP.GET_HOST_TASK_LIST}?page=${page}&per_page=${per_page}`,
+    `${SERVICE_CONFIG_URLS.APP.GET_HOST_TASK_LIST}?${queryParams.toString()}`,
   );
 
   if (ok) {
-    // 🔥 NORMALIZE FOR useInfiniteListData
     return {
       ...data,
-      data: data.data.data, // ⬅️ IMPORTANT
+      data: data.data.data,
       meta: {
         current_page: data.data.current_page,
         last_page: data.data.last_page,
@@ -204,6 +219,8 @@ export const getHostTaskList = async ({
 
   throw response;
 };
+
+
 
 //GET TASK DETAIL
 export const getTaskDetail = async (
