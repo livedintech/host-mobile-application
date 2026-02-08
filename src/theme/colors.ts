@@ -33,4 +33,5 @@ export const Colors = {
   BOTTLE_GREEN: '#40B69C',
   AIRBNB_RED: '#ED0509',
   GATHEM_PURPLE: '#8C05ED',
+  DEEP_TEAL: '#07524D',
 };

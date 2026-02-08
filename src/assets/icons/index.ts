@@ -96,6 +96,9 @@ import navigationMap from "./navigationMap.svg";
 import reviewHouse from "./reviewHouse.svg";
 import smileySparksIcon from "./smiley-sparks.svg";
 import smileyHappyIcon from "./smiley-happy.svg";
+import mailIcon from "./mailIcon.svg";
+import starRewardIcon from "./starRewardIcon.svg";
+import chatBubbleIcon from "./chatBubbleIcon.svg";
 
 
 
@@ -196,5 +199,8 @@ export const icons = {
     navigationMap,
     reviewHouse,
     smileySparksIcon,
-    smileyHappyIcon
+    smileyHappyIcon,
+    mailIcon,
+    starRewardIcon,
+    chatBubbleIcon
 };

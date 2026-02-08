@@ -11,7 +11,7 @@ interface ReviewCardProps {
   item: {
     id: string;
     guestName: string;
-    platform: string;
+    platform: 'Airbnb' | 'Gathern' | 'Booking.com';
     property: string;
     date: string;
     guestRating?: number;
@@ -73,8 +73,10 @@ const ReviewCard = ({
             fontSize={14}
             type="Bold"
           />
+          {/* FLEX: 1 allows the platform text to wrap if it's very long */}
           <AppText
             text={item.platform}
+            style={{ flex: 1 }} 
             color={
               item.platform === 'Airbnb'
                 ? Colors.AIRBNB_RED
@@ -88,6 +90,7 @@ const ReviewCard = ({
         </View>
 
         <View style={styles.infoRow}>
+          {/* Top-aligned icon for multiline property text */}
           <Svgicons path="reviewHouse" size={18} mr={10} />
           <AppText
             text="Property: "
@@ -95,11 +98,13 @@ const ReviewCard = ({
             fontSize={14}
             type="Bold"
           />
+          {/* FLEX: 1 is critical here to fix the overflow from your image */}
           <AppText
             text={item.property}
             type="Regular"
             fontSize={14}
             color={Colors.PINE_FOREST}
+            style={{ flex: 1 }}
           />
         </View>
 
@@ -116,6 +121,7 @@ const ReviewCard = ({
             type="Regular"
             fontSize={14}
             color={Colors.PINE_FOREST}
+            style={{ flex: 1 }}
           />
         </View>
 
@@ -123,9 +129,7 @@ const ReviewCard = ({
 
         <View style={styles.sectionHeader}>
           <Svgicons
-            path={
-              item.hasGuestReviewed ? 'smileySparksIcon' : 'smileyHappyIcon'
-            }
+            path={item.hasGuestReviewed ? 'smileySparksIcon' : 'smileyHappyIcon'}
             size={18}
             mr={10}
           />
@@ -141,7 +145,6 @@ const ReviewCard = ({
           <View style={{ marginTop: 10 }}>
             {renderStars(item.guestRating)}
 
-            {/* FIXED EQUAL BUTTON WIDTH HERE */}
             <View style={styles.buttonRow}>
               <View style={styles.flexWrapper}>
                 <AppButton
@@ -151,7 +154,7 @@ const ReviewCard = ({
                 />
               </View>
 
-              <View style={styles.flexWrapper}>
+              <View style={[styles.flexWrapper, { marginRight: 0 }]}>
                 <AppButton
                   title="View Review"
                   onPress={onViewReview}
@@ -184,7 +187,7 @@ const ReviewCard = ({
 
         <View style={styles.sectionHeader}>
           <Svgicons
-            path={item.myRating ? 'SmileIcon' : 'FrownIcon'}
+            path={item.myRating ? 'smileyHappyIcon' : 'smileySparksIcon'}
             size={18}
             mr={10}
           />
@@ -228,17 +231,23 @@ const styles = StyleSheet.create({
   container: { marginBottom: 20 },
   inner: { padding: 20, backgroundColor: Colors.WHITE },
 
-  infoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  // Added alignItems: 'flex-start' so icons stay at top when text wraps
+  infoRow: { 
+    flexDirection: 'row', 
+    alignItems: 'flex-start', 
+    marginBottom: 10 
+  },
 
   sectionHeader: { flexDirection: 'row', alignItems: 'center' },
 
   starRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 12 },
 
   divider: {
-    height: 1,
-    backgroundColor: Colors.ANTI_FLASH_WHITE,
-    marginVertical: 20,
-    width: '100%',
+    // height: 1,
+    // backgroundColor: Colors.ANTI_FLASH_WHITE,
+    // marginVertical: 20,
+    // width: '100%',
+    marginBottom:30,
   },
 
   buttonRow: {
@@ -251,7 +260,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 
-  requestBtn: {},
+  requestBtn: {
+    width: '70%'
+  },
 });
 
 export default ReviewCard;
