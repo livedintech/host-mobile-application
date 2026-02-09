@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { smartLockActiveCodesPayloadType, smartLockConnectPayloadType, smartLockGeneratePasscodePayloadType } from "@/types/api/smartLockTypes";
+import { smartLockActiveCodesPayloadType, smartLockConnectPayloadType, smartLockGeneratePasscodePayloadType, smartLockMappingAssignPayloadType } from "@/types/api/smartLockTypes";
 import Utils from "@/utility/Utils";
 
 export const getDropdownListingApi = async () => {
@@ -70,6 +70,17 @@ export const getSmartLockActivityLogsApi = async (payload: smartLockActiveCodesP
 export const passcodeGenerateApi = async (payload: smartLockGeneratePasscodePayloadType) => {
     const { ok, response, data } = await apiService.post(
         SERVICE_CONFIG_URLS.APP.SMART_LOCK_PASSCODE_GENERATE,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const SmartLockMappingsAssignApi = async (payload: smartLockMappingAssignPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CONNECT_SMART_LOCK_MAPPINGS_ASSIGN,
         payload,
     );
     if (ok) {

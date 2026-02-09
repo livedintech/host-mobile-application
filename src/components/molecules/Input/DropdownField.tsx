@@ -26,6 +26,8 @@ interface DropdownFieldProps {
   disabled?: boolean;
   rules?: RegisterOptions;
   dropdownPosition?: 'auto' | 'top' | 'bottom';
+  onSelect?: (value: any) => void;
+  extraPayload?: any;
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
@@ -37,8 +39,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   placeholder = 'Select',
   disabled = false,
   rules,
-
   dropdownPosition,
+  onSelect,
+  extraPayload,
 }) => {
   const error = errors[name]?.message as string;
 
@@ -75,7 +78,13 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             valueField="value"
             placeholder={placeholder}
             value={value}
-            onChange={item => onChange(item.value)}
+            // onChange={item => onChange(item.value)}
+            onChange={item => {
+              onChange(item.value);
+              if (onSelect) {
+                onSelect(item);
+              }
+            }}
             disable={disabled}
             renderRightIcon={() => (
               <Svgicons path="ChevronDownIcon" width={15} height={15} />

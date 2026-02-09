@@ -8,6 +8,8 @@ import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 import { smartLockApiResponseType, smartLockGeneratePasscodePayloadType } from '@/types/api/smartLockTypes';
 import Toast from 'react-native-toast-message';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const schema = yup.object().shape({
     name: yup.string().required('Name is required'),
@@ -53,6 +55,7 @@ export default function useGeneratePasscodeContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_ACTIVE_CODES]
             });
+            navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS)
         },
         onError: error => {
             Toast.show({
@@ -75,35 +78,33 @@ export default function useGeneratePasscodeContainer() {
         }
     });
 
-const onSubmit = (data: any) => {
+    const onSubmit = (data: any) => {
 
-    let payload: any = {
-        lockId: lock_id,
-        keyboardPwdName: data.name,
+        let payload: any = {
+            lockId: lock_id,
+            keyboardPwdName: data.name,
+        };
+
+        if (type === 'Permanent') {
+            payload.keyboardPwdType = 1;
+        }
+
+        if (type === 'One-time') {
+            payload.keyboardPwdType = 2;
+        }
+
+        if (type === 'Timed') {
+            payload.keyboardPwdType = 3;
+            payload.start_date = data.startDate;
+            payload.start_time = data.startTime;
+            payload.end_date = data.endDate;
+            payload.end_time = data.endTime;
+        }
+
+        console.log('FINAL PAYLOAD:', payload);
+
+        passcodeGeneratePayload(payload);
     };
-
-    if (type === 'Permanent') {
-        payload.keyboardPwdType = 1;
-    }
-
-    if (type === 'One-time') {
-        payload.keyboardPwdType = 2;
-    }
-
-    if (type === 'Timed') {
-        payload.keyboardPwdType = 3;
-        payload.start_date = data.startDate;
-        payload.start_time = data.startTime;
-        payload.end_date = data.endDate;
-        payload.end_time = data.endTime;
-    }
-
-    console.log('FINAL PAYLOAD:', payload);
-
-    passcodeGeneratePayload(payload);
-};
-
-
 
     const getInstructionText = () => {
         switch (type) {
