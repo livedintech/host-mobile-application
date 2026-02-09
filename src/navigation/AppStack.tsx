@@ -275,7 +275,6 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        // options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CHAT_DETAIL}
         getComponent={() =>
@@ -316,7 +315,7 @@ const AppStack = () => {
             .default
         }
       />
-            <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.EDIT_TASK}
         getComponent={() =>
@@ -364,7 +363,7 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_AI_AUTO_REPLY}
         getComponent={() =>
@@ -372,7 +371,7 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.WHAT_AI_KNOWS}
         getComponent={() =>
@@ -380,6 +379,71 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.ASSIGN_CHAT}
+        getComponent={() =>
+          require('@/screens/appstack/AssignChat/AssignChatScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.RESERVATION_DETAILS}
+        getComponent={() =>
+          require('@/screens/appstack/ReservationDetails/ReservationDetailsScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.SMART_LOCK}
+        getComponent={() =>
+          require('@/screens/appstack/SmartLock/SmartLockScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS}
+        getComponent={() =>
+          require('@/screens/appstack/TTLockCredentials/TTLockCredentialsScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS}
+        getComponent={() =>
+          require('@/screens/appstack/YourSmartLockss/YourSmartLocksScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.SMART_LOCK_ACTIVITY_LOG}
+        getComponent={() =>
+          require('@/screens/appstack/SmartLockActivityLog/SmartLockActivityLogScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown:false }}
+        name={NavigationRoutes.APP_STACK.ACTIVE_CODES}
+        getComponent={() =>
+          require('@/screens/appstack/ActiveCodes/ActiveCodesScreen')
+            .default
+        }
+      />
+       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.GENERATE_PASSCODE}
+        getComponent={() =>
+          require('@/screens/appstack/GeneratePasscode/GeneratePasscodeScreen')
+            .default
+        }
+      />
+
 
     </Stack.Navigator>
   );

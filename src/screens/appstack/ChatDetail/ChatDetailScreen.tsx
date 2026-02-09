@@ -1,4 +1,4 @@
-// ChatScreen.tsx - WITH REPLY/QUOTE MESSAGE FUNCTIONALITY + SCROLL TO MESSAGE
+// ChatScreen.tsx - Complete Refactored Code
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   StyleSheet,
@@ -6,7 +6,6 @@ import {
   Pressable,
   Keyboard,
   Image,
-  FlatList,
   TextInput,
   KeyboardAvoidingView,
   Platform,
@@ -24,9 +23,11 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import { goBack } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useAuthStore } from '@/store/useAuthStore';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useRoute } from '@react-navigation/native';
 
 interface MessageWithTimeLabel extends ChatMessage {
   showTimeLabel?: boolean;
@@ -129,8 +130,12 @@ const processMessagesWithTimeLabels = (
 };
 
 const ChatScreen = () => {
-    const {user} = useAuthStore();
-  
+  const { user } = useAuthStore();
+    const route = useRoute();
+    const params = route?.params as { conversation_id?: string } | undefined;
+    const conversation_id = params?.conversation_id;
+    
+
   const {
     messages,
     inputText,
@@ -143,8 +148,6 @@ const ChatScreen = () => {
     showAttachmentMenu,
     setShowAttachmentMenu,
     sendMessage,
-    sendSavedReply,
-    sendAiSuggestion,
     setInputText,
     handleCopyText,
     handleTaskCreation,
@@ -156,8 +159,7 @@ const ChatScreen = () => {
     replyingToMessage,
     handleReplyToMessage,
     cancelReply,
-    scrollToMessage, // NEW
-
+    scrollToMessage,
     handleCamera,
     handleVideo,
     handleGallery,
@@ -167,16 +169,16 @@ const ChatScreen = () => {
     isImageViewerVisible,
     setIsImageViewerVisible,
     handleMessageSelect,
-    flatListRef, // NEW
+    flatListRef,
     SAVED_REPLIES,
     isLoading,
-    refetch
+    refetch,
+    conversationData,
+    sendAiSuggestion,
   } = useChatContainer();
 
-  // NEW: State for highlighting scrolled message
-  const [highlightedMessageId, setHighlightedMessageId] = useState<
-    string | number | null
-  >(null);
+  // State for highlighting scrolled message
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | number | null>(null);
 
   const messagesWithTimeLabels = useMemo(
     () => processMessagesWithTimeLabels(messages),
@@ -184,8 +186,9 @@ const ChatScreen = () => {
   );
 
   useEffect(() => {
-    if (messagesWithTimeLabels.length > 0)
+    if (messagesWithTimeLabels.length > 0) {
       flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+    }
   }, [messagesWithTimeLabels.length]);
 
   const renderTimeLabel = (timeLabel: string) => (
@@ -199,7 +202,7 @@ const ChatScreen = () => {
     </View>
   );
 
-  // NEW: Handle clicking on reply quote to scroll to original message
+  // Handle clicking on reply quote to scroll to original message
   const handleReplyQuotePress = (replyToId: string | number) => {
     scrollToMessage(replyToId, messagesWithTimeLabels);
 
@@ -207,10 +210,10 @@ const ChatScreen = () => {
     setHighlightedMessageId(replyToId);
     setTimeout(() => {
       setHighlightedMessageId(null);
-    }, 2000); // Remove highlight after 2 seconds
+    }, 2000);
   };
 
-  // NEW: Render reply quote in message
+  // Render reply quote in message
   const renderReplyQuote = (replyTo: ChatMessage['replyTo']) => {
     if (!replyTo) return null;
 
@@ -239,13 +242,11 @@ const ChatScreen = () => {
   };
 
   const renderMessage = ({ item }: { item: MessageWithTimeLabel }) => {
-    const isHost = item.user._id === user?.id;
+    // ✅ Dynamic comparison with logged-in user
+    const isHost = Number(item.user._id) === Number(user?.id);
     const isAutomated = item.user._id === 3;
     const isSelected = selectedMessageId === item._id;
-    const isHighlighted = highlightedMessageId === item._id; // NEW
-
-      console.log('Message user ID:', item.user._id, 'Logged-in user ID:', user?.id, 'isHost:', isHost); // Debug
-
+    const isHighlighted = highlightedMessageId === item._id;
 
     return (
       <View>
@@ -275,10 +276,10 @@ const ChatScreen = () => {
               isHost ? styles.hostBubble : styles.guestBubble,
               isAutomated && styles.automatedBubble,
               isSelected && styles.messageBubbleSelected,
-              isHighlighted && styles.messageBubbleHighlighted, // NEW
+              isHighlighted && styles.messageBubbleHighlighted,
             ]}
           >
-            {/* NEW: Show reply quote if replying to another message */}
+            {/* Show reply quote if replying to another message */}
             {item.replyTo && renderReplyQuote(item.replyTo)}
 
             {/* Document Message */}
@@ -370,20 +371,19 @@ const ChatScreen = () => {
     );
   };
 
-  // NEW: Handle scroll index errors gracefully
+  // Handle scroll index errors gracefully
   const handleScrollToIndexFailed = (info: {
     index: number;
     highestMeasuredFrameIndex: number;
     averageItemLength: number;
   }) => {
-    const wait = new Promise(resolve => setTimeout(resolve, 500));
-    wait.then(() => {
+    setTimeout(() => {
       flatListRef.current?.scrollToIndex({
         index: info.index,
         animated: true,
-        viewPosition: 0.5
+        viewPosition: 0.5,
       });
-    });
+    }, 500);
   };
 
   return (
@@ -403,8 +403,10 @@ const ChatScreen = () => {
               <Svgicons path="arrowLeftIcon" size={26} />
             </Pressable>
           </GradientBorder>
+
+          {/* ✅ Dynamic conversation name from API */}
           <AppText
-            text="Abdulrahman Al Hassan"
+            text={conversationData?.name || "Chat"}
             fontSize={18}
             type="Bold"
             color={Colors.MIDNIGHT}
@@ -423,7 +425,12 @@ const ChatScreen = () => {
                 />
                 <Svgicons path="listingCalendar" size={24} />
               </MenuOption>
-              <MenuOption style={styles.menuItem}>
+              <MenuOption
+                style={styles.menuItem}
+                onSelect={() =>
+                  navigate(NavigationRoutes.APP_STACK.RESERVATION_DETAILS)
+                }
+              >
                 <AppText
                   text="Reservation Details"
                   fontSize={14}
@@ -431,7 +438,12 @@ const ChatScreen = () => {
                 />
                 <Svgicons path="reservationDetail" size={24} />
               </MenuOption>
-              <MenuOption style={styles.menuItem}>
+              <MenuOption
+                style={styles.menuItem}
+                onSelect={() => {
+                  navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT,{conversation_id});
+                }}
+              >
                 <AppText
                   text="Assign Chat To User"
                   fontSize={14}
@@ -452,17 +464,6 @@ const ChatScreen = () => {
         </View>
 
         {/* Messages List */}
-        {/* <FlatList
-          ref={flatListRef}
-          data={messagesWithTimeLabels}
-          renderItem={renderMessage}
-          keyExtractor={(item, index) => `${item._id}-${index}`}
-          inverted
-          contentContainerStyle={styles.messagesList}
-          scrollEnabled={messagesWithTimeLabels.length > 5}
-          keyboardShouldPersistTaps="handled"
-          onScrollToIndexFailed={handleScrollToIndexFailed} // NEW
-        /> */}
         <FlatListSimpleHandler
           ref={flatListRef}
           data={messagesWithTimeLabels}
@@ -470,8 +471,10 @@ const ChatScreen = () => {
           renderItem={renderMessage}
           listEmptyText=""
           onRefresh={refetch}
-          keyExtractor={(item) => item._id.toString()}
-          inverted
+          keyExtractor={item => item._id.toString()}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+          }}
           contentContainerStyle={styles.messagesList}
           scrollEnabled={messagesWithTimeLabels.length > 5}
           keyboardShouldPersistTaps="handled"
@@ -545,7 +548,8 @@ const ChatScreen = () => {
                 <AppText text="AR" fontSize={11} color={Colors.GREY_SHADOW} />
               </Pressable>
 
-              {selectedMessageData.user._id === 1 && (
+              {/* ✅ Only show delete for logged-in user's messages */}
+              {Number(selectedMessageData.user._id) === Number(user?.id) && (
                 <Pressable
                   style={[styles.menuOption, { borderBottomWidth: 0 }]}
                   onPress={() => {
@@ -591,11 +595,14 @@ const ChatScreen = () => {
                 mb={10}
               />
               <View style={styles.aiFooter}>
-                <Pressable onPress={() =>{
-                   setShowAiSuggestion(false);
-                   setInputText('Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.');
-                }
-                   }>
+                <Pressable
+                  onPress={() => {
+                    setShowAiSuggestion(false);
+                    setInputText(
+                      'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.',
+                    );
+                  }}
+                >
                   <AppText
                     text="Edit"
                     fontSize={12}
@@ -635,11 +642,7 @@ const ChatScreen = () => {
               />
             </View>
             <Pressable onPress={cancelReply}>
-              <Svgicons
-                path="closeIcon"
-                size={18}
-                color={Colors.GREY_SHADOW}
-              />
+              <Svgicons path="closeIcon" size={18} color={Colors.GREY_SHADOW} />
             </Pressable>
           </View>
         )}
@@ -858,9 +861,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  // NEW: Highlight style for scrolled-to message
   messageBubbleHighlighted: {
-    backgroundColor: 'rgba(39, 174, 96, 0.15)', // Light green highlight
+    backgroundColor: 'rgba(39, 174, 96, 0.15)',
     shadowColor: Colors.BRUNSWICK_GREEN,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,

@@ -76,8 +76,14 @@ import chevronDown from "./chevron-down.svg";
 import edit_icon_2 from "./edit_icon_2.svg";
 import taskManagementIcon from "./taskManagementIcon.svg";
 import taskManagementFilterIcon from "./taskManagementFilterIcon.svg";
-
-
+import lockInfoIcon from "./lockInfo.svg";
+import batteryIcon from "./batteryIcon.svg";
+import keyIcon from "./keyIcon.svg";
+import keyholeLock from './keyhole-lock.svg'
+import logIcon from './logIcon.svg'
+import lockFrame from './lockFrame.svg'
+import keyBinary from './keyBinary.svg'
+import unlock from './unlock.svg'
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -156,5 +162,13 @@ export const icons = {
     chevronDown,
     edit_icon_2,
     taskManagementIcon,
-    taskManagementFilterIcon
+    taskManagementFilterIcon,
+    lockInfoIcon,
+    batteryIcon,
+    keyIcon,
+    keyholeLock,
+    logIcon,
+    lockFrame,
+    keyBinary,
+    unlock
 };

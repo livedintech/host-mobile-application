@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import Utils from "@/utility/Utils";
 import apiService from "./apiService";
-import { createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType } from "@/types/api/chatTypes";
+import {  assignUserToChatPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
 type ChatListParams = {
   page?: number;
   limit?: number;
@@ -116,4 +116,54 @@ export const getChatListCityApi = async () => {
     }
 
     throw response.message;
+};
+
+// Chat Detail Send Message
+export const ChatMessageSendApi = async (payload: sendMessagePayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.GET_CHAT_DETAIL_SEMD_MESSAGE,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+
+//Get Users 
+export const GetAssignChatToUserApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.ASSIGN_USER
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
+
+//Assign User To Chat
+// export const assignUserToChatApi = async (payload: assignUserToChatPayloadType) => {
+//     const { ok, response, data } = await apiService.post(
+//         SERVICE_CONFIG_URLS.APP.CREATE_ASSIGN_USER,
+//         payload,
+//     );
+//     if (ok) {
+//         return data;
+//     }
+//     throw response;
+// };
+export const assignUserToChatApi = async (payload: assignUserToChatPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_ASSIGN_USER,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.post(url, {...payload}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
 };

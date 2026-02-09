@@ -108,15 +108,12 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
       surname: '.'
     };
     if (mode === 'create') {
-      userManagementCraetePayload(payload)
+      userManagementCraetePayload(payload);
+    } else {
+      const editPayload = { id: editUser?.id, ...payload };
+      userManagementEditPayload(editPayload);
     }
-    {
-      const editPayload = {
-        id: editUser?.id,
-        ...payload
-      }
-      userManagementEditPayload(editPayload)
-    }
+
   };
 
   // Create User 
@@ -168,8 +165,8 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
       });
     },
   });
-    // Delete User 
-   const {
+  // Delete User 
+  const {
     mutate: userManagementDeletePayload,
     isPending: isPendingUserManagementDelete,
     isIdle: isIdleUserManagementDelete,
@@ -205,7 +202,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   });
 
   // User Management List
-  const { data: userManagement = [],refetch } = useQuery({
+  const { data: userManagement = [], refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT],
     queryFn: getUserManagementApi,
   });

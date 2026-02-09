@@ -7,6 +7,8 @@ export default function useAccountContainer() {
     { id: '2', title: 'Manage Booking Platform', route: 'MANAGE_BOOKING' },
     { id: '3', title: 'Manage Listing', route: 'MANAGE_LISTING' },
     { id: '4', title: 'User Management', route: 'USER_MANAGEMENT' },
+    { id: '5', title: 'Smart Lock Managment', route: 'SMART_LOCK_MANAGMENT' },
+
   ];
 
   const handlePress = (route: string) => {
@@ -21,6 +23,9 @@ export default function useAccountContainer() {
     }
     if (route === 'USER_MANAGEMENT') {
       navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
+    }
+    if (route === 'SMART_LOCK_MANAGMENT') {
+      navigate(NavigationRoutes.APP_STACK.SMART_LOCK);
     }
   };
   return { accountOptions, handlePress };

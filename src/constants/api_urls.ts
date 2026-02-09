@@ -54,11 +54,20 @@ export const SERVICE_CONFIG_URLS = {
     GET_AUTOMATIONS_TEMPLATE_EVENTS:`${authController}/chat/automations/events`,
     EDIT_STATUS_AUTOMATIONS_TEMPLATE:`${authController}/chat/automations/{id}/status`,
     GET_CHAT_DETAIL:`${authController}/chat/inbox/{conversation_id}`,
+    GET_CHAT_DETAIL_SEMD_MESSAGE:`${authController}/chat/messages/send`,
     GET_AI_AUTO_REPLY:`${authController}/chat/ai/rules`,
     CREATE_AI_AUTO_REPLY:`${authController}/chat/ai/rules`,
     EDIT_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}`,
     DELETE_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}`,
     EDIT_STATUS_AI_AUTO_REPLY:`${authController}/chat/ai/rules/{id}/status`,
+    ASSIGN_USER:`${authController}/host/users?kind=host`,
+    CREATE_ASSIGN_USER:`${authController}/chat/inbox/{conversation_id}/assign`,
+    GET_SMART_LOCK_LIST:'api/ttlock/locks?pageNo=1&pageSize=100',
+    GET_SMART_LOCK_DROPDOWN_LIST:'api/ttlock/listings',
+    CONNECT_SMART_LOCK:'api/ttlock/connect',
+    SMART_LOCK_ACTIVE_CODES:'api/ttlock/locks/passcodes?lockId={lockId}',
+    SMART_LOCK_ACTIVITY_LOGS:'api/ttlock/activity-logs?lockId={lockId}',
+    SMART_LOCK_PASSCODE_GENERATE:'api/ttlock/passcode/generate',
 
 
   }
