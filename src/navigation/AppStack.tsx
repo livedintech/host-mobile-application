@@ -116,6 +116,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.ANALYTIC_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/Analytics/screens/AnalyticsScreen')
+            .default
+        }
+      />
+      <Stack.Screen
         options={{
           header: () => (
             <HeaderApp isGoBackAfterLogo addIconAfterisGoBack="mapIcon" />
@@ -316,7 +324,7 @@ const AppStack = () => {
             .default
         }
       />
-            <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.EDIT_TASK}
         getComponent={() =>
@@ -328,8 +336,7 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SAVED_REPLIES}
         getComponent={() =>
-          require('@/screens/appstack/SavedReplies/SavedRepliesScreen')
-            .default
+          require('@/screens/appstack/SavedReplies/SavedRepliesScreen').default
         }
       />
       <Stack.Screen
@@ -360,11 +367,10 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.AI_AUTO_REPLY}
         getComponent={() =>
-          require('@/screens/appstack/AIAutoReply/AIAutoReplyScreen')
-            .default
+          require('@/screens/appstack/AIAutoReply/AIAutoReplyScreen').default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_AI_AUTO_REPLY}
         getComponent={() =>
@@ -372,15 +378,42 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.WHAT_AI_KNOWS}
         getComponent={() =>
-          require('@/screens/appstack/WhatAIKnows/WhatAIKnowsScreen')
-            .default
+          require('@/screens/appstack/WhatAIKnows/WhatAIKnowsScreen').default
         }
       />
 
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT}
+        getComponent={() =>
+          require('@/screens/appstack/ReviewManagement/screens/ReviewManagementScreen').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/ReviewManagement/screens/RateYourGuestScreen').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/ReviewManagement/screens/ReviewDetailScreen').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/ReviewManagement/screens/ViewReviewScreen').default
+        }
+      />
     </Stack.Navigator>
   );
 };

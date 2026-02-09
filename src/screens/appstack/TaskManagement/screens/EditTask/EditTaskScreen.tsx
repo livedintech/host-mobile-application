@@ -101,6 +101,7 @@ const EditTaskScreen = () => {
             fontSize={23}
             type="Bold"
             color={Colors.PINE_FOREST}
+            // style={{textAlign:"center"}}
           />
           <Svgicons path="File_Document" size={30} ml={10} />
         </View>
@@ -455,7 +456,7 @@ const EditTaskScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
+  container: { flex: 1, backgroundColor: '#FFF', },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scrollContent: { padding: 20, paddingBottom: 100 },
   header: {
@@ -463,6 +464,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 25,
+    paddingHorizontal:20
   },
   infoSection: { marginBottom: 25 },
   checklistTitleRow: {

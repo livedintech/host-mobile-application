@@ -4199,6 +4199,11 @@ get-symbol-description@^1.1.0:
     es-errors "^1.3.0"
     get-intrinsic "^1.2.6"
 
+gifted-charts-core@0.1.76:
+  version "0.1.76"
+  resolved "https://registry.yarnpkg.com/gifted-charts-core/-/gifted-charts-core-0.1.76.tgz#3b0b72697855b5ed9bb4983c53f7dd024315609c"
+  integrity sha512-R7ZGxE9cJnXmUwLqyQJRrwbsZWwLnYr/8o8KNZhrs+ggUL98VO4OBxA2KYwiNACprgvocMQjdDvpaXiha0L5VA==
+
 glob-parent@^5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
@@ -6324,6 +6329,13 @@ react-native-gesture-handler@2.29.1:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
+
+react-native-gifted-charts@^1.4.73:
+  version "1.4.73"
+  resolved "https://registry.yarnpkg.com/react-native-gifted-charts/-/react-native-gifted-charts-1.4.73.tgz#53c853ddd472987e4769315e1284d05ec906241c"
+  integrity sha512-EX2f9ggZ1B3fJPXEmWUMM/HHN/TZFEwKm5LgHiorN5rYbH3oNpm044SmLiZKbWdgo1qPnVAtd9eVdl7DCayneA==
+  dependencies:
+    gifted-charts-core "0.1.76"
 
 react-native-gifted-chat@^3.2.3:
   version "3.2.3"
