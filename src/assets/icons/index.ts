@@ -32,7 +32,6 @@ import CheckboxUncheckedIcon from './checkbox-primary-unchecked.svg';
 import fileUploadIcon from './file_upload.svg'
 import plusIcon from './plusIcon.svg'
 import plusWhiteIcon from './plusWhiteIcon.svg'
-
 import closeCircleIcon from './closeCircleIcon.svg'
 import videoIcon from './videoIcon.svg'
 import cameraIcon from './cameraIcon.svg'
@@ -76,6 +75,14 @@ import chevronDown from "./chevron-down.svg";
 import edit_icon_2 from "./edit_icon_2.svg";
 import taskManagementIcon from "./taskManagementIcon.svg";
 import taskManagementFilterIcon from "./taskManagementFilterIcon.svg";
+import lockInfoIcon from "./lockInfo.svg";
+import batteryIcon from "./batteryIcon.svg";
+import keyIcon from "./keyIcon.svg";
+import keyholeLock from './keyhole-lock.svg'
+import logIcon from './logIcon.svg'
+import lockFrame from './lockFrame.svg'
+import keyBinary from './keyBinary.svg'
+import unlock from './unlock.svg'
 import webcampIcon from "./webcamp.svg";
 import taskCompletedIcon from "./task-completed.svg";
 import analyticsIcon from "./analytics.svg";
@@ -99,8 +106,6 @@ import smileyHappyIcon from "./smiley-happy.svg";
 import mailIcon from "./mailIcon.svg";
 import starRewardIcon from "./starRewardIcon.svg";
 import chatBubbleIcon from "./chatBubbleIcon.svg";
-
-
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -180,6 +185,14 @@ export const icons = {
     edit_icon_2,
     taskManagementIcon,
     taskManagementFilterIcon,
+    lockInfoIcon,
+    batteryIcon,
+    keyIcon,
+    keyholeLock,
+    logIcon,
+    lockFrame,
+    keyBinary,
+    unlock,
     webcampIcon,
     taskCompletedIcon,
     analyticsIcon,

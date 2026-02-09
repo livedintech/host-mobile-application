@@ -19,9 +19,23 @@ export default function useDescribeHouseContainer() {
   const { user } = useAuthStore()
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
-  const listing_description = listing.listing_descriptions[0]; 
-  const listing_descriptionParsed = JSON.parse(listing_description);
-  
+
+  // Safe access for edit mode only
+  const listingDescriptionRaw =
+    listing?.listing_descriptions?.[0] ?? null;
+
+  let listingDescriptionParsed: any = null;
+
+  try {
+    listingDescriptionParsed =
+      typeof listingDescriptionRaw === 'string'
+        ? JSON.parse(listingDescriptionRaw)
+        : listingDescriptionRaw;
+  } catch (e) {
+    listingDescriptionParsed = null;
+  }
+
+
   const {
     control,
     handleSubmit,
@@ -30,9 +44,11 @@ export default function useDescribeHouseContainer() {
   } = useForm<DescribeHouseFormValues>({
     resolver: yupResolver(describeHouseSchema),
     defaultValues: {
-      name: listing?.name || '',
-      listing_descriptions: listing_descriptionParsed?.[0]?.description || '',
+      name: listing?.name ?? '',
+      listing_descriptions:
+        listingDescriptionParsed?.[0]?.description ?? '',
     },
+
   });
 
   const descriptionValue = watch('listing_descriptions') || '';

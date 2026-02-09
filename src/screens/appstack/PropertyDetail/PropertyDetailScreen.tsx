@@ -95,13 +95,15 @@ const PropertyDetailScreen = () => {
 
         {/* Place Information Card */}
         <InfoCard title="Place Information" icon="infoIcon" onEdit={() => handleEditSection('PlaceInfo')}>
-          <LabelValue label="Size" value={propertyData.placeInfo.size} />
+          {/* <LabelValue label="Size" value={propertyData.placeInfo.size} /> */}
           <LabelValue label="Number of Bedrooms" value={propertyData.placeInfo.bedrooms} />
           <LabelValue label="Number of Bed" value={propertyData.placeInfo.beds} />
-          <LabelValue label="Kitchen" value={propertyData.placeInfo.kitchen} />
-          <LabelValue label="Pool" value={propertyData.placeInfo.pool} />
-          <LabelValue label="Long Term Stay" value={propertyData.placeInfo.longTerm} />
+          <LabelValue label="Number of Bathrooms" value={propertyData.placeInfo.bathrooms} />
+
           <LabelValue label="Minimum Day Stay" value={propertyData.placeInfo.minStay} />
+          <LabelValue label="Booking Type" value={propertyData.houseDetails.bookingType} />
+          <LabelValue label="Check-in Time" value={propertyData.houseDetails.checkIn} />
+          <LabelValue label="Check-out Time" value={propertyData.houseDetails.checkOut} />
           <LabelValue label="Other Features" value={propertyData.placeInfo.features} />
         </InfoCard>
 
@@ -132,11 +134,7 @@ const PropertyDetailScreen = () => {
           <AppText text="House Title: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
           <AppText text={propertyData.title} color={Colors.BRUNSWICK_GREEN} mb={20} />
           <AppText text="Description: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-          <AppText text={propertyData.houseDetails.description} color={Colors.BRUNSWICK_GREEN} mb={15} lineHeight={20} />
-          <LabelValue label="Booking Type" value={propertyData.houseDetails.bookingType} />
-          <LabelValue label="Guest Eligibility" value={propertyData.houseDetails.guestEligibility} />
-          <LabelValue label="Check-in Time" value={propertyData.houseDetails.checkIn} />
-          <LabelValue label="Check-out Time" value={propertyData.houseDetails.checkOut} />
+           <AppText text={propertyData.houseDetails.description} color={Colors.BRUNSWICK_GREEN} mb={15} lineHeight={20} />
         </InfoCard>
 
         {/* Pricing */}
@@ -152,8 +150,8 @@ const PropertyDetailScreen = () => {
         {/* Disclosure */}
         <InfoCard title="Property Disclosure Details" icon="bookIcon" onEdit={() => handleEditSection('Disclosure')}>
           <LabelValue label="Exterior Security Camera" value={propertyData.disclosure.cameras} />
-          <LabelValue label="Noise Decibel Monitor" value={propertyData.disclosure.noiseMonitor} />
           <LabelValue label="Weapon on Property" value={propertyData.disclosure.weapons} />
+          <LabelValue label="Noise Monitor" value={propertyData.disclosure.noise} />
         </InfoCard>
 
         {/* Ownership Documents */}

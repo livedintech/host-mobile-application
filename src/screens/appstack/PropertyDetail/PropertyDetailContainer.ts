@@ -20,81 +20,92 @@ export default function usePropertyDetailContainer() {
     enabled: Boolean(listing_id),
   });
 
-
-
-
   const listing = data?.data?.listing;
   const photos = data?.data?.listing?.photos || [];
   const documents = data?.data?.listing?.documents || [];
-const rawDescription =
-  data?.data?.listing?.listing_descriptions?.[0];
+  const rawDescription =
+    data?.data?.listing?.listing_descriptions?.[0];
 
-const listing_descriptionParsed =
-  typeof rawDescription === 'string'
-    ? (() => {
+  const listing_descriptionParsed =
+    typeof rawDescription === 'string'
+      ? (() => {
         try {
           return JSON.parse(rawDescription);
         } catch {
           return [];
         }
       })()
-    : [];
+      : [];
 
 
-  const propertyData = {
-    title: listing?.name || '',
-    address: [
-      listing?.street,
-      listing?.apt,
-      listing?.city,
-      listing?.state,
-      listing?.country_code,
-    ]
-      .filter(Boolean)
-      .join(', '),
+ const propertyData = {
+  title: listing?.name || '',
 
-    placeInfo: {
-      size: '',
-      bedrooms: listing?.bedrooms ?? '',
-      beds: listing?.beds ?? '',
-      kitchen: '',
-      pool: '',
-      longTerm: '',
-      minStay: listing?.min_nights ?? '',
-      features: Array.isArray(listing?.amenities)
-        ? listing.amenities.join(', ')
-        : '',
-    },
-    houseDetails: {
-     description: listing_descriptionParsed?.[0]?.description || '',
-      bookingType: listing?.instant_booking ? 'Instant Booking' : 'Request to Book',
-      guestEligibility: '',
-      checkIn: listing?.check_in_time || '',
-      checkOut: listing?.check_out_time || '',
-    },
-    pricing: {
-      weekday: listing?.prices?.weekday
-        ? `SAR ${listing.prices.weekday}`
-        : '',
-      weekend: listing?.prices?.weekend
-        ? `SAR ${listing.prices.weekend}`
-        : '',
-      discount: '',
-      tax: '',
-      markup: '',
-      cleaning: listing?.prices?.cleaning_fee
-        ? `SAR ${listing.prices.cleaning_fee}`
-        : '',
-    },
-    disclosure: {
-      cameras: listing?.disclosures?.cameras ?? '',
-      noiseMonitor: listing?.disclosures?.noise_monitor ?? '',
-      weapons: listing?.disclosures?.weapons ?? '',
-    },
+  address: [
+    listing?.street,
+    listing?.apt,
+    listing?.city,
+    listing?.state,
+    listing?.country_code,
+  ]
+    .filter(Boolean)
+    .join(', '),
 
-    photos,
-    documents,
-  };
+  placeInfo: {
+    bedrooms: listing?.bedrooms ?? '',
+    beds: listing?.beds ?? '',
+    bathrooms: listing?.bathrooms ?? '',
+    minStay: listing?.min_nights ?? '',
+    features: Array.isArray(listing?.amenities)
+      ? listing.amenities.join(', ')
+      : '',
+  },
+
+  houseDetails: {
+    description: listing_descriptionParsed?.[0]?.description || '',
+    bookingType: listing?.instant_booking
+      ? 'Instant Booking'
+      : 'Request to Book',
+    checkIn: listing?.check_in_time || '',
+    checkOut: listing?.check_out_time || '',
+  },
+
+  pricing: {
+    weekday: listing?.prices?.weekday
+      ? `SAR ${listing.prices.weekday}`
+      : '',
+
+    weekend: listing?.prices?.weekend
+      ? `SAR ${listing.prices.weekend}`
+      : '',
+
+    discount: listing?.prices?.discount
+      ? `SAR ${listing.prices.discount}`
+      : '0',
+
+    tax: listing?.prices?.tax
+      ? `SAR ${listing.prices.tax}`
+      : '0',
+
+    markup: listing?.prices?.markup
+      ? `SAR ${listing.prices.markup}`
+      : '0',
+
+    cleaning: listing?.prices?.cleaning_fee
+      ? `SAR ${listing.prices.cleaning_fee}`
+      : '',
+  },
+
+  disclosure: {
+    cameras: listing?.disclosures?.cameras ? 'Yes' : 'No',
+    noise: listing?.disclosures?.noise ? 'Yes' : 'No',
+    weapons: listing?.disclosures?.weapons ? 'Yes' : 'No',
+  },
+
+  photos: listing?.photos || {},
+  documents: listing?.documents || {},
+};
+
 
   const handleEditSection = (section: string) => {
 
@@ -121,7 +132,7 @@ const listing_descriptionParsed =
     }
 
     if (section === 'Exterior') {
-       navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, {
+      navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, {
         isEdit: true,
         existingPhotos: data?.data?.listing?.photos?.Exterior || [],
       });

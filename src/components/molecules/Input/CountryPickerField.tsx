@@ -80,7 +80,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
                   borderColor: errors[name] ? Colors.INDIAN_RED : animatedBorderColor,
                   backgroundColor: animatedBackgroundColor,
                 },
-                disabled && {backgroundColor: Colors.ANTI_FLASH_WHITE}
+                disabled && { backgroundColor: Colors.ANTI_FLASH_WHITE }
               ]}
             >
               <TouchableOpacity
@@ -93,8 +93,9 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
                 }}
               >
                 <CountryPicker
+                  withFilter={false}
+                  countryCodes={['SA']}
                   withFlag
-                  withFilter
                   countryCode={countryCode as CountryCode}
                   visible={pickerVisible}
                   onClose={() => {

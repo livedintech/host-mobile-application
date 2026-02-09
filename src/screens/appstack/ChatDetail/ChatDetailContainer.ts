@@ -5,9 +5,12 @@ import { pick, types } from '@react-native-documents/picker';
 import { FlatList } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import STORAGE_CONST from '@/constants/storage';
-import { getChatDetailApi } from '@/services/chatApi';
-import { useQuery } from '@tanstack/react-query';
+import { ChatMessageSendApi, getChatDetailApi } from '@/services/chatApi';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
+import { queryClient } from '@/services/api';
+import Toast from 'react-native-toast-message';
+import { createChatSnoozeByConversationIdResponseType, sendMessagePayloadType } from '@/types/api/chatTypes';
 
 export interface ChatMessage {
   _id: string | number;
@@ -104,6 +107,8 @@ const transformApiMessages = (apiMessages: any[]): ChatMessage[] => {
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
+  console.log('user',user?.id);
+  
   
   // Safely get params
   const route = useRoute();
@@ -143,6 +148,29 @@ export const useChatContainer = () => {
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, conversation_id],
     queryFn: () => getChatDetailApi({ conversation_id }),
     enabled: Boolean(conversation_id),
+      refetchInterval: 4000,
+
+  });
+
+  // Create User 
+  const {
+    mutate: chatMessagesSend,
+  } = useMutation<createChatSnoozeByConversationIdResponseType, Error, sendMessagePayloadType>({
+    mutationFn: ChatMessageSendApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_CHAT_LIST]
+      });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_CHAT_DETAIL]
+      });
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Something went wrong',
+      });
+    },
   });
 
   console.log('API Data:', data);
@@ -166,38 +194,89 @@ export const useChatContainer = () => {
   }, []);
 
   // Send text message
+  // const sendMessage = useCallback(() => {
+  //   if (!inputText.trim()) return;
+
+  //   const newMessage: ChatMessage = {
+  //     _id: `temp-${Date.now()}`,
+  //     text: inputText.trim(),
+  //     createdAt: new Date(),
+  //     user: { 
+  //       _id: Number(user?.id),
+  //       name: user?.name || 'You'
+  //     },
+  //     replyTo: replyingToMessage
+  //       ? {
+  //           _id: replyingToMessage._id,
+  //           text: replyingToMessage.text || 'Media message',
+  //           userName: replyingToMessage.user.name,
+  //         }
+  //       : undefined,
+  //   };
+
+  //   console.log('Sending message:', newMessage);
+
+  //   addMessage(newMessage);
+  //   setInputText('');
+  //   setReplyingToMessage(null);
+  //   setShowAiSuggestion(false);
+  //   setShowSavedReplies(false);
+  //   setShowAttachmentMenu(false);
+
+  //   // TODO: Call API to send message
+  //   // sendMessageApi({ conversation_id, text: inputText.trim(), reply_to: replyingToMessage?._id });
+  // }, [inputText, addMessage, replyingToMessage, user]);
+
+
   const sendMessage = useCallback(() => {
-    if (!inputText.trim()) return;
+  if (!inputText.trim() || !conversation_id) return;
 
-    const newMessage: ChatMessage = {
-      _id: `temp-${Date.now()}`,
-      text: inputText.trim(),
-      createdAt: new Date(),
-      user: { 
-        _id: Number(user?.id),
-        name: user?.name || 'You'
-      },
-      replyTo: replyingToMessage
-        ? {
-            _id: replyingToMessage._id,
-            text: replyingToMessage.text || 'Media message',
-            userName: replyingToMessage.user.name,
-          }
-        : undefined,
-    };
+  const tempId = `temp-${Date.now()}`;
 
-    console.log('Sending message:', newMessage);
+  // 👇 optimistic message (UI smooth)
+  const optimisticMessage: ChatMessage = {
+    _id: tempId,
+    text: inputText.trim(),
+    createdAt: new Date(),
+    user: {
+      _id: Number(user?.id),
+      name: user?.name || 'You',
+    },
+    replyTo: replyingToMessage
+      ? {
+          _id: replyingToMessage._id,
+          text: replyingToMessage.text || 'Media message',
+          userName: replyingToMessage.user.name,
+        }
+      : undefined,
+  };
 
-    addMessage(newMessage);
-    setInputText('');
-    setReplyingToMessage(null);
-    setShowAiSuggestion(false);
-    setShowSavedReplies(false);
-    setShowAttachmentMenu(false);
+  // ✅ UI instantly update
+  addMessage(optimisticMessage);
 
-    // TODO: Call API to send message
-    // sendMessageApi({ conversation_id, text: inputText.trim(), reply_to: replyingToMessage?._id });
-  }, [inputText, addMessage, replyingToMessage, user]);
+  const bodyText = inputText.trim();
+
+  setInputText('');
+  setReplyingToMessage(null);
+  setShowAiSuggestion(false);
+  setShowSavedReplies(false);
+  setShowAttachmentMenu(false);
+
+  // ✅ API CALL
+  chatMessagesSend({
+    conversation_id,
+    body: bodyText,
+    reply_to: replyingToMessage?._id,
+  });
+}, [
+  inputText,
+  conversation_id,
+  replyingToMessage,
+  user,
+  addMessage,
+  chatMessagesSend,
+]);
+
 
   // Send saved reply
   const sendSavedReply = useCallback(

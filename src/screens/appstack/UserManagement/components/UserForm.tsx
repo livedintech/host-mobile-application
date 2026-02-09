@@ -94,6 +94,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode }) => {
             placeholder="Select Role"
           />
           <MultiSelectDropdownField
+            dropdownPosition='top'
             name="listings"
             label="Listing Selection"
             control={control}

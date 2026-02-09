@@ -19,7 +19,6 @@ const UserManagementScreen = () => {
     refetch, // 👈 assuming tum container se de sakte ho
   } = useUserManagementContainer();
 
-  const users = userManagement?.users ?? [];
 
   const renderUser = ({ item }: any) => (
     <GradientBorder
@@ -51,7 +50,7 @@ const UserManagementScreen = () => {
 
         <View style={styles.infoRow}>
           <AppText
-            text={item.role_name}
+            text={item.role_namwe}
             fontSize={18}
             color={Colors.PINE_FOREST}
             mr={8}
@@ -65,7 +64,7 @@ const UserManagementScreen = () => {
   return (
     <View style={styles.container}>
       <FlatListSimpleHandler
-        data={users}
+        data={userManagement}
         isLoading={isLoading}
         renderItem={renderUser}
         listEmptyText="No users found"
