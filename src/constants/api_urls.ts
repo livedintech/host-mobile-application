@@ -1,4 +1,5 @@
 const authController = 'api/v2';
+const api = 'api';
 
 export const SERVICE_CONFIG_URLS = {
   AUTH: {
@@ -12,7 +13,7 @@ export const SERVICE_CONFIG_URLS = {
     CITIES: `${authController}/external-cities`,
     DISTRICTS: `${authController}/external-districts`,
     CHART_DATA: `${authController}/external-get-amount-latest-mom`,
-    PAYMENT_SAVE_CARD: `${authController}/save-card`
+    PAYMENT_SAVE_CARD: `${authController}/save-card`,
   },
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,
@@ -68,7 +69,18 @@ export const SERVICE_CONFIG_URLS = {
     SMART_LOCK_ACTIVE_CODES:'api/ttlock/locks/passcodes?lockId={lockId}',
     SMART_LOCK_ACTIVITY_LOGS:'api/ttlock/activity-logs?lockId={lockId}',
     SMART_LOCK_PASSCODE_GENERATE:'api/ttlock/passcode/generate',
-
-
-  }
+    GET_CATEGORY_TASK_MANAGEMENT: `${api}/task-types`,
+    GET_LISTING_TASK_MANAGEMENT: `${api}/host-active-listings`,
+    GET_VENDOR_TASK_MANAGEMENT: `${api}/host-vendors`,
+    CREATE_TASK_MANAGEMENT: `${api}/host-create-task`,
+    GET_TASK_MANAGEMENT_CHECKLIST: `${api}/get-task-checklist/{id}/{tasktype}`,
+    GET_TASK_MANAGEMENT_CHECKLIST_DETAIL: `${api}/get-task-checklist_detailed/{id}/{tasktype}`,
+    TASK_MANAGEMENT_INSERT_CHECKLIST: `${api}/add-checklist-item`,
+    TASK_MANAGEMENT_ADD_SECTION: `${api}/add-checklist-section`,
+    TASK_MANAGEMENT_SINGLE_CHECKLIST_ITEM_UPDATE: `${api}/task/checklist/update`,
+    TASK_MANAGEMENT_STATUS_UPDATE: `${api}/task-draft-to-create`,
+    GET_HOST_TASK_LIST: `${api}/get-host-tasklist`,
+    TASK_MANAGEMENT_TASK_DETAIL: `${api}/gettaskdetails/{taskid}`,
+    TASK_MANAGEMENT_VENDOR_UPDATE: `${api}/host-task-edit/{id}`,
+  },
 };

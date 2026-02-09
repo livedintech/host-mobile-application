@@ -32,7 +32,6 @@ import CheckboxUncheckedIcon from './checkbox-primary-unchecked.svg';
 import fileUploadIcon from './file_upload.svg'
 import plusIcon from './plusIcon.svg'
 import plusWhiteIcon from './plusWhiteIcon.svg'
-
 import closeCircleIcon from './closeCircleIcon.svg'
 import videoIcon from './videoIcon.svg'
 import cameraIcon from './cameraIcon.svg'
@@ -84,6 +83,29 @@ import logIcon from './logIcon.svg'
 import lockFrame from './lockFrame.svg'
 import keyBinary from './keyBinary.svg'
 import unlock from './unlock.svg'
+import webcampIcon from "./webcamp.svg";
+import taskCompletedIcon from "./task-completed.svg";
+import analyticsIcon from "./analytics.svg";
+import walletIcon from "./walletIcon.svg";
+import occupancyIcon from "./occupancyIcon.svg";
+import moonIcon from "./moonIcon.svg";
+import dollarBagIcon from "./dollarBagIcon.svg";
+import dollarIcon from "./dollarIcon.svg";
+import circleClockIcon from "./circleClockIcon.svg";
+import trendUpIcon from "./trendUpIcon.svg";
+import trendDownIcon from "./trendDownIcon.svg";
+import graphAnalyticIcon from "./graphAnalytic.svg";
+import aiSuggestionIcon from "./aiSuggestionIcon.svg";
+import graphBarIncreaseIcon from "./graphBarIncreaseIcon.svg";
+import reviewStarIcon from "./reviewStarIcon.svg";
+import reviewStartUnfilledIcon from "./reviewStartUnfilledIcon.svg";
+import navigationMap from "./navigationMap.svg";
+import reviewHouse from "./reviewHouse.svg";
+import smileySparksIcon from "./smiley-sparks.svg";
+import smileyHappyIcon from "./smiley-happy.svg";
+import mailIcon from "./mailIcon.svg";
+import starRewardIcon from "./starRewardIcon.svg";
+import chatBubbleIcon from "./chatBubbleIcon.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -170,5 +192,28 @@ export const icons = {
     logIcon,
     lockFrame,
     keyBinary,
-    unlock
+    unlock,
+    webcampIcon,
+    taskCompletedIcon,
+    analyticsIcon,
+    walletIcon,
+    circleClockIcon,
+    moonIcon,
+    occupancyIcon,
+    dollarBagIcon,
+    dollarIcon,
+    trendUpIcon,
+    trendDownIcon,
+    graphAnalyticIcon,
+    aiSuggestionIcon,
+    graphBarIncreaseIcon,
+    reviewStarIcon,
+    reviewStartUnfilledIcon,
+    navigationMap,
+    reviewHouse,
+    smileySparksIcon,
+    smileyHappyIcon,
+    mailIcon,
+    starRewardIcon,
+    chatBubbleIcon
 };

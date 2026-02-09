@@ -8,7 +8,7 @@ export default function useAccountContainer() {
     { id: '3', title: 'Manage Listing', route: 'MANAGE_LISTING' },
     { id: '4', title: 'User Management', route: 'USER_MANAGEMENT' },
     { id: '5', title: 'Smart Lock Managment', route: 'SMART_LOCK_MANAGMENT' },
-
+    { id: '6', title: 'Reviews Management', route: 'REVIEW_MANAGEMENT' },
   ];
 
   const handlePress = (route: string) => {
@@ -27,6 +27,10 @@ export default function useAccountContainer() {
     if (route === 'SMART_LOCK_MANAGMENT') {
       navigate(NavigationRoutes.APP_STACK.SMART_LOCK);
     }
+    if (route === 'REVIEW_MANAGEMENT') {
+      navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT);
+    }
+  
   };
   return { accountOptions, handlePress };
 }

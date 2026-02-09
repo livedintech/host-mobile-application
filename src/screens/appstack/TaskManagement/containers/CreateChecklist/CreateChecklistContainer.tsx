@@ -1,125 +1,234 @@
-import { useEffect, useState } from 'react';
+// containers/CreateChecklist/CreateChecklistContainer.ts
+import { useState, useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useTaskStore } from '@/store/taskStore';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { ChecklistSection } from '@/types/api/taskManagentType';
+import {
+  getTaskChecklistDetail,
+  taskManagementAddChecklist,
+  taskManagementInsertChecklist,
+  getTaskChecklist,
+  editChecklistItem,
+  taskCreateStatusUpdate,
+} from '@/services/TaskManagementApi';
+import {
+  ChecklistSection,
+  ChecklistApiSection,
+} from '@/types/api/taskManagentType';
 
-
-
-
-export const MOCK_DATA: ChecklistSection[] = [
-  {
-    id: '1',
-    title: 'Bedroom 01',
-    icon: 'bedroom',
-    items: [
-      { id: '101', label: 'Empty the trash bins and replace the new liner' },
-      { id: '102', label: 'Windows glass & channels cleaned' },
-      { id: '103', label: 'Curtains Set / Unstained' },
-      { id: '104', label: 'Wardrobe Check and Dust' },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Bedroom 02',
-    icon: 'bedroom',
-    items: [],
-  },
-  {
-    id: '3',
-    title: 'Bathroom',
-    icon: 'bathroom',
-    items: [],
-  },
-];
+interface FormValues {
+  sectionName: string;
+  items: { value: string }[];
+}
 
 const CreateChecklistContainer = () => {
-  const addTask = useTaskStore(s => s.addTask);
-  const {draft, clearDraft, setDraft, isCleaningCategory} = useTaskDraftStore();
+  // const addTask = useTaskStore(s => s.addTask);
+  const { draft, clearDraft, isCleaningCategory } = useTaskDraftStore();
+  console.log('draftbb', draft);
 
-  const [data, setData] = useState<ChecklistSection[]>(MOCK_DATA);
+  const [data, setData] = useState<ChecklistSection[]>([]);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<string[]>(['1']);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setDraft({ 
-        checklistData: data, 
-        selectedChecklistItems: selectedItems 
-    });
-  }, [data, selectedItems]);
-
+  const [loadingSections, setLoadingSections] = useState<string[]>([]);
 
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      sectionName: '',
-      items: [{ value: '' }],
-    },
+  } = useForm<FormValues>({
+    defaultValues: { sectionName: '', items: [{ value: '' }] },
   });
 
-  const { fields, append } = useFieldArray({
-    control,
-    name: 'items',
-  });
+  const { fields, append } = useFieldArray({ control, name: 'items' });
 
-  const toggleModal = (sectionId?: any) => {
+  // Populate sections from draft API data
+  useEffect(() => {
+    if (!draft?.checklistApiData?.data?.tasks) return;
+
+    const sections: ChecklistSection[] = draft.checklistApiData.data.tasks.map(
+      (task: ChecklistApiSection) => ({
+        id: String(task.id),
+        title: task.name,
+        icon: task.icon || 'bedroom',
+        items: [], // items will be loaded when expanded
+      }),
+    );
+
+    setData(sections);
+  }, [draft?.checklistApiData]);
+
+  const toggleModal = (sectionId?: string) => {
     if (isModalVisible) {
       setModalVisible(false);
       setActiveSectionId(null);
       reset();
     } else {
-      // If sectionId is a string (from 'Add' button), set active mode
-      if (typeof sectionId === 'string') {
-        setActiveSectionId(sectionId);
-      }
+      if (sectionId) setActiveSectionId(sectionId);
       setModalVisible(true);
     }
   };
 
-  const onConfirmAddSection = (formData: any) => {
-    const newItems = formData.items
-      .filter((item: any) => item.value.trim() !== '')
-      .map((item: any, index: number) => ({
-        id: `${Date.now()}-${index}`,
-        label: item.value,
-      }));
+  // -----------------------------
+  // ADD SECTION
+  // -----------------------------
+  const addNewSection = async (formData: FormValues) => {
+    const checklistNames = formData.items
+      .filter(i => i.value.trim())
+      .map(i => i.value.trim());
 
-    if (activeSectionId) {
-      // Update existing section
-      setData(prev =>
-        prev.map(section =>
-          section.id === activeSectionId
-            ? { ...section, items: [...section.items, ...newItems] }
-            : section,
-        ),
-      );
-    } else {
-      // Create new section
-      const newSection: ChecklistSection = {
-        id: Date.now().toString(),
-        title: formData.sectionName || 'Untitled Section',
-        icon: 'bedroom',
-        items: newItems,
-      };
-      setData([newSection, ...data]);
+    if (!formData.sectionName.trim()) {
+      return Toast.show({ type: 'error', text1: 'Section name required' });
     }
-    toggleModal();
+    if (!checklistNames.length) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Add at least one checklist item',
+      });
+    }
+
+    try {
+      setIsLoading(true);
+
+      const taskId = draft?.checklistApiData?.data?.tasks?.[0].task_id;
+
+      if (!taskId) throw new Error('Task ID not found');
+
+      // Add section API call
+      await taskManagementAddChecklist({
+        task_id: taskId,
+        section_name: formData.sectionName,
+        checklist_names: checklistNames,
+      });
+
+      // Fetch updated checklist
+      const checklistRes = await getTaskChecklist(taskId, draft?.taskType!);
+
+      if (!checklistRes?.data?.tasks?.length)
+        throw new Error('No checklist data');
+
+      const sections: ChecklistSection[] = checklistRes.data.tasks.map(
+        (task: ChecklistApiSection) => ({
+          id: String(task.id),
+          title: task.name,
+          icon: task.icon || 'bedroom',
+          items: [], // load items on expand
+        }),
+      );
+
+      setData(sections);
+      toggleModal();
+      Toast.show({ type: 'success', text1: 'Section added successfully' });
+    } catch (err: any) {
+      Toast.show({
+        type: 'error',
+        text1: err.message || 'Failed to add section',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const toggleSection = (id: string) => {
+  // -----------------------------
+  // ADD ITEM TO EXISTING SECTION
+  // -----------------------------
+  const addItemToSection = async (formData: FormValues) => {
+    if (!activeSectionId) return;
+
+    const checklistNames = formData.items
+      .filter(i => i.value.trim())
+      .map(i => i.value.trim());
+    if (!checklistNames.length) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Add at least one checklist item',
+      });
+    }
+
+    try {
+      setIsLoading(true);
+
+      const taskId = draft?.checklistApiData?.data?.tasks?.[0].task_id;
+      if (!taskId) throw new Error('Task ID not found');
+
+      const res = await taskManagementInsertChecklist({
+        task_id: taskId,
+        task_checklist_detail_id: parseInt(activeSectionId, 10),
+        checklist_names: checklistNames,
+      });
+
+      // Merge items uniquely
+      setData(prev =>
+        prev.map(section => {
+          if (section.id !== activeSectionId) return section;
+
+          const existingIds = new Set(section.items.map(i => i.id));
+          const newItems = res.data
+            .map(i => ({ id: String(i.id), label: i.name }))
+            .filter(i => !existingIds.has(i.id));
+
+          return { ...section, items: [...section.items, ...newItems] };
+        }),
+      );
+
+      toggleModal();
+      Toast.show({ type: 'success', text1: 'Items added successfully' });
+    } catch (err: any) {
+      Toast.show({
+        type: 'error',
+        text1: err.message || 'Failed to add items',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onConfirm = handleSubmit((formData: FormValues) => {
+    if (activeSectionId) addItemToSection(formData);
+    else addNewSection(formData);
+  });
+
+  // -----------------------------
+  // TOGGLE SECTION & LOAD ITEMS
+  // -----------------------------
+  const toggleSection = async (sectionId: string) => {
+    const isExpanding = !expandedSections.includes(sectionId);
     setExpandedSections(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id],
+      prev.includes(sectionId)
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId],
     );
+
+    if (!isExpanding) return;
+    const section = data.find(s => s.id === sectionId);
+    if (!section || section.items.length > 0) return;
+
+    setLoadingSections(prev => [...prev, sectionId]);
+    try {
+      const res = await getTaskChecklistDetail(
+        sectionId,
+        draft?.taskType as string,
+      );
+      console.log('resdatattad', res);
+      const items = res.data.map((i: any) => ({
+        id: String(i.id),
+        label: i.name,
+      }));
+      console.log('itemsitemstets', items);
+      setData(prev =>
+        prev.map(s => (s.id === sectionId ? { ...s, items } : s)),
+      );
+    } catch (e: any) {
+      Toast.show({ type: 'error', text1: e.message || 'Failed to load items' });
+    } finally {
+      setLoadingSections(prev => prev.filter(id => id !== sectionId));
+    }
   };
 
   const toggleItem = (id: string) => {
@@ -128,58 +237,82 @@ const CreateChecklistContainer = () => {
     );
   };
 
-  const onCreateTask = () => {
-    if (!draft) return;
-    // ❌ VALIDATION: no checklist selected
-    if (selectedItems.length === 0) {
-      Toast.show({
-        type: 'error',
-        text1: 'Checklist required',
-        text2: 'Please select at least one checklist item',
-        position: 'top',
-        visibilityTime: 2500,
-      });
-      return;
+
+  
+
+  const onCreateTask = async () => {
+    if (!draft) {
+      return Toast.show({ type: 'error', text1: 'Draft not found' });
     }
 
-    const filteredChecklistData = data
-    .map(section => ({
-      ...section,
-      items: section.items.filter(item => selectedItems.includes(item.id))
-    }))
-    .filter(section => section.items.length > 0);
+    if (!selectedItems.length) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Select at least one checklist item',
+      });
+    }
 
+    const taskId = draft?.checklistApiData?.data?.tasks?.[0]?.task_id;
 
-    setIsLoading(true);
+    if (!taskId) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Task ID not found',
+      });
+    }
 
-    addTask({
-      taskName: draft.taskName,
-      description: draft.taskDescription,
-      category: draft.category,
-      property: draft.listingSelection,
-      assignedTask: draft.assignTask || 'Unassigned',
-      // checklistItems: selectedItems,
-      selectDate: draft.selectDate,
-      selectStartTime: draft.selectStartTime,
-      selectEndTime: draft.selectEndTime,
-      checklistData: filteredChecklistData,
-      isCleaningCategory: isCleaningCategory,
-    });
+    try {
+      setIsLoading(true);
 
-    clearDraft();
-    // ✅ Show success toast
-    Toast.show({
-      type: 'success',
-      text1: 'Task Created',
-      text2: 'Your task has been successfully created.',
-      position: 'top',
-      visibilityTime: 2000,
-    });
+      // -----------------------------
+      // 1️⃣ UPDATE CHECKLIST ITEMS
+      // -----------------------------
+      const checklistIds = selectedItems.map(id => Number(id));
 
-    setTimeout(() => {
-      setIsLoading(false);
+      await editChecklistItem({
+        task_id: taskId,
+        ids: checklistIds,
+      });
+
+      // -----------------------------
+      // 2️⃣ UPDATE TASK STATUS
+      // -----------------------------
+      await taskCreateStatusUpdate({
+        task_id: taskId,
+        is_draft: 0,
+      });
+
+      // -----------------------------
+      // 3️⃣ LOCAL STORE UPDATE (optional)
+      // -----------------------------
+      // addTask({
+      //   taskName: draft.taskName,
+      //   description: draft.taskDescription,
+      //   category: draft.category,
+      //   property: draft.listingSelection,
+      //   assignedTask: draft.assignTask || 'Unassigned',
+      //   selectDate: draft.selectDate,
+      //   selectStartTime: draft.selectStartTime,
+      //   selectEndTime: draft.selectEndTime,
+      //   isCleaningCategory,
+      // });
+
+      clearDraft();
+
+      Toast.show({
+        type: 'success',
+        text1: 'Task created successfully',
+      });
+
       navigate(NavigationRoutes.APP_STACK.TASK);
-    }, 300);
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: error?.message || 'Failed to create task',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
@@ -197,7 +330,8 @@ const CreateChecklistContainer = () => {
     errors,
     fields,
     addChecklistField: () => append({ value: '' }),
-    onConfirmAddSection: handleSubmit(onConfirmAddSection),
+    onConfirmAddSection: onConfirm,
+    loadingSections,
   };
 };
 

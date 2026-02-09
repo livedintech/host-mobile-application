@@ -189,6 +189,7 @@ function handleError(error: any): ApiResult {
 apiSauceInstance.addRequestTransform((request) => {
   try {
     const token = useAuthStore.getState()?.token;
+    console.log("token",token)
     
     // Initialize headers if not present
     request.headers = request.headers || {};
