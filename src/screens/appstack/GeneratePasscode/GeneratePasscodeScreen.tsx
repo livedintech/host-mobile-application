@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -7,9 +7,10 @@ import Metrics from '@/utility/Metrics';
 import useGeneratePasscodeContainer from './GeneratePasscodeContainer';
 import InputField from '@/components/molecules/Input/InputField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 
 const GeneratePasscodeScreen = () => {
-    const { type, control, errors, handleSubmit, instructionText,isLoading } = useGeneratePasscodeContainer();
+    const { type, control, errors, handleSubmit, instructionText, isLoading } = useGeneratePasscodeContainer();
 
     const timedFields = [
         { label: 'Select Start Date', name: 'startDate', icon: 'calendarIcon', placeholder: 'mm/dd/yy' },
@@ -20,7 +21,7 @@ const GeneratePasscodeScreen = () => {
 
     return (
         <View style={styles.container}>
-            <ScrollView keyboardShouldPersistTaps="handled">
+            <ScrollView keyboardShouldPersistTaps="handled" showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                 {/* Dynamic Title based on images */}
                 <View style={styles.titleWrapper}>
                     <AppText
@@ -42,7 +43,7 @@ const GeneratePasscodeScreen = () => {
                     />
 
                     {/* Conditional Rendering for Timed Type */}
-                    {type === 'Timed' && timedFields.map((field) => (
+                    {/* {type === 'Timed' && timedFields.map((field) => (
                         <InputField
                             key={field.name}
                             label={field.label}
@@ -52,7 +53,51 @@ const GeneratePasscodeScreen = () => {
                             placeholder={field.placeholder}
                             renderRightIcon={() => <Svgicons path={field.icon} size={20} color={Colors.BRUNSWICK_GREEN} />}
                         />
-                    ))}
+                    ))} */}
+                    {type === 'Timed' && (
+                        <>
+                            <DateTimeInputField
+                                name="startDate"
+                                control={control}
+                                errors={errors}
+                                label="Select Start Date"
+                                placeholder="mm/dd/yy"
+                                mode="date"
+                                rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
+                            />
+
+                            <DateTimeInputField
+                                name="startTime"
+                                control={control}
+                                errors={errors}
+                                label="Select Start Time"
+                                placeholder="-- : --"
+                                mode="time"
+                                rightIcon={<Svgicons path="Clock" size={20} color={Colors.BRUNSWICK_GREEN} />}
+                            />
+
+                            <DateTimeInputField
+                                name="endDate"
+                                control={control}
+                                errors={errors}
+                                label="Select End Date"
+                                placeholder="mm/dd/yy"
+                                mode="date"
+                                rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
+                            />
+
+                            <DateTimeInputField
+                                name="endTime"
+                                control={control}
+                                errors={errors}
+                                label="Select End Time"
+                                placeholder="-- : --"
+                                mode="time"
+                                rightIcon={<Svgicons path="Clock" size={20} color={Colors.BRUNSWICK_GREEN} />}
+                            />
+                        </>
+                    )}
+
                 </View>
 
                 <AppText

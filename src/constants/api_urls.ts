@@ -66,6 +66,7 @@ export const SERVICE_CONFIG_URLS = {
     GET_SMART_LOCK_LIST:'api/ttlock/locks?pageNo=1&pageSize=100',
     GET_SMART_LOCK_DROPDOWN_LIST:'api/ttlock/listings',
     CONNECT_SMART_LOCK:'api/ttlock/connect',
+    CONNECT_SMART_LOCK_MAPPINGS_ASSIGN:'api/ttlock/mappings/assign',
     SMART_LOCK_ACTIVE_CODES:'api/ttlock/locks/passcodes?lockId={lockId}',
     SMART_LOCK_ACTIVITY_LOGS:'api/ttlock/activity-logs?lockId={lockId}',
     SMART_LOCK_PASSCODE_GENERATE:'api/ttlock/passcode/generate',

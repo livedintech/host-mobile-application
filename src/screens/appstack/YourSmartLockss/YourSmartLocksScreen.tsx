@@ -8,8 +8,7 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useYourSmartLockssContainer from './YourSmartLockssContainer';
-import { goBack, navigate } from '@/services/navigationService';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { goBack } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 
 export interface SmartLock {
@@ -30,10 +29,10 @@ const YourSmartLocksScreen = () => {
         errors,
         getBatteryColor,
         handleConnectNewAccount,
-        handleViewLogs,
         isLoading,
         refetch,
-        goToScreen
+        goToScreen,
+        selectDropdown,
     } = useYourSmartLockssContainer();
 
     const renderLockCard = ({
@@ -121,6 +120,10 @@ const YourSmartLocksScreen = () => {
                     data={LISTING_OPTIONS}
                     placeholder="Select Property"
                     dropdownPosition="bottom"
+                    onSelect={(value) => {
+                        selectDropdown(value?.value, item.lock_id)
+                    }}
+                    extraPayload={item?.lock_id}
                 />
             </Pressable>
         );
@@ -132,18 +135,12 @@ const YourSmartLocksScreen = () => {
                 <ButtonView style={styles.backBtn} onPress={() => goBack()}>
                     <Svgicons path="arrowLeftIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
                 </ButtonView>
-
-                {/* <ButtonView style={styles.logsBtn} onPress={handleViewLogs}>
-                    <AppText text="View Logs" fontSize={14} color={Colors.BRUNSWICK_GREEN} type="Medium" />
-                </ButtonView> */}
             </View>
-
             <View style={styles.scrollContent}>
                 <View style={styles.titleContainer}>
                     <AppText text="Your Smart Locks" fontSize={32} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                     <Svgicons path="lockInfoIcon" size={28} color={Colors.BRUNSWICK_GREEN} ml={10} />
                 </View>
-
                 <FlatListSimpleHandler
                     data={locksData}
                     keyExtractor={item => item.lock_id.toString()}
@@ -151,7 +148,6 @@ const YourSmartLocksScreen = () => {
                     renderItem={renderLockCard}
                     onRefresh={refetch}
                 />
-
                 <AppButton
                     title="Connect New Account"
                     onPress={handleConnectNewAccount}
@@ -164,6 +160,7 @@ const YourSmartLocksScreen = () => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.WHITE },
@@ -183,12 +180,12 @@ const styles = StyleSheet.create({
         paddingVertical: 8, paddingHorizontal: 15,
         borderRadius: 20, borderWidth: 1, borderColor: Colors.SMOOTH_GREY
     },
-    scrollContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(40) },
+    scrollContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(200) },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: Metrics.verticalScale(30)
+        marginTop: Metrics.verticalScale(0)
     },
     card: {
         borderWidth: 1,

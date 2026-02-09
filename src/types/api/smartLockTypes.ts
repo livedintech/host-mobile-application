@@ -11,6 +11,11 @@ export interface smartLockConnectPayloadType {
   password:string
 }
 
+export interface smartLockMappingAssignPayloadType {
+  lock_id: number,
+  listing_id:string
+}
+
 export interface smartLockActiveCodesPayloadType {
   lockId: number
 }

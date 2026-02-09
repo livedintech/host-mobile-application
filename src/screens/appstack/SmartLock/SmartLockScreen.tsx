@@ -25,7 +25,6 @@ const SmartLockScreen = () => {
           </View>
         </View>
       </View>
-
       <AppButton
         mt={40}
         title='Connect TT Account'
