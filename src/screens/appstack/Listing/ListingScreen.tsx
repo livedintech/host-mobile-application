@@ -132,25 +132,37 @@ const ListingScreen = () => {
   const onCreateBooking = async (formData: any) => {
     const finalId = formData.listing_id || selectedListingId;
     if (!finalId || finalId === "all") return;
+
     const formatDate = (date: string) => {
       if (!date) return "";
       if (date.includes('-')) return date;
       const [m, d, y] = date.split('/');
       return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
     };
+
     const payload = { 
       listing_id: finalId, 
       start_date: formatDate(formData.start_date || getValues('start_date')), 
       end_date: formatDate(formData.end_date) 
     };
+
     const res = bookingType === 'direct' 
       ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'guest' })
       : await updateCalendarPricingApi({ ...payload, price: formData.rate });
     
     if (res) {
+      // 1. Close the sheet
       setIsBookingOpen(false);
+      
+      // 2. Clear the form
       reset();
       queryClient.invalidateQueries({ queryKey: ['USER_LISTINGS'] });
+      queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
+      
+      // If your CalendarContainer uses a specific key for the dots, add it here:
+      queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA', selectedListingId] });
+      
+      console.log("Booking created and cache invalidated");
     }
   };
 
