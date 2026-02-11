@@ -40,6 +40,9 @@ const STORAGE_CONST = {
     GET_REVIEWS_ALL : `getAllReviews`,
     GET_CALENDAR_BOOKINGS: 'GET_CALENDAR_BOOKINGS',
     GET_CALENDAR_DATA: 'GET_CALENDAR_DATA',
+    RATE_YOUR_GUEST: `rateYourGuest`
+
+
 }
 
 export default STORAGE_CONST;

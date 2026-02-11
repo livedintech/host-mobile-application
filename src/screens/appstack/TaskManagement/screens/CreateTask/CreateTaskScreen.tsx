@@ -79,13 +79,13 @@ const CreateTaskScreen = () => {
           multiline
           descriptionLength={wordCount}
           wordLimit={250}
-          //   rules={{
-          //     required: 'Description is required',
-          //     minLength: {
-          //       value: 10,
-          //       message: 'Description must be at least 10 characters',
-          //     },
-          //   }}
+            rules={{
+              required: 'Description is required',
+              minLength: {
+                value: 10,
+                message: 'Description must be at least 10 characters',
+              },
+            }}
         />
 
         {/* Category Dropdown */}

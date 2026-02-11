@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
-import Toast from 'react-native-toast-message';
-
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -11,11 +9,64 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import InputField from '@/components/molecules/Input/InputField';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-
-import { ChecklistSection } from '@/types/api/taskManagentType';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
+import { useQuery } from '@tanstack/react-query';
+import { getTaskChecklistDetail } from '@/services/TaskManagementApi';
+import { useTaskDraftStore } from '@/store/taskDraftStore';
 import CreateChecklistContainer from '../../containers/CreateChecklist/CreateChecklistContainer';
+
+const ChecklistItemsList = ({
+  sectionId,
+  selectedItems,
+  toggleItem,
+  toggleModal,
+}: any) => {
+  const { draft } = useTaskDraftStore();
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ['checklistDetails', sectionId],
+    queryFn: async () => {
+      const res = await getTaskChecklistDetail(
+        sectionId,
+        draft?.taskType as string,
+      );
+      return res.data.map((i: any) => ({ id: String(i.id), label: i.name }));
+    },
+    enabled: !!sectionId,
+  });
+
+  if (isLoading)
+    return (
+      <ActivityIndicator color={Colors.PINE_FOREST} style={{ margin: 20 }} />
+    );
+
+  return (
+    <View>
+      {items.map((i: any) => (
+        <ButtonView
+          key={i.id}
+          style={styles.checkRow}
+          onPress={() => toggleItem(i.id)}
+        >
+          <Checkbox
+            isChecked={selectedItems.includes(i.id)}
+            onPress={() => toggleItem(i.id)}
+          />
+          <AppText
+            text={i.label}
+            style={{ marginLeft: 10, flex: 1 }}
+            color={Colors.PINE_FOREST}
+          />
+        </ButtonView>
+      ))}
+      <ButtonView
+        style={styles.addItemBtn}
+        onPress={() => toggleModal(sectionId)}
+      >
+        <AppText text="Add Item" color={Colors.PINE_FOREST} type="Medium" />
+      </ButtonView>
+    </View>
+  );
+};
 
 const CreateChecklistScreen = () => {
   const {
@@ -34,12 +85,9 @@ const CreateChecklistScreen = () => {
     addChecklistField,
     onConfirmAddSection,
     activeSectionId,
-    loadingSections,
+    isLoadingSections,
   } = CreateChecklistContainer();
 
-  // --------------------------
-  // Header above FlatList
-  // --------------------------
   const renderHeader = () => (
     <View style={styles.topHeader}>
       <View style={styles.titleRow}>
@@ -51,18 +99,13 @@ const CreateChecklistScreen = () => {
         />
         <Svgicons path="File_Document" size={30} />
       </View>
-
       <AppText
-        text="Please select what you require from the user for this checklist."
+        text="Please select what you require for this checklist."
         fontSize={14}
         color={Colors.TRANSLUCENT_NAVY}
         style={styles.subtitle}
       />
-
-      <ButtonView
-        style={styles.addSectionBtn}
-        onPress={() => toggleModal()} // No id = add section
-      >
+      <ButtonView style={styles.addSectionBtn} onPress={() => toggleModal()}>
         <AppText
           text="Add Section"
           fontSize={14}
@@ -73,12 +116,8 @@ const CreateChecklistScreen = () => {
     </View>
   );
 
-  // --------------------------
-  // Section Card
-  // --------------------------
-  const renderItem = ({ item }: { item: ChecklistSection }) => {
+  const renderItem = ({ item }: any) => {
     const expanded = expandedSections.includes(item.id);
-
     const CardContent = (
       <View style={[styles.card, !expanded && styles.collapsedCard]}>
         <ButtonView
@@ -97,42 +136,14 @@ const CreateChecklistScreen = () => {
             <Svgicons path={expanded ? 'chevronUp' : 'chevronDown'} size={14} />
           </View>
         </ButtonView>
-
         {expanded && (
           <View style={styles.items}>
-            {loadingSections.includes(item.id) ? (
-              <View style={{ paddingVertical: 20 }}>
-                <SpinnerLoader size="small" />
-              </View>
-            ) : (
-              item.items.map(i => (
-                <ButtonView
-                  key={i.id}
-                  style={styles.checkRow}
-                  onPress={() => toggleItem(i.id)}
-                >
-                  <Checkbox
-                    isChecked={selectedItems.includes(i.id)}
-                    onPress={() => toggleItem(i.id)}
-                  />
-                  <AppText
-                    text={i.label}
-                    style={{ marginLeft: 10, flex: 1 }}
-                    color={Colors.PINE_FOREST}
-                  />
-                </ButtonView>
-              ))
-            )}
-
-            {/* Add Checklist Item Button */}
-            {!loadingSections.includes(item.id) && (
-              <ButtonView
-                style={styles.addItemBtn}
-                onPress={() => toggleModal(item.id)} // id = add items
-              >
-                <AppText text="Add" color={Colors.PINE_FOREST} type="Medium" />
-              </ButtonView>
-            )}
+            <ChecklistItemsList
+              sectionId={item.id}
+              selectedItems={selectedItems}
+              toggleItem={toggleItem}
+              toggleModal={toggleModal}
+            />
           </View>
         )}
       </View>
@@ -149,18 +160,23 @@ const CreateChecklistScreen = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        ListHeaderComponent={renderHeader}
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={i => i.id}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {isLoadingSections ? (
+        <ActivityIndicator
+          size="large"
+          style={{ flex: 1 }}
+          color={Colors.PINE_FOREST}
+        />
+      ) : (
+        <FlatList
+          ListHeaderComponent={renderHeader}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={i => i.id}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
 
-      {/* -------------------------
-          MODAL: ADD SECTION / ITEM
-      ------------------------- */}
       <Modal
         isVisible={isModalVisible}
         onBackdropPress={() => toggleModal()}
@@ -169,15 +185,12 @@ const CreateChecklistScreen = () => {
       >
         <View style={styles.modalContent}>
           <AppText
-            text={
-              activeSectionId ? 'Add Items to Section' : 'Create New Section'
-            }
+            text={activeSectionId ? 'Add Items' : 'New Section'}
             type="Bold"
             fontSize={18}
             style={styles.modalTitle}
           />
 
-          {/* Section Name Input only when adding section */}
           {!activeSectionId && (
             <InputField
               label="Section Name:"
@@ -189,47 +202,58 @@ const CreateChecklistScreen = () => {
             />
           )}
 
-          {/* Checklist Item Inputs */}
           <FlatListSimpleHandler
             data={fields}
             isLoading={isLoading}
-            renderItem={({ item, index }: any) => (
-              <InputField
-                key={item.id}
-                name={`items.${index}.value`}
-                control={control}
-                errors={errors}
-                placeholder="Checklist item"
-              />
-            )}
+            renderItem={({ index }: any) => {
+              const fieldName = `items.${index}.value`;
+              const itemError = (errors as any)?.items?.[index]?.value;
+
+              return (
+                <InputField
+                  key={fields[index].id}
+                  name={fieldName}
+                  control={control}
+                  errors={{ [fieldName]: itemError }}
+                  placeholder="Item name"
+                  rules={{ required: 'Item name is required' }}
+                />
+              );
+            }}
           />
 
           <ButtonView style={styles.addMoreBtn} onPress={addChecklistField}>
             <AppText text="Add More" color={Colors.PINE_FOREST} type="Medium" />
           </ButtonView>
 
-          {/* Modal Footer */}
           <View style={styles.modalFooter}>
             <ButtonView style={styles.cancelBtn} onPress={() => toggleModal()}>
-              <AppText text="Cancel" color={Colors.PINE_FOREST} type="Medium" />
+              <AppText text="Cancel" color={Colors.PINE_FOREST} type="Bold" />
             </ButtonView>
-            <ButtonView style={styles.confirmBtn} onPress={onConfirmAddSection}>
-              <AppText text="Confirm" color={Colors.PINE_FOREST} type="Bold" />
+            <ButtonView
+              style={styles.confirmBtn}
+              onPress={onConfirmAddSection}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" />
+              ) : (
+                <AppText
+                  text="Confirm"
+                  type="Bold"
+                  color={Colors.PINE_FOREST}
+                />
+              )}
             </ButtonView>
           </View>
         </View>
       </Modal>
 
-      {/* -------------------------
-          FOOTER: CREATE TASK
-      ------------------------- */}
       <View style={styles.footer}>
         <AppButton
           title="Create Task"
           onPress={onCreateTask}
           loading={isLoading}
-          backgroundColor={Colors.WHITE}
-          borderColor={Colors.ARGENT}
           color={Colors.PINE_FOREST}
         />
       </View>

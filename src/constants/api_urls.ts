@@ -94,5 +94,6 @@ export const SERVICE_CONFIG_URLS = {
     GET_CALENDAR_DATA: `${authController}/calendar/{listing_id}`,
     SET_CALENDAR_PRICING: `${authController}/calendar/pricing`,
     GET_BOOKINGS_DETAILS: `${authController}/bookings/details/{booking_id}`,
+    RATE_YOUR_GUEST: `${authController}/guest/reviews`
   },
 };
