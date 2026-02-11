@@ -88,6 +88,11 @@ export const SERVICE_CONFIG_URLS = {
     GET_ANALYTICS_CHANNEL : `${authController}/analytics/revenue-by-channel`,
     GET_REVIEWS_ALL : `${authController}/reviews`,
     GET_REVIEW_BY_ID : `${authController}/reviews/{id}`,
-    HOST_REVIEW_REPLY : `${authController}/reviews/reply`
+    HOST_REVIEW_REPLY : `${authController}/reviews/reply`,
+    GET_CALENDAR_BOOKINGS: `${authController}/bookings`,
+    GET_CALENDAR_BOOKINGS_LISTING_ID: `${authController}/bookings/{listing_id}`,
+    GET_CALENDAR_DATA: `${authController}/calendar/{listing_id}`,
+    SET_CALENDAR_PRICING: `${authController}/calendar/pricing`,
+    GET_BOOKINGS_DETAILS: `${authController}/bookings/details/{booking_id}`,
   },
 };
