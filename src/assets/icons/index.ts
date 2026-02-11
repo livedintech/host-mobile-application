@@ -87,11 +87,11 @@ import webcampIcon from "./webcamp.svg";
 import taskCompletedIcon from "./task-completed.svg";
 import analyticsIcon from "./analytics.svg";
 import walletIcon from "./walletIcon.svg";
-import occupancyIcon from "./occupancyIcon.svg";
+import occupancy from "./occupancyIcon.svg";
 import moonIcon from "./moonIcon.svg";
-import dollarBagIcon from "./dollarBagIcon.svg";
-import dollarIcon from "./dollarIcon.svg";
-import circleClockIcon from "./circleClockIcon.svg";
+import avg_stay_revenue from "./dollarBagIcon.svg";
+import adr from "./dollarIcon.svg";
+import avg_length_of_stay from "./circleClockIcon.svg";
 import trendUpIcon from "./trendUpIcon.svg";
 import trendDownIcon from "./trendDownIcon.svg";
 import graphAnalyticIcon from "./graphAnalytic.svg";
@@ -106,6 +106,7 @@ import smileyHappyIcon from "./smiley-happy.svg";
 import mailIcon from "./mailIcon.svg";
 import starRewardIcon from "./starRewardIcon.svg";
 import chatBubbleIcon from "./chatBubbleIcon.svg";
+import paymentCardIcon from "./paymentCard.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -197,11 +198,11 @@ export const icons = {
     taskCompletedIcon,
     analyticsIcon,
     walletIcon,
-    circleClockIcon,
+    avg_length_of_stay,
     moonIcon,
-    occupancyIcon,
-    dollarBagIcon,
-    dollarIcon,
+    occupancy,
+    avg_stay_revenue,
+    adr,
     trendUpIcon,
     trendDownIcon,
     graphAnalyticIcon,
@@ -215,5 +216,6 @@ export const icons = {
     smileyHappyIcon,
     mailIcon,
     starRewardIcon,
-    chatBubbleIcon
+    chatBubbleIcon,
+    paymentCardIcon
 };

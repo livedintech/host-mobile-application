@@ -1,0 +1,54 @@
+import { SERVICE_CONFIG_URLS } from '@/constants/api_urls';
+import apiService from './apiService';
+import Utils from '@/utility/Utils';
+import {
+  AddSectionPayload,
+  InsertChecklistItemPayload,
+  taskManagementCreateApiPayload,
+} from '@/types/api/taskManagentType';
+
+export const getAllReviews = async () => {
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_REVIEWS_ALL,
+  );
+
+  if (ok) {
+    return data;
+  }
+
+  throw response.message;
+};
+
+
+export const getReviewByID = async (id: number | string) => {
+  if (!id) {
+    throw new Error('id is required');
+  }
+
+  const endpoint =
+    SERVICE_CONFIG_URLS.APP.GET_REVIEW_BY_ID.replace('{id}', String(id));
+
+  const { ok, response, data } = await apiService.get(endpoint);
+
+  if (ok) {
+    return data;
+  }
+
+  throw new Error(response?.message || 'Failed to fetch review');
+};
+
+
+export const hostReviewReply = async (
+  payload: { review_id: number; content: string },
+) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.CREATE_TASK_MANAGEMENT,
+    payload,
+  );
+
+  if (ok) {
+    return data;
+  }
+
+  throw response;
+};
