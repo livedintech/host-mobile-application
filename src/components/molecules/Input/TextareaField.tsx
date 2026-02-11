@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, TextInputProps, Platform } from 'react-native';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { Controller, Control, FieldErrors, RegisterOptions } from 'react-hook-form';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -15,7 +15,8 @@ interface TextareaFieldProps extends TextInputProps {
     wrapperStyle?: object;
     descriptionLength?: number
     wordLimit?: number;
-    sparkleIcon?: boolean
+    sparkleIcon?: boolean;
+    rules?: RegisterOptions; 
 }
 
 const TextareaField: React.FC<TextareaFieldProps> = ({
@@ -30,6 +31,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
     descriptionLength,
     wordLimit,
     sparkleIcon,
+    rules,
     ...props
 }) => {
     const error = errors[name]?.message as string;
@@ -58,6 +60,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
                 )}
                 <Controller
                     control={control}
+                      rules={rules}  
                     name={name}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput

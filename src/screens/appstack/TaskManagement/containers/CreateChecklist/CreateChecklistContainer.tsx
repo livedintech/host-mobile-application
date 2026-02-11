@@ -1,8 +1,7 @@
-// containers/CreateChecklist/CreateChecklistContainer.ts
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useTaskStore } from '@/store/taskStore';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -14,10 +13,7 @@ import {
   editChecklistItem,
   taskCreateStatusUpdate,
 } from '@/services/TaskManagementApi';
-import {
-  ChecklistSection,
-  ChecklistApiSection,
-} from '@/types/api/taskManagentType';
+import { ChecklistApiSection } from '@/types/api/taskManagentType';
 
 interface FormValues {
   sectionName: string;
@@ -25,210 +21,140 @@ interface FormValues {
 }
 
 const CreateChecklistContainer = () => {
-  // const addTask = useTaskStore(s => s.addTask);
-  const { draft, clearDraft, isCleaningCategory } = useTaskDraftStore();
-  console.log('draftbb', draft);
+  const queryClient = useQueryClient();
+  const { draft, clearDraft } = useTaskDraftStore();
+  const taskId = draft?.checklistApiData?.data?.tasks?.[0]?.task_id;
 
-  const [data, setData] = useState<ChecklistSection[]>([]);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingSections, setLoadingSections] = useState<string[]>([]);
 
   const {
     control,
     handleSubmit,
     reset,
+    trigger,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: { sectionName: '', items: [{ value: '' }] },
+    mode: 'onChange', // Helps validation update in real-time after first trigger
   });
 
   const { fields, append } = useFieldArray({ control, name: 'items' });
 
-  // Populate sections from draft API data
-  useEffect(() => {
-    if (!draft?.checklistApiData?.data?.tasks) return;
-
-    const sections: ChecklistSection[] = draft.checklistApiData.data.tasks.map(
-      (task: ChecklistApiSection) => ({
+  // -----------------------------
+  // FETCH SECTIONS
+  // -----------------------------
+  const { data: sections = [], isLoading: isLoadingSections } = useQuery({
+    queryKey: ['taskChecklist', taskId],
+    queryFn: async () => {
+      if (!taskId) return [];
+      const res = await getTaskChecklist(taskId, draft?.taskType!);
+      return res.data.tasks.map((task: ChecklistApiSection) => ({
         id: String(task.id),
         title: task.name,
         icon: task.icon || 'bedroom',
-        items: [], // items will be loaded when expanded
+        items: [],
+      }));
+    },
+    enabled: !!taskId,
+  });
+
+  // -----------------------------
+  // MUTATIONS
+  // -----------------------------
+  const addSectionMutation = useMutation({
+    mutationFn: (vars: { sectionName: string; checklistNames: string[] }) =>
+      taskManagementAddChecklist({
+        task_id: taskId!,
+        section_name: vars.sectionName,
+        checklist_names: vars.checklistNames,
       }),
-    );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['taskChecklist', taskId] });
+      toggleModal();
+      Toast.show({ type: 'success', text1: 'Section added successfully' });
+    },
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Failed' }),
+  });
 
-    setData(sections);
-  }, [draft?.checklistApiData]);
+  const addItemsMutation = useMutation({
+    mutationFn: (vars: { sectionId: string; checklistNames: string[] }) =>
+      taskManagementInsertChecklist({
+        task_id: taskId!,
+        task_checklist_detail_id: parseInt(vars.sectionId, 10),
+        checklist_names: vars.checklistNames,
+      }),
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({
+        queryKey: ['checklistDetails', vars.sectionId],
+      });
+      toggleModal();
+      Toast.show({ type: 'success', text1: 'Items added successfully' });
+    },
+  });
 
+  const createTaskMutation = useMutation({
+    mutationFn: async () => {
+      const checklistIds = selectedItems.map(id => Number(id));
+      if (checklistIds.length > 0) {
+        await editChecklistItem({
+          task_id: taskId!,
+          ids: checklistIds,
+        });
+      }
+      await taskCreateStatusUpdate({ task_id: taskId!, is_draft: 0 });
+    },
+    onSuccess: () => {
+      clearDraft();
+      Toast.show({ type: 'success', text1: 'Task created successfully' });
+      navigate(NavigationRoutes.APP_STACK.TASK);
+    },
+  });
+
+  // -----------------------------
+  // HANDLERS
+  // -----------------------------
   const toggleModal = (sectionId?: string) => {
     if (isModalVisible) {
       setModalVisible(false);
       setActiveSectionId(null);
-      reset();
+      reset({ sectionName: '', items: [{ value: '' }] });
     } else {
       if (sectionId) setActiveSectionId(sectionId);
       setModalVisible(true);
     }
   };
 
-  // -----------------------------
-  // ADD SECTION
-  // -----------------------------
-  const addNewSection = async (formData: FormValues) => {
-    const checklistNames = formData.items
-      .filter(i => i.value.trim())
-      .map(i => i.value.trim());
+  const onConfirm = async () => {
+    // Explicitly trigger validation before proceeding
+    const isValid = await trigger();
+    if (!isValid) return;
 
-    if (!formData.sectionName.trim()) {
-      return Toast.show({ type: 'error', text1: 'Section name required' });
-    }
-    if (!checklistNames.length) {
-      return Toast.show({
-        type: 'error',
-        text1: 'Add at least one checklist item',
-      });
-    }
+    handleSubmit((formData: FormValues) => {
+      const checklistNames = formData.items
+        .map(i => i.value.trim())
+        .filter(Boolean);
 
-    try {
-      setIsLoading(true);
-
-      const taskId = draft?.checklistApiData?.data?.tasks?.[0].task_id;
-
-      if (!taskId) throw new Error('Task ID not found');
-
-      // Add section API call
-      await taskManagementAddChecklist({
-        task_id: taskId,
-        section_name: formData.sectionName,
-        checklist_names: checklistNames,
-      });
-
-      // Fetch updated checklist
-      const checklistRes = await getTaskChecklist(taskId, draft?.taskType!);
-
-      if (!checklistRes?.data?.tasks?.length)
-        throw new Error('No checklist data');
-
-      const sections: ChecklistSection[] = checklistRes.data.tasks.map(
-        (task: ChecklistApiSection) => ({
-          id: String(task.id),
-          title: task.name,
-          icon: task.icon || 'bedroom',
-          items: [], // load items on expand
-        }),
-      );
-
-      setData(sections);
-      toggleModal();
-      Toast.show({ type: 'success', text1: 'Section added successfully' });
-    } catch (err: any) {
-      Toast.show({
-        type: 'error',
-        text1: err.message || 'Failed to add section',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+      if (activeSectionId) {
+        addItemsMutation.mutate({ sectionId: activeSectionId, checklistNames });
+      } else {
+        addSectionMutation.mutate({
+          sectionName: formData.sectionName,
+          checklistNames,
+        });
+      }
+    })();
   };
 
-  // -----------------------------
-  // ADD ITEM TO EXISTING SECTION
-  // -----------------------------
-  const addItemToSection = async (formData: FormValues) => {
-    if (!activeSectionId) return;
-
-    const checklistNames = formData.items
-      .filter(i => i.value.trim())
-      .map(i => i.value.trim());
-    if (!checklistNames.length) {
-      return Toast.show({
-        type: 'error',
-        text1: 'Add at least one checklist item',
-      });
-    }
-
-    try {
-      setIsLoading(true);
-
-      const taskId = draft?.checklistApiData?.data?.tasks?.[0].task_id;
-      if (!taskId) throw new Error('Task ID not found');
-
-      const res = await taskManagementInsertChecklist({
-        task_id: taskId,
-        task_checklist_detail_id: parseInt(activeSectionId, 10),
-        checklist_names: checklistNames,
-      });
-
-      // Merge items uniquely
-      setData(prev =>
-        prev.map(section => {
-          if (section.id !== activeSectionId) return section;
-
-          const existingIds = new Set(section.items.map(i => i.id));
-          const newItems = res.data
-            .map(i => ({ id: String(i.id), label: i.name }))
-            .filter(i => !existingIds.has(i.id));
-
-          return { ...section, items: [...section.items, ...newItems] };
-        }),
-      );
-
-      toggleModal();
-      Toast.show({ type: 'success', text1: 'Items added successfully' });
-    } catch (err: any) {
-      Toast.show({
-        type: 'error',
-        text1: err.message || 'Failed to add items',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onConfirm = handleSubmit((formData: FormValues) => {
-    if (activeSectionId) addItemToSection(formData);
-    else addNewSection(formData);
-  });
-
-  // -----------------------------
-  // TOGGLE SECTION & LOAD ITEMS
-  // -----------------------------
-  const toggleSection = async (sectionId: string) => {
-    const isExpanding = !expandedSections.includes(sectionId);
+  const toggleSection = (sectionId: string) => {
     setExpandedSections(prev =>
       prev.includes(sectionId)
         ? prev.filter(id => id !== sectionId)
         : [...prev, sectionId],
     );
-
-    if (!isExpanding) return;
-    const section = data.find(s => s.id === sectionId);
-    if (!section || section.items.length > 0) return;
-
-    setLoadingSections(prev => [...prev, sectionId]);
-    try {
-      const res = await getTaskChecklistDetail(
-        sectionId,
-        draft?.taskType as string,
-      );
-      console.log('resdatattad', res);
-      const items = res.data.map((i: any) => ({
-        id: String(i.id),
-        label: i.name,
-      }));
-      console.log('itemsitemstets', items);
-      setData(prev =>
-        prev.map(s => (s.id === sectionId ? { ...s, items } : s)),
-      );
-    } catch (e: any) {
-      Toast.show({ type: 'error', text1: e.message || 'Failed to load items' });
-    } finally {
-      setLoadingSections(prev => prev.filter(id => id !== sectionId));
-    }
   };
 
   const toggleItem = (id: string) => {
@@ -237,92 +163,17 @@ const CreateChecklistContainer = () => {
     );
   };
 
-
-  
-
-  const onCreateTask = async () => {
-    if (!draft) {
-      return Toast.show({ type: 'error', text1: 'Draft not found' });
-    }
-
-    if (!selectedItems.length) {
-      return Toast.show({
-        type: 'error',
-        text1: 'Select at least one checklist item',
-      });
-    }
-
-    const taskId = draft?.checklistApiData?.data?.tasks?.[0]?.task_id;
-
-    if (!taskId) {
-      return Toast.show({
-        type: 'error',
-        text1: 'Task ID not found',
-      });
-    }
-
-    try {
-      setIsLoading(true);
-
-      // -----------------------------
-      // 1️⃣ UPDATE CHECKLIST ITEMS
-      // -----------------------------
-      const checklistIds = selectedItems.map(id => Number(id));
-
-      await editChecklistItem({
-        task_id: taskId,
-        ids: checklistIds,
-      });
-
-      // -----------------------------
-      // 2️⃣ UPDATE TASK STATUS
-      // -----------------------------
-      await taskCreateStatusUpdate({
-        task_id: taskId,
-        is_draft: 0,
-      });
-
-      // -----------------------------
-      // 3️⃣ LOCAL STORE UPDATE (optional)
-      // -----------------------------
-      // addTask({
-      //   taskName: draft.taskName,
-      //   description: draft.taskDescription,
-      //   category: draft.category,
-      //   property: draft.listingSelection,
-      //   assignedTask: draft.assignTask || 'Unassigned',
-      //   selectDate: draft.selectDate,
-      //   selectStartTime: draft.selectStartTime,
-      //   selectEndTime: draft.selectEndTime,
-      //   isCleaningCategory,
-      // });
-
-      clearDraft();
-
-      Toast.show({
-        type: 'success',
-        text1: 'Task created successfully',
-      });
-
-      navigate(NavigationRoutes.APP_STACK.TASK);
-    } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: error?.message || 'Failed to create task',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return {
-    data,
+    data: sections,
     expandedSections,
     selectedItems,
     toggleSection,
     toggleItem,
-    onCreateTask,
-    isLoading,
+    onCreateTask: () => createTaskMutation.mutate(),
+    isLoading:
+      addSectionMutation.isPending ||
+      addItemsMutation.isPending ||
+      createTaskMutation.isPending,
     isModalVisible,
     activeSectionId,
     toggleModal,
@@ -331,7 +182,7 @@ const CreateChecklistContainer = () => {
     fields,
     addChecklistField: () => append({ value: '' }),
     onConfirmAddSection: onConfirm,
-    loadingSections,
+    isLoadingSections,
   };
 };
 

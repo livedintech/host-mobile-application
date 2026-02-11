@@ -1,11 +1,7 @@
 import { SERVICE_CONFIG_URLS } from '@/constants/api_urls';
 import apiService from './apiService';
-import Utils from '@/utility/Utils';
-import {
-  AddSectionPayload,
-  InsertChecklistItemPayload,
-  taskManagementCreateApiPayload,
-} from '@/types/api/taskManagentType';
+import { RateYourGuestPayload } from '@/types/api/reviewManagementTypes';
+
 
 export const getAllReviews = async () => {
   const { ok, response, data } = await apiService.get(
@@ -52,3 +48,20 @@ export const hostReviewReply = async (
 
   throw response;
 };
+
+
+export const rateYourGuest = async (
+  payload: RateYourGuestPayload,
+) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.RATE_YOUR_GUEST,
+    payload,
+  );
+
+  if (ok) {
+    return data;
+  }
+
+  throw response;
+};
+

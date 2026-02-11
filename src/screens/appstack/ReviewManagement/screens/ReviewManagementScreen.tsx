@@ -7,25 +7,41 @@ import ReviewCard from '../components/ReviewCard';
 import useFetchReviews, { ReviewItem } from '../containers/useFetchReviews';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import AppButton from '@/components/molecules/AppButton/AppButton';
 
 const ReviewManagementScreen = () => {
   const { allReviews, allReviewsLoading, refreshReviews } = useFetchReviews();
 
   const renderItem = ({ item }: { item: ReviewItem }) => (
     <ButtonView
-      onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { reviewData: item })}
+      onPress={() =>
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+          reviewData: item,
+        })
+      }
       mb={15}
     >
       <ReviewCard
         item={item}
-        onViewReview={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN, { id: item.id })}
-        onRateGuest={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN, { name: 'Guest' })}
-        onTalkToGuest={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { id:item.id })}
+        onViewReview={() =>
+          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN, {
+            id: item.id,
+          })
+        }
+        onRateGuest={() =>
+          navigate(
+            NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
+            { id: item.id },
+          )
+        }
+        onTalkToGuest={() =>
+          navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { id: item.id })
+        }
         onRequestRating={() => console.log('Request Rating')}
       />
     </ButtonView>
   );
-  console.log("allReviews",allReviews)
+  console.log('allReviews', allReviews);
 
   return (
     <View style={styles.container}>

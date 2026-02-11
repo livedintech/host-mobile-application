@@ -107,6 +107,7 @@ import mailIcon from "./mailIcon.svg";
 import starRewardIcon from "./starRewardIcon.svg";
 import chatBubbleIcon from "./chatBubbleIcon.svg";
 import paymentCardIcon from "./paymentCard.svg";
+import reviewStarHalfIcon from "./reviewStarHalfIcon.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -217,5 +218,6 @@ export const icons = {
     mailIcon,
     starRewardIcon,
     chatBubbleIcon,
-    paymentCardIcon
+    paymentCardIcon,
+    reviewStarHalfIcon
 };
