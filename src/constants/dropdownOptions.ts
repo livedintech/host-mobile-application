@@ -5,3 +5,10 @@ export const bedroomOptions = [
   { label: '4', value: '4' },
   { label: '5', value: '5' },
 ];
+
+export const FILTER_OPTIONS = [
+  { id: 'all', label: 'All' },
+  { id: 'today', label: 'Today' },
+  { id: 'pending', label: 'Pending' },
+  { id: 'confirmed', label: 'Confirmed' },
+];

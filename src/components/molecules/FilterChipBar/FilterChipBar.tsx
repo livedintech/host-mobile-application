@@ -9,11 +9,13 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { s, vs, ms } from 'react-native-size-matters';
 
-interface FilterOption {
+// 1. Define the interface for a single option
+export interface FilterOption {
   id: string;
   label: string;
 }
 
+// 2. Define the props interface for the component
 interface FilterChipBarProps {
   options: FilterOption[];
   selectedId: string;
@@ -40,7 +42,10 @@ const FilterChipBar: React.FC<FilterChipBarProps> = ({
     }
 
     return (
-      <Pressable onPress={() => onSelect(item.id)} style={styles.chipContainer}>
+      <Pressable 
+        onPress={() => onSelect(item.id)} 
+        style={styles.chipContainer}
+      >
         <LinearGradient
           colors={['#FFFFFF', '#F9F9F9', '#F2F2F2']}
           style={styles.inactiveChip}
@@ -72,11 +77,13 @@ const FilterChipBar: React.FC<FilterChipBarProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingVertical: vs(10),
+    width: '100%',
   },
   listContent: {
     paddingHorizontal: s(16),
-    gap: s(12), // Spacing between chips
+    gap: s(12), 
     alignItems: 'center',
+    flexDirection: 'row',
   },
   chipContainer: {
     borderRadius: ms(25),
@@ -88,17 +95,17 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   chip: {
-    height: vs(42),
-    paddingHorizontal: s(24),
+    height: vs(38),
+    paddingHorizontal: s(22),
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: ms(25),
   },
   activeChip: {
-    backgroundColor: '#2D4A41', // Dark green from screenshot
+    backgroundColor: '#2D4A41', // Dark Green
   },
   inactiveChip: {
-    height: vs(42),
+    height: vs(38),
     paddingHorizontal: s(20),
     justifyContent: 'center',
     alignItems: 'center',
@@ -118,12 +125,12 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#FFFFFF',
-    fontSize: ms(15),
-    fontWeight: '500',
+    fontSize: ms(14),
+    fontWeight: '600',
   },
   inactiveText: {
     color: '#2D4A41',
-    fontSize: ms(15),
+    fontSize: ms(14),
     fontWeight: '500',
   },
 });

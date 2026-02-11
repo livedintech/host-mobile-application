@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
@@ -6,120 +6,66 @@ import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// --- OTA Configuration ---
 const OTAs = {
   AIRBNB: { label: 'Airbnb', color: '#FF5A5F' },
   GATHERN: { label: 'Gathern', color: '#A855F7' },
   BOOKING: { label: 'Booking.com', color: '#3B82F6' },
 };
 
-// --- Mock Data ---
-const DOTS_DATA: any = {
-  '2026-01-01': { channels: ['airbnb', 'gathern'], price: '500' },
-  '2026-01-02': { channels: ['airbnb', 'booking', 'gathern'], price: '500' },
-  '2026-01-03': { channels: ['airbnb', 'booking', 'gathern'], price: '500' },
-  '2026-01-04': { channels: ['airbnb', 'booking', 'gathern'], price: '500' },
-  '2026-01-05': { channels: ['airbnb', 'booking', 'gathern'], price: '500' },
-};
+interface MultiChannelCalendarProps {
+  markedDates: any;
+  onDayPress: (day: any) => void;
+  currentDate?: string;
+}
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
-  const data = marking || {};
-  const isActiveSelection = data.activeSelection;
-  const hasChannels = data.channels && data.channels.length > 0;
+  // Extract channels/sources from the marking object
+  const dots = marking?.channels || [];
+  const displayPrice = marking?.price;
+  const isSelected = marking?.activeSelection;
 
   return (
-    <TouchableOpacity
-      style={styles.dayContainer}
+    <TouchableOpacity 
+      style={[
+        styles.dayContainer, 
+        isSelected && styles.selectedDayContainer
+      ]} 
       onPress={() => onPress(date)}
-      activeOpacity={0.8}
     >
-      {/* User Selection Ring */}
-      {isActiveSelection && <View style={styles.selectionRing} />}
+      {/* SELECTION RING */}
+      {isSelected && <View style={styles.selectionRing} />}
 
-      {/* Date Number */}
       <Text style={[
-        styles.dayText,
+        styles.dayText, 
         state === 'disabled' && styles.disabledText,
-        isActiveSelection && styles.selectedDayText
+        isSelected && styles.selectedDayText
       ]}>
         {date.day}
       </Text>
 
-      {/* Multi-OTA Dots */}
+      {/* DOTS CONTAINER */}
       <View style={styles.dotContainer}>
-        {hasChannels && data.channels.map((channel: string, index: number) => {
-          const config = OTAs[channel.toUpperCase() as keyof typeof OTAs];
+        {dots.map((source: string, index: number) => {
+          const config = OTAs[source?.toUpperCase() as keyof typeof OTAs];
           return (
             <View
-              key={index}
+              key={`${date.dateString}-${index}`}
               style={[styles.dot, { backgroundColor: config?.color || '#CCC' }]}
             />
           );
         })}
       </View>
 
-      {/* Pricing */}
-      {state !== 'disabled' && (
-        <Text style={styles.priceText}>SAR {data.price || '500'}</Text>
+      {/* PRICE LABEL */}
+      {state !== 'disabled' && displayPrice && (
+        <Text style={[styles.priceText, isSelected && styles.selectedPriceText]}>
+          SAR {displayPrice}
+        </Text>
       )}
     </TouchableOpacity>
   );
 };
 
-const MultiChannelCalendar = () => {
-  const [selected, setSelected] = useState('');
-
-  const markedDates = useMemo(() => ({
-    ...DOTS_DATA,
-    [selected]: { ...DOTS_DATA[selected], activeSelection: true }
-  }), [selected]);
-
-  return (
-    <View style={styles.card}>
-      {/* Legend Header with Color-Matched Text */}
-      <View style={styles.legendHeader}>
-        <LegendItem config={OTAs.AIRBNB} />
-        <LegendItem config={OTAs.GATHERN} />
-        <LegendItem config={OTAs.BOOKING} />
-      </View>
-
-      <Calendar
-        current={'2026-01-01'}
-        dayComponent={({ date, state, marking }: any) => (
-          <CustomDay
-            date={date}
-            state={state}
-            marking={marking}
-            onPress={(d: any) => setSelected(d.dateString)}
-          />
-        )}
-        markedDates={markedDates}
-        renderArrow={(dir) => (
-          dir === 'left' ?
-          <ChevronLeft size={22} color="#A0A0A0" /> :
-          <ChevronRight size={22} color="#A0A0A0" />
-        )}
-        theme={{
-          calendarBackground: 'transparent',
-          monthTextColor: '#1A332C',
-          textMonthFontWeight: '700',
-          textMonthFontSize: ms(20),
-          // Clean week headers
-          'stylesheet.calendar.header': {
-            week: {
-              marginTop: vs(15),
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              borderBottomWidth: 0,
-            }
-          }
-        }}
-      />
-    </View>
-  );
-};
-
-// --- Helper Components ---
 const LegendItem = ({ config }: { config: { label: string, color: string } }) => (
   <View style={styles.legendItem}>
     <View style={[styles.lDot, { backgroundColor: config.color }]} />
@@ -127,14 +73,55 @@ const LegendItem = ({ config }: { config: { label: string, color: string } }) =>
   </View>
 );
 
+const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate }: MultiChannelCalendarProps) => {
+  return (
+    <View style={styles.card}>
+      {/* LEGEND HEADER */}
+      <View style={styles.legendHeader}>
+        <LegendItem config={OTAs.AIRBNB} />
+        <LegendItem config={OTAs.GATHERN} />
+        <LegendItem config={OTAs.BOOKING} />
+      </View>
+
+      <Calendar
+        current={currentDate}
+        markingType="custom"
+        markedDates={markedDates}
+        dayComponent={({ date, state, marking }: any) => (
+          <CustomDay
+            date={date}
+            state={state}
+            marking={marking}
+            onPress={onDayPress}
+          />
+        )}
+        renderArrow={(dir) => (
+          dir === 'left' ?
+          <ChevronLeft size={ms(22)} color="#A0A0A0" /> :
+          <ChevronRight size={ms(22)} color="#1A332C" />
+        )}
+        theme={{
+          calendarBackground: 'transparent',
+          monthTextColor: '#1A332C',
+          textMonthFontWeight: '700',
+          textMonthFontSize: ms(20),
+          textSectionTitleColor: '#7B8D88',
+          textDayHeaderFontSize: ms(14),
+          textDayHeaderFontWeight: '600',
+          // We cast the whole object to bypass the strict 'Theme' check
+        } as any}
+      />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFF',
     borderRadius: ms(25),
     padding: s(15),
-    width: SCREEN_WIDTH - s(30),
+    width: '100%',
     alignSelf: 'center',
-    // Professional shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
@@ -144,69 +131,72 @@ const styles = StyleSheet.create({
   legendHeader: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: s(15),
-    marginBottom: vs(15),
+    flexWrap: 'wrap',
+    gap: s(12), 
+    marginBottom: vs(10),
     paddingBottom: vs(10),
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: s(6)
   },
-  lDot: {
-    width: ms(8),
-    height: ms(8),
-    borderRadius: 4
-  },
-  lText: {
-    fontSize: ms(13),
-    fontWeight: '700', // Bold matching the screenshot
-    letterSpacing: -0.2,
-  },
-  dayContainer: {
-    height: vs(65),
-    width: (SCREEN_WIDTH - s(80)) / 7,
-    alignItems: 'center',
+  lDot: { width: ms(8), height: ms(8), borderRadius: 4, marginRight: s(4) },
+  lText: { fontSize: ms(12), fontWeight: '700' },
+  dayContainer: { 
+    height: vs(65), 
+    width: (SCREEN_WIDTH - s(70)) / 7, 
+    alignItems: 'center', 
     justifyContent: 'center',
   },
-  dayText: {
-    fontSize: ms(18),
-    fontWeight: '500',
-    color: '#4A4A4A',
+  selectedDayContainer: {
+    // Optional: add a light background to the selected day cell
+  },
+  dayText: { 
+    fontSize: ms(16), 
+    fontWeight: '500', 
+    color: '#4A4A4A', 
     marginBottom: vs(2),
+    zIndex: 10,
   },
-  selectedDayText: {
-    color: '#2D4A41',
-    fontWeight: '800'
+  selectedDayText: { 
+    color: '#1A332C', 
+    fontWeight: '800' 
   },
-  disabledText: {
-    color: '#E0E0E0'
+  disabledText: { 
+    color: '#E0E0E0' 
   },
-  dotContainer: {
-    flexDirection: 'row',
-    gap: s(3),
-    height: vs(6),
-    alignItems: 'center',
-    marginBottom: vs(4),
+  dotContainer: { 
+    flexDirection: 'row', 
+    gap: s(4), // Increased gap for better spacing
+    height: vs(10), 
+    alignItems: 'center', 
+    justifyContent: 'center', // Center the dots under the number
+    width: '100%',
   },
-  dot: {
-    width: ms(5),
-    height: ms(5),
-    borderRadius: 3,
+  dot: { 
+    width: ms(6), // Slightly larger for visibility
+    height: ms(6), 
+    borderRadius: ms(3), 
   },
-  priceText: {
-    fontSize: ms(8.5),
-    color: '#999',
-    fontWeight: '600',
+  priceText: { 
+    fontSize: ms(8.5), 
+    color: '#999', 
+    fontWeight: '600' 
   },
-  selectionRing: {
-    position: 'absolute',
-    width: ms(44),
-    height: ms(44),
-    borderRadius: ms(22),
-    borderWidth: 1.5,
-    borderColor: '#2D4A41',
+  selectedPriceText: { 
+    color: '#1A332C' 
+  },
+  selectionRing: { 
+    position: 'absolute', 
+    width: ms(40), 
+    height: ms(40), 
+    borderRadius: ms(20), 
+    borderWidth: 1.5, 
+    borderColor: '#1A332C', 
     top: vs(4),
+    zIndex: 1,
   }
 });
 

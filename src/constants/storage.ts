@@ -37,9 +37,9 @@ const STORAGE_CONST = {
     GET_ANALYTICS_SUMMARY : `analytics/summary`,
     GET_ANALYTICS_PERFORMANCE : `analytics/listing-performance`,
     GET_ANALYTICS_CHANNEL : `analytics/revenue-by-channel`,
-    GET_REVIEWS_ALL : `getAllReviews`
-
-
+    GET_REVIEWS_ALL : `getAllReviews`,
+    GET_CALENDAR_BOOKINGS: 'GET_CALENDAR_BOOKINGS',
+    GET_CALENDAR_DATA: 'GET_CALENDAR_DATA',
 }
 
 export default STORAGE_CONST;

@@ -3,209 +3,189 @@ import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-nati
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { AirbnbIcon, GathernIcon } from './CustomIcons';
+import { AirbnbIcon, GathernIcon } from './CustomIcons'; 
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const INITIAL_BOOKINGS: any = {
-  '2026-01-01': { type: 'single', color: '#D32F2F', textColor: '#FFF' },
-  '2026-01-02': { type: 'start', color: '#F8B6B6' },
-  '2026-01-03': { type: 'middle', color: '#F8B6B6' },
-  '2026-01-04': { type: 'middle', color: '#F8B6B6', showLabel: true, guest: 'Ahmed', ota: 'airbnb' },
-  '2026-01-05': { type: 'middle', color: '#F8B6B6' },
-  '2026-01-06': { type: 'middle', color: '#F8B6B6' },
-  '2026-01-07': { type: 'end', color: '#F8B6B6' },
-  '2026-01-08': { type: 'single', color: '#D32F2F', textColor: '#FFF' },
-  '2026-01-09': { type: 'single', color: '#B39DDB', textColor: '#FFF' },
-  '2026-01-10': { type: 'start', color: '#F3E5F5' },
-  '2026-01-11': { type: 'middle', color: '#F3E5F5' },
-  '2026-01-12': { type: 'middle', color: '#F3E5F5', showLabel: true, guest: 'Fayyaz', ota: 'gathern' },
-  '2026-01-13': { type: 'middle', color: '#F3E5F5' },
-  '2026-01-14': { type: 'end', color: '#F3E5F5' },
-  '2026-01-15': { type: 'single', color: '#B39DDB', textColor: '#FFF' },
+const OTAs = {
+  AIRBNB: { label: 'Airbnb', color: '#FF5A5F' },
+  GATHERN: { label: 'Gathern', color: '#A855F7' },
+  BOOKING: { label: 'Booking.com', color: '#3B82F6' },
 };
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
-  const isActive = !!marking;
-  const { type, color, textColor } = marking || {};
-
+  const isActive = !!marking?.type; 
+  const { type, color, textColor, guest, ota, price, showLabel } = marking || {};
   return (
-    <TouchableOpacity
-      style={styles.dayContainer}
-      onPress={() => onPress(date)}
-      activeOpacity={1}
-    >
-      {/* BACKGROUND BAR */}
-      {isActive && (
-        <View
-          style={[
-            styles.selectionBg,
-            { backgroundColor: color },
-            type === 'single' && styles.circleBg,
-            type === 'start' && styles.startEdge,
-            type === 'middle' && styles.middleEdge,
-            type === 'end' && styles.endEdge,
-          ]}
-        />
-      )}
+    <View style={styles.dayCell}>
+      <TouchableOpacity
+        style={styles.dayContainer}
+        onPress={() => onPress(date)}
+        activeOpacity={0.9}
+      >
+        {/* 1. BACKGROUND SELECTION BAR */}
+        {isActive && (
+          <View
+            style={[
+              styles.selectionBg,
+              { backgroundColor: color || '#E0E0E0' },
+              type === 'single' && styles.circleBg,
+              type === 'start' && styles.startEdge,
+              type === 'middle' && styles.middleEdge,
+              type === 'end' && styles.endEdge,
+            ]}
+          />
+        )}
 
-      {/* CENTER LABEL (Guest Name & OTA Icon) */}
-      {marking?.showLabel && (
-        <View style={styles.overlayContainer}>
-          <View style={styles.otaRow}>
-            {marking.ota === 'airbnb' ? (
-              <AirbnbIcon size={ms(11)} />
-            ) : (
-              <GathernIcon size={ms(11)} />
-            )}
-            <Text
-              style={styles.guestNameText}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {marking.guest}
+        {/* 2. DAY NUMBER */}
+        <View style={styles.numberContainer}>
+          <Text
+            style={[
+              styles.dayNumber,
+              state === 'disabled' ? styles.disabledText : { color: textColor || '#1A332C' },
+            ]}
+          >
+            {date.day}
+          </Text>
+        </View>
+
+        {/* 3. PRICE */}
+        {!isActive && state !== 'disabled' && (
+          <Text style={styles.priceText}>
+            SAR {price || '500'}
+          </Text>
+        )}
+      </TouchableOpacity>
+
+      {/* 4. GUEST NAME - Positioned absolutely to float on top of everything */}
+      {showLabel && (
+        <View style={styles.labelWrapper} pointerEvents="none">
+          <View style={styles.otaBadge}>
+            {ota === 'airbnb' ? <AirbnbIcon size={ms(10)} /> : <GathernIcon size={ms(10)} />}
+            <Text style={styles.guestText} numberOfLines={1}>
+              {guest}
             </Text>
           </View>
         </View>
       )}
-
-
-      {/* DAY NUMBER */}
-      <View style={styles.dateNumberContainer}>
-        <Text
-          style={[
-            styles.dayText,
-            state === 'disabled' ? styles.disabledText : styles.activeText,
-            textColor && { color: textColor },
-          ]}
-        >
-          {date.day}
-        </Text>
-      </View>
-
-      {/* PRICE */}
-      {!isActive && state !== 'disabled' && <Text style={styles.priceText}>SAR 500</Text>}
-      {date.dateString === '2026-01-16' && !isActive && <Text style={styles.priceText}>SAR 5000</Text>}
-    </TouchableOpacity>
+    </View>
   );
 };
 
-const CustomCalendar = () => {
+const LegendItem = ({ config }: { config: { label: string, color: string } }) => (
+  <View style={styles.legendItem}>
+    <View style={[styles.lDot, { backgroundColor: config.color }]} />
+    <Text style={[styles.lText, { color: config.color }]}>{config.label}</Text>
+  </View>
+);
+
+const CustomCalendar = ({ markedDates, onDayPress, currentDate }: any) => {
   return (
     <View style={styles.card}>
+      <View style={styles.legendHeader}>
+        <LegendItem config={OTAs.AIRBNB} />
+        <LegendItem config={OTAs.GATHERN} />
+        <LegendItem config={OTAs.BOOKING} />
+      </View>
       <Calendar
-        current="2026-01-01"
+        current={currentDate}
         markingType="custom"
-        markedDates={INITIAL_BOOKINGS}
+        markedDates={markedDates}
         dayComponent={({ date, state, marking }: any) => (
           <CustomDay
             date={date}
             state={state}
             marking={marking}
-            onPress={(d: any) => console.log(d.dateString)}
+            onPress={onDayPress}
           />
         )}
-        renderArrow={(dir) =>
-          dir === 'left' ? (
-            <ChevronLeft size={ms(22)} color="#A0A0A0" />
-          ) : (
-            <ChevronRight size={ms(22)} color="#000" />
-          )
-        }
+        renderArrow={(dir) => (
+          dir === 'left' ? 
+          <ChevronLeft size={ms(22)} color="#A0A0A0" /> : 
+          <ChevronRight size={ms(22)} color="#1A332C" />
+        )}
         theme={{
           calendarBackground: 'transparent',
-          monthTextColor: '#000',
-          textMonthFontWeight: '500',
-          textMonthFontSize: ms(22),
+          monthTextColor: '#1A332C',
+          textMonthFontWeight: '700',
+          textMonthFontSize: ms(20),
           textSectionTitleColor: '#7B8D88',
-          textDayHeaderFontSize: ms(16),
-          textDayHeaderFontWeight: '400',
-        }}
+        } as any}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#FFF',
-    width: SCREEN_WIDTH,
-    paddingTop: vs(20),
-  },
-  dayContainer: {
-    width: SCREEN_WIDTH / 7,
+  card: { backgroundColor: '#FFF', width: '100%', paddingTop: vs(10) },
+  dayCell: {
+    width: (SCREEN_WIDTH - s(32)) / 7,
     height: vs(60),
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'visible', // allows names to bleed out
+  },
+  dayContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   selectionBg: {
     position: 'absolute',
-    height: vs(48),
+    height: vs(40),
     width: '100%',
     zIndex: 1,
   },
-  circleBg: {
-    width: vs(48),
-    borderRadius: vs(24),
-  },
-  startEdge: {
-    borderTopLeftRadius: ms(20),
-    borderBottomLeftRadius: ms(20),
-    width: '105%',
-    left: '5%',
-  },
-  middleEdge: {
-    width: '110%',
-  },
-  endEdge: {
-    borderTopRightRadius: ms(20),
-    borderBottomRightRadius: ms(20),
-    width: '105%',
-    right: '5%',
-  },
-  // <<< FIXED overlayContainer >>>
-  overlayContainer: {
+  circleBg: { width: vs(40), borderRadius: vs(20) },
+  startEdge: { borderTopLeftRadius: ms(20), borderBottomLeftRadius: ms(20), width: '110%', left: '10%' },
+  middleEdge: { width: '120%' },
+  endEdge: { borderTopRightRadius: ms(20), borderBottomRightRadius: ms(20), width: '110%', right: '10%' },
+  
+  labelWrapper: {
     position: 'absolute',
-    top: vs(10),      // inside the selection box
-    zIndex: 20,
-    minWidth: s(70),  // minimum for short names
-    maxWidth: SCREEN_WIDTH / 2, // allow longer names
-    paddingHorizontal: s(2),
-    alignItems: 'center',       // center horizontally
+    top: vs(4),
+    left: s(12),
+    zIndex: 100, // Highest priority
+    width: s(120), // Wide enough to span across the next day
+    flexDirection: 'row',
   },
-  otaRow: {
+  otaBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    paddingHorizontal: s(4),
+    paddingVertical: vs(1),
+    borderRadius: ms(8),
+  },
+  guestText: {
+    fontSize: ms(8.5),
+    fontWeight: '800',
+    color: '#333',
+    marginLeft: s(2),
+  },
+  numberContainer: {
+    zIndex: 10,
+    marginTop: vs(12),
+  },
+  dayNumber: { fontSize: ms(16), fontWeight: '600' },
+  disabledText: { color: '#E0E0E0' },
+  priceText: { position: 'absolute', bottom: vs(2), fontSize: ms(8), color: '#9E9E9E', fontWeight: '600' },
+  legendHeader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: s(12), 
+    marginBottom: vs(10),
+    paddingBottom: vs(10),
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  guestNameText: {
-    fontSize: ms(9),
-    color: '#666',
-    fontWeight: '500',
-    marginLeft: s(2),
-    textAlign: 'center',
-  },
-  dateNumberContainer: {
-    zIndex: 30,
-    marginTop: vs(8),
-  },
-  dayText: {
-    fontSize: ms(19),
-    fontWeight: '600',
-  },
-  activeText: {
-    color: '#1A332C',
-  },
-  disabledText: {
-    color: '#E0E0E0',
-  },
-  priceText: {
-    position: 'absolute',
-    bottom: vs(4),
-    fontSize: ms(8),
-    color: '#9E9E9E',
-    fontWeight: '500',
-  },
+  lDot: { width: ms(8), height: ms(8), borderRadius: 4, marginRight: s(4) },
+  lText: { fontSize: ms(12), fontWeight: '700' },
 });
 
 export default CustomCalendar;

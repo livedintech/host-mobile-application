@@ -15,7 +15,6 @@ import Animated, {
   FadeIn,
   FadeOut,
   ScaleIn,
-  Layout
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import { s, vs, ms } from 'react-native-size-matters';
