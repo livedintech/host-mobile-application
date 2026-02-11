@@ -16,28 +16,30 @@ const OTAs = {
 const CustomDay = ({ date, state, marking, onPress }: any) => {
   const isActive = !!marking?.type; 
   const { type, color, textColor, guest, ota, price, showLabel } = marking || {};
+  
   return (
     <View style={styles.dayCell}>
+      {/* 1. SELECTION BACKGROUND (Move outside/before Touchable and disable pointers) */}
+      {isActive && (
+        <View
+          pointerEvents="none" // <--- CRITICAL: Allows touch to pass through to the button
+          style={[
+            styles.selectionBg,
+            { backgroundColor: color || '#E0E0E0' },
+            type === 'single' && styles.circleBg,
+            // Use 'starting' instead of 'start' to match your ListingScreen logic
+            (type === 'start' || type === 'starting') && styles.startEdge, 
+            type === 'middle' && styles.middleEdge,
+            (type === 'end' || type === 'ending') && styles.endEdge,
+          ]}
+        />
+      )}
+
       <TouchableOpacity
         style={styles.dayContainer}
         onPress={() => onPress(date)}
-        activeOpacity={0.9}
+        activeOpacity={0.8}
       >
-        {/* 1. BACKGROUND SELECTION BAR */}
-        {isActive && (
-          <View
-            style={[
-              styles.selectionBg,
-              { backgroundColor: color || '#E0E0E0' },
-              type === 'single' && styles.circleBg,
-              type === 'start' && styles.startEdge,
-              type === 'middle' && styles.middleEdge,
-              type === 'end' && styles.endEdge,
-            ]}
-          />
-        )}
-
-        {/* 2. DAY NUMBER */}
         <View style={styles.numberContainer}>
           <Text
             style={[
@@ -49,7 +51,6 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
           </Text>
         </View>
 
-        {/* 3. PRICE */}
         {!isActive && state !== 'disabled' && (
           <Text style={styles.priceText}>
             SAR {price || '500'}
@@ -57,14 +58,12 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
         )}
       </TouchableOpacity>
 
-      {/* 4. GUEST NAME - Positioned absolutely to float on top of everything */}
+      {/* GUEST LABEL */}
       {showLabel && (
         <View style={styles.labelWrapper} pointerEvents="none">
           <View style={styles.otaBadge}>
-            {ota === 'airbnb' ? <AirbnbIcon size={ms(10)} /> : <GathernIcon size={ms(10)} />}
-            <Text style={styles.guestText} numberOfLines={1}>
-              {guest}
-            </Text>
+            {/* Logic for icons */}
+            <Text style={styles.guestText} numberOfLines={1}>{guest}</Text>
           </View>
         </View>
       )}

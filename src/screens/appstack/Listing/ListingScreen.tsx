@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { s, vs } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 
 // Internal Imports
 import { useAuthStore } from '@/store/useAuthStore';
@@ -20,22 +21,22 @@ import {
   updateCalendarPricingApi 
 } from '@/services/calendarBookingManagement';
 import useCalendarContainer from './container/CalendarContainer';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 import SegmentedControl from '@/components/molecules/SegmentedControl/SegmentedControl';
 import ReservationCard from '@/components/molecules/ReservationCard/ReservationCard';
 import AppText from '@/components/molecules/AppText/AppText';
 import { BookingDetailsView } from '@/components/molecules/BookingDetailsView/BookingDetailsView';
+import { CalendarSection } from '@/components/molecules/CalendarSection/CalendarSection';
+import { ReservationHeader } from '@/components/molecules/ReservationHeader/ReservationHeader';
 import { FilterModalView } from '@/components/molecules/FilterModalView/FilterModalView';
 import { CreateBookingSheet } from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
-import { CalendarSection } from '@/components/molecules/CalendarSelection/CalendarSelection';
-import { ReservationHeader } from '@/components/molecules/ReservationsHeader/ReservationsHeader';
-import { useNavigation } from '@react-navigation/native';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { Colors } from '@/theme/colors';
 
 const ListingScreen = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const navigation = useNavigation<any>();
   
   // UI States
   const [selectedTab, setSelectedTab] = useState(0); 
@@ -45,7 +46,7 @@ const ListingScreen = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   
-  // Booking Details Overlay States
+  // Booking Details States
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<any[]>([]);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
@@ -86,19 +87,14 @@ const ListingScreen = () => {
   });
 
   const { rawData } = useCalendarContainer(selectedListingId);
-  const navigation = useNavigation<any>();
 
   // --- HANDLERS ---
-  
-  // New handler for clicking a card in the list
-
   const handleReservationPress = async (bookingId: string | number) => {
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
       
       if (response && response.data) {
-        // 2. Use the constant instead of the string 'ReviewDetailScreen'
         navigation.navigate(
           NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, 
           { bookingData: response.data }
@@ -126,6 +122,38 @@ const ListingScreen = () => {
     }
   };
 
+  const toggleProperty = (val: any) => {
+    const valStr = String(val);
+    setSelectedPropertyValues(prev => 
+      prev.includes(valStr) ? prev.filter(v => v !== valStr) : [...prev, valStr]
+    );
+  };
+
+  const onCreateBooking = async (formData: any) => {
+    const finalId = formData.listing_id || selectedListingId;
+    if (!finalId || finalId === "all") return;
+    const formatDate = (date: string) => {
+      if (!date) return "";
+      if (date.includes('-')) return date;
+      const [m, d, y] = date.split('/');
+      return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    };
+    const payload = { 
+      listing_id: finalId, 
+      start_date: formatDate(formData.start_date || getValues('start_date')), 
+      end_date: formatDate(formData.end_date) 
+    };
+    const res = bookingType === 'direct' 
+      ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'guest' })
+      : await updateCalendarPricingApi({ ...payload, price: formData.rate });
+    
+    if (res) {
+      setIsBookingOpen(false);
+      reset();
+      queryClient.invalidateQueries({ queryKey: ['USER_LISTINGS'] });
+    }
+  };
+
   // --- MEMOIZED DATA ---
   const filteredReservations = useMemo(() => {
     if (!reservationRawData) return [];
@@ -143,6 +171,13 @@ const ListingScreen = () => {
       return matchesSearch && matchesChip;
     });
   }, [reservationRawData, searchQuery, activeFilter]);
+
+  const actualProperties = useMemo(() => {
+    return (listingOptions || []).filter((opt: any) => {
+      const label = (opt.label || '').toLowerCase();
+      return opt.value !== "" && !label.includes('all listing');
+    });
+  }, [listingOptions]);
 
   const calendarMarkedDates = useMemo(() => {
     if (!rawData || !Array.isArray(rawData)) return {};
@@ -189,43 +224,20 @@ const ListingScreen = () => {
     return marks;
   }, [rawData, selectedListingId]);
 
-  const onCreateBooking = async (formData: any) => {
-    const finalId = formData.listing_id || selectedListingId;
-    if (!finalId || finalId === "all") return;
-    const formatDate = (date: string) => {
-      if (!date) return "";
-      if (date.includes('-')) return date;
-      const [m, d, y] = date.split('/');
-      return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-    };
-    const payload = { listing_id: finalId, start_date: formatDate(formData.start_date || getValues('start_date')), end_date: formatDate(formData.end_date) };
-    const res = bookingType === 'direct' 
-      ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'guest' })
-      : await updateCalendarPricingApi({ ...payload, price: formData.rate });
-    if (res) {
-      setIsBookingOpen(false);
-      reset();
-      queryClient.invalidateQueries({ queryKey: ['USER_LISTINGS'] });
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* 1. Details Overlay */}
       <BookingDetailsView 
         isVisible={isDetailsOpen} 
         onClose={() => setIsDetailsOpen(false)} 
         data={selectedBookingDetails} 
       />
 
-      {/* 2. Global Loader for API Calls */}
       {isFetchingDetails && (
         <View style={styles.overlayLoader}>
           <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
         </View>
       )}
 
-      {/* 3. Main Content */}
       {!isDetailsOpen && (
         <>
           <View style={styles.headerFixed}>
@@ -286,17 +298,14 @@ const ListingScreen = () => {
         </>
       )}
 
-      {/* Modals */}
       <FilterModalView 
         isVisible={isModalVisible} onClose={() => setModalVisible(false)}
         onApply={() => { setAppliedListingIds(selectedPropertyValues.join(',')); setModalVisible(false); }}
         onReset={() => { setSelectedPropertyValues([]); setAppliedListingIds(''); }}
         isDropdownOpen={isDropdownOpen} setIsDropdownOpen={setIsDropdownOpen}
-        selectedPropertyValues={selectedPropertyValues} actualProperties={listingOptions.filter((o:any) => o.value !== "")} 
-        toggleProperty={(val: string | number) => {
-            const valStr = String(val);
-            setSelectedPropertyValues(prev => prev.includes(valStr) ? prev.filter(v => v !== valStr) : [...prev, valStr]);
-        }}
+        selectedPropertyValues={selectedPropertyValues} 
+        actualProperties={actualProperties} 
+        toggleProperty={toggleProperty}
       />
 
       <CreateBookingSheet 
