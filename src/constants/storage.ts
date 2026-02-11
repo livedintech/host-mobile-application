@@ -34,6 +34,10 @@ const STORAGE_CONST = {
     GET_TASK_DETAIL: 'GET_TASK_DETAIL',
     GET_TASK_CHECKLIST: 'GET_TASK_CHECKLIST',
     GET_TASK_CHECKLIST_DETAIL: 'GET_TASK_CHECKLIST_DETAIL',
+    GET_ANALYTICS_SUMMARY : `analytics/summary`,
+    GET_ANALYTICS_PERFORMANCE : `analytics/listing-performance`,
+    GET_ANALYTICS_CHANNEL : `analytics/revenue-by-channel`,
+    GET_REVIEWS_ALL : `getAllReviews`
 
 
 }

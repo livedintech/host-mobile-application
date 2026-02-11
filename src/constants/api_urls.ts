@@ -83,5 +83,11 @@ export const SERVICE_CONFIG_URLS = {
     GET_HOST_TASK_LIST: `${api}/get-host-tasklist`,
     TASK_MANAGEMENT_TASK_DETAIL: `${api}/gettaskdetails/{taskid}`,
     TASK_MANAGEMENT_VENDOR_UPDATE: `${api}/host-task-edit/{id}`,
+    GET_ANALYTICS_SUMMARY : `${authController}/analytics/summary`,
+    GET_LISTING_ANALYTICS_PERFORMANCE : `${authController}/analytics/listing-performance`,
+    GET_ANALYTICS_CHANNEL : `${authController}/analytics/revenue-by-channel`,
+    GET_REVIEWS_ALL : `${authController}/reviews`,
+    GET_REVIEW_BY_ID : `${authController}/reviews/{id}`,
+    HOST_REVIEW_REPLY : `${authController}/reviews/reply`
   },
 };

@@ -61,7 +61,7 @@ export default function useLoginWithPhoneContainer() {
 
   const onSubmit = async (data: checkUserisExistFormValues) => {
     const payload = {
-      phone_number: data?.phoneNumber,
+      phone_number:data?.phoneNumber,
     };
     setphoneNumber(payload?.phone_number);
     checkUserPayload(payload);

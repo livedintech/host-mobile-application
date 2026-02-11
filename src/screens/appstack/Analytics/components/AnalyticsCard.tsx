@@ -6,6 +6,7 @@ import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
+  // console.log("analyticsanalyticsItem",item)
   /** -----------------------------
    * AI INSIGHT RENDERER
    * ----------------------------- */
@@ -57,7 +58,7 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
 
               <View style={styles.listingInfo}>
                 <AppText
-                  text={item.name}
+                  text={item.title}
                   type="Bold"
                   fontSize={18}
                   color={Colors.JET_BLACK}
@@ -96,7 +97,8 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
               <View style={styles.trendRow}>
                 {!isZeroTrend && (
                   <Svgicons
-                    path={item.isUp ? 'trendUpIcon' : 'trendDownIcon'}
+                    // path={item.isUp ? 'trendUpIcon' : 'trendDownIcon'}
+                    path={true ? 'trendUpIcon' : 'trendDownIcon'}
                     width={12}
                     height={12}
                     mr={4}
@@ -104,9 +106,11 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
                 )}
 
                 <AppText
-                  text={`${item.trend} vs previous period`}
+                  // text={`${item.trend} vs previous period`}
+                  text='15% vs previous period'
                   fontSize={10}
-                  color={trendColor}
+                  // color={trendColor}
+                  color='#40B69C'
                   type="Medium"
                 />
               </View>
@@ -132,7 +136,7 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
       <GradientBorder borderRadius={15}>
         <View style={styles.kpiInner}>
           <View style={styles.kpiHeader}>
-            <Svgicons path={item.icon} size={14} mr={5} />
+            <Svgicons path={item.key} size={14} mr={5} />
             <AppText
               text={item.label}
               fontSize={11}
@@ -149,7 +153,8 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
           />
 
           <AppText
-            text={item.duration}
+            // text={item.duration}
+            text='vs last 30 days'
             fontSize={10}
             color={Colors.SUPER_GREY}
           />
