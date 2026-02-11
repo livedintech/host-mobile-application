@@ -27,11 +27,11 @@ import AppText from '@/components/molecules/AppText/AppText';
 import { BookingDetailsView } from '@/components/molecules/BookingDetailsView/BookingDetailsView';
 import { FilterModalView } from '@/components/molecules/FilterModalView/FilterModalView';
 import { CreateBookingSheet } from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
-import { Colors } from '@/theme/colors';
 import { CalendarSection } from '@/components/molecules/CalendarSelection/CalendarSelection';
 import { ReservationHeader } from '@/components/molecules/ReservationsHeader/ReservationsHeader';
 import { useNavigation } from '@react-navigation/native';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { Colors } from '@/theme/colors';
 
 const ListingScreen = () => {
   const { user } = useAuthStore();
