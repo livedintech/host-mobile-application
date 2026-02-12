@@ -57,13 +57,13 @@ const AnalyticsScreen = () => {
     const colors: Record<string, string> = {
       airbnb: '#ED0509',
       gathern: '#8C05ED',
-      direct: '#1F3A31',
-      almosafer: '#00AEEF',
-      aqar: '#4CAF50',
-      whatsapp: '#25D366',
-      ltr_host: '#C4C4C4',
-      host_lead: '#D3D3D3',
-      ltr_direct_with_ejar: '#E0E0E0',
+      direct: '#1B4F44',
+      almosafer: '#1B284F',
+      aqar: '#08873D',
+      whatsapp: '#5C5C5C',
+      ltr_host: '#000000',
+      host_lead: '#D9BB20',
+      ltr_direct_with_ejar: '#40B69C',
     };
 
     const totalNights = rawData.reduce((acc, curr) => acc + curr.nights, 0);

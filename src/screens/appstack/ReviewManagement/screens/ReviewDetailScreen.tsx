@@ -16,6 +16,7 @@ const DetailRow = ({ label, value, valueColor }: { label: string; value: string;
 
 const ReviewDetailScreen = ({ route }: any) => {
   // Extract dynamic data from navigation params
+  console.log("routeparams",route.params);
   const bookingData = route?.params?.bookingData || {};
   
   // Destructure for easier access based on your specific API structure
