@@ -331,12 +331,38 @@ const ListingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
-  headerFixed: { paddingHorizontal: s(16), backgroundColor: '#FFF', zIndex: 10 },
-  segmentedWrapper: { alignItems: 'center', paddingVertical: vs(15) },
-  listContent: { padding: s(16), flexGrow: 1 },
-  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: vs(100) },
-  overlayLoader: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.7)', justifyContent: 'center', alignItems: 'center', zIndex: 999 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#FFF' 
+  },
+  headerFixed: { 
+    paddingHorizontal: s(16), 
+    backgroundColor: '#FFF', 
+    zIndex: 10,
+    paddingTop: 0, // Removed top padding to move SegmentedControl up
+  },
+  segmentedWrapper: { 
+    alignItems: 'center', 
+    paddingTop: vs(5),    // Reduced from 15 to pull it up
+    paddingBottom: vs(8), // Tightened for more calendar space
+  },
+  listContent: { 
+    padding: s(16), 
+    flexGrow: 1 
+  },
+  centerContainer: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginTop: vs(100) 
+  },
+  overlayLoader: { 
+    ...StyleSheet.absoluteFill, 
+    backgroundColor: 'rgba(255,255,255,0.7)', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    zIndex: 999 
+  },
 });
 
 export default ListingScreen;
