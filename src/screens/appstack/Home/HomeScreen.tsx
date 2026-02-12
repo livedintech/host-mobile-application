@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   cardContainer: { marginTop: 30, padding: 20, borderRadius: 30, backgroundColor: Colors.WHITE, elevation: 5, shadowOpacity: 0.1 },
   platformBtn: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', height: 60, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 30, paddingHorizontal: 20, marginBottom: 15 },
   icon: { width: 20, height: 20 },
-  bottomSearch: { flexDirection: 'row', padding: 20, alignItems: 'center' },
+  bottomSearch: { flexDirection: 'row', padding: 20, alignItems: 'center' , display:'none'},
   searchInput: { flex: 1, flexDirection: 'row', height: 55, backgroundColor: '#F9F9F9', borderRadius: 30, paddingHorizontal: 20, alignItems: 'center', marginRight: 10 },
   sendBtn: { width: 55, height: 55, borderRadius: 28, borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' }
 });
