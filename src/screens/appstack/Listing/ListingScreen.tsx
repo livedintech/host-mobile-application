@@ -57,13 +57,22 @@ const ListingScreen = () => {
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
   const [appliedListingIds, setAppliedListingIds] = useState<string>(''); 
 
-  const { control, watch, handleSubmit, setValue, reset, getValues, formState: { errors } } = useForm({
-    defaultValues: { 
-      listing_selection: '', name: '', email: '', phone: '',
-      booking_type: 'guest', end_date: '', start_date: '', rate: '', listing_id: '',
-    },
-    shouldUnregister: false,
-  });
+  const { 
+  control, 
+  watch, 
+  handleSubmit, 
+  setValue, 
+  reset, 
+  getValues, 
+  setError, 
+  formState: { errors } 
+} = useForm({
+  defaultValues: { 
+    listing_selection: '', name: '', email: '', phone: '',
+    booking_type: 'host', end_date: '', start_date: '', rate: '', listing_id: '',
+  },
+  shouldUnregister: false,
+});
 
   const selectedListingId = watch('listing_selection');
 
@@ -140,29 +149,41 @@ const ListingScreen = () => {
       return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
     };
 
+    const startDate = formatDate(formData.start_date || getValues('start_date'));
+    const endDate = formatDate(formData.end_date);
+
+    // --- DATE VALIDATION LOGIC ---
+    if (startDate === endDate) {
+        setError('end_date', { 
+            type: 'manual', 
+            message: 'Checkout date must be at least one day after the check-in date.' 
+        });
+        return;
+    }
+
     const payload = { 
       listing_id: finalId, 
-      start_date: formatDate(formData.start_date || getValues('start_date')), 
-      end_date: formatDate(formData.end_date) 
+      start_date: startDate, 
+      end_date: endDate 
     };
-
-    const res = bookingType === 'direct' 
-      ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'guest' })
-      : await updateCalendarPricingApi({ ...payload, price: formData.rate });
     
+    const res = bookingType === 'direct' 
+      ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'host' })
+      : await updateCalendarPricingApi({ ...payload, price: formData.rate });
+
     if (res) {
-      // 1. Close the sheet
       setIsBookingOpen(false);
-      
-      // 2. Clear the form
       reset();
+      
+      // Global invalidations
       queryClient.invalidateQueries({ queryKey: ['USER_LISTINGS'] });
       queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
       
-      // If your CalendarContainer uses a specific key for the dots, add it here:
-      queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA', selectedListingId] });
+      queryClient.invalidateQueries({ 
+        queryKey: ['CALENDAR_DATA', user?.id, selectedListingId] 
+      });
       
-      console.log("Booking created and cache invalidated");
+      console.log("Booking created and cache invalidated with user ID context");
     }
   };
 

@@ -67,7 +67,7 @@ export const CreateBookingSheet = ({
             errors={errors} 
             label="Stay Type" 
             placeholder="Select stay type"
-            data={[{label: 'Guest', value: 'guest'}, {label: 'Host', value: 'host'}]} 
+            data={[{label: 'Host', value: 'host'}, {label: 'Livedin', value: 'livedin'}]} 
           />
           <InputField 
             name="name" 
