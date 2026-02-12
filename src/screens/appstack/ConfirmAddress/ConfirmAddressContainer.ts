@@ -109,6 +109,7 @@ export default function useConfirmAddressContainer() {
       city: data.city,
       street: data.street,
       apt: data.apt,
+      name: propertyDetail?.name || 'New Listing', 
     });
     const payload = {
       channel_id,
@@ -128,22 +129,47 @@ export default function useConfirmAddressContainer() {
     createListingDetailsPayload(payload)
   };
 
-  const onSaveExit = (data: AddressFormValues) => {
-    const payload = {
-      channel_id,
-      listing_id,
-      user_id: Number(user?.id),
-      listing: {
-        country_code: data.country_code?.cca2,
-        state: data.state,
-        city: data.city,
-        street: data.street,
-        apt: data.apt,
-        name: propertyDetail?.name,
-      }
-    }
-    editListingDetailsPayload(payload)
+const onSaveExit = (data: AddressFormValues) => {
+  updateListing({
+    country_code: data.country_code?.cca2 || '',
+    state: data.state,
+    city: data.city,
+    street: data.street,
+    apt: data.apt,
+  });
+
+  const payload = {
+    channel_id,
+    listing_id,
+    user_id: Number(user?.id),
+    listing: {
+      country_code: data.country_code?.cca2 || '',
+      state: data.state,
+      city: data.city,
+      street: data.street,
+      apt: data.apt,
+      lat: propertyDetail.lat,
+      lng: propertyDetail.lng,
+      name: propertyDetail?.name || 'New Listing',
+    },
   };
+
+  // 👉 EDIT MODE
+  if (isEdit) {
+    editListingDetailsPayload(payload);
+  } else {
+    // 👉 CREATE MODE
+    createListingDetailsPayload(payload, {
+      onSuccess: () => {
+        navigate(
+          NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
+        );
+      },
+    });
+  }
+};
+
+
 
   return {
     control,

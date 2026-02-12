@@ -5,10 +5,8 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
 import DropdownField from '@/components/molecules/Input/DropdownField';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useYourSmartLockssContainer from './YourSmartLockssContainer';
-import { goBack } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 
 export interface SmartLock {
@@ -131,11 +129,7 @@ const YourSmartLocksScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <ButtonView style={styles.backBtn} onPress={() => goBack()}>
-                    <Svgicons path="arrowLeftIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
-                </ButtonView>
-            </View>
+
             <View style={styles.scrollContent}>
                 <View style={styles.titleContainer}>
                     <AppText text="Your Smart Locks" fontSize={32} type="Bold" color={Colors.BRUNSWICK_GREEN} />
@@ -180,7 +174,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8, paddingHorizontal: 15,
         borderRadius: 20, borderWidth: 1, borderColor: Colors.SMOOTH_GREY
     },
-    scrollContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(200) },
+    scrollContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(120) },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -194,7 +188,7 @@ const styles = StyleSheet.create({
         padding: Metrics.scale(20),
         marginBottom: Metrics.verticalScale(20),
         backgroundColor: Colors.WHITE,
-        zIndex: 1, // Dropdown visibility ke liye zaroori hai
+        zIndex: 1,
     },
     row: { flexDirection: 'row', alignItems: 'center' },
     rowSmall: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },

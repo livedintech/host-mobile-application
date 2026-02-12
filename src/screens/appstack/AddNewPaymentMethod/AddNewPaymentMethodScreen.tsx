@@ -15,6 +15,8 @@ const AddNewPaymentMethodScreen = () => {
     isProcessingPayment,
     isSaving,
     cardLoading,
+    paymentMethodName,
+    isCardMethod,
     cardPaymentView,
     getCardViewStyle,
     handlePay,
@@ -23,7 +25,7 @@ const AddNewPaymentMethodScreen = () => {
 
   // Loading Overlay Component
   const LoadingOverlay = () => {
-    let loadingText = "Loading Secure Payment...";
+    let loadingText = `Loading ${paymentMethodName || 'Payment'}...`;
     
     if (isProcessingPayment) {
       loadingText = "Processing Payment...";
@@ -44,6 +46,78 @@ const AddNewPaymentMethodScreen = () => {
     );
   };
 
+  // Wallet Payment Instructions (for STC Pay, Apple Pay, Google Pay)
+  const WalletInstructions = () => (
+    <View style={styles.walletContainer}>
+      <View style={styles.walletIcon}>
+        <AppText text="💳" fontSize={48} />
+      </View>
+      
+      <AppText 
+        text={`Pay with ${paymentMethodName}`}
+        fontSize={24}
+        type="Bold"
+        textAlign="center"
+        color={Colors.BLACK}
+        mt={20}
+      />
+      
+      <AppText 
+        text="You will be redirected to complete your payment"
+        fontSize={14}
+        textAlign="center"
+        color={Colors.SUPER_GREY}
+        mt={10}
+      />
+
+      <View style={styles.instructionsList}>
+        <View style={styles.instructionItem}>
+          <AppText text="1️⃣" fontSize={20} />
+          <AppText 
+            text={`Open ${paymentMethodName} app/website`}
+            fontSize={14}
+            color={Colors.BLACK}
+            ml={10}
+            flex={1}
+          />
+        </View>
+        
+        <View style={styles.instructionItem}>
+          <AppText text="2️⃣" fontSize={20} />
+          <AppText 
+            text="Confirm payment details"
+            fontSize={14}
+            color={Colors.BLACK}
+            ml={10}
+            flex={1}
+          />
+        </View>
+        
+        <View style={styles.instructionItem}>
+          <AppText text="3️⃣" fontSize={20} />
+          <AppText 
+            text="Complete authentication"
+            fontSize={14}
+            color={Colors.BLACK}
+            ml={10}
+            flex={1}
+          />
+        </View>
+        
+        <View style={styles.instructionItem}>
+          <AppText text="4️⃣" fontSize={20} />
+          <AppText 
+            text="Return to app after payment"
+            fontSize={14}
+            color={Colors.BLACK}
+            ml={10}
+            flex={1}
+          />
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.innerContainer}>
@@ -51,48 +125,61 @@ const AddNewPaymentMethodScreen = () => {
         {/* Header Section */}
         <View style={styles.headerSection}>
           <AppText 
-            text="Add Payment Method" 
+            text={`${paymentMethodName || 'Payment'}`}
             fontSize={24}
             type="Bold"
             color={Colors.BLACK}
           />
           <AppText 
-            text="Enter your card details securely" 
+            text={
+              isCardMethod 
+                ? "Enter your card details securely" 
+                : "Quick and secure payment"
+            }
             fontSize={14}
             color={Colors.SUPER_GREY}
             mt={5}
           />
         </View>
 
-        {/* Card Input Section */}
+        {/* Payment Content Section */}
         <View style={styles.cardSection}>
           
           {/* Show loading overlay when processing */}
           {cardLoading && <LoadingOverlay />}
 
-          {/* MyFatoorah Card View */}
-          <MFCardPaymentView
-            ref={cardPaymentView}
-            paymentStyle={getCardViewStyle()}
-            style={[
-              styles.mfCardView, 
-              { opacity: isLoading ? 0 : 1 }
-            ]}
-          />
-
-          {/* Retry Button if loading failed */}
-          {!isLoading && !cardPaymentView.current && (
-            <TouchableOpacity 
-              style={styles.retryButton}
-              onPress={retrySession}
-            >
-              <AppText 
-                text="⟳ Retry Loading" 
-                color={Colors.INDIAN_RED}
-                type="Bold"
-                fontSize={16}
+          {/* CARD METHOD: Show MyFatoorah Card Form */}
+          {isCardMethod && (
+            <>
+              <MFCardPaymentView
+                ref={cardPaymentView}
+                paymentStyle={getCardViewStyle()}
+                style={[
+                  styles.mfCardView, 
+                  { opacity: isLoading ? 0 : 1 }
+                ]}
               />
-            </TouchableOpacity>
+
+              {/* Retry Button if loading failed */}
+              {!isLoading && !cardPaymentView.current && (
+                <TouchableOpacity 
+                  style={styles.retryButton}
+                  onPress={retrySession}
+                >
+                  <AppText 
+                    text="⟳ Retry Loading" 
+                    color={Colors.INDIAN_RED}
+                    type="Bold"
+                    fontSize={16}
+                  />
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+
+          {/* WALLET METHOD: Show Instructions */}
+          {!isCardMethod && !isLoading && (
+            <WalletInstructions />
           )}
         </View>
 
@@ -116,6 +203,8 @@ const AddNewPaymentMethodScreen = () => {
                 ? "Processing Payment..." 
                 : isSaving 
                 ? "Saving Details..." 
+                : !isCardMethod
+                ? `Pay with ${paymentMethodName}`
                 : "Pay Now"
             }
             onPress={handlePay}
@@ -123,8 +212,8 @@ const AddNewPaymentMethodScreen = () => {
             loading={cardLoading}
           />
           
-          {/* Reset Session Button */}
-          {!cardLoading && (
+          {/* Reset Session Button (for card methods only) */}
+          {!cardLoading && isCardMethod && (
             <TouchableOpacity 
               style={styles.resetButton}
               onPress={retrySession}
@@ -195,6 +284,33 @@ const styles = StyleSheet.create({
     borderColor: Colors.INDIAN_RED,
     borderRadius: 12,
     backgroundColor: Colors.WHITE,
+  },
+  // Wallet payment styles
+  walletContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: Metrics.verticalScale(40),
+  },
+  walletIcon: {
+    width: Metrics.scale(100),
+    height: Metrics.scale(100),
+    borderRadius: 50,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  instructionsList: {
+    marginTop: Metrics.verticalScale(30),
+    width: '100%',
+  },
+  instructionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Metrics.verticalScale(15),
+    padding: Metrics.scale(12),
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
   },
   securityInfo: {
     paddingVertical: Metrics.verticalScale(15),

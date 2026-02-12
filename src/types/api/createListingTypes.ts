@@ -186,3 +186,8 @@ export interface PropertyDetails {
 export interface QualityStandards {
   state: string;
 }
+
+export interface getTransactionHistoryPayloadType {
+  host_id: number;
+}
+

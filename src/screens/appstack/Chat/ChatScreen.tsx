@@ -60,7 +60,8 @@ const ChatScreen = () => {
           {/* API response me image field hai ya default */}
           <Image source={item.img ? { uri: item.img } : require('@/assets/img/dummy/livedin.png')} style={styles.avatar} />
           <Pressable style={styles.chatInfo} onPress={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
-            conversation_id: item?.id
+            conversation_id: item?.id,
+            listing_id: item?.listing_id
           })}>
             <View style={styles.infoTop}>
               {/* API response me name */}

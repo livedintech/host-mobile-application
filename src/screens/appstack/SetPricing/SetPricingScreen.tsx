@@ -8,7 +8,7 @@ import useSetPricingContainer from './SetPricingContainer';
 import InputField from '@/components/molecules/Input/InputField';
 
 const SetPricingScreen = () => {
-  const { control, errors, handleSubmit, onNext, isLoading,isEdit,onSaveExit } = useSetPricingContainer();
+  const { control, errors, handleSubmit, onNext, isLoading, isEdit, onSaveExit } = useSetPricingContainer();
 
   return (
     <View style={styles.container}>
@@ -108,21 +108,32 @@ const SetPricingScreen = () => {
         </View>
 
         {/* Footer Buttons */}
-        <View style={styles.footer}>
-  {isEdit ? (
-    <AppButton
-      title="Save & Exit"
-      onPress={handleSubmit(onSaveExit)}
-      loading={isLoading}
-    />
-  ) : (
-    <AppButton
-      title="Next"
-      onPress={handleSubmit(onNext)}
-      loading={isLoading}
-    />
-  )}
-</View>
+       <View style={styles.footer}>
+            {!isEdit && (
+              <>
+                <AppButton
+                  title="Next"
+                  onPress={handleSubmit(onNext)}
+                  loading={isLoading}
+                />
+
+                <AppButton
+                  title="Save & Exit"
+                  onPress={handleSubmit(onSaveExit)}
+                  mt={15}
+                  disabled={isLoading}
+                />
+              </>
+            )}
+
+            {isEdit && (
+              <AppButton
+                title="Save & Exit"
+                onPress={handleSubmit(onSaveExit)}
+                loading={isLoading}
+              />
+            )}
+          </View>
 
       </ScrollView>
     </View>

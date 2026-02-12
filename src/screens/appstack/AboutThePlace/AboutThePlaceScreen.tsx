@@ -86,22 +86,30 @@ const AboutThePlaceScreen = () => {
           />
 
           <View style={styles.footer}>
-            <View style={styles.footer}>
-              {isEdit ? (
-                <AppButton
-                  title="Save & Exit"
-                  onPress={handleSubmit(onSaveExit)}
-                  loading={isLoading}
-                />
-              ) : (
+            {!isEdit && (
+              <>
                 <AppButton
                   title="Next"
                   onPress={handleSubmit(onNext)}
                   loading={isLoading}
                 />
-              )}
-            </View>
 
+                <AppButton
+                  title="Save & Exit"
+                  onPress={handleSubmit(onSaveExit)}
+                  mt={15}
+                  disabled={isLoading}
+                />
+              </>
+            )}
+
+            {isEdit && (
+              <AppButton
+                title="Save & Exit"
+                onPress={handleSubmit(onSaveExit)}
+                loading={isLoading}
+              />
+            )}
           </View>
         </View>
       </ScrollView>

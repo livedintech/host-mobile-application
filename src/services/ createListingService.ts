@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload } from "@/types/api/createListingTypes";
+import { CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
 import Utils from "@/utility/Utils";
 import { getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 
@@ -95,4 +95,18 @@ export const editListingPriceApi = async (payload: createListingPricingPayload) 
         return data;
     }
     throw response;
+};
+
+// Transaction History
+export const getTransactionHistoryApi = async (payload: getTransactionHistoryPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.TRANSACTION_HISTORY,
+        { host_id: payload.host_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
 };

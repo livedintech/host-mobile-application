@@ -99,7 +99,7 @@ export default function useDescribeHouseContainer() {
     },
   });
 
-  const onSubmit = (data: DescribeHouseFormValues) => {
+  const onNext = (data: DescribeHouseFormValues) => {
     updateListing({
       name: data?.name,
     })
@@ -125,7 +125,18 @@ export default function useDescribeHouseContainer() {
         name: data?.name,
       },
     };
-    updateListingDetails(payload);
+      if (isEdit) {
+         updateListingDetails(payload);
+      }else{
+        createListingDetailsPayload(payload, {
+        onSuccess: () => {
+          navigate(
+            NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
+          );
+        },
+      });
+      }
+   
   };
 
 
@@ -135,7 +146,7 @@ export default function useDescribeHouseContainer() {
     control,
     errors,
     handleSubmit,
-    onSubmit,
+    onNext,
     onSaveExit,
     descriptionLength: descriptionValue.length,
   };

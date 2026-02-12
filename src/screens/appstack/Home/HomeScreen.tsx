@@ -1,39 +1,42 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, TextInput } from 'react-native';
+import { StyleSheet, View, Image, TextInput } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useHomeContainer from './HomeContainer';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthStore } from '@/store/useAuthStore';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const HomeScreen = () => {
+  const { user } = useAuthStore();
   const { onConnect } = useHomeContainer();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <AppText text="Hi Tooba , how can i help you today?" fontSize={32} type="Medium" color={Colors.PINE_FOREST} />
+        <AppText text={`Hi ${user?.name} , how can i help you today?`} fontSize={32} type="Medium" color={Colors.PINE_FOREST} />
         
         <View style={styles.cardContainer}>
           {['Connect Airbnb', 'Connect Gathern', 'Connect New Listing'].map((item) => (
-            <TouchableOpacity key={item} style={styles.platformBtn} onPress={() => onConnect(item)}>
+            <ButtonView key={item} style={styles.platformBtn} onPress={() => onConnect(item)}>
               <AppText text={item} fontSize={16} color={Colors.PINE_FOREST} />
               {/* <Image source={require('@/assets/img/upload.png')} style={styles.icon} /> */}
               <Svgicons path='UploadIcon'/>
-            </TouchableOpacity>
+            </ButtonView>
           ))}
         </View>
       </View>
 
       <View style={styles.bottomSearch}>
         <View style={styles.searchInput}>
-          <TextInput placeholder="Ask me any question" style={{flex: 1}} />
+          <TextInput placeholder="Ask me any question" style={{flex: 1, color: Colors.BLACK}}/>
           {/* <Image source={require('@/assets/img/mic.png')} style={styles.icon} /> */}
           <Svgicons path='MicIcon'/>
         </View>
-        <TouchableOpacity style={styles.sendBtn}>
+        <ButtonView style={styles.sendBtn}>
           {/* <Image source={require('@/assets/img/send.png')} style={styles.icon} /> */}
           <Svgicons path='SendIcon'/>
-        </TouchableOpacity>
+        </ButtonView>
       </View>
     </SafeAreaView>
   );
