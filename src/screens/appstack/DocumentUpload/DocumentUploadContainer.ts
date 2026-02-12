@@ -13,7 +13,7 @@ import {
 } from '@/validation/auth/createListingSchemas';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { goBack, reset } from '@/services/navigationService';
+import { goBack, navigate, reset } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
 import { queryClient } from '@/services/api';
@@ -187,7 +187,7 @@ export default function useDocumentUploadContainer() {
                 if (isEdit) {
                     goBack();
                 } else {
-                    reset(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+                    navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
                 }
             } else {
                 throw new Error(result.message || (isEdit ? "Update failed" : "Upload failed"));

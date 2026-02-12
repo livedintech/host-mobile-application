@@ -111,7 +111,7 @@ export default function useAboutThePlaceContainer() {
   const onSaveExit = (data: StepTwoFormValues) => {
     const payload = {
       channel_id,
-      listing_id: listing?.listing_id,
+      listing_id: listing?.listing_id || listing_id,
       user_id: Number(user?.id),
       listing: {
         bedrooms: Number(data.bedrooms),
@@ -121,12 +121,25 @@ export default function useAboutThePlaceContainer() {
         check_in_time: data.check_in_time,
         check_out_time: data.check_out_time,
         instant_booking: data.instant_booking === 'true',
-        name: propertyDetail?.name,
+        name: propertyDetail?.name || 'New Listing',
       },
     };
 
-    updateListingDetails(payload);
+    // 👉 EDIT MODE
+    if (isEdit) {
+      updateListingDetails(payload);
+    } else {
+      // 👉 CREATE MODE
+      createListingDetailsPayload(payload, {
+        onSuccess: () => {
+          navigate(
+            NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
+          );
+        },
+      });
+    }
   };
+
 
   return {
     control,

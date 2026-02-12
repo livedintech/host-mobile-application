@@ -167,3 +167,17 @@ export const assignUserToChatApi = async (payload: assignUserToChatPayloadType) 
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+//
+export const getChatDetailSavedRepliesApi = async (payload: createChatArchiveByConversationIdPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.GET_SAVED_REPLIES,
+        { conversation_id: payload.conversation_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.get(url, {}); // body
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};

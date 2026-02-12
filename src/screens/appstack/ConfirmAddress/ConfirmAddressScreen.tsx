@@ -9,7 +9,7 @@ import useConfirmAddressContainer from './ConfirmAddressContainer';
 import CountryPickerField from '@/components/molecules/Input/CountryPickerField';
 
 const ConfirmAddressScreen = () => {
-  const { control, errors, handleSubmit, onNext, onSaveExit,isLoading,isEdit } = useConfirmAddressContainer();
+  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit } = useConfirmAddressContainer();
 
   return (
     <View style={styles.container}>
@@ -21,7 +21,7 @@ const ConfirmAddressScreen = () => {
           <Svgicons path="mapIcon" size={25} />
         </View>
         <View style={styles.form}>
-         
+
           <CountryPickerField
             name="country_code"
             label="Country"
@@ -67,12 +67,31 @@ const ConfirmAddressScreen = () => {
 
           <View style={styles.footer}>
             {!isEdit && (
-              <AppButton title="Next" onPress={handleSubmit(onNext)} loading={isLoading}/>
+              <>
+                <AppButton
+                  title="Next"
+                  onPress={handleSubmit(onNext)}
+                  loading={isLoading}
+                />
+
+                <AppButton
+                  title="Save & Exit"
+                  onPress={handleSubmit(onSaveExit)}
+                  mt={15}
+                  disabled={isLoading}
+                />
+              </>
             )}
+
             {isEdit && (
-            <AppButton title="Save & Exit" onPress={handleSubmit(onSaveExit)} mt={15} disabled={isLoading}/>
+              <AppButton
+                title="Save & Exit"
+                onPress={handleSubmit(onSaveExit)}
+                loading={isLoading}
+              />
             )}
           </View>
+
         </View>
 
       </ScrollView>

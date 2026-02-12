@@ -20,10 +20,12 @@ interface UseMediaUploadProps {
   listingId: string;
   category: 'interior' | 'exterior' | 'bedroom' | 'bathroom' | 'other';
   nextRoute?: string;
+  exitRoute?: string; // 👈 ADD
   description?: string;
   mode?: 'create' | 'edit';
   initialMedia?: MediaItem[];
 }
+
 
 export const usePropertyMediaUpload = ({
   listingId,
@@ -32,6 +34,7 @@ export const usePropertyMediaUpload = ({
   description = 'Property Photo',
   mode = 'create',
   initialMedia = [],
+  exitRoute
 }: UseMediaUploadProps) => {
   const { listing_id } = useCreateListingStore()
   const [mediaList, setMediaList] = useState<MediaItem[]>(initialMedia);
@@ -141,17 +144,23 @@ export const usePropertyMediaUpload = ({
   // -----------------------------
   // SAVE & EXIT (EDIT MODE)
   // -----------------------------
-  const handleSaveAndExit = async () => {
-    setIsLoading(true);
+const handleSaveAndExit = async () => {
+  setIsLoading(true);
 
-    const success = await uploadMedia();
+  const success = await uploadMedia();
 
-    setIsLoading(false);
+  setIsLoading(false);
 
-    if (success) {
-      goBack();
-    }
-  };
+  if (!success) return;
+
+  if (mode === 'edit') {
+    goBack();
+  } else if (exitRoute) {
+    navigate(exitRoute);
+  }
+};
+
+
 
   return {
     mediaList,

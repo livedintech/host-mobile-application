@@ -9,7 +9,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import TextareaField from '@/components/molecules/Input/TextareaField';
 
 const DescribeHouseScreen = () => {
-    const { control, errors, handleSubmit, onSubmit, isLoading, descriptionLength, isEdit, onSaveExit } = useDescribeHouseContainer();
+    const { control, errors, handleSubmit, onNext, isLoading, descriptionLength, isEdit, onSaveExit } = useDescribeHouseContainer();
 
     return (
         <View style={styles.container}>
@@ -44,7 +44,7 @@ const DescribeHouseScreen = () => {
                         wordLimit={250}
                     />
                 </View>
-                <View style={styles.footer}>
+                {/* <View style={styles.footer}>
                     {isEdit ? (
                         <AppButton
                             title="Save & Exit"
@@ -54,7 +54,33 @@ const DescribeHouseScreen = () => {
                     ) : (
                         <AppButton
                             title="Next"
-                            onPress={handleSubmit(onSubmit)}
+                            onPress={handleSubmit(onNext)}
+                            loading={isLoading}
+                        />
+                    )}
+                </View> */}
+                <View style={styles.footer}>
+                    {!isEdit && (
+                        <>
+                            <AppButton
+                                title="Next"
+                                onPress={handleSubmit(onNext)}
+                                loading={isLoading}
+                            />
+
+                            <AppButton
+                                title="Save & Exit"
+                                onPress={handleSubmit(onSaveExit)}
+                                mt={15}
+                                disabled={isLoading}
+                            />
+                        </>
+                    )}
+
+                    {isEdit && (
+                        <AppButton
+                            title="Save & Exit"
+                            onPress={handleSubmit(onSaveExit)}
                             loading={isLoading}
                         />
                     )}

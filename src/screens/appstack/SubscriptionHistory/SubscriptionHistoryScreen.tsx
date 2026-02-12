@@ -1,19 +1,26 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, FlatList, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useSubscriptionHistoryContainer from './SubscriptionHistoryContainer';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import Metrics from '@/utility/Metrics';
+import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 
 const SubscriptionHistoryScreen = () => {
-  const { listings, features } = useSubscriptionHistoryContainer();
+  const { listings, features, removeSheetRef, closeSheet, openSheet,isLoading,refetch } = useSubscriptionHistoryContainer();
+  const totalAmount = listings?.length > 0 
+  ? listings.length * 1500 
+  : 0;
+  console.log('totalAmounts',totalAmount);
+  
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
+
         <AppText text="Listing Cost" fontSize={24} type="Medium" color={Colors.BRUNSWICK_GREEN} mt={45} mb={15} />
 
         {/* Price Card */}
@@ -32,8 +39,8 @@ const SubscriptionHistoryScreen = () => {
           <View style={[styles.innerCard, styles.featuresContainer]}>
             {features.map((item) => (
               <View key={item.id} style={styles.featureItem}>
-                <Svgicons path={item.icon} size={45}/>
-                <AppText text={item.label} fontSize={6} textAlign="center" color={Colors.PINE_FOREST} mt={8} type='Medium'/>
+                <Svgicons path={item.icon} size={45} />
+                <AppText text={item.label} fontSize={6} textAlign="center" color={Colors.PINE_FOREST} mt={8} type='Medium' />
               </View>
             ))}
           </View>
@@ -42,44 +49,54 @@ const SubscriptionHistoryScreen = () => {
         <AppText text="Your Listings" fontSize={24} type="Medium" color={Colors.BRUNSWICK_GREEN} mt={30} mb={15} />
 
         {/* Horizontal Listings */}
-        <FlatList
+        <FlatListSimpleHandler
           horizontal
-          data={listings}
+          data={listings || []}
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <GradientBorder borderRadius={24} style={styles.listingItem}>
               <View style={styles.innerCard}>
-                <Svgicons path='listingIcon' size={49}/>
-                <AppText text={item.title} fontSize={14} color={Colors.PINE_FOREST} mt={10} />
+                <Svgicons path='listingIcon' size={49} />
+                <AppText text={item.title || ''} fontSize={14} color={Colors.PINE_FOREST} mt={10} numberOfLines={1}/>
               </View>
             </GradientBorder>
           )}
+          isLoading={isLoading}
+          onRefresh={refetch}
         />
 
         {/* Footer Actions */}
         <GradientBorder borderRadius={24} style={styles.cardWrapper}>
           <View style={[styles.innerCard, styles.renewalBox]}>
             <AppText text="Renews 26 January 2026" fontSize={18} type="Medium" color={Colors.BRUNSWICK_GREEN} />
-            <AppText text="SAR 6,000" fontSize={14} color={Colors.PINE_FOREST} />
+            <AppText text={`SAR ${totalAmount}`} fontSize={14} color={Colors.PINE_FOREST} />
           </View>
         </GradientBorder>
 
         {/* Cancel Subscription */}
-        <TouchableOpacity>
+        <Pressable onPress={openSheet}> 
           <GradientBorder borderRadius={24} style={styles.cancelBtnGradient}>
             <View style={[styles.innerCard, styles.cancelBtn]}>
               <AppText text="Cancel Subscription" fontSize={22} type="Medium" color={Colors.BRUNSWICK_GREEN} />
               <GradientBorder borderRadius={16} borderWidth={1}>
                 <View style={styles.arrowCircleInner}>
-                  <Svgicons path='ArrowUpRightIcon'/>
+                  <Svgicons path='ArrowUpRightIcon' />
                 </View>
               </GradientBorder>
             </View>
           </GradientBorder>
-        </TouchableOpacity>
+        </Pressable>
 
       </ScrollView>
+      <ConfirmAction
+        ref={removeSheetRef}
+        title={'Cancel Subscription'}
+        content="Are you sure you want cancel?"
+        confirmText='Yes'
+        closeText='No'
+        onConfirm={closeSheet}
+      />
     </View>
   );
 };
@@ -92,8 +109,9 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     backgroundColor: Colors.WHITE,
     paddingVertical: Metrics.scale(16),
-    justifyContent:'center',
-    alignItems:'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal:Metrics.scale(16),
   },
   featuresContainer: { flexDirection: 'row', justifyContent: 'space-between' },
   featureItem: { alignItems: 'center', flex: 1 },
@@ -105,7 +123,7 @@ const styles = StyleSheet.create({
   cancelBtnGradient: { marginTop: 15 },
 
   arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
-  listingItem:{
+  listingItem: {
     width: Metrics.scale(105),
     marginRight: Metrics.scale(13),
     marginBottom: Metrics.verticalScale(46)

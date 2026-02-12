@@ -12,24 +12,26 @@ const InteriorPhotoScreen = () => {
 
   const { listing_id } = useCreateListingStore();
 
-  const {
-    mediaList,
-    setMediaList,
-    handleNext,
-    handleSaveAndExit,
-    isLoading,
-  } = usePropertyMediaUpload({
-    listingId: listing_id,
-    category: 'interior',
-    nextRoute: isEdit
-      ? undefined
-      : NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS,
-    mode: isEdit ? 'edit' : 'create',
-    initialMedia: existingPhotos.map((p: any) => ({
-      path: p.url,
-      type: p.type || 'image/jpeg',
-    })),
-  });
+const {
+  mediaList,
+  setMediaList,
+  handleNext,
+  handleSaveAndExit,
+  isLoading,
+} = usePropertyMediaUpload({
+  listingId: listing_id,
+  category: 'interior',
+  nextRoute: !isEdit
+    ? NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS
+    : undefined,
+  exitRoute: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
+  mode: isEdit ? 'edit' : 'create',
+  initialMedia: existingPhotos.map((p: any) => ({
+    path: p.url,
+    type: p.type || 'image/jpeg',
+  })),
+});
+
 
   return (
     <PhotoUploadTemplate

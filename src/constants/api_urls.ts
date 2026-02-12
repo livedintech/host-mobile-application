@@ -13,7 +13,9 @@ export const SERVICE_CONFIG_URLS = {
     CITIES: `${authController}/external-cities`,
     DISTRICTS: `${authController}/external-districts`,
     CHART_DATA: `${authController}/external-get-amount-latest-mom`,
-    PAYMENT_SAVE_CARD: `${authController}/save-card`,
+    PAYMENT_SAVE_CARD: `${api}/save/customer/identifier`,
+    SUBSCRIPTION_SAVE_CARD: `${api}/subscription/saved-cards`,
+
   },
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,
@@ -94,6 +96,10 @@ export const SERVICE_CONFIG_URLS = {
     GET_CALENDAR_DATA: `${authController}/calendar/{listing_id}`,
     SET_CALENDAR_PRICING: `${authController}/calendar/pricing`,
     GET_BOOKINGS_DETAILS: `${authController}/bookings/details/{booking_id}`,
-    RATE_YOUR_GUEST: `${authController}/guest/reviews`
+    RATE_YOUR_GUEST: `${authController}/guest/reviews`,
+    SUBSCRIPTION_SAVED_CARDS: `${authController}/subscription/saved-cards`,
+    SUBSCRIPTION_CUSTOMER_IDENTIFIER: `${authController}/subscription/customer-identifier`,
+    TRANSACTION_HISTORY:`${authController}/subscription/payments?host_id={host_id}`,
+    
   },
 };

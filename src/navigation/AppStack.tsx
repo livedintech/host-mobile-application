@@ -417,7 +417,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS}
         getComponent={() =>
           require('@/screens/appstack/YourSmartLockss/YourSmartLocksScreen')

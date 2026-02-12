@@ -10,7 +10,8 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const MoreScreen = () => {
-  const { logout } = useAuthStore();
+
+  const { logout,user } = useAuthStore();
   const goToBilling = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.BILLING);
   }, []);
@@ -55,8 +56,8 @@ const MoreScreen = () => {
       <View style={styles.profileRow}>
         <View style={styles.avatarCircle} />
         <View style={{ marginLeft: 15 }}>
-          <AppText text="Tooba J" fontSize={18} type="Bold" />
-          <AppText text="(+966) 5XX XXX XXX" color="#999" />
+          <AppText text={user?.name || ''} fontSize={18} type="Bold" />
+          <AppText text={user?.phone || ''} color="#999" />
         </View>
       </View>
 
@@ -73,19 +74,33 @@ const MoreScreen = () => {
           icon={'analyticsIcon'}
           onPress={goToAnalytics}
         />
-        {/* <MenuCard title="Billing" items={['Payment Method', 'Subscription', 'Transaction History']} icon={'cardIcon'} onPress={goToBilling} /> */}
-        <MenuCard
-          title="General"
-          items={['Privacy Policy', 'Terms & Conditions', 'FAQ']}
-          icon={'starIcon'}
-        />
+        <MenuCard title="Billing" items={['Payment Method', 'Subscription', 'Transaction History']} icon={'cardIcon'} onPress={goToBilling} />
+       
         <MenuCard
           title="Refer App"
           items={['Refer App', 'To Another', 'Host']}
           icon={'heartIcon'}
         />
       </View>
-
+      <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
+        <Pressable style={styles.logoutBtn} onPress={() => null}>
+          <AppText
+            text="General"
+            fontSize={24}
+            type="Bold"
+            color={Colors.BRUNSWICK_GREEN}
+          />
+          <GradientBorder
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
+            <View style={styles.arrowCircleInner}>
+              <Svgicons path="ArrowUpRightIcon" size={21} />
+            </View>
+          </GradientBorder>
+        </Pressable>
+      </GradientBorder>
       <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
         <Pressable style={styles.logoutBtn} onPress={() => logout()}>
           <AppText
@@ -94,7 +109,15 @@ const MoreScreen = () => {
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}
           />
-          <Svgicons path="ArrowUpRightIcon" />
+          <GradientBorder
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
+            <View style={styles.arrowCircleInner}>
+              <Svgicons path="ArrowUpRightIcon" size={21} />
+            </View>
+          </GradientBorder>
         </Pressable>
       </GradientBorder>
     </ScrollView>

@@ -202,7 +202,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   });
 
   // User Management List
-  const { data: userManagement = [], refetch } = useQuery({
+  const { data: userManagement = [],isLoading, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT],
     queryFn: getUserManagementApi,
   });
@@ -225,7 +225,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     handleCreateUser,
     handleEditUser,
     handleDeleteUser,
-    isLoading: isPending && !isIdle || isPendingUserManagementEdit && !isIdleUserManagementEdit || isPendingUserManagementDelete && !isIdleUserManagementDelete,
+    isLoading:isLoading ||  isPending && !isIdle || isPendingUserManagementEdit && !isIdleUserManagementEdit || isPendingUserManagementDelete && !isIdleUserManagementDelete,
     listingOptions,
     rolesOptions,
     roles,

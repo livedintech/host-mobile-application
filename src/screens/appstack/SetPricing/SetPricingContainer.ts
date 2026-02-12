@@ -105,7 +105,7 @@ export default function useSetPricingContainer() {
     };
 
     const onSaveExit = (data: PricingFormValues) => {
-       
+
 
         const payload: createListingPricingPayload = {
             channel_id: channel_id,
@@ -123,8 +123,17 @@ export default function useSetPricingContainer() {
             },
         };
 
-
-        updateListingDetails(payload);
+        if (isEdit) {
+            updateListingDetails(payload);
+        } else {
+            createListingPricing(payload, {
+                onSuccess: () => {
+                    navigate(
+                        NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
+                    );
+                },
+            });
+        }
     };
 
     return {

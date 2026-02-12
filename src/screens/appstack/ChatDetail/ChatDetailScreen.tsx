@@ -1,4 +1,4 @@
-// ChatScreen.tsx - Complete Refactored Code
+// ChatScreen.tsx - Complete Refactored Code with WhatsApp-style scroll
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import {
   Menu,
@@ -131,10 +132,10 @@ const processMessagesWithTimeLabels = (
 
 const ChatScreen = () => {
   const { user } = useAuthStore();
-    const route = useRoute();
-    const params = route?.params as { conversation_id?: string } | undefined;
-    const conversation_id = params?.conversation_id;
-    
+  const route = useRoute();
+  const params = route?.params as { conversation_id?: string, listing_id:string } | undefined;
+  const conversation_id = params?.conversation_id;
+  const listing_id = params?.listing_id;
 
   const {
     messages,
@@ -179,17 +180,78 @@ const ChatScreen = () => {
 
   // State for highlighting scrolled message
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | number | null>(null);
+  
+  // ✅ State to track if user is at bottom of chat
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  
+  // ✅ State for unread message indicator
+  const [unreadCount, setUnreadCount] = useState(0);
+  
+  // ✅ Animation for scroll-to-bottom button
+  const [scrollButtonOpacity] = useState(new Animated.Value(0));
 
   const messagesWithTimeLabels = useMemo(
     () => processMessagesWithTimeLabels(messages),
     [messages],
   );
 
+  // ✅ Track previous message count to detect new messages
+  const [prevMessageCount, setPrevMessageCount] = useState(messagesWithTimeLabels.length);
+
+  // ✅ Handle new messages - auto scroll only if user is at bottom
   useEffect(() => {
-    if (messagesWithTimeLabels.length > 0) {
-      flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+    if (messagesWithTimeLabels.length > prevMessageCount) {
+      const newMessageCount = messagesWithTimeLabels.length - prevMessageCount;
+      
+      if (isAtBottom) {
+        // User is at bottom, auto scroll
+        setTimeout(() => {
+          flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+        }, 100);
+      } else {
+        // User is scrolled up, show unread indicator
+        setUnreadCount(prev => prev + newMessageCount);
+        // Show scroll button with animation
+        Animated.timing(scrollButtonOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+      
+      setPrevMessageCount(messagesWithTimeLabels.length);
     }
-  }, [messagesWithTimeLabels.length]);
+  }, [messagesWithTimeLabels.length, isAtBottom, prevMessageCount]);
+
+  // ✅ Handle scroll events to detect if user is at bottom
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    
+    // Since list is inverted, check if offset is near 0
+    const atBottom = offsetY <= 100;
+    
+    if (atBottom !== isAtBottom) {
+      setIsAtBottom(atBottom);
+      
+      if (atBottom) {
+        // User scrolled to bottom, reset unread count
+        setUnreadCount(0);
+        // Hide scroll button
+        Animated.timing(scrollButtonOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+    }
+  };
+
+  // ✅ Scroll to bottom button handler
+  const scrollToBottom = () => {
+    flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+    setUnreadCount(0);
+    setIsAtBottom(true);
+  };
 
   const renderTimeLabel = (timeLabel: string) => (
     <View style={styles.timeLabelContainer}>
@@ -267,6 +329,14 @@ const ChatScreen = () => {
               />
             </View>
           )}
+          <AppText
+            text={item.user.name}
+            fontSize={11}
+            type="Medium"
+            color={Colors.GREY_SHADOW}
+            mb={4}
+            style={isHost ? { textAlign: 'right' } : { textAlign: 'left' }}
+          />
 
           <Pressable
             onPress={() => handleMessageSelect(item)}
@@ -441,7 +511,7 @@ const ChatScreen = () => {
               <MenuOption
                 style={styles.menuItem}
                 onSelect={() => {
-                  navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT,{conversation_id});
+                  navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, { conversation_id });
                 }}
               >
                 <AppText
@@ -479,7 +549,34 @@ const ChatScreen = () => {
           scrollEnabled={messagesWithTimeLabels.length > 5}
           keyboardShouldPersistTaps="handled"
           onScrollToIndexFailed={handleScrollToIndexFailed}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          inverted
         />
+
+        {/* ✅ Scroll to Bottom Button (WhatsApp style) */}
+        {!isAtBottom && (
+          <Animated.View 
+            style={[
+              styles.scrollToBottomButton,
+              { opacity: scrollButtonOpacity }
+            ]}
+          >
+            <Pressable onPress={scrollToBottom} style={styles.scrollButtonInner}>
+              <Svgicons path="ChevronDownIcon" size={20} color={Colors.WHITE} />
+              {unreadCount > 0 && (
+                <View style={styles.unreadBadge}>
+                  <AppText 
+                    text={unreadCount > 99 ? '99+' : unreadCount.toString()} 
+                    fontSize={10} 
+                    type="Bold"
+                    color={Colors.WHITE} 
+                  />
+                </View>
+              )}
+            </Pressable>
+          </Animated.View>
+        )}
 
         {/* Context Menu */}
         {selectedMessageId && selectedMessageData && (
@@ -524,28 +621,13 @@ const ChatScreen = () => {
                   }
                   setSelectedMessageId(null);
                   setSelectedMessageData(null);
+                  navigate(NavigationRoutes.APP_STACK.CREATE_TASK)
                 }}
               >
                 <View style={styles.menuTextContainer}>
                   <AppText text="Create Task" fontSize={13} />
                 </View>
                 <Svgicons path="taskIcon" size={16} />
-              </Pressable>
-
-              <Pressable
-                style={styles.menuOption}
-                onPress={() => {
-                  if (selectedMessageData.text) {
-                    handleTranslate(selectedMessageData.text);
-                  }
-                  setSelectedMessageId(null);
-                  setSelectedMessageData(null);
-                }}
-              >
-                <View style={styles.menuTextContainer}>
-                  <AppText text="Translate" fontSize={13} />
-                </View>
-                <AppText text="AR" fontSize={11} color={Colors.GREY_SHADOW} />
               </Pressable>
 
               {/* ✅ Only show delete for logged-in user's messages */}
@@ -676,16 +758,6 @@ const ChatScreen = () => {
               multiline
               maxLength={500}
             />
-            <Pressable
-              onPress={() => setShowAttachmentMenu(!showAttachmentMenu)}
-              style={styles.attachButtonInside}
-            >
-              <Svgicons
-                path="attachmentIcon"
-                size={20}
-                color={Colors.MIDNIGHT}
-              />
-            </Pressable>
           </View>
 
           <Pressable
@@ -1055,11 +1127,6 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     padding: 0,
   },
-  attachButtonInside: {
-    padding: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   sendButton: {
     width: 50,
     height: 50,
@@ -1117,6 +1184,38 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.WHITE,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // ✅ Scroll to bottom button styles
+  scrollToBottomButton: {
+    position: 'absolute',
+    bottom: 90,
+    right: 20,
+    zIndex: 999,
+  },
+  scrollButtonInner: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  unreadBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: Colors.INDIAN_RED,
+    borderRadius: 12,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 5,
   },
 });
 
