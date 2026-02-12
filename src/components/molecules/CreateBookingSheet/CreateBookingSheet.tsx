@@ -111,6 +111,7 @@ export const CreateBookingSheet = ({
         label="End Date" 
         placeholder="YYYY-MM-DD"
         mode='date'
+        rules={{ required: 'Check-out date is required' }}
         rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />} 
       />
 
