@@ -21,7 +21,6 @@ interface MultiChannelCalendarProps {
 const CustomDay = ({ date, state, marking, onPress }: any) => {
   // Extract channels/sources from the marking object
   const dots = marking?.channels || [];
-  const displayPrice = marking?.price;
   const isSelected = marking?.activeSelection;
 
   return (
@@ -43,7 +42,7 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
         {date.day}
       </Text>
 
-      {/* DOTS CONTAINER */}
+      {/* DOTS CONTAINER - Represents different booking channels */}
       <View style={styles.dotContainer}>
         {dots.map((source: string, index: number) => {
           const config = OTAs[source?.toUpperCase() as keyof typeof OTAs];
@@ -56,12 +55,7 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
         })}
       </View>
 
-      {/* PRICE LABEL */}
-      {state !== 'disabled' && displayPrice && (
-        <Text style={[styles.priceText, isSelected && styles.selectedPriceText]}>
-          SAR {displayPrice}
-        </Text>
-      )}
+      {/* Note: Price Text removed for Multi-Channel view per requirement */}
     </TouchableOpacity>
   );
 };
@@ -104,11 +98,10 @@ const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate }: MultiCha
           calendarBackground: 'transparent',
           monthTextColor: '#1A332C',
           textMonthFontWeight: '700',
-          textMonthFontSize: ms(20),
+          textMonthFontSize: ms(18),
           textSectionTitleColor: '#7B8D88',
-          textDayHeaderFontSize: ms(14),
+          textDayHeaderFontSize: ms(13),
           textDayHeaderFontWeight: '600',
-          // We cast the whole object to bypass the strict 'Theme' check
         } as any}
       />
     </View>
@@ -118,84 +111,82 @@ const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate }: MultiCha
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFF',
-    borderRadius: ms(25),
-    padding: s(15),
+    borderRadius: ms(20),
+    padding: s(12),
     width: '100%',
     alignSelf: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   legendHeader: {
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'wrap',
-    gap: s(12), 
-    marginBottom: vs(10),
-    paddingBottom: vs(10),
+    gap: s(15), 
+    marginBottom: vs(12),
+    paddingBottom: vs(12),
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#F2F2F2',
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  lDot: { width: ms(8), height: ms(8), borderRadius: 4, marginRight: s(4) },
-  lText: { fontSize: ms(12), fontWeight: '700' },
+  lDot: { 
+    width: ms(7), 
+    height: ms(7), 
+    borderRadius: 4, 
+    marginRight: s(5) 
+  },
+  lText: { 
+    fontSize: ms(11), 
+    fontWeight: '600' 
+  },
   dayContainer: { 
-    height: vs(65), 
-    width: (SCREEN_WIDTH - s(70)) / 7, 
+    height: vs(50), // Tightened height for price-less view
+    width: (SCREEN_WIDTH - s(80)) / 7, 
     alignItems: 'center', 
     justifyContent: 'center',
   },
-  selectedDayContainer: {
-    // Optional: add a light background to the selected day cell
-  },
+  selectedDayContainer: {},
   dayText: { 
-    fontSize: ms(16), 
+    fontSize: ms(15), 
     fontWeight: '500', 
-    color: '#4A4A4A', 
+    color: '#333', 
     marginBottom: vs(2),
     zIndex: 10,
   },
   selectedDayText: { 
     color: '#1A332C', 
-    fontWeight: '800' 
+    fontWeight: '700' 
   },
   disabledText: { 
-    color: '#E0E0E0' 
+    color: '#D1D1D1' 
   },
   dotContainer: { 
     flexDirection: 'row', 
-    gap: s(4), // Increased gap for better spacing
-    height: vs(10), 
+    gap: s(3), 
+    height: vs(8), 
     alignItems: 'center', 
-    justifyContent: 'center', // Center the dots under the number
+    justifyContent: 'center', 
     width: '100%',
   },
   dot: { 
-    width: ms(6), // Slightly larger for visibility
-    height: ms(6), 
-    borderRadius: ms(3), 
-  },
-  priceText: { 
-    fontSize: ms(8.5), 
-    color: '#999', 
-    fontWeight: '600' 
-  },
-  selectedPriceText: { 
-    color: '#1A332C' 
+    width: ms(5), 
+    height: ms(5), 
+    borderRadius: ms(2.5), 
   },
   selectionRing: { 
     position: 'absolute', 
-    width: ms(40), 
-    height: ms(40), 
-    borderRadius: ms(20), 
+    width: ms(34), 
+    height: ms(34), 
+    borderRadius: ms(17), 
     borderWidth: 1.5, 
     borderColor: '#1A332C', 
-    top: vs(4),
+    top: vs(2),
     zIndex: 1,
   }
 });
