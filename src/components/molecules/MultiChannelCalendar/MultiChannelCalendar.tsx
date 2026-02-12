@@ -54,8 +54,6 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
           );
         })}
       </View>
-
-      {/* Note: Price Text removed for Multi-Channel view per requirement */}
     </TouchableOpacity>
   );
 };
