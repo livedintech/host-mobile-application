@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useCalendarContainer(listingId: string) {
   const { user } = useAuthStore();
-  console.log('USERS INFO...', user)
   const { data: rawData, isLoading } = useQuery({
     queryKey: ['CALENDAR_DATA', listingId], 
     queryFn: () => getCalendarBookingManagementListingsApi(listingId),
