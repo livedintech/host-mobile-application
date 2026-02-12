@@ -78,10 +78,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.WHITE,
     height: Metrics.scale(54),
     borderRadius: 100,
-    marginHorizontal: 20,
+    marginHorizontal: 40,
     paddingHorizontal: 10,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',  
+    marginBottom: 30,       
+    marginTop: 10,
   },
   tabItem: {
     width: Metrics.scale(54),
@@ -91,8 +93,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
   }
 });

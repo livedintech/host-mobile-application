@@ -66,7 +66,7 @@ const AnalyticContainers = () => {
   });
 
   const { data: AnalyticChannelChartData, isLoading: isLoadingAnalyticsChannelChart } = useQuery({
-    queryKey: [STORAGE_CONST.GET_ANALYTICS_CHANNEL, chartListingIds, filters.date],
+    queryKey: [STORAGE_CONST.GET_ANALYTICS_CHANNEL, chartListingIds],
     queryFn: () => getAnalyticsChannel({
       listing_ids: chartListingIds.join(','), 
       // range: filters.date[0] || '30days',
