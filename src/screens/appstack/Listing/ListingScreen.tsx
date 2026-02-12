@@ -79,7 +79,6 @@ const ListingScreen = () => {
   useEffect(() => {
     if (selectedDateForBooking) {
       setValue('start_date', selectedDateForBooking);
-      setValue('end_date', selectedDateForBooking);
     }
   }, [selectedDateForBooking, setValue]);
 

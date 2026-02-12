@@ -3,19 +3,15 @@ import {
   StyleSheet,
   View,
   Modal,
-  Pressable,
   Dimensions,
   TouchableWithoutFeedback,
-  Platform,
 } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
+  withTiming, // Switched to withTiming for a smooth, non-bouncy feel
   interpolate,
-  Extrapolate,
-  FadeIn,
-  FadeOut,
+  Easing,
 } from 'react-native-reanimated';
 import { s, vs, ms } from 'react-native-size-matters';
 
@@ -31,10 +27,17 @@ const BottomSheetComponent: React.FC<BottomSheetProps> = ({ isVisible, onClose, 
   const translateY = useSharedValue(SCREEN_HEIGHT);
 
   useEffect(() => {
+    // Using withTiming with a 'Cubic' easing creates a very premium, smooth slide
     if (isVisible) {
-      translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
+      translateY.value = withTiming(0, {
+        duration: 350,
+        easing: Easing.out(Easing.cubic),
+      });
     } else {
-      translateY.value = withSpring(SCREEN_HEIGHT, { damping: 20, stiffness: 100 });
+      translateY.value = withTiming(SCREEN_HEIGHT, {
+        duration: 300,
+        easing: Easing.in(Easing.cubic),
+      });
     }
   }, [isVisible]);
 
@@ -43,7 +46,11 @@ const BottomSheetComponent: React.FC<BottomSheetProps> = ({ isVisible, onClose, 
   }));
 
   const backdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(translateY.value, [SCREEN_HEIGHT, 0], [0, 1], Extrapolate.CLAMP),
+    opacity: interpolate(
+      translateY.value,
+      [SCREEN_HEIGHT, 0],
+      [0, 1]
+    ),
   }));
 
   return (
@@ -68,7 +75,10 @@ const BottomSheetComponent: React.FC<BottomSheetProps> = ({ isVisible, onClose, 
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
+  backdrop: { 
+    ...StyleSheet.absoluteFill, 
+    backgroundColor: 'rgba(0,0,0,0.4)' 
+  },
   sheet: {
     backgroundColor: 'white',
     width: '100%',
