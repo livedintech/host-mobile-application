@@ -87,7 +87,7 @@ export const createMapListingbyUserIDApi = async (payload: createMapListingbyUse
         { user: payload.user }, // params
     );
 
-    const { ok, response, data } = await apiService.post(url, {listing_id: payload?.listing_id}); // body
+    const { ok, response, data } = await apiService.post(url, {listing_id: payload?.listing_id, channel_id:payload?.channel_id }); // body
     if (ok) {
         return data;
     }

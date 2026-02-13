@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import Utils from "@/utility/Utils";
 import apiService from "./apiService";
-import {  assignUserToChatPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
+import {  assignUserToChatPayloadType, chatDetailSavedRepliesPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
 type ChatListParams = {
   page?: number;
   limit?: number;
@@ -168,16 +168,26 @@ export const assignUserToChatApi = async (payload: assignUserToChatPayloadType) 
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
 
-//
-export const getChatDetailSavedRepliesApi = async (payload: createChatArchiveByConversationIdPayloadType) => {
-    const url = Utils.createDynamicUrl(
-        SERVICE_CONFIG_URLS.APP.GET_SAVED_REPLIES,
-        { conversation_id: payload.conversation_id }, // params
-    );
+export const getChatDetailSavedRepliesApi = async (
+  payload: chatDetailSavedRepliesPayloadType
+) => {
 
-    const { ok, response, data } = await apiService.get(url, {}); // body
-    if (ok) {
-        return data;
+  const url = Utils.createDynamicUrl(
+    SERVICE_CONFIG_URLS.APP.GET_SAVED_REPLIES_CHAT_DETAIL,
+    {
+      offset: 0,
+      limit: 0,
+      listing_id: payload.listing_id,
+      is_active: payload.is_active,
     }
-    throw new Error(response.message || 'Failed to fetch sub-categories');
+  );
+
+  const { ok, response, data } = await apiService.get(url, {});
+
+  if (ok) {
+    return data;
+  }
+
+  throw new Error(response?.message || 'Failed to fetch saved replies');
 };
+

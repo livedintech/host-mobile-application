@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, FlatList } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useAirbnbImportContainer from './AirbnbImportContainer';
@@ -10,6 +10,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import { shortId } from '@/utility/Utils';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 
 const PropertyCard = ({
   id,
@@ -29,7 +30,7 @@ const PropertyCard = ({
         <View>
           <View style={styles.infoRow}>
             <AppText text="Airbnb Property ID: " type="Bold" color={Colors.PINE_FOREST} />
-            <AppText text={shortId(id) } color={Colors.PINE_FOREST} />
+            <AppText text={shortId(id)} color={Colors.PINE_FOREST} />
           </View>
 
           <View style={styles.infoRow}>
@@ -76,8 +77,21 @@ const AirbnbImportScreen = () => {
     handleIndividualImport,
     refetch,
     watch,
+    isLoading,
     listingOptions,
   } = useAirbnbImportContainer();
+
+  const renderItem = ({ item }: any) => (
+    <PropertyCard
+      id={item.id}
+      name={item.title}
+      control={control}
+      errors={errors}
+      listingOptions={listingOptions}
+      handleIndividualImport={handleIndividualImport}
+      watch={watch}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -102,28 +116,20 @@ const AirbnbImportScreen = () => {
         />
       </View>
 
-      {/* Cards */}
-      <ScrollView
+      {/* FlatList */}
+      <FlatListSimpleHandler
+        onRefresh={refetch}
+        isLoading={isLoading}
+        data={properties}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-      >
-        {properties.map((item: { id: number, title: string, type: string }) => (
-          <PropertyCard
-            key={item.id}
-            id={item.id}
-            name={item.title}
-            property={item.type}
-            control={control}
-            errors={errors}
-            listingOptions={listingOptions}
-            handleIndividualImport={handleIndividualImport}
-            watch={watch}   // 👈 ADD THIS
-          />
-        ))}
-
-        <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
-      </ScrollView>
+        ListFooterComponent={
+          <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
+        }
+      />
     </View>
   );
 };
@@ -131,7 +137,12 @@ const AirbnbImportScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
   fixedHeader: { paddingHorizontal: 22, paddingTop: 15 },
-  scrollContent: { paddingHorizontal: 22, paddingBottom: 40, paddingTop: 20 },
+
+  scrollContent: {
+    paddingHorizontal: 22,
+    paddingBottom: 40,
+    paddingTop: 20,
+  },
 
   headerRow: {
     flexDirection: 'row',

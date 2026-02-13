@@ -8,9 +8,11 @@ import Metrics from '@/utility/Metrics';
 import useEnterPasswordContainer from './EnterPasswordContainer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Checkbox from '@/components/molecules/Input/CheckBox';
+import { Controller } from 'react-hook-form';
 
 const EnterPasswordScreen = () => {
-  const { isLoading, control, errors, handleSubmit,gotToVerifyOTP } = useEnterPasswordContainer();
+  const { isLoading, control, errors, handleSubmit, gotToVerifyOTP } = useEnterPasswordContainer();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,10 +20,10 @@ const EnterPasswordScreen = () => {
 
         {/* Title Section */}
         <View style={styles.titleSection}>
-          <AppText 
-            text="Please enter your Password to continue." 
-            fontSize={28} 
-            textAlign="center" 
+          <AppText
+            text="Please enter your Password to continue."
+            fontSize={28}
+            textAlign="center"
           />
         </View>
 
@@ -38,11 +40,22 @@ const EnterPasswordScreen = () => {
           {/* Remember Me & Forgot Password Row */}
           <View style={styles.row}>
             <View style={styles.rememberMe}>
-              <View style={styles.checkbox} />
-              <AppText text="Remember me" fontSize={12} color={Colors.PINE_FOREST} type='Medium'/>
+              {/* <View style={styles.checkbox} /> */}
+              <Controller
+                control={control}
+                name="rememberMe"
+                render={({ field: { value, onChange } }) => (
+                  <Checkbox
+                    isChecked={value}
+                    onPress={() => onChange(!value)}
+                  />
+                )}
+              />
+
+              <AppText text="Remember me" color={Colors.PINE_FOREST} type='Medium' />
             </View>
             <ButtonView onPress={gotToVerifyOTP}>
-              <AppText text="Forgot password?" fontSize={12} color={Colors.BRUNSWICK_GREEN} type="Medium"/>
+              <AppText text="Forgot password?" color={Colors.BRUNSWICK_GREEN} type="Medium" />
             </ButtonView>
           </View>
         </View>
@@ -64,39 +77,39 @@ const EnterPasswordScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
   scrollContainer: { flexGrow: 1, paddingHorizontal: 20 },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    marginTop: 20 
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20
   },
   headerRight: { flexDirection: 'row', alignItems: 'center' },
-  circleBtn: { 
-    width: 40, height: 40, borderRadius: 20, 
-    borderWidth: 1, borderColor: '#E0E0E0', 
-    justifyContent: 'center', alignItems: 'center', marginRight: 8 
+  circleBtn: {
+    width: 40, height: 40, borderRadius: 20,
+    borderWidth: 1, borderColor: '#E0E0E0',
+    justifyContent: 'center', alignItems: 'center', marginRight: 8
   },
-  backBtn: { 
-    paddingHorizontal: 25, height: 40, borderRadius: 20, 
-    borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center' 
+  backBtn: {
+    paddingHorizontal: 25, height: 40, borderRadius: 20,
+    borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center'
   },
   titleSection: { marginTop: Metrics.verticalScale(80), alignItems: 'center' },
   form: { marginTop: Metrics.verticalScale(40) },
-  row: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    marginTop: 15, 
-    alignItems: 'center' 
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+    alignItems: 'center'
   },
   rememberMe: { flexDirection: 'row', alignItems: 'center' },
-  checkbox: { 
-    width: 18, height: 18, borderWidth: 1, 
-    borderColor: '#E0E0E0', borderRadius: 4, marginRight: 8 
+  checkbox: {
+    width: 18, height: 18, borderWidth: 1,
+    borderColor: '#E0E0E0', borderRadius: 4, marginRight: 8
   },
-  bottomSec: { 
-    flex: 1, 
-    justifyContent: 'flex-end', 
-    paddingBottom: Metrics.verticalScale(30) 
+  bottomSec: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: Metrics.verticalScale(30)
   },
   continueBtn: {
     backgroundColor: 'transparent',

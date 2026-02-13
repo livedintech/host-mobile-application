@@ -124,7 +124,7 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
             <View style={styles.bullet} />
             <AppText
               text={`Upload up to ${props.maxImages} images and ${props.maxVideos} video per section.`}
-              fontSize={10}
+              fontSize={12}
               color={Colors.PINE_FOREST}
             />
           </View>
@@ -133,7 +133,7 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
             <View style={styles.bullet} />
             <AppText
               text="Allowed formats: jpg, png, mp4."
-              fontSize={10}
+              fontSize={12}
               color={Colors.PINE_FOREST}
             />
           </View>
@@ -142,7 +142,7 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
             <View style={styles.bullet} />
             <AppText
               text="Video limit: ≤ 20 MB."
-              fontSize={10}
+              fontSize={12}
               color={Colors.PINE_FOREST}
             />
           </View>
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    marginTop: 'auto',
+    marginTop: Metrics.verticalScale(20),
     marginBottom: Metrics.verticalScale(20),
   },
 });

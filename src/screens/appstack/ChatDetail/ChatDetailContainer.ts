@@ -109,20 +109,14 @@ const transformApiMessages = (apiMessages: any[], currentUserId: number): ChatMe
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
-  console.log('user',user?.id);
-  
-  
+  console.log('user', user?.id);
+
+
   // Safely get params
   const route = useRoute();
-  const params = route?.params as { conversation_id?: string, listing_id?:string } | undefined;
+  const params = route?.params as { conversation_id?: string, listing_id?: string } | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
-  console.log('listing_id',listing_id);
-  
-
-
-  console.log('Logged in user:', user);
-  console.log('Conversation ID:', conversation_id);
 
   // Core Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -160,11 +154,20 @@ export const useChatContainer = () => {
     refetchInterval: 4000,
   });
 
-   // Get Saved Replies of a conversation
-  const { data:savedReplies } = useQuery({
-    queryKey: [STORAGE_CONST.GET_CHAT_DETAIL_SAVED_REPLIES, conversation_id],
-    queryFn: () => getChatDetailSavedRepliesApi({ conversation_id }),
-  });
+  // Get Saved Replies of a conversation
+ const { data: savedReplies } = useQuery({
+  queryKey: [
+    STORAGE_CONST.GET_CHAT_DETAIL_SAVED_REPLIES,
+    listing_id,
+  ],
+  queryFn: () =>
+    getChatDetailSavedRepliesApi({
+      listing_id,
+      is_active: true,
+      offset: 0,
+      limit: 0,
+    }),
+});
 
   // Create User 
   const {
@@ -225,10 +228,10 @@ export const useChatContainer = () => {
       },
       replyTo: replyingToMessage
         ? {
-            _id: replyingToMessage._id,
-            text: replyingToMessage.text || 'Media message',
-            userName: replyingToMessage.user.name,
-          }
+          _id: replyingToMessage._id,
+          text: replyingToMessage.text || 'Media message',
+          userName: replyingToMessage.user.name,
+        }
         : undefined,
     };
 
@@ -275,24 +278,24 @@ export const useChatContainer = () => {
         _id: `temp-${Date.now()}`,
         text: replyText,
         createdAt: new Date(),
-        user: { 
+        user: {
           _id: Number(user?.id),
           name: user?.name || 'You'
         },
         replyTo: replyingToMessage
           ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
           : undefined,
       };
 
       addMessage(newMessage);
-      
+
       // ✅ Set flag for auto-scroll
       setJustSentMessage(true);
-      
+
       setInputText('');
       setReplyingToMessage(null);
       setShowSavedReplies(false);
@@ -315,16 +318,16 @@ export const useChatContainer = () => {
       _id: `temp-${Date.now()}`,
       text: 'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival. Wi-Fi and other details are inside.',
       createdAt: new Date(),
-      user: { 
+      user: {
         _id: Number(user?.id),
         name: user?.name || 'You'
       },
     };
     addMessage(aiMessage);
-    
+
     // ✅ Set flag for auto-scroll
     setJustSentMessage(true);
-    
+
     setShowAiSuggestion(false);
 
     // ✅ Auto scroll
@@ -366,7 +369,7 @@ export const useChatContainer = () => {
   // Scroll to specific message
   const scrollToMessage = useCallback((messageId: string | number, messages: ChatMessage[]) => {
     const messageIndex = messages.findIndex(msg => msg._id === messageId);
-    
+
     if (messageIndex !== -1 && flatListRef.current) {
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({
@@ -396,7 +399,7 @@ export const useChatContainer = () => {
   const handleDeleteMessage = useCallback((messageId: string | number) => {
     setMessages(prev => prev.filter(msg => msg._id !== messageId));
     setSelectedMessageId(null);
-    
+
     // TODO: Call API to delete message
   }, []);
 
@@ -416,25 +419,25 @@ export const useChatContainer = () => {
         _id: `temp-${Date.now()}`,
         text: '',
         createdAt: new Date(),
-        user: { 
+        user: {
           _id: Number(user?.id),
           name: user?.name || 'You'
         },
         image: image.path,
         replyTo: replyingToMessage
           ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
           : undefined,
       };
 
       addMessage(message);
-      
+
       // ✅ Set flag for auto-scroll
       setJustSentMessage(true);
-      
+
       setReplyingToMessage(null);
       setShowAttachmentMenu(false);
 
@@ -462,25 +465,25 @@ export const useChatContainer = () => {
         _id: `temp-${Date.now()}`,
         text: '',
         createdAt: new Date(),
-        user: { 
+        user: {
           _id: Number(user?.id),
           name: user?.name || 'You'
         },
         video: video.path,
         replyTo: replyingToMessage
           ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
           : undefined,
       };
 
       addMessage(message);
-      
+
       // ✅ Set flag for auto-scroll
       setJustSentMessage(true);
-      
+
       setReplyingToMessage(null);
       setShowAttachmentMenu(false);
 
@@ -514,7 +517,7 @@ export const useChatContainer = () => {
         _id: `temp-${Date.now()}`,
         text: '',
         createdAt: new Date(),
-        user: { 
+        user: {
           _id: Number(user?.id),
           name: user?.name || 'You'
         },
@@ -522,18 +525,18 @@ export const useChatContainer = () => {
         video: media.mime?.includes('video') ? media.path : undefined,
         replyTo: replyingToMessage
           ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
           : undefined,
       };
 
       addMessage(message);
-      
+
       // ✅ Set flag for auto-scroll
       setJustSentMessage(true);
-      
+
       setReplyingToMessage(null);
       setShowAttachmentMenu(false);
 
@@ -560,7 +563,7 @@ export const useChatContainer = () => {
           _id: `temp-${Date.now()}`,
           text: `📄 ${res.name}`,
           createdAt: new Date(),
-          user: { 
+          user: {
             _id: Number(user?.id),
             name: user?.name || 'You'
           },
@@ -572,18 +575,18 @@ export const useChatContainer = () => {
           },
           replyTo: replyingToMessage
             ? {
-                _id: replyingToMessage._id,
-                text: replyingToMessage.text || 'Media message',
-                userName: replyingToMessage.user.name,
-              }
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
             : undefined,
         };
 
         addMessage(message);
-        
+
         // ✅ Set flag for auto-scroll
         setJustSentMessage(true);
-        
+
         setReplyingToMessage(null);
         setShowAttachmentMenu(false);
 
@@ -620,7 +623,7 @@ export const useChatContainer = () => {
     flatListRef,
     conversationData,
     justSentMessage,
-    
+
     // Setters
     setInputText,
     setShowAiSuggestion,
@@ -644,7 +647,7 @@ export const useChatContainer = () => {
     handleMessageSelect,
     handleReplyToMessage,
     cancelReply,
-    scrollToMessage, 
+    scrollToMessage,
 
     SAVED_REPLIES,
     refetch,

@@ -67,7 +67,14 @@ const ManageListingScreen = () => {
             />
             <View style={{ flex: 1 }}>
               <AppText
-                text={`${item?.name},${item?.apt},${item?.state},${item?.city}  `}
+                text={[
+                  item?.apt,
+                  item?.state,
+                  item?.city,
+                ]
+                  .filter(Boolean)
+                  .join(', ')
+                }
                 color={Colors.PINE_FOREST}
                 fontSize={14}
                 numberOfLines={1}
