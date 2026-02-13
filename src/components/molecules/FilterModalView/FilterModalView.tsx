@@ -90,7 +90,7 @@ export const FilterModalView = ({
                   text={
                     localSelected.length > 0
                       ? `${localSelected.length} Selected`
-                      : 'Select Properties'
+                      : 'Select Multiple Options'
                   }
                   color="#1A332C"
                   fontSize={14}
