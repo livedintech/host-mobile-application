@@ -8,6 +8,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const MoreScreen = () => {
 
@@ -20,6 +21,9 @@ const MoreScreen = () => {
   }, []);
   const goToAnalytics = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.ANALYTIC_SCREEN);
+  }, []);
+  const goToProfile = useCallback(() => {
+    navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
   }, []);
 
   const MenuCard = ({ title, items, icon, onPress }: any) => (
@@ -53,13 +57,13 @@ const MoreScreen = () => {
       style={styles.container}
       contentContainerStyle={{ padding: 20 }}
     >
-      <View style={styles.profileRow}>
+      <ButtonView style={styles.profileRow} onPress={goToProfile}>
         <View style={styles.avatarCircle} />
         <View style={{ marginLeft: 15 }}>
           <AppText text={user?.name || ''} fontSize={18} type="Bold" />
           <AppText text={user?.phone || ''} color="#999" />
         </View>
-      </View>
+      </ButtonView>
 
       <View style={styles.grid}>
         <MenuCard
@@ -126,7 +130,7 @@ const MoreScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
-  profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 30 },
+  profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 30 , alignSelf:'flex-start'},
   avatarCircle: {
     width: 60,
     height: 60,
