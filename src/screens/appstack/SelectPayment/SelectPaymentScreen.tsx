@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   methodIcon: { 
     width: 40, 
-    height: 25, 
+    height: 30, 
     resizeMode: 'contain' 
   },
   methodInfo: {
