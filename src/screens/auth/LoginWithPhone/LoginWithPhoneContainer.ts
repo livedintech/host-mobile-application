@@ -15,8 +15,11 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useState } from 'react';
 import { usePhoneStore } from '@/store/usePhoneStore';
+import { useRememberMeStore } from '@/store/useRememberMeStore';
 
 export default function useLoginWithPhoneContainer() {
+    const {callingCode,cca2,clearCredentials,password,phoneNumber:storePhoneNo,rememberMe,setRememberMe,setPassword} = useRememberMeStore()
+  
   
   const setPhoneData = usePhoneStore((state) => state.setPhoneData);
 
@@ -29,10 +32,20 @@ export default function useLoginWithPhoneContainer() {
   } = useForm<checkUserisExistFormValues>({
     resolver: yupResolver(checkUserisExistSchema),
     defaultValues: {
-      country: { cca2: 'SA', callingCode: '966' },
-      phoneNumber: '',
+      country: { cca2: cca2 || 'SA', callingCode: callingCode|| '966' },
+      phoneNumber:storePhoneNo|| '',
     },
   });
+  const countryCca2 = watch('country')?.cca2;
+  const countryCallingCode = watch('country')?.callingCode;
+  const phoneNo = watch('phoneNumber');
+
+  console.log('countryCca2',countryCca2);
+  console.log('countryCallingCode',countryCallingCode);
+
+  
+
+
 
   // ----------------- Normal Login -----------------
   const {
@@ -42,10 +55,14 @@ export default function useLoginWithPhoneContainer() {
   } = useMutation<CheckUserExistResponse, Error, CheckUserExistPayload>({
     mutationFn: CheckUserApi,
     onSuccess: data => {
-      navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, phoneNumber);
+      const payload = {
+        countryCca2,
+        countryCallingCode,
+        phoneNo
+      }
+      navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, payload);
     },
     onError: error => {
-
       if (error?.message === 'User not found') {
         setPhoneData({
           phoneNumber: phoneNumber

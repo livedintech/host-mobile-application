@@ -14,6 +14,7 @@ import {
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useRememberMeStore } from '@/store/useRememberMeStore';
 
 // Validation Schema
 const signInSchema = yup.object().shape({
@@ -25,9 +26,12 @@ const signInSchema = yup.object().shape({
 });
 
 export default function useEnterPasswordContainer() {
+  const {callingCode,cca2,clearCredentials,password,phoneNumber,rememberMe,setPhoneData,setRememberMe,setPassword} = useRememberMeStore()
   const { setToken, setUser } = useAuthStore();
 
   const { params } = useRoute();
+  console.log('params',params);
+  
 
   const {
     control,
@@ -36,8 +40,8 @@ export default function useEnterPasswordContainer() {
   } = useForm({
     resolver: yupResolver(signInSchema),
     defaultValues: {
-      password: '',
-      rememberMe: false,
+      password: password || '',
+      rememberMe: rememberMe || false,
     },
   });
 
@@ -79,15 +83,24 @@ export default function useEnterPasswordContainer() {
 
   const onSubmit = (data: any) => {
     const payload = {
-      phone_number: params,
+      phone_number: params?.countryCallingCode +params?.phoneNo,
       password: data?.password,
     };
+     // Remember Me logic
+    if (data.rememberMe) {
+      setRememberMe(true);
+      setPhoneData(params?.phoneNo, params?.countryCca2, params?.countryCallingCode);
+      setPassword(data.password);
+    } else {
+      setRememberMe(false);
+      clearCredentials();
+    }
     loginPayload(payload);
   };
 
   const gotToVerifyOTP = () => {
     const payload = {
-      phone_number: params,
+      phone_number:  params?.phoneNo +params?.countryCallingCode,
     };
     forgotPayload(payload);
   };

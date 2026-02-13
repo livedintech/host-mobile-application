@@ -7,6 +7,7 @@ import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const BASE_URL = BASE_URL_DEV;
 
@@ -59,6 +60,7 @@ export const usePropertyMediaUpload = ({
   // COMMON UPLOAD FUNCTION
   // -----------------------------
   const uploadMedia = async (): Promise<boolean> => {
+    const token = useAuthStore().token
     if (mediaList.length === 0) {
       Alert.alert('Required', `Please upload at least one ${category} photo.`);
       return false;
@@ -93,7 +95,9 @@ export const usePropertyMediaUpload = ({
 
       const response = await fetch(url, {
         method: mode === 'edit' ? 'POST' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 
+             Authorization: `Bearer ${token}`, 
+        },
         body: JSON.stringify(body),
       });
 

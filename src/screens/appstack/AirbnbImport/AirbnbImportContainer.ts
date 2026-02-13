@@ -46,29 +46,31 @@ export default function useAirbnbImportContainer() {
     enabled: Boolean(user?.id),
   });
 
-const { mutate: createMapListingbyUserID, isPending } =
-  useMutation<CreateAccountResponse, Error, { listing_id: number }>({
-    mutationFn: (payload) =>
-      createMapListingbyUserIDApi({
-        user: user!.id,
-        listing_id: payload.listing_id,
-      }),
+  const { mutate: createMapListingbyUserID, isPending } =
+    useMutation<CreateAccountResponse, Error, { listing_id: number, channel_id:string }>({
+      mutationFn: (payload) =>
+        createMapListingbyUserIDApi({
+          user: user!.id,
+          listing_id: payload.listing_id,
+          channel_id: payload.channel_id,
 
-    onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
-      });
+        }),
 
-      Toast.show({ type: 'success', text1: message });
-    },
+      onSuccess: ({ message }) => {
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+        });
 
-    onError: (error) => {
-      Toast.show({ type: 'error', text1: error.message });
-    },
-  });
+        Toast.show({ type: 'success', text1: message });
+      },
+
+      onError: (error) => {
+        Toast.show({ type: 'error', text1: error.message });
+      },
+    });
 
 
   const listingOptions =
@@ -86,7 +88,7 @@ const { mutate: createMapListingbyUserID, isPending } =
     defaultValues: {},
   });
 
-  const handleIndividualImport = (fieldName: number) => {
+const handleIndividualImport = (fieldName: string) => {
   const selectedValue = watch(fieldName);
   const airbnbListingId = Number(fieldName);
 
@@ -97,11 +99,21 @@ const { mutate: createMapListingbyUserID, isPending } =
     };
 
     console.log('Mapping existing listing:', payload);
+
+    // 👇 Yahan aap ko correct API call karni hogi
+    createMapListingbyUserID({
+      listing_id: airbnbListingId,
+      channel_id:channelId,
+
+    });
+
     return;
   }
 
+  // Agar dropdown select nahi hua
   createMapListingbyUserID({
     listing_id: airbnbListingId,
+   channel_id:channelId,
   });
 };
 
@@ -114,7 +126,7 @@ const { mutate: createMapListingbyUserID, isPending } =
   return {
     control,
     errors,
-    properties: data?.listings ?? [],
+    properties: data ?? [],
     listingOptions,
     isLoading,
     handleSubmit,

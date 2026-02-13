@@ -1,6 +1,10 @@
 export interface createChatArchiveByConversationIdPayloadType {
   conversation_id?: string | undefined,
 }
+export interface chatDetailSavedRepliesPayloadType {
+  listing_id: string,
+  is_active:boolean
+}
 export interface createChatArchiveByConversationIdResponseType {
   status: string;
   message: string;
