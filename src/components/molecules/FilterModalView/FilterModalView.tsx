@@ -1,5 +1,11 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronDown } from 'lucide-react-native';
 import ModalComponent from '@/components/molecules/ModalComponent/ModalComponent';
@@ -8,13 +14,10 @@ import AppText from '@/components/molecules/AppText/AppText';
 interface Props {
   isVisible: boolean;
   onClose: () => void;
-  onApply: () => void;
+  onApply: (selected: string[]) => void;
   onReset: () => void;
-  isDropdownOpen: boolean;
-  setIsDropdownOpen: (val: boolean) => void;
-  selectedPropertyValues: string[];
   actualProperties: any[];
-  toggleProperty: (val: any) => void;
+  initialSelectedValues: string[];
 }
 
 export const FilterModalView = ({
@@ -22,105 +25,165 @@ export const FilterModalView = ({
   onClose,
   onApply,
   onReset,
-  isDropdownOpen,
-  setIsDropdownOpen,
-  selectedPropertyValues,
   actualProperties,
-  toggleProperty,
-}: Props) => (
-  <ModalComponent
-    isVisible={isVisible}
-    onClose={onClose}
-    title="Apply Filter"
-    onApply={onApply}
-    onReset={onReset}
-  >
-    <AppText text="Property Listing" type="Bold" fontSize={16} color="#1A332C" mb={8} />
-    
-    <View style={[styles.dropdownBox, isDropdownOpen && { borderColor: '#2D4A41' }]}>
-      <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => setIsDropdownOpen(!isDropdownOpen)}
-      >
-        <View style={styles.row}>
-          <View
-            style={[
-              styles.checkboxBox,
-              selectedPropertyValues.length > 0 && styles.checkboxActive,
-            ]}
-          />
-          <AppText
-            text={
-              selectedPropertyValues.length > 0
-                ? `${selectedPropertyValues.length} Selected`
-                : 'Select Properties'
-            }
-            color="#1A332C"
-            fontSize={14}
-          />
-        </View>
-        <ChevronDown size={ms(18)} color="#000" />
-      </TouchableOpacity>
+  initialSelectedValues,
+}: Props) => {
+  // Local state manages changes inside the modal without triggering parent re-renders
+  const [localSelected, setLocalSelected] = useState<string[]>(initialSelectedValues);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-      {isDropdownOpen && (
-        <ScrollView style={{ maxHeight: vs(200) }} nestedScrollEnabled>
-          {actualProperties.map((item: any) => (
+  // Sync local state when modal opens
+  useEffect(() => {
+    if (isVisible) {
+      setLocalSelected(initialSelectedValues);
+    }
+  }, [isVisible, initialSelectedValues]);
+
+  const toggleLocalProperty = (val: any) => {
+    const valStr = String(val);
+    setLocalSelected((prev) =>
+      prev.includes(valStr) ? prev.filter((v) => v !== valStr) : [...prev, valStr]
+    );
+  };
+
+  const handleApply = () => {
+    onApply(localSelected);
+  };
+
+  const handleReset = () => {
+    setLocalSelected([]);
+    onReset();
+  };
+
+  return (
+    <ModalComponent
+      isVisible={isVisible}
+      onClose={onClose}
+      title="Apply Filter"
+      onApply={handleApply}
+      onReset={handleReset}
+    >
+      <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+        <View style={styles.contentContainer}>
+          <AppText
+            text="Property Listing"
+            type="Bold"
+            fontSize={16}
+            color="#1A332C"
+            mb={8}
+          />
+
+          <View style={[styles.dropdownBox, isDropdownOpen && styles.dropdownBoxActive]}>
             <TouchableOpacity
-              key={item.value}
-              style={styles.propertyItem}
-              onPress={() => toggleProperty(item.value)}
+              activeOpacity={0.7}
+              style={styles.dropdownHeader}
+              onPress={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              <View
-                style={[
-                  styles.checkboxBox,
-                  selectedPropertyValues.includes(String(item.value)) &&
-                    styles.checkboxActive,
-                ]}
+              <View style={styles.row}>
+                <View
+                  style={[
+                    styles.checkboxBox,
+                    localSelected.length > 0 && styles.checkboxActive,
+                  ]}
+                />
+                <AppText
+                  text={
+                    localSelected.length > 0
+                      ? `${localSelected.length} Selected`
+                      : 'Select Properties'
+                  }
+                  color="#1A332C"
+                  fontSize={14}
+                />
+              </View>
+              <ChevronDown
+                size={ms(18)}
+                color="#000"
+                style={{ transform: [{ rotate: isDropdownOpen ? '180deg' : '0deg' }] }}
               />
-              <AppText text={item.label} fontSize={13} color="#444" />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
-    </View>
-  </ModalComponent>
-);
+
+            {isDropdownOpen && (
+              <View style={styles.listContainer}>
+                <ScrollView
+                  style={{ maxHeight: vs(200) }}
+                  nestedScrollEnabled={true}
+                  showsVerticalScrollIndicator={true}
+                >
+                  {actualProperties.map((item: any) => (
+                    <TouchableOpacity
+                      key={item.value}
+                      activeOpacity={0.6}
+                      style={styles.propertyItem}
+                      onPress={() => toggleLocalProperty(item.value)}
+                    >
+                      <View
+                        style={[
+                          styles.checkboxBox,
+                          localSelected.includes(String(item.value)) &&
+                            styles.checkboxActive,
+                        ]}
+                      />
+                      <AppText text={item.label} fontSize={13} color="#444" />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </ModalComponent>
+  );
+};
 
 const styles = StyleSheet.create({
-  row: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: s(10) 
+  contentContainer: {
+    width: '100%',
   },
-  checkboxBox: { 
-    width: ms(20), 
-    height: ms(20), 
-    borderWidth: 1.5, 
-    borderColor: '#2D4A41', 
-    borderRadius: ms(5), 
-    backgroundColor: '#FFF' 
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: s(10),
   },
-  checkboxActive: { 
-    backgroundColor: '#2D4A41' 
+  checkboxBox: {
+    width: ms(20),
+    height: ms(20),
+    borderWidth: 1.5,
+    borderColor: '#2D4A41',
+    borderRadius: ms(5),
+    backgroundColor: '#FFF',
   },
-  dropdownBox: { 
-    borderWidth: 1, 
-    borderColor: '#DDD', 
-    borderRadius: 8, 
+  checkboxActive: {
+    backgroundColor: '#2D4A41',
+  },
+  dropdownBox: {
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
     marginTop: vs(10),
-    overflow: 'hidden'
+    overflow: 'hidden',
+    backgroundColor: '#FFF',
   },
-  dropdownHeader: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    padding: s(12) 
+  dropdownBoxActive: {
+    borderColor: '#2D4A41',
   },
-  propertyItem: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    padding: s(12), 
-    borderTopWidth: 1, 
-    borderTopColor: '#EEE', 
-    gap: 10 
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: s(12),
+  },
+  listContainer: {
+    borderTopWidth: 1,
+    borderTopColor: '#EEE',
+  },
+  propertyItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: s(12),
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#EEE',
+    gap: 10,
   },
 });

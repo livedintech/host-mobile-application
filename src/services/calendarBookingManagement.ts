@@ -59,12 +59,27 @@ export const getCalendarBookingsByListingIdApi = async (listingIds: string | str
 /**
  * 4. FETCH RESERVATIONS (For the Reservation Tab)
  */
-export const getReservationsApi = async (listingIds?: string) => {
-    const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS; 
 
-    const url = listingIds 
-        ? `${baseUrl}?&apartment_id=${listingIds}` 
-        : `${baseUrl}`;
+export const getReservationsApi = async (listingIds?: string, activeFilter?: string) => {
+    const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
+    let queryParams = ``;
+    if (listingIds) {
+      queryParams += `&apartment_id=${listingIds}`;
+    }
+    if (activeFilter === 'today') {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+      
+      queryParams += `&created_at=${formattedDate}`;
+    } 
+    else if (activeFilter && activeFilter !== 'all') {
+      queryParams += `&status=${encodeURIComponent(activeFilter)}`;
+    }
+
+    const url = `${baseUrl}${queryParams}`;
     
     const { ok, data } = await apiService.get(url);
     

@@ -45,7 +45,7 @@ const ListingScreen = () => {
   // UI States
   const [selectedTab, setSelectedTab] = useState(0); 
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState('today'); // Default filter set to today
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -68,6 +68,7 @@ const ListingScreen = () => {
     handleSubmit, 
     setValue, 
     reset, 
+    clearErrors,
     formState: { errors } 
   } = useForm<createBookingFormValues>({
     resolver: yupResolver(createBookingSchema) as any,
@@ -88,7 +89,11 @@ const ListingScreen = () => {
 
   const selectedListingId = watch('listing_selection');
 
-  // Clear end_date when start_date changes to force fresh validation
+  // Handle mode switches (Direct vs Pricing)
+  useEffect(() => {
+    clearErrors();
+  }, [bookingType, clearErrors]);
+
   useEffect(() => {
     if (selectedDateForBooking) {
       setValue('start_date', selectedDateForBooking);
@@ -101,9 +106,10 @@ const ListingScreen = () => {
     queryFn: () => getUserListingsApi(user?.id || ''),
   });
 
+  // Updated to include activeFilter in queryKey and API call
   const { data: reservationRawData = [], isLoading: resLoading } = useQuery({
-    queryKey: ['RESERVATIONS_LIST', appliedListingIds],
-    queryFn: () => getReservationsApi(appliedListingIds),
+    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter],
+    queryFn: () => getReservationsApi(appliedListingIds, activeFilter),
     enabled: selectedTab === 1,
   });
 
@@ -143,13 +149,6 @@ const ListingScreen = () => {
     }
   };
 
-  const toggleProperty = (val: any) => {
-    const valStr = String(val);
-    setSelectedPropertyValues(prev => 
-      prev.includes(valStr) ? prev.filter(v => v !== valStr) : [...prev, valStr]
-    );
-  };
-
   const onCreateBooking = async (formData: createBookingFormValues) => {
     const finalId = formData.listing_id || selectedListingId;
     if (!finalId || finalId === "all") return;
@@ -170,7 +169,6 @@ const ListingScreen = () => {
       end_date: endDate 
     };
     
-    // Switch between Direct Booking and Pricing update
     const res = bookingType === 'direct' 
       ? await createDirectBookingApi({ 
           ...formData, 
@@ -185,33 +183,20 @@ const ListingScreen = () => {
     if (res) {
       setIsBookingOpen(false);
       reset();
-      
-      // Invalidate queries to refresh UI
-      queryClient.invalidateQueries({ queryKey: ['USER_LISTINGS'] });
       queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
-      queryClient.invalidateQueries({ 
-        queryKey: ['CALENDAR_DATA', user?.id, selectedListingId] 
-      });
+      queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
     }
   };
 
   // --- MEMOIZED DATA ---
+  // Now only handles Search Filtering because status/date filtering is done via API
   const filteredReservations = useMemo(() => {
     if (!reservationRawData) return [];
     return reservationRawData.filter((item: any) => {
       const guestName = (item.guest || item.name || '').toLowerCase();
-      const matchesSearch = guestName.includes(searchQuery.toLowerCase());
-      const today = new Date().toISOString().split('T')[0];
-      const itemDate = (item.start_date || '').split(' ')[0];
-
-      let matchesChip = true;
-      if (activeFilter === 'today') matchesChip = itemDate === today;
-      else if (activeFilter === 'pending') matchesChip = item.status?.toLowerCase() === 'pending';
-      else if (activeFilter === 'confirmed') matchesChip = item.status?.toLowerCase() === 'confirmed';
-
-      return matchesSearch && matchesChip;
+      return guestName.includes(searchQuery.toLowerCase());
     });
-  }, [reservationRawData, searchQuery, activeFilter]);
+  }, [reservationRawData, searchQuery]);
 
   const actualProperties = useMemo(() => {
     return (listingOptions || []).filter((opt: any) => {
@@ -340,13 +325,19 @@ const ListingScreen = () => {
       )}
 
       <FilterModalView 
-        isVisible={isModalVisible} onClose={() => setModalVisible(false)}
-        onApply={() => { setAppliedListingIds(selectedPropertyValues.join(',')); setModalVisible(false); }}
-        onReset={() => { setSelectedPropertyValues([]); setAppliedListingIds(''); }}
-        isDropdownOpen={isDropdownOpen} setIsDropdownOpen={setIsDropdownOpen}
-        selectedPropertyValues={selectedPropertyValues} 
+        isVisible={isModalVisible} 
+        onClose={() => setModalVisible(false)}
+        initialSelectedValues={selectedPropertyValues}
+        onApply={(finalSelection) => {
+          setSelectedPropertyValues(finalSelection);
+          setAppliedListingIds(finalSelection.join(','));
+          setModalVisible(false);
+        }}
+        onReset={() => {
+          setSelectedPropertyValues([]);
+          setAppliedListingIds('');
+        }}
         actualProperties={actualProperties} 
-        toggleProperty={toggleProperty}
       />
 
       <CreateBookingSheet 
@@ -360,38 +351,12 @@ const ListingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#FFF' 
-  },
-  headerFixed: { 
-    paddingHorizontal: s(16), 
-    backgroundColor: '#FFF', 
-    zIndex: 10,
-    paddingTop: 0,
-  },
-  segmentedWrapper: { 
-    alignItems: 'center', 
-    paddingTop: vs(5),
-    paddingBottom: vs(8),
-  },
-  listContent: { 
-    padding: s(16), 
-    flexGrow: 1 
-  },
-  centerContainer: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginTop: vs(100) 
-  },
-  overlayLoader: { 
-    ...StyleSheet.absoluteFill, 
-    backgroundColor: 'rgba(255,255,255,0.7)', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    zIndex: 999 
-  },
+  container: { flex: 1, backgroundColor: '#FFF' },
+  headerFixed: { paddingHorizontal: s(16), backgroundColor: '#FFF', zIndex: 10, paddingTop: 0 },
+  segmentedWrapper: { alignItems: 'center', paddingTop: vs(5), paddingBottom: vs(8) },
+  listContent: { padding: s(16), flexGrow: 1 },
+  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: vs(100) },
+  overlayLoader: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(255,255,255,0.7)', justifyContent: 'center', alignItems: 'center', zIndex: 999 },
 });
 
 export default ListingScreen;
