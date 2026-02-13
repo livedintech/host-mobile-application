@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCalendarBookingManagementListingsApi } from '@/services/calendarBookingManagement'; 
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useCalendarContainer(listingId: string) {
+  const { user } = useAuthStore();
   const { data: rawData, isLoading } = useQuery({
     queryKey: ['CALENDAR_DATA', listingId], 
     queryFn: () => getCalendarBookingManagementListingsApi(listingId),
-    enabled: true, 
+    enabled: !!user?.id,
   });
 
   const calendarDataMap = useMemo(() => {

@@ -67,7 +67,7 @@ export const CreateBookingSheet = ({
             errors={errors} 
             label="Stay Type" 
             placeholder="Select stay type"
-            data={[{label: 'Guest', value: 'guest'}, {label: 'Host', value: 'host'}]} 
+            data={[{label: 'Host', value: 'host'}, {label: 'Livedin', value: 'livedin'}]} 
           />
           <InputField 
             name="name" 
@@ -111,6 +111,7 @@ export const CreateBookingSheet = ({
         label="End Date" 
         placeholder="YYYY-MM-DD"
         mode='date'
+        rules={{ required: 'Check-out date is required' }}
         rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />} 
       />
 

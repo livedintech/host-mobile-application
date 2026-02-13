@@ -5,13 +5,16 @@ import apiService from "./apiService";
  * 1. FETCH BOOKINGS (For the Dots/Calendar)
  */
 export const getCalendarBookingManagementListingsApi = async (listingId?: string) => {
-    const url = listingId 
+    // If listingId is provided and not "all" (empty string), use the specific calendar route
+    // Otherwise, use the bookings route which should be protected by your Bearer token 
+    // in the apiService interceptor.
+    const url = (listingId && listingId !== "") 
         ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
         : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS; 
     
     const { ok, data } = await apiService.get(url);
-    if (ok) return data?.data || [];
     
+    if (ok) return data?.data || [];
     return [];
 };
 

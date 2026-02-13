@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,11 +6,6 @@ import {
   Pressable,
   useWindowDimensions,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
 import { s, vs, ms } from 'react-native-size-matters';
 
 interface SegmentedControlProps {
@@ -26,36 +21,20 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
 }) => {
   const { width: windowWidth } = useWindowDimensions();
 
-  // Responsive layout constants
   const CONTAINER_WIDTH = windowWidth * 0.9;
   const PADDING = s(4);
   const SEGMENT_WIDTH = (CONTAINER_WIDTH - PADDING * 2) / options.length;
-
-  // Animation value for the sliding background
-  const translateX = useSharedValue(selectedIndex * SEGMENT_WIDTH);
-
-  // Sync animation with prop changes
-  useEffect(() => {
-    translateX.value = withSpring(selectedIndex * SEGMENT_WIDTH, {
-      damping: 18,
-      stiffness: 120,
-    });
-  }, [selectedIndex, SEGMENT_WIDTH, translateX]);
-
-  const animatedIndicatorStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+  const leftPosition = selectedIndex * SEGMENT_WIDTH;
 
   return (
     <View style={[styles.container, { width: CONTAINER_WIDTH }]}>
-      {/* Persistent Animated Background:
-          This stays green and simply slides to the selected position.
-      */}
-      <Animated.View
+      <View
         style={[
           styles.activeIndicator,
-          { width: SEGMENT_WIDTH },
-          animatedIndicatorStyle,
+          { 
+            width: SEGMENT_WIDTH, 
+            left: PADDING + leftPosition 
+          },
         ]}
       />
 
@@ -67,7 +46,6 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
             key={`segment-${index}`}
             onPress={() => onChange(index)}
             style={styles.segment}
-            android_ripple={{ color: 'rgba(255,255,255,0.1)', borderless: true }}
           >
             <Text
               style={[
@@ -86,12 +64,11 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: vs(54),
+    height: vs(48), // Reduced from 54 to save vertical space
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    borderRadius: ms(27),
+    borderRadius: ms(24),
     padding: s(4),
-    // Outer Border & Shadow
     borderWidth: 1,
     borderColor: '#E8E8E8',
     shadowColor: '#000',
@@ -104,20 +81,19 @@ const styles = StyleSheet.create({
   },
   activeIndicator: {
     position: 'absolute',
-    height: vs(46),
-    backgroundColor: '#2D4A41', // Dark Green from screenshot
-    borderRadius: ms(23),
-    left: s(4),
+    height: vs(40), // Adjusted for new container height
+    backgroundColor: '#2D4A41',
+    borderRadius: ms(20),
   },
   segment: {
     flex: 1,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10, // Ensure text is always on top of the indicator
+    zIndex: 10, 
   },
   text: {
-    fontSize: ms(16),
+    fontSize: ms(15), // Slightly smaller to match the thinner bar
     fontWeight: '600',
     letterSpacing: 0.2,
   },

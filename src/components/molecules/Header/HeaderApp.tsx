@@ -36,11 +36,11 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo,a
         )}
 
         <View style={styles.headerRight}>
-          {isLang && (
+          {/* {isLang && (
             <View style={styles.langBtn}>
               <AppText text="AR" fontSize={12} type="Medium" />
             </View>
-          )}
+          )} */}
 
           {isGoBack && (
             <ButtonView style={styles.getStartedBtn} onPress={() => goBack()}>

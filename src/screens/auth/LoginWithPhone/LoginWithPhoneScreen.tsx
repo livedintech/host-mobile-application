@@ -8,7 +8,7 @@ import Metrics from '@/utility/Metrics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const LoginWithPhoneScreen = () => {
-  const { control, errors, handleSubmit, isLoading, onSubmit, } =
+  const { control, errors, handleSubmit, isLoading, onSubmit } =
     useLoginWithPhoneContainer();
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +38,6 @@ const LoginWithPhoneScreen = () => {
           title="Next"
           onPress={handleSubmit(onSubmit)}
           loading={isLoading}
-         
         />
       </View>
     </SafeAreaView>
@@ -136,6 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
+    paddingBottom: 50,
   },
 });
 

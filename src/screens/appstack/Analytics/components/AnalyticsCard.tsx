@@ -7,6 +7,10 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
   // console.log("analyticsanalyticsItem",item)
+
+  const numericDelta = parseFloat(item?.delta_pct || item?.trend || 0);
+  const isPositive = numericDelta > 0;
+  const isZeroTrend = numericDelta === 0;
   /** -----------------------------
    * AI INSIGHT RENDERER
    * ----------------------------- */
@@ -39,10 +43,10 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
    * ----------------------------- */
   if (variant === 'listing') {
     // ⭐ SAME ZERO LOGIC AS KPI
-    const isZeroTrend = item.trend === '0%' || item.trend === '-0%';
+    // const isZeroTrend = item.trend === '0%' || item.trend === '-0%';
     const trendColor = isZeroTrend
       ? '#757575'
-      : item.isUp
+      : isPositive
       ? '#1FA67A'
       : '#E53935';
 
@@ -127,9 +131,9 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
    * KPI CARD UI
    * ----------------------------- */
 
-  const isZeroTrend = item.change === '0%' || item.change === '-0%';
-  const badgeBg = isZeroTrend ? '#E0E0E0' : item.isUp ? '#E8F5F1' : '#FDEEEE';
-  const textColor = isZeroTrend ? '#757575' : item.isUp ? '#1FA67A' : '#E53935';
+  // const isZeroTrend = item.change === '0%' || item.change === '-0%';
+const badgeBg = isZeroTrend ? '#E0E0E0' : isPositive ? '#E8F5F1' : '#FDEEEE';
+  const textColor = isZeroTrend ? '#757575' : isPositive ? '#1FA67A' : '#E53935';
 
   return (
     <View style={styles.kpiWrapper}>
@@ -162,14 +166,14 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
           <View style={[styles.kpiBadge, { backgroundColor: badgeBg }]}>
             {!isZeroTrend && (
               <Svgicons
-                path={item.isUp ? 'trendUpIcon' : 'trendDownIcon'}
+                path={isPositive ? 'trendUpIcon' : 'trendDownIcon'}
                 width={10}
                 height={10}
                 mr={4}
               />
             )}
             <AppText
-              text={item.change}
+              text={item.delta_pct}
               fontSize={10}
               type="Medium"
               color={textColor}
