@@ -8,7 +8,9 @@ export interface getChannexListingsByIdPayload {
   channel_id: string
 }
 export interface getUserListingsByUserID {
-  user: number
+  user: number;
+  conntection_type?: string;
+  limit?: number
 }
 export interface createMapListingbyUserIDType {
   user: number,

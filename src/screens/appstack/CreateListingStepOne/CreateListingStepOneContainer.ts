@@ -3,13 +3,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
 import { StepOneFormValues, stepOneSchema } from '@/validation/auth/createListingSchemas';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { useMutation } from '@tanstack/react-query';
-import { CreateListingPayload, CreateListingResponse } from '@/types/api/createListingTypes';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { CreateListingPayload, CreateListingResponse, getChannelIDResponse, ManageListingsResponse } from '@/types/api/createListingTypes';
 import Toast from 'react-native-toast-message';
-import { createListingApi } from '@/services/ createListingService';
+import { createListingApi, createNewListingApi, getManageYourListings } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import STORAGE_CONST from '@/constants/storage';
 
 export default function useCreateListingStepOneContainer() {
   const { user } = useAuthStore()
@@ -28,6 +29,15 @@ export default function useCreateListingStepOneContainer() {
     defaultValues: {
       propertyType: '',
     },
+  });
+
+  // Get Channel ID
+  const { data, refetch, isLoading } = useQuery<getChannelIDResponse>({
+    queryKey: [STORAGE_CONST.CREATE_LISTING],
+    queryFn: () =>
+      createNewListingApi({
+        user: user?.id!,
+      }),
   });
 
   const {
@@ -52,17 +62,19 @@ export default function useCreateListingStepOneContainer() {
       });
     },
   });
+  const channelID = data?.data?.[0]?.ch_channel_id;
+  const isChannelMissing = !channelID;
 
 
   const onNext = (data: StepOneFormValues) => {
 
     updateListing({
       property_type_category: data?.propertyType,
-      name:''
+      name: ''
     });
-    setChannelId("9bd50e4a-9336-44a2-93b9-dac6f9f8b57b")
+    channelID && setChannelId(channelID)
     const payload = {
-      channel_id: "9bd50e4a-9336-44a2-93b9-dac6f9f8b57b",
+      channel_id: channelID,
       user_id: Number(user?.id),
       payload: {
         listing: {
@@ -76,43 +88,43 @@ export default function useCreateListingStepOneContainer() {
   };
 
 
-const onSaveExit = handleSubmit((data: StepOneFormValues) => {
-  updateListing({
-    property_type_category: data?.propertyType,
-    name: '',
-  });
+  const onSaveExit = handleSubmit((data: StepOneFormValues) => {
+    updateListing({
+      property_type_category: data?.propertyType,
+      name: '',
+    });
 
-  setChannelId('9bd50e4a-9336-44a2-93b9-dac6f9f8b57b');
+    channelID && setChannelId(channelID);
 
-  const payload = {
-    channel_id: '9bd50e4a-9336-44a2-93b9-dac6f9f8b57b',
-    user_id: Number(user?.id),
-    payload: {
-      listing: {
-        property_type_category: data?.propertyType,
-        name: 'New Listing',
+    const payload = {
+      channel_id: channelID,
+      user_id: Number(user?.id),
+      payload: {
+        listing: {
+          property_type_category: data?.propertyType,
+          name: 'New Listing',
+        },
       },
-    },
-  };
+    };
 
-  createListingPayload(payload, {
-    onSuccess: ({ message, data }) => {
-      Toast.show({
-        type: 'success',
-        text1: message || 'Listing saved successfully',
-      });
+    createListingPayload(payload, {
+      onSuccess: ({ message, data }) => {
+        Toast.show({
+          type: 'success',
+          text1: message || 'Listing saved successfully',
+        });
 
-      setListingId(data?.listing_id);
+        setListingId(data?.listing_id);
 
-      navigate(
-        NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
-      );
-    },
+        navigate(
+          NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
+        );
+      },
+    });
   });
-});
 
 
   return {
-    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading: isPending && !isIdle,
+    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading: isPending && !isIdle || isLoading,isChannelMissing
   };
 }

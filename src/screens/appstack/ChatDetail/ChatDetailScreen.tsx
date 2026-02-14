@@ -28,57 +28,81 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import { useAuthStore } from '@/store/useAuthStore';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+dayjs.extend(utc);
+dayjs.extend(localizedFormat);
 
+dayjs.extend(utc);
 interface MessageWithTimeLabel extends ChatMessage {
   showTimeLabel?: boolean;
   timeLabel?: string;
 }
 
 // Helper function to format time label
-const getTimeLabel = (date: Date): string => {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
+// const getTimeLabel = (date: Date): string => {
+//   const today = new Date();
+//   const yesterday = new Date(today);
+//   yesterday.setDate(yesterday.getDate() - 1);
 
-  const messageDate = new Date(date);
-  const messageDateOnly = new Date(
-    messageDate.getFullYear(),
-    messageDate.getMonth(),
-    messageDate.getDate(),
-  );
-  const todayDateOnly = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
-  const yesterdayDateOnly = new Date(
-    yesterday.getFullYear(),
-    yesterday.getMonth(),
-    yesterday.getDate(),
-  );
+//   const messageDate = new Date(date);
+//   const messageDateOnly = new Date(
+//     messageDate.getFullYear(),
+//     messageDate.getMonth(),
+//     messageDate.getDate(),
+//   );
+//   const todayDateOnly = new Date(
+//     today.getFullYear(),
+//     today.getMonth(),
+//     today.getDate(),
+//   );
+//   const yesterdayDateOnly = new Date(
+//     yesterday.getFullYear(),
+//     yesterday.getMonth(),
+//     yesterday.getDate(),
+//   );
 
-  let dateLabel = '';
+//   let dateLabel = '';
 
-  if (messageDateOnly.getTime() === todayDateOnly.getTime()) {
-    dateLabel = 'Today';
-  } else if (messageDateOnly.getTime() === yesterdayDateOnly.getTime()) {
-    dateLabel = 'Yesterday';
-  } else {
-    dateLabel = messageDate.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
+//   if (messageDateOnly.getTime() === todayDateOnly.getTime()) {
+//     dateLabel = 'Today';
+//   } else if (messageDateOnly.getTime() === yesterdayDateOnly.getTime()) {
+//     dateLabel = 'Yesterday';
+//   } else {
+//     dateLabel = messageDate.toLocaleDateString('en-US', {
+//       weekday: 'short',
+//       month: 'short',
+//       day: 'numeric',
+//     });
+//   }
+
+//   const timeString = messageDate.toLocaleTimeString([], {
+//     hour: 'numeric',
+//     minute: '2-digit',
+//     hour12: true,
+//   });
+
+//   return `${dateLabel} ${timeString}`;
+// };
+const getTimeLabel = (date: string | Date): string => {
+  const messageDate = dayjs(date);
+  const today = dayjs();
+  const yesterday = today.subtract(1, 'day');
+
+  if (messageDate.isSame(today, 'day')) {
+    return 'Today';
   }
 
-  const timeString = messageDate.toLocaleTimeString([], {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+  if (messageDate.isSame(yesterday, 'day')) {
+    return 'Yesterday';
+  }
 
-  return `${dateLabel} ${timeString}`;
+  // Older messages → show weekday
+  return messageDate.format('dddd'); // e.g. "Tuesday"
 };
+
+
 
 const shouldShowTimeLabel = (
   currentMessage: ChatMessage,
@@ -86,18 +110,16 @@ const shouldShowTimeLabel = (
 ): boolean => {
   if (!previousMessage) return true;
 
-  const currentDate = new Date(currentMessage.createdAt);
-  const previousDate = new Date(previousMessage.createdAt);
+  const currentDate = dayjs(currentMessage.createdAt).utc();
+  const previousDate = dayjs(previousMessage.createdAt).utc();
 
-  const currentDay = currentDate.toDateString();
-  const previousDay = previousDate.toDateString();
+  const currentDay = currentDate.format('YYYY-MM-DD');
+  const previousDay = previousDate.format('YYYY-MM-DD');
 
   if (currentDay !== previousDay) return true;
 
-  const currentHour = currentDate.getHours();
-  const previousHour = previousDate.getHours();
-
-  return currentHour !== previousHour;
+  // Show label if hour changed
+  return currentDate.hour() !== previousDate.hour();
 };
 
 const processMessagesWithTimeLabels = (
@@ -132,7 +154,7 @@ const processMessagesWithTimeLabels = (
 const ChatScreen = () => {
   const { user } = useAuthStore();
   const route = useRoute();
-  const params = route?.params as { conversation_id?: string, listing_id:string } | undefined;
+  const params = route?.params as { conversation_id?: string, listing_id: string } | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
 
@@ -179,13 +201,13 @@ const ChatScreen = () => {
 
   // State for highlighting scrolled message
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | number | null>(null);
-  
+
   // ✅ State to track if user is at bottom of chat
   const [isAtBottom, setIsAtBottom] = useState(true);
-  
+
   // ✅ State for unread message indicator
   const [unreadCount, setUnreadCount] = useState(0);
-  
+
   // ✅ Animation for scroll-to-bottom button
   const [scrollButtonOpacity] = useState(new Animated.Value(0));
 
@@ -201,7 +223,7 @@ const ChatScreen = () => {
   useEffect(() => {
     if (messagesWithTimeLabels.length > prevMessageCount) {
       const newMessageCount = messagesWithTimeLabels.length - prevMessageCount;
-      
+
       if (isAtBottom) {
         // User is at bottom, auto scroll
         setTimeout(() => {
@@ -217,7 +239,7 @@ const ChatScreen = () => {
           useNativeDriver: true,
         }).start();
       }
-      
+
       setPrevMessageCount(messagesWithTimeLabels.length);
     }
   }, [messagesWithTimeLabels.length, isAtBottom, prevMessageCount]);
@@ -225,13 +247,13 @@ const ChatScreen = () => {
   // ✅ Handle scroll events to detect if user is at bottom
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
-    
+
     // Since list is inverted, check if offset is near 0
     const atBottom = offsetY <= 100;
-    
+
     if (atBottom !== isAtBottom) {
       setIsAtBottom(atBottom);
-      
+
       if (atBottom) {
         // User scrolled to bottom, reset unread count
         setUnreadCount(0);
@@ -303,7 +325,6 @@ const ChatScreen = () => {
   };
 
   const renderMessage = ({ item }: { item: MessageWithTimeLabel }) => {
-    // ✅ Dynamic comparison with logged-in user
     const isHost = Number(item.user._id) === Number(user?.id);
     const isAutomated = item.user._id === 3;
     const isSelected = selectedMessageId === item._id;
@@ -422,10 +443,7 @@ const ChatScreen = () => {
 
             {/* Message Time */}
             <AppText
-              text={item.createdAt.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              text={dayjs(item.createdAt).local().format('h:mm A')}
               fontSize={11}
               color={
                 isHost && !isAutomated
@@ -434,6 +452,7 @@ const ChatScreen = () => {
               }
               mt={8}
             />
+
           </Pressable>
         </View>
       </View>
@@ -538,8 +557,7 @@ const ChatScreen = () => {
           data={messagesWithTimeLabels}
           isLoading={isLoading}
           renderItem={renderMessage}
-          listEmptyText=""
-          onRefresh={refetch}
+          listEmptyText="No Messages Found"
           keyExtractor={item => item._id.toString()}
           maintainVisibleContentPosition={{
             minIndexForVisible: 0,
@@ -555,7 +573,7 @@ const ChatScreen = () => {
 
         {/* ✅ Scroll to Bottom Button (WhatsApp style) */}
         {!isAtBottom && (
-          <Animated.View 
+          <Animated.View
             style={[
               styles.scrollToBottomButton,
               { opacity: scrollButtonOpacity }
@@ -565,11 +583,11 @@ const ChatScreen = () => {
               <Svgicons path="ChevronDownIcon" size={20} color={Colors.WHITE} />
               {unreadCount > 0 && (
                 <View style={styles.unreadBadge}>
-                  <AppText 
-                    text={unreadCount > 99 ? '99+' : unreadCount.toString()} 
-                    fontSize={10} 
+                  <AppText
+                    text={unreadCount > 99 ? '99+' : unreadCount.toString()}
+                    fontSize={10}
                     type="Bold"
-                    color={Colors.WHITE} 
+                    color={Colors.WHITE}
                   />
                 </View>
               )}
@@ -782,17 +800,17 @@ const ChatScreen = () => {
               fontSize={16}
             />
             <View style={styles.repliesGrid}>
-              {SAVED_REPLIES.map(reply => (
+              {SAVED_REPLIES.map((reply: { id: number; body: string; title: string }) => (
                 <Pressable
-                  key={reply.id}
+                  key={reply?.id}
                   style={styles.replyChip}
                   onPress={() => {
-                    setInputText(reply.value);
+                    setInputText(reply?.body);
                     setShowSavedReplies(false);
                   }}
                 >
                   <AppText
-                    text={reply.label}
+                    text={reply?.title}
                     fontSize={13}
                     color={Colors.BRUNSWICK_GREEN}
                   />
@@ -1023,6 +1041,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
     padding: 5,
+    zIndex: 99999
   },
   aiFooter: {
     flexDirection: 'row',

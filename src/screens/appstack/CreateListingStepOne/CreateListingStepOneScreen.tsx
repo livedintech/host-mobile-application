@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, Pressable } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -8,7 +8,9 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
 
 const CreateListingStepOneScreen = () => {
-  const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading } = useCreateListingStepOneContainer();
+  const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading, isChannelMissing } = useCreateListingStepOneContainer();
+  console.log('isChannelMissing', isChannelMissing);
+
 
   return (
     <View style={styles.container}>
@@ -41,7 +43,7 @@ const CreateListingStepOneScreen = () => {
 
           <View style={styles.footer}>
             <AppButton
-              loading={isLoading}
+              loading={isLoading || isChannelMissing}
               title="Next"
               onPress={handleSubmit(onNext)}
               mt={20}
@@ -50,7 +52,7 @@ const CreateListingStepOneScreen = () => {
               title="Save & Exit"
               onPress={onSaveExit}
               mt={15}
-              disabled={isLoading}
+              disabled={isLoading || isChannelMissing}
             />
           </View>
         </View>

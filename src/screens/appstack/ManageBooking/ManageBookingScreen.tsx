@@ -25,7 +25,7 @@ const ManageBookingScreen = () => {
         const pfType = type ? type : 'Airbnb'
         return (
             <View>
-                <AppText text={`${pfType} Account`} mb={13} color={Colors.BRUNSWICK_GREEN} fontSize={18}/>
+                {/* <AppText text={`${pfType} Account`} mb={13} color={Colors.BRUNSWICK_GREEN} fontSize={18}/> */}
                 <GradientBorder borderRadius={24} style={styles.cardWrapper}>
                 <View style={styles.cardInner}>
                     <View style={styles.rowContent}>
@@ -34,14 +34,14 @@ const ManageBookingScreen = () => {
                     </View>
 
                     <View style={styles.rowContent}>
-                        <AppText text="Livedin Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                        <AppText text={name} color={Colors.PINE_FOREST} type="Medium" />
+                        <AppText text="Platform Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText text={pfType} color={Colors.PINE_FOREST} type="Medium" />
                     </View>
 
-                    <View style={styles.rowContent}>
+                    {/* <View style={styles.rowContent}>
                         <AppText text="Total Property Count: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
                         <AppText text={count} color={Colors.PINE_FOREST} type="Medium" />
-                    </View>
+                    </View> */}
 
                     <View style={styles.statusRow}>
                         <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />

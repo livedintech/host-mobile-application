@@ -53,12 +53,12 @@ const SubscriptionHistoryScreen = () => {
           horizontal
           data={listings || []}
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
           renderItem={({ item }) => (
             <GradientBorder borderRadius={24} style={styles.listingItem}>
               <View style={styles.innerCard}>
                 <Svgicons path='listingIcon' size={49} />
-                <AppText text={item.title || ''} fontSize={14} color={Colors.PINE_FOREST} mt={10} numberOfLines={1}/>
+                <AppText text={item.title || item.name ||  ''} fontSize={14} color={Colors.PINE_FOREST} mt={10} numberOfLines={1}/>
               </View>
             </GradientBorder>
           )}

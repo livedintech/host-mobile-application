@@ -74,10 +74,13 @@ export default function useAirbnbImportContainer() {
 
 
   const listingOptions =
-    apiResponse?.data?.map((item: { title: string, id: number }) => ({
-      label: item.title,
+    apiResponse?.data?.map((item: { name: string, id: number }) => ({
+      label: item.name,
       value: item.id,
     })) ?? [];
+
+    console.log('listingOptions',listingOptions);
+    
 
   const {
     control,

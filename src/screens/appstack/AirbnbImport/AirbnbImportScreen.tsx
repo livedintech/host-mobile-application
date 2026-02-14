@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable, FlatList } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useAirbnbImportContainer from './AirbnbImportContainer';
@@ -35,7 +35,9 @@ const PropertyCard = ({
 
           <View style={styles.infoRow}>
             <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
-            <AppText text={name} color={Colors.PINE_FOREST} />
+            <View style={{ flex: 1 }}>
+              <AppText text={name} color={Colors.PINE_FOREST} numberOfLines={1} />
+            </View>
           </View>
 
           <View style={styles.infoRow}>
@@ -46,6 +48,7 @@ const PropertyCard = ({
             />
           </View>
         </View>
+
         <Svgicons path="houseLineIcon" />
       </View>
 
