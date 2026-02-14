@@ -9,6 +9,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
+import AppButton from '../AppButton/AppButton';
 
 interface Props {
   isVisible: boolean;
@@ -115,7 +116,7 @@ export const CreateBookingSheet = ({
         rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />} 
       />
 
-      <Pressable style={styles.buttonShadow} onPress={onSubmit}>
+      {/* <Pressable style={styles.buttonShadow} onPress={onSubmit}>
         <LinearGradient colors={['#FFFFFF', '#F9F9F9']} style={styles.gradientBtn}>
           <AppText 
             text={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"} 
@@ -123,7 +124,10 @@ export const CreateBookingSheet = ({
             color="#2D4A41" 
           />
         </LinearGradient>
-      </Pressable>
+      </Pressable> */}
+      <AppButton title={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"} 
+      onPress={onSubmit}
+      />
     </ScrollView>
   </BottomSheetComponent>
 );

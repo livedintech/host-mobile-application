@@ -201,3 +201,8 @@ export interface getTransactionHistoryPayloadType {
   host_id: number;
 }
 
+export interface createEditAmenitiesPayloadType {
+  listing_id: string;
+  channel_id: string;
+  amenities: string[]
+}

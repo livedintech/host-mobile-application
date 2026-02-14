@@ -4,7 +4,7 @@ import { SpinnerLoaderProps } from './types';
 import { Colors } from '@/theme/colors';
 
 export default function SpinnerLoader(props: SpinnerLoaderProps) {
-    const { containerStyles, size = "small" } = props
+    const { containerStyles, size = "large" } = props
     return (
       <View style={[styles.container, containerStyles]}>
         <ActivityIndicator size={size} color={Colors.BRUNSWICK_GREEN} />

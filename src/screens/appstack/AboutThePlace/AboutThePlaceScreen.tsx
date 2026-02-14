@@ -9,6 +9,7 @@ import useAboutThePlaceContainer from './AboutThePlaceContainer';
 import InputField from '@/components/molecules/Input/InputField';
 import MaskedInputField from '@/components/molecules/Input/MaskedInputField';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
+import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 
 const AboutThePlaceScreen = () => {
   const {
@@ -20,7 +21,9 @@ const AboutThePlaceScreen = () => {
     onNext,
     isLoading,
     isEdit,
-    onSaveExit
+    onSaveExit,
+    getAmunities,
+    isLoadingGetAmunities
   } = useAboutThePlaceContainer();
 
   return (
@@ -56,14 +59,6 @@ const AboutThePlaceScreen = () => {
 
           <View style={styles.row}>
             <View style={styles.half}>
-              {/* <MaskedInputField
-                name="check_in_time"
-                label="Check-in Time"
-                control={control}
-                errors={errors}
-                placeholder="HH:MM"
-
-              /> */}
               <DateTimeInputField
                 mode='time'
                 name="check_in_time"
@@ -82,13 +77,6 @@ const AboutThePlaceScreen = () => {
                 errors={errors}
                 placeholder="HH:MM"
               />
-              {/* <MaskedInputField
-                name="check_out_time"
-                label="Check-out Time"
-                control={control}
-                errors={errors}
-                placeholder="HH:MM"
-              /> */}
             </View>
           </View>
 
@@ -101,6 +89,16 @@ const AboutThePlaceScreen = () => {
             data={binaryOptions}
             placeholder="Select Yes/No"
           />
+          <MultiSelectDropdownField
+  control={control}
+  label='Amenities'
+  errors={errors}
+  name='amenities'
+  data={getAmunities}
+  disabled={isLoadingGetAmunities}
+  dropdownPosition='top'
+/>
+
 
           <View style={styles.footer}>
             {!isEdit && (
