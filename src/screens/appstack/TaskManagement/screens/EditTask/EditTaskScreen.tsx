@@ -205,45 +205,57 @@ const EditTaskScreen = () => {
 
             {preActivityExpanded && (
               <View style={styles.checklistContent}>
-                <View style={styles.mediaContainer}>
-                  {preActivityMedia.map((media: any, index: number) => {
-                    const mediaId = media.id || `pre-${index}`;
-                    const isVideo = checkIsVideo(media);
-                    return (
-                      <ButtonView
-                        key={mediaId}
-                        onPress={() => handlePreview(media)}
-                        style={styles.mediaWrapper}
-                      >
-                        <ShimmerPlaceholder
-                          visible={imageLoaded[mediaId]}
-                          style={styles.shimmerStyle}
+                {preActivityMedia.length > 0 ? (
+                  <View style={styles.mediaContainer}>
+                    {preActivityMedia.map((media: any, index: number) => {
+                      const mediaId = media.id || `pre-${index}`;
+                      const isVideo = checkIsVideo(media);
+                      return (
+                        <ButtonView
+                          key={mediaId}
+                          onPress={() => handlePreview(media)}
+                          style={styles.mediaWrapper}
                         >
-                          {isVideo ? (
-                            <View
-                              style={styles.videoPlaceholder}
-                              onLayout={() => toggleImageLoad(mediaId)}
-                            >
-                              <Svgicons path="webcampIcon" size={30} />
-                              <AppText
-                                text="Video"
-                                fontSize={10}
-                                color={Colors.PINE_FOREST}
-                                mt={4}
+                          <ShimmerPlaceholder
+                            visible={imageLoaded[mediaId]}
+                            style={styles.shimmerStyle}
+                          >
+                            {isVideo ? (
+                              <View
+                                style={styles.videoPlaceholder}
+                                onLayout={() => toggleImageLoad(mediaId)}
+                              >
+                                <Svgicons path="webcampIcon" size={30} />
+                                <AppText
+                                  text="Video"
+                                  fontSize={10}
+                                  color={Colors.PINE_FOREST}
+                                  mt={4}
+                                />
+                              </View>
+                            ) : (
+                              <Image
+                                source={{ uri: media.file_path }}
+                                style={styles.mediaImage}
+                                onLoad={() => toggleImageLoad(mediaId)}
                               />
-                            </View>
-                          ) : (
-                            <Image
-                              source={{ uri: media.file_path }}
-                              style={styles.mediaImage}
-                              onLoad={() => toggleImageLoad(mediaId)}
-                            />
-                          )}
-                        </ShimmerPlaceholder>
-                      </ButtonView>
-                    );
-                  })}
-                </View>
+                            )}
+                          </ShimmerPlaceholder>
+                        </ButtonView>
+                      );
+                    })}
+                  </View>
+                ) : (
+                  /* --- This is the empty state message --- */
+                  <View style={styles.emptyMediaContainer}>
+                    <AppText
+                      text="No images or videos available for this task."
+                      fontSize={14}
+                      color={Colors.BRUNSWICK_GREEN}
+                      style={{ textAlign: 'center' }}
+                    />
+                  </View>
+                )}
               </View>
             )}
           </View>
@@ -292,6 +304,7 @@ const EditTaskScreen = () => {
         listEmptyText="No checklists available"
         contentContainerStyle={styles.scrollContent}
         ListHeaderComponent={ListHeader}
+        style={{flex:1}}
         renderItem={({ item }) => (
           <GradientBorder
             style={styles.gradientWrapper}
@@ -346,12 +359,14 @@ const EditTaskScreen = () => {
                               onPress={() => toggleChecklistItem(check.id)}
                             />
                           )}
-                          <AppText
-                            text={check.name}
-                            fontSize={12}
-                            color={Colors.PINE_FOREST}
-                            ml={taskStatus === 'todo' ? 12 : 0}
-                          />
+                          <View style={{ flex: 1 }}>
+                            <AppText
+                              text={check.name}
+                              fontSize={12}
+                              color={Colors.PINE_FOREST}
+                              ml={taskStatus === 'todo' ? 12 : 0}
+                            />
+                          </View>
                         </View>
 
                         {/* --- Post Activity / Checklist Media --- */}
@@ -456,15 +471,15 @@ const EditTaskScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF', },
+  container: { flex: 1, backgroundColor: '#FFF' },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  scrollContent: { padding: 20, paddingBottom: 100 },
+  scrollContent: { padding: 20, paddingBottom: 20 },
   header: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 25,
-    paddingHorizontal:20
+    paddingHorizontal: 20,
   },
   infoSection: { marginBottom: 25 },
   checklistTitleRow: {
@@ -530,6 +545,11 @@ const styles = StyleSheet.create({
   fullVideo: { width: '100%', height: '80%' },
   closeVideoBtn: { position: 'absolute', top: 50, right: 20, zIndex: 10 },
   footer: { padding: 20 },
+  emptyMediaContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default EditTaskScreen;
