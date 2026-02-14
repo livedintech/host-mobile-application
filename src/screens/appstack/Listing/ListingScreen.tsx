@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { s, vs } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 // Internal Imports
 import { useAuthStore } from '@/store/useAuthStore';
@@ -33,6 +34,9 @@ import { FilterModalView } from '@/components/molecules/FilterModalView/FilterMo
 import { CreateBookingSheet } from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import { Colors } from '@/theme/colors';
 
+// Validation
+import { createBookingFormValues, createBookingSchema } from '@/validation/booking/bookingSchemas';
+
 const ListingScreen = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
@@ -41,7 +45,7 @@ const ListingScreen = () => {
   // UI States
   const [selectedTab, setSelectedTab] = useState(0); 
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState('today'); // Default filter set to today
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -51,30 +55,44 @@ const ListingScreen = () => {
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<any[]>([]);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
-  // Form & Selection States
+  // Selection States
   const [selectedDateForBooking, setSelectedDateForBooking] = useState('');
   const [bookingType, setBookingType] = useState('direct');
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
   const [appliedListingIds, setAppliedListingIds] = useState<string>(''); 
 
+  // --- FORM SETUP WITH YUP ---
   const { 
-  control, 
-  watch, 
-  handleSubmit, 
-  setValue, 
-  reset, 
-  getValues, 
-  setError, 
-  formState: { errors } 
-} = useForm({
-  defaultValues: { 
-    listing_selection: '', name: '', email: '', phone: '',
-    booking_type: 'host', end_date: '', start_date: '', rate: '', listing_id: '',
-  },
-  shouldUnregister: false,
-});
+    control, 
+    watch, 
+    handleSubmit, 
+    setValue, 
+    reset, 
+    clearErrors,
+    formState: { errors } 
+  } = useForm<createBookingFormValues>({
+    resolver: yupResolver(createBookingSchema) as any,
+    context: { bookingType: bookingType },
+    defaultValues: { 
+      listing_selection: '', 
+      name: '', 
+      email: '', 
+      phone: '',
+      booking_type: 'host', 
+      end_date: '', 
+      start_date: '', 
+      rate: '', 
+      listing_id: '',
+    },
+    shouldUnregister: false,
+  });
 
   const selectedListingId = watch('listing_selection');
+
+  // Handle mode switches (Direct vs Pricing)
+  useEffect(() => {
+    clearErrors();
+  }, [bookingType, clearErrors]);
 
   useEffect(() => {
     if (selectedDateForBooking) {
@@ -88,13 +106,14 @@ const ListingScreen = () => {
     queryFn: () => getUserListingsApi(user?.id || ''),
   });
 
+  // Updated to include activeFilter in queryKey and API call
   const { data: reservationRawData = [], isLoading: resLoading } = useQuery({
-    queryKey: ['RESERVATIONS_LIST', appliedListingIds],
-    queryFn: () => getReservationsApi(appliedListingIds),
+    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter],
+    queryFn: () => getReservationsApi(appliedListingIds, activeFilter),
     enabled: selectedTab === 1,
   });
 
-  const { rawData } = useCalendarContainer(selectedListingId);
+  const { rawData } = useCalendarContainer(selectedListingId || '');
 
   // --- HANDLERS ---
   const handleReservationPress = async (bookingId: string | number) => {
@@ -130,35 +149,19 @@ const ListingScreen = () => {
     }
   };
 
-  const toggleProperty = (val: any) => {
-    const valStr = String(val);
-    setSelectedPropertyValues(prev => 
-      prev.includes(valStr) ? prev.filter(v => v !== valStr) : [...prev, valStr]
-    );
-  };
-
-  const onCreateBooking = async (formData: any) => {
+  const onCreateBooking = async (formData: createBookingFormValues) => {
     const finalId = formData.listing_id || selectedListingId;
     if (!finalId || finalId === "all") return;
 
-    const formatDate = (date: string) => {
+    const formatDate = (date: string | null | undefined) => {
       if (!date) return "";
       if (date.includes('-')) return date;
       const [m, d, y] = date.split('/');
       return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
     };
 
-    const startDate = formatDate(formData.start_date || getValues('start_date'));
+    const startDate = formatDate(formData.start_date);
     const endDate = formatDate(formData.end_date);
-
-    // --- DATE VALIDATION LOGIC ---
-    if (startDate === endDate) {
-        setError('end_date', { 
-            type: 'manual', 
-            message: 'Checkout date must be at least one day after the check-in date.' 
-        });
-        return;
-    }
 
     const payload = { 
       listing_id: finalId, 
@@ -167,42 +170,33 @@ const ListingScreen = () => {
     };
     
     const res = bookingType === 'direct' 
-      ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'host' })
-      : await updateCalendarPricingApi({ ...payload, price: formData.rate });
+      ? await createDirectBookingApi({ 
+          ...formData, 
+          ...payload, 
+          booking_type: formData.booking_type || 'host' 
+        })
+      : await updateCalendarPricingApi({ 
+          ...payload, 
+          price: formData.rate || '' 
+        });
 
     if (res) {
       setIsBookingOpen(false);
       reset();
-      
-      // Global invalidations
-      queryClient.invalidateQueries({ queryKey: ['USER_LISTINGS'] });
       queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
-      
-      queryClient.invalidateQueries({ 
-        queryKey: ['CALENDAR_DATA', user?.id, selectedListingId] 
-      });
-      
-      console.log("Booking created and cache invalidated with user ID context");
+      queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
     }
   };
 
   // --- MEMOIZED DATA ---
+  // Now only handles Search Filtering because status/date filtering is done via API
   const filteredReservations = useMemo(() => {
     if (!reservationRawData) return [];
     return reservationRawData.filter((item: any) => {
       const guestName = (item.guest || item.name || '').toLowerCase();
-      const matchesSearch = guestName.includes(searchQuery.toLowerCase());
-      const today = new Date().toISOString().split('T')[0];
-      const itemDate = (item.start_date || '').split(' ')[0];
-
-      let matchesChip = true;
-      if (activeFilter === 'today') matchesChip = itemDate === today;
-      else if (activeFilter === 'pending') matchesChip = item.status?.toLowerCase() === 'pending';
-      else if (activeFilter === 'confirmed') matchesChip = item.status?.toLowerCase() === 'confirmed';
-
-      return matchesSearch && matchesChip;
+      return guestName.includes(searchQuery.toLowerCase());
     });
-  }, [reservationRawData, searchQuery, activeFilter]);
+  }, [reservationRawData, searchQuery]);
 
   const actualProperties = useMemo(() => {
     return (listingOptions || []).filter((opt: any) => {
@@ -289,7 +283,7 @@ const ListingScreen = () => {
             <CalendarSection 
               control={control} errors={errors} 
               listingOptions={listingOptions} 
-              selectedListingId={selectedListingId} 
+              selectedListingId={selectedListingId || ''} 
               markedDates={calendarMarkedDates} 
               onDayPress={handleDayPress} 
             />
@@ -331,58 +325,38 @@ const ListingScreen = () => {
       )}
 
       <FilterModalView 
-        isVisible={isModalVisible} onClose={() => setModalVisible(false)}
-        onApply={() => { setAppliedListingIds(selectedPropertyValues.join(',')); setModalVisible(false); }}
-        onReset={() => { setSelectedPropertyValues([]); setAppliedListingIds(''); }}
-        isDropdownOpen={isDropdownOpen} setIsDropdownOpen={setIsDropdownOpen}
-        selectedPropertyValues={selectedPropertyValues} 
+        isVisible={isModalVisible} 
+        onClose={() => setModalVisible(false)}
+        initialSelectedValues={selectedPropertyValues}
+        onApply={(finalSelection) => {
+          setSelectedPropertyValues(finalSelection);
+          setAppliedListingIds(finalSelection.join(','));
+          setModalVisible(false);
+        }}
+        onReset={() => {
+          setSelectedPropertyValues([]);
+          setAppliedListingIds('');
+        }}
         actualProperties={actualProperties} 
-        toggleProperty={toggleProperty}
       />
 
       <CreateBookingSheet 
         isVisible={isBookingOpen} onClose={() => setIsBookingOpen(false)}
         bookingType={bookingType} setBookingType={setBookingType}
         control={control} errors={errors} listingOptions={listingOptions}
-        selectedListingId={selectedListingId} onSubmit={handleSubmit(onCreateBooking)}
+        selectedListingId={selectedListingId || ''} onSubmit={handleSubmit(onCreateBooking)}
       />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#FFF' 
-  },
-  headerFixed: { 
-    paddingHorizontal: s(16), 
-    backgroundColor: '#FFF', 
-    zIndex: 10,
-    paddingTop: 0, // Removed top padding to move SegmentedControl up
-  },
-  segmentedWrapper: { 
-    alignItems: 'center', 
-    paddingTop: vs(5),    // Reduced from 15 to pull it up
-    paddingBottom: vs(8), // Tightened for more calendar space
-  },
-  listContent: { 
-    padding: s(16), 
-    flexGrow: 1 
-  },
-  centerContainer: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginTop: vs(100) 
-  },
-  overlayLoader: { 
-    ...StyleSheet.absoluteFill, 
-    backgroundColor: 'rgba(255,255,255,0.7)', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    zIndex: 999 
-  },
+  container: { flex: 1, backgroundColor: '#FFF' },
+  headerFixed: { paddingHorizontal: s(16), backgroundColor: '#FFF', zIndex: 10, paddingTop: 0 },
+  segmentedWrapper: { alignItems: 'center', paddingTop: vs(5), paddingBottom: vs(8) },
+  listContent: { padding: s(16), flexGrow: 1 },
+  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: vs(100) },
+  overlayLoader: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(255,255,255,0.7)', justifyContent: 'center', alignItems: 'center', zIndex: 999 },
 });
 
 export default ListingScreen;

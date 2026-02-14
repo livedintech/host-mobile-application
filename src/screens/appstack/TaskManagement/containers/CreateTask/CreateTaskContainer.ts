@@ -96,6 +96,7 @@ const CreateTaskContainer = () => {
       value: item.id,
     }),
   );
+  console.log("transformedListing",transformedListing)
 
   //GET VENDOR
   const { data: getTaskVendor = [] } = useQuery({
@@ -105,10 +106,11 @@ const CreateTaskContainer = () => {
 
   const transformedVendor = getTaskVendor.map(
     (item: { name: string; business_name: string; id: string }) => ({
-      label: item.business_name,
+      label: item.name,
       value: item.id,
     }),
   );
+  console.log("transformedVendor",transformedVendor)
 
   const createTaskDraftMutation = useMutation<
     taskManagementCreateApiResponse,
@@ -172,26 +174,44 @@ const CreateTaskContainer = () => {
     },
   });
 
-  const onSubmit = (data: taskManagementCreateApiPayload) => {
-    // Base payload
-    const payload: taskManagementCreateApiPayload = {
-      title: data.title,
-      description: data.description,
-      task_type_id: data.task_type_id,
-      listing_id: data.listing_id,
-      vendor_id: data.vendor_id,
-    };
+const onSubmit = (data: taskManagementCreateApiPayload) => {
+  const payload: taskManagementCreateApiPayload = {
+    title: data.title,
+    description: data.description,
+    task_type_id: data.task_type_id,
+    listing_id: data.listing_id,
+    vendor_id: data.vendor_id,
+  };
 
-    // Only send date & time when not cleaning category
-    if (!isCleaningCategory) {
-      payload.start_date = data.start_date;
-      payload.start_time = convertTo24Hour(data.start_time);
-      payload.end_time = convertTo24Hour(data.end_time);
+  if (!isCleaningCategory) {
+    if (data.start_date) {
+      // Create a date object safely
+      const dateObj = new Date(data.start_date);
+
+      // Check if the date is actually valid before formatting
+      if (!isNaN(dateObj.getTime())) {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        payload.start_date = `${year}-${month}-${day}`;
+      } else {
+        // Fallback: If it's a string like "02/13/26", manual split
+        const parts = data.start_date.split('/');
+        if (parts.length === 3) {
+          const m = parts[0].padStart(2, '0');
+          const d = parts[1].padStart(2, '0');
+          const y = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
+          payload.start_date = `${y}-${m}-${d}`;
+        }
+      }
     }
 
-    // 🔹 Trigger create draft mutation
-    createTaskDraftMutation.mutate(payload);
-  };
+    payload.start_time = convertTo24Hour(data.start_time);
+    payload.end_time = convertTo24Hour(data.end_time);
+  }
+
+  createTaskDraftMutation.mutate(payload);
+};
 
   return {
     control,

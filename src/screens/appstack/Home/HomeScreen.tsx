@@ -14,7 +14,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <AppText text={`Hi ${user?.name} , how can i help you today?`} fontSize={32} type="Medium" color={Colors.PINE_FOREST} />
+        <AppText text={`Hi ${user?.name}, how may I help you today?`} fontSize={32} type="Medium" color={Colors.PINE_FOREST} />
         
         <View style={styles.cardContainer}>
           {['Connect Booking Platform', 'Connect New Listing'].map((item) => (

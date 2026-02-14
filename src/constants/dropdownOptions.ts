@@ -7,8 +7,10 @@ export const bedroomOptions = [
 ];
 
 export const FILTER_OPTIONS = [
-  { id: 'all', label: 'All' },
   { id: 'today', label: 'Today' },
-  { id: 'pending', label: 'Pending' },
-  { id: 'confirmed', label: 'Confirmed' },
+  { id: 'pending_request', label: 'Pending Request' },
+  { id: 'pending_reviews', label: 'Pending Reviews' },
+  { id: 'check_in', label: 'Check-in' },
+  { id: 'check_out', label: 'Check-out' },
+  { id: 'upcoming', label: 'Upcoming' },
 ];
