@@ -29,7 +29,7 @@ export default function useManageListingContainer() {
     updateListing({
       name,
     })
-    setChannelId("9bd50e4a-9336-44a2-93b9-dac6f9f8b57b")
+    setChannelId("8b7b2e2c-b7bc-4b3c-8a6a-d9a7a4833ccb")
     setListingId(id.toString())
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
   };

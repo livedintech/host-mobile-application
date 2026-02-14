@@ -222,6 +222,14 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.OTHER_VIDEOS}
+        getComponent={() =>
+          require('@/screens/appstack/OtherPhotos/OtherPhotosScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS}
         getComponent={() =>
           require('@/screens/appstack/ExteriorPhoto/ExteriorPhotoScreen')

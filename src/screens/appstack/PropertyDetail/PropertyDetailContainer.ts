@@ -38,73 +38,66 @@ export default function usePropertyDetailContainer() {
       : [];
 
 
- const propertyData = {
-  title: listing?.name || '',
+  const propertyData = {
+    title: listing?.name || '',
 
-  address: [
-    listing?.street,
-    listing?.apt,
-    listing?.city,
-    listing?.state,
-    listing?.country_code,
-  ]
-    .filter(Boolean)
-    .join(', '),
+    address: [
+      listing?.street,
+      listing?.apt,
+      listing?.city,
+      listing?.state,
+      listing?.country_code,
+    ]
+      .filter(Boolean)
+      .join(', '),
 
-  placeInfo: {
-    bedrooms: listing?.bedrooms ?? '',
-    beds: listing?.beds ?? '',
-    bathrooms: listing?.bathrooms ?? '',
-    minStay: listing?.min_nights ?? '',
-    features: Array.isArray(listing?.amenities)
-      ? listing.amenities.join(', ')
-      : '',
-  },
+    placeInfo: {
+      bedrooms: listing?.bedrooms ?? '',
+      beds: listing?.beds ?? '',
+      bathrooms: listing?.bathrooms ?? '',
+      minStay: listing?.min_nights ?? '',
+      features: Array.isArray(listing?.amenities)
+        ? listing.amenities.join(', ')
+        : '',
+    },
 
-  houseDetails: {
-    description: listing_descriptionParsed?.[0]?.description || '',
-    bookingType: listing?.instant_booking
-      ? 'Instant Booking'
-      : 'Request to Book',
-    checkIn: listing?.check_in_time || '',
-    checkOut: listing?.check_out_time || '',
-  },
+    houseDetails: {
+      description: listing_descriptionParsed?.[0]?.description || '',
+      bookingType: listing?.instant_booking
+        ? 'Instant Booking'
+        : 'Request to Book',
+      checkIn: listing?.check_in_time || '',
+      checkOut: listing?.check_out_time || '',
+    },
 
-  pricing: {
-    weekday: listing?.prices?.weekday
-      ? `SAR ${listing.prices.weekday}`
-      : '',
+    pricing: {
+      weekday: listing?.prices?.weekday
+        && `SAR ${listing.prices.weekday}`,
 
-    weekend: listing?.prices?.weekend
-      ? `SAR ${listing.prices.weekend}`
-      : '',
+      weekend: listing?.prices?.weekend
+        && `SAR ${listing.prices.weekend}`,
 
-    discount: listing?.prices?.discount
-      ? `SAR ${listing.prices.discount}`
-      : '0',
+      discount: listing?.prices?.discount
+        && `SAR ${listing.prices.discount}`,
 
-    tax: listing?.prices?.tax
-      ? `SAR ${listing.prices.tax}`
-      : '0',
+      tax: listing?.prices?.tax
+        && `SAR ${listing.prices.tax}`,
 
-    markup: listing?.prices?.markup
-      ? `SAR ${listing.prices.markup}`
-      : '0',
+      markup: listing?.prices?.markup && `SAR ${listing.prices.markup}`,
 
-    cleaning: listing?.prices?.cleaning_fee
-      ? `SAR ${listing.prices.cleaning_fee}`
-      : '',
-  },
+      cleaning: listing?.prices?.cleaning_fee
+        && `SAR ${listing.prices.cleaning_fee}`,
+    },
 
-  disclosure: {
-    cameras: listing?.disclosures?.cameras ? 'Yes' : 'No',
-    noise: listing?.disclosures?.noise ? 'Yes' : 'No',
-    weapons: listing?.disclosures?.weapons ? 'Yes' : 'No',
-  },
+    disclosure: {
+      cameras: listing?.disclosures?.cameras,
+      noise: listing?.disclosures?.noise,
+      weapons: listing?.disclosures?.weapons,
+    },
 
-  photos: listing?.photos || {},
-  documents: listing?.documents || {},
-};
+    photos: listing?.photos || {},
+    documents: listing?.documents || {},
+  };
 
 
   const handleEditSection = (section: string) => {
@@ -124,25 +117,25 @@ export default function usePropertyDetailContainer() {
     if (section === 'Disclosure') {
       navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, { paramData: data?.data })
     }
-    if (section === 'Interior') {
-      navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS, {
-        isEdit: true,
-        existingPhotos: data?.data?.listing?.photos?.Interior || [],
-      });
-    }
+    // if (section === 'Interior') {
+    //   navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS, {
+    //     isEdit: true,
+    //     existingPhotos: data?.data?.listing?.photos?.Interior || [],
+    //   });
+    // }
 
-    if (section === 'Exterior') {
-      navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, {
-        isEdit: true,
-        existingPhotos: data?.data?.listing?.photos?.Exterior || [],
-      });
-    }
-    if (section === 'Bathroom') {
-      navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS, {
-        isEdit: true,
-        existingPhotos: data?.data?.listing?.photos?.Bathroom || [],
-      });
-    }
+    // if (section === 'Exterior') {
+    //   navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, {
+    //     isEdit: true,
+    //     existingPhotos: data?.data?.listing?.photos?.Exterior || [],
+    //   });
+    // }
+    // if (section === 'Bathroom') {
+    //   navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS, {
+    //     isEdit: true,
+    //     existingPhotos: data?.data?.listing?.photos?.Bathroom || [],
+    //   });
+    // }
     if (section === 'Documents') {
       navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, { paramData: data?.data })
     }
@@ -168,6 +161,15 @@ export default function usePropertyDetailContainer() {
     navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA)
   }
 
+  const handleEditPhotosVideos = (category: string) => {
+    navigate(NavigationRoutes.APP_STACK.OTHER_VIDEOS, {
+      isEdit: true,
+      existingPhotos: data?.data?.listing?.photos?.[category] || [],
+      category: category,
+    });
+  };
+
+
   return {
     propertyData,
     handleEditSection,
@@ -175,6 +177,7 @@ export default function usePropertyDetailContainer() {
     goToConnectedOTA,
     isLoading,
     refetch,
-    data
+    data,
+    handleEditPhotosVideos
   };
 }

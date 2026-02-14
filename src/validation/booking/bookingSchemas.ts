@@ -36,7 +36,7 @@ export const createBookingSchema = yup.object({
   }),
   phone: yup.string().when('$bookingType', {
     is: 'direct',
-    then: (s) => s.required('Phone number is required').matches(/^\d{8,15}$/, 'Phone number must be 8-15 digits'),
+    then: (s) => s.required('Phone number is required').matches(/^\d{8,10}$/, 'Phone number must be 8-10 digits'),
     otherwise: (s) => s.nullable().notRequired(),
   }),
 });

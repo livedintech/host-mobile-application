@@ -37,12 +37,17 @@ export const stepTwoSchema = yup.object({
   beds: yup.string().required('Beds is required'),
   bathrooms: yup.string().required('Bathrooms is required'),
   min_nights: yup.string().required('Min nights is required'),
+  amenities: yup
+    .array()
+    .of(yup.string())
+    .min(1, 'Amenities is required'),
   check_in_time: yup.string().required('Check-in time is required'),
   check_out_time: yup.string().required('Check-out time is required'),
   instant_booking: yup
     .string()
     .required('Instant booking is required')
     .oneOf(['true', 'false'], 'Instant booking must be Yes or No'),
+    
 });
 
 
@@ -54,6 +59,7 @@ export type StepTwoFormValues = {
   check_in_time: string;
   check_out_time: string;
   instant_booking: string;
+ amenities: string[];
 };
 
 export const describeHouseSchema = yup.object().shape({

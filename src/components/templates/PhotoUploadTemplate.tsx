@@ -178,6 +178,8 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
           <GradientBorder borderRadius={15} style={styles.gridWrapper}>
             <View style={styles.gridInner}>
               <FlatList
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
                 data={[...props.mediaList, { isButton: true }]}
                 numColumns={4}
                 keyExtractor={(_, index) => index.toString()}

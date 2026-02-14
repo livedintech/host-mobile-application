@@ -15,13 +15,16 @@ import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const PropertyDetailScreen = () => {
-  const { propertyData, handleEditSection, handleMenuAction, refetch, isLoading } = usePropertyDetailContainer();
+  const { propertyData, handleEditSection, handleMenuAction, refetch, isLoading, handleEditPhotosVideos } = usePropertyDetailContainer();
   const isOwnership = propertyData?.documents?.ownership?.length > 0
   const isLicense = propertyData?.documents?.license?.length > 0
   const isNational_id = propertyData?.documents?.national_id?.length > 0
   const isInterior = propertyData?.photos?.Interior?.length > 0
   const isExterior = propertyData?.photos?.Exterior?.length > 0
   const isBathroom = propertyData?.photos?.Bathroom?.length > 0
+
+  console.log('propertyData?.photos', propertyData?.photos);
+
 
   const InfoCard = ({ title, icon, onEdit, children }: any) => (
     <View style={styles.card}>
@@ -38,21 +41,60 @@ const PropertyDetailScreen = () => {
     </View>
   );
 
-  const LabelValue = ({ label, value }: { label: string; value: any }) => (
-    <View style={styles.row}>
-      <AppText text={`${label}: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-      <AppText text={value} color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-    </View>
-  );
+  const LabelValue = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: any;
+  }) => {
+
+    const hasValue =
+      value !== null &&
+      value !== undefined &&
+      value !== '' &&
+      !(Array.isArray(value) && value.length === 0);
+
+    if (!hasValue) return null;
+
+    const formatValue = () => {
+      if (typeof value === 'boolean') {
+        return value ? 'Yes' : 'No';
+      }
+
+      if (Array.isArray(value)) {
+        return value.join(', ');
+      }
+
+      return String(value);
+    };
+
+    return (
+      <View style={styles.row}>
+        <AppText
+          text={`${label}: `}
+          type="Bold"
+          color={Colors.BRUNSWICK_GREEN}
+          fontSize={14}
+        />
+        <AppText
+          text={formatValue()}
+          color={Colors.BRUNSWICK_GREEN}
+          fontSize={14}
+        />
+      </View>
+    );
+  };
+
 
   return (
     <View style={styles.container}>
       {/* Header with Menu Dots */}
       <View style={styles.header}>
         <View style={{
-          flex:1
+          flex: 1
         }}>
-        <AppText text={propertyData?.title} fontSize={28} lineHeight={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+          <AppText text={propertyData?.title} fontSize={28} lineHeight={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
         </View>
         {/* <Menu>
           <MenuTrigger>
@@ -115,7 +157,7 @@ const PropertyDetailScreen = () => {
               <Svgicons path="imageIcon" size={20} color={Colors.BRUNSWICK_GREEN} ml={8} />
             </View>
           </View>
-          <ButtonView style={[styles.mediaButton, isInterior && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Interior')}>
+          {/* <ButtonView style={[styles.mediaButton, isInterior && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Interior')}>
              <Svgicons path={isInterior ? 'CheckboxCheckedIcon' : 'attachmentIcon'} size={30} />
             <AppText text="Update Interior Images" ml={10}  color={isInterior ? Colors.WHITE : Colors.BLACK}/>
           </ButtonView>
@@ -126,15 +168,44 @@ const PropertyDetailScreen = () => {
           <ButtonView style={[styles.mediaButton,isBathroom && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Bathroom')}>
             <Svgicons path={isBathroom ? 'CheckboxCheckedIcon' : 'attachmentIcon'} size={30} />
             <AppText text="Update Bathroom Images" ml={10} color={isBathroom ? Colors.WHITE : Colors.BLACK}/>
-          </ButtonView>
+          </ButtonView> */}
+          {Object.keys(propertyData?.photos || {}).map((category) => {
+            const images = propertyData.photos[category];
+            const hasImages = Array.isArray(images) && images.length > 0;
+            return (
+              <ButtonView
+                key={category}
+                style={[
+                  styles.mediaButton,
+                  hasImages && { backgroundColor: Colors.BRUNSWICK_GREEN },
+                ]}
+                onPress={() => handleEditPhotosVideos(category)}
+              >
+                <Svgicons
+                  path={hasImages ? 'CheckboxCheckedIcon' : 'attachmentIcon'}
+                  size={30}
+                />
+                <AppText
+                  text={`Update ${category} Images`}
+                  ml={10}
+                  color={hasImages ? Colors.WHITE : Colors.BLACK}
+                />
+              </ButtonView>
+            );
+          })}
+
         </View>
 
         {/* House Details */}
         <InfoCard title="House Details" icon="homeIcon" onEdit={() => handleEditSection('HouseDetails')}>
           <AppText text="House Title: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
           <AppText text={propertyData.title} color={Colors.BRUNSWICK_GREEN} mb={20} />
-          <AppText text="Description: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-           <AppText text={propertyData.houseDetails.description} color={Colors.BRUNSWICK_GREEN} mb={15} lineHeight={20} />
+          {propertyData.houseDetails.description && (
+            <>
+              <AppText text="Description: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+              <AppText text={propertyData.houseDetails.description} color={Colors.BRUNSWICK_GREEN} mb={15} lineHeight={20} />
+            </>
+          )}
         </InfoCard>
 
         {/* Pricing */}
@@ -148,11 +219,13 @@ const PropertyDetailScreen = () => {
         </InfoCard>
 
         {/* Disclosure */}
-        <InfoCard title="Property Disclosure Details" icon="bookIcon" onEdit={() => handleEditSection('Disclosure')}>
-          <LabelValue label="Exterior Security Camera" value={propertyData.disclosure.cameras} />
-          <LabelValue label="Weapon on Property" value={propertyData.disclosure.weapons} />
-          <LabelValue label="Noise Monitor" value={propertyData.disclosure.noise} />
-        </InfoCard>
+        {propertyData.disclosure.cameras || propertyData.disclosure.weapons || propertyData.disclosure.noise &&
+          <InfoCard title="Property Disclosure Details" icon="bookIcon" onEdit={() => handleEditSection('Disclosure')}>
+            {propertyData.disclosure.cameras && <LabelValue label="Exterior Security Camera" value={propertyData.disclosure.cameras} />}
+            {propertyData.disclosure.weapons && <LabelValue label="Weapon on Property" value={propertyData.disclosure.weapons} />}
+            {propertyData.disclosure.noise && <LabelValue label="Noise Monitor" value={propertyData.disclosure.noise} />}
+          </InfoCard>
+        }
 
         {/* Ownership Documents */}
         <View style={styles.card}>
@@ -163,7 +236,7 @@ const PropertyDetailScreen = () => {
             </View>
           </View>
           <ButtonView style={[styles.docButton, isOwnership && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>
-             {isOwnership && <Svgicons path="CheckboxCheckedIcon" size={30} />}
+            {isOwnership && <Svgicons path="CheckboxCheckedIcon" size={30} />}
             <AppText text="Update Property Ownership Doc" color={isOwnership ? Colors.WHITE : Colors.BLACK} />
           </ButtonView>
           <ButtonView style={[styles.docButton, isLicense && { backgroundColor: Colors.BRUNSWICK_GREEN }]} onPress={() => handleEditSection('Documents')}>{isLicense && <Svgicons path="CheckboxCheckedIcon" size={30} />}<AppText text="Update Authority License" color={isLicense ? Colors.WHITE : Colors.BLACK} /></ButtonView>
