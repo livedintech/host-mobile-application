@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, maxWidth: 240 },
   items: { marginTop: 15 },
-  checkRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  checkRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 , flex:1},
   addItemBtn: {
     borderWidth: 1,
     borderColor: '#EEE',

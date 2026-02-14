@@ -14,6 +14,8 @@ import {
 } from '@/services/TaskManagementApi';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { navigate } from '@/services/navigationService';
 
 const EditTaskContainer = () => {
   const { params } = useRoute();
@@ -132,21 +134,72 @@ const EditTaskContainer = () => {
   // -------------------------------
   // Save handler
   // -------------------------------
-  const onSubmit = (formData: any) => {
-    // 1️⃣ vendor update
-    vendorMutation.mutate({
-      taskId: taskId,
-      vendor_id: formData.assignTask,
+  // const onSubmit = (formData: any) => {
+  //     navigate(NavigationRoutes.APP_STACK.TASK);
+
+  //   // 1️⃣ vendor update
+  //   vendorMutation.mutate({
+  //     taskId: taskId,
+  //     vendor_id: formData.assignTask,
+  //   });
+
+  //   // 2️⃣ checklist update (only if items selected)
+  //   if (selectedChecklistIds.length > 0) {
+  //     checklistMutation.mutate({
+  //       task_id: taskId,
+  //       ids: selectedChecklistIds,
+  //     });
+  //   }
+  // };
+
+  const onSubmit = async (formData: any) => {
+  try {
+    const promises = [];
+
+    // 1️⃣ Add Vendor Update to promises if value exists
+    if (formData.assignTask) {
+      promises.push(
+        vendorMutation.mutateAsync({
+          taskId: taskId,
+          vendor_id: formData.assignTask,
+        })
+      );
+    }
+
+    // 2️⃣ Add Checklist Update to promises if items selected
+    if (selectedChecklistIds.length > 0) {
+      promises.push(
+        checklistMutation.mutateAsync({
+          task_id: taskId,
+          ids: selectedChecklistIds,
+        })
+      );
+    }
+
+    // If there's nothing to update, just go back
+    if (promises.length === 0) {
+      navigate(NavigationRoutes.APP_STACK.TASK);
+      return;
+    }
+
+    // Wait for all API calls to finish successfully
+    await Promise.all(promises);
+
+    // Show success message
+    Toast.show({
+      type: 'success',
+      text1: 'Changes saved successfully',
     });
 
-    // 2️⃣ checklist update (only if items selected)
-    if (selectedChecklistIds.length > 0) {
-      checklistMutation.mutate({
-        task_id: taskId,
-        ids: selectedChecklistIds,
-      });
-    }
-  };
+    // Finally, navigate back
+    navigate(NavigationRoutes.APP_STACK.TASK);
+    
+  } catch (error) {
+    // If any API fails, the code stops here and stays on the screen
+    // so the user can see the error toast and try again.
+    console.error('Save failed:', error);
+  }
+};
 
   //   const onSubmit = (formData: any) => {
   //   const previousVendorId = taskDetail?.assigned_user?.id;
