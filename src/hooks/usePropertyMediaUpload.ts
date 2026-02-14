@@ -40,8 +40,8 @@ export const usePropertyMediaUpload = ({
   const { listing_id } = useCreateListingStore()
   const [mediaList, setMediaList] = useState<MediaItem[]>(initialMedia);
   const [isLoading, setIsLoading] = useState(false);
+  const { token } = useAuthStore();
 
-  // Platform specific path handling
   const getBase64 = async (uri: string) => {
     try {
       const filePath =
@@ -60,7 +60,6 @@ export const usePropertyMediaUpload = ({
   // COMMON UPLOAD FUNCTION
   // -----------------------------
   const uploadMedia = async (): Promise<boolean> => {
-    const token = useAuthStore().token
     if (mediaList.length === 0) {
       Alert.alert('Required', `Please upload at least one ${category} photo.`);
       return false;
@@ -95,8 +94,9 @@ export const usePropertyMediaUpload = ({
 
       const response = await fetch(url, {
         method: mode === 'edit' ? 'POST' : 'POST',
-        headers: { 'Content-Type': 'application/json', 
-             Authorization: `Bearer ${token}`, 
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(body),
       });
@@ -148,21 +148,21 @@ export const usePropertyMediaUpload = ({
   // -----------------------------
   // SAVE & EXIT (EDIT MODE)
   // -----------------------------
-const handleSaveAndExit = async () => {
-  setIsLoading(true);
+  const handleSaveAndExit = async () => {
+    setIsLoading(true);
 
-  const success = await uploadMedia();
+    const success = await uploadMedia();
 
-  setIsLoading(false);
+    setIsLoading(false);
 
-  if (!success) return;
+    if (!success) return;
 
-  if (mode === 'edit') {
-    goBack();
-  } else if (exitRoute) {
-    navigate(exitRoute);
-  }
-};
+    if (mode === 'edit') {
+      goBack();
+    } else if (exitRoute) {
+      navigate(exitRoute);
+    }
+  };
 
 
 

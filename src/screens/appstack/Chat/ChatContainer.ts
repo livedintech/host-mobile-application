@@ -3,11 +3,25 @@ import { ChatMessage, ChatStatus } from '@/types/chat';
 import { useForm } from 'react-hook-form';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import STORAGE_CONST from '@/constants/storage';
-import { createInboxArchiveApi, createInboxSnoozeApi, createInboxUnArchiveApi, createInboxUnSnoozeApi, getChatListApi, getChatListCityApi } from '@/services/chatApi';
+import {
+  createInboxArchiveApi,
+  createInboxSnoozeApi,
+  createInboxUnArchiveApi,
+  createInboxUnSnoozeApi,
+  getChatListApi,
+  getChatListCityApi,
+  markReadChatApi
+} from '@/services/chatApi';
 import { PAGE_SIZE, queryClient } from '@/services/api';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
 import Toast from 'react-native-toast-message';
-import { createChatArchiveByConversationIdPayloadType, createChatArchiveByConversationIdResponseType, createChatSnoozeByConversationIdPayloadType, createChatSnoozeByConversationIdResponseType } from '@/types/api/chatTypes';
+import {
+  createChatArchiveByConversationIdPayloadType,
+  createChatArchiveByConversationIdResponseType,
+  createChatSnoozeByConversationIdPayloadType,
+  createChatSnoozeByConversationIdResponseType,
+  markReadChatPayloadType
+} from '@/types/api/chatTypes';
 import { getUserListingsByUserIDApi } from '@/services/bookingManagementApi';
 import { useAuthStore } from '@/store/useAuthStore';
 import { navigate } from '@/services/navigationService';
@@ -15,55 +29,87 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
+
   const [activeTab, setActiveTab] = useState<ChatStatus>('All');
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filterAssigned, setFilterAssigned] = useState(false);
+  const [search, setSearch] = useState('');
 
-  const { control, reset, formState: { errors } } = useForm({
-    defaultValues: { reservationStatus: '', listings: '', city: '' }
+  const {
+    control,
+    reset,
+    watch,
+    formState: { errors }
+  } = useForm({
+    defaultValues: {
+      reservationStatus: '',
+      listings: '',
+      city: '',
+      apartmenttype: '',
+    }
   });
 
-  const resetFilters = () => {
-    setFilterAssigned(false);
-  };
+  const reservationStatus = watch('reservationStatus');
+  const listingId = watch('listings');
+  const city = watch('city');
+  const listingType = watch('apartmenttype');
 
-  const handleResetAll = () => {
-    reset();
-    resetFilters();
-  };
-  function getChatFiltersByTab(tab: ChatStatus) {
+  /* -------------------------------- TAB FILTERS -------------------------------- */
+
+  const getChatFiltersByTab = (tab: ChatStatus) => {
     switch (tab) {
       case 'Unread':
         return { unread: true };
-
       case 'Archived':
         return { archived: true };
-
       case 'Snoozed':
         return { snoozed: true };
-
-      case 'Marketplace':
-        return { marketplace: true };
-
-      case 'All':
       default:
         return {};
     }
-  }
+  };
 
-  const filters = useMemo(
-    () => getChatFiltersByTab(activeTab),
-    [activeTab],
-  );
-  // Get All Chat List
+  /* ------------------------------- FINAL FILTERS ------------------------------- */
+
+  const finalFilters = useMemo(() => {
+    const rawFilters = {
+      ...getChatFiltersByTab(activeTab),
+      search: search || undefined,
+      assigned_to: filterAssigned ? user?.id : undefined,
+      listing_id: listingId || undefined,
+      city: city || undefined,
+      listing_type: listingType || undefined,
+      reservation_status: reservationStatus || undefined,
+    };
+
+    // Remove undefined & empty values
+    return Object.fromEntries(
+      Object.entries(rawFilters).filter(
+        ([_, value]) => value !== undefined && value !== ''
+      )
+    );
+  }, [
+    activeTab,
+    search,
+    filterAssigned,
+    listingId,
+    city,
+    listingType,
+    reservationStatus,
+    user?.id,
+  ]);
+
+  /* ------------------------------- CHAT LIST QUERY ------------------------------ */
+
   const dataQuery = useInfiniteQuery({
-    queryKey: [STORAGE_CONST.GET_CHAT_LIST, filters],
+    queryKey: [STORAGE_CONST.GET_CHAT_LIST, finalFilters],
     queryFn: ({ pageParam = 1 }) =>
       getChatListApi({
         page: pageParam as number,
         limit: PAGE_SIZE,
-        ...filters,
+        ...finalFilters,
       }),
+      refetchInterval: 4000,
     initialPageParam: 1,
     getNextPageParam: lastPage =>
       lastPage.current_page < lastPage.total_pages
@@ -71,151 +117,178 @@ export const useChatContainer = () => {
         : undefined,
   });
 
+  const { data: rawData, isLoading, isFetching } = dataQuery;
+  const data = useInfiniteListData(rawData?.pages);
 
-  const { data: raiseIssueData, isLoading, isFetching } = dataQuery;
-  const data = useInfiniteListData(raiseIssueData?.pages);
+  /* --------------------------------- MUTATIONS --------------------------------- */
 
-  // Archive Chat
-  const { mutate: chatArchivePayload, isPending: isPendingchatArchive } =
-    useMutation<createChatArchiveByConversationIdResponseType, Error, createChatArchiveByConversationIdPayloadType>({
-      mutationFn: createInboxArchiveApi,
-      onSuccess: ({ message }) => {
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.GET_CHAT_LIST]
-        });
-        Toast.show({ type: 'success', text1: message });
-      },
-      onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message });
-      },
+  const invalidateChats = () => {
+    queryClient.invalidateQueries({
+      queryKey: [STORAGE_CONST.GET_CHAT_LIST],
     });
+  };
 
-  // UnArchive Chat
-  const { mutate: chatUnArchivePayload, isPending: isPendingchatUnArchive } =
-    useMutation<createChatArchiveByConversationIdResponseType, Error, createChatArchiveByConversationIdPayloadType>({
-      mutationFn: createInboxUnArchiveApi,
-      onSuccess: ({ message }) => {
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.GET_CHAT_LIST],
-        });
-        Toast.show({ type: 'success', text1: message });
-      },
-      onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message });
-      },
-    });
+  const showSuccess = (message: string) =>
+    Toast.show({ type: 'success', text1: message });
 
-  // Snooze
-  const { mutate: chatSnoozePayload, isPending: isPendingSnooze } =
-    useMutation<createChatSnoozeByConversationIdResponseType, Error, createChatSnoozeByConversationIdPayloadType>({
-      mutationFn: createInboxSnoozeApi,
-      onSuccess: ({ message }) => {
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.GET_CHAT_LIST],
-        });
-        Toast.show({ type: 'success', text1: message });
-      },
-      onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message });
-      },
-    });
+  const showError = (message: string) =>
+    Toast.show({ type: 'error', text1: message });
 
-  // Snooze
-  const { mutate: chatUnSnoozePayload, isPending: isPendingChatUnSnooze } =
-    useMutation<createChatSnoozeByConversationIdResponseType, Error, createChatSnoozeByConversationIdPayloadType>({
-      mutationFn: createInboxUnSnoozeApi,
-      onSuccess: ({ message }) => {
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.GET_CHAT_LIST],
-        });
-        Toast.show({ type: 'success', text1: message });
-      },
-      onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message });
-      },
-    });
+  const { mutate: archiveChat } = useMutation<
+    createChatArchiveByConversationIdResponseType,
+    Error,
+    createChatArchiveByConversationIdPayloadType
+  >({
+    mutationFn: createInboxArchiveApi,
+    onSuccess: ({ message }) => {
+      invalidateChats();
+      showSuccess(message);
+    },
+    onError: (error) => showError(error.message),
+  });
 
-  const handleAction = (item: ChatMessage, newStatus: ChatStatus) => {
-    if (newStatus === 'Archived') {
-      if (item?.is_archived) {
-        chatUnArchivePayload({ conversation_id: item?.id })
-      } else {
-        chatArchivePayload({ conversation_id: item?.id })
-      }
+  const { mutate: unArchiveChat } = useMutation({
+    mutationFn: createInboxUnArchiveApi,
+    onSuccess: ({ message }) => {
+      invalidateChats();
+      showSuccess(message);
+    },
+    onError: (error: Error) => showError(error.message),
+  });
+
+  const { mutate: snoozeChat } = useMutation<
+    createChatSnoozeByConversationIdResponseType,
+    Error,
+    createChatSnoozeByConversationIdPayloadType
+  >({
+    mutationFn: createInboxSnoozeApi,
+    onSuccess: ({ message }) => {
+      invalidateChats();
+      showSuccess(message);
+    },
+    onError: (error) => showError(error.message),
+  });
+
+  const { mutate: unSnoozeChat } = useMutation({
+    mutationFn: createInboxUnSnoozeApi,
+    onSuccess: ({ message }) => {
+      invalidateChats();
+      showSuccess(message);
+    },
+    onError: (error: Error) => showError(error.message),
+  });
+
+  const { mutate: markRead } = useMutation<
+    unknown,
+    Error,
+    markReadChatPayloadType
+  >({
+    mutationFn: markReadChatApi,
+    onSuccess: invalidateChats,
+    onError: (error) => showError(error.message),
+  });
+
+  /* -------------------------------- ACTIONS -------------------------------- */
+
+  const handleAction = (item: ChatMessage, status: ChatStatus) => {
+    if (status === 'Archived') {
+      item?.is_archived
+        ? unArchiveChat({ conversation_id: item.id })
+        : archiveChat({ conversation_id: item.id });
     }
-    if (newStatus === 'Snoozed') {
-      if (item?.is_mute) {
-        chatUnSnoozePayload({ conversation_id: item?.id })
-      } else {
-        chatSnoozePayload({ conversation_id: item?.id })
 
-      }
-
+    if (status === 'Snoozed') {
+      item?.is_mute
+        ? unSnoozeChat({ conversation_id: item.id })
+        : snoozeChat({ conversation_id: item.id });
     }
   };
 
-  // City
+  const handleResetAll = () => {
+    reset();
+    setFilterAssigned(false);
+  };
+
+  const goToChatDetail = (item: {
+    id: string;
+    latest_message?: { id: number };
+    listing_id: string;
+  }) => {
+    if (item?.latest_message?.id) {
+      markRead({
+        conversation_id: item.id,
+        last_message_id: item.latest_message.id,
+      });
+    }
+
+    navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+      conversation_id: item.id,
+      listing_id: item.listing_id,
+    });
+  };
+
+  /* ------------------------------- DROPDOWN DATA ------------------------------- */
+
   const { data: citiesData = [] } = useQuery({
     queryKey: [STORAGE_CONST.GET_CHAT_LIST_CITY],
     queryFn: getChatListCityApi,
   });
 
-  // Listings && Appartment Types
   const { data: listings } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () =>
       getUserListingsByUserIDApi({
         user: user?.id!,
       }),
+    enabled: !!user?.id,
   });
 
-  // City Transformed
-  const transformedCities = citiesData.map((item: { name: string, id: string }) => ({
-    label: item.name,
-    value: item.id,
-  }));
+  const transformedCities = citiesData.map(
+    (item: { name: string; id: string }) => ({
+      label: item.name,
+      value: item.id,
+    })
+  );
 
-  // Listings Transformed
-  const transformedListings = listings?.data.map((item: { title: string, id: string }) => ({
-    label: item.title,
-    value: item.id,
-  }));
+  const transformedListings =
+    listings?.data?.map((item: { title: string; id: string }) => ({
+      label: item.title,
+      value: item.id,
+    })) || [];
 
-  // Listings Transformed
-  const transformedApartmentTypes = listings?.data.map((item: { type: string, id: string }) => ({
-    label: item.type,
-    value: item.id,
-  }));
-  // console.log('transformedListings', transformedListings);
-  const handlePopupMenu = (selected: string) => {
-    if (selected === 'Saved Replies') {
-      navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES)
-    } else if (selected === 'Automation Template') {
-      navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE)
-    }
-    else if (selected === 'AI Auto Reply') {
-      navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY)
-    }
-  }
+  const transformedApartmentTypes = [
+    { label: 'Apartment', value: 'apartment' },
+  ];
 
-  return {
-    data,
-    isLoading,
-    isFetching,
-    dataQuery,
-    activeTab,
-    setActiveTab,
-    handleAction,
-    isFilterVisible,
-    setFilterVisible,
-    filterAssigned,
-    setFilterAssigned,
-    handleResetAll,
-    control,
-    errors,
-    transformedCities,
-    transformedListings,
-    transformedApartmentTypes,
-    handlePopupMenu
-  };
+  /* -------------------------------- RETURN -------------------------------- */
+
+  const handlePopupMenu = (item: ChatMessage, type: ChatStatus) => {
+  handleAction(item, type);
+};
+
+
+ return {
+  data,
+  isLoading,
+  isFetching,
+  dataQuery,
+  activeTab,
+  setActiveTab,
+  handleAction,
+  handlePopupMenu, // 👈 ye add karo
+  isFilterVisible,
+  setFilterVisible,
+  filterAssigned,
+  setFilterAssigned,
+  handleResetAll,
+  control,
+  errors,
+  transformedCities,
+  transformedListings,
+  transformedApartmentTypes,
+  goToChatDetail,
+  search,
+  setSearch,
+};
+
 };

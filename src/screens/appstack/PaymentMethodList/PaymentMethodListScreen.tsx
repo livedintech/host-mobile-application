@@ -12,8 +12,8 @@ import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import usePaymentMethodListContainer from './PaymentMethodListContainer';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const PaymentMethodListScreen = () => {
   const {
@@ -29,7 +29,7 @@ const PaymentMethodListScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-
+        {/* Loading */}
         {isLoading && (
           <AppText
             text="Loading cards..."
@@ -39,121 +39,130 @@ const PaymentMethodListScreen = () => {
           />
         )}
 
-        {/* Render Cards */}
-        {cards?.map((item, index) => (
-          <View style={styles.paymentCard} key={item.Token || index}>
+        {/* Empty State */}
+        {!isLoading && (!cards || cards.length === 0) && (
+          <View style={styles.emptyContainer}>
+            <Svgicons path="cardIcon" width={60} height={60} />
+            <AppText
+              text="No Payment Methods Found"
+              fontSize={16}
+              type="SemiBold"
+              color={Colors.PINE_FOREST}
+              mt={15}
+            />
+            <AppText
+              text="You haven't added any payment method yet."
+              fontSize={14}
+              color={Colors.GREY_SHADOW}
+              mt={6}
+              style={{ textAlign: 'center' }}
+            />
+          </View>
+        )}
 
-            {/* Header */}
-            <View style={styles.cardHeader}>
+        {/* Cards List */}
+        {!isLoading &&
+          cards?.length > 0 &&
+          cards.map((item, index) => (
+            <View style={styles.paymentCard} key={item.Token || index}>
+              {/* Header */}
+              <View style={styles.cardHeader}>
+                <AppText
+                  text={`${item.CardBrand} Card`}
+                  fontSize={16}
+                  type="SemiBold"
+                  color={Colors.PINE_FOREST}
+                />
+              </View>
+
+              {/* Brand Logo */}
+              {item.CardBrand === 'Master' && (
+                <Image
+                  source={require('@/assets/img/mastercard.png')}
+                  style={styles.mcLogo}
+                />
+              )}
+
+              {/* Card Holder */}
               <AppText
-                text={`${item.CardBrand} Card`}
-                fontSize={16}
-                type="SemiBold"
+                text="Card Holder Name"
+                fontSize={14}
                 color={Colors.PINE_FOREST}
+                mt={15}
+                mb={8}
               />
-
-              {/* <View style={styles.actionIcons}>
-                <ButtonView>
-                  <Svgicons path="trashIcon" />
-                </ButtonView>
-
-                <ButtonView style={{ marginLeft: 12 }}>
-                  <Svgicons path="editIcon" />
-                </ButtonView>
-              </View> */}
-            </View>
-
-            {/* Brand Logo */}
-            {item.CardBrand === 'Master' && (
-              <Image
-                source={require('@/assets/img/mastercard.png')}
-                style={styles.mcLogo}
-              />
-            )}
-
-            {/* Card Holder */}
-            <AppText
-              text="Card Holder Name"
-              fontSize={14}
-              color={Colors.PINE_FOREST}
-              mt={15}
-              mb={8}
-            />
-            <TextInput
-              style={styles.disabledInput}
-              value="--"
-              editable={false}
-            />
-
-            {/* Card Number */}
-            <AppText
-              text="Card Number"
-              fontSize={14}
-              color={Colors.PINE_FOREST}
-              mt={15}
-              mb={8}
-            />
-
-            <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.flexInput}
-                value={item.CardNumber}
-                secureTextEntry={isSecure}
+                style={styles.disabledInput}
+                value={item.CardHolderName || '--'}
                 editable={false}
               />
 
-              <ButtonView onPress={() => setIsSecure(!isSecure)}>
-                <Svgicons path="eyeSlash" />
-              </ButtonView>
-            </View>
-
-            {/* Expiry + CVV (not from API yet) */}
-            <View style={styles.rowSplit}>
-              <View style={{ flex: 1, marginRight: 15 }}>
-                <AppText text="Exp. Date" fontSize={14} mt={15} mb={8} />
-                <TextInput
-                  style={styles.disabledInput}
-                  value="--/--"
-                  editable={false}
-                />
-              </View>
-
-              <View style={{ flex: 1 }}>
-                <AppText text="CVV" fontSize={14} mt={15} mb={8} />
-                <TextInput
-                  style={styles.disabledInput}
-                  value="***"
-                  editable={false}
-                />
-              </View>
-            </View>
-
-            {/* Default Switch */}
-            <View style={styles.switchRow}>
+              {/* Card Number */}
               <AppText
-                text="Set as default"
-                fontSize={16}
+                text="Card Number"
+                fontSize={14}
                 color={Colors.PINE_FOREST}
+                mt={15}
+                mb={8}
               />
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.flexInput}
+                  value={item.CardNumber || '--'}
+                  secureTextEntry={isSecure}
+                  editable={false}
+                />
+                <ButtonView onPress={() => setIsSecure(!isSecure)}>
+                  <Svgicons path={isSecure ? 'eyeSlash' : 'eye'} />
+                </ButtonView>
+              </View>
 
-              <Switch
-                value={isDefault}
-                onValueChange={setIsDefault}
-                trackColor={{
-                  false: '#E0E0E0',
-                  true: Colors.BRUNSWICK_GREEN,
-                }}
-                thumbColor={Colors.WHITE}
-              />
+              {/* Expiry + CVV */}
+              <View style={styles.rowSplit}>
+                <View style={{ flex: 1, marginRight: 15 }}>
+                  <AppText text="Exp. Date" fontSize={14} mt={15} mb={8} />
+                  <TextInput
+                    style={styles.disabledInput}
+                    value={item.ExpDate || '--/--'}
+                    editable={false}
+                  />
+                </View>
+
+                <View style={{ flex: 1 }}>
+                  <AppText text="CVV" fontSize={14} mt={15} mb={8} />
+                  <TextInput
+                    style={styles.disabledInput}
+                    value={item.CVV || '***'}
+                    editable={false}
+                  />
+                </View>
+              </View>
+
+              {/* Default Switch */}
+              <View style={styles.switchRow}>
+                <AppText
+                  text="Set as default"
+                  fontSize={16}
+                  color={Colors.PINE_FOREST}
+                />
+                <Switch
+                  value={isDefault === item.Token}
+                  onValueChange={() => setIsDefault(item.Token)}
+                  trackColor={{
+                    false: '#E0E0E0',
+                    true: Colors.BRUNSWICK_GREEN,
+                  }}
+                  thumbColor={Colors.WHITE}
+                />
+              </View>
             </View>
-          </View>
-        ))}
+          ))}
 
         {/* Add New Button */}
         <AppButton
           title="Add New Payment Method"
           onPress={onAddNew}
-          mt={34}
+          mt={(!cards || cards.length === 0) ? 40 : 34}
         />
       </ScrollView>
     </View>
@@ -191,10 +200,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-
-  actionIcons: {
-    flexDirection: 'row',
   },
 
   mcLogo: {
@@ -241,5 +246,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 25,
+  },
+
+  emptyContainer: {
+    marginTop: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 30,
   },
 });

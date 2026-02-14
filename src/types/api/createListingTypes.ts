@@ -77,7 +77,17 @@ export interface CreateListingPayload {
     }
   }
 }
-
+export interface getChannelIDResponse {
+  status: string;
+  message: string;
+  data: getChannelIDItemResponse[];
+}
+export interface getChannelIDItemResponse{
+   id: number;
+    user_id: number;
+    ch_channel_id: string;
+    connection_type: any;
+}
 export interface ManageListingsResponse {
   status: string;
   message: string;

@@ -54,7 +54,7 @@ const PropertyDetailScreen = () => {
         }}>
         <AppText text={propertyData?.title} fontSize={28} lineHeight={28} type="Bold" color={Colors.BRUNSWICK_GREEN} />
         </View>
-        <Menu>
+        {/* <Menu>
           <MenuTrigger>
             <View style={{ padding: 5 }}>
               <Svgicons path="menuDotsIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
@@ -82,7 +82,7 @@ const PropertyDetailScreen = () => {
               <Svgicons path="deleteIcon" size={20} color={Colors.INDIAN_RED} />
             </MenuOption>
           </MenuOptions>
-        </Menu>
+        </Menu> */}
       </View>
       <RefreshableScrollView
         isLoading={isLoading}

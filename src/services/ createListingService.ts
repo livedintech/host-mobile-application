@@ -110,3 +110,17 @@ export const getTransactionHistoryApi = async (payload: getTransactionHistoryPay
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+// Create Listing 
+export const createNewListingApi = async (payload: getUserListingsByUserID) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CREATE_LISTINGS_BEFORE,
+        { user_id: payload.user },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};

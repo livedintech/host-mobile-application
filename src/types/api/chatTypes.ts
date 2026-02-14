@@ -35,3 +35,8 @@ export interface assignUserToChatPayloadType {
   conversation_id?: string | number,
   user_id?: string,
 }
+
+export interface markReadChatPayloadType {
+  conversation_id?: string | number,
+  last_message_id?: string | number,
+}

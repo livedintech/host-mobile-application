@@ -33,7 +33,7 @@ interface ExistingDocument {
 }
 
 export default function useDocumentUploadContainer() {
-    const { user } = useAuthStore();
+    const { user, token } = useAuthStore();
     const { params } = useRoute();
     const routeListing = params?.paramData?.listing;
     const isEdit = Boolean(routeListing?.id);
@@ -165,7 +165,10 @@ export default function useDocumentUploadContainer() {
 
             const response = await fetch(`${BASE_URL}api/v2/channelmanagement/create-listing/documents`, {
                 method: isEdit ? 'POST' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
                 body: JSON.stringify(body),
             });
 

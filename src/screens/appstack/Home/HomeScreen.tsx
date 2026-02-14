@@ -17,7 +17,7 @@ const HomeScreen = () => {
         <AppText text={`Hi ${user?.name}, how may I help you today?`} fontSize={32} type="Medium" color={Colors.PINE_FOREST} />
         
         <View style={styles.cardContainer}>
-          {['Connect Airbnb', 'Connect Gathern', 'Connect New Listing'].map((item) => (
+          {['Connect Booking Platform', 'Connect New Listing'].map((item) => (
             <ButtonView key={item} style={styles.platformBtn} onPress={() => onConnect(item)}>
               <AppText text={item} fontSize={16} color={Colors.PINE_FOREST} />
               {/* <Image source={require('@/assets/img/upload.png')} style={styles.icon} /> */}

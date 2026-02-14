@@ -41,37 +41,37 @@ interface SavedReply {
   value: string;
 }
 
-const SAVED_REPLIES: SavedReply[] = [
-  {
-    id: 1,
-    label: 'Wifi Pass',
-    value: 'Here is the Wi-Fi password for your stay: 12345678',
-  },
-  {
-    id: 2,
-    label: 'Cleaning',
-    value: 'Cleaning will be done daily between 10 AM and 12 PM.',
-  },
-  {
-    id: 3,
-    label: 'Check in',
-    value: 'You can check in anytime after 3:00 PM.',
-  },
-  { id: 4, label: 'Check out', value: 'Please check out before 11:00 AM.' },
-  {
-    id: 5,
-    label: 'Bathroom',
-    value: 'Fresh towels and toiletries are provided in the bathroom.',
-  },
-  { id: 6, label: 'Bedsheet', value: 'Bedsheets are changed every 3 days.' },
-  { id: 7, label: 'Timings', value: 'Breakfast is served from 8 AM to 10 AM.' },
-  { id: 8, label: 'Booking', value: 'Your booking has been confirmed.' },
-  {
-    id: 9,
-    label: 'Microwave',
-    value: 'The microwave is available in the kitchen.',
-  },
-];
+// const SAVED_REPLIES: SavedReply[] = [
+//   {
+//     id: 1,
+//     label: 'Wifi Pass',
+//     value: 'Here is the Wi-Fi password for your stay: 12345678',
+//   },
+//   {
+//     id: 2,
+//     label: 'Cleaning',
+//     value: 'Cleaning will be done daily between 10 AM and 12 PM.',
+//   },
+//   {
+//     id: 3,
+//     label: 'Check in',
+//     value: 'You can check in anytime after 3:00 PM.',
+//   },
+//   { id: 4, label: 'Check out', value: 'Please check out before 11:00 AM.' },
+//   {
+//     id: 5,
+//     label: 'Bathroom',
+//     value: 'Fresh towels and toiletries are provided in the bathroom.',
+//   },
+//   { id: 6, label: 'Bedsheet', value: 'Bedsheets are changed every 3 days.' },
+//   { id: 7, label: 'Timings', value: 'Breakfast is served from 8 AM to 10 AM.' },
+//   { id: 8, label: 'Booking', value: 'Your booking has been confirmed.' },
+//   {
+//     id: 9,
+//     label: 'Microwave',
+//     value: 'The microwave is available in the kitchen.',
+//   },
+// ];
 
 // Helper function to transform API data to ChatMessage format
 const transformApiMessages = (apiMessages: any[], currentUserId: number): ChatMessage[] => {
@@ -648,8 +648,7 @@ export const useChatContainer = () => {
     handleReplyToMessage,
     cancelReply,
     scrollToMessage,
-
-    SAVED_REPLIES,
+    SAVED_REPLIES:savedReplies?.data?.items,
     refetch,
   };
 };

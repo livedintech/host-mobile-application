@@ -13,8 +13,6 @@ import { useChatContainer } from './ChatContainer';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { navigate } from '@/services/navigationService';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import dayjs from 'dayjs';
 
@@ -34,35 +32,81 @@ const ChatScreen = () => {
     transformedCities,
     transformedListings,
     transformedApartmentTypes,
-    handlePopupMenu
+    handlePopupMenu,
+    goToChatDetail,
+    search,
+    setSearch,
   } = useChatContainer();
+
+  const ACTION_WIDTH = Metrics.scale(80); // ek button ki width
+  const TOTAL_ACTION_WIDTH = ACTION_WIDTH * 2; // 2 buttons (Snooze + Archive)
+
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
     const renderRightActions = (_prog: SharedValue<number>, drag: SharedValue<number>) => {
-      const style = useAnimatedStyle(() => ({ transform: [{ translateX: drag.value + 160 }] }));
+      const style = useAnimatedStyle(() => ({
+        transform: [{ translateX: drag.value + TOTAL_ACTION_WIDTH }]
+      }));
+
+      const isArchived = item?.is_archived;
+      const isSnoozed = item?.is_mute;
+
       return (
-        <Reanimated.View style={[styles.swipeContainer, style]}>
-          <ButtonView style={styles.snoozeAction} onPress={() => handleAction(item, 'Snoozed')}>
-            <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
-            <AppText text="Snooze" color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
+        <Reanimated.View
+          style={[
+            styles.swipeContainer,
+            { width: TOTAL_ACTION_WIDTH },
+            style
+          ]}
+        >
+          {/* Snooze / UnSnooze */}
+          <ButtonView
+            style={[styles.snoozeAction, { width: ACTION_WIDTH }]}
+            onPress={() => handleAction(item, 'Snoozed')}
+          >
+            <Svgicons
+              path="snoozeIcon"
+              size={24}
+              color={Colors.WHITE}
+            />
+            <AppText
+              text={isSnoozed ? 'Un-snooze' : 'Snooze'}
+              color={Colors.WHITE}
+              fontSize={12}
+              mt={5}
+              type="Medium"
+            />
           </ButtonView>
-          <ButtonView style={styles.archiveAction} onPress={() => handleAction(item, 'Archived')}>
-            <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
-            <AppText text="Archive" color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
+
+          {/* Archive / UnArchive */}
+          <ButtonView
+            style={[styles.archiveAction, { width: ACTION_WIDTH }]}
+            onPress={() => handleAction(item, 'Archived')}
+          >
+            <Svgicons
+              path="archiveIcon"
+              size={24}
+              color={Colors.WHITE}
+            />
+            <AppText
+              text={isArchived ? 'Un-archive' : 'Archive'}
+              color={Colors.WHITE}
+              fontSize={12}
+              mt={5}
+              type="Medium"
+            />
           </ButtonView>
         </Reanimated.View>
       );
     };
 
+
     return (
-      <Swipeable friction={2} rightThreshold={40} renderRightActions={renderRightActions}>
+      <Swipeable friction={1.5} rightThreshold={40} overshootRight={false} renderRightActions={renderRightActions}>
         <View style={styles.chatRow}>
           {/* API response me image field hai ya default */}
           <Image source={item.img ? { uri: item.img } : require('@/assets/img/dummy/livedin.png')} style={styles.avatar} />
-          <Pressable style={styles.chatInfo} onPress={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
-            conversation_id: item?.id,
-            listing_id: item?.listing_id
-          })}>
+          <Pressable style={styles.chatInfo} onPress={() => goToChatDetail(item)}>
             <View style={styles.infoTop}>
               {/* API response me name */}
               <View style={{
@@ -99,7 +143,8 @@ const ChatScreen = () => {
       {/* Header Section */}
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
-          <TextInput placeholder="Search Guest" style={styles.searchInput} placeholderTextColor={Colors.GREY_SHADOW} />
+          <TextInput placeholder="Search Guest" style={styles.searchInput} placeholderTextColor={Colors.GREY_SHADOW} value={search}
+            onChangeText={setSearch} />
           <Svgicons path="searchIcon" size={18} />
         </View>
         <ButtonView onPress={() => setFilterVisible(true)}>
@@ -125,7 +170,7 @@ const ChatScreen = () => {
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
-          data={['All', 'Archived', 'Snoozed', 'Unread', 'Marketplace'] as ChatStatus[]}
+          data={['All', 'Archived', 'Snoozed', 'Unread'] as ChatStatus[]}
           contentContainerStyle={{ paddingLeft: 20 }}
           renderItem={({ item }) => (
             <View style={{ marginHorizontal: 5 }}>
@@ -148,7 +193,8 @@ const ChatScreen = () => {
       </View>
 
       <FlatListHandler
-        isLoading={isLoading || isFetching}
+        // isLoading={isLoading || isFetching}
+        isLoading={false}
         data={data}
         meta={dataQuery}
         listEmptyText="No Chat found"
@@ -284,9 +330,7 @@ const styles = StyleSheet.create({
 
   swipeContainer: {
     flexDirection: 'row',
-    width: Metrics.scale(160),
   },
-
   snoozeAction: {
     flex: 1,
     backgroundColor: '#B0B5C1',

@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import Utils from "@/utility/Utils";
 import apiService from "./apiService";
-import {  assignUserToChatPayloadType, chatDetailSavedRepliesPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
+import {  assignUserToChatPayloadType, chatDetailSavedRepliesPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, markReadChatPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
 type ChatListParams = {
   page?: number;
   limit?: number;
@@ -9,6 +9,7 @@ type ChatListParams = {
   archived?: boolean;
   snoozed?: boolean;
   marketplace?: boolean;
+  search?:string;
 };
 
 export const getChatListApi = async ({
@@ -191,3 +192,14 @@ export const getChatDetailSavedRepliesApi = async (
   throw new Error(response?.message || 'Failed to fetch saved replies');
 };
 
+// Mark Read
+export const markReadChatApi = async (payload: markReadChatPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_MARK_READ,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
