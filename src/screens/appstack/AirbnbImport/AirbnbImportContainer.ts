@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { navigate } from '@/services/navigationService';
@@ -11,12 +12,11 @@ import {
 } from '@/services/bookingManagementApi';
 import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
-import { createMapListingbyUserIDType } from '@/types/api/bookingManagementTypes';
 import { CreateAccountResponse } from '@/types/api/authTypes';
 import Toast from 'react-native-toast-message';
 
 type FormValues = {
-  [key: string]: string;
+  [key: string]: string; // key = Airbnb property id, value = Livedin listing id
 };
 
 type RouteParams = {
@@ -28,7 +28,8 @@ export default function useAirbnbImportContainer() {
   const channelId = route.params?.ch_channel_id;
   const { user } = useAuthStore();
 
-  const { data, isLoading, refetch } = useQuery({
+  // Fetch Airbnb listings for this channel
+  const { data: airbnbData, isLoading, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
     queryFn: () =>
       getChannexListingsById({
@@ -37,6 +38,7 @@ export default function useAirbnbImportContainer() {
     enabled: Boolean(channelId),
   });
 
+  // Fetch user listings (for dropdown options)
   const { data: apiResponse } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () =>
@@ -46,81 +48,84 @@ export default function useAirbnbImportContainer() {
     enabled: Boolean(user?.id),
   });
 
-  const { mutate: createMapListingbyUserID, isPending } =
-    useMutation<CreateAccountResponse, Error, { listing_id: number, channel_id:string }>({
-      mutationFn: (payload) =>
-        createMapListingbyUserIDApi({
-          user: user!.id,
-          listing_id: payload.listing_id,
-          channel_id: payload.channel_id,
-
-        }),
-
-      onSuccess: ({ message }) => {
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
-        });
-
-        Toast.show({ type: 'success', text1: message });
-      },
-
-      onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message });
-      },
-    });
+  // Prepare dropdown options (values must be strings)
+  const listingOptions = apiResponse?.data?.map((item: any) => ({
+  label: item.name,
+  value: String(item.listing_id), // internal Livedin ID for dropdown
+})) ?? [];
 
 
-  const listingOptions =
-    apiResponse?.data?.map((item: { name: string, id: number }) => ({
-      label: item.name,
-      value: item.id,
-    })) ?? [];
-
-    console.log('listingOptions',listingOptions);
-    
-
+  // Initialize form
   const {
     control,
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<FormValues>({
-    defaultValues: {},
+    defaultValues: {}, // initially empty
   });
 
-const handleIndividualImport = (fieldName: string) => {
-  const selectedValue = watch(fieldName);
-  const airbnbListingId = Number(fieldName);
+  // When data loads, set default values for pre-selected dropdowns
+useEffect(() => {
+  if (airbnbData && apiResponse) {
+    const defaultFormValues: FormValues = {};
 
-  if (selectedValue) {
-    const payload = {
-      airbnb_listing_id: airbnbListingId,
-      livedin_listing_id: selectedValue,
-    };
+    airbnbData.forEach((property: any) => {
+      // Match Airbnb property with user listing by ID
+      const match = apiResponse.data?.find((item: any) => item.id === property.id);
 
-    console.log('Mapping existing listing:', payload);
-
-    // 👇 Yahan aap ko correct API call karni hogi
-    createMapListingbyUserID({
-      listing_id: airbnbListingId,
-      channel_id:channelId,
-
+      if (match) {
+        // value = internal Livedin listing_id (for dropdown)
+        defaultFormValues[String(property.id)] = String(match.listing_id);
+      }
     });
 
-    return;
+    reset(defaultFormValues); // prefill dropdowns
   }
-
-  // Agar dropdown select nahi hua
-  createMapListingbyUserID({
-    listing_id: airbnbListingId,
-   channel_id:channelId,
-  });
-};
+}, [airbnbData, apiResponse, reset]);
 
 
+  // Mutation to map Airbnb listing to Livedin listing
+  const { mutate: createMapListingbyUserID } =
+    useMutation<CreateAccountResponse, Error, { listing_id: number; channel_id: string }>({
+      mutationFn: (payload) =>
+        createMapListingbyUserIDApi({
+          user: user!.id,
+          listing_id: payload.listing_id,
+          channel_id: payload.channel_id,
+        }),
+      onSuccess: ({ message }) => {
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+        });
+        Toast.show({ type: 'success', text1: message });
+      },
+      onError: (error) => {
+        Toast.show({ type: 'error', text1: error.message });
+      },
+    });
+
+  // Handle individual import (dropdown selection)
+  const handleIndividualImport = (fieldName: string) => {
+    const selectedValue = watch(fieldName);
+    const airbnbListingId = Number(fieldName);
+
+    createMapListingbyUserID({
+      listing_id: airbnbListingId,
+      channel_id: channelId!,
+    });
+
+    console.log('Mapping Airbnb listing:', {
+      airbnb_listing_id: airbnbListingId,
+      livedin_listing_id: selectedValue,
+    });
+  };
+
+  // Final submit
   const onNext = (data: FormValues) => {
     console.log('Final form submit:', data);
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
@@ -129,13 +134,13 @@ const handleIndividualImport = (fieldName: string) => {
   return {
     control,
     errors,
-    properties: data ?? [],
+    properties: airbnbData ?? [],
     listingOptions,
     isLoading,
     handleSubmit,
     onNext,
     handleIndividualImport,
     refetch,
-    watch
+    watch,
   };
 }
