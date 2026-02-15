@@ -109,7 +109,7 @@ export const useChatContainer = () => {
         limit: PAGE_SIZE,
         ...finalFilters,
       }),
-      refetchInterval: 4000,
+    refetchInterval: 4000,
     initialPageParam: 1,
     getNextPageParam: lastPage =>
       lastPage.current_page < lastPage.total_pages
@@ -262,33 +262,30 @@ export const useChatContainer = () => {
 
   /* -------------------------------- RETURN -------------------------------- */
 
-  const handlePopupMenu = (item: ChatMessage, type: ChatStatus) => {
-  handleAction(item, type);
-};
+  const handlePopupMenu = (selected: string) => { if (selected === 'Saved Replies') { navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES) } else if (selected === 'Automation Template') { navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE) } else if (selected === 'AI Auto Reply') { navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY) } }
 
-
- return {
-  data,
-  isLoading,
-  isFetching,
-  dataQuery,
-  activeTab,
-  setActiveTab,
-  handleAction,
-  handlePopupMenu, // 👈 ye add karo
-  isFilterVisible,
-  setFilterVisible,
-  filterAssigned,
-  setFilterAssigned,
-  handleResetAll,
-  control,
-  errors,
-  transformedCities,
-  transformedListings,
-  transformedApartmentTypes,
-  goToChatDetail,
-  search,
-  setSearch,
-};
+  return {
+    data,
+    isLoading,
+    isFetching,
+    dataQuery,
+    activeTab,
+    setActiveTab,
+    handleAction,
+    handlePopupMenu, // 👈 ye add karo
+    isFilterVisible,
+    setFilterVisible,
+    filterAssigned,
+    setFilterAssigned,
+    handleResetAll,
+    control,
+    errors,
+    transformedCities,
+    transformedListings,
+    transformedApartmentTypes,
+    goToChatDetail,
+    search,
+    setSearch,
+  };
 
 };

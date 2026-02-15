@@ -12,6 +12,7 @@ import { Task } from '@/types/api/taskManagentType';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import Metrics from '@/utility/Metrics';
 
 const TaskListScreen: React.FC = () => {
   const {
@@ -96,8 +97,8 @@ const TaskListScreen: React.FC = () => {
                 item.status === 'todo'
                   ? Colors.ALERT_RED
                   : item.status === 'inprogress'
-                  ? Colors.GOLDEN_YELLOW
-                  : Colors.TEAL_GREEN
+                    ? Colors.GOLDEN_YELLOW
+                    : Colors.TEAL_GREEN
               }
               type="Bold"
             />
@@ -136,81 +137,86 @@ const TaskListScreen: React.FC = () => {
       />
 
       {/* Filter Modal */}
-      <Modal
-        isVisible={isFilterVisible}
-        onBackdropPress={toggleFilterModal}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <AppText
-              text="Apply Filter"
-              fontSize={22}
-              type="Bold"
-              color={Colors.BRUNSWICK_GREEN}
-            />
-          </View>
+      {isFilterVisible &&
 
-          <MultiSelectDropdownField
-            name="listings"
-            label="Select Listings"
-            control={control}
-            errors={errors}
-            data={listingDropdown}
-            placeholder="Select Multiple Options"
+        <Modal
+          animationIn='fadeInUp'
+          isVisible={isFilterVisible}
+          onBackdropPress={toggleFilterModal}
+          style={styles.modal}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <AppText
+                text="Apply Filter"
+                fontSize={22}
+                type="Bold"
+                color={Colors.BRUNSWICK_GREEN}
+              />
+            </View>
+
+            <MultiSelectDropdownField
+              name="listings"
+              label="Select Listings"
+              control={control}
+              errors={errors}
+              data={listingDropdown}
+              placeholder="Select Multiple Options"
             // rules={{
             //   validate: (value: any[]) =>
             //     value?.length > 0 || 'Please select at least one listing',
             // }}
-          />
+            />
 
-          <MultiSelectDropdownField
-            name="assignee"
-            label="Task Assignee"
-            control={control}
-            errors={errors}
-            data={vendorDropdown}
-            placeholder="Select Multiple Options"
+            <MultiSelectDropdownField
+              name="assignee"
+              label="Task Assignee"
+              control={control}
+              errors={errors}
+              data={vendorDropdown}
+              placeholder="Select Multiple Options"
             // rules={{
             //   validate: (value: any[]) =>
             //     value?.length > 0 || 'Please select assignee',
             // }}
-          />
+            />
 
-          <MultiSelectDropdownField
-            name="status"
-            label="Task Status"
-            control={control}
-            errors={errors}
-            data={[
-              { label: 'Todo', value: 'todo' },
-              { label: 'In Progress', value: 'inprogress' },
-              { label: 'Completed', value: 'completed' },
-            ]}
-            placeholder="Select Multiple Options"
+            <MultiSelectDropdownField
+              name="status"
+              label="Task Status"
+              control={control}
+              errors={errors}
+              data={[
+                { label: 'Todo', value: 'todo' },
+                { label: 'In Progress', value: 'inprogress' },
+                { label: 'Completed', value: 'completed' },
+              ]}
+              placeholder="Select Multiple Options"
             // rules={{
             //   validate: (value: any[]) =>
             //     value?.length > 0 || 'Please select status',
             // }}
-          />
+            />
 
-          <View style={styles.modalFooter}>
-            <AppButton
-              title="Reset"
-              onPress={onResetFilter}
-              style={styles.flex1}
-              mx={5}
-            />
-            <AppButton
-              title="Apply Filter"
-              onPress={handleSubmit(onApplyFilter)}
-              style={styles.flex1}
-              mx={5}
-              color={Colors.PINE_FOREST}
-            />
+            <View style={styles.modalFooter}>
+              <AppButton
+                title="Reset"
+                onPress={onResetFilter}
+                style={styles.flex1}
+                mx={5}
+              />
+              <AppButton
+                title="Apply Filter"
+                onPress={handleSubmit(onApplyFilter)}
+                style={styles.flex1}
+                mx={5}
+                color={Colors.PINE_FOREST}
+              />
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      }
+
 
       {/* Footer */}
       <View style={styles.footer}>
@@ -251,7 +257,16 @@ const styles = StyleSheet.create({
   infoRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' },
 
   /* Footer */
-  footer: { position: 'absolute', bottom: 20, left: 20, right: 20 },
+  footer: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 0,
+    backgroundColor: '#FFF',
+    paddingVertical: 10,
+    width:'100%',
+    paddingBottom: Metrics.verticalScale(20)
+  },
   createBtn: {
     height: 52,
     borderRadius: 12,

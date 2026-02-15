@@ -199,6 +199,25 @@ const ChatScreen = () => {
     sendAiSuggestion,
   } = useChatContainer();
 
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+
+  useEffect(() => {
+  const showSub = Keyboard.addListener('keyboardDidShow', (e) => {
+    setKeyboardHeight(e.endCoordinates.height);
+  });
+
+  const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+    setKeyboardHeight(0);
+  });
+
+  return () => {
+    showSub.remove();
+    hideSub.remove();
+  };
+}, []);
+
+
   // State for highlighting scrolled message
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | number | null>(null);
 
@@ -477,6 +496,7 @@ const ChatScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={20}
       style={styles.container}
     >
       <View style={styles.container}>
@@ -747,7 +767,7 @@ const ChatScreen = () => {
         )}
 
         {/* Input Area */}
-        <View style={styles.inputArea}>
+        <View style={[styles.inputArea, { paddingBottom: keyboardHeight > 0 ? 15 : 12 }]}>
           <Pressable
             onPress={() => {
               Keyboard.dismiss();

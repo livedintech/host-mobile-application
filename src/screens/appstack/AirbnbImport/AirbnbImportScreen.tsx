@@ -20,6 +20,7 @@ const PropertyCard = ({
   listingOptions,
   handleIndividualImport,
   watch,
+  isMap
 }: any) => {
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
@@ -62,7 +63,7 @@ const PropertyCard = ({
       />
 
       <AppButton
-        title="Import Listing"
+        title={isMap ? 'Map Listing' : "Unmapped Listing"}
         onPress={() => handleIndividualImport(fieldName)}
         mt={12}
       />
@@ -93,6 +94,7 @@ const AirbnbImportScreen = () => {
       listingOptions={listingOptions}
       handleIndividualImport={handleIndividualImport}
       watch={watch}
+      isMap={item?.isMap}
     />
   );
 

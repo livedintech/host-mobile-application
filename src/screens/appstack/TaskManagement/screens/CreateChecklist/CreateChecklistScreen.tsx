@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTaskChecklistDetail } from '@/services/TaskManagementApi';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
 import CreateChecklistContainer from '../../containers/CreateChecklist/CreateChecklistContainer';
+import Metrics from '@/utility/Metrics';
 
 const ChecklistItemsList = ({
   sectionId,
@@ -319,9 +320,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     right: 20,
-    bottom: 20,
+    bottom: 0,
     backgroundColor: '#FFF',
     paddingVertical: 10,
+    width:'100%',
+    paddingBottom: Metrics.verticalScale(20)
   },
   modalMargin: { margin: 20, justifyContent: 'center' },
   modalContent: { backgroundColor: 'white', padding: 24, borderRadius: 24 },

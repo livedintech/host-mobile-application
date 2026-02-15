@@ -15,7 +15,7 @@ import {
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 
 const EditTaskContainer = () => {
   const { params } = useRoute();
@@ -178,7 +178,8 @@ const EditTaskContainer = () => {
 
     // If there's nothing to update, just go back
     if (promises.length === 0) {
-      navigate(NavigationRoutes.APP_STACK.TASK);
+      // navigate(NavigationRoutes.APP_STACK.TASK);
+      goBack()
       return;
     }
 
@@ -192,7 +193,8 @@ const EditTaskContainer = () => {
     });
 
     // Finally, navigate back
-    navigate(NavigationRoutes.APP_STACK.TASK);
+    // navigate(NavigationRoutes.APP_STACK.TASK);
+    goBack()
     
   } catch (error) {
     // If any API fails, the code stops here and stays on the screen

@@ -29,7 +29,7 @@ export default function useAirbnbImportContainer() {
   const { user } = useAuthStore();
 
   // Fetch Airbnb listings for this channel
-  const { data: airbnbData, isLoading, refetch } = useQuery({
+  const { data: airbnbData, isLoading:isLoadingListing, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
     queryFn: () =>
       getChannexListingsById({
@@ -39,7 +39,7 @@ export default function useAirbnbImportContainer() {
   });
 
   // Fetch user listings (for dropdown options)
-  const { data: apiResponse } = useQuery({
+  const { data: apiResponse,isLoading:isLoadingDropdown } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () =>
       getUserListingsByUserIDApi({
@@ -88,12 +88,12 @@ useEffect(() => {
 
   // Mutation to map Airbnb listing to Livedin listing
   const { mutate: createMapListingbyUserID } =
-    useMutation<CreateAccountResponse, Error, { listing_id: number; channel_id: string }>({
+    useMutation<CreateAccountResponse, Error, { listing_id: number; }>({
       mutationFn: (payload) =>
         createMapListingbyUserIDApi({
           user: user!.id,
           listing_id: payload.listing_id,
-          channel_id: payload.channel_id,
+          // channel_id: payload.channel_id,
         }),
       onSuccess: ({ message }) => {
         queryClient.invalidateQueries({
@@ -116,7 +116,7 @@ useEffect(() => {
 
     createMapListingbyUserID({
       listing_id: airbnbListingId,
-      channel_id: channelId!,
+      // channel_id: channelId!,
     });
 
     console.log('Mapping Airbnb listing:', {
@@ -136,7 +136,7 @@ useEffect(() => {
     errors,
     properties: airbnbData ?? [],
     listingOptions,
-    isLoading,
+    isLoading : isLoadingDropdown || isLoadingListing,
     handleSubmit,
     onNext,
     handleIndividualImport,

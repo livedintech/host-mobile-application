@@ -15,7 +15,7 @@ export interface getUserListingsByUserID {
 export interface createMapListingbyUserIDType {
   user: number,
   listing_id: number
-  channel_id: string
+  // channel_id: string
 
 }
 export interface creatGathernChannelType {
