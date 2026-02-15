@@ -14,12 +14,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 // Internal Imports
 import { useAuthStore } from '@/store/useAuthStore';
-import { 
-  getUserListingsApi, 
-  getReservationsApi, 
+import {
+  getUserListingsApi,
+  getReservationsApi,
   getBookingDetailsApi,
   createDirectBookingApi,
-  updateCalendarPricingApi 
+  updateCalendarPricingApi
 } from '@/services/calendarBookingManagement';
 import useCalendarContainer from './container/CalendarContainer';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -36,20 +36,21 @@ import { Colors } from '@/theme/colors';
 
 // Validation
 import { createBookingFormValues, createBookingSchema } from '@/validation/booking/bookingSchemas';
+import Toast from 'react-native-toast-message';
 
 const ListingScreen = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const navigation = useNavigation<any>();
-  
+
   // UI States
-  const [selectedTab, setSelectedTab] = useState(0); 
+  const [selectedTab, setSelectedTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('today'); // Default filter set to today
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  
+
   // Booking Details States
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<any[]>([]);
@@ -59,29 +60,29 @@ const ListingScreen = () => {
   const [selectedDateForBooking, setSelectedDateForBooking] = useState('');
   const [bookingType, setBookingType] = useState('direct');
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
-  const [appliedListingIds, setAppliedListingIds] = useState<string>(''); 
+  const [appliedListingIds, setAppliedListingIds] = useState<string>('');
 
   // --- FORM SETUP WITH YUP ---
-  const { 
-    control, 
-    watch, 
-    handleSubmit, 
-    setValue, 
-    reset, 
+  const {
+    control,
+    watch,
+    handleSubmit,
+    setValue,
+    reset,
     clearErrors,
-    formState: { errors } 
+    formState: { errors }
   } = useForm<createBookingFormValues>({
     resolver: yupResolver(createBookingSchema) as any,
     context: { bookingType: bookingType },
-    defaultValues: { 
-      listing_selection: '', 
-      name: '', 
-      email: '', 
+    defaultValues: {
+      listing_selection: '',
+      name: '',
+      email: '',
       phone: '',
-      booking_type: 'host', 
-      end_date: '', 
-      start_date: '', 
-      rate: '', 
+      booking_type: 'host',
+      end_date: '',
+      start_date: '',
+      rate: '',
       listing_id: '',
     },
     shouldUnregister: false,
@@ -120,10 +121,10 @@ const ListingScreen = () => {
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
-      
+
       if (response && response.data) {
         navigation.navigate(
-          NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, 
+          NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
           { bookingData: response.data }
         );
       }
@@ -136,8 +137,8 @@ const ListingScreen = () => {
 
   const handleDayPress = (day: any) => {
     const dateData = calendarMarkedDates[day.dateString];
-    const isBooked = selectedListingId 
-      ? (dateData?.type && dateData.type !== 'none') 
+    const isBooked = selectedListingId
+      ? (dateData?.type && dateData.type !== 'none')
       : (dateData?.channels?.length > 0);
 
     if (isBooked) {
@@ -150,42 +151,75 @@ const ListingScreen = () => {
   };
 
   const onCreateBooking = async (formData: createBookingFormValues) => {
-    const finalId = formData.listing_id || selectedListingId;
-    if (!finalId || finalId === "all") return;
+    try {
+      const finalId = formData.listing_id || selectedListingId;
+      if (!finalId || finalId === "all") return;
 
-    const formatDate = (date: string | null | undefined) => {
-      if (!date) return "";
-      if (date.includes('-')) return date;
-      const [m, d, y] = date.split('/');
-      return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-    };
+      const formatDate = (date: string | null | undefined) => {
+        if (!date) return "";
+        if (date.includes('-')) return date;
+        const [m, d, y] = date.split('/');
+        return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+      };
 
-    const startDate = formatDate(formData.start_date);
-    const endDate = formatDate(formData.end_date);
+      const startDate = formatDate(formData.start_date);
+      const endDate = formatDate(formData.end_date);
 
-    const payload = { 
-      listing_id: finalId, 
-      start_date: startDate, 
-      end_date: endDate 
-    };
-    
-    const res = bookingType === 'direct' 
-      ? await createDirectBookingApi({ 
-          ...formData, 
-          ...payload, 
-          booking_type: formData.booking_type || 'host' 
+      const payload = {
+        listing_id: finalId,
+        start_date: startDate,
+        end_date: endDate
+      };
+
+      const res = bookingType === 'direct'
+        ? await createDirectBookingApi({
+          ...formData,
+          ...payload,
+          booking_type: formData.booking_type || 'host'
         })
-      : await updateCalendarPricingApi({ 
-          ...payload, 
-          price: formData.rate || '' 
+        : await updateCalendarPricingApi({
+          ...payload,
+          price: formData.rate || ''
         });
 
-    if (res) {
-      setIsBookingOpen(false);
-      reset();
-      queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
-      queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
+      if (res) {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: bookingType === 'direct'
+            ? 'Booking created successfully'
+            : 'Pricing updated successfully',
+        });
+
+        setIsBookingOpen(false);
+        reset();
+
+        queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
+        queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
+      }
+
+    } catch (error: any) {
+      console.log('Booking Error:', error);
+
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Something went wrong',
+      });
     }
+  };
+
+  const getDatesBetween = (start: string, end: string) => {
+    const dates: string[] = [];
+    const current = new Date(start);
+    const last = new Date(end);
+
+    while (current <= last) {
+      dates.push(current.toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 1);
+    }
+
+    return dates;
   };
 
   // --- MEMOIZED DATA ---
@@ -207,55 +241,76 @@ const ListingScreen = () => {
 
   const calendarMarkedDates = useMemo(() => {
     if (!rawData || !Array.isArray(rawData)) return {};
+
     const marks: any = {};
-    const extractCardData = (item: any) => ({
-      id: item.booking_id || item.id,
-      guestName: item.guest || item.name || 'Guest',
-      platform: item.source || 'Direct',
-      property: item.listing_title || 'Property Details',
-      date: (item.start_date || item.calender_date)?.split(' ')[0] || 'N/A',
-      checkIn: item.check_in || '09:00 AM',
-      checkOut: item.check_out || '11:00 PM',
-      platformColor: item.source?.toLowerCase().includes('airbnb') ? '#FF5A5F' : 
-                     item.source?.toLowerCase().includes('gathern') ? '#9146FF' : '#3B82F6'
-    });
 
     rawData.forEach((item: any) => {
-      const dateKey = (item.start_date || item.calender_date)?.split(' ')[0];
-      if (!dateKey) return;
-      if (!selectedListingId) {
-        const source = item.source?.toLowerCase() || '';
-        let ota = source.includes('airbnb') ? 'airbnb' : source.includes('gathern') ? 'gathern' : 'booking';
-        if (marks[dateKey]) {
-          if (!marks[dateKey].channels.includes(ota)) marks[dateKey].channels.push(ota);
-          marks[dateKey].bookings.push(extractCardData(item));
-        } else {
-          marks[dateKey] = { channels: [ota], price: item.rate || '500', bookings: [extractCardData(item)] };
-        }
-      } else {
-        const booking = item.bookings?.[0];
-        if (booking) {
-          const source = booking.source?.toLowerCase() || '';
-          let color = source.includes('airbnb') ? '#FF5A5F' : source.includes('gathern') ? '#9146FF' : '#3B82F6';
+      if (!item.start_date || !item.end_date) return;
+
+      const start = item.start_date.split(' ')[0];
+      const end = item.end_date.split(' ')[0];
+      const bookingDates = getDatesBetween(start, end);
+
+      // ✅ CASE 1: Single Listing Selected → Range Highlight
+      if (selectedListingId) {
+        bookingDates.forEach((dateKey: string, index: number) => {
+          let type = 'middle';
+
+          if (bookingDates.length === 1) type = 'single';
+          else if (index === 0) type = 'starting';
+          else if (index === bookingDates.length - 1) type = 'ending';
+
           marks[dateKey] = {
-            type: dateKey === booking.arrival_date ? 'starting' : dateKey === booking.departure_date ? 'ending' : 'middle',
-            color, textColor: '#FFFFFF', price: item.rate, showLabel: dateKey === booking.arrival_date,
-            bookingData: extractCardData({ ...booking, listing_title: item.listing_title })
+            type,
+            color: item.source_type === 'livedin'
+              ? '#3B82F6'
+              : '#FF5A5F',
+            textColor: '#FFFFFF',
+            showLabel: index === 0,
+            guest: item.guest || 'Guest',
+            price: item.amount,
+            bookingData: item,
           };
-        } else {
-          marks[dateKey] = { type: 'none', color: 'transparent', price: item.rate };
-        }
+        });
+
       }
+      // ✅ CASE 2: All Listings Selected → Multi Channel Dots
+      else {
+        bookingDates.forEach((dateKey: string) => {
+
+          let channel = 'booking';
+
+          if (item.source_type === 'livedin') channel = 'booking';
+          if (item.source_type === 'ota') channel = 'airbnb';
+
+          if (!marks[dateKey]) {
+            marks[dateKey] = {
+              channels: [channel],
+              bookings: [item],
+            };
+          } else {
+            if (!marks[dateKey].channels.includes(channel)) {
+              marks[dateKey].channels.push(channel);
+            }
+            marks[dateKey].bookings.push(item);
+          }
+
+        });
+      }
+
     });
+
     return marks;
+
   }, [rawData, selectedListingId]);
+
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <BookingDetailsView 
-        isVisible={isDetailsOpen} 
-        onClose={() => setIsDetailsOpen(false)} 
-        data={selectedBookingDetails} 
+      <BookingDetailsView
+        isVisible={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        data={selectedBookingDetails}
       />
 
       {isFetchingDetails && (
@@ -271,21 +326,21 @@ const ListingScreen = () => {
               <SegmentedControl options={['Calendar', 'Reservation']} selectedIndex={selectedTab} onChange={setSelectedTab} />
             </View>
             {selectedTab === 1 && (
-              <ReservationHeader 
-                searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
-                onFilterPress={() => setModalVisible(true)} 
-                activeFilter={activeFilter} setActiveFilter={setActiveFilter} 
+              <ReservationHeader
+                searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+                onFilterPress={() => setModalVisible(true)}
+                activeFilter={activeFilter} setActiveFilter={setActiveFilter}
               />
             )}
           </View>
 
           {selectedTab === 0 ? (
-            <CalendarSection 
-              control={control} errors={errors} 
-              listingOptions={listingOptions} 
-              selectedListingId={selectedListingId || ''} 
-              markedDates={calendarMarkedDates} 
-              onDayPress={handleDayPress} 
+            <CalendarSection
+              control={control} errors={errors}
+              listingOptions={listingOptions}
+              selectedListingId={selectedListingId || ''}
+              markedDates={calendarMarkedDates}
+              onDayPress={handleDayPress}
             />
           ) : (
             <View style={{ flex: 1 }}>
@@ -305,14 +360,15 @@ const ListingScreen = () => {
                     </View>
                   }
                   renderItem={({ item }) => (
-                    <ReservationCard 
+                    <ReservationCard
                       id={item.booking_id || item.id}
-                      guestName={item.guest || 'Guest'} 
+                      guestName={item.guest}
                       platform={item.source || 'Direct'}
-                      property={item.listing_title || 'Property'} 
-                      date={item.start_date || ''}
-                      checkIn="09:00 AM" 
-                      checkOut="11:00 PM"
+                      property={item.listing_title || 'Property'}
+                      endDate={item.end_date}
+                      startDate={item?.start_date}
+                      checkIn={item?.checkIn || '04:00 PM'}
+                      checkOut={item?.checkOut || '12:00 AM'}
                       platformColor={item.source?.toLowerCase().includes('airbnb') ? '#FF5A5F' : '#3B82F6'}
                       onPress={handleReservationPress}
                     />
@@ -324,8 +380,8 @@ const ListingScreen = () => {
         </>
       )}
 
-      <FilterModalView 
-        isVisible={isModalVisible} 
+      <FilterModalView
+        isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}
         initialSelectedValues={selectedPropertyValues}
         onApply={(finalSelection) => {
@@ -337,10 +393,10 @@ const ListingScreen = () => {
           setSelectedPropertyValues([]);
           setAppliedListingIds('');
         }}
-        actualProperties={actualProperties} 
+        actualProperties={actualProperties}
       />
 
-      <CreateBookingSheet 
+      <CreateBookingSheet
         isVisible={isBookingOpen} onClose={() => setIsBookingOpen(false)}
         bookingType={bookingType} setBookingType={setBookingType}
         control={control} errors={errors} listingOptions={listingOptions}

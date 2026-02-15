@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     backgroundColor: Colors.WHITE,
-    minHeight:240
+    height:240
   },
   centerIcon: {
     width: 50,
