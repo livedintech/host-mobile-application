@@ -9,7 +9,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const OTAs = {
   AIRBNB: { label: 'Airbnb', color: '#FF5A5F' },
   GATHERN: { label: 'Gathern', color: '#A855F7' },
-  BOOKING: { label: 'Direct', color: '#3B82F6' },
+  LIVEDIN: { label: 'Livedin', color: '#3B82F6' },
+  // BOOKING: { label: 'Booking.com', color: '#3B82F6' },
 };
 
 interface MultiChannelCalendarProps {
@@ -19,7 +20,6 @@ interface MultiChannelCalendarProps {
 }
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
-  // Extract channels/sources from the marking object
   const dots = marking?.channels || [];
   const isSelected = marking?.activeSelection;
 
@@ -73,7 +73,8 @@ const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate }: MultiCha
       <View style={styles.legendHeader}>
         <LegendItem config={OTAs.AIRBNB} />
         <LegendItem config={OTAs.GATHERN} />
-        <LegendItem config={OTAs.BOOKING} />
+        <LegendItem config={OTAs.LIVEDIN} />
+        {/* <LegendItem config={OTAs.BOOKING} /> */}
       </View>
 
       <Calendar

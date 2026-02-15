@@ -16,56 +16,49 @@ export default function useCalendarContainer(listingId: string) {
     if (!Array.isArray(rawData)) return map;
 
     rawData.forEach((item: any) => {
-      const dateKey = item.calender_date || item.start_date; 
+      const dateKey = item.calender_date; // Exactly as per your API JSON
       if (!dateKey) return;
 
-      // Initialize default day structure
-      if (!map[dateKey]) {
-        map[dateKey] = { 
-          channels: [], 
-          price: item.rate || item.amount 
+      // Initialize the base day object
+      map[dateKey] = {
+        price: item.rate || 0,
+        availability: item.availability,
+        type: 'none', // Default to no booking
+      };
+
+      // Since you mentioned bookings will always have at least one object:
+      if (item.bookings && item.bookings.length > 0) {
+        const booking = item.bookings[0]; // Take the first booking object
+        const source = booking.source?.toLowerCase();
+        
+        // 1. Determine Position for the UI Span
+        let type = 'middle';
+        if (dateKey === booking.arrival_date) {
+          type = 'starting'; // Rounded left side + Name Label
+        } else if (dateKey === booking.departure_date) {
+          type = 'ending';   // Rounded right side
+        }
+
+        // Handle single-day edge case
+        if (booking.arrival_date === booking.departure_date) {
+          type = 'single';
+        }
+
+        // 2. Map Visual Data to match your Screenshot
+        map[dateKey] = {
+          ...map[dateKey],
+          type,
+          guestName: booking.guest_name,
+          // Match the colors and icons from your screenshot logic
+          color: source === 'airbnb' ? '#F8B6B6' : '#E9D5FF', 
+          containerColor: source === 'airbnb' ? '#C53030' : '#9333EA', // Darker circle color
+          textColor: type === 'starting' ? '#FFFFFF' : '#1A332C',
+          otaType: booking.type, // 'livedin', 'airbnb', etc.
+          showLabel: dateKey === booking.arrival_date, // Only show name on start date
         };
       }
-
-      // CASE A: Single Listing (Nested Bookings for Span View)
-      if (item.bookings && Array.isArray(item.bookings) && item.bookings.length > 0) {
-        item.bookings.forEach((booking: any) => {
-          const source = booking.source?.toUpperCase();
-          
-          // 1. Determine Position in the Span
-          let type = 'middle';
-          if (dateKey === booking.arrival_date) type = 'start';
-          else if (dateKey === booking.departure_date) type = 'end';
-          
-          // Handle single-day bookings
-          if (booking.arrival_date === booking.departure_date) type = 'single';
-
-          // 2. Map Data for CustomCalendar UI
-          map[dateKey] = {
-            ...map[dateKey],
-            type,
-            // Flexible name detection
-            guest: booking.guest_name || booking.name || 'Guest', 
-            ota: booking.source?.toLowerCase(),
-            color: source === 'AIRBNB' ? '#F8B6B6' : '#F3E5F5',
-            textColor: (type === 'start' || type === 'single') ? '#FFF' : '#1A332C',
-            
-            // showLabel: Only true on the arrival date for the Calendar text
-            showLabel: dateKey === booking.arrival_date, 
-            
-            channels: [...(map[dateKey].channels || []), source]
-          };
-        });
-      } 
-      // CASE B: All Listings (Flat structure for Dots View)
-      else if (item.source) {
-        const source = item.source.toUpperCase();
-        if (!map[dateKey].channels.includes(source)) {
-          map[dateKey].channels.push(source);
-        }
-      }
     });
-    
+
     return map;
   }, [rawData]);
 
