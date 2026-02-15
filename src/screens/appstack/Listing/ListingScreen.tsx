@@ -48,7 +48,6 @@ const ListingScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('today'); // Default filter set to today
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   // Booking Details States
@@ -240,71 +239,84 @@ const ListingScreen = () => {
   }, [listingOptions]);
 
   const calendarMarkedDates = useMemo(() => {
-    if (!rawData || !Array.isArray(rawData)) return {};
+  if (!rawData || !Array.isArray(rawData)) return {};
 
-    const marks: any = {};
+  const marks: any = {};
 
-    rawData.forEach((item: any) => {
-      if (!item.start_date || !item.end_date) return;
+  // Helper to map API source to our internal OTA config colors
+  const getOtaConfig = (source: string) => {
+    const s = source?.toLowerCase();
+    if (s === 'airbnb') return { key: 'AIRBNB', color: '#FF5A5F' };
+    if (s === 'gathern') return { key: 'GATHERN', color: '#A855F7' };
+    if (s === 'livedin') return { key: 'Livedin', color: '#3B82F6' };
+    return { key: 'LIVEDIN', color: '#3B82F6' }; // Default for 'direct', 'livedin', 'host_booking'
+  };
 
+  rawData.forEach((item: any) => {
+    // --- 1. SINGLE PROPERTY STRUCTURE (/calendar/id) ---
+    if (item.calender_date) {
+      const dateKey = item.calender_date;
+      
+      // Initialize day with rate
+      if (!marks[dateKey]) {
+        marks[dateKey] = { price: item.rate || 0 };
+      }
+
+      if (item.bookings && item.bookings.length > 0) {
+        const booking = item.bookings[0];
+        const config = getOtaConfig(booking.source || booking.type);
+
+        let type = 'middle';
+        if (dateKey === booking.arrival_date) type = 'starting';
+        else if (dateKey === booking.departure_date) type = 'ending';
+        if (booking.arrival_date === booking.departure_date) type = 'single';
+
+        marks[dateKey] = {
+          ...marks[dateKey],
+          type,
+          ota: config.key, // Used by Dynamic Legend
+          color: config.color, // Solid color for seamless UI
+          guest: booking.guest_name?.trim() || 'Guest',
+          showLabel: dateKey === booking.arrival_date,
+          bookingData: booking,
+        };
+      }
+    } 
+
+    // --- 2. MULTI-CHANNEL STRUCTURE (/bookings) ---
+    else if (item.start_date && item.end_date) {
       const start = item.start_date.split(' ')[0];
       const end = item.end_date.split(' ')[0];
+      
+      // Expand range into individual dates
       const bookingDates = getDatesBetween(start, end);
+      const config = getOtaConfig(item.source_type === 'livedin' ? 'direct' : item.source);
 
-      // ✅ CASE 1: Single Listing Selected → Range Highlight
-      if (selectedListingId) {
-        bookingDates.forEach((dateKey: string, index: number) => {
-          let type = 'middle';
-
-          if (bookingDates.length === 1) type = 'single';
-          else if (index === 0) type = 'starting';
-          else if (index === bookingDates.length - 1) type = 'ending';
-
+      bookingDates.forEach((dateKey) => {
+        if (!marks[dateKey]) {
           marks[dateKey] = {
-            type,
-            color: item.source_type === 'livedin'
-              ? '#3B82F6'
-              : '#FF5A5F',
-            textColor: '#FFFFFF',
-            showLabel: index === 0,
-            guest: item.guest || 'Guest',
-            price: item.amount,
-            bookingData: item,
+            ota: config.key,
+            channels: [config.key.toLowerCase()], // For MultiChannelCalendar dots
+            price: item.amount || 0,
+            bookings: [item]
           };
-        });
-
-      }
-      // ✅ CASE 2: All Listings Selected → Multi Channel Dots
-      else {
-        bookingDates.forEach((dateKey: string) => {
-
-          let channel = 'booking';
-
-          if (item.source_type === 'livedin') channel = 'booking';
-          if (item.source_type === 'ota') channel = 'airbnb';
-
-          if (!marks[dateKey]) {
-            marks[dateKey] = {
-              channels: [channel],
-              bookings: [item],
-            };
-          } else {
-            if (!marks[dateKey].channels.includes(channel)) {
-              marks[dateKey].channels.push(channel);
-            }
+        } else {
+          // If MultiChannel view, add to channels array for dots
+          if (marks[dateKey].channels && !marks[dateKey].channels.includes(config.key.toLowerCase())) {
+            marks[dateKey].channels.push(config.key.toLowerCase());
+          }
+          if (marks[dateKey].bookings) {
             marks[dateKey].bookings.push(item);
           }
+        }
+      });
+    }
+  });
 
-        });
-      }
+  return marks;
+}, [rawData, selectedListingId]);
 
-    });
-
-    return marks;
-
-  }, [rawData, selectedListingId]);
-
-
+  // console.log('markedDates =>', calendarMarkedDates)
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <BookingDetailsView
