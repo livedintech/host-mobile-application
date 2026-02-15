@@ -8,9 +8,6 @@ export const getCalendarBookingManagementListingsApi = async (listingId?: string
   // If listingId is provided and not "all" (empty string), use the specific calendar route
   // Otherwise, use the bookings route which should be protected by your Bearer token 
   // in the apiService interceptor.
-  // const url = (listingId && listingId !== "") 
-  //     ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
-  //     : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS; 
   const baseUrl = (listingId && listingId !== "")
     ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
     : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;

@@ -13,7 +13,6 @@ interface Props {
   markedDates: any;
   onDayPress: (day: any) => void;
 }
-
 export const CalendarSection = ({ control, errors, listingOptions, selectedListingId, markedDates, onDayPress }: Props) => (
   <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}>
     <DropdownField name="listing_selection" control={control} errors={errors} label="Property" data={listingOptions} placeholder="All Listings" />

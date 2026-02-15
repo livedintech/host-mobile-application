@@ -3,111 +3,89 @@ import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-nati
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { AirbnbIcon, GathernIcon } from './CustomIcons'; 
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-const OTAs = {
-  AIRBNB: { label: 'Airbnb', color: '#FF5A5F' },
-  GATHERN: { label: 'Gathern', color: '#A855F7' },
-  BOOKING: { label: 'Direct', color: '#3B82F6' },
-};
+const COLUMN_WIDTH = (SCREEN_WIDTH - s(32)) / 7;
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
-  const isActive = !!marking?.type; 
-  const { type, color, textColor, guest, ota, price, showLabel } = marking || {};
+  const { type, color, guest, price, showLabel } = marking || {};
+  const isActive = !!type && type !== 'none';
+  const themeColor = color || '#3B82F6';
   
+  // Determine rounding based on booking type
+  const isStarting = type === 'starting' || type === 'single';
+  const isEnding = type === 'ending' || type === 'single';
+
   return (
     <View style={styles.dayCell}>
-      {/* 1. SELECTION BACKGROUND (Move outside/before Touchable and disable pointers) */}
+      {/* LAYER 1: SELECTION BOX (The Pill) */}
       {isActive && (
         <View
-          pointerEvents="none" // <--- CRITICAL: Allows touch to pass through to the button
+          pointerEvents="none"
           style={[
-            styles.selectionBg,
-            { backgroundColor: color || '#E0E0E0' },
-            type === 'single' && styles.circleBg,
-            // Use 'starting' instead of 'start' to match your ListingScreen logic
-            (type === 'start' || type === 'starting') && styles.startEdge, 
-            type === 'middle' && styles.middleEdge,
-            (type === 'end' || type === 'ending') && styles.endEdge,
+            styles.selectionFullBox,
+            { backgroundColor: themeColor },
+            isStarting && styles.roundedLeft,
+            isEnding && styles.roundedRight,
           ]}
         />
       )}
 
+      {/* LAYER 2: INTERACTIVE CONTENT */}
       <TouchableOpacity
         style={styles.dayContainer}
         onPress={() => onPress(date)}
         activeOpacity={0.8}
       >
-        <View style={styles.numberContainer}>
-          <Text
-            style={[
-              styles.dayNumber,
-              state === 'disabled' ? styles.disabledText : { color: textColor || '#1A332C' },
-            ]}
-          >
+        <View style={styles.contentWrapper}>
+          {/* GUEST NAME: Centered and elevated to prevent clipping */}
+          {showLabel && (
+            <View style={styles.labelPositioner} pointerEvents="none">
+              <Text style={styles.guestTextInside} numberOfLines={1}>
+                {guest}
+              </Text>
+            </View>
+          )}
+          
+          <Text style={[
+            styles.dayNumber,
+            state === 'disabled' ? styles.disabledText : { color: isActive ? '#FFF' : '#1A332C' }
+          ]}>
             {date.day}
           </Text>
-        </View>
 
-        {!isActive && state !== 'disabled' && (
-          <Text style={styles.priceText}>
-            SAR {price || '500'}
-          </Text>
-        )}
+          {state !== 'disabled' && (
+            <Text style={[
+              styles.priceText,
+              { color: isActive ? 'rgba(255,255,255,0.9)' : '#9E9E9E' }
+            ]}>
+              SAR {price || '0'}
+            </Text>
+          )}
+        </View>
       </TouchableOpacity>
-
-      {/* GUEST LABEL */}
-      {showLabel && (
-        <View style={styles.labelWrapper} pointerEvents="none">
-          <View style={styles.otaBadge}>
-            {/* Logic for icons */}
-            <Text style={styles.guestText} numberOfLines={1}>{guest}</Text>
-          </View>
-        </View>
-      )}
     </View>
   );
 };
 
-const LegendItem = ({ config }: { config: { label: string, color: string } }) => (
-  <View style={styles.legendItem}>
-    <View style={[styles.lDot, { backgroundColor: config.color }]} />
-    <Text style={[styles.lText, { color: config.color }]}>{config.label}</Text>
-  </View>
-);
-
 const CustomCalendar = ({ markedDates, onDayPress, currentDate }: any) => {
   return (
     <View style={styles.card}>
-      <View style={styles.legendHeader}>
-        <LegendItem config={OTAs.AIRBNB} />
-        <LegendItem config={OTAs.GATHERN} />
-        <LegendItem config={OTAs.BOOKING} />
-      </View>
       <Calendar
         current={currentDate}
         markingType="custom"
         markedDates={markedDates}
         dayComponent={({ date, state, marking }: any) => (
-          <CustomDay
-            date={date}
-            state={state}
-            marking={marking}
-            onPress={onDayPress}
-          />
+          <CustomDay date={date} state={state} marking={marking} onPress={onDayPress} />
         )}
         renderArrow={(dir) => (
-          dir === 'left' ? 
-          <ChevronLeft size={ms(22)} color="#A0A0A0" /> : 
-          <ChevronRight size={ms(22)} color="#1A332C" />
+          dir === 'left' ? <ChevronLeft size={ms(22)} color="#A0A0A0" /> : <ChevronRight size={ms(22)} color="#1A332C" />
         )}
         theme={{
           calendarBackground: 'transparent',
           monthTextColor: '#1A332C',
           textMonthFontWeight: '700',
-          textMonthFontSize: ms(20),
+          textMonthFontSize: ms(18),
           textSectionTitleColor: '#7B8D88',
         } as any}
       />
@@ -116,75 +94,69 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate }: any) => {
 };
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#FFF', width: '100%', paddingTop: vs(10) },
+  card: { backgroundColor: '#FFF', width: '100%' },
   dayCell: {
-    width: (SCREEN_WIDTH - s(32)) / 7,
+    width: COLUMN_WIDTH,
     height: vs(60),
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'visible', // Allows names to expand outward
+  },
+  selectionFullBox: {
+    position: 'absolute',
+    height: vs(48),
+    width: '100%',
+    zIndex: 1,
+  },
+  roundedLeft: {
+    borderTopLeftRadius: ms(24),
+    borderBottomLeftRadius: ms(24),
+  },
+  roundedRight: {
+    borderTopRightRadius: ms(24),
+    borderBottomRightRadius: ms(24),
   },
   dayContainer: {
     width: '100%',
     height: '100%',
+    zIndex: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  selectionBg: {
-    position: 'absolute',
-    height: vs(40),
+    height: vs(48),
     width: '100%',
-    zIndex: 1,
+    overflow: 'visible',
   },
-  circleBg: { width: vs(40), borderRadius: vs(20) },
-  startEdge: { borderTopLeftRadius: ms(20), borderBottomLeftRadius: ms(20), width: '110%', left: '10%' },
-  middleEdge: { width: '120%' },
-  endEdge: { borderTopRightRadius: ms(20), borderBottomRightRadius: ms(20), width: '110%', right: '10%' },
-  
-  labelWrapper: {
+  labelPositioner: {
     position: 'absolute',
-    top: vs(4),
-    left: s(12),
-    zIndex: 100, // Highest priority
-    width: s(120), // Wide enough to span across the next day
-    flexDirection: 'row',
-  },
-  otaBadge: {
+    top: vs(4), 
+    left: s(8),
+    zIndex: 20,
+    width: s(150),
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    paddingHorizontal: s(4),
-    paddingVertical: vs(1),
-    borderRadius: ms(8),
   },
-  guestText: {
+  guestTextInside: {
     fontSize: ms(8.5),
     fontWeight: '800',
-    color: '#333',
-    marginLeft: s(2),
+    color: '#FFF',
+    textAlign: 'left',
+    backgroundColor: 'transparent',
   },
-  numberContainer: {
-    zIndex: 10,
-    marginTop: vs(12),
+  dayNumber: { 
+    fontSize: ms(14), 
+    fontWeight: '700',
+    marginTop: vs(8), 
   },
-  dayNumber: { fontSize: ms(16), fontWeight: '600' },
+  priceText: { 
+    fontSize: ms(7.5), 
+    fontWeight: '600', 
+    marginTop: 1 
+  },
   disabledText: { color: '#E0E0E0' },
-  priceText: { position: 'absolute', bottom: vs(2), fontSize: ms(8), color: '#9E9E9E', fontWeight: '600' },
-  legendHeader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    gap: s(12), 
-    marginBottom: vs(10),
-    paddingBottom: vs(10),
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  lDot: { width: ms(8), height: ms(8), borderRadius: 4, marginRight: s(4) },
-  lText: { fontSize: ms(12), fontWeight: '700' },
 });
 
 export default CustomCalendar;
