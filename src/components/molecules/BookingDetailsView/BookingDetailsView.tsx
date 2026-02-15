@@ -25,23 +25,26 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
 
         <ScrollView contentContainerStyle={styles.scroll}>
           {data && data.length > 0 ? (
-            data.map((item: any, index: number) => (
-              <View key={index} style={styles.cardWrapper}>
-                <ReservationCard 
-                  id={item.id}
-                  guestName={item.guestName}
-                  platform={item.platform}
-                  property={item.property}
-                  date={item.date}
-                  checkIn={item.checkIn || "09:00 AM"}
-                  checkOut={item.checkOut || "11:00 PM"}
-                  platformColor={item.platformColor}
-                  // For the modal view, we usually don't need a deep onPress, 
-                  // but we keep it consistent
-                  onPress={() => {}} 
-                />
-              </View>
-            ))
+            data.map((item: any, index: number) => {
+              return (
+                <View key={index} style={styles.cardWrapper}>
+                  <ReservationCard
+                    id={item.id}
+                    guestName={item.guestName}
+                    platform={item.platform}
+                    property={item.property}
+                    endDate={item?.endData}
+                    startDate={item?.startDate || ''}
+                    checkIn={item.checkIn || "NA"}
+                    checkOut={item.checkOut || "NA"}
+                    platformColor={item.platformColor}
+                    // For the modal view, we usually don't need a deep onPress, 
+                    // but we keep it consistent
+                    onPress={() => { }}
+                  />
+                </View>
+              )
+            })
           ) : (
             <View style={styles.empty}>
               <AppText text="No booking information available." color="#666" />
@@ -54,31 +57,31 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#F8F9FA' 
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F9FA'
   },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    padding: s(16), 
-    borderBottomWidth: 1, 
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: s(16),
+    borderBottomWidth: 1,
     borderBottomColor: '#EEE',
     backgroundColor: '#FFF'
   },
-  closeButton: { 
-    padding: s(4) 
+  closeButton: {
+    padding: s(4)
   },
-  scroll: { 
-    padding: s(16), 
-    paddingBottom: vs(40) 
+  scroll: {
+    padding: s(16),
+    paddingBottom: vs(40)
   },
-  cardWrapper: { 
-    marginBottom: vs(12) 
+  cardWrapper: {
+    marginBottom: vs(12)
   },
-  empty: { 
-    alignItems: 'center', 
-    marginTop: vs(100) 
+  empty: {
+    alignItems: 'center',
+    marginTop: vs(100)
   }
 });

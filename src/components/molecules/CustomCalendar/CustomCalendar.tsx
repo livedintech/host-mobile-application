@@ -10,7 +10,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const OTAs = {
   AIRBNB: { label: 'Airbnb', color: '#FF5A5F' },
   GATHERN: { label: 'Gathern', color: '#A855F7' },
-  BOOKING: { label: 'Booking.com', color: '#3B82F6' },
+  BOOKING: { label: 'Direct', color: '#3B82F6' },
 };
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {

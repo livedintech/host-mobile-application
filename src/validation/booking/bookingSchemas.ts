@@ -4,7 +4,7 @@ import { emailRegex } from '@/utility/regex';
 
 export const createBookingSchema = yup.object({
   listing_selection: yup.string().nullable().default(''),
-  listing_id: yup.string().required('Please select a property').default(''),
+  listing_id: yup.string().optional().default(''),
   start_date: yup.string().required('Check-in date is required').default(''),
   end_date: yup.string().required('Check-out date is required')
     .test('not-same-day', 'Check-out must be after check-in', function (value) {

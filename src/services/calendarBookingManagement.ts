@@ -5,17 +5,23 @@ import apiService from "./apiService";
  * 1. FETCH BOOKINGS (For the Dots/Calendar)
  */
 export const getCalendarBookingManagementListingsApi = async (listingId?: string) => {
-    // If listingId is provided and not "all" (empty string), use the specific calendar route
-    // Otherwise, use the bookings route which should be protected by your Bearer token 
-    // in the apiService interceptor.
-    const url = (listingId && listingId !== "") 
-        ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
-        : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS; 
-    
-    const { ok, data } = await apiService.get(url);
-    
-    if (ok) return data?.data || [];
-    return [];
+  // If listingId is provided and not "all" (empty string), use the specific calendar route
+  // Otherwise, use the bookings route which should be protected by your Bearer token 
+  // in the apiService interceptor.
+  // const url = (listingId && listingId !== "") 
+  //     ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
+  //     : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS; 
+  const baseUrl = (listingId && listingId !== "")
+    ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
+    : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
+  const url = `${baseUrl}?t=${Date.now()}`;
+
+
+
+  const { ok, data } = await apiService.get(url);
+
+  if (ok) return data?.data || [];
+  return [];
 };
 
 /**
@@ -40,20 +46,20 @@ export const getUserListingsApi = async (userId: string | number) => {
  * 3. FETCH BOOKINGS BY SPECIFIC LISTING ID
  */
 export const getCalendarBookingsByListingIdApi = async (listingIds: string | string[]) => {
-    const ids = Array.isArray(listingIds) ? listingIds : [listingIds];
-    try {
-        const fetchPromises = ids.map(async (id) => {
-            const url = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS_LISTING_ID.replace('{listing_id}', id);
-            const { ok, data } = await apiService.get(url);
-            return ok ? (data?.data || []) : [];
-        });
+  const ids = Array.isArray(listingIds) ? listingIds : [listingIds];
+  try {
+    const fetchPromises = ids.map(async (id) => {
+      const url = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS_LISTING_ID.replace('{listing_id}', id);
+      const { ok, data } = await apiService.get(url);
+      return ok ? (data?.data || []) : [];
+    });
 
-        const results = await Promise.all(fetchPromises);
-        return results.flat();
-    } catch (error) {
-        console.error('Error fetching multiple listings:', error);
-        return [];
-    }
+    const results = await Promise.all(fetchPromises);
+    return results.flat();
+  } catch (error) {
+    console.error('Error fetching multiple listings:', error);
+    return [];
+  }
 };
 
 /**
@@ -61,30 +67,30 @@ export const getCalendarBookingsByListingIdApi = async (listingIds: string | str
  */
 
 export const getReservationsApi = async (listingIds?: string, activeFilter?: string) => {
-    const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
-    let queryParams = ``;
-    if (listingIds) {
-      queryParams += `&apartment_id=${listingIds}`;
-    }
-    if (activeFilter === 'today') {
-      const today = new Date();
-      const day = String(today.getDate()).padStart(2, '0');
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const year = today.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
-      
-      queryParams += `&created_at=${formattedDate}`;
-    } 
-    else if (activeFilter && activeFilter !== 'all') {
-      queryParams += `&status=${encodeURIComponent(activeFilter)}`;
-    }
+  const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
+  let queryParams = ``;
+  if (listingIds) {
+    queryParams += `&apartment_id=${listingIds}`;
+  }
+  if (activeFilter === 'today') {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
 
-    const url = `${baseUrl}${queryParams}`;
-    
-    const { ok, data } = await apiService.get(url);
-    
-    if (ok) return data?.data || [];
-    return [];
+    queryParams += `&created_at=${formattedDate}`;
+  }
+  else if (activeFilter && activeFilter !== 'all') {
+    queryParams += `?status=${encodeURIComponent(activeFilter)}`;
+  }
+
+  const url = `${baseUrl}${queryParams}`;
+
+  const { ok, data } = await apiService.get(url);
+
+  if (ok) return data?.data || [];
+  return [];
 };
 
 /**
@@ -101,16 +107,16 @@ const formatDate = (dateStr: string) => {
  * 5. CREATE DIRECT BOOKING
  */
 export const createDirectBookingApi = async (payload: any) => {
-    const formattedPayload = {
-      ...payload,
-      start_date: formatDate(payload.start_date),
-      end_date: formatDate(payload.end_date),
-    };
-    const url = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS; 
-    const { ok, data } = await apiService.post(url, formattedPayload);
-    
-    if (ok) return data?.data || data; 
-    return null; 
+  const formattedPayload = {
+    ...payload,
+    start_date: formatDate(payload.start_date),
+    end_date: formatDate(payload.end_date),
+  };
+  const url = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
+  const { ok, data } = await apiService.post(url, formattedPayload);
+
+  if (ok) return data?.data || data;
+  return null;
 };
 
 /**
@@ -122,16 +128,16 @@ export const updateCalendarPricingApi = async (payload: {
   start_date: string;
   end_date: string;
 }) => {
-    const formattedPayload = {
-      ...payload,
-      start_date: formatDate(payload.start_date),
-      end_date: formatDate(payload.end_date),
-    };
+  const formattedPayload = {
+    ...payload,
+    start_date: formatDate(payload.start_date),
+    end_date: formatDate(payload.end_date),
+  };
 
-    const url = SERVICE_CONFIG_URLS.APP.SET_CALENDAR_PRICING; 
-    const { ok, data } = await apiService.post(url, formattedPayload);    
-    if (ok) return data;
-    return null; 
+  const url = SERVICE_CONFIG_URLS.APP.SET_CALENDAR_PRICING;
+  const { ok, data } = await apiService.post(url, formattedPayload);
+  if (ok) return data;
+  return null;
 };
 
 /**
@@ -142,7 +148,7 @@ export const getBookingDetailsApi = async (bookingId: string | number) => {
     const url = SERVICE_CONFIG_URLS.APP.GET_BOOKINGS_DETAILS.replace('{booking_id}', String(bookingId));
 
     const { ok, data } = await apiService.get(url);
-    
+
     // We return 'data' which contains the full response including the .data property 
     // needed by your navigation logic
     if (ok) {
