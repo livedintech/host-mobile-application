@@ -35,8 +35,8 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
                     property={item.listing_title}
                     endDate={item?.end_date || ''}
                     startDate={item?.start_date || ''}
-                    checkIn={item.checkIn || "NA"}
-                    checkOut={item.checkOut || "NA"}
+                    checkIn={item.checkIn || "04:00 PM"}
+                    checkOut={item.checkOut || "12:00 AM"}
                     platformColor={item.platformColor}
                     onPress={() => { }}
                   />

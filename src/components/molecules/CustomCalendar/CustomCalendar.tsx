@@ -3,47 +3,70 @@ import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-nati
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const COLUMN_WIDTH = (SCREEN_WIDTH - s(32)) / 7;
+const CALENDAR_PADDING = s(32);
+const COLUMN_WIDTH = (SCREEN_WIDTH - CALENDAR_PADDING) / 7;
+const SELECTION_HEIGHT = vs(46); // Consistent height for both circles and pills
+
+const getOTASource = (source?: string) => {
+  const s = source?.toLowerCase();
+  let iconName: any; 
+  if (s === 'airbnb') iconName = 'airbnb';
+  else if (s === 'bookingcom' || s === 'booking.com') iconName = 'booking';
+  else if (s === 'gathern') iconName = 'gathern';
+  else iconName = 'livedin'; 
+
+  return { icon: iconName };
+};
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
-  const { type, color, guest, price, showLabel } = marking || {};
+  const { type, color, guest, price, showLabel, ota } = marking || {};
   const isActive = !!type && type !== 'none';
   const themeColor = color || '#3B82F6';
   
-  // Determine rounding based on booking type
-  const isStarting = type === 'starting' || type === 'single';
-  const isEnding = type === 'ending' || type === 'single';
+  // Logic for distinct shapes
+  const isSingle = type === 'single';
+  const isStarting = type === 'starting';
+  const isEnding = type === 'ending';
+  const isMiddle = type === 'middle';
+  
+  const otaIconData = getOTASource(ota);
 
   return (
     <View style={styles.dayCell}>
-      {/* LAYER 1: SELECTION BOX (The Pill) */}
+      {/* SELECTION LAYER: Conditional styling for perfect circles vs pills */}
       {isActive && (
         <View
           pointerEvents="none"
           style={[
-            styles.selectionFullBox,
+            styles.selectionBase,
             { backgroundColor: themeColor },
+            isSingle && styles.circleShape,
             isStarting && styles.roundedLeft,
             isEnding && styles.roundedRight,
+            (isMiddle || isStarting || isEnding) && styles.fullWidth,
           ]}
         />
       )}
 
-      {/* LAYER 2: INTERACTIVE CONTENT */}
       <TouchableOpacity
         style={styles.dayContainer}
         onPress={() => onPress(date)}
         activeOpacity={0.8}
       >
         <View style={styles.contentWrapper}>
-          {/* GUEST NAME: Centered and elevated to prevent clipping */}
+          
+          {/* OTA ICON + GUEST: Top-aligned and fine-tuned */}
           {showLabel && (
             <View style={styles.labelPositioner} pointerEvents="none">
-              <Text style={styles.guestTextInside} numberOfLines={1}>
-                {guest}
-              </Text>
+              <View style={styles.labelRow}>
+                <Svgicons path={otaIconData.icon} size={ms(8)} />
+                <Text style={styles.guestTextInside} numberOfLines={1}>
+                  {guest}
+                </Text>
+              </View>
             </View>
           )}
           
@@ -57,7 +80,7 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
           {state !== 'disabled' && (
             <Text style={[
               styles.priceText,
-              { color: isActive ? 'rgba(255,255,255,0.9)' : '#9E9E9E' }
+              { color: isActive ? 'rgba(255,255,255,0.85)' : '#9E9E9E' }
             ]}>
               SAR {price || '0'}
             </Text>
@@ -100,21 +123,29 @@ const styles = StyleSheet.create({
     height: vs(60),
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'visible', // Allows names to expand outward
+    overflow: 'visible',
   },
-  selectionFullBox: {
+  selectionBase: {
     position: 'absolute',
-    height: vs(48),
-    width: '100%',
+    height: SELECTION_HEIGHT,
     zIndex: 1,
   },
+  // Perfect Circle: Width matches height
+  circleShape: {
+    width: SELECTION_HEIGHT,
+    borderRadius: SELECTION_HEIGHT / 2,
+  },
+  // Range: Fills the cell width
+  fullWidth: {
+    width: '100%',
+  },
   roundedLeft: {
-    borderTopLeftRadius: ms(24),
-    borderBottomLeftRadius: ms(24),
+    borderTopLeftRadius: SELECTION_HEIGHT / 2,
+    borderBottomLeftRadius: SELECTION_HEIGHT / 2,
   },
   roundedRight: {
-    borderTopRightRadius: ms(24),
-    borderBottomRightRadius: ms(24),
+    borderTopRightRadius: SELECTION_HEIGHT / 2,
+    borderBottomRightRadius: SELECTION_HEIGHT / 2,
   },
   dayContainer: {
     width: '100%',
@@ -126,25 +157,29 @@ const styles = StyleSheet.create({
   contentWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: vs(48),
+    height: SELECTION_HEIGHT,
     width: '100%',
     overflow: 'visible',
   },
   labelPositioner: {
     position: 'absolute',
     top: vs(4), 
-    left: s(8),
+    left: s(14),
     zIndex: 20,
-    width: s(150),
+    width: s(140),
     flexDirection: 'row',
     alignItems: 'center',
   },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: s(3),
+  },
   guestTextInside: {
-    fontSize: ms(8.5),
+    fontSize: ms(6.5),
     fontWeight: '800',
     color: '#FFF',
     textAlign: 'left',
-    backgroundColor: 'transparent',
   },
   dayNumber: { 
     fontSize: ms(14), 
@@ -152,9 +187,9 @@ const styles = StyleSheet.create({
     marginTop: vs(8), 
   },
   priceText: { 
-    fontSize: ms(7.5), 
+    fontSize: ms(7), 
     fontWeight: '600', 
-    marginTop: 1 
+    marginTop: 0 
   },
   disabledText: { color: '#E0E0E0' },
 });
