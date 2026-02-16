@@ -9,6 +9,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Toast from 'react-native-toast-message';
 
 const MoreScreen = () => {
 
@@ -25,6 +26,14 @@ const MoreScreen = () => {
   const goToProfile = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
   }, []);
+
+  const referComingSoon = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Coming soon',
+    });
+  };
+
 
   const MenuCard = ({ title, items, icon, onPress }: any) => (
     <GradientBorder borderRadius={20} style={styles.menuCardWrapper}>
@@ -84,6 +93,7 @@ const MoreScreen = () => {
           title="Refer App"
           items={['Refer App', 'To Another', 'Host']}
           icon={'heartIcon'}
+          onPress={referComingSoon}
         />
       </View>
       <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
