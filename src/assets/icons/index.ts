@@ -109,7 +109,10 @@ import chatBubbleIcon from "./chatBubbleIcon.svg";
 import paymentCardIcon from "./paymentCard.svg";
 import reviewStarHalfIcon from "./reviewStarHalfIcon.svg";
 import stc_pay_logo from "./stc_pay_logo.svg";
-import mada_logo from "./mada_logo.svg"
+import mada_logo from "./mada_logo.svg";
+import airbnb from "./airbnb.svg";
+import gathern from "./gathern.svg";
+import livedin from "./livedin.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -223,5 +226,8 @@ export const icons = {
     paymentCardIcon,
     reviewStarHalfIcon,
     stc_pay_logo,
-    mada_logo
+    mada_logo,
+    airbnb,
+    gathern,
+    livedin
 };

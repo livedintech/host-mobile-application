@@ -316,7 +316,6 @@ const ListingScreen = () => {
   return marks;
 }, [rawData, selectedListingId]);
 
-  // console.log('markedDates =>', calendarMarkedDates)
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <BookingDetailsView
