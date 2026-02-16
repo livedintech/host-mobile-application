@@ -3,7 +3,7 @@ import Toast from 'react-native-toast-message';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
-import { reset as navigationReset } from '@/services/navigationService';
+import { reset as navigationReset, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import {
   getTaskChecklistDetail,
@@ -111,7 +111,16 @@ const CreateChecklistContainer = () => {
       clearDraft();
       Toast.show({ type: 'success', text1: 'Task created successfully' });
       // navigate(NavigationRoutes.APP_STACK.TASK);
-      navigationReset(NavigationRoutes.APP_STACK.TASK);
+      // navigationReset(NavigationRoutes.APP_STACK.TASK);
+      // resetToRoutes([
+      //   { name: NavigationRoutes.APP_STACK.ROOT_STACK }, 
+      //   { name: NavigationRoutes.APP_STACK.TASK }
+      // ] as any);
+
+      navigationReset(NavigationRoutes.APP_STACK.ROOT_STACK, {
+    screen: NavigationRoutes.APP_STACK.TASK,
+  });
+  
     },
   });
 
