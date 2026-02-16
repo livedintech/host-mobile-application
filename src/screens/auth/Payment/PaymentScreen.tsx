@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const PaymentScreen = () => {
-    const { selectedPlan, onPlanSelect, handleStartTrial } = usePaymentContainer();
+    const { selectedPlan, onPlanSelect, handleStartTrial, handleSkipThis } = usePaymentContainer();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -58,6 +58,15 @@ const PaymentScreen = () => {
                     mt={30}
                     fontSize={16}
                 />
+                <AppButton
+                    color={Colors.WHITE}
+                    backgroundColor={Colors.BRUNSWICK_GREEN}
+                    title={`Skip`}
+                    onPress={handleSkipThis}
+                    mt={10}
+                    fontSize={16}
+                />
+
 
                 {/* Legal Disclaimer */}
                 <View style={styles.legalContainer}>
@@ -79,14 +88,14 @@ const styles = StyleSheet.create({
     scrollContainer: { paddingHorizontal: 24, paddingBottom: 40 },
     circleBtn: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center', marginRight: 10 },
     backBtn: { paddingHorizontal: 28, height: 42, borderRadius: 21, borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center' },
-    titleSection: {  alignItems: 'center' },
+    titleSection: { alignItems: 'center' },
     providerRow: { flexDirection: 'row', justifyContent: 'center', marginTop: Metrics.verticalScale(51), gap: 35 },
     providerBox: { width: Metrics.scale(72), height: Metrics.verticalScale(48), justifyContent: 'center', alignItems: 'center', },
     icon: { width: Metrics.scale(72), height: '100%' },
     planSection: { marginTop: 45 },
     planCard: {
         padding: 22, borderRadius: 24, borderWidth: 1, borderColor: '#E0E0E0',
-        backgroundColor: '#F8F9F9' 
+        backgroundColor: '#F8F9F9'
     },
     activeCard: {
         borderColor: Colors.BRUNSWICK_GREEN,

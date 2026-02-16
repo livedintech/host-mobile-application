@@ -12,6 +12,7 @@ import { Task } from '@/types/api/taskManagentType';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import Metrics from '@/utility/Metrics';
 
 const TaskListScreen: React.FC = () => {
   const {
@@ -67,8 +68,8 @@ const TaskListScreen: React.FC = () => {
                 item.status === 'todo'
                   ? Colors.ALERT_RED
                   : item.status === 'inprogress'
-                  ? Colors.GOLDEN_YELLOW
-                  : Colors.TEAL_GREEN
+                    ? Colors.GOLDEN_YELLOW
+                    : Colors.TEAL_GREEN
               }
               type="Bold"
             />

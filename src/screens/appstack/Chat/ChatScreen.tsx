@@ -15,6 +15,11 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 // --- Dummy Data for Dropdowns ---
 const STATUS_DATA = [{ label: 'Confirmed', value: 'confirmed' }, { label: 'Pending', value: 'pending' }];
@@ -116,7 +121,15 @@ const ChatScreen = () => {
                 <AppText text={item.name || 'Unknown'} type="SemiBold" fontSize={16} color={Colors.MIDNIGHT} numberOfLines={1} />
               </View>
               {/* API response me date */}
-              <AppText text={dayjs(item.last_message_date).format('MM/DD/YY') || 'N/A'} fontSize={12} color={Colors.GREY_SHADOW} />
+              <AppText
+                text={
+                  item.last_message_date
+                    ? dayjs.utc(item.created_at).local().format('MM/DD/YY')
+                    : 'N/A'
+                }
+                fontSize={12}
+                color={Colors.GREY_SHADOW}
+              />
             </View>
 
             <View style={styles.infoBottom}>
