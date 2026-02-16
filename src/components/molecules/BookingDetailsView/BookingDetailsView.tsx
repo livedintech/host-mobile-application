@@ -13,6 +13,7 @@ interface Props {
 }
 
 export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
+  console.log('DATA yahannn', data)
   return (
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
@@ -30,16 +31,14 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
                 <View key={index} style={styles.cardWrapper}>
                   <ReservationCard
                     id={item.id}
-                    guestName={item.guestName}
-                    platform={item.platform}
-                    property={item.property}
-                    endDate={item?.endData}
-                    startDate={item?.startDate || ''}
+                    guestName={item.guest}
+                    platform={item.source_type}
+                    property={item.listing_title}
+                    endDate={item?.end_date || ''}
+                    startDate={item?.start_date || ''}
                     checkIn={item.checkIn || "NA"}
                     checkOut={item.checkOut || "NA"}
                     platformColor={item.platformColor}
-                    // For the modal view, we usually don't need a deep onPress, 
-                    // but we keep it consistent
                     onPress={() => { }}
                   />
                 </View>
