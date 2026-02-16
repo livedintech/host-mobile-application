@@ -43,14 +43,12 @@ const AppStack = () => {
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
-        // getComponent={() =>
-        //   require('@/screens/appstack/Task/TaskScreen').default
-        // }
 
         getComponent={() =>
           require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen')
             .default
         }
+        
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
