@@ -13,7 +13,6 @@ interface Props {
 }
 
 export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
-  console.log('DATA yahannn', data)
   return (
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
