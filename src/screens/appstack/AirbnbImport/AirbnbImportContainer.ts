@@ -29,7 +29,7 @@ export default function useAirbnbImportContainer() {
   const { user } = useAuthStore();
 
   // Fetch Airbnb listings for this channel
-  const { data: airbnbData, isLoading:isLoadingListing, refetch } = useQuery({
+  const { data: airbnbData, isLoading: isLoadingListing, isFetching: isFetchingListing, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
     queryFn: () =>
       getChannexListingsById({
@@ -39,7 +39,7 @@ export default function useAirbnbImportContainer() {
   });
 
   // Fetch user listings (for dropdown options)
-  const { data: apiResponse,isLoading:isLoadingDropdown } = useQuery({
+  const { data: apiResponse, isLoading: isLoadingDropdown, isFetching: isFetchingDropdown } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () =>
       getUserListingsByUserIDApi({
@@ -50,9 +50,9 @@ export default function useAirbnbImportContainer() {
 
   // Prepare dropdown options (values must be strings)
   const listingOptions = apiResponse?.data?.map((item: any) => ({
-  label: item.name,
-  value: String(item.listing_id), // internal Livedin ID for dropdown
-})) ?? [];
+    label: item.name,
+    value: String(item.listing_id), // internal Livedin ID for dropdown
+  })) ?? [];
 
 
   // Initialize form
@@ -67,27 +67,27 @@ export default function useAirbnbImportContainer() {
   });
 
   // When data loads, set default values for pre-selected dropdowns
-useEffect(() => {
-  if (airbnbData && apiResponse) {
-    const defaultFormValues: FormValues = {};
+  useEffect(() => {
+    if (airbnbData && apiResponse) {
+      const defaultFormValues: FormValues = {};
 
-    airbnbData.forEach((property: any) => {
-      // Match Airbnb property with user listing by ID
-      const match = apiResponse.data?.find((item: any) => item.id === property.id);
+      airbnbData.forEach((property: any) => {
+        // Match Airbnb property with user listing by ID
+        const match = apiResponse.data?.find((item: any) => item.id === property.id);
 
-      if (match) {
-        // value = internal Livedin listing_id (for dropdown)
-        defaultFormValues[String(property.id)] = String(match.listing_id);
-      }
-    });
+        if (match) {
+          // value = internal Livedin listing_id (for dropdown)
+          defaultFormValues[String(property.id)] = String(match.listing_id);
+        }
+      });
 
-    reset(defaultFormValues); // prefill dropdowns
-  }
-}, [airbnbData, apiResponse, reset]);
+      reset(defaultFormValues); // prefill dropdowns
+    }
+  }, [airbnbData, apiResponse, reset]);
 
 
   // Mutation to map Airbnb listing to Livedin listing
-  const { mutate: createMapListingbyUserID } =
+  const { mutate: createMapListingbyUserID, isPending: isMappingLoading, isIdle: isIdleMapping } =
     useMutation<CreateAccountResponse, Error, { listing_id: number; }>({
       mutationFn: (payload) =>
         createMapListingbyUserIDApi({
@@ -131,12 +131,20 @@ useEffect(() => {
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   };
 
+  const isLoadingScreen =
+    isLoadingListing || // initial fetch Airbnb listings
+    isLoadingDropdown || // initial fetch user listings
+    isFetchingListing || // refetch Airbnb listings
+    isFetchingDropdown || // refetch user listings
+    isMappingLoading; // mutation running
+
+
   return {
     control,
     errors,
     properties: airbnbData ?? [],
     listingOptions,
-    isLoading : isLoadingDropdown || isLoadingListing,
+    isLoading: isLoadingScreen,
     handleSubmit,
     onNext,
     handleIndividualImport,

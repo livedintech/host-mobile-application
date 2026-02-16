@@ -34,9 +34,7 @@ const userManagementSchema = yup.object({
 
   listings: yup
     .array()
-    .of(yup.string().required())
-    .min(1, 'At least one listing is required')
-    .required(),
+    .of(yup.string().notRequired()),
 
   password: yup
     .string()

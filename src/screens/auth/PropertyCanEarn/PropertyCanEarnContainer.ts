@@ -50,11 +50,11 @@ export default function usePropertyCanEarnContainer() {
   });
 
   const chartPoints = useMemo(() => {
-    if (!chartData?.months) return [];
-    return chartData.months.map((value:any, index:number) => ({ timestamp: index, value }));
+    if (!chartData?.data?.months) return [];
+    return chartData?.data.months.map((value:any, index:number) => ({ timestamp: index, value }));
   }, [chartData]);
 
-  const maxValue = Math.max(...(chartData?.months || [0]));
+  const maxValue = Math.max(...(chartData?.data?.months || [0]));
   const roundedMax = Math.ceil(maxValue / 5000) * 5000;
 
   const yAxisLabels = useMemo(() => {
@@ -66,8 +66,8 @@ export default function usePropertyCanEarnContainer() {
 
   const xAxisLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  const availableCityItems = useMemo(() => cities.map((city: string) => ({ label: city, value: city })), [cities]);
-  const availableDistrictItems = useMemo(() => districts.map((district: string) => ({ label: district, value: district })), [districts]);
+  const availableCityItems = useMemo(() => cities?.data?.map((city: string) => ({ label: city, value: city })), [cities]);
+  const availableDistrictItems = useMemo(() => districts?.data?.map((district: string) => ({ label: district, value: district })), [districts]);
 
   const onNext = (data: any) => {
     setIsLoading(true);

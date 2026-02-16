@@ -7,9 +7,12 @@ import { profileFormValues, profileSchema } from '@/validation/auth/authSchemas'
 import { useCallback } from 'react';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useProfileContainer() {
   const navigation = useNavigation();
+  const {user} = useAuthStore();
+  
 
   const {
     control,
@@ -19,7 +22,7 @@ export default function useProfileContainer() {
   } = useForm<profileFormValues>({
     resolver: yupResolver(profileSchema),
     defaultValues: {
-      full_name: '',
+      full_name: user?.name,
       gender: '',
       country: '',
       city: '',

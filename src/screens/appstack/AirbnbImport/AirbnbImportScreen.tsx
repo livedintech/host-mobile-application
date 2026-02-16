@@ -11,6 +11,7 @@ import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import { shortId } from '@/utility/Utils';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 const PropertyCard = ({
   id,
@@ -20,10 +21,12 @@ const PropertyCard = ({
   listingOptions,
   handleIndividualImport,
   watch,
-  isMap
+  isMap,
 }: any) => {
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
+
+
 
   return (
     <View style={styles.card}>
@@ -63,7 +66,7 @@ const PropertyCard = ({
       />
 
       <AppButton
-        title={isMap ? 'Map Listing' : "Unmapped Listing"}
+        title={isMap ? 'Unmapped Listing' : "Map Listing"}
         onPress={() => handleIndividualImport(fieldName)}
         mt={12}
       />
@@ -85,6 +88,7 @@ const AirbnbImportScreen = () => {
     listingOptions,
   } = useAirbnbImportContainer();
 
+
   const renderItem = ({ item }: any) => (
     <PropertyCard
       id={item.id}
@@ -100,6 +104,11 @@ const AirbnbImportScreen = () => {
 
   return (
     <View style={styles.container}>
+       {isLoading && (
+      <View style={styles.loaderContainer}>
+        <SpinnerLoader />
+      </View>
+    )}
       {/* Header */}
       <View style={styles.fixedHeader}>
         <View style={styles.headerRow}>
@@ -124,7 +133,7 @@ const AirbnbImportScreen = () => {
       {/* FlatList */}
       <FlatListSimpleHandler
         onRefresh={refetch}
-        isLoading={isLoading}
+        isLoading={false}
         data={properties}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
@@ -183,6 +192,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 8,
   },
+  loaderContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+
 });
 
 export default AirbnbImportScreen;

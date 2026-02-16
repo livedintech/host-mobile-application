@@ -13,6 +13,8 @@ import PropertyAreaChart from '../../../components/organisms/PropertyAreaChart/P
 const PropertyCanEarnScreen = () => {
   const { control, errors, handleSubmit, showResults, isLoading, goTologinWithPhone, availableCityItems, availableDistrictItems, selectedcity, chartPoints, roundedMax,yAxisLabels,xAxisLabels,chartData } =
     usePropertyCanEarnContainer();
+    console.log('chartDatsa',chartData?.data);
+    
 
   return (
     <View style={styles.container}>
@@ -116,14 +118,14 @@ const PropertyCanEarnScreen = () => {
                     color={Colors.PINE_FOREST}
                   />
                   <AppText
-                    text={`SAR ${chartData?.monthly}`}
+                    text={`SAR ${chartData?.data?.monthly}`}
                     color={Colors.BRUNSWICK_GREEN}
                   />
                 </View>
                 <View style={styles.statBox}>
                   <AppText text="Yearly Income" fontSize={11} color={Colors.PINE_FOREST}/>
                   <AppText
-                     text={`SAR ${chartData?.yearly}`}
+                     text={`SAR ${chartData?.data?.yearly}`}
                     color={Colors.BRUNSWICK_GREEN}
                   />
                 </View>
