@@ -5,12 +5,14 @@ import { s, vs, ms } from 'react-native-size-matters';
 import { X } from 'lucide-react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import ReservationCard from '@/components/molecules/ReservationCard/ReservationCard';
+import { getOtaConfig } from '@/constants/ota_config';
 
 interface Props {
   isVisible: boolean;
   onClose: () => void;
   data: any[];
 }
+
 
 export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
   return (
@@ -26,18 +28,19 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
         <ScrollView contentContainerStyle={styles.scroll}>
           {data && data.length > 0 ? (
             data.map((item: any, index: number) => {
+              const otaConfig = getOtaConfig(item.source);
               return (
                 <View key={index} style={styles.cardWrapper}>
                   <ReservationCard
                     id={item.id}
                     guestName={item.guest}
-                    platform={item.source_type}
+                    platform={item?.source_type === 'livedin' ? 'Livedin' : item.source}
                     property={item.listing_title}
                     endDate={item?.end_date || ''}
                     startDate={item?.start_date || ''}
                     checkIn={item.checkIn || "04:00 PM"}
                     checkOut={item.checkOut || "12:00 AM"}
-                    platformColor={item.platformColor}
+                    platformColor={otaConfig.color}
                     onPress={() => { }}
                   />
                 </View>
