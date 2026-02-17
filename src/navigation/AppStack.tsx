@@ -195,7 +195,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CONFIRM_ADDRESS}
         getComponent={() =>
           require('@/screens/appstack/ConfirmAddress/ConfirmAddressScreen')
@@ -203,7 +203,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.ABOUT_THE_PLACE}
         getComponent={() =>
           require('@/screens/appstack/AboutThePlace/AboutThePlaceScreen')
@@ -211,7 +211,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS}
         getComponent={() =>
           require('@/screens/appstack/InteriorPhoto/InteriorPhotoScreen')
@@ -219,7 +219,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.OTHER_VIDEOS}
         getComponent={() =>
           require('@/screens/appstack/OtherPhotos/OtherPhotosScreen')
@@ -227,7 +227,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS}
         getComponent={() =>
           require('@/screens/appstack/ExteriorPhoto/ExteriorPhotoScreen')
@@ -235,7 +235,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS}
         getComponent={() =>
           require('@/screens/appstack/BathroomPhoto/BathroomPhotoScreen')
@@ -243,7 +243,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE}
         getComponent={() =>
           require('@/screens/appstack/DescribeHouse/DescribeHouseScreen')
@@ -446,6 +446,14 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ headerShown:false }}
+        name={NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL}
+        getComponent={() =>
+          require('@/screens/appstack/CreateEditBookingDetail/CreateEditBookingDetailsScreen')
+            .default
+        }
+      />
        <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.GENERATE_PASSCODE}
@@ -454,8 +462,6 @@ const AppStack = () => {
             .default
         }
       />
-
-
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT}

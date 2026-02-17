@@ -5,6 +5,7 @@ import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { navigate } from '@/services/navigationService';
 
 const InteriorPhotoScreen = () => {
   const route = useRoute<any>();
@@ -43,13 +44,15 @@ const {
       mediaList={mediaList}
       onMediaChange={setMediaList}
       primaryBtnTitle={!isEdit ? 'Next' : null}
-      onPrimaryPress={!isEdit ? handleNext : undefined}
+      // onPrimaryPress={!isEdit ? handleNext : undefined}
+      onPrimaryPress={()=> navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS)}
       primaryLoading={isLoading}
       primaryDisable={mediaList.length === 0 || isLoading}
       secondaryBtnTitle="Save & Exit"
       onSecondaryPress={handleSaveAndExit}
       secondaryLoading={false}
       secondaryDisable={isLoading}
+      percentage={20}
     />
   );
 };

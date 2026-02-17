@@ -106,6 +106,9 @@ export const SERVICE_CONFIG_URLS = {
     SUBSCRIPTION_SAVED_CARDS: `${authController}/subscription/saved-cards`,
     SUBSCRIPTION_CUSTOMER_IDENTIFIER: `${authController}/subscription/customer-identifier`,
     TRANSACTION_HISTORY:`${authController}/subscription/payments?host_id={host_id}`,
-    
+    COUNTRIES: `${authController}/countries`,
+    STATES: `${authController}/states?country_id={country_id}`,
+    CITIES: `${authController}/cities?state_id={state_id}`,
+    DISTRICTS: `${authController}/districts?city_id={city_id}`
   },
 };

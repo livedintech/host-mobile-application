@@ -4,6 +4,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useRoute } from '@react-navigation/native';
+import { navigate } from '@/services/navigationService';
 
 const ExteriorPhotoScreen = () => {
     // const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
@@ -62,13 +63,15 @@ const ExteriorPhotoScreen = () => {
             mediaList={mediaList}
             onMediaChange={setMediaList}
             primaryBtnTitle={!isEdit ? 'Next' : null}
-            onPrimaryPress={!isEdit ? handleNext : undefined}
+            // onPrimaryPress={!isEdit ? handleNext : undefined}
+            onPrimaryPress={()=> navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE)}
             primaryLoading={isLoading}
             primaryDisable={mediaList.length === 0 || isLoading}
             secondaryBtnTitle="Save & Exit"
             onSecondaryPress={handleSaveAndExit}
             secondaryLoading={false}
             secondaryDisable={isLoading}
+            percentage={30}
         />
     );
 };

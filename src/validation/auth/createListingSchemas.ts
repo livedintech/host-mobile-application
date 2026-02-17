@@ -11,56 +11,111 @@ export const stepOneSchema = yup.object({
 
 export type StepOneFormValues = yup.InferType<typeof stepOneSchema>;
 
-export type AddressFormValues = {
+
+// Types used in container/screen for payload building
+export type CountryOption = {
+  id: number;
+  cca2: string;
   name: string;
-  country_code: CountryValue | null;
-  state: string;
-  city: string;
-  street: string;
-  apt?: string;
+};
+
+export type DropdownOption = {
+  id: number;
+  name: string;
 };
 
 export const addressSchema = yup.object({
-  name:yup.string().required('Name is required'),
-  country_code: yup.object({
-    cca2: yup.string().required('Country is required'),
-  }).required('Country is required'),
-  state: yup.string().required('State is required'),
-  city: yup.string().required('City is required'),
-  street: yup.string().required('Street address is required'),
-  apt: yup.string().required('Apartment / Unit is required'),
+  name: yup.string().required('Name is required'),
+
+  country_code: yup
+    .number()
+    .required('Country is required')
+    .typeError('Country is required'),
+
+  state: yup
+    .number()
+    .required('State is required')
+    .typeError('State is required'),
+
+  city: yup
+    .number()
+    .required('City is required')
+    .typeError('City is required'),
+
+  district: yup
+    .number()
+    .required('District is required')
+    .typeError('District is required'),
+
+  address:       yup.string().required('Address is required'),
+  postalAddress: yup.string().required('Postal address is required'),
 });
 
+export type AddressFormValues = yup.InferType<typeof addressSchema>;
 
+
+// ─── Step 2 Schema (image ke mutabiq) ───────────────────────────────────────
 export const stepTwoSchema = yup.object({
-  bedrooms: yup.string().required('Bedrooms is required'),
-  beds: yup.string().required('Beds is required'),
-  bathrooms: yup.string().required('Bathrooms is required'),
-  min_nights: yup.string().required('Min nights is required'),
+  size_sqm: yup
+    .string()
+    .required('Size is required'),
+
+  bedrooms: yup
+    .string()
+    .required('Number of Bedrooms is required'),
+
+  beds: yup
+    .string()
+    .required('Number of Beds is required'),
+
+  kitchen: yup
+    .string()
+    .required('Kitchen is required')
+    .oneOf(['true', 'false'], 'Kitchen must be Yes or No'),
+
+  pool: yup
+    .string()
+    .required('Pool is required')
+    .oneOf(['true', 'false'], 'Pool must be Yes or No'),
+
+  long_term_stay: yup
+    .string()
+    .required('Long term Stay is required')
+    .oneOf(['true', 'false'], 'Long term Stay must be Yes or No'),
+
+  min_gap_night: yup
+    .string()
+    .required('Minimum Gap Night is required'),
+
+  min_nights: yup
+    .string()
+    .required('Minimum Night Stay is required'),
+
+  max_nights: yup
+    .string()
+    .required('Maximum Night Stay is required'),
+
   amenities: yup
     .array()
-    .of(yup.string())
-    .min(1, 'Amenities is required'),
-  check_in_time: yup.string().required('Check-in time is required'),
-  check_out_time: yup.string().required('Check-out time is required'),
-  instant_booking: yup
-    .string()
-    .required('Instant booking is required')
-    .oneOf(['true', 'false'], 'Instant booking must be Yes or No'),
-    
+    .of(yup.string().required())
+    .min(1, 'Please select at least one house feature')
+    .required('Please select at least one house feature'),
 });
 
-
 export type StepTwoFormValues = {
+  size_sqm: string;
   bedrooms: string;
   beds: string;
-  bathrooms: string;
+  kitchen: string;
+  pool: string;
+  long_term_stay: string;
+  min_gap_night: string;
   min_nights: string;
-  check_in_time: string;
-  check_out_time: string;
-  instant_booking: string;
- amenities: string[];
+  max_nights: string;
+  amenities: string[];
 };
+// ─────────────────────────────────────────────────────────────────────────────
+
 
 export const describeHouseSchema = yup.object().shape({
   name: yup.string().required('House title is required'),
@@ -71,6 +126,33 @@ export const describeHouseSchema = yup.object().shape({
 });
 
 export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
+
+// ─── Booking Details Schema ──────────────────────────────────────────────────
+export const bookingDetailsSchema = yup.object({
+  booking_type: yup
+    .string()
+    .required('Booking type is required'),
+
+  guest_eligibility: yup
+    .string()
+    .required('Guest eligibility is required'),
+
+  check_in_time: yup
+    .string()
+    .required('Check-in time is required'),
+
+  check_out_time: yup
+    .string()
+    .required('Check-out time is required'),
+});
+
+export type BookingDetailsFormValues = {
+  booking_type: string;
+  guest_eligibility: string;
+  check_in_time: string;
+  check_out_time: string;
+};
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const pricingSchema = yup.object().shape({
   weekdayPrice: yup
@@ -102,9 +184,6 @@ export const pricingSchema = yup.object().shape({
     .required('Cleaning Fee is required'),
 });
 
-
-
-// Infer type directly from schema
 export type PricingFormValues = yup.InferType<typeof pricingSchema>;
 
 export const disclosureSchema = yup.object().shape({
@@ -114,6 +193,7 @@ export const disclosureSchema = yup.object().shape({
 });
 
 export type DisclosureFormValues = yup.InferType<typeof disclosureSchema>;
+
 export interface DocumentPickerResult {
   uri: string;
   name: string;

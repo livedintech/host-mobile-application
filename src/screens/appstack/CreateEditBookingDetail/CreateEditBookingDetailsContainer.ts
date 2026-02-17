@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DescribeHouseFormValues, describeHouseSchema } from '@/validation/auth/createListingSchemas';
+import { BookingDetailsFormValues, bookingDetailsSchema } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation } from '@tanstack/react-query';
@@ -13,46 +13,41 @@ import { useRoute } from '@react-navigation/native';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-export default function useDescribeHouseContainer() {
+export default function useBookingDetailsContainer() {
   const { params } = useRoute();
-  const { updateListing, listing_id, channel_id } = useCreateListingStore();
+  const { listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
-  // Safe access for edit mode only
-  const listingDescriptionRaw = listing?.listing_descriptions?.[0] ?? null;
+  const bookingTypeOptions = [
+    { label: 'Instant', value: 'instant' },
+    { label: 'Request', value: 'request' },
+  ];
 
-  let listingDescriptionParsed: any = null;
-  try {
-    listingDescriptionParsed =
-      typeof listingDescriptionRaw === 'string'
-        ? JSON.parse(listingDescriptionRaw)
-        : listingDescriptionRaw;
-  } catch (e) {
-    listingDescriptionParsed = null;
-  }
+  const guestEligibilityOptions = [
+    { label: 'Yes', value: 'true' },
+    { label: 'No', value: 'false' },
+  ];
 
-  const { control, handleSubmit, formState: { errors }, watch } = useForm<DescribeHouseFormValues>({
-    resolver: yupResolver(describeHouseSchema) as any,
+  const { control, handleSubmit, formState: { errors } } = useForm<BookingDetailsFormValues>({
+    resolver: yupResolver(bookingDetailsSchema) as any,
     defaultValues: {
-      name: listing?.name ?? '',
-      listing_descriptions: listingDescriptionParsed?.[0]?.description ?? '',
-      wifi_username: listing?.wifi_username ?? '',
-      wifi_password: listing?.wifi_password ?? '',
-      door_lock_code: listing?.door_lock_code ?? '',
+      booking_type: listing?.booking_type ?? '',
+      guest_eligibility: listing?.guest_eligibility === true
+        ? 'true'
+        : listing?.guest_eligibility === false
+        ? 'false'
+        : '',
+      check_in_time: listing?.check_in_time ?? '',
+      check_out_time: listing?.check_out_time ?? '',
     },
   });
 
-  const descriptionValue = watch('listing_descriptions') || '';
-
-  const { mutate: createListingDetailsPayload, isPending } =
+  // ---- Mutations ----
+  const { mutate: createListingDetailsPayload, isPending: isCreating } =
     useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
       mutationFn: createListingDetailsApi,
-      onSuccess: ({ message }) => {
-        Toast.show({ type: 'success', text1: message || 'Saved successfully' });
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
-      },
       onError: error => {
         Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
       },
@@ -75,28 +70,34 @@ export default function useDescribeHouseContainer() {
     },
   });
 
-  const buildPayload = (data: DescribeHouseFormValues): CreateListingDetailsPayload => ({
+  // ---- Payload builder ----
+  const buildPayload = (
+    data: BookingDetailsFormValues,
+    overrideListingId?: string
+  ): CreateListingDetailsPayload => ({
     channel_id,
-    listing_id,
+    listing_id: overrideListingId || listing_id,
     user_id: Number(user?.id),
     listing: {
-      name: data.name,
-      listing_descriptions: data.listing_descriptions,
-      wifi_username: data.wifi_username,
-      wifi_password: data.wifi_password,
-      door_lock_code: data.door_lock_code,
+      booking_type: data.booking_type,
+      guest_eligibility: data.guest_eligibility === 'true',
+      check_in_time: data.check_in_time,
+      check_out_time: data.check_out_time,
     },
   });
 
-  const onNext = (data: DescribeHouseFormValues) => {
-    // updateListing({ name: data.name });
-    // createListingDetailsPayload(buildPayload(data));
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
+  // ---- Handlers ----
+  const onNext = (data: BookingDetailsFormValues) => {
+    createListingDetailsPayload(buildPayload(data), {
+      onSuccess: () => {
+        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
+      },
+    });
   };
 
-  const onSaveExit = (data: DescribeHouseFormValues) => {
+  const onSaveExit = (data: BookingDetailsFormValues) => {
     if (isEdit) {
-      updateListingDetails(buildPayload(data));
+      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
     } else {
       createListingDetailsPayload(buildPayload(data), {
         onSuccess: () => {
@@ -107,13 +108,14 @@ export default function useDescribeHouseContainer() {
   };
 
   return {
-    isEdit,
-    isLoading: isPending || isUpdating,
     control,
     errors,
     handleSubmit,
     onNext,
     onSaveExit,
-    descriptionLength: descriptionValue.length,
+    isEdit,
+    isLoading: isCreating || isUpdating,
+    bookingTypeOptions,
+    guestEligibilityOptions,
   };
 }

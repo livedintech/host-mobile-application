@@ -41,3 +41,13 @@ export interface getManageListingDetailByIdApiTypePayload {
   listing_id: string;
   user_id: number,
 }
+
+export interface CreateEditlistingStatePayloadType {
+    country_id: string | number
+}
+export interface CreateEditlistingCitiesPayloadType {
+    state_id: string | number
+}
+export interface CreateEditlistingDistrictsPayloadType {
+    city_id: string | number
+}
