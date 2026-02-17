@@ -29,12 +29,13 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
           {data && data.length > 0 ? (
             data.map((item: any, index: number) => {
               const otaConfig = getOtaConfig(item.source);
+              const platformLabel = item.source_type === 'livedin' ? 'Livedin' : (item.source || 'Direct');
               return (
                 <View key={index} style={styles.cardWrapper}>
                   <ReservationCard
                     id={item.id}
                     guestName={item.guest}
-                    platform={item?.source_type === 'livedin' ? 'Livedin' : item.source}
+                    platform={platformLabel}
                     property={item.listing_title}
                     endDate={item?.end_date || ''}
                     startDate={item?.start_date || ''}

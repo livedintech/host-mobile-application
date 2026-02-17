@@ -259,7 +259,11 @@ const ReviewDetailScreen = ({ route }: any) => {
           <View style={styles.innerCard}>
             <DetailRow
               label="Booking Platform:"
-              value={property?.booking_platform || 'N/A'}
+              value={
+                property?.booking_platform === 'host_booking' 
+                  ? 'Livedin' 
+                  : property?.booking_platform || 'N/A'
+              }
               valueColor={
                 property?.booking_platform?.toLowerCase() === 'airbnb'
                   ? Colors.AIRBNB_RED
@@ -288,24 +292,24 @@ const ReviewDetailScreen = ({ route }: any) => {
             {/* Note: Map specific dates if available in booking_dates */}
             <DetailRow
               label="Confirmation Code:"
-              value={booking_dates?.confirmation_code || 'N/A'}
+              value={property?.confirmation_code || 'N/A'}
             />
 
             <View style={styles.verticalSpacer} />
 
             <DetailRow
               label="Door Code:"
-              value={booking_dates?.door_code || 'N/A'}
+              value={property?.door_code || 'N/A'}
             />
             <DetailRow
               label="Payment Status:"
               value={
-                booking_dates?.payment_status
+                property?.payment_status
                   ?.replace('_', ' ')
                   .toUpperCase() || 'N/A'
               }
               valueColor={
-                booking_dates?.payment_status === 'payment_unverified'
+                property?.payment_status === 'payment_unverified'
                   ? Colors.AIRBNB_RED
                   : Colors.BOTTLE_GREEN
               }
