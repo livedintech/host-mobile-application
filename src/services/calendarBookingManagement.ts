@@ -16,9 +16,13 @@ export const getCalendarBookingManagementListingsApi = async (listingId?: string
 
 
   const { ok, data } = await apiService.get(url);
-
-  if (ok) return data?.data || [];
-  return [];
+  if (ok) {
+    return {
+      bookings: data?.data || [], // This is your array of objects
+      defaultDailyPrice: data?.default_daily_price || 0 // This is your 38
+    };
+  }
+  return { bookings: [], defaultDailyPrice: 0 };
 };
 
 /**

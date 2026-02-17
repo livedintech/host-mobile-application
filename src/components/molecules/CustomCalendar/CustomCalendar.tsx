@@ -8,35 +8,37 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CALENDAR_PADDING = s(32);
 const COLUMN_WIDTH = (SCREEN_WIDTH - CALENDAR_PADDING) / 7;
-const SELECTION_HEIGHT = vs(46); // Consistent height for both circles and pills
+const SELECTION_HEIGHT = vs(46); 
 
 const getOTASource = (source?: string) => {
   const s = source?.toLowerCase();
   let iconName: any; 
   if (s === 'airbnb') iconName = 'airbnb';
-  else if (s === 'bookingcom' || s === 'booking.com') iconName = 'booking';
+  else if (s === 'bookingcom' || s === 'booking.com' || s === 'booking') iconName = 'booking';
   else if (s === 'gathern') iconName = 'gathern';
   else iconName = 'livedin'; 
 
   return { icon: iconName };
 };
 
-const CustomDay = ({ date, state, marking, onPress }: any) => {
-  const { type, color, guest, price, showLabel, ota } = marking || {};
+const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
+  // Destructure values from marking
+  const { type, color, guest, price, rate, showLabel, ota } = marking || {};
   const isActive = !!type && type !== 'none';
   const themeColor = color || '#3B82F6';
   
-  // Logic for distinct shapes
+  // Shape Logic
   const isSingle = type === 'single';
   const isStarting = type === 'starting';
   const isEnding = type === 'ending';
   const isMiddle = type === 'middle';
   
   const otaIconData = getOTASource(ota);
+  const displayPrice = rate || price || defaultPrice;
 
   return (
     <View style={styles.dayCell}>
-      {/* SELECTION LAYER: Conditional styling for perfect circles vs pills */}
+      {/* SELECTION LAYER */}
       {isActive && (
         <View
           pointerEvents="none"
@@ -58,7 +60,7 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
       >
         <View style={styles.contentWrapper}>
           
-          {/* OTA ICON + GUEST: Top-aligned and fine-tuned */}
+          {/* OTA ICON + GUEST NAME */}
           {showLabel && (
             <View style={styles.labelPositioner} pointerEvents="none">
               <View style={styles.labelRow}>
@@ -77,12 +79,13 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
             {date.day}
           </Text>
 
+          {/* PRICE DISPLAY */}
           {state !== 'disabled' && (
             <Text style={[
               styles.priceText,
               { color: isActive ? 'rgba(255,255,255,0.85)' : '#9E9E9E' }
             ]}>
-              SAR {price || '0'}
+              SAR {displayPrice}
             </Text>
           )}
         </View>
@@ -91,7 +94,7 @@ const CustomDay = ({ date, state, marking, onPress }: any) => {
   );
 };
 
-const CustomCalendar = ({ markedDates, onDayPress, currentDate }: any) => {
+const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: any) => {
   return (
     <View style={styles.card}>
       <Calendar
@@ -99,7 +102,13 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate }: any) => {
         markingType="custom"
         markedDates={markedDates}
         dayComponent={({ date, state, marking }: any) => (
-          <CustomDay date={date} state={state} marking={marking} onPress={onDayPress} />
+          <CustomDay 
+            date={date} 
+            state={state} 
+            marking={marking} 
+            onPress={onDayPress} 
+            defaultPrice={defaultPrice} 
+          />
         )}
         renderArrow={(dir) => (
           dir === 'left' ? <ChevronLeft size={ms(22)} color="#A0A0A0" /> : <ChevronRight size={ms(22)} color="#1A332C" />
@@ -130,12 +139,10 @@ const styles = StyleSheet.create({
     height: SELECTION_HEIGHT,
     zIndex: 1,
   },
-  // Perfect Circle: Width matches height
   circleShape: {
     width: SELECTION_HEIGHT,
     borderRadius: SELECTION_HEIGHT / 2,
   },
-  // Range: Fills the cell width
   fullWidth: {
     width: '100%',
   },
@@ -164,9 +171,9 @@ const styles = StyleSheet.create({
   labelPositioner: {
     position: 'absolute',
     top: vs(4), 
-    left: s(14),
+    left: s(10),
     zIndex: 20,
-    width: s(140),
+    width: s(150),
     flexDirection: 'row',
     alignItems: 'center',
   },
