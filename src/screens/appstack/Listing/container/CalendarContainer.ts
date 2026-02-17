@@ -2,66 +2,86 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCalendarBookingManagementListingsApi } from '@/services/calendarBookingManagement'; 
 import { useAuthStore } from '@/store/useAuthStore';
+import { getOtaConfig } from '@/constants/ota_config';
 
 export default function useCalendarContainer(listingId: string) {
   const { user } = useAuthStore();
-  const { data: rawData, isLoading } = useQuery({
+  
+  const { data: response, isLoading } = useQuery({
     queryKey: ['CALENDAR_DATA', listingId], 
     queryFn: () => getCalendarBookingManagementListingsApi(listingId),
     enabled: !!user?.id,
   });
 
+  const rawData = response?.bookings || [];
+  const defaultDailyPrice = response?.defaultDailyPrice || 0;
+
   const calendarDataMap = useMemo(() => {
-    const map: any = {};
-    if (!Array.isArray(rawData)) return map;
+    const marks: any = {};
+    if (!Array.isArray(rawData)) return marks;
 
     rawData.forEach((item: any) => {
-      const dateKey = item.calender_date; // Exactly as per your API JSON
-      if (!dateKey) return;
-
-      // Initialize the base day object
-      map[dateKey] = {
-        price: item.rate || 0,
-        availability: item.availability,
-        type: 'none', // Default to no booking
-      };
-
-      // Since you mentioned bookings will always have at least one object:
-      if (item.bookings && item.bookings.length > 0) {
-        const booking = item.bookings[0]; // Take the first booking object
-        const source = booking.source?.toLowerCase();
+      // --- 1. SINGLE PROPERTY STRUCTURE (Specific Listing Selected) ---
+      if (item.calender_date) {
+        const dateKey = item.calender_date;
         
-        // 1. Determine Position for the UI Span
-        let type = 'middle';
-        if (dateKey === booking.arrival_date) {
-          type = 'starting'; // Rounded left side + Name Label
-        } else if (dateKey === booking.departure_date) {
-          type = 'ending';   // Rounded right side
-        }
+        // Initial day state
+        marks[dateKey] = { price: item.rate || defaultDailyPrice };
 
-        // Handle single-day edge case
-        if (booking.arrival_date === booking.departure_date) {
-          type = 'single';
-        }
+        if (item.bookings && item.bookings.length > 0) {
+          const booking = item.bookings[0];
+          const config = getOtaConfig(booking.source || booking.type);
+          
+          let type = 'middle';
+          if (dateKey === booking.arrival_date) type = 'starting';
+          else if (dateKey === booking.departure_date) type = 'ending';
+          if (booking.arrival_date === booking.departure_date) type = 'single';
 
-        // 2. Map Visual Data to match your Screenshot
-        map[dateKey] = {
-          ...map[dateKey],
-          type,
-          guestName: booking.guest_name,
-          // Match the colors and icons from your screenshot logic
-          color: source === 'airbnb' ? '#F8B6B6' : '#E9D5FF', 
-          containerColor: source === 'airbnb' ? '#C53030' : '#9333EA', // Darker circle color
-          textColor: type === 'starting' ? '#FFFFFF' : '#1A332C',
-          otaType: booking.type, // 'livedin', 'airbnb', etc.
-          showLabel: dateKey === booking.arrival_date, // Only show name on start date
-        };
+          marks[dateKey] = {
+            ...marks[dateKey],
+            type,
+            ota: config.key,
+            color: config.color,
+            guest: booking.guest_name?.trim() || 'Guest',
+            showLabel: dateKey === booking.arrival_date,
+            bookingData: booking,
+          };
+        }
+      } 
+      // --- 2. MULTI-CHANNEL STRUCTURE (All Listings View) ---
+      else if (item.start_date && item.end_date) {
+        const start = item.start_date.split(' ')[0];
+        const end = item.end_date.split(' ')[0];
+        const config = getOtaConfig(item.source_type === 'livedin' ? 'direct' : item.source);
+        
+        const current = new Date(start);
+        const last = new Date(end);
+        
+        while (current <= last) {
+          const dKey = current.toISOString().split('T')[0];
+          if (!marks[dKey]) {
+            marks[dKey] = {
+              ota: config.key,
+              channels: [config.key.toLowerCase()],
+              price: item.amount || defaultDailyPrice,
+              bookings: [item]
+            };
+          } else {
+            const existingChannels = marks[dKey].channels || [];
+            if (!existingChannels.includes(config.key.toLowerCase())) {
+              marks[dKey].channels = [...existingChannels, config.key.toLowerCase()];
+            }
+            if (marks[dKey].bookings) {
+              marks[dKey].bookings.push(item);
+            }
+          }
+          current.setDate(current.getDate() + 1);
+        }
       }
     });
 
-    return map;
-  }, [rawData]);
+    return marks;
+  }, [rawData, defaultDailyPrice]);
 
-  // We return rawData here so ListingScreen can use it for the Reservation Tab list
-  return { calendarDataMap, isLoading, rawData };
+  return { calendarDataMap, isLoading, rawData, defaultDailyPrice };
 }
