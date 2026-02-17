@@ -35,6 +35,25 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
         </View>
     );
 
+    const renderEmptyContainer = () => (
+    <View style={styles.emptyContainer}>
+        <Svgicons path="logIcon" size={50} color={Colors.SMOOTH_GREY} />
+        <AppText 
+            text="No activity logs found." 
+            fontSize={18} 
+            type="Medium" 
+            color={Colors.SMOOTH_GREY} 
+            mt={15} 
+        />
+        <AppText 
+            text="Try refreshing to see recent updates." 
+            fontSize={14} 
+            color={Colors.SMOOTH_GREY} 
+            mt={5} 
+        />
+    </View>
+);
+
     return (
         <View style={styles.container}>
             {/* Custom Header */}
@@ -71,6 +90,7 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
                 showsVerticalScrollIndicator={false}
                 onRefresh={handleRefresh}
                 refreshing={isLoading}
+ListEmptyComponent={renderEmptyContainer}
             />
         </View>
     );
@@ -129,7 +149,13 @@ const styles = StyleSheet.create({
     },
     actionText: {
         lineHeight: 22
-    }
+    },
+    emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: Metrics.verticalScale(50), 
+},
 });
 
 export default SmartLockActivityLogScreen;

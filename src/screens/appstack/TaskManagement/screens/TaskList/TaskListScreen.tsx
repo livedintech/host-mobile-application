@@ -31,6 +31,8 @@ const TaskListScreen: React.FC = () => {
     vendorDropdown,
   } = TaskListContainer();
 
+  
+
   const renderTaskItem = ({ item }: { item: Task }) => (
     <GradientBorder borderRadius={15} style={styles.gradientWrapper}>
       <View style={styles.taskCard}>
@@ -104,8 +106,8 @@ const TaskListScreen: React.FC = () => {
           <AppText text="Create Task" type="Bold" color={Colors.PINE_FOREST} />
         </TouchableOpacity>
       </View>
-
-      <Modal isVisible={isFilterVisible} onBackdropPress={toggleFilterModal} style={styles.modal}>
+{isFilterVisible && (
+      <Modal animationIn={'fadeIn'} isVisible={isFilterVisible} onBackdropPress={toggleFilterModal} style={styles.modal}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <AppText text="Apply Filter" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
@@ -130,6 +132,7 @@ const TaskListScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+      )}
     </SafeAreaView>
   );
 };

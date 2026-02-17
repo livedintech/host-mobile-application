@@ -406,14 +406,14 @@ const AppStack = () => {
             .default
         }
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SMART_LOCK}
         getComponent={() =>
           require('@/screens/appstack/SmartLock/SmartLockScreen')
             .default
         }
-      />
+      /> */}
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS}

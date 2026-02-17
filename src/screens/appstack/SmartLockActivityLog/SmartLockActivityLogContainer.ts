@@ -37,7 +37,7 @@ export default function useSmartLockActivityLogContainer() {
         Toast.show({
             type: 'success',
             text1: 'Logs Updated',
-            position: 'bottom'
+            position: 'top'
         });
     };
 

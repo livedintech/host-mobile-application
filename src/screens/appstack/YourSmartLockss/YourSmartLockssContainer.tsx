@@ -65,11 +65,15 @@ export default function useYourSmartLockssContainer() {
                 text1: message,
             });
             queryClient.invalidateQueries({
-                queryKey: [STORAGE_CONST.GET_SMARTLOCK_LIST],
-            });
-            queryClient.refetchQueries({
-                queryKey: [STORAGE_CONST.GET_SMARTLOCK_LIST],
-            });
+            queryKey: [STORAGE_CONST.GET_SMARTLOCK_LIST],
+        });
+        
+            // queryClient.invalidateQueries({
+            //     queryKey: [STORAGE_CONST.GET_SMARTLOCK_LIST],
+            // });
+            // queryClient.refetchQueries({
+            //     queryKey: [STORAGE_CONST.GET_SMARTLOCK_LIST],
+            // });
         },
         onError: error => {
             Toast.show({
@@ -94,15 +98,18 @@ export default function useYourSmartLockssContainer() {
     };
 
     return {
-        locksData: citiesgetSmartlockListData,
-        LISTING_OPTIONS,
-        control,
-        errors,
-        getBatteryColor,
-        handleConnectNewAccount: () => navigate(NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS),
-        refetch,
-        goToScreen,
-        isLoading: isPending && !isIdle || isLoadingLocks,
-        selectDropdown,
-    };
+  locksData: citiesgetSmartlockListData,
+  LISTING_OPTIONS,
+  control,
+  errors,
+  getBatteryColor,
+  handleConnectNewAccount: () =>
+    navigate(NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS),
+  refetch,
+  goToScreen,
+//   isLoading: isPending || isLoadingLocks,
+isLoading: isLoadingLocks || isPending,
+  selectDropdown,
+};
+
 }
