@@ -7,7 +7,6 @@ import { s, vs } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-// Internal Imports
 import { useAuthStore } from '@/store/useAuthStore';
 import {
   getUserListingsApi,
@@ -38,50 +37,30 @@ const ListingScreen = () => {
   const queryClient = useQueryClient();
   const navigation = useNavigation<any>();
 
-  // UI States
   const [selectedTab, setSelectedTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('today');
   const [isModalVisible, setModalVisible] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-
-  // Booking Details States
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<any[]>([]);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
-
-  // Selection States
   const [selectedDateForBooking, setSelectedDateForBooking] = useState('');
   const [bookingType, setBookingType] = useState('direct');
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
   const [appliedListingIds, setAppliedListingIds] = useState<string>('');
 
-  const {
-    control, watch, handleSubmit, setValue, reset, clearErrors,
-    formState: { errors }
-  } = useForm<createBookingFormValues>({
+  const { control, watch, handleSubmit, setValue, reset, clearErrors, formState: { errors } } = useForm<createBookingFormValues>({
     resolver: yupResolver(createBookingSchema) as any,
     context: { bookingType: bookingType },
-    defaultValues: {
-      listing_selection: '', name: '', email: '', phone: '',
-      booking_type: 'host', end_date: '', start_date: '',
-      rate: '', listing_id: '',
-    },
+    defaultValues: { listing_selection: '', name: '', email: '', phone: '', booking_type: 'host', end_date: '', start_date: '', rate: '', listing_id: '' },
   });
 
   const selectedListingId = watch('listing_selection');
 
-  useEffect(() => {
-    clearErrors();
-  }, [bookingType, clearErrors]);
+  useEffect(() => { clearErrors(); }, [bookingType, clearErrors]);
+  useEffect(() => { if (selectedDateForBooking) setValue('start_date', selectedDateForBooking); }, [selectedDateForBooking, setValue]);
 
-  useEffect(() => {
-    if (selectedDateForBooking) {
-      setValue('start_date', selectedDateForBooking);
-    }
-  }, [selectedDateForBooking, setValue]);
-
-  // --- API QUERIES ---
   const { data: listingOptions = [] } = useQuery({
     queryKey: ['USER_LISTINGS', user?.id],
     queryFn: () => getUserListingsApi(user?.id || ''),
@@ -93,19 +72,14 @@ const ListingScreen = () => {
     enabled: selectedTab === 1,
   });
 
-  // Dynamic Data from Hook
   const { calendarDataMap, defaultDailyPrice } = useCalendarContainer(selectedListingId || '');
 
-  // --- HANDLERS ---
   const handleReservationPress = async (bookingId: string | number) => {
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
       if (response && response.data) {
-        navigation.navigate(
-          NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
-          { bookingData: response.data }
-        );
+        navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data });
       }
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Error', text2: 'Could not fetch booking info' });
@@ -116,9 +90,7 @@ const ListingScreen = () => {
 
   const handleDayPress = (day: any) => {
     const dateData = calendarDataMap[day.dateString];
-    const isBooked = selectedListingId
-      ? (dateData?.type && dateData.type !== 'none')
-      : (dateData?.channels?.length > 0);
+    const isBooked = selectedListingId ? (dateData?.type && dateData.type !== 'none') : (dateData?.channels?.length > 0);
 
     if (isBooked) {
       setSelectedBookingDetails(selectedListingId ? [dateData.bookingData] : (dateData.bookings || []));
@@ -140,13 +112,13 @@ const ListingScreen = () => {
         const [m, d, y] = date.split('/');
         return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
       };
-
       const payload = {
+        ...formData,
         listing_id: finalId,
-        start_date: formatDate(formData.start_date),
-        end_date: formatDate(formData.end_date)
+        phone: (formData.phone ?? '').replace(/[^\d]/g, ''),
+        start_date: formatDate(formData.start_date || ''),
+        end_date: formatDate(formData.end_date || ''),
       };
-
       const res = bookingType === 'direct'
         ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'host' })
         : await updateCalendarPricingApi({ ...payload, price: formData.rate || '' });
@@ -159,7 +131,8 @@ const ListingScreen = () => {
         queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
       }
     } catch (error: any) {
-      Toast.show({ type: 'error', text1: 'Error', text2: error?.response?.data?.message || 'Action failed' });
+      const serverMessage = error?.data?.message || error?.response?.data?.message || "Something went wrong";
+      Toast.show({ type: 'error', text1: serverMessage, visibilityTime: 4000 });
     }
   };
 
@@ -171,7 +144,12 @@ const ListingScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <BookingDetailsView isVisible={isDetailsOpen} onClose={() => setIsDetailsOpen(false)} data={selectedBookingDetails} />
+      <BookingDetailsView 
+        isVisible={isDetailsOpen} 
+        onClose={() => setIsDetailsOpen(false)} 
+        data={selectedBookingDetails}
+        onCardPress={handleReservationPress} 
+      />
       
       {isFetchingDetails && (
         <View style={styles.overlayLoader}>
@@ -219,7 +197,7 @@ const ListingScreen = () => {
                       <ReservationCard
                         id={item.booking_id || item.id}
                         guestName={item.guest}
-                        platform={config.label}
+                        platform={item.source_type === 'livedin' ? 'Livedin' : config.label}
                         property={item.listing_title || 'Property'}
                         endDate={item.end_date} startDate={item.start_date}
                         checkIn={item?.checkIn || '04:00 PM'} checkOut={item?.checkOut || '12:00 AM'}
@@ -259,7 +237,13 @@ const styles = StyleSheet.create({
   segmentedWrapper: { alignItems: 'center', paddingVertical: vs(8) },
   listContent: { padding: s(16), flexGrow: 1 },
   centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: vs(100) },
-  overlayLoader: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.7)', justifyContent: 'center', alignItems: 'center', zIndex: 999 },
+  overlayLoader: {
+  ...StyleSheet.absoluteFill,
+  backgroundColor: 'rgba(255,255,255,0.7)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 999,
+},
 });
 
 export default ListingScreen;

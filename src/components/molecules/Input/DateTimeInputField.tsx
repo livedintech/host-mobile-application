@@ -17,7 +17,6 @@ import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 type Props = {
   name: string;
@@ -32,6 +31,7 @@ type Props = {
   rightIcon?: React.ReactNode;
   rules?: object;
   editable?: boolean;
+  minimumDate?: Date; // Added this line
 };
 
 const DateTimeInputField = ({
@@ -47,6 +47,7 @@ const DateTimeInputField = ({
   rightIcon,
   rules,
   editable = false,
+  minimumDate, // Added this line
 }: Props) => {
   const [showPicker, setShowPicker] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState(new Date());
@@ -80,11 +81,11 @@ const DateTimeInputField = ({
   });
 
   const formatDate = (date: Date): string => {
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const year = String(date.getFullYear()).slice(-2);
-    return `${month}/${day}/${year}`;
-  };
+  const year = date.getFullYear(); // Full 4 digits (2026)
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`; // Returns YYYY-MM-DD
+};
 
   const formatTime = (date: Date): string => {
     const hours = String(date.getHours() % 12 || 12).padStart(2, '0');
@@ -98,19 +99,33 @@ const DateTimeInputField = ({
     date: Date | undefined,
     onChange: (value: string) => void
   ) => {
+    // For Android, we close immediately on selection
+    if (Platform.OS === 'android') {
+      setShowPicker(false);
+      handleBlur();
+    }
+
     if (date) {
       setSelectedDateTime(date);
       const formatted = mode === 'date' ? formatDate(date) : formatTime(date);
       onChange(formatted);
     }
-
-    if (Platform.OS === 'android') {
-      setShowPicker(false);
-    }
   };
 
-  const handleOpenPicker = (onFocus: () => void) => {
+  const handleOpenPicker = (onFocus: () => void, currentValue: string) => {
     onFocus();
+    
+    // Attempt to set picker to the currently selected value if it exists
+    if (currentValue) {
+      const parsedDate = new Date(currentValue);
+      if (!isNaN(parsedDate.getTime())) {
+        setSelectedDateTime(parsedDate);
+      }
+    } else if (minimumDate && minimumDate > new Date()) {
+        // If no value but minimumDate is in the future, start picker there
+        setSelectedDateTime(minimumDate);
+    }
+    
     setShowPicker(true);
   };
 
@@ -138,7 +153,7 @@ const DateTimeInputField = ({
 
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => handleOpenPicker(handleFocus)}
+            onPress={() => handleOpenPicker(handleFocus, value)}
           >
             <Animated.View
               style={[
@@ -161,12 +176,6 @@ const DateTimeInputField = ({
                 placeholder={placeholder}
                 placeholderTextColor={Colors.SUPER_GREY}
                 value={value}
-                onChangeText={onChange}
-                onFocus={() => handleOpenPicker(handleFocus)}
-                onBlur={() => {
-                  handleBlur();
-                  onBlur();
-                }}
                 editable={false}
                 pointerEvents="none"
               />
@@ -174,7 +183,7 @@ const DateTimeInputField = ({
               {rightIcon && (
                 <ButtonView
                   style={styles.iconWrapper}
-                  onPress={() => handleOpenPicker(handleFocus)}
+                  onPress={() => handleOpenPicker(handleFocus, value)}
                 >
                   {rightIcon}
                 </ButtonView>
@@ -189,6 +198,7 @@ const DateTimeInputField = ({
               <DateTimePicker
                 value={selectedDateTime}
                 mode={mode}
+                minimumDate={minimumDate} // Pass the prop here
                 display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                 onChange={(event, date) =>
                   handleDateTimeChange(event, date, onChange)
@@ -214,8 +224,6 @@ const DateTimeInputField = ({
     />
   );
 };
-
-export default DateTimeInputField;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -263,3 +271,5 @@ const styles = StyleSheet.create({
     marginTop: Metrics.verticalScale(12),
   },
 });
+
+export default DateTimeInputField;

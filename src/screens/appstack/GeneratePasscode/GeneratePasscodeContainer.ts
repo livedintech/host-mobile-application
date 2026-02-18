@@ -55,7 +55,7 @@ export default function useGeneratePasscodeContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_ACTIVE_CODES]
             });
-            navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS)
+            navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES,{ lock_id })
         },
         onError: error => {
             Toast.show({
@@ -84,15 +84,12 @@ export default function useGeneratePasscodeContainer() {
             lockId: lock_id,
             keyboardPwdName: data.name,
         };
-
-        if (type === 'Permanent') {
+        if (type === 'One-time') {
             payload.keyboardPwdType = 1;
         }
-
-        if (type === 'One-time') {
+        if (type === 'Permanent') {
             payload.keyboardPwdType = 2;
         }
-
         if (type === 'Timed') {
             payload.keyboardPwdType = 3;
             payload.start_date = data.startDate;

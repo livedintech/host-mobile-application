@@ -134,7 +134,6 @@ const EditTaskScreen = () => {
             mb={28}
           />
 
-          {taskStatus === 'todo' ? (
             <DropdownField
               name="assignTask"
               label="Assign Task"
@@ -142,138 +141,23 @@ const EditTaskScreen = () => {
               errors={errors}
               data={vendorDropdown}
             />
-          ) : (
-            <View>
-              <AppText
-                text="Task Assigned:"
-                fontSize={14}
-                type="Medium"
-                color={Colors.PINE_FOREST}
-                mb={8}
-              />
-              <AppText
-                text={taskDetail?.assigned_user?.name || 'N/A'}
-                fontSize={14}
-                color={Colors.BRUNSWICK_GREEN}
-                mb={28}
-              />
-            </View>
-          )}
+     
         </View>
 
-        <View style={styles.checklistTitleRow}>
-          <AppText
-            text="Pre Activity Preview"
-            fontSize={23}
-            type="Bold"
-            color={Colors.PINE_FOREST}
-          />
-          <Svgicons path="webcampIcon" size={30} />
-        </View>
 
-        <GradientBorder
-          style={styles.gradientWrapper}
-          borderRadius={15}
-          borderWidth={1.5}
-        >
-          <View style={styles.sectionContainer}>
-            <ButtonView
-              style={styles.sectionHeader}
-              onPress={() => setPreActivityExpanded(!preActivityExpanded)}
-            >
-              <View style={styles.row}>
-                <Svgicons path={'bedroom'} size={24} mr={12} />
-                <AppText
-                  text="View Images/Video"
-                  fontSize={18}
-                  type="Bold"
-                  color={Colors.PINE_FOREST}
-                />
-              </View>
-              <View style={styles.arrowCircle}>
-                <Svgicons
-                  path="chevronDown"
-                  size={14}
-                  style={{
-                    transform: [
-                      { rotate: preActivityExpanded ? '180deg' : '0deg' },
-                    ],
-                  }}
-                />
-              </View>
-            </ButtonView>
-
-            {preActivityExpanded && (
-              <View style={styles.checklistContent}>
-                {preActivityMedia.length > 0 ? (
-                  <View style={styles.mediaContainer}>
-                    {preActivityMedia.map((media: any, index: number) => {
-                      const mediaId = media.id || `pre-${index}`;
-                      const isVideo = checkIsVideo(media);
-                      return (
-                        <ButtonView
-                          key={mediaId}
-                          onPress={() => handlePreview(media)}
-                          style={styles.mediaWrapper}
-                        >
-                          <ShimmerPlaceholder
-                            visible={imageLoaded[mediaId]}
-                            style={styles.shimmerStyle}
-                          >
-                            {isVideo ? (
-                              <View
-                                style={styles.videoPlaceholder}
-                                onLayout={() => toggleImageLoad(mediaId)}
-                              >
-                                <Svgicons path="webcampIcon" size={30} />
-                                <AppText
-                                  text="Video"
-                                  fontSize={10}
-                                  color={Colors.PINE_FOREST}
-                                  mt={4}
-                                />
-                              </View>
-                            ) : (
-                              <Image
-                                source={{ uri: media.file_path }}
-                                style={styles.mediaImage}
-                                onLoad={() => toggleImageLoad(mediaId)}
-                              />
-                            )}
-                          </ShimmerPlaceholder>
-                        </ButtonView>
-                      );
-                    })}
-                  </View>
-                ) : (
-                  /* --- This is the empty state message --- */
-                  <View style={styles.emptyMediaContainer}>
-                    <AppText
-                      text="No images or videos available for this task."
-                      fontSize={14}
-                      color={Colors.BRUNSWICK_GREEN}
-                      style={{ textAlign: 'center' }}
-                    />
-                  </View>
-                )}
-              </View>
-            )}
-          </View>
-        </GradientBorder>
 
         <View style={styles.checklistTitleRow}>
           <AppText
             text={
-              taskStatus === 'todo'
-                ? 'Check-list Management'
-                : 'Post Activity Preview'
+            'Check-list Management'
+                
             }
             fontSize={23}
             type="Bold"
             color={Colors.PINE_FOREST}
           />
           <Svgicons
-            path={taskStatus === 'todo' ? 'File_Document' : 'webcampIcon'}
+            path={'File_Document' }
             size={30}
           />
         </View>
@@ -370,7 +254,7 @@ const EditTaskScreen = () => {
                         </View>
 
                         {/* --- Post Activity / Checklist Media --- */}
-                        {check.images?.length > 0 && (
+                        {/* {check.images?.length > 0 && (
                           <View style={styles.mediaContainer}>
                             {check.images.map((img: any, idx: number) => {
                               const mediaId =
@@ -415,7 +299,7 @@ const EditTaskScreen = () => {
                               );
                             })}
                           </View>
-                        )}
+                        )} */}
                       </View>
                     ))
                   )}

@@ -134,21 +134,31 @@ const EditTaskScreen = () => {
             mb={28}
           />
 
-          <View>
-            <AppText
-              text="Task Assigned:"
-              fontSize={14}
-              type="Medium"
-              color={Colors.PINE_FOREST}
-              mb={8}
+          {taskStatus === 'todo' ? (
+            <DropdownField
+              name="assignTask"
+              label="Assign Task"
+              control={control}
+              errors={errors}
+              data={vendorDropdown}
             />
-            <AppText
-              text={taskDetail?.assigned_user?.name || 'N/A'}
-              fontSize={14}
-              color={Colors.BRUNSWICK_GREEN}
-              mb={28}
-            />
-          </View>
+          ) : (
+            <View>
+              <AppText
+                text="Task Assigned:"
+                fontSize={14}
+                type="Medium"
+                color={Colors.PINE_FOREST}
+                mb={8}
+              />
+              <AppText
+                text={taskDetail?.assigned_user?.name || 'N/A'}
+                fontSize={14}
+                color={Colors.BRUNSWICK_GREEN}
+                mb={28}
+              />
+            </View>
+          )}
         </View>
 
         <View style={styles.checklistTitleRow}>
@@ -253,12 +263,19 @@ const EditTaskScreen = () => {
 
         <View style={styles.checklistTitleRow}>
           <AppText
-            text={'Post Activity Preview'}
+            text={
+              taskStatus === 'todo'
+                ? 'Check-list Management'
+                : 'Post Activity Preview'
+            }
             fontSize={23}
             type="Bold"
             color={Colors.PINE_FOREST}
           />
-          <Svgicons path={'webcampIcon'} size={30} />
+          <Svgicons
+            path={taskStatus === 'todo' ? 'File_Document' : 'webcampIcon'}
+            size={30}
+          />
         </View>
       </View>
     );
@@ -287,7 +304,7 @@ const EditTaskScreen = () => {
         listEmptyText="No checklists available"
         contentContainerStyle={styles.scrollContent}
         ListHeaderComponent={ListHeader}
-        style={{ flex: 1 }}
+        style={{flex:1}}
         renderItem={({ item }) => (
           <GradientBorder
             style={styles.gradientWrapper}
@@ -333,6 +350,15 @@ const EditTaskScreen = () => {
                     checklistDetail?.items?.map((check: any) => (
                       <View key={check.id} style={styles.checkItemContainer}>
                         <View style={styles.checkItemRow}>
+                          {taskStatus === 'todo' && (
+                            <Checkbox
+                              isChecked={
+                                selectedChecklistIds.includes(check.id) ||
+                                !!check.completed
+                              }
+                              onPress={() => toggleChecklistItem(check.id)}
+                            />
+                          )}
                           <View style={{ flex: 1 }}>
                             <AppText
                               text={check.name}
@@ -427,13 +453,19 @@ const EditTaskScreen = () => {
         </View>
       </Modal>
 
-      <View style={styles.taskCompleted}>
-        <Svgicons path="taskCompletedIcon" size={24} />
-        <AppText
-          text="Task Completed Successfully"
-          color={Colors.BRUNSWICK_GREEN}
-        />
-      </View>
+      {taskStatus === 'todo' && (
+        <View style={styles.footer}>
+          <AppButton
+            title={
+              isSavingVendor || isSavingChecklist ? 'Saving...' : 'Save Changes'
+            }
+            color={Colors.PINE_FOREST}
+            onPress={handleSave}
+            disabled={isSavingVendor || isSavingChecklist}
+            loading={isSavingVendor || isSavingChecklist}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -516,13 +548,6 @@ const styles = StyleSheet.create({
   emptyMediaContainer: {
     paddingVertical: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  taskCompleted: {
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
     justifyContent: 'center',
   },
 });

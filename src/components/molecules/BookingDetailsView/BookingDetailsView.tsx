@@ -11,10 +11,10 @@ interface Props {
   isVisible: boolean;
   onClose: () => void;
   data: any[];
+  onCardPress: (bookingId: string | number) => void;
 }
 
-
-export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
+export const BookingDetailsView = ({ isVisible, onClose, data, onCardPress }: Props) => {
   return (
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
@@ -30,6 +30,7 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
             data.map((item: any, index: number) => {
               const otaConfig = getOtaConfig(item.source);
               const platformLabel = item.source_type === 'livedin' ? 'Livedin' : (item.source || 'Direct');
+              
               return (
                 <View key={index} style={styles.cardWrapper}>
                   <ReservationCard
@@ -42,10 +43,13 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
                     checkIn={item.checkIn || "04:00 PM"}
                     checkOut={item.checkOut || "12:00 AM"}
                     platformColor={otaConfig.color}
-                    onPress={() => { }}
+                    onPress={() => {
+                      onClose();
+                      onCardPress(item.booking_id);
+                    }}
                   />
                 </View>
-              )
+              );
             })
           ) : (
             <View style={styles.empty}>
@@ -59,10 +63,7 @@ export const BookingDetailsView = ({ isVisible, onClose, data }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8F9FA'
-  },
+  container: { flex: 1, backgroundColor: '#F8F9FA' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -72,18 +73,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEE',
     backgroundColor: '#FFF'
   },
-  closeButton: {
-    padding: s(4)
-  },
-  scroll: {
-    padding: s(16),
-    paddingBottom: vs(40)
-  },
-  cardWrapper: {
-    marginBottom: vs(12)
-  },
-  empty: {
-    alignItems: 'center',
-    marginTop: vs(100)
-  }
+  closeButton: { padding: s(4) },
+  scroll: { padding: s(16), paddingBottom: vs(40) },
+  cardWrapper: { marginBottom: vs(12) },
+  empty: { alignItems: 'center', marginTop: vs(100) }
 });

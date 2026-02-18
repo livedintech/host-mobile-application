@@ -11,12 +11,15 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack } from '@/services/navigationService';
 
 const ActiveCodesScreen = () => {
-    const { activeTab, setActiveTab, currentData, handleGenerateNew, handleViewLogs, isLoading } =
+    const { activeTab, setActiveTab, currentData, handleGenerateNew, handleViewLogs, isLoading,refetch } =
         useActiveCodesContainer();
 
+          console.log("currentDatacurrentData",currentData)
     const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
 
-    const renderCodeCard = ({ item }: { item: any }) => (
+    const renderCodeCard = ({ item }: { item: any }) => {
+          console.log("itemmmccn",item)
+        return (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
                 <Svgicons path="lockFrame" size={24} color={Colors.BRUNSWICK_GREEN} />
@@ -30,11 +33,13 @@ const ActiveCodesScreen = () => {
                         <DetailRow label="Date" value={item.date} />
                         <DetailRow label="Start Time" value={item.startTime} />
                         <DetailRow label="End Time" value={item.endTime} />
+                        <DetailRow label="Status" value={item.status} />
                     </>
                 )}
             </View>
         </View>
-    );
+        )
+    };
 
     return (
         <View style={styles.container}>
@@ -81,6 +86,7 @@ const ActiveCodesScreen = () => {
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
                 isLoading={isLoading}
+                onRefresh={refetch}
 
             />
 

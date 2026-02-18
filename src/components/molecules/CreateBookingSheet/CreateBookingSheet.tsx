@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
-import LinearGradient from 'react-native-linear-gradient';
+import { useWatch } from 'react-hook-form'; 
 import BottomSheetComponent from '@/components/molecules/BottomSheetComponent/BottomSheetComponent';
 import AppText from '@/components/molecules/AppText/AppText';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -33,106 +33,137 @@ export const CreateBookingSheet = ({
   listingOptions,
   selectedListingId,
   onSubmit,
-}: Props) => (
-  <BottomSheetComponent isVisible={isVisible} onClose={onClose}>
-    <ScrollView showsVerticalScrollIndicator={false}>
-      {/* Type Selector: Direct Booking vs Pricing */}
-      <View style={styles.radioRow}>
-        {['direct', 'pricing'].map((type) => (
-          <Pressable key={type} style={styles.radioItem} onPress={() => setBookingType(type)}>
-            <View style={[styles.radioOuter, bookingType === type && styles.radioActive]}>
-              {bookingType === type && <View style={styles.radioInner} />}
-            </View>
-            <AppText text={type === 'direct' ? "Direct Booking" : "Pricing"} />
-          </Pressable>
-        ))}
-      </View>
+}: Props) => {
+  // 1. Get Today's date to prevent back-dating
+  const today = new Date();
 
-      {/* Property Selection (Shown only if 'All Listings' is selected in main screen) */}
-      {(!selectedListingId || selectedListingId === "all") && (
-        <DropdownField 
-          name="listing_id" 
+  // 2. Watch the start_date to dynamically restrict the end_date
+  const startDateValue = useWatch({
+    control,
+    name: 'start_date',
+  });
+
+  // 3. Logic for minimum selectable dates
+  // Start Date cannot be before Today (Feb 18, 2026)
+  const minStartDate = today;
+  
+  // End Date cannot be before the selected Start Date. 
+  // If no start date is picked yet, default to Today.
+  const minEndDate = startDateValue ? new Date(startDateValue) : today;
+
+  return (
+    <BottomSheetComponent isVisible={isVisible} onClose={onClose}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        {/* Type Selector: Direct Booking vs Pricing */}
+        <View style={styles.radioRow}>
+          {['direct', 'pricing'].map((type) => (
+            <Pressable key={type} style={styles.radioItem} onPress={() => setBookingType(type)}>
+              <View style={[styles.radioOuter, bookingType === type && styles.radioActive]}>
+                {bookingType === type && <View style={styles.radioInner} />}
+              </View>
+              <AppText text={type === 'direct' ? "Direct Booking" : "Pricing"} />
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Property Selection */}
+        {(!selectedListingId || selectedListingId === "all") && (
+          <DropdownField 
+            name="listing_id" 
+            control={control} 
+            errors={errors} 
+            label="Property Listing" 
+            placeholder="Select a property"
+            data={listingOptions.filter((o: any) => o.value !== "" && !o.label.toLowerCase().includes('all'))} 
+          />
+        )}
+
+        {bookingType === 'direct' ? (
+          <View>
+            <DropdownField 
+              name="booking_type" 
+              control={control} 
+              errors={errors} 
+              label="Stay Type" 
+              placeholder="Select stay type"
+              data={[{label: 'Host', value: 'host'}, {label: 'Livedin', value: 'livedin'}]} 
+            />
+            <InputField 
+              name="name" 
+              control={control} 
+              errors={errors} 
+              label="Guest Name" 
+              placeholder="Enter guest name" 
+            />
+            <InputField 
+              name="email" 
+              control={control} 
+              errors={errors} 
+              label="Email" 
+              placeholder="guest@example.com" 
+              keyboardType="email-address" 
+            />
+            <InputField 
+              name="phone" 
+              control={control} 
+              errors={errors} 
+              label="Phone" 
+              placeholder="+966..." 
+              keyboardType="phone-pad" 
+            />
+          </View>
+        ) : (
+          <InputField 
+            name="rate" 
+            control={control} 
+            errors={errors} 
+            label="Pricing (SAR)" 
+            placeholder="e.g. 500" 
+            keyboardType="numeric" 
+          />
+        )}
+        
+        {/* Check-in Date - Cannot be before Today */}
+        <DateTimeInputField 
+          name="start_date" 
           control={control} 
           errors={errors} 
-          label="Property Listing" 
-          placeholder="Select a property"
-          data={listingOptions.filter((o: any) => o.value !== "" && !o.label.toLowerCase().includes('all'))} 
+          label="Start Date" 
+          placeholder="MM/DD/YY"
+          mode='date'
+          minimumDate={minStartDate} 
+          rules={{ required: 'Check-in date is required' }}
+          rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />} 
         />
-      )}
 
-      {bookingType === 'direct' ? (
-        <View>
-          <DropdownField 
-            name="booking_type" 
-            control={control} 
-            errors={errors} 
-            label="Stay Type" 
-            placeholder="Select stay type"
-            data={[{label: 'Host', value: 'host'}, {label: 'Livedin', value: 'livedin'}]} 
-          />
-          <InputField 
-            name="name" 
-            control={control} 
-            errors={errors} 
-            label="Guest Name" 
-            placeholder="Enter guest name" 
-          />
-          <InputField 
-            name="email" 
-            control={control} 
-            errors={errors} 
-            label="Email" 
-            placeholder="guest@example.com" 
-            keyboardType="email-address" 
-          />
-          <InputField 
-            name="phone" 
-            control={control} 
-            errors={errors} 
-            label="Phone" 
-            placeholder="+966..." 
-            keyboardType="phone-pad" 
+        {/* Check-out Date - Cannot be before the Check-in Date */}
+        <DateTimeInputField 
+          name="end_date" 
+          control={control} 
+          errors={errors} 
+          label="End Date" 
+          placeholder="MM/DD/YY"
+          mode='date'
+          minimumDate={minEndDate} 
+          rules={{ required: 'Check-out date is required' }}
+          rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />} 
+        />
+
+        <View style={styles.buttonContainer}>
+          <AppButton 
+            title={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"} 
+            onPress={onSubmit}
           />
         </View>
-      ) : (
-        <InputField 
-          name="rate" 
-          control={control} 
-          errors={errors} 
-          label="Pricing (SAR)" 
-          placeholder="e.g. 500" 
-          keyboardType="numeric" 
-        />
-      )}
-      
-      <DateTimeInputField 
-        name="end_date" 
-        control={control} 
-        errors={errors} 
-        label="End Date" 
-        placeholder="YYYY-MM-DD"
-        mode='date'
-        rules={{ required: 'Check-out date is required' }}
-        rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />} 
-      />
-
-      {/* <Pressable style={styles.buttonShadow} onPress={onSubmit}>
-        <LinearGradient colors={['#FFFFFF', '#F9F9F9']} style={styles.gradientBtn}>
-          <AppText 
-            text={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"} 
-            type="Bold" 
-            color="#2D4A41" 
-          />
-        </LinearGradient>
-      </Pressable> */}
-      <AppButton title={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"} 
-      onPress={onSubmit}
-      />
-    </ScrollView>
-  </BottomSheetComponent>
-);
+      </ScrollView>
+    </BottomSheetComponent>
+  );
+};
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    paddingBottom: vs(30),
+  },
   radioRow: { 
     flexDirection: 'row', 
     justifyContent: 'center', 
@@ -162,18 +193,10 @@ const styles = StyleSheet.create({
   radioActive: { 
     borderColor: '#2D4A41' 
   },
-  buttonShadow: { 
-    marginTop: vs(10), 
-    marginBottom: vs(30), 
-    borderRadius: ms(25), 
-    elevation: 4 
-  },
-  gradientBtn: { 
-    height: vs(50), 
-    borderRadius: ms(25), 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    borderWidth: 1, 
-    borderColor: '#EAEAEA' 
-  },
+  buttonContainer: {
+    marginTop: vs(20),
+    marginBottom: vs(10)
+  }
 });
+
+export default CreateBookingSheet;
