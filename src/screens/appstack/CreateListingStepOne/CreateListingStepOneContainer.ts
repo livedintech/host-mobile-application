@@ -72,9 +72,10 @@ export default function useCreateListingStepOneContainer() {
       property_type_category: data?.propertyType,
       name: ''
     });
-    channelID && setChannelId(channelID)
+    // channelID && setChannelId(channelID)
+    setChannelId("ccb15c62-d5fa-46d3-8686-f137d0609c69")
     const payload = {
-      channel_id: channelID,
+      channel_id: "ccb15c62-d5fa-46d3-8686-f137d0609c69",
       user_id: Number(user?.id),
       payload: {
         listing: {
@@ -94,8 +95,8 @@ export default function useCreateListingStepOneContainer() {
       name: '',
     });
 
-    channelID && setChannelId(channelID);
-
+    // channelID && setChannelId(channelID);
+    setChannelId("ccb15c62-d5fa-46d3-8686-f137d0609c69")
     const payload = {
       channel_id: channelID,
       user_id: Number(user?.id),

@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
@@ -13,7 +12,7 @@ export default function useManageListingContainer() {
   const { user } = useAuthStore();
   const { updateListing, setListingId, setChannelId } = useCreateListingStore();
 
-  const { data,refetch,isLoading } = useQuery<ManageListingsResponse>({
+  const { data, refetch, isLoading } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
     queryFn: () =>
       getManageYourListings({
@@ -29,7 +28,7 @@ export default function useManageListingContainer() {
     updateListing({
       name,
     })
-    setChannelId("8b7b2e2c-b7bc-4b3c-8a6a-d9a7a4833ccb")
+    setChannelId("ccb15c62-d5fa-46d3-8686-f137d0609c69")
     setListingId(id.toString())
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
   };
@@ -39,5 +38,5 @@ export default function useManageListingContainer() {
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   }, [])
 
-  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail,refetch,isLoading };
+  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail, refetch, isLoading };
 }

@@ -89,7 +89,7 @@ export interface ListingDetails {
 }
 
 export interface CreateListingDetailsPayload {
-  user_id?: number;
+  user_id?: string;
   channel_id?: string | null;
   listing_id?: string | null;
   listing?: ListingDetails;
