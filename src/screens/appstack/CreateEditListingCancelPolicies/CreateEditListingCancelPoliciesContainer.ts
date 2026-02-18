@@ -15,8 +15,7 @@ import { queryClient } from '@/services/api';
 
 export default function useCreateEditListingCancelPoliciesContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id } = useCreateListingStore();
-  const { user } = useAuthStore();
+const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();  const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
@@ -64,42 +63,57 @@ export default function useCreateEditListingCancelPoliciesContainer() {
   });
 
   // ---- Payload builder ----
-  const buildPayload = (
-    data: CancelPoliciesFormValues,
-    overrideListingId?: string
-  ): CreateListingDetailsPayload => ({
-    channel_id,
-    listing_id: overrideListingId || listing_id,
-    user_id: Number(user?.id),
-    listing: {
-      cancel_policy_airbnb: data.cancel_policy_airbnb,
-      cancel_policy_gathern: data.cancel_policy_gathern,
-      cancel_policy_booking: data.cancel_policy_booking,
-    },
-  });
+ const buildPayload = (
+  data: CancelPoliciesFormValues,
+  isSaveAndExit: boolean = false
+): CreateListingDetailsPayload => ({
+  channel_id,
+  listing_id: String(listing_id),
+  user_id: String(user?.id),
+  save_and_exit: isSaveAndExit ? 1 : 0,
+  listing: {
+    name: propertyDetail?.name || 'New Listing',
+    airbnb_cancellation_policy: data.cancel_policy_airbnb, 
+    gathern_cancellation_policy: data.cancel_policy_gathern,
+    bookingCom_cancellation_policy: data.cancel_policy_booking, // Note the "Com" in Swagger
+  },
+});
 
   // ---- Handlers ----
-  const onNext = (data: CancelPoliciesFormValues) => {
-    navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING)
-    return false
-    createListingDetailsPayload(buildPayload(data), {
+ const onNext = (data: CancelPoliciesFormValues) => {
+  // 1. Update Store for persistence
+  updateListing({
+    cancel_policy_airbnb: data.cancel_policy_airbnb,
+    cancel_policy_gathern: data.cancel_policy_gathern,
+    cancel_policy_booking: data.cancel_policy_booking,
+  });
+
+  // 2. API Hit
+  createListingDetailsPayload(buildPayload(data, false), {
+    onSuccess: () => {
+      // Navigate to Set Your Pricing
+      navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
+    },
+  });
+};
+
+ const onSaveExit = (data: CancelPoliciesFormValues) => {
+  updateListing({
+    cancel_policy_airbnb: data.cancel_policy_airbnb,
+  });
+
+  const payload = buildPayload(data, true); // save_and_exit: 1
+
+  if (isEdit) {
+    updateListingDetails(payload);
+  } else {
+    createListingDetailsPayload(payload, {
       onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
       },
     });
-  };
-
-  const onSaveExit = (data: CancelPoliciesFormValues) => {
-    if (isEdit) {
-      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
-    } else {
-      createListingDetailsPayload(buildPayload(data), {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
-      });
-    }
-  };
+  }
+};
 
   return {
     control,

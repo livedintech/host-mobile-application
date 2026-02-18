@@ -13,8 +13,8 @@ import STORAGE_CONST from '@/constants/storage';
 import { createListingDetailsApi, CreateUpdateAmenitiesApi, editListingApi, getAmenitiesApi } from '@/services/ createListingService';
 
 export default function useAboutThePlaceContainer() {
-  const { user } = useAuthStore();
-  const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+  const { user, } = useAuthStore();
+  const { listing_id, channel_id, listing: propertyDetail, updateListing } = useCreateListingStore();
   const navigation = useNavigation();
   const { params } = useRoute();
   const listing = params?.paramData?.listing;
@@ -90,50 +90,63 @@ export default function useAboutThePlaceContainer() {
     updateAmenities({ listing_id: currentListingId, amenities, channel_id });
   };
 
-  const buildPayload = (data: StepTwoFormValues, overrideListingId?: string): CreateListingDetailsPayload => ({
+  const buildPayload = (data: StepTwoFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+    user_id: String(user?.id),
     channel_id,
-    listing_id: overrideListingId || listing_id,
-    user_id: Number(user?.id),
+    listing_id: String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
+      name: propertyDetail?.name || 'New Listing',
+      property_area: Number(data.size_sqm), // Swagger key: property_area
+      bedrooms: Number(data.bedrooms),
+      beds: Number(data.beds),
+      kitchen: data.kitchen === 'true',
+      has_kitchen: data.kitchen === 'true', // Swagger key
+      has_pool: data.pool === 'true',       // Swagger key
+      min_gap_night: Number(data.min_gap_night),
+      min_nights: Number(data.min_nights),
+      max_nights: Number(data.max_nights),
+      maximum_days_stays: Number(data.max_nights), // Swagger key
+      amenities: data.amenities,
+    },
+  });
+
+  // ── Handlers ──
+  const onNext = (data: StepTwoFormValues) => {
+    // 1. Update Store taake local state sync rahe
+    updateListing({
       size_sqm: Number(data.size_sqm),
       bedrooms: Number(data.bedrooms),
       beds: Number(data.beds),
       kitchen: data.kitchen === 'true',
       pool: data.pool === 'true',
-      long_term_stay: data.long_term_stay === 'true',
-      min_gap_night: Number(data.min_gap_night),
-      min_nights: Number(data.min_nights),
-      max_nights: Number(data.max_nights),
-      name: propertyDetail?.name || 'New Listing',
-    },
-  });
+      amenities: data.amenities,
+    });
 
-  // ---- Handlers ----
-  const onNext = (data: StepTwoFormValues) => {
-        navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
-return false
-    createListingDetailsPayload(buildPayload(data), {
+    // 2. API Hit aur Navigation
+    createListingDetailsPayload(buildPayload(data, false), {
       onSuccess: (res) => {
-        const createdListingId = res?.listing_id || listing_id;
-        handleAmenitiesUpdate(data.amenities, createdListingId);
+        // Agar amenities alag se update karni hain
+        handleAmenitiesUpdate(data.amenities, res?.listing_id || listing_id);
         navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
       },
     });
   };
 
   const onSaveExit = (data: StepTwoFormValues) => {
+    const payload = buildPayload(data, true);
+
     if (isEdit) {
-      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id), {
+      updateListingDetails(payload, {
         onSuccess: () => {
-          handleAmenitiesUpdate(data.amenities, listing?.listing_id || listing_id);
+          handleAmenitiesUpdate(data.amenities, listing_id);
           goBack();
         },
       });
     } else {
-      createListingDetailsPayload(buildPayload(data), {
+      createListingDetailsPayload(payload, {
         onSuccess: (res) => {
-          const createdListingId = res?.listing_id || listing_id;
-          handleAmenitiesUpdate(data.amenities, createdListingId);
+          handleAmenitiesUpdate(data.amenities, res?.listing_id || listing_id);
           navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
         },
       });

@@ -15,7 +15,7 @@ import { queryClient } from '@/services/api';
 
 export default function useCreateEditListingAiDynamicPricingContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id } = useCreateListingStore();
+  const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
@@ -63,40 +63,50 @@ export default function useCreateEditListingAiDynamicPricingContainer() {
   };
 
   // ---- Payload builder ----
-  const buildPayload = (
-    data: AiDynamicPricingFormValues,
-    overrideListingId?: string
-  ): CreateListingDetailsPayload => ({
-    channel_id,
-    listing_id: overrideListingId || listing_id,
-    user_id: Number(user?.id),
-    listing: {
-      pricing_mode: data.pricing_mode,
-      manual_price_override: data.manual_price_override,
-    },
+  const buildPayload = (data: AiDynamicPricingFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+  channel_id,
+  listing_id: String(listing_id),
+  user_id: String(user?.id),
+  save_and_exit: isSaveAndExit ? 1 : 0,
+  listing: {
+    name: propertyDetail?.name || 'New Listing',
+    pricing_mode: data.pricing_mode, // 'conservative' or 'aggressive'
+    manual_price_override: data.manual_price_override ? 1 : 0, // Sending as 1/0 or boolean based on Swagger preference
+  },
+});
+
+ const onNext = (data: AiDynamicPricingFormValues) => {
+  // 1. Store Update (taake UI selections persist rahein)
+  updateListing({
+    pricing_mode: data.pricing_mode,
+    manual_price_override: data.manual_price_override,
   });
 
-  const onNext = (data: AiDynamicPricingFormValues) => {
-     navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE)
-    return false
-    createListingDetailsPayload(buildPayload(data), {
+  // 2. API Hit
+  createListingDetailsPayload(buildPayload(data, false), {
+    onSuccess: () => {
+      // Navigate to Property Disclosure (Next Step)
+      navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE);
+    },
+  });
+};
+
+const onSaveExit = (data: AiDynamicPricingFormValues) => {
+  // Persistence logic
+  updateListing({ pricing_mode: data.pricing_mode });
+
+  const payload = buildPayload(data, true); // save_and_exit: 1
+
+  if (isEdit) {
+    updateListingDetails(payload);
+  } else {
+    createListingDetailsPayload(payload, {
       onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
       },
     });
-  };
-
-  const onSaveExit = (data: AiDynamicPricingFormValues) => {
-    if (isEdit) {
-      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
-    } else {
-      createListingDetailsPayload(buildPayload(data), {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
-      });
-    }
-  };
+  }
+};
 
   return {
     control,

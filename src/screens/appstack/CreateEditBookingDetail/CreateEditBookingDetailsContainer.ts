@@ -15,7 +15,7 @@ import { queryClient } from '@/services/api';
 
 export default function useBookingDetailsContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id } = useCreateListingStore();
+const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
@@ -37,8 +37,8 @@ export default function useBookingDetailsContainer() {
       guest_eligibility: listing?.guest_eligibility === true
         ? 'true'
         : listing?.guest_eligibility === false
-        ? 'false'
-        : '',
+          ? 'false'
+          : '',
       check_in_time: listing?.check_in_time ?? '',
       check_out_time: listing?.check_out_time ?? '',
     },
@@ -71,37 +71,51 @@ export default function useBookingDetailsContainer() {
   });
 
   // ---- Payload builder ----
-  const buildPayload = (
-    data: BookingDetailsFormValues,
-    overrideListingId?: string
-  ): CreateListingDetailsPayload => ({
+  const buildPayload = (data: BookingDetailsFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
     channel_id,
-    listing_id: overrideListingId || listing_id,
+    listing_id: String(listing_id),
     user_id: Number(user?.id),
+    save_and_exit: isSaveAndExit ? 1 : 0, // Swagger requirement
     listing: {
+      name: propertyDetail?.name || 'New Listing',
+      booking_type: data.booking_type, // 'instant' or 'request'
+      instant_booking: data.booking_type === 'instant', // Swagger requirement (boolean)
+      guest_eligibility: data.guest_eligibility === 'true',
+      check_in_time: data.check_in_time, // Format: "14:00"
+      check_out_time: data.check_out_time, // Format: "11:00"
+    },
+  });
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+  const onNext = (data: BookingDetailsFormValues) => {
+    // 1. Store Update (taake state localy save rahe)
+    updateListing({
       booking_type: data.booking_type,
       guest_eligibility: data.guest_eligibility === 'true',
       check_in_time: data.check_in_time,
       check_out_time: data.check_out_time,
-    },
-  });
+    });
 
-  // ---- Handlers ----
-  const onNext = (data: BookingDetailsFormValues) => {
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES)
-    return false
-    createListingDetailsPayload(buildPayload(data), {
+    // 2. API Hit
+    createListingDetailsPayload(buildPayload(data, false), {
       onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES);
       },
     });
   };
 
   const onSaveExit = (data: BookingDetailsFormValues) => {
+    updateListing({
+      booking_type: data.booking_type,
+      guest_eligibility: data.guest_eligibility === 'true',
+    });
+
+    const payload = buildPayload(data, true); // save_and_exit: 1
+
     if (isEdit) {
-      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
+      updateListingDetails(payload);
     } else {
-      createListingDetailsPayload(buildPayload(data), {
+      createListingDetailsPayload(payload, {
         onSuccess: () => {
           navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
         },

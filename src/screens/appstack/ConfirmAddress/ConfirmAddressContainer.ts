@@ -111,39 +111,30 @@ export default function useConfirmAddressContainer() {
 
   // ── Build Payload ─────────────────────────────────────────────────────────
 
-  const buildPayload = (data: AddressFormValues): CreateListingDetailsPayload => {
-    const countryObj  = findCountry(Number(data.country_code));
-    const stateObj    = findState(Number(data.state));
-    const cityObj     = findCity(Number(data.city));
-    const districtObj = findDistrict(Number(data.district));
+const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => {
+  const countryObj = findCountry(Number(data.country_code));
+  const stateObj = findState(Number(data.state));
+  const cityObj = findCity(Number(data.city));
 
-    return {
-      channel_id,
-      listing_id,
-      user_id: String(user?.id),
-      listing: {
-        name: propertyDetail?.name || 'New Listing',
-        lat:  propertyDetail?.lat  ?? undefined,
-        lng:  propertyDetail?.lng  ?? undefined,
-
-        country_id:   countryObj?.id,
-        country_code: countryObj?.sortname,   // "SA"
-        country_name: countryObj?.name,       // "Saudi Arabia"
-
-        state_id: stateObj?.id,
-        state:    stateObj?.name,
-
-        city_id: cityObj?.id,
-        city:    cityObj?.name,
-
-        district_id: districtObj?.id,
-        district:    districtObj?.name,
-
-        street: data.address,
-        apt:    data.postalAddress,
-      },
-    };
+  return {
+    user_id: Number(user?.id),
+    channel_id,
+    listing_id: String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name: propertyDetail?.name || 'New Listing',
+      street: data.address,
+      apt: data.postalAddress,
+      zipcode: data.postalAddress, // Swagger key: zipcode
+      city: cityObj?.name,
+      state: stateObj?.name,
+      district: findDistrict(Number(data.district))?.name,
+      country_code: countryObj?.sortname,
+      lat: propertyDetail?.lat ?? 24.7136,
+      lng: propertyDetail?.lng ?? 46.6753,
+    },
   };
+};
 
   // ── Mutations ─────────────────────────────────────────────────────────────
 
@@ -176,51 +167,29 @@ export default function useConfirmAddressContainer() {
     });
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-
   const onNext = (data: AddressFormValues) => {
-    // const countryObj  = findCountry(Number(data.country_code));
-    // const stateObj    = findState(Number(data.state));
-    // const cityObj     = findCity(Number(data.city));
-    // const districtObj = findDistrict(Number(data.district));
+    // 1. Update Store
+    updateListing({
+      street: data.address,
+      apt: data.postalAddress,
+      country_code: findCountry(Number(data.country_code))?.sortname || '',
+      state: findState(Number(data.state))?.name || '',
+      city: findCity(Number(data.city))?.name || '',
+    });
 
-    // updateListing({
-    //   country_id:   countryObj?.id,
-    //   country_code: countryObj?.sortname || '',
-    //   country_name: countryObj?.name     || '',
-    //   state_id:     stateObj?.id,
-    //   state:        stateObj?.name       || '',
-    //   city_id:      cityObj?.id,
-    //   city:         cityObj?.name        || '',
-    //   district_id:  districtObj?.id,
-    //   district:     districtObj?.name    || '',
-    //   street:       data.address,
-    //   apt:          data.postalAddress,
-    // });
-    // createListingDetailsPayload(buildPayload(data));
-        navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
+    // 2. API Hit & Navigate
+    createListingDetailsPayload(buildPayload(data, false), {
+      onSuccess: () => navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE),
+    });
   };
 
   const onSaveExit = (data: AddressFormValues) => {
-    const countryObj  = findCountry(Number(data.country_code));
-    const stateObj    = findState(Number(data.state));
-    const cityObj     = findCity(Number(data.city));
-    const districtObj = findDistrict(Number(data.district));
-
     updateListing({
-      country_id:   countryObj?.id,
-      country_code: countryObj?.sortname || '',
-      country_name: countryObj?.name     || '',
-      state_id:     stateObj?.id,
-      state:        stateObj?.name       || '',
-      city_id:      cityObj?.id,
-      city:         cityObj?.name        || '',
-      district_id:  districtObj?.id,
-      district:     districtObj?.name    || '',
-      street:       data.address,
-      apt:          data.postalAddress,
+      street: data.address,
+      apt: data.postalAddress,
     });
 
-    const payload = buildPayload(data);
+    const payload = buildPayload(data, true);
     if (isEdit) {
       editListingDetailsPayload(payload);
     } else {

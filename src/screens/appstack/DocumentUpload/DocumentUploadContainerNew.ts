@@ -28,8 +28,7 @@ type OtaAccountFormValues = {
 
 export default function useCreateEditListingDocumentUploadContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id } = useCreateListingStore();
-  const { user } = useAuthStore();
+  const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore(); const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
@@ -142,63 +141,74 @@ export default function useCreateEditListingDocumentUploadContainer() {
   };
 
   const handleExportSubmit = (data: OtaAccountFormValues) => {
-    // Export logic here (API call to export listing to OTA)
-    Toast.show({ type: 'success', text1: `Exported to ${data.ota_account}` });
+    // Example Export API Call
+    // exportListingApi({ listing_id, ota_account_id: data.ota_account })
+    Toast.show({ type: 'success', text1: `Exporting listing to ${data.ota_account}...` });
     setBottomSheetVisible(false);
   };
 
   const buildPayload = (
     data: DocumentFormValues,
-    overrideListingId?: string,
-    saveAndExit: number = 0
-  ): DocumentUploadPayload => {
+    isSaveAndExit: number
+  ): any => {
     const documents: Array<{ url: string; type: string; file_name: string }> = [];
 
-    // Add property ownership document
+    // Swagger types: ownership, authority_license, national_id
     if (data.propertyOwnership?.base64) {
       documents.push({
-        url: data.propertyOwnership.base64,
+        url: `data:application/pdf;${data.propertyOwnership.base64}`,
         type: 'ownership',
-        file_name: data.propertyOwnership.name || 'ownership.pdf',
+        file_name: data.propertyOwnership.name,
       });
     }
 
-    // Add authority license document
     if (data.authorityLicense?.base64) {
       documents.push({
-        url: data.authorityLicense.base64,
+        url: `data:application/pdf;${data.authorityLicense.base64}`,
         type: 'authority_license',
-        file_name: data.authorityLicense.name || 'authority_license.pdf',
+        file_name: data.authorityLicense.name,
       });
     }
 
-    // Add national ID document
     if (data.nationalId?.base64) {
       documents.push({
-        url: data.nationalId.base64,
+        url: `data:application/pdf;${data.nationalId.base64}`,
         type: 'national_id',
-        file_name: data.nationalId.name || 'national_id.pdf',
+        file_name: data.nationalId.name,
       });
     }
 
     return {
-      save_and_exit: saveAndExit,
-      listing_id: overrideListingId || listing_id,
+      user_id: Number(user?.id),
       channel_id,
+      listing_id: String(listing_id),
+      // save_and_exit: isSaveAndExit ? 1 : 0,
+      save_and_exit:  0,
+
       documents,
+      // Note: If API expects documents inside 'listing' object, wrap it here.
+      // Based on standard Swagger for files:
+      listing: {
+        name: propertyDetail?.name || 'New Listing'
+      }
     };
   };
 
   const onSaveExit = (data: DocumentFormValues) => {
-     navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-    return false
-    const payload = buildPayload(data, listing?.listing_id || listing_id, 1);
+    // 1. Check if at least one document is present
+    if (!data.propertyOwnership && !data.authorityLicense && !data.nationalId) {
+      Toast.show({ type: 'error', text1: 'Please upload at least one document' });
+      return;
+    }
+
+    const payload = buildPayload(data, 1); // save_and_exit: 1
 
     if (isEdit) {
       updateListingDetails(payload);
     } else {
       createListingDetailsPayload(payload, {
         onSuccess: () => {
+          // Complete the flow
           navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
         },
       });
@@ -221,7 +231,6 @@ export default function useCreateEditListingDocumentUploadContainer() {
     bottomSheetVisible,
     setBottomSheetVisible,
     otaAccountOptions,
-    // OTA form
     otaControl,
     otaErrors,
     handleOtaSubmit,

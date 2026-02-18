@@ -15,8 +15,7 @@ import { queryClient } from '@/services/api';
 
 export default function useSetPricingContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id } = useCreateListingStore();
-  const { user } = useAuthStore();
+const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();  const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
@@ -69,50 +68,67 @@ export default function useSetPricingContainer() {
   });
 
   // ---- Payload builder ----
-  const buildPayload = (
-    data: PricingFormValues,
-    overrideListingId?: string
-  ): CreateListingDetailsPayload => ({
-    channel_id,
-    listing_id: overrideListingId || listing_id,
-    user_id: Number(user?.id),
-    listing: {
-      weekday_base_price: data.weekday_base_price,
-      weekend_base_price: data.weekend_base_price,
-      discount: data.discount,
-      tax_vat: data.tax_vat,
-      markup_price: data.markup_price,
-      cleaning_fee: data.cleaning_fee,
-      airbnb_discount: data.airbnb_discount,
-      gathern_discount: data.gathern_discount,
-      booking_discount: data.booking_discount,
-      extra_guest_fee: data.extra_guest_fee,
-    },
-  });
+  const buildPayload = (data: PricingFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+  channel_id,
+  listing_id: String(listing_id),
+  user_id: String(user?.id),
+  save_and_exit: isSaveAndExit ? 1 : 0,
+  listing: {
+    name: propertyDetail?.name || 'New Listing',
+    weekday_base_price: String(data.weekday_base_price),
+    weekend_base_price: String(data.weekend_base_price),
+    discount: data.discount ? String(data.discount) : undefined,
+    tax_vat: data.tax_vat ? String(data.tax_vat) : undefined,
+    markup_price: data.markup_price ? String(data.markup_price) : undefined,
+    cleaning_fee: String(data.cleaning_fee),
+    airbnb_discount: data.airbnb_discount ? String(data.airbnb_discount) : undefined,
+    gathern_discount: data.gathern_discount ? String(data.gathern_discount) : undefined,
+    booking_discount: data.booking_discount ? String(data.booking_discount) : undefined,
+    extra_guest_fee: String(data.extra_guest_fee),
+  },
+});
 
   // ---- Handlers ----
   const onNext = (data: PricingFormValues) => {
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING)
-    return false
-    createListingDetailsPayload(buildPayload(data), {
+  // 1. Store Update (taake pricing values persist rahein jab user back aye)
+  updateListing({
+    weekday_base_price: data.weekday_base_price,
+    weekend_base_price: data.weekend_base_price,
+    discount: data.discount,
+    tax_vat: data.tax_vat,
+    markup_price: data.markup_price,
+    cleaning_fee: data.cleaning_fee,
+    airbnb_discount: data.airbnb_discount,
+    gathern_discount: data.gathern_discount,
+    booking_discount: data.booking_discount,
+    extra_guest_fee: data.extra_guest_fee,
+  });
+
+  // 2. API Hit
+  createListingDetailsPayload(buildPayload(data, false), {
+    onSuccess: () => {
+      // Navigate to AI Dynamic Pricing
+      navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING);
+    },
+  });
+};
+
+  const onSaveExit = (data: PricingFormValues) => {
+  // Persistence call
+  updateListing({ weekday_base_price: data.weekday_base_price });
+
+  const payload = buildPayload(data, true); // save_and_exit: 1
+
+  if (isEdit) {
+    updateListingDetails(payload);
+  } else {
+    createListingDetailsPayload(payload, {
       onSuccess: () => {
-        // Navigate to next step (adjust route as needed)
         navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
       },
     });
-  };
-
-  const onSaveExit = (data: PricingFormValues) => {
-    if (isEdit) {
-      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
-    } else {
-      createListingDetailsPayload(buildPayload(data), {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
-      });
-    }
-  };
+  }
+};
 
   return {
     control,

@@ -27,7 +27,6 @@ const DocumentUploadScreen = () => {
     bottomSheetVisible,
     setBottomSheetVisible,
     otaAccountOptions,
-    // OTA form
     otaControl,
     otaErrors,
     handleOtaSubmit,

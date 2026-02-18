@@ -15,8 +15,7 @@ import { queryClient } from '@/services/api';
 
 export default function useCreateEditListingHouseGuidelinesContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id } = useCreateListingStore();
-  const { user } = useAuthStore();
+const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();  const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
@@ -61,42 +60,55 @@ export default function useCreateEditListingHouseGuidelinesContainer() {
   });
 
   // ---- Payload builder ----
-  const buildPayload = (
-    data: HouseGuidelinesFormValues,
-    overrideListingId?: string
-  ): CreateListingDetailsPayload => ({
-    channel_id,
-    listing_id: overrideListingId || listing_id,
-    user_id: Number(user?.id),
-    listing: {
-      arrival_guide: data.arrival_guide,
-      house_rules: data.house_rules,
-      checkout_instructions: data.checkout_instructions,
-    },
-  });
+  const buildPayload = (data: HouseGuidelinesFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+  channel_id,
+  listing_id: String(listing_id),
+  user_id: String(user?.id),
+  save_and_exit: isSaveAndExit ? 1 : 0,
+  listing: {
+    name: propertyDetail?.name || 'New Listing',
+    arrival_guide: data.arrival_guide,
+    house_rule: data.house_rules,
+    cleaning_instructions: data.checkout_instructions
+  },
+});
 
   // ---- Handlers ----
   const onNext = (data: HouseGuidelinesFormValues) => {
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES)
-    return false
-    createListingDetailsPayload(buildPayload(data), {
-      onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
-      },
-    });
-  };
+  // 1. Store Update (taake character counts aur data persist rahe)
+  updateListing({
+    arrival_guide: data.arrival_guide,
+    house_rules: data.house_rules,
+    checkout_instructions: data.checkout_instructions,
+  });
+
+  // 2. API Hit
+  createListingDetailsPayload(buildPayload(data, false), {
+    onSuccess: () => {
+      navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES);
+    },
+  });
+};
 
   const onSaveExit = (data: HouseGuidelinesFormValues) => {
-    if (isEdit) {
-      updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
-    } else {
-      createListingDetailsPayload(buildPayload(data), {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
-      });
-    }
-  };
+  // Local store update
+  updateListing({
+    arrival_guide: data.arrival_guide,
+    house_rules: data.house_rules,
+  });
+
+  const payload = buildPayload(data, true); // save_and_exit: 1
+
+  if (isEdit) {
+    updateListingDetails(payload);
+  } else {
+    createListingDetailsPayload(payload, {
+      onSuccess: () => {
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+      },
+    });
+  }
+};
 
   return {
     control,

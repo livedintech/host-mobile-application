@@ -40,8 +40,7 @@ const ExteriorPhotoScreen = () => {
             mediaList={mediaList}
             onMediaChange={setMediaList}
             primaryBtnTitle={!isEdit ? 'Next' : null}
-            // onPrimaryPress={!isEdit ? handleNext : undefined}
-             onPrimaryPress={()=> navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS)}
+            onPrimaryPress={!isEdit ? handleNext : undefined}
             primaryLoading={isLoading}
             primaryDisable={mediaList.length === 0 || isLoading}
             secondaryBtnTitle="Save & Exit"

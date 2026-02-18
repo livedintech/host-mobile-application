@@ -51,7 +51,7 @@ export default function useDescribeHouseContainer() {
       mutationFn: createListingDetailsApi,
       onSuccess: ({ message }) => {
         Toast.show({ type: 'success', text1: message || 'Saved successfully' });
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
       },
       onError: error => {
         Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
@@ -75,23 +75,29 @@ export default function useDescribeHouseContainer() {
     },
   });
 
-  const buildPayload = (data: DescribeHouseFormValues): CreateListingDetailsPayload => ({
-    channel_id,
-    listing_id,
-    user_id: Number(user?.id),
-    listing: {
-      name: data.name,
-      listing_descriptions: data.listing_descriptions,
-      wifi_username: data.wifi_username,
-      wifi_password: data.wifi_password,
-      door_lock_code: data.door_lock_code,
-    },
-  });
+  const buildPayload = (data: DescribeHouseFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+  user_id: String(user?.id),
+  channel_id,
+  listing_id: String(listing_id),
+  save_and_exit: isSaveAndExit ? 1 : 0,
+  listing: {
+    name: data.name,
+    listing_desc: data.listing_descriptions, // Swagger key: listing_desc
+    wifi_network: data.wifi_username,         // Swagger key: wifi_network
+    wifi_password: data.wifi_password,
+    door_lock_code: data.door_lock_code,
+    listing_descriptions: [
+      {
+        description: data.listing_descriptions
+      }
+    ]
+  },
+});
 
   const onNext = (data: DescribeHouseFormValues) => {
-    // updateListing({ name: data.name });
-    // createListingDetailsPayload(buildPayload(data));
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
+    updateListing({ name: data.name });
+    createListingDetailsPayload(buildPayload(data));
+    // navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
   };
 
   const onSaveExit = (data: DescribeHouseFormValues) => {
