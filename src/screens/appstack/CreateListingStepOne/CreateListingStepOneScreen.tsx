@@ -9,9 +9,6 @@ import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
 
 const CreateListingStepOneScreen = () => {
   const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading, isChannelMissing } = useCreateListingStepOneContainer();
-  console.log('isChannelMissing', isChannelMissing);
-
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>

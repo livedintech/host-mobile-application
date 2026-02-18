@@ -251,14 +251,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.SET_YOUR_PRICING}
         getComponent={() =>
           require('@/screens/appstack/SetPricing/SetPricingScreen').default
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE}
         getComponent={() =>
           require('@/screens/appstack/PropertyDisclosure/PropertyDisclosureScreen')
@@ -266,7 +266,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD}
         getComponent={() =>
           require('@/screens/appstack/DocumentUpload/DocumentUploadScreen')
@@ -451,6 +451,30 @@ const AppStack = () => {
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL}
         getComponent={() =>
           require('@/screens/appstack/CreateEditBookingDetail/CreateEditBookingDetailsScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown:false }}
+        name={NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES}
+        getComponent={() =>
+          require('@/screens/appstack/CreateEditListingHouseGuidelines/CreateEditListingHouseGuidelinesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown:false }}
+        name={NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES}
+        getComponent={() =>
+          require('@/screens/appstack/CreateEditListingCancelPolicies/CreateEditListingCancelPoliciesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown:false }}
+        name={NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING}
+        getComponent={() =>
+          require('@/screens/appstack/CreateEditListingAiDynamicPricing/CreateEditListingAiDynamicPricingScreen')
             .default
         }
       />

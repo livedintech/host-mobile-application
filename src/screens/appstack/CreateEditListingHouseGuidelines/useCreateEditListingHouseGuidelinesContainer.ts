@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { PricingFormValues, pricingSchema } from '@/validation/auth/createListingSchemas';
+import { HouseGuidelinesFormValues, houseGuidelinesSchema } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation } from '@tanstack/react-query';
@@ -13,34 +13,26 @@ import { useRoute } from '@react-navigation/native';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-export default function useSetPricingContainer() {
+export default function useCreateEditListingHouseGuidelinesContainer() {
   const { params } = useRoute();
   const { listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
-  // Discount percentage options
-  const discountOptions = Array.from({ length: 21 }, (_, i) => ({
-    label: `${i * 5}%`,
-    value: `${i * 5}`,
-  }));
-
-  const { control, handleSubmit, formState: { errors } } = useForm<PricingFormValues>({
-    resolver: yupResolver(pricingSchema) as any,
+  const { control, handleSubmit, formState: { errors }, watch } = useForm<HouseGuidelinesFormValues>({
+    resolver: yupResolver(houseGuidelinesSchema) as any,
     defaultValues: {
-      weekday_base_price: listing?.weekday_base_price ?? '',
-      weekend_base_price: listing?.weekend_base_price ?? '',
-      discount: listing?.discount ?? '',
-      tax_vat: listing?.tax_vat ?? '',
-      markup_price: listing?.markup_price ?? '',
-      cleaning_fee: listing?.cleaning_fee ?? '',
-      airbnb_discount: listing?.airbnb_discount ?? '',
-      gathern_discount: listing?.gathern_discount ?? '',
-      booking_discount: listing?.booking_discount ?? '',
-      extra_guest_fee: listing?.extra_guest_fee ?? '',
+      arrival_guide: listing?.arrival_guide ?? '',
+      house_rules: listing?.house_rules ?? '',
+      checkout_instructions: listing?.checkout_instructions ?? '',
     },
   });
+
+  // Watch for character counts
+  const arrivalGuideLength = (watch('arrival_guide') || '').length;
+  const houseRulesLength = (watch('house_rules') || '').length;
+  const checkoutInstructionsLength = (watch('checkout_instructions') || '').length;
 
   // ---- Mutations ----
   const { mutate: createListingDetailsPayload, isPending: isCreating } =
@@ -70,39 +62,31 @@ export default function useSetPricingContainer() {
 
   // ---- Payload builder ----
   const buildPayload = (
-    data: PricingFormValues,
+    data: HouseGuidelinesFormValues,
     overrideListingId?: string
   ): CreateListingDetailsPayload => ({
     channel_id,
     listing_id: overrideListingId || listing_id,
     user_id: Number(user?.id),
     listing: {
-      weekday_base_price: data.weekday_base_price,
-      weekend_base_price: data.weekend_base_price,
-      discount: data.discount,
-      tax_vat: data.tax_vat,
-      markup_price: data.markup_price,
-      cleaning_fee: data.cleaning_fee,
-      airbnb_discount: data.airbnb_discount,
-      gathern_discount: data.gathern_discount,
-      booking_discount: data.booking_discount,
-      extra_guest_fee: data.extra_guest_fee,
+      arrival_guide: data.arrival_guide,
+      house_rules: data.house_rules,
+      checkout_instructions: data.checkout_instructions,
     },
   });
 
   // ---- Handlers ----
-  const onNext = (data: PricingFormValues) => {
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING)
+  const onNext = (data: HouseGuidelinesFormValues) => {
+    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES)
     return false
     createListingDetailsPayload(buildPayload(data), {
       onSuccess: () => {
-        // Navigate to next step (adjust route as needed)
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
       },
     });
   };
 
-  const onSaveExit = (data: PricingFormValues) => {
+  const onSaveExit = (data: HouseGuidelinesFormValues) => {
     if (isEdit) {
       updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
     } else {
@@ -118,10 +102,12 @@ export default function useSetPricingContainer() {
     control,
     errors,
     handleSubmit,
+    isEdit,
     onNext,
     onSaveExit,
-    isEdit,
     isLoading: isCreating || isUpdating,
-    discountOptions,
+    arrivalGuideLength,
+    houseRulesLength,
+    checkoutInstructionsLength,
   };
 }

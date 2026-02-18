@@ -46,6 +46,42 @@ type Listing = {
   check_in_time: string;
   check_out_time: string;
   // ─────────────────────────────────────────
+
+  // ─── House Guidelines fields ─────────────
+  arrival_guide: string;
+  house_rules: string;
+  checkout_instructions: string;
+  // ─────────────────────────────────────────
+
+  // ─── Cancel Policies fields ──────────────
+  cancel_policy_airbnb: string;
+  cancel_policy_gathern: string;
+  cancel_policy_booking: string;
+  // ─────────────────────────────────────────
+
+  // ─── AI Dynamic Pricing fields ───────────
+  pricing_mode: string;
+  manual_price_override: boolean;
+  // ─────────────────────────────────────────
+
+  // ─── Set Pricing fields ──────────────────
+  weekday_base_price: string;
+  weekend_base_price: string;
+  discount: string;
+  tax_vat: string;
+  markup_price: string;
+  cleaning_fee: string;
+  airbnb_discount: string;
+  gathern_discount: string;
+  booking_discount: string;
+  extra_guest_fee: string;
+  // ─────────────────────────────────────────
+
+  // ─── Document Upload fields ──────────────
+  property_ownership_doc: string;
+  authority_license_doc: string;
+  national_id_doc: string;
+  // ─────────────────────────────────────────
 };
 
 type CreateListingState = {
@@ -107,6 +143,42 @@ const initialListing: Listing = {
   check_in_time: '',
   check_out_time: '',
   // ────────────────────────────────
+
+  // ─── House Guidelines defaults ───
+  arrival_guide: '',
+  house_rules: '',
+  checkout_instructions: '',
+  // ─────────────────────────────────
+
+  // ─── Cancel Policies defaults ────
+  cancel_policy_airbnb: '',
+  cancel_policy_gathern: '',
+  cancel_policy_booking: '',
+  // ─────────────────────────────────
+
+  // ─── AI Dynamic Pricing defaults ─
+  pricing_mode: '',
+  manual_price_override: false,
+  // ─────────────────────────────────
+
+  // ─── Set Pricing defaults ────────
+  weekday_base_price: '',
+  weekend_base_price: '',
+  discount: '',
+  tax_vat: '',
+  markup_price: '',
+  cleaning_fee: '',
+  airbnb_discount: '',
+  gathern_discount: '',
+  booking_discount: '',
+  extra_guest_fee: '',
+  // ─────────────────────────────────
+
+  // ─── Document Upload defaults ────
+  property_ownership_doc: '',
+  authority_license_doc: '',
+  national_id_doc: '',
+  // ─────────────────────────────────
 };
 
 export const useCreateListingStore = create<CreateListingState>((set) => ({

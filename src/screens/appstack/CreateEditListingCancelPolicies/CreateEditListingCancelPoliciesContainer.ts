@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { PricingFormValues, pricingSchema } from '@/validation/auth/createListingSchemas';
+import { CancelPoliciesFormValues, cancelPoliciesSchema } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation } from '@tanstack/react-query';
@@ -13,32 +13,27 @@ import { useRoute } from '@react-navigation/native';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-export default function useSetPricingContainer() {
+export default function useCreateEditListingCancelPoliciesContainer() {
   const { params } = useRoute();
   const { listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
-  // Discount percentage options
-  const discountOptions = Array.from({ length: 21 }, (_, i) => ({
-    label: `${i * 5}%`,
-    value: `${i * 5}`,
-  }));
+  // Cancel policy options (can be fetched from API if needed)
+  const cancelPolicyOptions = [
+    { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
+    { label: 'Moderate - Guests can cancel up to 5 days before check-in', value: 'moderate' },
+    { label: 'Firm - Guests can cancel up to 30 days before check-in', value: 'firm' },
+    { label: 'Strict - Guests can cancel up to 60 days before check-in', value: 'strict' },
+  ];
 
-  const { control, handleSubmit, formState: { errors } } = useForm<PricingFormValues>({
-    resolver: yupResolver(pricingSchema) as any,
+  const { control, handleSubmit, formState: { errors } } = useForm<CancelPoliciesFormValues>({
+    resolver: yupResolver(cancelPoliciesSchema) as any,
     defaultValues: {
-      weekday_base_price: listing?.weekday_base_price ?? '',
-      weekend_base_price: listing?.weekend_base_price ?? '',
-      discount: listing?.discount ?? '',
-      tax_vat: listing?.tax_vat ?? '',
-      markup_price: listing?.markup_price ?? '',
-      cleaning_fee: listing?.cleaning_fee ?? '',
-      airbnb_discount: listing?.airbnb_discount ?? '',
-      gathern_discount: listing?.gathern_discount ?? '',
-      booking_discount: listing?.booking_discount ?? '',
-      extra_guest_fee: listing?.extra_guest_fee ?? '',
+      cancel_policy_airbnb: listing?.cancel_policy_airbnb ?? '',
+      cancel_policy_gathern: listing?.cancel_policy_gathern ?? '',
+      cancel_policy_booking: listing?.cancel_policy_booking ?? '',
     },
   });
 
@@ -70,39 +65,31 @@ export default function useSetPricingContainer() {
 
   // ---- Payload builder ----
   const buildPayload = (
-    data: PricingFormValues,
+    data: CancelPoliciesFormValues,
     overrideListingId?: string
   ): CreateListingDetailsPayload => ({
     channel_id,
     listing_id: overrideListingId || listing_id,
     user_id: Number(user?.id),
     listing: {
-      weekday_base_price: data.weekday_base_price,
-      weekend_base_price: data.weekend_base_price,
-      discount: data.discount,
-      tax_vat: data.tax_vat,
-      markup_price: data.markup_price,
-      cleaning_fee: data.cleaning_fee,
-      airbnb_discount: data.airbnb_discount,
-      gathern_discount: data.gathern_discount,
-      booking_discount: data.booking_discount,
-      extra_guest_fee: data.extra_guest_fee,
+      cancel_policy_airbnb: data.cancel_policy_airbnb,
+      cancel_policy_gathern: data.cancel_policy_gathern,
+      cancel_policy_booking: data.cancel_policy_booking,
     },
   });
 
   // ---- Handlers ----
-  const onNext = (data: PricingFormValues) => {
-    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING)
+  const onNext = (data: CancelPoliciesFormValues) => {
+    navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING)
     return false
     createListingDetailsPayload(buildPayload(data), {
       onSuccess: () => {
-        // Navigate to next step (adjust route as needed)
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);
       },
     });
   };
 
-  const onSaveExit = (data: PricingFormValues) => {
+  const onSaveExit = (data: CancelPoliciesFormValues) => {
     if (isEdit) {
       updateListingDetails(buildPayload(data, listing?.listing_id || listing_id));
     } else {
@@ -122,6 +109,6 @@ export default function useSetPricingContainer() {
     onSaveExit,
     isEdit,
     isLoading: isCreating || isUpdating,
-    discountOptions,
+    cancelPolicyOptions,
   };
 }

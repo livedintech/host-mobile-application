@@ -45,6 +45,42 @@ export interface ListingDetails {
   check_out_time?: string;
   // ─────────────────────────────────────────────────────────────
 
+  // ─── House Guidelines fields ──────────────────────────────────
+  arrival_guide?: string;
+  house_rules?: string;
+  checkout_instructions?: string;
+  // ─────────────────────────────────────────────────────────────
+
+  // ─── Cancel Policies fields ───────────────────────────────────
+  cancel_policy_airbnb?: string;
+  cancel_policy_gathern?: string;
+  cancel_policy_booking?: string;
+  // ─────────────────────────────────────────────────────────────
+
+  // ─── AI Dynamic Pricing fields ────────────────────────────────
+  pricing_mode?: string;
+  manual_price_override?: boolean;
+  // ─────────────────────────────────────────────────────────────
+
+  // ─── Set Pricing fields ───────────────────────────────────────
+  weekday_base_price?: string;
+  weekend_base_price?: string;
+  discount?: string;
+  tax_vat?: string;
+  markup_price?: string;
+  cleaning_fee?: string;
+  airbnb_discount?: string;
+  gathern_discount?: string;
+  booking_discount?: string;
+  extra_guest_fee?: string;
+  // ─────────────────────────────────────────────────────────────
+
+  // ─── Document Upload fields ───────────────────────────────────
+  property_ownership_doc?: string;
+  authority_license_doc?: string;
+  national_id_doc?: string;
+  // ─────────────────────────────────────────────────────────────
+
   disclosures?: {
     cameras?: boolean;
     noise?: boolean;
@@ -218,4 +254,17 @@ export interface createEditAmenitiesPayloadType {
   listing_id: string;
   channel_id: string;
   amenities: string[];
+}
+
+export interface DocumentItem {
+  url: string;
+  type: string;
+  file_name: string;
+}
+
+export interface DocumentUploadPayload {
+  save_and_exit: number;
+  listing_id: string;
+  channel_id: string;
+  documents: DocumentItem[];
 }

@@ -88,6 +88,8 @@ export default function useBookingDetailsContainer() {
 
   // ---- Handlers ----
   const onNext = (data: BookingDetailsFormValues) => {
+    navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES)
+    return false
     createListingDetailsPayload(buildPayload(data), {
       onSuccess: () => {
         navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING);

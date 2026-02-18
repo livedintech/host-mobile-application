@@ -154,37 +154,125 @@ export type BookingDetailsFormValues = {
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const pricingSchema = yup.object().shape({
-  weekdayPrice: yup
+// ─── House Guidelines Schema ─────────────────────────────────────────────────
+export const houseGuidelinesSchema = yup.object({
+  arrival_guide: yup
     .string()
-    .required('Weekday Price is required'),
+    .required('Arrival guide is required')
+    .min(20, 'Must be at least 20 characters'),
 
-  weekendPrice: yup
+  house_rules: yup
     .string()
-    .required('Weekend Price is required'),
+    .required('House rules are required')
+    .min(20, 'Must be at least 20 characters'),
+
+  checkout_instructions: yup
+    .string()
+    .required('Checkout instructions are required')
+    .min(20, 'Must be at least 20 characters'),
+});
+
+export type HouseGuidelinesFormValues = {
+  arrival_guide: string;
+  house_rules: string;
+  checkout_instructions: string;
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── Cancel Policies Schema ──────────────────────────────────────────────────
+export const cancelPoliciesSchema = yup.object({
+  cancel_policy_airbnb: yup
+    .string()
+    .required('Cancel policy for Airbnb is required'),
+
+  cancel_policy_gathern: yup
+    .string()
+    .required('Cancel policy for Gathern is required'),
+
+  cancel_policy_booking: yup
+    .string()
+    .required('Cancel policy for Booking.com is required'),
+});
+
+export type CancelPoliciesFormValues = {
+  cancel_policy_airbnb: string;
+  cancel_policy_gathern: string;
+  cancel_policy_booking: string;
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── AI Dynamic Pricing Schema ───────────────────────────────────────────────
+export const aiDynamicPricingSchema = yup.object({
+  pricing_mode: yup
+    .string()
+    .required('Please select a pricing mode')
+    .oneOf(['conservative', 'aggressive'], 'Invalid pricing mode'),
+
+  manual_price_override: yup
+    .boolean()
+    .required('Manual price override selection is required'),
+});
+
+export type AiDynamicPricingFormValues = {
+  pricing_mode: string;
+  manual_price_override: boolean;
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const pricingSchema = yup.object().shape({
+  weekday_base_price: yup
+    .string()
+    .required('Weekday base price is required'),
+
+  weekend_base_price: yup
+    .string()
+    .required('Weekend base price is required'),
 
   discount: yup
     .string()
     .required('Discount is required'),
 
-  taxVat: yup
+  tax_vat: yup
     .string()
     .required('Tax(VAT) is required'),
 
-  markup: yup
+  markup_price: yup
     .string()
-    .required('Markup is required'),
+    .required('Markup price is required'),
 
-  security_deposit: yup
+  cleaning_fee: yup
     .string()
-    .required('Security Deposit is required'),
+    .required('Cleaning fee is required'),
 
-  cleaningFee: yup
+  airbnb_discount: yup
     .string()
-    .required('Cleaning Fee is required'),
+    .required('Airbnb discount is required'),
+
+  gathern_discount: yup
+    .string()
+    .required('Gathern discount is required'),
+
+  booking_discount: yup
+    .string()
+    .required('Booking.com discount is required'),
+
+  extra_guest_fee: yup
+    .string()
+    .required('Extra guest fee is required'),
 });
 
-export type PricingFormValues = yup.InferType<typeof pricingSchema>;
+export type PricingFormValues = {
+  weekday_base_price: string;
+  weekend_base_price: string;
+  discount: string;
+  tax_vat: string;
+  markup_price: string;
+  cleaning_fee: string;
+  airbnb_discount: string;
+  gathern_discount: string;
+  booking_discount: string;
+  extra_guest_fee: string;
+};
 
 export const disclosureSchema = yup.object().shape({
   securityCameras: yup.string().required('Please select an option'),

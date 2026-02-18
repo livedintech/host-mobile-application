@@ -5,81 +5,100 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import DropdownField from '@/components/molecules/Input/DropdownField';
-import usePropertyDisclosureContainer from './PropertyDisclosureContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
+import useCreateEditListingCancelPoliciesContainer from './CreateEditListingCancelPoliciesContainer';
 
-const PropertyDisclosureScreen = () => {
-  const { control, errors, handleSubmit, onNext, isEdit, onSaveExit, isLoading } = usePropertyDisclosureContainer();
-
-  const options = [
-    { label: 'Yes', value: 'Yes' },
-    { label: 'No', value: 'No' },
-  ];
+const CreateEditListingCancelPoliciesScreen = () => {
+  const {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isEdit,
+    isLoading,
+    cancelPolicyOptions,
+  } = useCreateEditListingCancelPoliciesContainer();
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+
         {/* Header */}
-        {/* <AppText text="Step 6" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" /> */}
-         {/* Header */}
         <View style={styles.headerRow}>
           <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
             <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
             </Pressable>
           </GradientBorder>
-          <CircularProgress percentage={80} size={48} strokeWidth={4} />
+          <CircularProgress percentage={55} size={48} strokeWidth={4} />
         </View>
 
-         {/* Step Title */}
-        <AppText text="Step 7" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mb={20} />
-
-        <View style={styles.subTitleRow}>
-          <AppText text="Add Property Disclosure Details" fontSize={22} type="SemiBold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
-          <Svgicons path="bookIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
+        {/* Title */}
+        <View style={styles.titleRow}>
+          <AppText text="Booking Cancel Policies" fontSize={26} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
+          <Svgicons path="clipboardIcon" size={24} />
         </View>
 
-        {/* Disclosure Dropdowns */}
-        <View style={styles.inputSection}>
+        {/* Form */}
+        <View style={styles.form}>
+
+          {/* Cancel Policy Airbnb */}
           <DropdownField
-            name="securityCameras"
+            name="cancel_policy_airbnb"
+            label="Cancel Policy Airbnb"
             control={control}
             errors={errors}
-            label="Exterior Security Cameras Present"
-            data={options}
+            data={cancelPolicyOptions}
+            placeholder="Flexible - Guests can cancel at least 24..."
           />
 
+          {/* Cancel Policy Gathern */}
           <DropdownField
-            name="noiseMonitor"
+            name="cancel_policy_gathern"
+            label="Cancel Policy Gathern"
             control={control}
             errors={errors}
-            label="Noise Decibel Monitor"
-            data={options}
+            data={cancelPolicyOptions}
+            placeholder="Flexible - Guests can cancel at least 24..."
           />
 
+          {/* Cancel Policy Booking.com */}
           <DropdownField
-            name="weaponsOnProperty"
+            name="cancel_policy_booking"
+            label="Cancel Policy Booking.com"
             control={control}
             errors={errors}
-            label="Weapons On Property"
-            data={options}
+            data={cancelPolicyOptions}
+            placeholder="Flexible - Guests can cancel at least 24..."
           />
+
         </View>
 
-        {/* Action Buttons */}
+        {/* Footer Buttons */}
         <View style={styles.footer}>
-          {isEdit ? (
+          {!isEdit && (
+            <>
+              <AppButton
+                title="Next"
+                onPress={handleSubmit(onNext)}
+                loading={isLoading}
+              />
+              <AppButton
+                title="Save & Exit"
+                onPress={handleSubmit(onSaveExit)}
+                mt={15}
+                disabled={isLoading}
+              />
+            </>
+          )}
+
+          {isEdit && (
             <AppButton
               title="Save & Exit"
               onPress={handleSubmit(onSaveExit)}
-              loading={isLoading}
-            />
-          ) : (
-            <AppButton
-              title="Next"
-              onPress={handleSubmit(onNext)}
               loading={isLoading}
             />
           )}
@@ -93,27 +112,11 @@ const PropertyDisclosureScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
   content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
-  subTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-    gap: 10,
-    flexWrap: 'wrap'
-  },
-  inputSection: {
-    marginBottom: 20,
-  },
-  footer: {
-    marginTop: 'auto',
-    paddingTop: 40
-  },
-   headerRow: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 30,
   },
   arrowCircleInner: {
     width: 32,
@@ -123,6 +126,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 30,
+  },
+  form: { flex: 1 },
+  footer: { marginTop: 20 },
 });
 
-export default PropertyDisclosureScreen;
+export default CreateEditListingCancelPoliciesScreen;

@@ -1,135 +1,241 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable, TouchableOpacity, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import useDocumentUploadContainer from './DocumentUploadContainer';
-import { DocumentFormValues } from '@/validation/auth/createListingSchemas';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { goBack } from '@/services/navigationService';
+import useCreateEditListingDocumentUploadContainer from './DocumentUploadContainerNew';
+import Metrics from '@/utility/Metrics';
 
 const DocumentUploadScreen = () => {
-    const {
-        errors,
-        handleSubmit,
-        onSubmit,
-        handleDocumentPick,
-        removeFile,
-        files,
-        loading,
-        isEdit
-    } = useDocumentUploadContainer();
+  const {
+    control,
+    errors,
+    handleSubmit,
+    onSaveExit,
+    isEdit,
+    isLoading,
+    propertyOwnershipDoc,
+    authorityLicenseDoc,
+    nationalIdDoc,
+    pickDocument,
+    removeDocument,
+    handleExport,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaAccountOptions,
+    // OTA form
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    handleExportSubmit,
+  } = useCreateEditListingDocumentUploadContainer();
 
-    const renderUploadField = (label: string, fieldName: keyof DocumentFormValues, isRequired = false) => {
-        const file = files[fieldName];
+  const renderUploadButton = (
+    label: string,
+    fieldName: 'propertyOwnership' | 'authorityLicense' | 'nationalId',
+    document: any
+  ) => (
+    <View style={styles.uploadSection}>
+      <AppText text={label} fontSize={16} type="SemiBold" color={Colors.PINE_FOREST} mb={12} />
 
-        return (
-            <View style={styles.fieldWrapper}>
-                <AppText
-                    text={`${label}${isRequired ? '*' : ''}`}
-                    fontSize={16}
-                    type="SemiBold"
-                    color={Colors.BRUNSWICK_GREEN}
-                    mb={8}
-                />
+      <TouchableOpacity
+        style={styles.uploadButton}
+        onPress={() => pickDocument(fieldName)}
+        activeOpacity={0.7}
+      >
+        <AppText text="Upload Pdf" fontSize={16} color={Colors.PINE_FOREST} />
+        <Svgicons path="attachmentIcon" size={24} />
+      </TouchableOpacity>
 
-                <Pressable style={styles.uploadBox} onPress={() => handleDocumentPick(fieldName)}>
-                    <AppText 
-                        text={file ? "Change Document" : "Upload Pdf"} 
-                        color={Colors.BRUNSWICK_GREEN} 
-                    />
-                    <Svgicons path="attachmentIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
-                </Pressable>
-
-                {/* Uploaded File Status */}
-                {file && (
-                    <View style={styles.fileStatusRow}>
-                        <View style={styles.fileInfo}>
-                            <Svgicons path="checkCircleIcon" size={18} color={Colors.BRUNSWICK_GREEN} />
-                            <AppText
-                                text={file.name}
-                                ml={10}
-                                fontSize={14}
-                                color={Colors.MIDNIGHT}
-                                numberOfLines={1}
-                            />
-                        </View>
-                        <Pressable onPress={() => removeFile(fieldName)}>
-                            <Svgicons path="closeIcon" size={18} color={Colors.BLACK} />
-                        </Pressable>
-                    </View>
-                )}
-
-                {/* Error Message */}
-                {errors[fieldName] && (
-                    <AppText
-                        text={errors[fieldName]?.message || ''}
-                        color={Colors.INDIAN_RED}
-                        fontSize={12}
-                        mt={5}
-                    />
-                )}
-            </View>
-        );
-    };
-
-    return (
-        <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                <AppText
-                    text={isEdit ? "Update Ownership Licence Documents" : "Upload Ownership Licence Documents"}
-                    fontSize={24}
-                    type="Bold"
-                    color={Colors.BRUNSWICK_GREEN}
-                    textAlign="center"
-                    mt={20}
-                />
-
-                <View style={styles.infoSection}>
-                    <AppText text="• Accepted formats: PDF." fontSize={12} color={Colors.BRUNSWICK_GREEN} />
-                    <AppText text="• File size ≤ 10 MB per document." fontSize={12} color={Colors.BRUNSWICK_GREEN} />
-                </View>
-
-                {renderUploadField("Property Ownership / Rental Documents", "propertyOwnership", true)}
-                {renderUploadField("Authority license", "authorityLicense", true)}
-                {renderUploadField("Aqama / National ID", "nationalId", true)}
-
-                <View style={styles.footer}>
-                    <AppButton
-                        title={isEdit ? "Save & Exit" : "Upload & Save"}
-                        onPress={handleSubmit(onSubmit)}
-                        loading={loading}
-                    />
-                </View>
-            </ScrollView>
+      {document && (
+        <View style={styles.uploadedFile}>
+          <View style={styles.fileInfo}>
+            <Svgicons path="checkCircleIcon" size={20} />
+            <AppText text={document.name} fontSize={14} color={Colors.PINE_FOREST} ml={8} style={{ flex: 1 }} />
+          </View>
+          <TouchableOpacity onPress={() => removeDocument(fieldName)}>
+            <Svgicons path="closeCircleIcon" size={20} />
+          </TouchableOpacity>
         </View>
-    );
+      )}
+
+      {errors[fieldName] && (
+        <AppText text={errors[fieldName]?.message as string} fontSize={13} color={Colors.INDIAN_RED} mt={5} />
+      )}
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+
+        {/* Header */}
+        <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path="arrowLeftIcon" size={24} />
+            </Pressable>
+          </GradientBorder>
+          <View style={styles.wavyCheck}>
+            <Svgicons path='wavy_check' size={20} />
+          </View>
+
+        </View>
+
+        {/* Title */}
+        <AppText
+          text="Upload Ownership Licence Documents"
+          fontSize={26}
+          type="SemiBold"
+          color={Colors.BRUNSWICK_GREEN}
+          textAlign="center"
+          mb={30}
+        />
+
+        {/* Info */}
+        <View style={styles.infoBox}>
+          <AppText text="• Accepted formats: PDF." fontSize={13} color={Colors.SUPER_GREY} mb={4} />
+          <AppText text="• File size ≤ 10 MB per document." fontSize={13} color={Colors.SUPER_GREY} />
+        </View>
+
+        {/* Upload Sections */}
+        {renderUploadButton('Property Ownership / Rental Documents*', 'propertyOwnership', propertyOwnershipDoc)}
+        {renderUploadButton('Authority license', 'authorityLicense', authorityLicenseDoc)}
+        {renderUploadButton('Aqama / National ID', 'nationalId', nationalIdDoc)}
+
+        {/* Footer Buttons */}
+        <View style={styles.footer}>
+          <AppButton title="Export" onPress={handleExport} />
+          <AppButton
+            title="Save & Exit"
+            onPress={handleSubmit(onSaveExit)}
+            loading={isLoading}
+            mt={15}
+          />
+        </View>
+
+      </ScrollView>
+
+      {/* Bottom Sheet Modal */}
+      <Modal
+        visible={bottomSheetVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setBottomSheetVisible(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+          <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+
+            {/* Handle Bar */}
+            <View style={styles.handleBar} />
+
+            <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+
+            {/* OTA Account Dropdown */}
+            <DropdownField
+              name="ota_account"
+              control={otaControl}
+              errors={otaErrors}
+              label=""
+              data={otaAccountOptions}
+              placeholder="Tooba's airbnb account"
+            />
+
+            {/* Export Button */}
+            <AppButton title="Export" onPress={handleOtaSubmit(handleExportSubmit)} mt={20} />
+
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
-    infoSection: { marginVertical: 30, paddingHorizontal: 10 },
-    fieldWrapper: { marginBottom: 25 },
-    uploadBox: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        borderRadius: 25,
-        paddingHorizontal: 20,
-        height: 56,
-        backgroundColor: '#FAFAFA'
-    },
-    fileStatusRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 15,
-        paddingHorizontal: 5
-    },
-    fileInfo: { flexDirection: 'row', alignItems: 'center', flex: 0.9 },
-    footer: { marginTop: 40 }
+  container: { flex: 1, backgroundColor: Colors.WHITE },
+  content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  arrowCircleInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoBox: {
+    marginBottom: 30,
+  },
+  uploadSection: {
+    marginBottom: 25,
+  },
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: Colors.SMOOTH_GREY,
+    borderRadius: 30,
+    backgroundColor: Colors.WHITE,
+  },
+  uploadedFile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  fileInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  footer: { marginTop: 30 },
+
+  // Bottom Sheet Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor: Colors.WHITE,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 40,
+  },
+  handleBar: {
+    width: 40,
+    height: 4,
+    backgroundColor: Colors.SMOOTH_GREY,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  wavyCheck: {
+    borderWidth: 1,
+    borderColor: Colors.LIGHT_GRAY,
+    width: Metrics.scale(48),
+    height: Metrics.scale(48),
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
 
 export default DocumentUploadScreen;

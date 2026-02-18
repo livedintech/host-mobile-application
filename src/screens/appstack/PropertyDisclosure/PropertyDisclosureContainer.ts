@@ -75,6 +75,8 @@ export default function usePropertyDisclosureContainer() {
 
 
     const onNext = (data: DisclosureFormValues) => {
+        navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
+        return false
         if (!listing_id) {
             Toast.show({ type: 'error', text1: 'Listing ID is missing' });
             return;
