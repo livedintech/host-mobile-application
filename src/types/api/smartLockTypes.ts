@@ -8,7 +8,8 @@ export interface smartLockApiResponseType {
 
 export interface smartLockConnectPayloadType {
   username: string,
-  password:string
+  password:string,
+  timezone: string;
 }
 
 export interface smartLockMappingAssignPayloadType {

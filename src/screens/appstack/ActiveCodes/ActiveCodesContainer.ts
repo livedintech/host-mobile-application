@@ -15,6 +15,7 @@ type ApiPasscodeItem = {
   passcode: string;
   start_at: string | null;
   end_at: string | null;
+  status: string | null;
 };
 
 export default function useActiveCodesContainer() {
@@ -25,7 +26,7 @@ export default function useActiveCodesContainer() {
   // ======================
   // API CALL
   // ======================
-  const { data, isLoading } = useQuery({
+  const { data, isLoading , refetch} = useQuery({
     queryKey: [STORAGE_CONST.GET_ACTIVE_CODES, lock_id],
     queryFn: () =>
       getSmartLockActiveCodesApi({ lockId: lock_id! }),
@@ -52,6 +53,8 @@ export default function useActiveCodesContainer() {
         : '-',
     startTime: item.start_at?.split(' ')[1] || '-',
     endTime: item.end_at?.split(' ')[1] || '-',
+    status: item.status || '-',
+
   });
 
   const codesData: Record<CodeTab, any[]> = {
@@ -84,6 +87,7 @@ export default function useActiveCodesContainer() {
     currentData: codesData[activeTab],
     handleGenerateNew,
     isLoading,
-    handleViewLogs
+    handleViewLogs,
+    refetch
   };
 }

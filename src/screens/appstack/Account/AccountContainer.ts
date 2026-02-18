@@ -25,7 +25,7 @@ export default function useAccountContainer() {
       navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
     }
     if (route === 'SMART_LOCK_MANAGMENT') {
-      navigate(NavigationRoutes.APP_STACK.SMART_LOCK);
+      navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS);
     }
     if (route === 'REVIEW_MANAGEMENT') {
       navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT);

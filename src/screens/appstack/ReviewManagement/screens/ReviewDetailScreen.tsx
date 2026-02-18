@@ -374,7 +374,11 @@ const ReviewDetailScreen = ({ route }: any) => {
           mt={10}
           mb={50}
           borderRadius={25}
-          onPress={() => {}}
+          onPress={() =>
+            navigate(
+              NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
+            )
+          }
         />
 
         <View style={styles.cancellationPolicy}>

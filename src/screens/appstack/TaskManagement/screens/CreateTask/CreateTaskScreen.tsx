@@ -18,6 +18,9 @@ import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField'
 import AppButton from '@/components/molecules/AppButton/AppButton';
 
 import CreateTaskContainer from '../../containers/CreateTask/CreateTaskContainer';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const CreateTaskScreen = () => {
   const {
@@ -29,9 +32,12 @@ const CreateTaskScreen = () => {
     userOptions,
     isCleaningCategory,
     wordCount,
-    isPending
+    isPending,
   } = CreateTaskContainer();
 
+  const handleAddVendor = () => {
+    navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, { mode: 'create' });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -79,13 +85,13 @@ const CreateTaskScreen = () => {
           multiline
           descriptionLength={wordCount}
           wordLimit={250}
-            rules={{
-              required: 'Description is required',
-              minLength: {
-                value: 10,
-                message: 'Description must be at least 10 characters',
-              },
-            }}
+          rules={{
+            required: 'Description is required',
+            minLength: {
+              value: 10,
+              message: 'Description must be at least 10 characters',
+            },
+          }}
         />
 
         {/* Category Dropdown */}
@@ -172,15 +178,36 @@ const CreateTaskScreen = () => {
           </>
         )}
 
-        <DropdownField
-          name="vendor_id"
-          control={control}
-          errors={errors}
-          label="Assign Task"
-          data={userOptions}
-          placeholder="Select User"
-          rules={{ required: 'User assignment is required' }}
-        />
+        {/* Assign Task Section */}
+        <View style={styles.dropdownSection}>
+          <DropdownField
+            name="vendor_id"
+            control={control}
+            errors={errors}
+            label="Assign Task"
+            data={userOptions}
+            placeholder="Select User"
+            rules={{ required: 'User assignment is required' }}
+          />
+
+          {userOptions.length === 0 && (
+            <ButtonView
+              onPress={handleAddVendor}
+              style={styles.emptyVendorAction}
+            >
+              <View style={styles.actionContent}>
+                <Svgicons path="plusIcon" size={12} color={Colors.PINE_FOREST} />
+                <AppText
+                  text="No User found. Add a User here."
+                  fontSize={13}
+                  color={Colors.PINE_FOREST}
+                  type="Bold"
+                  ml={8}
+                />
+              </View>
+            </ButtonView>
+          )}
+        </View>
 
         {/* Next Button */}
         <AppButton
@@ -190,8 +217,8 @@ const CreateTaskScreen = () => {
           borderColor={Colors.ARGENT}
           color={Colors.PINE_FOREST}
           style={styles.nextButton}
-          loading = {isPending}
-          disabled = {isPending}
+          loading={isPending}
+          disabled={isPending}
         />
       </ScrollView>
     </KeyboardAvoidingView>
@@ -218,6 +245,25 @@ const styles = StyleSheet.create({
   nextButton: {
     marginTop: Metrics.verticalScale(24),
     marginBottom: Metrics.verticalScale(8),
+  },
+  dropdownSection: {
+    marginBottom: Metrics.verticalScale(18),
+  },
+  emptyVendorAction: {
+    backgroundColor: '#F0F7F4', // A very light green/mint to match PINE_FOREST theme
+    borderWidth: 1,
+    borderTopWidth: 0, // Removes top border so it merges with dropdown
+    borderColor: Colors.SMOOTH_GREY,
+    marginTop: Metrics.verticalScale(-19), // Pulls it up to sit flush against the dropdown
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    paddingVertical: Metrics.verticalScale(12),
+    paddingHorizontal: Metrics.scale(16),
+  },
+  actionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

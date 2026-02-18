@@ -213,6 +213,12 @@ const onSubmit = (data: taskManagementCreateApiPayload) => {
   createTaskDraftMutation.mutate(payload);
 };
 
+const hasNoVendors = transformedVendor.length === 0;
+
+  const handleRedirectToUserMgmt = () => {
+     navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM);
+  };
+  
   return {
     control,
     errors,
@@ -223,6 +229,8 @@ const onSubmit = (data: taskManagementCreateApiPayload) => {
     isCleaningCategory,
     wordCount,
     isPending: createTaskDraftMutation.isPending,
+    hasNoVendors,
+    handleRedirectToUserMgmt,
   };
 };
 
