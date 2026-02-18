@@ -13,10 +13,10 @@ interface TextareaFieldProps extends TextInputProps {
     label?: string;
     leftIcon?: React.ReactNode;
     wrapperStyle?: object;
-    descriptionLength?: number
+    descriptionLength?: number;
     wordLimit?: number;
     sparkleIcon?: boolean;
-    rules?: RegisterOptions; 
+    rules?: RegisterOptions;
 }
 
 const TextareaField: React.FC<TextareaFieldProps> = ({
@@ -38,12 +38,24 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
 
     return (
         <View style={[styles.mainWrapper, wrapperStyle]}>
-            {label && <AppText text={label} style={styles.label} fontSize={14} type='Medium' />}
-            {wordLimit && (
-                <View style={styles.wordCounterRow}>
-                    <AppText text={`${descriptionLength}/${wordLimit} Words`} fontSize={12} color={Colors.SUPER_GREY} />
-                </View>
-            )}
+            {/* Header Row for Horizontal Alignment */}
+            <View style={styles.headerRow}>
+                {label && (
+                    <AppText 
+                        text={label} 
+                        style={styles.label} 
+                        fontSize={14} 
+                        type='Medium' 
+                    />
+                )}
+                {wordLimit !== undefined && (
+                    <AppText 
+                        text={`${descriptionLength || 0}/${wordLimit} Words`} 
+                        fontSize={12} 
+                        color={Colors.SUPER_GREY} 
+                    />
+                )}
+            </View>
 
             <View style={[
                 styles.inputContainer,
@@ -60,7 +72,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
                 )}
                 <Controller
                     control={control}
-                      rules={rules}  
+                    rules={rules}
                     name={name}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
@@ -78,11 +90,11 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
                         />
                     )}
                 />
-                <View style={styles.sparkleIcon}>
-                    {sparkleIcon && (
+                {sparkleIcon && (
+                    <View style={styles.sparkleIcon}>
                         <Svgicons path="sparkleIcon" size={17} color={Colors.BRUNSWICK_GREEN} />
-                    )}
-                </View>
+                    </View>
+                )}
             </View>
 
             {error && <AppText text={error} color={Colors.INDIAN_RED} style={styles.errorText} />}
@@ -94,8 +106,13 @@ const styles = StyleSheet.create({
     mainWrapper: {
         marginBottom: Metrics.verticalScale(16),
     },
-    label: {
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: Metrics.verticalScale(8),
+    },
+    label: {
         color: Colors.PINE_FOREST,
         fontSize: Metrics.generatedFontSize(14),
     },
@@ -126,7 +143,6 @@ const styles = StyleSheet.create({
         color: Colors.BLACK,
         fontSize: 16,
         paddingVertical: 0,
-
     },
     multilineInput: {
         height: '100%',
@@ -142,13 +158,11 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Colors.INDIAN_RED,
     },
-    wordCounterRow: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 5, marginTop: -Metrics.verticalScale(10), marginBottom: 15 },
     sparkleIcon: {
         position: 'absolute',
         bottom: 10,
         right: 10
     }
-
 });
 
 export default TextareaField;

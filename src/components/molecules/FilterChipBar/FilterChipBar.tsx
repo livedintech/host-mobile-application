@@ -9,13 +9,11 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { s, vs, ms } from 'react-native-size-matters';
 
-// 1. Define the interface for a single option
 export interface FilterOption {
   id: string;
   label: string;
 }
 
-// 2. Define the props interface for the component
 interface FilterChipBarProps {
   options: FilterOption[];
   selectedId: string;
@@ -32,31 +30,34 @@ const FilterChipBar: React.FC<FilterChipBarProps> = ({
 
     if (isActive) {
       return (
-        <Pressable
-          onPress={() => onSelect(item.id)}
-          style={[styles.chip, styles.activeChip]}
-        >
-          <Text style={styles.activeText}>{item.label}</Text>
-        </Pressable>
+        <View style={styles.shadowWrapper}>
+           <Pressable
+            onPress={() => onSelect(item.id)}
+            style={[styles.chip, styles.activeChip]}
+          >
+            <Text style={styles.activeText}>{item.label}</Text>
+          </Pressable>
+        </View>
       );
     }
 
     return (
-      <Pressable 
-        onPress={() => onSelect(item.id)} 
-        style={styles.chipContainer}
-      >
-        <LinearGradient
-          colors={['#FFFFFF', '#F9F9F9', '#F2F2F2']}
-          style={styles.inactiveChip}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
+      <View style={styles.shadowWrapper}>
+        <Pressable 
+          onPress={() => onSelect(item.id)} 
+          style={styles.chipContainer}
         >
-          {/* Subtle top light highlight for the "glass" look */}
-          <View style={styles.topHighlight} />
-          <Text style={styles.inactiveText}>{item.label}</Text>
-        </LinearGradient>
-      </Pressable>
+          <LinearGradient
+            colors={['#FFFFFF', '#FDFDFD', '#F5F5F5']} // Slightly cleaner whites
+            style={styles.inactiveChip}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          >
+            <View style={styles.topHighlight} />
+            <Text style={styles.inactiveText}>{item.label}</Text>
+          </LinearGradient>
+        </Pressable>
+      </View>
     );
   };
 
@@ -69,6 +70,7 @@ const FilterChipBar: React.FC<FilterChipBarProps> = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
+        removeClippedSubviews={false}
       />
     </View>
   );
@@ -76,8 +78,9 @@ const FilterChipBar: React.FC<FilterChipBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: vs(10),
     width: '100%',
+    // Increased vertical padding so shadows have room to breathe
+    paddingVertical: vs(12), 
   },
   listContent: {
     paddingHorizontal: s(16),
@@ -85,14 +88,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
+  shadowWrapper: {
+    // Extra padding around each item ensures elevation/shadow isn't cut off by the list
+    paddingBottom: vs(4),
+    paddingHorizontal: s(2),
+  },
   chipContainer: {
     borderRadius: ms(25),
-    // Soft outer shadow for inactive chips
+    backgroundColor: '#FFF',
+    // Improved Shadow logic
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12, // Slightly higher for better definition
+    shadowRadius: 4.5,
+    elevation: 4, // Higher elevation to prevent "dull" look on Android
   },
   chip: {
     height: vs(38),
@@ -100,9 +109,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: ms(25),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4.5,
+    elevation: 4,
   },
   activeChip: {
-    backgroundColor: '#2D4A41', // Dark Green
+    backgroundColor: '#2D4A41',
   },
   inactiveChip: {
     height: vs(38),
@@ -111,27 +125,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: ms(25),
     borderWidth: 1,
-    borderColor: '#EAEAEA',
-    overflow: 'hidden',
+    borderColor: '#ECECEC',
+    // Removed overflow: 'hidden' as it can clip shadows on some RN versions
   },
   topHighlight: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 1,
+    height: vs(1),
     backgroundColor: '#FFFFFF',
-    opacity: 0.8,
+    opacity: 0.9,
   },
   activeText: {
     color: '#FFFFFF',
-    fontSize: ms(14),
-    fontWeight: '600',
+    fontSize: ms(13),
+    fontWeight: '700',
   },
   inactiveText: {
     color: '#2D4A41',
-    fontSize: ms(14),
-    fontWeight: '500',
+    fontSize: ms(13),
+    fontWeight: '600',
   },
 });
 

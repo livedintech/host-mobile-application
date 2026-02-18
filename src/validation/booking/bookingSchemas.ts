@@ -5,11 +5,42 @@ import { emailRegex } from '@/utility/regex';
 export const createBookingSchema = yup.object({
   listing_selection: yup.string().nullable().default(''),
   listing_id: yup.string().optional().default(''),
-  start_date: yup.string().required('Check-in date is required').default(''),
-  end_date: yup.string().required('Check-out date is required')
-    .test('not-same-day', 'Check-out must be after check-in', function (value) {
-      return !value || value !== this.parent.start_date;
-    }).default(''),
+  // start_date: yup.string().required('Check-in date is required').default(''),
+  // 1. Start Date Validation
+  start_date: yup.string().when('$bookingType', {
+    is: 'direct',
+    then: (s) => s.required('Start date is required').test(
+      'is-not-past',
+      'Check-in cannot be in the past',
+      function (value) {
+        if (!value) return true;
+        const selected = new Date(value);
+        selected.setHours(0, 0, 0, 0);
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        return selected >= today;
+      }
+    ),
+    otherwise: (s) => s.nullable().notRequired(),
+  }),
+
+  end_date: yup.string().when('$bookingType', {
+    is: 'direct',
+    then: (s) => s.required('End date is required').test(
+      'is-after-start',
+      'End date cannot be before start date',
+      function (value) {
+        const { start_date } = this.parent;
+        if (!start_date || !value) return true;
+        
+        // Now both are YYYY-MM-DD, so comparison is perfect
+        return new Date(value) >= new Date(start_date);
+      }
+    ),
+    otherwise: (s) => s.nullable().notRequired(),
+  }),
 
   // --- PRICING FIELDS (Only required if NOT direct booking) ---
   rate: yup.string().when('$bookingType', {
@@ -36,7 +67,12 @@ export const createBookingSchema = yup.object({
   }),
   phone: yup.string().when('$bookingType', {
     is: 'direct',
-    then: (s) => s.required('Phone number is required').matches(/^\d{8,10}$/, 'Phone number must be 8-10 digits'),
+    then: (s) => 
+      s.required('Phone number is required')
+      .matches(
+        /^\+?\d{7,15}$/, 
+        'Phone number must be valid (7-15 digits, + optional)'
+      ),
     otherwise: (s) => s.nullable().notRequired(),
   }),
 });

@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -12,7 +13,6 @@ import { Task } from '@/types/api/taskManagentType';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import Metrics from '@/utility/Metrics';
 
 const TaskListScreen: React.FC = () => {
   const {
