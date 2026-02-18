@@ -339,6 +339,14 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.VIEW_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/ViewTask/ViewTaskScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SAVED_REPLIES}
         getComponent={() =>
           require('@/screens/appstack/SavedReplies/SavedRepliesScreen').default
