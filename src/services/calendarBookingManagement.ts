@@ -113,11 +113,18 @@ export const createDirectBookingApi = async (payload: any) => {
     start_date: formatDate(payload.start_date),
     end_date: formatDate(payload.end_date),
   };
+  
   const url = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
-  const { ok, data } = await apiService.post(url, formattedPayload);
+  const response = await apiService.post(url, formattedPayload);
 
-  if (ok) return data?.data || data;
-  return null;
+  // If the request was successful
+  if (response.ok) {
+    return response.data?.data || response.data;
+  }
+
+  // If the request failed (like your 409 error), throw it!
+  // This forces the 'catch' block in ListingScreen to trigger.
+  throw response; 
 };
 
 /**

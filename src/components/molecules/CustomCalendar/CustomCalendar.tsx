@@ -4,6 +4,7 @@ import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import AppText from '../AppText/AppText';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CALENDAR_PADDING = s(32);
@@ -22,16 +23,14 @@ const getOTASource = (source?: string) => {
 };
 
 const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
-  // Destructure values from marking
   const { type, color, guest, price, rate, showLabel, ota } = marking || {};
   const isActive = !!type && type !== 'none';
   const themeColor = color || '#3B82F6';
   
-  // Shape Logic
-  const isSingle = type === 'single';
-  const isStarting = type === 'starting';
-  const isEnding = type === 'ending';
-  const isMiddle = type === 'middle';
+  // Logic: 17th or Standalone stays a circle if both start and end exist
+  const isSingle = type === 'single' || (marking?.starting && marking?.ending);
+  const isStarting = type === 'starting' && !isSingle;
+  const isEnding = type === 'ending' && !isSingle;
   
   const otaIconData = getOTASource(ota);
   const displayPrice = rate || price || defaultPrice;
@@ -44,11 +43,16 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
           pointerEvents="none"
           style={[
             styles.selectionBase,
-            { backgroundColor: themeColor },
-            isSingle && styles.circleShape,
-            isStarting && styles.roundedLeft,
-            isEnding && styles.roundedRight,
-            (isMiddle || isStarting || isEnding) && styles.fullWidth,
+            { 
+              backgroundColor: themeColor,
+              width: isSingle ? SELECTION_HEIGHT : '100%',
+              left: isSingle ? (COLUMN_WIDTH - SELECTION_HEIGHT) / 2 : 0,
+              borderRadius: isSingle ? SELECTION_HEIGHT / 2 : 0,
+              borderTopLeftRadius: (isSingle || isStarting) ? SELECTION_HEIGHT / 2 : 0,
+              borderBottomLeftRadius: (isSingle || isStarting) ? SELECTION_HEIGHT / 2 : 0,
+              borderTopRightRadius: (isSingle || isEnding) ? SELECTION_HEIGHT / 2 : 0,
+              borderBottomRightRadius: (isSingle || isEnding) ? SELECTION_HEIGHT / 2 : 0,
+            }
           ]}
         />
       )}
@@ -59,30 +63,30 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
         activeOpacity={0.8}
       >
         <View style={styles.contentWrapper}>
-          
-          {/* OTA ICON + GUEST NAME */}
+          {/* GUEST LABEL - FORCED CENTER ALIGNMENT */}
           {showLabel && (
             <View style={styles.labelPositioner} pointerEvents="none">
               <View style={styles.labelRow}>
-                <Svgicons path={otaIconData.icon} size={ms(8)} />
-                <Text style={styles.guestTextInside} numberOfLines={1}>
-                  {guest}
-                </Text>
+                <Svgicons path={otaIconData.icon as any} size={ms(8)} />
+                <AppText 
+                  text={guest} 
+                  style={styles.guestTextInside} 
+                  numberOfLines={1} 
+                />
               </View>
             </View>
           )}
           
           <Text style={[
-            styles.dayNumber,
+            styles.dayNumber, 
             state === 'disabled' ? styles.disabledText : { color: isActive ? '#FFF' : '#1A332C' }
           ]}>
             {date.day}
           </Text>
-
-          {/* PRICE DISPLAY */}
+          
           {state !== 'disabled' && (
             <Text style={[
-              styles.priceText,
+              styles.priceText, 
               { color: isActive ? 'rgba(255,255,255,0.85)' : '#9E9E9E' }
             ]}>
               SAR {displayPrice}
@@ -132,27 +136,12 @@ const styles = StyleSheet.create({
     height: vs(60),
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'visible',
+    position: 'relative',
   },
   selectionBase: {
     position: 'absolute',
     height: SELECTION_HEIGHT,
     zIndex: 1,
-  },
-  circleShape: {
-    width: SELECTION_HEIGHT,
-    borderRadius: SELECTION_HEIGHT / 2,
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  roundedLeft: {
-    borderTopLeftRadius: SELECTION_HEIGHT / 2,
-    borderBottomLeftRadius: SELECTION_HEIGHT / 2,
-  },
-  roundedRight: {
-    borderTopRightRadius: SELECTION_HEIGHT / 2,
-    borderBottomRightRadius: SELECTION_HEIGHT / 2,
   },
   dayContainer: {
     width: '100%',
@@ -166,31 +155,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: SELECTION_HEIGHT,
     width: '100%',
-    overflow: 'visible',
+    position: 'relative',
   },
   labelPositioner: {
     position: 'absolute',
-    top: vs(4), 
-    left: s(10),
-    zIndex: 20,
-    width: s(150),
-    flexDirection: 'row',
+    top: vs(2), 
+    // This width ensures the container spans the whole day cell for centering
+    width: COLUMN_WIDTH,
+    left: 0,
     alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 30,
   },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: s(3),
+    justifyContent: 'center',
+    gap: s(2),
+    width: '100%',
+    paddingHorizontal: s(2),
   },
   guestTextInside: {
     fontSize: ms(6.5),
     fontWeight: '800',
     color: '#FFF',
-    textAlign: 'left',
+    textAlign: 'center',
   },
   dayNumber: { 
     fontSize: ms(14), 
     fontWeight: '700',
+    // marginTop provides space for the centered label above it
     marginTop: vs(8), 
   },
   priceText: { 
