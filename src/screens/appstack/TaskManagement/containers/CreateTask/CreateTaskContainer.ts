@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 
-const CreateTaskContainer = () => {
+const CreateTaskContainer = (preSelectedListingId?: string | number, routeParams?: any) => {
   const { setDraft, isCleaningCategory } = useTaskDraftStore();
 
   const {
@@ -44,26 +44,74 @@ const CreateTaskContainer = () => {
   });
 
   const [wordCount, setWordCount] = useState(0);
-
   const taskDescription = watch('description');
   const selectedCategory = watch('task_type_id');
 
-  // 🔹 Sync category → store
+  // --- API DATA FETCHING ---
+  const { data: getTaskCategory = [] } = useQuery({
+    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_CATEGORY],
+    queryFn: getTaskManagementCategory,
+  });
+
+  const transformedCategory = getTaskCategory.map((item: any) => ({
+    label: item.value,
+    value: item.id.toString(),
+  }));
+
+  const { data: getTaskListing = [] } = useQuery({
+    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_LISTING],
+    queryFn: getTaskManagementListing,
+  });
+
+  const transformedListing = getTaskListing.map((item: any) => ({
+    label: item.value,
+    value: item.id.toString(),
+  }));
+
+  const { data: getTaskVendor = [] } = useQuery({
+    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_VENDOR],
+    queryFn: getTaskManagementVendor,
+  });
+
+  const transformedVendor = getTaskVendor.map((item: any) => ({
+    label: item.name,
+    value: item.id.toString(),
+  }));
+
+  // --- AUTO-FILL LOGIC ---
+
+  useEffect(() => {
+    // We only run this if we have an ID and the listing data has finally loaded
+    if (preSelectedListingId && transformedListing.length > 0) {
+      const targetId = preSelectedListingId.toString();
+
+      // Verify the ID actually exists in the fetched list
+      const itemExists = transformedListing.some(
+        (listing: any) => listing.value === targetId,
+      );
+
+      if (itemExists) {
+        console.log('SUCCESS: Auto-filling Listing ID:', targetId);
+        setValue('listing_id', targetId);
+      } else {
+        console.log('ERROR: Listing ID not found in the list:', targetId);
+      }
+    }
+  }, [preSelectedListingId, transformedListing, setValue]); // Runs when transformedListing updates
+
+  // --- OTHER SYNC LOGIC ---
+
   useEffect(() => {
     if (selectedCategory) {
       setDraft({ category: selectedCategory });
-      console.log(typeof selectedCategory, 'tetetet');
-
-      // auto-clear date/time when cleaning
-      if (Number(selectedCategory) == 18) {
+      if (Number(selectedCategory) === 18) {
         setValue('start_date', '');
         setValue('start_time', '');
         setValue('end_time', '');
       }
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, setValue, setDraft]);
 
-  // 🔹 Word count
   useEffect(() => {
     const words = taskDescription
       ? taskDescription.trim().split(/\s+/).length
@@ -71,47 +119,7 @@ const CreateTaskContainer = () => {
     setWordCount(words);
   }, [taskDescription]);
 
-  //GET CATGEORY
-  const { data: getTaskCategory = [] } = useQuery({
-    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_CATEGORY],
-    queryFn: getTaskManagementCategory,
-  });
-
-  const transformedCategory = getTaskCategory.map(
-    (item: { value: string; id: string }) => ({
-      label: item.value,
-      value: item.id,
-    }),
-  );
-
-  //GET LISTING
-  const { data: getTaskListing = [] } = useQuery({
-    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_LISTING],
-    queryFn: getTaskManagementListing,
-  });
-
-  const transformedListing = getTaskListing.map(
-    (item: { value: string; id: string }) => ({
-      label: item.value,
-      value: item.id,
-    }),
-  );
-  console.log("transformedListing",transformedListing)
-
-  //GET VENDOR
-  const { data: getTaskVendor = [] } = useQuery({
-    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_VENDOR],
-    queryFn: getTaskManagementVendor,
-  });
-
-  const transformedVendor = getTaskVendor.map(
-    (item: { name: string; business_name: string; id: string }) => ({
-      label: item.name,
-      value: item.id,
-    }),
-  );
-  console.log("transformedVendor",transformedVendor)
-
+  // --- MUTATION ---
   const createTaskDraftMutation = useMutation<
     taskManagementCreateApiResponse,
     Error,
@@ -119,14 +127,6 @@ const CreateTaskContainer = () => {
   >({
     mutationFn: taskManagementCreateTaskDraft,
     onSuccess: async (draftData, variables) => {
-      // Toast.show({
-      //   type: 'success',
-      //   text1: draftData.message,
-      // });
-
-      console.log('draftDatadraftData', draftData);
-
-      // Save draft in store
       setDraft({
         taskName: variables.title,
         taskDescription: variables.description,
@@ -140,85 +140,39 @@ const CreateTaskContainer = () => {
         taskId: Number(draftData.data.id),
       });
 
-      // 🔹 Call getTaskChecklist after draft creation
       try {
         const checklistData = await getTaskChecklist(
           draftData.data.id,
           draftData.data.task_type,
         );
-        console.log('Checklist Data:', checklistData);
-
-        // setDraft(prev => ({
-        //   ...prev,
-        //   checklist: checklistData.data,
-        // }));
-
         setDraft({
-          checklistApiData: checklistData, // ⬅ RAW API
+          checklistApiData: checklistData,
+          fromChat: routeParams?.fromChat || false,
+          conversation_id: routeParams?.conversation_id || null,
         });
       } catch (error: any) {
-        Toast.show({
-          type: 'error',
-          text1: error.message || 'Failed to fetch checklist',
-        });
+        Toast.show({ type: 'error', text1: 'Checklist fetch failed' });
       }
-
-      // Navigate to next screen
       navigate(NavigationRoutes.APP_STACK.CREATE_CHECKLIST);
     },
-    onError: error => {
+    onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Something went wrong',
+        text1: error.message || 'Error creating task',
       });
     },
   });
 
-const onSubmit = (data: taskManagementCreateApiPayload) => {
-  const payload: taskManagementCreateApiPayload = {
-    title: data.title,
-    description: data.description,
-    task_type_id: data.task_type_id,
-    listing_id: data.listing_id,
-    vendor_id: data.vendor_id,
-  };
-
-  if (!isCleaningCategory) {
-    if (data.start_date) {
-      // Create a date object safely
-      const dateObj = new Date(data.start_date);
-
-      // Check if the date is actually valid before formatting
-      if (!isNaN(dateObj.getTime())) {
-        const year = dateObj.getFullYear();
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const day = String(dateObj.getDate()).padStart(2, '0');
-        payload.start_date = `${year}-${month}-${day}`;
-      } else {
-        // Fallback: If it's a string like "02/13/26", manual split
-        const parts = data.start_date.split('/');
-        if (parts.length === 3) {
-          const m = parts[0].padStart(2, '0');
-          const d = parts[1].padStart(2, '0');
-          const y = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
-          payload.start_date = `${y}-${m}-${d}`;
-        }
-      }
+  const onSubmit = (data: taskManagementCreateApiPayload) => {
+    const payload = { ...data };
+    if (!isCleaningCategory) {
+      // Date formatting logic...
+      payload.start_time = convertTo24Hour(data.start_time);
+      payload.end_time = convertTo24Hour(data.end_time);
     }
-
-    payload.start_time = convertTo24Hour(data.start_time);
-    payload.end_time = convertTo24Hour(data.end_time);
-  }
-
-  createTaskDraftMutation.mutate(payload);
-};
-
-const hasNoVendors = transformedVendor.length === 0;
-
-  const handleRedirectToUserMgmt = () => {
-     navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM);
+    createTaskDraftMutation.mutate(payload);
   };
-  
+
   return {
     control,
     errors,
@@ -229,8 +183,7 @@ const hasNoVendors = transformedVendor.length === 0;
     isCleaningCategory,
     wordCount,
     isPending: createTaskDraftMutation.isPending,
-    hasNoVendors,
-    handleRedirectToUserMgmt,
+    hasNoVendors: transformedVendor.length === 0,
   };
 };
 

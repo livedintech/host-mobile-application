@@ -22,7 +22,7 @@ const ReviewCard = ({
   onRateGuest,
 }: ReviewCardProps) => {
   // API score is out of 10, converting to 5-star scale (e.g., 3 / 2 = 1.5)
-  const displayRating = (item.overall_score || 0) / 2;
+  const displayRating = (item.overall_score || 0);
 
   const renderStars = (rating: number = 0) => {
     return (
@@ -104,6 +104,21 @@ const ReviewCard = ({
             fontSize={13}
           />
         </View>
+        <View style={styles.infoRow}>
+          <Svgicons path="Calendar_Days" size={18} mr={10} mt={2} />
+          <AppText
+            text="Date: "
+            color={Colors.PINE_FOREST}
+            fontSize={14}
+            type="Bold"
+          />
+          <AppText
+            text={item.departure_date}
+            style={{ flex: 1 }}
+            color={Colors.PINE_FOREST}
+            fontSize={13}
+          />
+        </View>
 
         <View style={styles.divider} />
 
@@ -130,7 +145,7 @@ const ReviewCard = ({
             </View>
             <View style={[styles.flexWrapper, { marginRight: 0 }]}>
               <AppButton
-                title="View Details"
+                title="View Review"
                 onPress={onViewReview}
                 borderColor={Colors.SMOOTH_GREY}
               />

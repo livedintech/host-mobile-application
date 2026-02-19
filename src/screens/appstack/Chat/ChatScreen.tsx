@@ -75,7 +75,7 @@ const ChatScreen = () => {
               color={Colors.WHITE}
             />
             <AppText
-              text={isSnoozed ? 'Un-snooze' : 'Snooze'}
+              text={isSnoozed ? 'Unsnoozed' : 'Snooze'}
               color={Colors.WHITE}
               fontSize={12}
               mt={5}
@@ -94,7 +94,7 @@ const ChatScreen = () => {
               color={Colors.WHITE}
             />
             <AppText
-              text={isArchived ? 'Un-archive' : 'Archive'}
+              text={isArchived ? 'Unarchived' : 'Archive'}
               color={Colors.WHITE}
               fontSize={12}
               mt={5}
@@ -168,7 +168,7 @@ const ChatScreen = () => {
             <Svgicons path="sortIcon" size={22} color={Colors.BLACK} />
           </MenuTrigger>
           <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-            {['Saved Replies', 'Automation Template', 'AI Auto Reply'].map((opt) => (
+            {['Saved Replies', 'Automation Template'].map((opt) => (
               <MenuOption key={opt} style={styles.menuItem} onSelect={() => handlePopupMenu(opt)}>
                 <AppText text={opt} fontSize={14} color={Colors.MIDNIGHT} />
                 <Svgicons path="expandIcon" size={18} />
@@ -226,9 +226,9 @@ const ChatScreen = () => {
               {filterAssigned ? <Svgicons path='CheckboxCheckedIcon' size={30} /> : <Svgicons path='CheckboxUncheckedIcon' size={30} />}
               <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
             </Pressable>
-            <DropdownField name="reservationStatus" control={control} errors={errors} label="Reservation Status" data={STATUS_DATA} />
+            {/* <DropdownField name="reservationStatus" control={control} errors={errors} label="Reservation Status" data={STATUS_DATA} /> */}
             <DropdownField name="listings" control={control} errors={errors} label="Listings" data={transformedListings} />
-            <DropdownField name="city" control={control} errors={errors} label="City" data={transformedCities} />
+            {/* <DropdownField name="city" control={control} errors={errors} label="City" data={transformedCities} /> */}
             <DropdownField name="apartmenttype" control={control} errors={errors} label="Apartment Type" data={transformedApartmentTypes} dropdownPosition='top' />
             <View style={styles.modalFooter}>
               <AppButton onPress={handleResetAll} title="Reset" style={styles.flex} />
@@ -395,6 +395,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: Metrics.verticalScale(20),
     paddingBottom: Metrics.verticalScale(20),
+    gap:5
   },
 
   resetBtn: {

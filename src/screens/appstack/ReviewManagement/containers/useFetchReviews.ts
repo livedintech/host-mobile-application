@@ -102,6 +102,8 @@ export interface ReviewItem {
   // UI helper fields (if your API doesn't provide these, we default them)
   guest_name?: string | null;
   platform?: string;
+  booking_id?: string;
+  thread_id ? : string
 }
 
 const useFetchReviews = () => {
