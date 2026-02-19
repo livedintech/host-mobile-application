@@ -12,10 +12,13 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useRoute } from '@react-navigation/native';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 export default function useBookingDetailsContainer() {
   const { params } = useRoute();
-const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+  const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
@@ -33,15 +36,15 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   const { control, handleSubmit, formState: { errors } } = useForm<BookingDetailsFormValues>({
     resolver: yupResolver(bookingDetailsSchema) as any,
     defaultValues: {
-      booking_type: listing?.booking_type ?? '',
-      guest_eligibility: listing?.guest_eligibility === true
-        ? 'true'
-        : listing?.guest_eligibility === false
-          ? 'false'
-          : '',
-      check_in_time: listing?.check_in_time ?? '',
-      check_out_time: listing?.check_out_time ?? '',
-    },
+      booking_type: listing?.instant_booking === true ? 'instant' : 'request',
+      guest_eligibility: listing?.guest_eligibility === true ? 'true' : 'false',
+      check_in_time: listing?.check_in_time 
+      ? dayjs(listing.check_in_time, "HH:mm").format("hh:mm a") 
+      : '04:00 pm',
+    check_out_time: listing?.check_out_time 
+      ? dayjs(listing.check_out_time, "HH:mm").format("hh:mm a") 
+      : '12:00 pm',
+    }
   });
 
   // ---- Mutations ----
@@ -74,12 +77,12 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   const buildPayload = (data: BookingDetailsFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
     channel_id,
     listing_id: String(listing_id),
-    user_id: Number(user?.id),
-    save_and_exit: isSaveAndExit ? 1 : 0, // Swagger requirement
+    user_id: String(user?.id),
+    // save_and_exit: isSaveAndExit ? 1 : 0,
+    save_and_exit: 0,
     listing: {
       name: propertyDetail?.name || 'New Listing',
-      booking_type: data.booking_type, // 'instant' or 'request'
-      instant_booking: data.booking_type === 'instant', // Swagger requirement (boolean)
+      instant_booking: data.booking_type === 'instant',
       guest_eligibility: data.guest_eligibility === 'true',
       check_in_time: data.check_in_time, // Format: "14:00"
       check_out_time: data.check_out_time, // Format: "11:00"

@@ -20,12 +20,37 @@ export default function useCreateEditListingAiDynamicPricingContainer() {
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
+  const PRICING_MODES = [
+    {
+      id: 1,
+      key: 'conservative',
+      title: 'Conservative Mode',
+      points: [
+        'Stable occupancy 📈',
+        'Fewer vacant nights',
+        'Slightly lower nightly rate',
+      ],
+    },
+    {
+      id: 2,
+      key: 'aggressive',
+      title: 'Aggressive Mode',
+      points: [
+        'Higher revenue per stay 💰',
+        'Premium positioning',
+        'Lower booking volume',
+      ],
+    },
+  ];
+
+
   const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<AiDynamicPricingFormValues>({
     resolver: yupResolver(aiDynamicPricingSchema) as any,
     defaultValues: {
-      pricing_mode: listing?.pricing_mode ?? '',
+      pricing_mode: listing?.pricing_mode ?? null,
       manual_price_override: listing?.manual_price_override ?? false,
     },
+
   });
 
   const selectedMode = watch('pricing_mode');
@@ -58,55 +83,55 @@ export default function useCreateEditListingAiDynamicPricingContainer() {
   });
 
   // ---- Handlers ----
-  const handleModeSelect = (mode: string) => {
-    setValue('pricing_mode', mode, { shouldValidate: true });
+  const handleModeSelect = (modeId: number) => {
+    setValue('pricing_mode', modeId, { shouldValidate: true });
   };
-
   // ---- Payload builder ----
   const buildPayload = (data: AiDynamicPricingFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
-  channel_id,
-  listing_id: String(listing_id),
-  user_id: String(user?.id),
-  save_and_exit: isSaveAndExit ? 1 : 0,
-  listing: {
-    name: propertyDetail?.name || 'New Listing',
-    pricing_mode: data.pricing_mode, // 'conservative' or 'aggressive'
-    manual_price_override: data.manual_price_override ? 1 : 0, // Sending as 1/0 or boolean based on Swagger preference
-  },
-});
-
- const onNext = (data: AiDynamicPricingFormValues) => {
-  // 1. Store Update (taake UI selections persist rahein)
-  updateListing({
-    pricing_mode: data.pricing_mode,
-    manual_price_override: data.manual_price_override,
-  });
-
-  // 2. API Hit
-  createListingDetailsPayload(buildPayload(data, false), {
-    onSuccess: () => {
-      // Navigate to Property Disclosure (Next Step)
-      navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE);
+    channel_id,
+    listing_id: String(listing_id),
+    user_id: String(user?.id),
+    // save_and_exit: isSaveAndExit ? 1 : 0,
+    save_and_exit: 0,
+    listing: {
+      name: propertyDetail?.name || 'New Listing',
+      pricing_mode: data.pricing_mode, // 'conservative' or 'aggressive'
+      manual_price_override: data.manual_price_override ? 1 : 0, // Sending as 1/0 or boolean based on Swagger preference
     },
   });
-};
 
-const onSaveExit = (data: AiDynamicPricingFormValues) => {
-  // Persistence logic
-  updateListing({ pricing_mode: data.pricing_mode });
+  const onNext = (data: AiDynamicPricingFormValues) => {
+    // 1. Store Update (taake UI selections persist rahein)
+    updateListing({
+      pricing_mode: data.pricing_mode,
+      manual_price_override: data.manual_price_override,
+    });
 
-  const payload = buildPayload(data, true); // save_and_exit: 1
-
-  if (isEdit) {
-    updateListingDetails(payload);
-  } else {
-    createListingDetailsPayload(payload, {
+    // 2. API Hit
+    createListingDetailsPayload(buildPayload(data, false), {
       onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        // Navigate to Property Disclosure (Next Step)
+        navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE);
       },
     });
-  }
-};
+  };
+
+  const onSaveExit = (data: AiDynamicPricingFormValues) => {
+    // Persistence logic
+    updateListing({ pricing_mode: data.pricing_mode });
+
+    const payload = buildPayload(data, true); // save_and_exit: 1
+
+    if (isEdit) {
+      updateListingDetails(payload);
+    } else {
+      createListingDetailsPayload(payload, {
+        onSuccess: () => {
+          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        },
+      });
+    }
+  };
 
   return {
     control,
@@ -120,5 +145,6 @@ const onSaveExit = (data: AiDynamicPricingFormValues) => {
     manualOverride,
     handleModeSelect,
     Controller,
+    PRICING_MODES
   };
 }

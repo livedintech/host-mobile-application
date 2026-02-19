@@ -6,11 +6,14 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useQuery } from '@tanstack/react-query';
 import { Alert } from 'react-native';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 export default function usePropertyDetailContainer() {
   const { user } = useAuthStore();
   const { listing_id } = useCreateListingStore();
-  
+
   const { data, refetch, isLoading } = useQuery({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
     queryFn: () =>
@@ -27,34 +30,38 @@ export default function usePropertyDetailContainer() {
   const listing_descriptionParsed =
     typeof rawDescription === 'string'
       ? (() => {
-          try {
-            return JSON.parse(rawDescription);
-          } catch {
-            return [];
-          }
-        })()
-      : [];
+        try {
+          return JSON.parse(rawDescription);
+        } catch {
+          return [];
+        }
+      })()
+      : rawDescription; // If it's already parsed or just a string
+
+
 
   const propertyData = {
+    discounts: listing?.discounts ? `${listing.discounts}%` : '',
     title: listing?.name || '',
 
     address: [
       listing?.street,
       listing?.apt,
-      listing?.city,
-      listing?.state,
-      listing?.country_code,
+      listing?.city?.name,
+      listing?.district?.name,
+      listing?.state?.name,
+      listing?.country_name,
     ]
       .filter(Boolean)
       .join(', '),
 
     placeInfo: {
-      size: listing?.size_sqm || '',
+      size: listing?.property_area || '',
       bedrooms: listing?.bedrooms ?? '',
       beds: listing?.beds ?? '',
-      kitchen: listing?.kitchen,
-      pool: listing?.pool,
-      longTermStay: listing?.long_term_stay,
+      kitchen: listing?.has_kitchen === 1,
+      pool: listing?.has_pool,
+      longTermStay: listing?.long_term_stay === 1 ? 'Yes' : 'No',
       minGapNight: listing?.min_gap_night ?? '',
       minNights: listing?.min_nights ?? '',
       maxNights: listing?.max_nights ?? '',
@@ -64,59 +71,69 @@ export default function usePropertyDetailContainer() {
     },
 
     houseDetails: {
-      description: listing_descriptionParsed?.[0]?.description || '',
-      wifiUsername: listing?.wifi_username || '',
+      description: typeof listing_descriptionParsed === 'string'
+        ? listing_descriptionParsed
+        : listing_descriptionParsed?.description || '',
+      wifiUsername: listing?.wifi_network || '',
       wifiPassword: listing?.wifi_password || '',
-      doorLockCode: listing?.door_lock_code || '',
+      doorLockCode: listing?.door_lock_code,
     },
 
     bookingDetails: {
-      bookingType: listing?.booking_type || '',
-      guestEligibility: listing?.guest_eligibility,
-      checkIn: listing?.check_in_time || '',
-      checkOut: listing?.check_out_time || '',
+      bookingType: listing?.prices?.instant_booking === 1 ? 'Instant' : 'Request',
+      guestEligibility: listing?.guest_eligibility === 1,
+      checkIn: dayjs(listing?.check_in_time, "HH:mm:ss").format("hh:mm a") || '',
+      checkOut: dayjs(listing?.check_out_time, "HH:mm:ss").format("hh:mm a") || '',
     },
 
     guidelines: {
       arrivalGuide: listing?.arrival_guide || '',
-      houseRules: listing?.house_rules || '',
-      checkoutInstructions: listing?.checkout_instructions || '',
+      houseRules: listing?.house_rule || '',
+      checkoutInstructions: listing?.cleaning_instructions || '',
     },
 
     cancelPolicies: {
-      airbnb: listing?.cancel_policy_airbnb || '',
-      gathern: listing?.cancel_policy_gathern || '',
-      booking: listing?.cancel_policy_booking || '',
+      airbnb: listing?.airbnb_cancellation_policy || '',
+      gathern: listing?.gathern_cancellation_policy || '',
+      booking: listing?.bookingCom_cancellation_policy || '',
     },
 
     aiPricing: {
-      pricingMode: listing?.pricing_mode || '',
-      manualOverride: listing?.manual_price_override,
+      pricingMode: listing?.pricing_mode,
+      manualOverride: listing?.manual_price_override === 1 ? true : false,
     },
 
     pricing: {
-      weekday: listing?.weekday_base_price
-        ? `SAR ${listing.weekday_base_price}`
+      weekday: listing?.prices?.weekday
+        ? `SAR ${listing.prices.weekday}`
         : '',
-      weekend: listing?.weekend_base_price
-        ? `SAR ${listing.weekend_base_price}`
+      weekend: listing?.prices?.weekend
+        ? `SAR ${listing.prices.weekend}`
         : '',
-      discount: listing?.discount || '',
-      tax: listing?.tax_vat || '',
-      markup: listing?.markup_price || '',
-      cleaning: listing?.cleaning_fee || '',
-      airbnbDiscount: listing?.airbnb_discount || '',
-      gathernDiscount: listing?.gathern_discount || '',
-      bookingDiscount: listing?.booking_discount || '',
-      extraGuestFee: listing?.extra_guest_fee
-        ? `SAR ${listing.extra_guest_fee}`
+      discount: listing?.discounts ? `${listing.discounts}%` : '',
+      tax: listing?.tax ? `${listing.tax}%` : '',
+      markup: listing?.markup ? `${listing.markup}%` : '',
+      cleaning: listing?.prices?.cleaning_fee
+        ? `SAR ${listing.prices.cleaning_fee}`
+        : '',
+      airbnbDiscount: listing?.prices?.airbnb_discount
+        ? `${listing.prices.airbnb_discount}%`
+        : '',
+      gathernDiscount: listing?.prices?.gathern_discount
+        ? `${listing.prices.gathern_discount}%`
+        : '',
+      bookingDiscount: listing?.prices?.bookingCom_discount
+        ? `${listing.prices.bookingCom_discount}%`
+        : '',
+      extraGuestFee: listing?.prices?.price_per_extra_person
+        ? `SAR ${listing.prices.price_per_extra_person}`
         : '',
     },
 
     disclosure: {
-      cameras: listing?.disclosures?.cameras,
-      noise: listing?.disclosures?.noise,
-      weapons: listing?.disclosures?.weapons,
+      cameras: listing?.exterior_security_camera === 1,
+      noise: listing?.noise_decibel_monitor === 1,
+      weapons: listing?.weapon_on_property === 1,
     },
 
     photos: listing?.photos || {},

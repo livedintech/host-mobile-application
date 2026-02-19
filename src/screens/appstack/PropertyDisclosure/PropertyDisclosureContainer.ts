@@ -25,9 +25,14 @@ export default function usePropertyDisclosureContainer() {
     } = useForm<DisclosureFormValues>({
         resolver: yupResolver(disclosureSchema),
         defaultValues: {
-            securityCameras: routeListing?.disclosures?.cameras ? 'Yes' : '',
-            noiseMonitor: routeListing?.disclosures?.noise ? 'Yes' : '',
-            weaponsOnProperty: routeListing?.disclosures?.weapons ? 'Yes' : '',
+            securityCameras:
+                routeListing?.exterior_security_camera === 1 ? 'Yes' : 'No',
+
+            noiseMonitor:
+                routeListing?.noise_decibel_monitor === 1 ? 'Yes' : 'No',
+
+            weaponsOnProperty:
+                routeListing?.weapon_on_property === 1 ? 'Yes' : 'No',
         },
     });
 
@@ -78,7 +83,8 @@ export default function usePropertyDisclosureContainer() {
         channel_id,
         listing_id: String(listing_id),
         user_id: String(user?.id),
-        save_and_exit: isSaveAndExit ? 1 : 0,
+        // save_and_exit: isSaveAndExit ? 1 : 0,
+        save_and_exit: 0,
         listing: {
             name: propertyDetail?.name || 'New Listing',
             exterior_security_camera: data.securityCameras === 'Yes',

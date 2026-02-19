@@ -108,12 +108,12 @@ const DocumentUploadScreen = () => {
 
         {/* Footer Buttons */}
         <View style={styles.footer}>
-          <AppButton title="Export" onPress={handleExport} />
+          {/* <AppButton title="Export" onPress={handleExport} /> */}
           <AppButton
             title="Save & Exit"
             onPress={handleSubmit(onSaveExit)}
             loading={isLoading}
-            mt={15}
+            // mt={15}
           />
         </View>
 
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  footer: { marginTop: 30 },
+  // footer: { marginTop: 30 },
 
   // Bottom Sheet Styles
   modalOverlay: {

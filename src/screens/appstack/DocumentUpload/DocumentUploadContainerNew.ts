@@ -5,8 +5,7 @@ import { DocumentFormValues, documentUploadSchema } from '@/validation/auth/crea
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation } from '@tanstack/react-query';
-import { CreateListingDetailsPayload, CreateListingDetailsResponse, DocumentUploadPayload } from '@/types/api/createListingTypes';
-import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
+import { CreateListingDetailsResponse, CreateListingDetailsPayload } from '@/types/api/createListingTypes';
 import Toast from 'react-native-toast-message';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -16,6 +15,7 @@ import RNFS from 'react-native-fs';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 import * as yup from 'yup';
+import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 
 // Schema for OTA Account selection
 const otaAccountSchema = yup.object({
@@ -28,7 +28,8 @@ type OtaAccountFormValues = {
 
 export default function useCreateEditListingDocumentUploadContainer() {
   const { params } = useRoute();
-  const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore(); const { user } = useAuthStore();
+  const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+  const { user } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
@@ -41,14 +42,35 @@ export default function useCreateEditListingDocumentUploadContainer() {
     { label: "Sarah's gathern account", value: 'sarah_gathern' },
   ];
 
+  // --- Map existing documents for edit mode ---
+  const mapExistingDocuments = (): DocumentFormValues => ({
+    propertyOwnership: listing?.documents?.ownership?.[0]
+      ? {
+        name: listing.documents.ownership[0].file_name,
+        uri: listing.documents.ownership[0].path,
+        type: 'application/pdf',
+      }
+      : null,
+    authorityLicense: listing?.documents?.authority_license?.[0]
+      ? {
+        name: listing.documents.authority_license[0].file_name,
+        uri: listing.documents.authority_license[0].path,
+        type: 'application/pdf',
+      }
+      : null,
+    nationalId: listing?.documents?.national_id?.[0]
+      ? {
+        name: listing.documents.national_id[0].file_name,
+        uri: listing.documents.national_id[0].path,
+        type: 'application/pdf',
+      }
+      : null,
+  });
+
   // Main form for documents
   const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DocumentFormValues>({
     resolver: yupResolver(documentUploadSchema) as any,
-    defaultValues: {
-      propertyOwnership: listing?.property_ownership_doc ?? null,
-      authorityLicense: listing?.authority_license_doc ?? null,
-      nationalId: listing?.national_id_doc ?? null,
-    },
+    defaultValues: mapExistingDocuments(),
   });
 
   // Separate form for OTA account selection
@@ -141,16 +163,11 @@ export default function useCreateEditListingDocumentUploadContainer() {
   };
 
   const handleExportSubmit = (data: OtaAccountFormValues) => {
-    // Example Export API Call
-    // exportListingApi({ listing_id, ota_account_id: data.ota_account })
     Toast.show({ type: 'success', text1: `Exporting listing to ${data.ota_account}...` });
     setBottomSheetVisible(false);
   };
 
-  const buildPayload = (
-    data: DocumentFormValues,
-    isSaveAndExit: number
-  ): any => {
+  const buildPayload = (data: DocumentFormValues, isSaveAndExit: number): any => {
     const documents: Array<{ url: string; type: string; file_name: string }> = [];
 
     // Swagger types: ownership, authority_license, national_id
@@ -183,34 +200,27 @@ export default function useCreateEditListingDocumentUploadContainer() {
       channel_id,
       listing_id: String(listing_id),
       // save_and_exit: isSaveAndExit ? 1 : 0,
-      save_and_exit:  0,
-
+      save_and_exit: 0,
       documents,
-      // Note: If API expects documents inside 'listing' object, wrap it here.
-      // Based on standard Swagger for files:
       listing: {
-        name: propertyDetail?.name || 'New Listing'
-      }
+        name: propertyDetail?.name || 'New Listing',
+      },
     };
   };
 
   const onSaveExit = (data: DocumentFormValues) => {
-    // 1. Check if at least one document is present
     if (!data.propertyOwnership && !data.authorityLicense && !data.nationalId) {
       Toast.show({ type: 'error', text1: 'Please upload at least one document' });
       return;
     }
 
-    const payload = buildPayload(data, 1); // save_and_exit: 1
+    const payload = buildPayload(data, 1);
 
     if (isEdit) {
       updateListingDetails(payload);
     } else {
       createListingDetailsPayload(payload, {
-        onSuccess: () => {
-          // Complete the flow
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
+        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
       });
     }
   };

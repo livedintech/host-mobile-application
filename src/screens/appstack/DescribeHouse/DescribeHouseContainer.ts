@@ -20,6 +20,20 @@ export default function useDescribeHouseContainer() {
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
+  let listingDescription = '';
+  try {
+    const raw = listing?.listing_descriptions?.[0] ?? '';
+    if (typeof raw === 'string') {
+      const parsed = JSON.parse(raw);
+      listingDescription = parsed?.description || raw;
+    } else {
+      listingDescription = raw?.description || '';
+    }
+  } catch {
+    listingDescription = listing?.listing_descriptions?.[0] ?? '';
+  }
+
+
   // Safe access for edit mode only
   const listingDescriptionRaw = listing?.listing_descriptions?.[0] ?? null;
 
@@ -35,10 +49,10 @@ export default function useDescribeHouseContainer() {
 
   const { control, handleSubmit, formState: { errors }, watch } = useForm<DescribeHouseFormValues>({
     resolver: yupResolver(describeHouseSchema) as any,
-    defaultValues: {
+     defaultValues: {
       name: listing?.name ?? '',
-      listing_descriptions: listingDescriptionParsed?.[0]?.description ?? '',
-      wifi_username: listing?.wifi_username ?? '',
+      listing_descriptions: listingDescription,
+      wifi_username: listing?.wifi_network ?? '',
       wifi_password: listing?.wifi_password ?? '',
       door_lock_code: listing?.door_lock_code ?? '',
     },
@@ -76,23 +90,23 @@ export default function useDescribeHouseContainer() {
   });
 
   const buildPayload = (data: DescribeHouseFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
-  user_id: String(user?.id),
-  channel_id,
-  listing_id: String(listing_id),
-  save_and_exit: isSaveAndExit ? 1 : 0,
-  listing: {
-    name: data.name,
-    listing_desc: data.listing_descriptions, // Swagger key: listing_desc
-    wifi_network: data.wifi_username,         // Swagger key: wifi_network
-    wifi_password: data.wifi_password,
-    door_lock_code: data.door_lock_code,
-    listing_descriptions: [
-      {
-        description: data.listing_descriptions
-      }
-    ]
-  },
-});
+    user_id: String(user?.id),
+    channel_id,
+    listing_id: String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name: data.name,
+      listing_desc: data.listing_descriptions, // Swagger key: listing_desc
+      wifi_network: data.wifi_username,         // Swagger key: wifi_network
+      wifi_password: data.wifi_password,
+      door_lock_code: data.door_lock_code,
+      listing_descriptions: [
+        {
+          description: data.listing_descriptions
+        }
+      ]
+    },
+  });
 
   const onNext = (data: DescribeHouseFormValues) => {
     updateListing({ name: data.name });

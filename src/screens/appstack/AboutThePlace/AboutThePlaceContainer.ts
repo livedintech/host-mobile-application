@@ -11,6 +11,7 @@ import { createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateList
 import { useAuthStore } from '@/store/useAuthStore';
 import STORAGE_CONST from '@/constants/storage';
 import { createListingDetailsApi, CreateUpdateAmenitiesApi, editListingApi, getAmenitiesApi } from '@/services/ createListingService';
+import { queryClient } from '@/services/api';
 
 export default function useAboutThePlaceContainer() {
   const { user, } = useAuthStore();
@@ -31,20 +32,58 @@ export default function useAboutThePlaceContainer() {
   }));
 
   const { control, handleSubmit, formState: { errors } } = useForm<StepTwoFormValues>({
-    resolver: yupResolver(stepTwoSchema),
-    defaultValues: {
-      size_sqm: listing?.size_sqm ? String(listing.size_sqm) : '',
-      bedrooms: listing?.bedrooms ? String(listing.bedrooms) : '',
-      beds: listing?.beds ? String(listing.beds) : '',
-      kitchen: listing?.kitchen === true ? 'true' : listing?.kitchen === false ? 'false' : '',
-      pool: listing?.pool === true ? 'true' : listing?.pool === false ? 'false' : '',
-      long_term_stay: listing?.long_term_stay === true ? 'true' : listing?.long_term_stay === false ? 'false' : '',
-      min_gap_night: listing?.min_gap_night ? String(listing.min_gap_night) : '',
-      min_nights: listing?.min_nights ? String(listing.min_nights) : '',
-      max_nights: listing?.max_nights ? String(listing.max_nights) : '',
-      amenities: listing?.amenities || [],
-    },
-  });
+  resolver: yupResolver(stepTwoSchema),
+  defaultValues: {
+    size_sqm: listing?.property_area
+      ? String(listing.property_area)
+      : '',
+
+    bedrooms: listing?.bedrooms
+      ? String(listing.bedrooms)
+      : '',
+
+    beds: listing?.beds
+      ? String(listing.beds)
+      : '',
+
+    kitchen:
+      listing?.has_kitchen === 1 || listing?.has_kitchen === true
+        ? 'true'
+        : listing?.has_kitchen === 0 || listing?.has_kitchen === false
+        ? 'false'
+        : '',
+
+    pool:
+      listing?.has_pool === 1 || listing?.has_pool === true
+        ? 'true'
+        : listing?.has_pool === 0 || listing?.has_pool === false
+        ? 'false'
+        : '',
+
+    long_term_stay:
+  listing?.long_term_stay === 1 || listing?.long_term_stay === true
+    ? 'true'
+    : listing?.long_term_stay === 0 || listing?.long_term_stay === false
+    ? 'false'
+    : '',
+
+
+    min_gap_night: listing?.min_gap_night
+      ? String(listing.min_gap_night)
+      : '',
+
+    min_nights: listing?.min_nights
+      ? String(listing.min_nights)
+      : '',
+
+    max_nights: listing?.max_nights
+      ? String(listing.max_nights)
+      : '',
+
+    amenities: listing?.amenities || [],
+  },
+});
+
 
   const { data: getAmunitiesResponse, isLoading: isLoadingGetAmunities } = useQuery({
     queryKey: [STORAGE_CONST.AMENITIES],
@@ -67,7 +106,11 @@ export default function useAboutThePlaceContainer() {
   const { mutate: updateAmenities, isPending: isUpdatingAmenities } = useMutation<CreateListingDetailsResponse, Error, createEditAmenitiesPayloadType>({
     mutationFn: CreateUpdateAmenitiesApi,
     onSuccess: () => {
-      Toast.show({ type: 'success', text1: 'Amenities updated successfully' });
+      // Toast.show({ type: 'success', text1: 'Amenities updated successfully' });
+       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+        });
     },
     onError: error => {
       Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
@@ -77,6 +120,10 @@ export default function useAboutThePlaceContainer() {
   const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
     mutationFn: editListingApi,
     onSuccess: ({ message }) => {
+       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+        });
       Toast.show({ type: 'success', text1: message || 'Updated successfully' });
     },
     onError: error => {
@@ -94,7 +141,9 @@ export default function useAboutThePlaceContainer() {
     user_id: String(user?.id),
     channel_id,
     listing_id: String(listing_id),
-    save_and_exit: isSaveAndExit ? 1 : 0,
+    // save_and_exit: isSaveAndExit ? 1 : 0,
+    save_and_exit: 0,
+
     listing: {
       name: propertyDetail?.name || 'New Listing',
       property_area: Number(data.size_sqm), // Swagger key: property_area
@@ -103,6 +152,7 @@ export default function useAboutThePlaceContainer() {
       kitchen: data.kitchen === 'true',
       has_kitchen: data.kitchen === 'true', // Swagger key
       has_pool: data.pool === 'true',       // Swagger key
+      long_term_stay: data.long_term_stay === 'true',
       min_gap_night: Number(data.min_gap_night),
       min_nights: Number(data.min_nights),
       max_nights: Number(data.max_nights),

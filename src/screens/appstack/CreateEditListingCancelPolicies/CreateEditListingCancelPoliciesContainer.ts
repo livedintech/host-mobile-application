@@ -21,19 +21,19 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
 
   // Cancel policy options (can be fetched from API if needed)
   const cancelPolicyOptions = [
-    { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
-    { label: 'Moderate - Guests can cancel up to 5 days before check-in', value: 'moderate' },
-    { label: 'Firm - Guests can cancel up to 30 days before check-in', value: 'firm' },
-    { label: 'Strict - Guests can cancel up to 60 days before check-in', value: 'strict' },
+    { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: '1' },
+    { label: 'Moderate - Guests can cancel up to 5 days before check-in', value: '2' },
+    { label: 'Firm - Guests can cancel up to 30 days before check-in', value: '3' },
+    { label: 'Strict - Guests can cancel up to 60 days before check-in', value: '4' },
   ];
 
   const { control, handleSubmit, formState: { errors } } = useForm<CancelPoliciesFormValues>({
     resolver: yupResolver(cancelPoliciesSchema) as any,
     defaultValues: {
-      cancel_policy_airbnb: listing?.cancel_policy_airbnb ?? '',
-      cancel_policy_gathern: listing?.cancel_policy_gathern ?? '',
-      cancel_policy_booking: listing?.cancel_policy_booking ?? '',
-    },
+    cancel_policy_airbnb: listing?.airbnb_cancellation_policy?.id?.toString() ?? '',
+    cancel_policy_gathern: listing?.gathern_cancellation_policy?.id?.toString() ?? '',
+    cancel_policy_booking: listing?.bookingCom_cancellation_policy?.id?.toString() ?? '',
+  },
   });
 
   // ---- Mutations ----
@@ -70,7 +70,8 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   channel_id,
   listing_id: String(listing_id),
   user_id: String(user?.id),
-  save_and_exit: isSaveAndExit ? 1 : 0,
+  // save_and_exit: isSaveAndExit ? 1 : 0,
+  save_and_exit: 0,
   listing: {
     name: propertyDetail?.name || 'New Listing',
     airbnb_cancellation_policy: data.cancel_policy_airbnb, 

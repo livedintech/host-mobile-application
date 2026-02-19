@@ -22,9 +22,9 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   const { control, handleSubmit, formState: { errors }, watch } = useForm<HouseGuidelinesFormValues>({
     resolver: yupResolver(houseGuidelinesSchema) as any,
     defaultValues: {
-      arrival_guide: listing?.arrival_guide ?? '',
-      house_rules: listing?.house_rules ?? '',
-      checkout_instructions: listing?.checkout_instructions ?? '',
+      arrival_guide: listing?.arrival_guide ?? listing?.listing_descriptions?.[0] ?? '',
+      house_rules: listing?.house_rule ?? '',
+      checkout_instructions: listing?.cleaning_instructions ?? '',
     },
   });
 
@@ -64,7 +64,8 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   channel_id,
   listing_id: String(listing_id),
   user_id: String(user?.id),
-  save_and_exit: isSaveAndExit ? 1 : 0,
+  // save_and_exit: isSaveAndExit ? 1 : 0,
+  save_and_exit:  0,
   listing: {
     name: propertyDetail?.name || 'New Listing',
     arrival_guide: data.arrival_guide,
