@@ -112,8 +112,8 @@ export const useChatContainer = () => {
     refetchInterval: 4000,
     initialPageParam: 1,
     getNextPageParam: lastPage =>
-      lastPage.current_page < lastPage.total_pages
-        ? lastPage.current_page + 1
+      lastPage?.current_page < lastPage?.total_pages
+        ? lastPage?.current_page + 1
         : undefined,
   });
 
@@ -243,6 +243,8 @@ export const useChatContainer = () => {
     enabled: !!user?.id,
   });
 
+  console.log("chatlistings",listings)
+
   const transformedCities = citiesData.map(
     (item: { name: string; id: string }) => ({
       label: item.name,
@@ -251,9 +253,9 @@ export const useChatContainer = () => {
   );
 
   const transformedListings =
-    listings?.data?.map((item: { title: string; id: string }) => ({
+    listings?.data?.map((item: { title: string; listing_id: string }) => ({
       label: item.title,
-      value: item.id,
+      value: item.listing_id,
     })) || [];
 
   const transformedApartmentTypes = [

@@ -3,7 +3,11 @@ import Toast from 'react-native-toast-message';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
-import { reset as navigationReset, resetToRoutes } from '@/services/navigationService';
+import {
+  navigate,
+  reset as navigationReset,
+  resetToRoutes,
+} from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import {
   getTaskChecklistDetail,
@@ -96,6 +100,37 @@ const CreateChecklistContainer = () => {
     },
   });
 
+  // const createTaskMutation = useMutation({
+  //   mutationFn: async () => {
+  //     const checklistIds = selectedItems.map(id => Number(id));
+  //     if (checklistIds.length > 0) {
+  //       await editChecklistItem({
+  //         task_id: taskId!,
+  //         ids: checklistIds,
+  //       });
+  //     }
+  //     await taskCreateStatusUpdate({ task_id: taskId!, is_draft: 0 });
+  //   },
+  //   onSuccess: () => {
+  //     const isFromChat = draft?.fromChat;
+  //     const conversationId = draft?.conversation_id;
+
+  //     clearDraft();
+  //     Toast.show({ type: 'success', text1: 'Task created successfully' });
+  //     // navigate(NavigationRoutes.APP_STACK.TASK);
+  //     // navigationReset(NavigationRoutes.APP_STACK.TASK);
+  //     // resetToRoutes([
+  //     //   { name: NavigationRoutes.APP_STACK.ROOT_STACK },
+  //     //   { name: NavigationRoutes.APP_STACK.TASK }
+  //     // ] as any);
+
+  //     navigationReset(NavigationRoutes.APP_STACK.ROOT_STACK, {
+  //   screen: NavigationRoutes.APP_STACK.TASK,
+  // });
+
+  //   },
+  // });
+
   const createTaskMutation = useMutation({
     mutationFn: async () => {
       const checklistIds = selectedItems.map(id => Number(id));
@@ -108,19 +143,33 @@ const CreateChecklistContainer = () => {
       await taskCreateStatusUpdate({ task_id: taskId!, is_draft: 0 });
     },
     onSuccess: () => {
+      const isFromChat = draft?.fromChat;
+      const conversationId = draft?.conversation_id;
+      console.log('isFromChat', isFromChat);
+      console.log('conversationId', conversationId);
+
       clearDraft();
       Toast.show({ type: 'success', text1: 'Task created successfully' });
-      // navigate(NavigationRoutes.APP_STACK.TASK);
-      // navigationReset(NavigationRoutes.APP_STACK.TASK);
-      // resetToRoutes([
-      //   { name: NavigationRoutes.APP_STACK.ROOT_STACK }, 
-      //   { name: NavigationRoutes.APP_STACK.TASK }
-      // ] as any);
 
-      navigationReset(NavigationRoutes.APP_STACK.ROOT_STACK, {
-    screen: NavigationRoutes.APP_STACK.TASK,
-  });
-  
+      if (isFromChat && conversationId) {
+        // 🔹 NAVIGATE TO CHAT
+        // navigate(NavigationRoutes.APP_STACK.CHAT, {
+        //   id: conversationId,
+        //   listing_id: draft?.listingSelection
+        // });
+        navigate(NavigationRoutes.APP_STACK.CHAT, {
+          screen: NavigationRoutes.APP_STACK.CHAT_DETAIL,
+          params: { 
+            conversation_id: conversationId, 
+            listing_id: draft?.listingSelection 
+          },
+        });
+      } else {
+        // 🔹 DEFAULT NAVIGATION TO TASK LIST
+        navigationReset(NavigationRoutes.APP_STACK.ROOT_STACK, {
+          screen: NavigationRoutes.APP_STACK.TASK,
+        });
+      }
     },
   });
 

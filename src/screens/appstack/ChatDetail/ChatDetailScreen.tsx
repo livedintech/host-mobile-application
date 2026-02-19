@@ -102,8 +102,6 @@ const getTimeLabel = (date: string | Date): string => {
   return messageDate.format('dddd'); // e.g. "Tuesday"
 };
 
-
-
 const shouldShowTimeLabel = (
   currentMessage: ChatMessage,
   previousMessage: ChatMessage | null,
@@ -154,7 +152,9 @@ const processMessagesWithTimeLabels = (
 const ChatScreen = () => {
   const { user } = useAuthStore();
   const route = useRoute();
-  const params = route?.params as { conversation_id?: string, listing_id: string } | undefined;
+  const params = route?.params as
+    | { conversation_id?: string; listing_id: string }
+    | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
 
@@ -201,25 +201,25 @@ const ChatScreen = () => {
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-
   useEffect(() => {
-  const showSub = Keyboard.addListener('keyboardDidShow', (e) => {
-    setKeyboardHeight(e.endCoordinates.height);
-  });
+    const showSub = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
 
-  const hideSub = Keyboard.addListener('keyboardDidHide', () => {
-    setKeyboardHeight(0);
-  });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
 
-  return () => {
-    showSub.remove();
-    hideSub.remove();
-  };
-}, []);
-
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // State for highlighting scrolled message
-  const [highlightedMessageId, setHighlightedMessageId] = useState<string | number | null>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<
+    string | number | null
+  >(null);
 
   // ✅ State to track if user is at bottom of chat
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -236,7 +236,9 @@ const ChatScreen = () => {
   );
 
   // ✅ Track previous message count to detect new messages
-  const [prevMessageCount, setPrevMessageCount] = useState(messagesWithTimeLabels.length);
+  const [prevMessageCount, setPrevMessageCount] = useState(
+    messagesWithTimeLabels.length,
+  );
 
   // ✅ Handle new messages - auto scroll only if user is at bottom
   useEffect(() => {
@@ -349,9 +351,13 @@ const ChatScreen = () => {
     const isSelected = selectedMessageId === item._id;
     const isHighlighted = highlightedMessageId === item._id;
 
+    console.log("testtingflatlist", isHost)
+
     return (
       <View>
-        {item.showTimeLabel && item.timeLabel && renderTimeLabel(item.timeLabel)}
+        {item.showTimeLabel &&
+          item.timeLabel &&
+          renderTimeLabel(item.timeLabel)}
 
         <View style={[styles.messageWrapper, isHost && styles.hostMessage]}>
           {isAutomated && (
@@ -471,7 +477,6 @@ const ChatScreen = () => {
               }
               mt={8}
             />
-
           </Pressable>
         </View>
       </View>
@@ -514,7 +519,7 @@ const ChatScreen = () => {
 
           {/* ✅ Dynamic conversation name from API */}
           <AppText
-            text={conversationData?.name || "Chat"}
+            text={conversationData?.name || 'Chat'}
             fontSize={18}
             type="Bold"
             color={Colors.MIDNIGHT}
@@ -549,7 +554,9 @@ const ChatScreen = () => {
               <MenuOption
                 style={styles.menuItem}
                 onSelect={() => {
-                  navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, { conversation_id });
+                  navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, {
+                    conversation_id,
+                  });
                 }}
               >
                 <AppText
@@ -559,14 +566,14 @@ const ChatScreen = () => {
                 />
                 <Svgicons path="expandIcon" size={24} />
               </MenuOption>
-              <MenuOption style={[styles.menuItem, { borderBottomWidth: 0 }]}>
+              {/* <MenuOption style={[styles.menuItem, { borderBottomWidth: 0 }]}>
                 <AppText
                   text="Add Internal Notes"
                   fontSize={14}
                   color={Colors.CHARCOAL}
                 />
                 <Svgicons path="note" size={24} />
-              </MenuOption>
+              </MenuOption> */}
             </MenuOptions>
           </Menu>
         </View>
@@ -596,10 +603,13 @@ const ChatScreen = () => {
           <Animated.View
             style={[
               styles.scrollToBottomButton,
-              { opacity: scrollButtonOpacity }
+              { opacity: scrollButtonOpacity },
             ]}
           >
-            <Pressable onPress={scrollToBottom} style={styles.scrollButtonInner}>
+            <Pressable
+              onPress={scrollToBottom}
+              style={styles.scrollButtonInner}
+            >
               <Svgicons path="ChevronDownIcon" size={20} color={Colors.WHITE} />
               {unreadCount > 0 && (
                 <View style={styles.unreadBadge}>
@@ -658,7 +668,11 @@ const ChatScreen = () => {
                   }
                   setSelectedMessageId(null);
                   setSelectedMessageData(null);
-                  navigate(NavigationRoutes.APP_STACK.CREATE_TASK)
+                  navigate(NavigationRoutes.APP_STACK.CREATE_TASK, {
+                    listing_id: conversationData?.listing_id,
+                    fromChat: true,
+                    conversation_id: conversationData?.id,
+                  });
                 }}
               >
                 <View style={styles.menuTextContainer}>
@@ -692,56 +706,59 @@ const ChatScreen = () => {
         )}
 
         {/* AI Suggestion */}
-        {showAiSuggestion && (
-          <View style={styles.aiWrapper}>
-            <AppText
-              text="A.I Suggestions"
-              fontSize={11}
-              color={Colors.GREY_SHADOW}
-              mb={8}
-            />
-            <View style={styles.aiBubble}>
-              <Pressable
-                onPress={() => setShowAiSuggestion(false)}
-                style={styles.aiClose}
-              >
-                <Svgicons path="closeIcon" size={12} />
-              </Pressable>
+        {
+          // showAiSuggestion
+          false && (
+            <View style={styles.aiWrapper}>
               <AppText
-                text="Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival."
-                fontSize={13}
-                color={Colors.BRUNSWICK_GREEN}
-                mb={10}
+                text="A.I Suggestions"
+                fontSize={11}
+                color={Colors.GREY_SHADOW}
+                mb={8}
               />
-              <View style={styles.aiFooter}>
+              <View style={styles.aiBubble}>
                 <Pressable
-                  onPress={() => {
-                    setShowAiSuggestion(false);
-                    setInputText(
-                      'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.',
-                    );
-                  }}
+                  onPress={() => setShowAiSuggestion(false)}
+                  style={styles.aiClose}
                 >
-                  <AppText
-                    text="Edit"
-                    fontSize={12}
-                    type="Bold"
-                    color={Colors.PINE_FOREST}
-                  />
+                  <Svgicons path="closeIcon" size={12} />
                 </Pressable>
-                <Pressable onPress={sendAiSuggestion}>
-                  <AppText
-                    text="Send Now"
-                    fontSize={12}
-                    type="Bold"
-                    ml={15}
-                    color={Colors.PINE_FOREST}
-                  />
-                </Pressable>
+                <AppText
+                  text="Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival."
+                  fontSize={13}
+                  color={Colors.BRUNSWICK_GREEN}
+                  mb={10}
+                />
+                <View style={styles.aiFooter}>
+                  <Pressable
+                    onPress={() => {
+                      setShowAiSuggestion(false);
+                      setInputText(
+                        'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.',
+                      );
+                    }}
+                  >
+                    <AppText
+                      text="Edit"
+                      fontSize={12}
+                      type="Bold"
+                      color={Colors.PINE_FOREST}
+                    />
+                  </Pressable>
+                  <Pressable onPress={sendAiSuggestion}>
+                    <AppText
+                      text="Send Now"
+                      fontSize={12}
+                      type="Bold"
+                      ml={15}
+                      color={Colors.PINE_FOREST}
+                    />
+                  </Pressable>
+                </View>
               </View>
             </View>
-          </View>
-        )}
+          )
+        }
 
         {/* Reply Indicator in Input Area */}
         {replyingToMessage && (
@@ -767,7 +784,12 @@ const ChatScreen = () => {
         )}
 
         {/* Input Area */}
-        <View style={[styles.inputArea, { paddingBottom: keyboardHeight > 0 ? 15 : 12 }]}>
+        <View
+          style={[
+            styles.inputArea,
+            { paddingBottom: keyboardHeight > 0 ? 15 : 12 },
+          ]}
+        >
           <Pressable
             onPress={() => {
               Keyboard.dismiss();
@@ -820,22 +842,24 @@ const ChatScreen = () => {
               fontSize={16}
             />
             <View style={styles.repliesGrid}>
-              {SAVED_REPLIES.map((reply: { id: number; body: string; title: string }) => (
-                <Pressable
-                  key={reply?.id}
-                  style={styles.replyChip}
-                  onPress={() => {
-                    setInputText(reply?.body);
-                    setShowSavedReplies(false);
-                  }}
-                >
-                  <AppText
-                    text={reply?.title}
-                    fontSize={13}
-                    color={Colors.BRUNSWICK_GREEN}
-                  />
-                </Pressable>
-              ))}
+              {SAVED_REPLIES.map(
+                (reply: { id: number; body: string; title: string }) => (
+                  <Pressable
+                    key={reply?.id}
+                    style={styles.replyChip}
+                    onPress={() => {
+                      setInputText(reply?.body);
+                      setShowSavedReplies(false);
+                    }}
+                  >
+                    <AppText
+                      text={reply?.title}
+                      fontSize={13}
+                      color={Colors.BRUNSWICK_GREEN}
+                    />
+                  </Pressable>
+                ),
+              )}
             </View>
           </View>
         )}
@@ -1061,7 +1085,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
     padding: 5,
-    zIndex: 99999
+    zIndex: 99999,
   },
   aiFooter: {
     flexDirection: 'row',

@@ -16,7 +16,7 @@ const ReviewManagementScreen = () => {
     <ButtonView
       onPress={() =>
         navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-          reviewData: item,
+          booking_id: item.booking_id,
         })
       }
       mb={15}
@@ -35,7 +35,7 @@ const ReviewManagementScreen = () => {
           )
         }
         onTalkToGuest={() =>
-          navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { id: item.id })
+          navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: item.thread_id })
         }
         onRequestRating={() => console.log('Request Rating')}
       />

@@ -20,6 +20,9 @@ export interface TaskDraft {
   checklistData: ChecklistSection[];
   selectedChecklistItems: string[];
 
+  fromChat?: boolean;
+  conversation_id?: string | number | null;
+
 }
 
 interface TaskDraftStore {

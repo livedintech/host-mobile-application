@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -8,6 +8,8 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
+// IMPORT YOUR API HERE
 
 const DetailRow = ({
   label,
@@ -35,11 +37,39 @@ const DetailRow = ({
 );
 
 const ReviewDetailScreen = ({ route }: any) => {
-  // Extract dynamic data from navigation params
-  console.log('routeparams', route.params);
-  const bookingData = route?.params?.bookingData || {};
+  // 1. Existing flow: Extract data from params
+  const initialBookingData = route?.params?.bookingData || {};
+  const booking_id = route?.params?.booking_id;
 
-  // Destructure for easier access based on your specific API structure
+  // 2. State for API handling
+  const [apiData, setApiData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Only call API if bookingData wasn't passed and we have an ID
+    if (Object.keys(initialBookingData).length === 0 && booking_id) {
+      fetchBookingDetails();
+    }
+  }, [booking_id]);
+
+  const fetchBookingDetails = async () => {
+    try {
+      setIsLoading(true);
+      const formattedId = `O${booking_id}`;
+      const response = await getBookingDetailsApi(formattedId);
+      // Adjust based on your API structure (e.g., response.data.data)
+      setApiData(response?.data || response);
+    } catch (error) {
+      console.error('Failed to fetch booking details:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 3. Determine which data to use (Passed data vs Fetched data)
+  const bookingData = Object.keys(initialBookingData).length > 0 ? initialBookingData : (apiData || {});
+
+  // Destructure for easier access
   const {
     guest,
     property,
@@ -79,6 +109,15 @@ const ReviewDetailScreen = ({ route }: any) => {
       </View>
     </View>
   );
+
+  // Show loader only when fetching from API
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.PINE_FOREST} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -289,7 +328,6 @@ const ReviewDetailScreen = ({ route }: any) => {
               label="Check-out Time:"
               value={property?.check_out_time || 'N/A'}
             />
-            {/* Note: Map specific dates if available in booking_dates */}
             <DetailRow
               label="Confirmation Code:"
               value={property?.confirmation_code || 'N/A'}

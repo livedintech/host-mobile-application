@@ -109,6 +109,8 @@ export const SERVICE_CONFIG_URLS = {
     COUNTRIES: `${authController}/countries`,
     STATES: `${authController}/states?country_id={country_id}`,
     CITIES: `${authController}/cities?state_id={state_id}`,
-    DISTRICTS: `${authController}/districts?city_id={city_id}`
+    DISTRICTS: `${authController}/districts?city_id={city_id}`,
+    DELETE_CHAT:`${authController}/chat/inbox/soft-delete/{message_id}`,
+
   },
 };

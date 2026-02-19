@@ -4,13 +4,22 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
 import { FlatList } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import STORAGE_CONST from '@/constants/storage';
-import { ChatMessageSendApi, getChatDetailApi, getChatDetailSavedRepliesApi } from '@/services/chatApi';
+import {
+  ChatMessageSendApi,
+  getChatDetailApi,
+  getChatDetailSavedRepliesApi,
+  deleteChatMessageApi
+} from '@/services/chatApi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
 import Toast from 'react-native-toast-message';
-import { createChatSnoozeByConversationIdResponseType, sendMessagePayloadType } from '@/types/api/chatTypes';
+import {
+  createChatSnoozeByConversationIdResponseType,
+  sendMessagePayloadType,
+} from '@/types/api/chatTypes';
 
 export interface ChatMessage {
   _id: string | number;
@@ -74,14 +83,17 @@ interface SavedReply {
 // ];
 
 // Helper function to transform API data to ChatMessage format
-const transformApiMessages = (apiMessages: any[], currentUserId: number): ChatMessage[] => {
+const transformApiMessages = (
+  apiMessages: any[],
+  currentUserId: number,
+): ChatMessage[] => {
   if (!Array.isArray(apiMessages)) {
     console.warn('apiMessages is not an array:', apiMessages);
     return [];
   }
 
   return apiMessages.map(msg => ({
-    _id: msg._id,
+    _id: msg._id || Math.random().toString(),
     text: msg.text || '',
     createdAt: new Date(msg.created_at),
     user: {
@@ -93,17 +105,22 @@ const transformApiMessages = (apiMessages: any[], currentUserId: number): ChatMe
     },
     image: msg.media?.type === 'image' ? msg.media.url : undefined,
     video: msg.media?.type === 'video' ? msg.media.url : undefined,
-    document: msg.media?.type === 'document' ? {
-      uri: msg.media.url,
-      name: msg.media.name || 'Document',
-      type: msg.media.mime_type || 'application/octet-stream',
-      size: msg.media.size || 0,
-    } : undefined,
-    replyTo: msg.reply_to ? {
-      _id: msg.reply_to._id,
-      text: msg.reply_to.text || 'Media message',
-      userName: msg.reply_to.user?.name || 'User',
-    } : undefined,
+    document:
+      msg.media?.type === 'document'
+        ? {
+            uri: msg.media.url,
+            name: msg.media.name || 'Document',
+            type: msg.media.mime_type || 'application/octet-stream',
+            size: msg.media.size || 0,
+          }
+        : undefined,
+    replyTo: msg.reply_to
+      ? {
+          _id: msg.reply_to._id,
+          text: msg.reply_to.text || 'Media message',
+          userName: msg.reply_to.user?.name || 'User',
+        }
+      : undefined,
   }));
 };
 
@@ -111,10 +128,11 @@ export const useChatContainer = () => {
   const { user } = useAuthStore();
   console.log('user', user?.id);
 
-
   // Safely get params
   const route = useRoute();
-  const params = route?.params as { conversation_id?: string, listing_id?: string } | undefined;
+  const params = route?.params as
+    | { conversation_id?: string; listing_id?: string }
+    | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
 
@@ -126,7 +144,9 @@ export const useChatContainer = () => {
   // UI State
   const [showAiSuggestion, setShowAiSuggestion] = useState(true);
   const [showSavedReplies, setShowSavedReplies] = useState(false);
-  const [selectedMessageId, setSelectedMessageId] = useState<string | number | null>(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<
+    string | number | null
+  >(null);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
 
   // State to handle image preview
@@ -134,11 +154,13 @@ export const useChatContainer = () => {
   const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
 
   // Message State
-  const [selectedMessageData, setSelectedMessageData] = useState<ChatMessage | null>(null);
+  const [selectedMessageData, setSelectedMessageData] =
+    useState<ChatMessage | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, isHost: false });
 
   // Reply State
-  const [replyingToMessage, setReplyingToMessage] = useState<ChatMessage | null>(null);
+  const [replyingToMessage, setReplyingToMessage] =
+    useState<ChatMessage | null>(null);
 
   // Ref for FlatList to control scrolling
   const flatListRef = useRef<FlatList>(null);
@@ -148,38 +170,40 @@ export const useChatContainer = () => {
 
   // Get Messages of a conversation
   const { data, refetch, isLoading } = useQuery({
-    queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, conversation_id],
+    queryKey: [
+      STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL,
+      conversation_id,
+    ],
     queryFn: () => getChatDetailApi({ conversation_id }),
     enabled: Boolean(conversation_id),
     refetchInterval: 4000,
   });
 
   // Get Saved Replies of a conversation
- const { data: savedReplies } = useQuery({
-  queryKey: [
-    STORAGE_CONST.GET_CHAT_DETAIL_SAVED_REPLIES,
-    listing_id,
-  ],
-  queryFn: () =>
-    getChatDetailSavedRepliesApi({
-      listing_id,
-      is_active: true,
-      offset: 0,
-      limit: 0,
-    }),
-});
+  const { data: savedReplies } = useQuery({
+    queryKey: [STORAGE_CONST.GET_CHAT_DETAIL_SAVED_REPLIES, listing_id],
+    queryFn: () =>
+      getChatDetailSavedRepliesApi({
+        listing_id,
+        is_active: true,
+        offset: 0,
+        limit: 0,
+      }),
+  });
 
-  // Create User 
-  const {
-    mutate: chatMessagesSend,
-  } = useMutation<createChatSnoozeByConversationIdResponseType, Error, sendMessagePayloadType>({
+  // Create User
+  const { mutate: chatMessagesSend } = useMutation<
+    createChatSnoozeByConversationIdResponseType,
+    Error,
+    sendMessagePayloadType
+  >({
     mutationFn: ChatMessageSendApi,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.GET_CHAT_LIST]
+        queryKey: [STORAGE_CONST.GET_CHAT_LIST],
       });
       queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.GET_CHAT_DETAIL]
+        queryKey: [STORAGE_CONST.GET_CHAT_DETAIL],
       });
     },
     onError: error => {
@@ -192,13 +216,44 @@ export const useChatContainer = () => {
 
   console.log('API Data:', data);
 
+
+  // Delete Message Mutation
+  const { mutate: deleteChatMessage } = useMutation({
+    mutationFn: (messageId: string | number) => deleteChatMessageApi({ message_id: messageId }),
+    onSuccess: () => {
+      // Invalidate queries to refresh chat list and detail from server
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_CHAT_LIST],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL,
+          conversation_id,
+        ],
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'Message deleted successfully',
+      });
+    },
+    onError: (error: any) => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Failed to delete message',
+      });
+      // Optional: refetch to sync UI if optimistic update failed
+      refetch();
+    },
+  });
+  
+
   // Update messages when API data changes
-  useEffect(() => {
-    if (data?.messages && user?.id) {
-      // ✅ Pass current user ID to the transform function
-      const transformedMessages = transformApiMessages(data.messages, Number(user.id));
-      console.log('Transformed Messages:', transformedMessages);
-      console.log('Logged-in user ID:', user?.id);
+useEffect(() => {
+    if (data?.messages) { // Don't block on user?.id here
+      const transformedMessages = transformApiMessages(
+        data.messages,
+        Number(user?.id || 0), // Fallback to 0 if not loaded yet
+      );
       setMessages(transformedMessages);
     }
     if (data?.conversation) {
@@ -228,10 +283,10 @@ export const useChatContainer = () => {
       },
       replyTo: replyingToMessage
         ? {
-          _id: replyingToMessage._id,
-          text: replyingToMessage.text || 'Media message',
-          userName: replyingToMessage.user.name,
-        }
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
         : undefined,
     };
 
@@ -280,14 +335,14 @@ export const useChatContainer = () => {
         createdAt: new Date(),
         user: {
           _id: Number(user?.id),
-          name: user?.name || 'You'
+          name: user?.name || 'You',
         },
         replyTo: replyingToMessage
           ? {
-            _id: replyingToMessage._id,
-            text: replyingToMessage.text || 'Media message',
-            userName: replyingToMessage.user.name,
-          }
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
           : undefined,
       };
 
@@ -320,7 +375,7 @@ export const useChatContainer = () => {
       createdAt: new Date(),
       user: {
         _id: Number(user?.id),
-        name: user?.name || 'You'
+        name: user?.name || 'You',
       },
     };
     addMessage(aiMessage);
@@ -367,25 +422,29 @@ export const useChatContainer = () => {
   }, []);
 
   // Scroll to specific message
-  const scrollToMessage = useCallback((messageId: string | number, messages: ChatMessage[]) => {
-    const messageIndex = messages.findIndex(msg => msg._id === messageId);
+  const scrollToMessage = useCallback(
+    (messageId: string | number, messages: ChatMessage[]) => {
+      const messageIndex = messages.findIndex(msg => msg._id === messageId);
 
-    if (messageIndex !== -1 && flatListRef.current) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({
-          index: messageIndex,
-          animated: true,
-          viewPosition: 0.5,
-        });
-      }, 100);
-    }
-  }, []);
+      if (messageIndex !== -1 && flatListRef.current) {
+        setTimeout(() => {
+          flatListRef.current?.scrollToIndex({
+            index: messageIndex,
+            animated: true,
+            viewPosition: 0.5,
+          });
+        }, 100);
+      }
+    },
+    [],
+  );
 
   const handleCopyText = useCallback((text: string) => {
-    console.log('Copy text:', text);
+    if (text) {
+      Clipboard.setString(text);
+    }
     setSelectedMessageId(null);
   }, []);
-
   const handleTaskCreation = useCallback((text: string) => {
     console.log('Create task:', text);
     setSelectedMessageId(null);
@@ -396,12 +455,15 @@ export const useChatContainer = () => {
     setSelectedMessageId(null);
   }, []);
 
-  const handleDeleteMessage = useCallback((messageId: string | number) => {
+const handleDeleteMessage = useCallback((messageId: string | number) => {
+    // 1. Optimistic UI update: Remove from local state immediately
     setMessages(prev => prev.filter(msg => msg._id !== messageId));
     setSelectedMessageId(null);
+    setSelectedMessageData(null);
 
-    // TODO: Call API to delete message
-  }, []);
+    // 2. Trigger API Call
+    deleteChatMessage(messageId);
+  }, [deleteChatMessage]);
 
   // Media Handlers
   const handleCamera = useCallback(async () => {
@@ -421,15 +483,15 @@ export const useChatContainer = () => {
         createdAt: new Date(),
         user: {
           _id: Number(user?.id),
-          name: user?.name || 'You'
+          name: user?.name || 'You',
         },
         image: image.path,
         replyTo: replyingToMessage
           ? {
-            _id: replyingToMessage._id,
-            text: replyingToMessage.text || 'Media message',
-            userName: replyingToMessage.user.name,
-          }
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
           : undefined,
       };
 
@@ -467,15 +529,15 @@ export const useChatContainer = () => {
         createdAt: new Date(),
         user: {
           _id: Number(user?.id),
-          name: user?.name || 'You'
+          name: user?.name || 'You',
         },
         video: video.path,
         replyTo: replyingToMessage
           ? {
-            _id: replyingToMessage._id,
-            text: replyingToMessage.text || 'Media message',
-            userName: replyingToMessage.user.name,
-          }
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
           : undefined,
       };
 
@@ -519,16 +581,16 @@ export const useChatContainer = () => {
         createdAt: new Date(),
         user: {
           _id: Number(user?.id),
-          name: user?.name || 'You'
+          name: user?.name || 'You',
         },
         image: media.mime?.includes('video') ? undefined : media.path,
         video: media.mime?.includes('video') ? media.path : undefined,
         replyTo: replyingToMessage
           ? {
-            _id: replyingToMessage._id,
-            text: replyingToMessage.text || 'Media message',
-            userName: replyingToMessage.user.name,
-          }
+              _id: replyingToMessage._id,
+              text: replyingToMessage.text || 'Media message',
+              userName: replyingToMessage.user.name,
+            }
           : undefined,
       };
 
@@ -565,7 +627,7 @@ export const useChatContainer = () => {
           createdAt: new Date(),
           user: {
             _id: Number(user?.id),
-            name: user?.name || 'You'
+            name: user?.name || 'You',
           },
           document: {
             uri: res.uri,
@@ -575,10 +637,10 @@ export const useChatContainer = () => {
           },
           replyTo: replyingToMessage
             ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
+                _id: replyingToMessage._id,
+                text: replyingToMessage.text || 'Media message',
+                userName: replyingToMessage.user.name,
+              }
             : undefined,
         };
 
@@ -603,6 +665,7 @@ export const useChatContainer = () => {
     }
   }, [addMessage, replyingToMessage, user]);
 
+  console.log("messages", )
   return {
     // State
     messages,
@@ -648,7 +711,7 @@ export const useChatContainer = () => {
     handleReplyToMessage,
     cancelReply,
     scrollToMessage,
-    SAVED_REPLIES:savedReplies?.data?.items,
+    SAVED_REPLIES: savedReplies?.data?.items,
     refetch,
   };
 };
