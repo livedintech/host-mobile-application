@@ -6,7 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-
+import { useRoute } from '@react-navigation/native';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -16,13 +16,16 @@ import TextareaField from '@/components/molecules/Input/TextareaField';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-
-import CreateTaskContainer from '../../containers/CreateTask/CreateTaskContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import { navigate } from '@/services/navigationService';
+import CreateTaskContainer from '../../containers/CreateTask/CreateTaskContainer';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { navigate } from '@/services/navigationService';
 
 const CreateTaskScreen = () => {
+  const route = useRoute<any>();
+  // Extract the listing_id from the navigation params
+  const preSelectedListingId = route.params?.listing_id;
+
   const {
     control,
     errors,
@@ -33,11 +36,7 @@ const CreateTaskScreen = () => {
     isCleaningCategory,
     wordCount,
     isPending,
-  } = CreateTaskContainer();
-
-  const handleAddVendor = () => {
-    navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, { mode: 'create' });
-  };
+  } = CreateTaskContainer(preSelectedListingId, route.params);
 
   return (
     <KeyboardAvoidingView
@@ -48,7 +47,6 @@ const CreateTaskScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
         <View style={styles.header}>
           <AppText
             text="Create New Task"
@@ -59,7 +57,6 @@ const CreateTaskScreen = () => {
           <Svgicons path="File_Document" size={30} />
         </View>
 
-        {/* Task Name Field */}
         <InputField
           name="title"
           control={control}
@@ -67,45 +64,42 @@ const CreateTaskScreen = () => {
           label="Task Name:"
           placeholder="Enter task name"
           rules={{
-            required: 'Task name is required',
+            required: 'Task name is required', // This is your appropriate error message
             minLength: {
               value: 3,
-              message: 'Task name must be at least 3 characters',
+              message: 'Title must be at least 3 characters long',
             },
           }}
         />
 
-        {/* Task Description Field */}
         <TextareaField
           name="description"
           control={control}
           errors={errors}
           label="Task Description"
-          placeholder="Enter task description"
-          multiline
           descriptionLength={wordCount}
           wordLimit={250}
+          sparkleIcon
+          multiline
           rules={{
-            required: 'Description is required',
-            minLength: {
-              value: 10,
-              message: 'Description must be at least 10 characters',
+            required: 'Please provide a task description',
+            maxLength: {
+              value: 250,
+              message: 'Description cannot exceed 250 words',
             },
           }}
         />
 
-        {/* Category Dropdown */}
         <DropdownField
           name="task_type_id"
           control={control}
           errors={errors}
           label="Category"
           data={categoryOptions}
-          placeholder="Select Category"
-          rules={{ required: 'Category is required' }}
+          rules={{ required: 'Please select a task category' }}
         />
 
-        {/* Listing Selection Dropdown */}
+        {/* This Dropdown will now auto-fill because listing_id is set in the Container's useEffect */}
         <DropdownField
           name="listing_id"
           control={control}
@@ -113,110 +107,56 @@ const CreateTaskScreen = () => {
           label="Listing Selection"
           data={listingOptions}
           placeholder="Select Listing"
-          rules={{ required: 'Listing selection is required' }}
+          rules={{ required: 'Please select a listing' }}
         />
 
-        {/* Conditional Fields - Only show if NOT cleaning */}
         {!isCleaningCategory && (
           <>
-            {/* Select Date Field */}
             <DateTimeInputField
               name="start_date"
               control={control}
               errors={errors}
               label="Select Date"
-              placeholder="mm/dd/yy"
+              placeholder="Select Date"
               mode="date"
-              leftIcon={
-                <Svgicons
-                  path="Calendar_Days"
-                  width={16}
-                  height={16}
-                  color={Colors.BRUNSWICK_GREEN}
-                />
-              }
               rules={{ required: 'Date is required' }}
             />
-
-            {/* Select Start Time Field */}
             <DateTimeInputField
               name="start_time"
               control={control}
               errors={errors}
               label="Select Start Time"
-              placeholder="--:--"
+              placeholder="Select Start Time"
               mode="time"
-              leftIcon={
-                <Svgicons
-                  path="Clock"
-                  width={16}
-                  height={16}
-                  color={Colors.BRUNSWICK_GREEN}
-                />
-              }
               rules={{ required: 'Start time is required' }}
             />
-
-            {/* Select End Time Field */}
             <DateTimeInputField
               name="end_time"
               control={control}
               errors={errors}
               label="Select End Time"
-              placeholder="--:--"
+              placeholder="Select End Time"
               mode="time"
-              leftIcon={
-                <Svgicons
-                  path="Clock"
-                  width={16}
-                  height={16}
-                  color={Colors.BRUNSWICK_GREEN}
-                />
-              }
               rules={{ required: 'End time is required' }}
             />
           </>
         )}
 
-        {/* Assign Task Section */}
         <View style={styles.dropdownSection}>
           <DropdownField
             name="vendor_id"
             control={control}
             errors={errors}
             label="Assign Task"
-            data={userOptions}
             placeholder="Select User"
-            rules={{ required: 'User assignment is required' }}
+            data={userOptions}
+            rules={{ required: 'Please assign this task to a vendor' }}
           />
-
-          {userOptions.length === 0 && (
-            <ButtonView
-              onPress={handleAddVendor}
-              style={styles.emptyVendorAction}
-            >
-              <View style={styles.actionContent}>
-                <Svgicons path="plusIcon" size={12} color={Colors.PINE_FOREST} />
-                <AppText
-                  text="No User found. Add a User here."
-                  fontSize={13}
-                  color={Colors.PINE_FOREST}
-                  type="Bold"
-                  ml={8}
-                />
-              </View>
-            </ButtonView>
-          )}
         </View>
 
-        {/* Next Button */}
         <AppButton
           title="Next"
           onPress={onSubmitForm}
-          backgroundColor={Colors.WHITE}
-          borderColor={Colors.ARGENT}
-          color={Colors.PINE_FOREST}
-          style={styles.nextButton}
           loading={isPending}
           disabled={isPending}
         />
@@ -226,14 +166,10 @@ const CreateTaskScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.WHITE,
-  },
+  container: { flex: 1, backgroundColor: Colors.WHITE },
   scrollContent: {
     paddingHorizontal: Metrics.scale(16),
     paddingVertical: Metrics.verticalScale(16),
-    paddingBottom: Metrics.verticalScale(24),
   },
   header: {
     flexDirection: 'row',
@@ -242,29 +178,7 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(24),
     gap: 8,
   },
-  nextButton: {
-    marginTop: Metrics.verticalScale(24),
-    marginBottom: Metrics.verticalScale(8),
-  },
-  dropdownSection: {
-    marginBottom: Metrics.verticalScale(18),
-  },
-  emptyVendorAction: {
-    backgroundColor: '#F0F7F4', // A very light green/mint to match PINE_FOREST theme
-    borderWidth: 1,
-    borderTopWidth: 0, // Removes top border so it merges with dropdown
-    borderColor: Colors.SMOOTH_GREY,
-    marginTop: Metrics.verticalScale(-19), // Pulls it up to sit flush against the dropdown
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
-    paddingVertical: Metrics.verticalScale(12),
-    paddingHorizontal: Metrics.scale(16),
-  },
-  actionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  dropdownSection: { marginBottom: Metrics.verticalScale(18) },
 });
 
 export default CreateTaskScreen;

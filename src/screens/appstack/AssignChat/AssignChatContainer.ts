@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { assignUserToChatApi, GetAssignChatToUserApi } from '@/services/chatApi';
@@ -42,7 +42,8 @@ export default function useAssignChatContainer() {
             Toast.show({ type: 'success', text1: message });
             queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHAT_LIST] });
             queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHAT_DETAIL] });
-            navigate(NavigationRoutes.APP_STACK.CHAT);
+            // navigate(NavigationRoutes.APP_STACK.CHAT);
+            goBack(2);
         },
         onError: error => {
             Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });

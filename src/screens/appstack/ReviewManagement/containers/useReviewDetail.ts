@@ -21,7 +21,7 @@ const useReviewDetail = (id: string | number) => {
   });
 
   // Calculate rating (e.g., 3/2 = 1.5 or 10/2 = 5)
-  const starRating = reviewDetail ? reviewDetail.overall_score / 2 : 0;
+  const starRating = reviewDetail ? reviewDetail.overall.stars : 0;
 
   return {
     reviewDetail,

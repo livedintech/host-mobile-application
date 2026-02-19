@@ -203,3 +203,21 @@ export const markReadChatApi = async (payload: markReadChatPayloadType) => {
     }
     throw response;
 };
+
+type deleteChatMessagePayloadType = {
+  message_id: string | number;
+};
+export const deleteChatMessageApi = async (payload: deleteChatMessagePayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.DELETE_CHAT,
+        { message_id: payload.message_id }, // maps to {message_id} in URL
+    );
+
+    const { ok, response, data } = await apiService.delete(url, {}); 
+
+    if (ok) {
+        return data;
+    }
+
+    throw new Error(response?.message || 'Failed to delete message');
+};
