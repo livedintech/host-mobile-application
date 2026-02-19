@@ -10,7 +10,7 @@ import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 export default function useManageListingContainer() {
   const { user } = useAuthStore();
-  const { updateListing, setListingId, setChannelId } = useCreateListingStore();
+  const { updateListing, setListingId, setChannelId,channel_id } = useCreateListingStore();
 
   const { data, refetch, isLoading } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
@@ -28,7 +28,7 @@ export default function useManageListingContainer() {
     updateListing({
       name,
     })
-    setChannelId("ccb15c62-d5fa-46d3-8686-f137d0609c69")
+    setChannelId(channel_id)
     setListingId(id.toString())
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
   };

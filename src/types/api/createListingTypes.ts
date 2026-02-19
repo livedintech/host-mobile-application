@@ -103,18 +103,23 @@ export interface CreateListingDetailsResponse {
 }
 
 export interface createListingPricingPayload {
-  channel_id: string;
-  listing_id: string;
-  listing_currency: string;
   user_id: number;
+  listing_id: string;
+  channel_id: string;
+  listing_currency: string;
+  save_and_exit: number; // Swagger requirement
   prices: {
     weekday: number;
     weekend: number;
+    cleaning_fee: number;
+    security_deposit: number;
+    price_per_extra_person: number; // Added
     discount: number;
     tax: number;
     markup: number;
-    cleaning_fee: number;
-    security_deposit: number;
+    airbnb_discount: number; // Added
+    gathern_discount: number; // Added
+    bookingCom_discount: number; // Added (Exact Swagger name)
   };
 }
 

@@ -25,6 +25,7 @@ const CreateEditListingAiDynamicPricingScreen = () => {
     manualOverride,
     handleModeSelect,
     Controller,
+    PRICING_MODES
   } = useCreateEditListingAiDynamicPricingContainer();
 
   return (
@@ -50,57 +51,40 @@ const CreateEditListingAiDynamicPricingScreen = () => {
           <Svgicons path="cardIcon" size={24} />
         </View>
 
-        {/* Conservative Mode Card */}
-        <ButtonView
-          activeOpacity={0.8}
-          onPress={() => handleModeSelect('conservative')}
-          style={[
-            styles.card,
-            selectedMode === 'conservative' && styles.cardSelected,
-          ]}
-        >
-          <AppText text="Conservative Mode" fontSize={18} type="SemiBold" color={Colors.PINE_FOREST} mb={12} />
-          <View style={styles.bulletList}>
-            <View style={styles.bulletRow}>
-              <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
-              <AppText text="Stable occupancy 📈" fontSize={14} color={Colors.SUPER_GREY} style={styles.bulletText} />
-            </View>
-            <View style={styles.bulletRow}>
-              <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
-              <AppText text="Fewer vacant nights" fontSize={14} color={Colors.SUPER_GREY} style={styles.bulletText} />
-            </View>
-            <View style={styles.bulletRow}>
-              <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
-              <AppText text="Slightly lower nightly rate" fontSize={14} color={Colors.SUPER_GREY} style={styles.bulletText} />
-            </View>
-          </View>
-        </ButtonView>
+        {PRICING_MODES.map(mode => (
+          <ButtonView
+            key={mode.id}
+            activeOpacity={0.8}
+            onPress={() => handleModeSelect(mode.id)}
+            style={[
+              styles.card,
+              selectedMode === mode.id && styles.cardSelected,
+            ]}
+          >
+            <AppText
+              text={mode.title}
+              fontSize={18}
+              type="SemiBold"
+              color={Colors.PINE_FOREST}
+              mb={12}
+            />
 
-        {/* Aggressive Mode Card */}
-        <ButtonView
-          activeOpacity={0.8}
-          onPress={() => handleModeSelect('aggressive')}
-          style={[
-            styles.card,
-            selectedMode === 'aggressive' && styles.cardSelected,
-          ]}
-        >
-          <AppText text="Aggressive Mode" fontSize={18} type="SemiBold" color={Colors.PINE_FOREST} mb={12} />
-          <View style={styles.bulletList}>
-            <View style={styles.bulletRow}>
-              <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
-              <AppText text="Higher revenue per stay 💰" fontSize={14} color={Colors.SUPER_GREY} style={styles.bulletText} />
+            <View style={styles.bulletList}>
+              {mode.points.map((point, index) => (
+                <View key={index} style={styles.bulletRow}>
+                  <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
+                  <AppText
+                    text={point}
+                    fontSize={14}
+                    color={Colors.SUPER_GREY}
+                    style={styles.bulletText}
+                  />
+                </View>
+              ))}
             </View>
-            <View style={styles.bulletRow}>
-              <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
-              <AppText text="Premium positioning" fontSize={14} color={Colors.SUPER_GREY} style={styles.bulletText} />
-            </View>
-            <View style={styles.bulletRow}>
-              <AppText text="• " fontSize={14} color={Colors.SUPER_GREY} />
-              <AppText text="Lower booking volume" fontSize={14} color={Colors.SUPER_GREY} style={styles.bulletText} />
-            </View>
-          </View>
-        </ButtonView>
+          </ButtonView>
+        ))}
+
 
         {/* Manual Price Override Toggle */}
         <Controller

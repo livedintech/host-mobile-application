@@ -30,8 +30,8 @@ export default function useConfirmAddressContainer() {
   const isEdit  = Boolean(listing?.id);
 
   // ── Form ──────────────────────────────────────────────────────────────────
-  // Every dropdown stores primitive number id — dropdown matches with ===
-  // Full name/cca2 are looked up from API arrays at submit time
+  // API returns nested objects: { id, name } for country, state, city, district
+  // We store primitive id in form, and lookup full object at submit time
 
   const {
     control,
@@ -41,13 +41,13 @@ export default function useConfirmAddressContainer() {
   } = useForm<AddressFormValues>({
     resolver: yupResolver(addressSchema),
     defaultValues: {
-      name:         listing?.name         || 'New Listing',
-      country_code: listing?.country_id   ?? undefined,
-      state:        listing?.state_id     ?? undefined,
-      city:         listing?.city_id      ?? undefined,
-      district:     listing?.district_id  ?? undefined,
-      address:      listing?.street       || '',
-      postalAddress: listing?.apt         || '',
+      name:          listing?.name || 'New Listing',
+      country_code:  listing?.country?.id ?? undefined,
+      state:         listing?.state?.id ?? undefined,
+      city:          listing?.city?.id ?? undefined,
+      district:      listing?.district?.id ?? undefined,
+      address:       listing?.street || listing?.address || '',
+      postalAddress: listing?.apt || '',
     },
   });
 
@@ -57,24 +57,24 @@ export default function useConfirmAddressContainer() {
 
   // ── Cascading Queries ─────────────────────────────────────────────────────
 
-  const { data: countriesData = [] } = useQuery({
+  const { data: countriesData = [], isLoading:isLoadingCountriesData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_COUNTRIES],
     queryFn:  getListingCountriesApi,
   });
 
-  const { data: statesData = [] } = useQuery({
+  const { data: statesData = [],isLoading:isLoadingStatesData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_STATE, selectedCountryId],
     queryFn:  () => getListingStateApi({ country_id: Number(selectedCountryId) }),
     enabled:  Boolean(selectedCountryId),
   });
 
-  const { data: citiesData = [] } = useQuery({
+  const { data: citiesData = [], isLoading:isLoadingCitiesData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_CITIES, selectedStateId],
     queryFn:  () => getListingCityApi({ state_id: Number(selectedStateId) }),
     enabled:  Boolean(selectedStateId),
   });
 
-  const { data: districtsData = [] } = useQuery({
+  const { data: districtsData = [],isLoading:isLoadingDistrictsData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_DISTRICTS, selectedCityId],
     queryFn:  () => getListingDistrictsApi({ city_id: Number(selectedCityId) }),
     enabled:  Boolean(selectedCityId),
@@ -111,30 +111,32 @@ export default function useConfirmAddressContainer() {
 
   // ── Build Payload ─────────────────────────────────────────────────────────
 
-const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => {
-  const countryObj = findCountry(Number(data.country_code));
-  const stateObj = findState(Number(data.state));
-  const cityObj = findCity(Number(data.city));
+  const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => {
+    const countryObj = findCountry(Number(data.country_code));
+    const stateObj = findState(Number(data.state));
+    const cityObj = findCity(Number(data.city));
+    const districtObj = findDistrict(Number(data.district));
 
-  return {
-    user_id: Number(user?.id),
-    channel_id,
-    listing_id: String(listing_id),
-    save_and_exit: isSaveAndExit ? 1 : 0,
-    listing: {
-      name: propertyDetail?.name || 'New Listing',
-      street: data.address,
-      apt: data.postalAddress,
-      zipcode: data.postalAddress, // Swagger key: zipcode
-      city: cityObj?.name,
-      state: stateObj?.name,
-      district: findDistrict(Number(data.district))?.name,
-      country_code: countryObj?.sortname,
-      lat: propertyDetail?.lat ?? 24.7136,
-      lng: propertyDetail?.lng ?? 46.6753,
-    },
+    return {
+      user_id: String(user?.id),
+      channel_id,
+      listing_id: String(listing_id),
+      // save_and_exit: isSaveAndExit ? 1 : 0,
+      save_and_exit:0,
+      listing: {
+        name: propertyDetail?.name || 'New Listing',
+        street: data.address,
+        apt: data.postalAddress,
+        zipcode: data.postalAddress,
+        city: cityObj?.name || '',
+        state: stateObj?.name || '',
+        district: districtObj?.name || '',
+        country_code: countryObj?.sortname || countryObj?.code || '',
+        lat: propertyDetail?.lat ?? 24.7136,
+        lng: propertyDetail?.lng ?? 46.6753,
+      },
+    };
   };
-};
 
   // ── Mutations ─────────────────────────────────────────────────────────────
 
@@ -169,12 +171,16 @@ const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const onNext = (data: AddressFormValues) => {
     // 1. Update Store
+    const countryObj = findCountry(Number(data.country_code));
+    const stateObj = findState(Number(data.state));
+    const cityObj = findCity(Number(data.city));
+
     updateListing({
       street: data.address,
       apt: data.postalAddress,
-      country_code: findCountry(Number(data.country_code))?.sortname || '',
-      state: findState(Number(data.state))?.name || '',
-      city: findCity(Number(data.city))?.name || '',
+      country_code: countryObj?.sortname || countryObj?.code || '',
+      state: stateObj?.name || '',
+      city: cityObj?.name || '',
     });
 
     // 2. API Hit & Navigate
@@ -206,7 +212,7 @@ const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): 
     onNext,
     onSaveExit,
     navigation,
-    isLoading: (isPending && !isIdle) || (isPendingEdit && !isIdleEdit),
+    isLoading: (isPending && !isIdle) || (isPendingEdit && !isIdleEdit) || isLoadingCountriesData || isLoadingStatesData || isLoadingCitiesData || isLoadingDistrictsData,
     isEdit,
     countriesOptions,
     statesOptions,

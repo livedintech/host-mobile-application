@@ -13,12 +13,15 @@ import usePropertyDetailContainer from './PropertyDetailContainer';
 import Metrics from '@/utility/Metrics';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 
 const PropertyDetailScreen = () => {
   const { propertyData, handleEditSection, handleMenuAction, refetch, isLoading, handleEditPhotosVideos } = usePropertyDetailContainer();
-  
+
+
+
   const isOwnership = propertyData?.documents?.ownership?.length > 0;
-  const isLicense = propertyData?.documents?.license?.length > 0;
+  const isLicense = propertyData?.documents?.authority_license?.length > 0;
   const isNational_id = propertyData?.documents?.national_id?.length > 0;
 
   const InfoCard = ({ title, icon, onEdit, children }: any) => (
@@ -175,7 +178,7 @@ const PropertyDetailScreen = () => {
 
         {/* House Guidelines */}
         {(propertyData.guidelines.arrivalGuide || propertyData.guidelines.houseRules || propertyData.guidelines.checkoutInstructions) && (
-          <InfoCard title="House Guidelines" icon="bookOpenIcon" onEdit={() => handleEditSection('Guidelines')}>
+          <InfoCard title="House Guidelines" icon="bookIcon" onEdit={() => handleEditSection('Guidelines')}>
             {propertyData.guidelines.arrivalGuide && (
               <>
                 <AppText text="Arrival Guide:" type="Bold" color={Colors.BRUNSWICK_GREEN} mb={5} />
@@ -200,25 +203,30 @@ const PropertyDetailScreen = () => {
         {/* Booking Cancel Policies */}
         {(propertyData.cancelPolicies.airbnb || propertyData.cancelPolicies.gathern || propertyData.cancelPolicies.booking) && (
           <InfoCard title="Booking Cancel Policies" icon="clipboardIcon" onEdit={() => handleEditSection('CancelPolicies')}>
-            <LabelValue label="Cancel Policy Airbnb" value={propertyData.cancelPolicies.airbnb} />
-            <LabelValue label="Cancel Policy Gathern" value={propertyData.cancelPolicies.gathern} />
-            <LabelValue label="Cancel Policy Booking.com" value={propertyData.cancelPolicies.booking} />
+            <LabelValue label="Cancel Policy Airbnb" value={propertyData.cancelPolicies?.airbnb?.title} />
+            <LabelValue label="Cancel Policy Gathern" value={propertyData.cancelPolicies?.gathern?.title} />
+            <LabelValue label="Cancel Policy Booking.com" value={propertyData.cancelPolicies?.booking?.title} />
           </InfoCard>
         )}
 
         {/* AI Dynamic Pricing */}
-        {propertyData.aiPricing.pricingMode && (
-          <InfoCard title="AI Dynamic Pricing" icon="chartIcon" onEdit={() => handleEditSection('AIPricing')}>
-            <LabelValue label="Conservative Mode" value={propertyData.aiPricing.pricingMode === 'conservative' ? 'Selected' : ''} />
-            <LabelValue label="Manual Price Override" value={propertyData.aiPricing.manualOverride} />
-          </InfoCard>
-        )}
+        <InfoCard title="AI Dynamic Pricing" icon="cardIcon" onEdit={() => handleEditSection('AIPricing')}>
+          <AppText text={propertyData.aiPricing.pricingMode === 1 ? 'Conservative Mode' : 'Aggressive Mode'} color={Colors.PINE_FOREST} fontSize={16} />
+          {/* <LabelValue label="Conservative Mode" value={propertyData.aiPricing.pricingMode === 1 ? 'Conservative Mode' : 'Aggressive Mode'} /> */}
+        </InfoCard>
+
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <AppText text={'Manual Price Override'} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+            <CustomSwitch value={propertyData?.aiPricing?.manualOverride} onToggle={() => handleEditSection('AIPricing')} />
+          </View>
+        </View>
 
         {/* Pricing */}
         <InfoCard title="Pricing" icon="cardIcon" onEdit={() => handleEditSection('Pricing')}>
           <LabelValue label="Weekday Base Price" value={propertyData.pricing.weekday} />
           <LabelValue label="Weekend Base Price" value={propertyData.pricing.weekend} />
-          <LabelValue label="Discount" value={propertyData.pricing.discount} />
+          <LabelValue label="Discount" value={propertyData.discounts} />
           <LabelValue label="Tax(VAT)" value={propertyData.pricing.tax} />
           <LabelValue label="Markup Price" value={propertyData.pricing.markup} />
           <LabelValue label="Cleaning Fee" value={propertyData.pricing.cleaning} />
@@ -233,7 +241,7 @@ const PropertyDetailScreen = () => {
           <InfoCard title="Property Disclosure Details" icon="bookIcon" onEdit={() => handleEditSection('Disclosure')}>
             <LabelValue label="Exterior Security Camera" value={propertyData.disclosure.cameras} />
             <LabelValue label="Noise Hidden Monitor" value={propertyData.disclosure.noise} />
-            <LabelValue label="Dangerous Weapon on Property" value={propertyData.disclosure.weapons} />
+            <LabelValue label="Weapon on Property" value={propertyData.disclosure.weapons} />
           </InfoCard>
         )}
 

@@ -204,17 +204,18 @@ export type CancelPoliciesFormValues = {
 // ─── AI Dynamic Pricing Schema ───────────────────────────────────────────────
 export const aiDynamicPricingSchema = yup.object({
   pricing_mode: yup
-    .string()
+    .number()
+    .typeError('Please select a pricing mode')
     .required('Please select a pricing mode')
-    .oneOf(['conservative', 'aggressive'], 'Invalid pricing mode'),
+    .oneOf([1, 2], 'Invalid pricing mode'),
 
   manual_price_override: yup
     .boolean()
-    .required('Manual price override selection is required'),
+    .default(false),
 });
 
 export type AiDynamicPricingFormValues = {
-  pricing_mode: string;
+  pricing_mode: number | null;
   manual_price_override: boolean;
 };
 // ─────────────────────────────────────────────────────────────────────────────
@@ -264,14 +265,15 @@ export const pricingSchema = yup.object().shape({
 export type PricingFormValues = {
   weekday_base_price: string;
   weekend_base_price: string;
+  cleaning_fee: string;
+  security_deposit?: string; // Optional if not in form
+  extra_guest_fee: string;
   discount: string;
   tax_vat: string;
   markup_price: string;
-  cleaning_fee: string;
   airbnb_discount: string;
   gathern_discount: string;
   booking_discount: string;
-  extra_guest_fee: string;
 };
 
 export const disclosureSchema = yup.object().shape({
