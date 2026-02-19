@@ -36,4 +36,6 @@ export const Colors = {
   GATHEM_PURPLE: '#8C05ED',
   DEEP_TEAL: '#07524D',
   STEEL_GREY: '#717375',
+  LIGHT_GRAY: '#D5D5D5',
+
 };

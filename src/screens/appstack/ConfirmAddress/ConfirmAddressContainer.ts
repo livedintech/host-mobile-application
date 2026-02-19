@@ -1,175 +1,203 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { addressSchema } from '@/validation/auth/createListingSchemas';
+import { addressSchema, AddressFormValues, CountryOption } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { useMutation } from '@tanstack/react-query';
-import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
 import Toast from 'react-native-toast-message';
 import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
-
-export type AddressFormValues = {
-  name: string;
-  country_code: { cca2?: string, name?: string, callingCode?:number };
-  state: string;
-  city: string;
-  street: string;
-  apt: string;
-};
+import { 
+    createListingDetailsApi,
+  editListingApi,
+  getListingCityApi,
+  getListingCountriesApi,
+  getListingDistrictsApi,
+  getListingStateApi,
+ } from '@/services/ createListingService';
 
 export default function useConfirmAddressContainer() {
-  const { params } = useRoute();
-  const { updateListing, listing_id, channel_id,listing:propertyDetail } = useCreateListingStore();
-  const { user } = useAuthStore()
+  const { params } = useRoute<any>();
+  const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+  const { user } = useAuthStore();
   const navigation = useNavigation();
+
   const listing = params?.paramData?.listing;
-  const isEdit = Boolean(listing?.id);
-  console.log('isEdits',listing);
-  
+  const isEdit  = Boolean(listing?.id);
+
+  // ── Form ──────────────────────────────────────────────────────────────────
+  // Every dropdown stores primitive number id — dropdown matches with ===
+  // Full name/cca2 are looked up from API arrays at submit time
 
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<AddressFormValues>({
     resolver: yupResolver(addressSchema),
     defaultValues: {
-      name: listing?.name || 'New Listing',
-      country_code: { cca2: listing?.country_code || '',name: listing?.country_name },
-      state: listing?.state || '',
-      city: listing?.city || '',
-      street: listing?.street || '',
-      apt: listing?.apt || '',
+      name:         listing?.name         || 'New Listing',
+      country_code: listing?.country_id   ?? undefined,
+      state:        listing?.state_id     ?? undefined,
+      city:         listing?.city_id      ?? undefined,
+      district:     listing?.district_id  ?? undefined,
+      address:      listing?.street       || '',
+      postalAddress: listing?.apt         || '',
     },
   });
 
+  const selectedCountryId = watch('country_code');
+  const selectedStateId   = watch('state');
+  const selectedCityId    = watch('city');
 
-  console.log('errors',propertyDetail?.name);
-  
+  // ── Cascading Queries ─────────────────────────────────────────────────────
 
-  const {
-    mutate: createListingDetailsPayload,
-    isPending,
-    isIdle,
-  } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
-    mutationFn: createListingDetailsApi,
-    onSuccess: ({ message }) => {
-      Toast.show({
-        type: 'success',
-        text1: message || 'Something went wrong',
-      });
-      navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
-    },
-    onError: error => {
-      Toast.show({
-        type: 'error',
-        text1: error.message || 'Something went wrong',
-      });
-    },
-  });
-  // editListingApi
-  const {
-    mutate: editListingDetailsPayload,
-    isPending:isPendingEdit,
-    isIdle:isIdleEdit,
-  } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
-    mutationFn: editListingApi,
-    onSuccess: ({ message }) => {
-       queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
-      });
-      Toast.show({
-        type: 'success',
-        text1: message || 'Something went wrong',
-      });
-
-      goBack()
-    },
-    onError: error => {
-      Toast.show({
-        type: 'error',
-        text1: error.message || 'Something went wrong',
-      });
-    },
+  const { data: countriesData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_COUNTRIES],
+    queryFn:  getListingCountriesApi,
   });
 
-
-  const onNext = (data: AddressFormValues) => {
-    updateListing({
-      country_code: data.country_code?.cca2 || '',
-      state: data.state,
-      city: data.city,
-      street: data.street,
-      apt: data.apt,
-      name: propertyDetail?.name || 'New Listing', 
-    });
-    const payload = {
-      channel_id,
-      listing_id,
-      user_id: Number(user?.id),
-      listing: {
-        country_code: data.country_code?.cca2 || '',
-        state: data.state,
-        city: data.city,
-        street: data.street,
-        apt: data.apt,
-        lat: propertyDetail.lat,
-        lng: propertyDetail.lng,
-        name: 'New Listing', 
-      }
-    }
-    createListingDetailsPayload(payload)
-  };
-
-const onSaveExit = (data: AddressFormValues) => {
-  updateListing({
-    country_code: data.country_code?.cca2 || '',
-    state: data.state,
-    city: data.city,
-    street: data.street,
-    apt: data.apt,
+  const { data: statesData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_STATE, selectedCountryId],
+    queryFn:  () => getListingStateApi({ country_id: Number(selectedCountryId) }),
+    enabled:  Boolean(selectedCountryId),
   });
 
-  const payload = {
-    channel_id,
-    listing_id,
+  const { data: citiesData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_CITIES, selectedStateId],
+    queryFn:  () => getListingCityApi({ state_id: Number(selectedStateId) }),
+    enabled:  Boolean(selectedStateId),
+  });
+
+  const { data: districtsData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_DISTRICTS, selectedCityId],
+    queryFn:  () => getListingDistrictsApi({ city_id: Number(selectedCityId) }),
+    enabled:  Boolean(selectedCityId),
+  });
+
+  // ── Dropdown Options — value is always primitive id ───────────────────────
+
+  const countriesOptions = countriesData.map((item: any) => ({
+    label: item.name,
+    value: item.id,         // number — matches form value with ===
+  }));
+
+  const statesOptions = statesData.map((item: any) => ({
+    label: item.name,
+    value: item.id,
+  }));
+
+  const citiesOptions = citiesData.map((item: any) => ({
+    label: item.name,
+    value: item.id,
+  }));
+
+  const districtsOptions = districtsData.map((item: any) => ({
+    label: item.name,
+    value: item.id,
+  }));
+
+  // ── Lookup helpers — id → full object at submit time ─────────────────────
+
+  const findCountry  = (id: number) => countriesData.find((c: any) => c.id === id);
+  const findState    = (id: number) => statesData.find((s: any)    => s.id === id);
+  const findCity     = (id: number) => citiesData.find((c: any)    => c.id === id);
+  const findDistrict = (id: number) => districtsData.find((d: any) => d.id === id);
+
+  // ── Build Payload ─────────────────────────────────────────────────────────
+
+const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => {
+  const countryObj = findCountry(Number(data.country_code));
+  const stateObj = findState(Number(data.state));
+  const cityObj = findCity(Number(data.city));
+
+  return {
     user_id: Number(user?.id),
+    channel_id,
+    listing_id: String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      country_code: data.country_code?.cca2 || '',
-      state: data.state,
-      city: data.city,
-      street: data.street,
-      apt: data.apt,
-      lat: propertyDetail.lat,
-      lng: propertyDetail.lng,
       name: propertyDetail?.name || 'New Listing',
+      street: data.address,
+      apt: data.postalAddress,
+      zipcode: data.postalAddress, // Swagger key: zipcode
+      city: cityObj?.name,
+      state: stateObj?.name,
+      district: findDistrict(Number(data.district))?.name,
+      country_code: countryObj?.sortname,
+      lat: propertyDetail?.lat ?? 24.7136,
+      lng: propertyDetail?.lng ?? 46.6753,
     },
   };
-
-  // 👉 EDIT MODE
-  if (isEdit) {
-    editListingDetailsPayload(payload);
-  } else {
-    // 👉 CREATE MODE
-    createListingDetailsPayload(payload, {
-      onSuccess: () => {
-        navigate(
-          NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
-        );
-      },
-    });
-  }
 };
 
+  // ── Mutations ─────────────────────────────────────────────────────────────
 
+  const { mutate: createListingDetailsPayload, isPending, isIdle } =
+    useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+      mutationFn: createListingDetailsApi,
+      onSuccess: ({ message }) => {
+        Toast.show({ type: 'success', text1: message || 'Created successfully' });
+        navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
+      },
+      onError: (error) => {
+        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+      },
+    });
+
+  const { mutate: editListingDetailsPayload, isPending: isPendingEdit, isIdle: isIdleEdit } =
+    useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+      mutationFn: editListingApi,
+      onSuccess: ({ message }) => {
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+        });
+        Toast.show({ type: 'success', text1: message || 'Saved successfully' });
+        goBack();
+      },
+      onError: (error) => {
+        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+      },
+    });
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+  const onNext = (data: AddressFormValues) => {
+    // 1. Update Store
+    updateListing({
+      street: data.address,
+      apt: data.postalAddress,
+      country_code: findCountry(Number(data.country_code))?.sortname || '',
+      state: findState(Number(data.state))?.name || '',
+      city: findCity(Number(data.city))?.name || '',
+    });
+
+    // 2. API Hit & Navigate
+    createListingDetailsPayload(buildPayload(data, false), {
+      onSuccess: () => navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE),
+    });
+  };
+
+  const onSaveExit = (data: AddressFormValues) => {
+    updateListing({
+      street: data.address,
+      apt: data.postalAddress,
+    });
+
+    const payload = buildPayload(data, true);
+    if (isEdit) {
+      editListingDetailsPayload(payload);
+    } else {
+      createListingDetailsPayload(payload, {
+        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+      });
+    }
+  };
 
   return {
     control,
@@ -178,7 +206,11 @@ const onSaveExit = (data: AddressFormValues) => {
     onNext,
     onSaveExit,
     navigation,
-    isLoading: isPending && !isIdle || isPendingEdit && !isIdleEdit,
-    isEdit
+    isLoading: (isPending && !isIdle) || (isPendingEdit && !isIdleEdit),
+    isEdit,
+    countriesOptions,
+    statesOptions,
+    citiesOptions,
+    districtsOptions,
   };
 }

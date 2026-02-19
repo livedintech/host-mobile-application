@@ -10,6 +10,7 @@ import { Alert } from 'react-native';
 export default function usePropertyDetailContainer() {
   const { user } = useAuthStore();
   const { listing_id } = useCreateListingStore();
+  
   const { data, refetch, isLoading } = useQuery({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
     queryFn: () =>
@@ -21,22 +22,18 @@ export default function usePropertyDetailContainer() {
   });
 
   const listing = data?.data?.listing;
-  const photos = data?.data?.listing?.photos || [];
-  const documents = data?.data?.listing?.documents || [];
-  const rawDescription =
-    data?.data?.listing?.listing_descriptions?.[0];
+  const rawDescription = data?.data?.listing?.listing_descriptions?.[0];
 
   const listing_descriptionParsed =
     typeof rawDescription === 'string'
       ? (() => {
-        try {
-          return JSON.parse(rawDescription);
-        } catch {
-          return [];
-        }
-      })()
+          try {
+            return JSON.parse(rawDescription);
+          } catch {
+            return [];
+          }
+        })()
       : [];
-
 
   const propertyData = {
     title: listing?.name || '',
@@ -52,10 +49,15 @@ export default function usePropertyDetailContainer() {
       .join(', '),
 
     placeInfo: {
+      size: listing?.size_sqm || '',
       bedrooms: listing?.bedrooms ?? '',
       beds: listing?.beds ?? '',
-      bathrooms: listing?.bathrooms ?? '',
-      minStay: listing?.min_nights ?? '',
+      kitchen: listing?.kitchen,
+      pool: listing?.pool,
+      longTermStay: listing?.long_term_stay,
+      minGapNight: listing?.min_gap_night ?? '',
+      minNights: listing?.min_nights ?? '',
+      maxNights: listing?.max_nights ?? '',
       features: Array.isArray(listing?.amenities)
         ? listing.amenities.join(', ')
         : '',
@@ -63,30 +65,52 @@ export default function usePropertyDetailContainer() {
 
     houseDetails: {
       description: listing_descriptionParsed?.[0]?.description || '',
-      bookingType: listing?.instant_booking
-        ? 'Instant Booking'
-        : 'Request to Book',
+      wifiUsername: listing?.wifi_username || '',
+      wifiPassword: listing?.wifi_password || '',
+      doorLockCode: listing?.door_lock_code || '',
+    },
+
+    bookingDetails: {
+      bookingType: listing?.booking_type || '',
+      guestEligibility: listing?.guest_eligibility,
       checkIn: listing?.check_in_time || '',
       checkOut: listing?.check_out_time || '',
     },
 
+    guidelines: {
+      arrivalGuide: listing?.arrival_guide || '',
+      houseRules: listing?.house_rules || '',
+      checkoutInstructions: listing?.checkout_instructions || '',
+    },
+
+    cancelPolicies: {
+      airbnb: listing?.cancel_policy_airbnb || '',
+      gathern: listing?.cancel_policy_gathern || '',
+      booking: listing?.cancel_policy_booking || '',
+    },
+
+    aiPricing: {
+      pricingMode: listing?.pricing_mode || '',
+      manualOverride: listing?.manual_price_override,
+    },
+
     pricing: {
-      weekday: listing?.prices?.weekday
-        && `SAR ${listing.prices.weekday}`,
-
-      weekend: listing?.prices?.weekend
-        && `SAR ${listing.prices.weekend}`,
-
-      discount: listing?.prices?.discount
-        && `SAR ${listing.prices.discount}`,
-
-      tax: listing?.prices?.tax
-        && `SAR ${listing.prices.tax}`,
-
-      markup: listing?.prices?.markup && `SAR ${listing.prices.markup}`,
-
-      cleaning: listing?.prices?.cleaning_fee
-        && `SAR ${listing.prices.cleaning_fee}`,
+      weekday: listing?.weekday_base_price
+        ? `SAR ${listing.weekday_base_price}`
+        : '',
+      weekend: listing?.weekend_base_price
+        ? `SAR ${listing.weekend_base_price}`
+        : '',
+      discount: listing?.discount || '',
+      tax: listing?.tax_vat || '',
+      markup: listing?.markup_price || '',
+      cleaning: listing?.cleaning_fee || '',
+      airbnbDiscount: listing?.airbnb_discount || '',
+      gathernDiscount: listing?.gathern_discount || '',
+      bookingDiscount: listing?.booking_discount || '',
+      extraGuestFee: listing?.extra_guest_fee
+        ? `SAR ${listing.extra_guest_fee}`
+        : '',
     },
 
     disclosure: {
@@ -99,57 +123,52 @@ export default function usePropertyDetailContainer() {
     documents: listing?.documents || {},
   };
 
-
   const handleEditSection = (section: string) => {
-
-    if (section === 'Address') {
-      navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, { paramData: data?.data })
-    }
-    if (section === 'PlaceInfo') {
-      navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE, { paramData: data?.data })
-    }
-    if (section === 'HouseDetails') {
-      navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE, { paramData: data?.data })
-    }
-    if (section === 'Pricing') {
-      navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING, { paramData: data?.data })
-    }
-    if (section === 'Disclosure') {
-      navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, { paramData: data?.data })
-    }
-    // if (section === 'Interior') {
-    //   navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS, {
-    //     isEdit: true,
-    //     existingPhotos: data?.data?.listing?.photos?.Interior || [],
-    //   });
-    // }
-
-    // if (section === 'Exterior') {
-    //   navigate(NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS, {
-    //     isEdit: true,
-    //     existingPhotos: data?.data?.listing?.photos?.Exterior || [],
-    //   });
-    // }
-    // if (section === 'Bathroom') {
-    //   navigate(NavigationRoutes.APP_STACK.BATHROOM_PHOTOS_VIDEOS, {
-    //     isEdit: true,
-    //     existingPhotos: data?.data?.listing?.photos?.Bathroom || [],
-    //   });
-    // }
-    if (section === 'Documents') {
-      navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, { paramData: data?.data })
+    switch (section) {
+      case 'Address':
+        navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, { paramData: data?.data });
+        break;
+      case 'PlaceInfo':
+        navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE, { paramData: data?.data });
+        break;
+      case 'HouseDetails':
+        navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE, { paramData: data?.data });
+        break;
+      case 'BookingDetails':
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL, { paramData: data?.data });
+        break;
+      case 'Guidelines':
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES, { paramData: data?.data });
+        break;
+      case 'CancelPolicies':
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES, { paramData: data?.data });
+        break;
+      case 'AIPricing':
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING, { paramData: data?.data });
+        break;
+      case 'Pricing':
+        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING, { paramData: data?.data });
+        break;
+      case 'Disclosure':
+        navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, { paramData: data?.data });
+        break;
+      case 'Documents':
+        navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, { paramData: data?.data });
+        break;
+      default:
+        console.log(`Section: ${section} not mapped`);
     }
   };
 
   const handleMenuAction = (action: string) => {
     switch (action) {
       case 'channel':
-        navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA)
+        navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA);
         break;
       case 'delete':
-        Alert.alert("Delete Property", "Are you sure you want to delete this listing?", [
-          { text: "Cancel", style: "cancel" },
-          { text: "Delete", style: "destructive", onPress: () => console.log("Deleted") }
+        Alert.alert('Delete Property', 'Are you sure you want to delete this listing?', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Delete', style: 'destructive', onPress: () => console.log('Deleted') },
         ]);
         break;
       default:
@@ -157,9 +176,6 @@ export default function usePropertyDetailContainer() {
         break;
     }
   };
-  const goToConnectedOTA = () => {
-    navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA)
-  }
 
   const handleEditPhotosVideos = (category: string) => {
     navigate(NavigationRoutes.APP_STACK.OTHER_VIDEOS, {
@@ -169,15 +185,13 @@ export default function usePropertyDetailContainer() {
     });
   };
 
-
   return {
     propertyData,
     handleEditSection,
     handleMenuAction,
-    goToConnectedOTA,
     isLoading,
     refetch,
     data,
-    handleEditPhotosVideos
+    handleEditPhotosVideos,
   };
 }

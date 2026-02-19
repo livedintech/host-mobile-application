@@ -13,7 +13,7 @@ import { useRoute } from '@react-navigation/native';
 
 export default function usePropertyDisclosureContainer() {
     const { user } = useAuthStore();
-    const { listing_id, channel_id, listing } = useCreateListingStore();
+    const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
     const { params } = useRoute();
     const routeListing = params?.paramData?.listing;
     const isEdit = Boolean(routeListing?.listing_id);
@@ -73,47 +73,55 @@ export default function usePropertyDisclosureContainer() {
         },
     });
 
+    // ── Build Payload ─────────────────────────────────────────────────────────
+    const buildPayload = (data: DisclosureFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+        channel_id,
+        listing_id: String(listing_id),
+        user_id: String(user?.id),
+        save_and_exit: isSaveAndExit ? 1 : 0,
+        listing: {
+            name: propertyDetail?.name || 'New Listing',
+            exterior_security_camera: data.securityCameras === 'Yes',
+            noise_decibel_monitor: data.noiseMonitor === 'Yes',
+            weapon_on_property: data.weaponsOnProperty === 'Yes',
+        },
+    });
 
+
+    // ── Handlers ──────────────────────────────────────────────────────────────
     const onNext = (data: DisclosureFormValues) => {
-        if (!listing_id) {
-            Toast.show({ type: 'error', text1: 'Listing ID is missing' });
-            return;
-        }
+        // 1. Store Update (taake data persist rahe)
+        updateListing({
+            exterior_security_camera: data.securityCameras === 'Yes',
+            noise_decibel_monitor: data.noiseMonitor === 'Yes',
+            weapon_on_property: data.weaponsOnProperty === 'Yes',
+        });
 
-        const payload: CreateListingDetailsPayload = {
-            channel_id: channel_id,
-            listing_id,
-            user_id: Number(user?.id),
-            listing: {
-                name: listing?.name,
-                disclosures: {
-                    cameras: data.securityCameras === 'Yes',
-                    noise: data.noiseMonitor === 'Yes',
-                    weapons: data.weaponsOnProperty === 'Yes',
-                }
-            }
-        };
-
-        console.log('Property Disclosure Payload:', payload);
-        createListingDetailsPayload(payload);
+        // 2. API Hit
+        createListingDetailsPayload(buildPayload(data, false), {
+            onSuccess: () => {
+                navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
+            },
+        });
     };
 
     const onSaveExit = (data: DisclosureFormValues) => {
-        const payload: CreateListingDetailsPayload = {
-            channel_id: channel_id!,
-            listing_id: routeListing?.listing_id,
-            user_id: Number(user?.id),
-            listing: {
-                name: listing?.name,
-                disclosures: {
-                    cameras: data.securityCameras === 'Yes',
-                    noise: data.noiseMonitor === 'Yes',
-                    weapons: data.weaponsOnProperty === 'Yes',
-                },
-            },
-        };
+        updateListing({
+            exterior_security_camera: data.securityCameras === 'Yes',
 
-        updateListingDisclosure(payload);
+        });
+
+        const payload = buildPayload(data, true); // save_and_exit: 1
+
+        if (isEdit) {
+            updateListingDisclosure(payload);
+        } else {
+            createListingDetailsPayload(payload, {
+                onSuccess: () => {
+                    navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+                },
+            });
+        }
     };
 
 

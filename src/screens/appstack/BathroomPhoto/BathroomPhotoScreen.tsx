@@ -4,6 +4,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useRoute } from '@react-navigation/native';
+import { navigate } from '@/services/navigationService';
 
 const ExteriorPhotoScreen = () => {
     // const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
@@ -69,6 +70,7 @@ const ExteriorPhotoScreen = () => {
             onSecondaryPress={handleSaveAndExit}
             secondaryLoading={false}
             secondaryDisable={isLoading}
+            percentage={30}
         />
     );
 };

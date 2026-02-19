@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -7,9 +7,10 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useAboutThePlaceContainer from './AboutThePlaceContainer';
 import InputField from '@/components/molecules/Input/InputField';
-import MaskedInputField from '@/components/molecules/Input/MaskedInputField';
-import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
+import { goBack } from '@/services/navigationService';
 
 const AboutThePlaceScreen = () => {
   const {
@@ -23,12 +24,20 @@ const AboutThePlaceScreen = () => {
     isEdit,
     onSaveExit,
     getAmunities,
-    isLoadingGetAmunities
+    isLoadingGetAmunities,
   } = useAboutThePlaceContainer();
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+         <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path='arrowLeftIcon' size={24} />
+            </Pressable>
+          </GradientBorder>
+          <CircularProgress percentage={15} size={48} strokeWidth={4} />
+        </View>
         <View style={styles.stepTitleRow}>
           <AppText text="Step 2" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} />
         </View>
@@ -39,66 +48,67 @@ const AboutThePlaceScreen = () => {
         </View>
 
         <View style={styles.form}>
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <DropdownField name="bedrooms" label="Bedrooms" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
-            <View style={styles.half}>
-              <DropdownField name="beds" label="Beds" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
-          </View>
 
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <DropdownField name="bathrooms" label="Bathrooms" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
-            <View style={styles.half}>
-              <DropdownField name="min_nights" label="Min Nights" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
-          </View>
-
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <DateTimeInputField
-                mode='time'
-                name="check_in_time"
-                label="Check-in Time"
-                control={control}
-                errors={errors}
-                placeholder="HH:MM"
-              />
-            </View>
-            <View style={styles.half}>
-              <DateTimeInputField
-                mode='time'
-                name="check_out_time"
-                label="Check-out Time"
-                control={control}
-                errors={errors}
-                placeholder="HH:MM"
-              />
-            </View>
-          </View>
-
-
-          <DropdownField
-            name="instant_booking"
-            label="Instant Booking"
+          {/* Size (SQM) */}
+          <InputField
+            name="size_sqm"
+            label="Size (SQM)"
             control={control}
             errors={errors}
-            data={binaryOptions}
-            placeholder="Select Yes/No"
+            placeholder="500 Sqm"
+            keyboardType="numeric"
           />
-          <MultiSelectDropdownField
-  control={control}
-  label='Amenities'
-  errors={errors}
-  name='amenities'
-  data={getAmunities}
-  disabled={isLoadingGetAmunities}
-  dropdownPosition='top'
-/>
 
+          {/* Number of Bedrooms + Number of Beds */}
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <DropdownField name="bedrooms" label="Number of Bedrooms" control={control} errors={errors} data={numberOptions} placeholder="Select" />
+            </View>
+            <View style={styles.half}>
+              <DropdownField name="beds" label="Number of Beds" control={control} errors={errors} data={numberOptions} placeholder="Select" />
+            </View>
+          </View>
+
+          {/* Kitchen + Pool */}
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <DropdownField name="kitchen" label="Kitchen" control={control} errors={errors} data={binaryOptions} placeholder="yes/no" />
+            </View>
+            <View style={styles.half}>
+              <DropdownField name="pool" label="Pool" control={control} errors={errors} data={binaryOptions} placeholder="yes/no" />
+            </View>
+          </View>
+
+          {/* Long term Stay? + Minimum Gap Night */}
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <DropdownField name="long_term_stay" label="Long term Stay?" control={control} errors={errors} data={binaryOptions} placeholder="yes/no" />
+            </View>
+            <View style={styles.half}>
+              <DropdownField name="min_gap_night" label="Minimum Gap Night" control={control} errors={errors} data={numberOptions} placeholder="Select" />
+            </View>
+          </View>
+
+          {/* Minimum Night Stay + Maximum Night Stay */}
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <DropdownField name="min_nights" label="Minimum Night Stay" control={control} errors={errors} data={numberOptions} placeholder="Select" />
+            </View>
+            <View style={styles.half}>
+              <DropdownField name="max_nights" label="Maximum Night Stay" control={control} errors={errors} data={numberOptions} placeholder="Select" />
+            </View>
+          </View>
+
+          {/* Other House Features */}
+          <MultiSelectDropdownField
+            control={control}
+            label="Other House Features"
+            errors={errors}
+            name="amenities"
+            data={getAmunities}
+            disabled={isLoadingGetAmunities}
+            dropdownPosition="top"
+          />
 
           <View style={styles.footer}>
             {!isEdit && (
@@ -108,7 +118,6 @@ const AboutThePlaceScreen = () => {
                   onPress={handleSubmit(onNext)}
                   loading={isLoading}
                 />
-
                 <AppButton
                   title="Save & Exit"
                   onPress={handleSubmit(onSaveExit)}
@@ -141,6 +150,12 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   half: { width: '48%' },
   footer: { marginTop: 30 },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
 });
 
 export default AboutThePlaceScreen;

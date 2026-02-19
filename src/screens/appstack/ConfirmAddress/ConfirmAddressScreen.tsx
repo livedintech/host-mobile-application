@@ -1,68 +1,110 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable, SafeAreaView } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
-import InputField from '@/components/molecules/Input/InputField'; // Aapka custom component
+import InputField from '@/components/molecules/Input/InputField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useConfirmAddressContainer from './ConfirmAddressContainer';
-import CountryPickerField from '@/components/molecules/Input/CountryPickerField';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { goBack } from '@/services/navigationService';
 
 const ConfirmAddressScreen = () => {
-  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit } = useConfirmAddressContainer();
+  const {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isLoading,
+    isEdit,
+    countriesOptions,
+    statesOptions,
+    citiesOptions,
+    districtsOptions,
+  } = useConfirmAddressContainer();
 
   return (
     <View style={styles.container}>
-
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Title Section with Map Icon */}
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* <CircularProgress percentage={10} size={48} strokeWidth={4} /> */}
+        <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path='arrowLeftIcon' size={24} />
+            </Pressable>
+          </GradientBorder>
+          <CircularProgress percentage={10} size={48} strokeWidth={4} />
+        </View>
         <View style={styles.titleContainer}>
-          <AppText text="Confirm Address " fontSize={22} type="Medium" color={Colors.BRUNSWICK_GREEN} />
+          <AppText
+            text="Confirm Address "
+            fontSize={22}
+            type="Medium"
+            color={Colors.BRUNSWICK_GREEN}
+          />
           <Svgicons path="mapIcon" size={25} />
         </View>
+
         <View style={styles.form}>
 
-          <CountryPickerField
+          {/* All dropdowns work identically — value is primitive id */}
+          <DropdownField
             name="country_code"
             label="Country"
             control={control}
             errors={errors}
-            placeholder="Select Country"
+            placeholder="Select country"
             disabled={isEdit}
+            data={countriesOptions}
           />
 
-          <InputField
+          <DropdownField
             name="state"
-            label="State"
+            label="State / Province"
             control={control}
             errors={errors}
-            placeholder="Riyadh"
-            editable={!isEdit}
+            placeholder="Select state"
+            data={statesOptions}
           />
 
-          <InputField
+          <DropdownField
             name="city"
             label="City"
             control={control}
             errors={errors}
-            placeholder="Riyadh"
-            editable={!isEdit}
+            placeholder="Select city"
+            data={citiesOptions}
+          />
+
+          <DropdownField
+            name="district"
+            label="District"
+            control={control}
+            errors={errors}
+            placeholder="Select district"
+            data={districtsOptions}
           />
 
           <InputField
-            name="street"
-            label="Street"
+            name="address"
+            label="Address"
             control={control}
             errors={errors}
-            placeholder="King Fahd Road"
+            placeholder="e.g. 123 King Fahad Rd"
           />
 
           <InputField
-            name="apt"
-            label="Apartment / Unit"
+            name="postalAddress"
+            label="Postal Address"
             control={control}
             errors={errors}
-            placeholder="Unit 4B"
+            placeholder="e.g. 12345"
           />
 
           <View style={styles.footer}>
@@ -73,7 +115,6 @@ const ConfirmAddressScreen = () => {
                   onPress={handleSubmit(onNext)}
                   loading={isLoading}
                 />
-
                 <AppButton
                   title="Save & Exit"
                   onPress={handleSubmit(onSaveExit)}
@@ -82,7 +123,6 @@ const ConfirmAddressScreen = () => {
                 />
               </>
             )}
-
             {isEdit && (
               <AppButton
                 title="Save & Exit"
@@ -91,9 +131,7 @@ const ConfirmAddressScreen = () => {
               />
             )}
           </View>
-
         </View>
-
       </ScrollView>
     </View>
   );
@@ -101,37 +139,22 @@ const ConfirmAddressScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
-  bgCircle: {
-    position: 'absolute',
-    top: -100,
-    alignSelf: 'center',
-    width: 600,
-    height: 600,
-    borderRadius: 300,
-    borderWidth: 1,
-    borderColor: '#F8F8F8',
-    zIndex: -1
-  },
-  header: { paddingHorizontal: 22, paddingTop: 10 },
-  backBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#EBEBEB',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
-    marginBottom: 30
+    marginBottom: 30,
   },
   form: { flex: 1 },
-  footer: { marginTop: 30, paddingBottom: 20 }
+  footer: { marginTop: 30, paddingBottom: 20 },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
 });
 
 export default ConfirmAddressScreen;

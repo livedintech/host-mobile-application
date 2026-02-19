@@ -113,6 +113,8 @@ import mada_logo from "./mada_logo.svg";
 import airbnb from "./airbnb.svg";
 import gathern from "./gathern.svg";
 import livedin from "./livedin.svg";
+import clipboardIcon from './clipboardIcon.svg';
+import wavy_check from './wavy_check.svg'
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -229,5 +231,7 @@ export const icons = {
     mada_logo,
     airbnb,
     gathern,
-    livedin
+    livedin,
+    clipboardIcon,
+    wavy_check
 };

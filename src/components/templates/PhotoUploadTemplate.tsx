@@ -16,12 +16,15 @@ import Metrics from '@/utility/Metrics';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useMediaUpload, MediaItem } from './useMediaUpload';
+import CircularProgress from '../molecules/CircularProgress/CircularProgress';
+import { goBack } from '@/services/navigationService';
 
 interface PhotoUploadTemplateProps {
   step?: string;
   screenTitle: string;
   sectionTitle: string;
   maxImages: number;
+  percentage?:number;
   maxVideos: number;
   mediaList: MediaItem[];
   onMediaChange: (list: MediaItem[]) => void;
@@ -95,7 +98,19 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
 
   return (
     <View style={styles.container}>
+
       <View style={styles.content}>
+        <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path='arrowLeftIcon' size={24} />
+            </Pressable>
+          </GradientBorder>
+          {props?.percentage && (
+          <CircularProgress percentage={props?.percentage} size={48} strokeWidth={4} />
+
+          )}
+        </View>
         {/* Step */}
         {props.step && (
           <AppText
@@ -178,8 +193,8 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
           <GradientBorder borderRadius={15} style={styles.gridWrapper}>
             <View style={styles.gridInner}>
               <FlatList
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 data={[...props.mediaList, { isButton: true }]}
                 numColumns={4}
                 keyExtractor={(_, index) => index.toString()}
@@ -434,4 +449,10 @@ const styles = StyleSheet.create({
     marginTop: Metrics.verticalScale(20),
     marginBottom: Metrics.verticalScale(20),
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
 });

@@ -5,6 +5,7 @@ import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { navigate } from '@/services/navigationService';
 
 const InteriorPhotoScreen = () => {
   const route = useRoute<any>();
@@ -50,6 +51,7 @@ const {
       onSecondaryPress={handleSaveAndExit}
       secondaryLoading={false}
       secondaryDisable={isLoading}
+      percentage={20}
     />
   );
 };

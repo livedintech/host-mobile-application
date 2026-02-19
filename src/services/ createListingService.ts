@@ -1,8 +1,8 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { createEditAmenitiesPayload, createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
+import { createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
 import Utils from "@/utility/Utils";
-import { getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { CreateEditlistingCitiesPayloadType, CreateEditlistingDistrictsPayloadType, CreateEditlistingStatePayloadType, getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 
 export const createListingApi = async (payload: CreateListingPayload) => {
     const { ok, response, data } = await apiService.post(
@@ -149,4 +149,59 @@ export const CreateUpdateAmenitiesApi = async (payload: createEditAmenitiesPaylo
         return data;
     }
     throw response;
+};
+
+//Country 
+export const getListingCountriesApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.COUNTRIES
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
+
+//State
+export const getListingStateApi = async (payload: CreateEditlistingStatePayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.STATES,
+        { country_id: payload.country_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data?.data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+//City
+export const getListingCityApi = async (payload: CreateEditlistingCitiesPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.CITIES,
+        { state_id: payload.state_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data?.data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+//District
+export const getListingDistrictsApi = async (payload: CreateEditlistingDistrictsPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.DISTRICTS,
+        { city_id: payload.city_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data?.data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
 };

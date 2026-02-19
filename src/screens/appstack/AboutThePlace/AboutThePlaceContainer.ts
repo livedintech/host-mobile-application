@@ -13,8 +13,8 @@ import STORAGE_CONST from '@/constants/storage';
 import { createListingDetailsApi, CreateUpdateAmenitiesApi, editListingApi, getAmenitiesApi } from '@/services/ createListingService';
 
 export default function useAboutThePlaceContainer() {
-  const { user } = useAuthStore();
-  const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+  const { user, } = useAuthStore();
+  const { listing_id, channel_id, listing: propertyDetail, updateListing } = useCreateListingStore();
   const navigation = useNavigation();
   const { params } = useRoute();
   const listing = params?.paramData?.listing;
@@ -22,29 +22,27 @@ export default function useAboutThePlaceContainer() {
 
   const binaryOptions = [
     { label: 'Yes', value: 'true' },
-    { label: 'No', value: 'false' }
+    { label: 'No', value: 'false' },
   ];
 
   const numberOptions = Array.from({ length: 10 }, (_, i) => ({
     label: `${i + 1}`,
-    value: `${i + 1}`
+    value: `${i + 1}`,
   }));
 
   const { control, handleSubmit, formState: { errors } } = useForm<StepTwoFormValues>({
     resolver: yupResolver(stepTwoSchema),
     defaultValues: {
-      amenities: listing?.amenities || [], // ✅ array for multi-select
+      size_sqm: listing?.size_sqm ? String(listing.size_sqm) : '',
       bedrooms: listing?.bedrooms ? String(listing.bedrooms) : '',
       beds: listing?.beds ? String(listing.beds) : '',
-      bathrooms: listing?.bathrooms ? String(listing.bathrooms) : '',
+      kitchen: listing?.kitchen === true ? 'true' : listing?.kitchen === false ? 'false' : '',
+      pool: listing?.pool === true ? 'true' : listing?.pool === false ? 'false' : '',
+      long_term_stay: listing?.long_term_stay === true ? 'true' : listing?.long_term_stay === false ? 'false' : '',
+      min_gap_night: listing?.min_gap_night ? String(listing.min_gap_night) : '',
       min_nights: listing?.min_nights ? String(listing.min_nights) : '',
-      check_in_time: listing?.check_in_time || '',
-      check_out_time: listing?.check_out_time || '',
-      instant_booking: listing?.instant_booking === true
-        ? 'true'
-        : listing?.instant_booking === false
-        ? 'false'
-        : '',
+      max_nights: listing?.max_nights ? String(listing.max_nights) : '',
+      amenities: listing?.amenities || [],
     },
   });
 
@@ -73,7 +71,7 @@ export default function useAboutThePlaceContainer() {
     },
     onError: error => {
       Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
-    }
+    },
   });
 
   const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
@@ -86,71 +84,71 @@ export default function useAboutThePlaceContainer() {
     },
   });
 
-  // ---- Handlers ----
+  // ---- Helpers ----
   const handleAmenitiesUpdate = (amenities: string[], currentListingId: string) => {
     if (!amenities?.length || !currentListingId) return;
     updateAmenities({ listing_id: currentListingId, amenities, channel_id });
   };
 
-  const onNext = (data: StepTwoFormValues) => {
-    const payload: CreateListingDetailsPayload = {
-      channel_id,
-      listing_id,
-      user_id: Number(user?.id),
-      listing: {
-        bedrooms: Number(data.bedrooms),
-        beds: Number(data.beds),
-        bathrooms: Number(data.bathrooms),
-        min_nights: Number(data.min_nights),
-        check_in_time: data.check_in_time,
-        check_out_time: data.check_out_time,
-        instant_booking: data.instant_booking === 'true',
-        name: 'New Listing',
-      }
-    };
+  const buildPayload = (data: StepTwoFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
+    user_id: String(user?.id),
+    channel_id,
+    listing_id: String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name: propertyDetail?.name || 'New Listing',
+      property_area: Number(data.size_sqm), // Swagger key: property_area
+      bedrooms: Number(data.bedrooms),
+      beds: Number(data.beds),
+      kitchen: data.kitchen === 'true',
+      has_kitchen: data.kitchen === 'true', // Swagger key
+      has_pool: data.pool === 'true',       // Swagger key
+      min_gap_night: Number(data.min_gap_night),
+      min_nights: Number(data.min_nights),
+      max_nights: Number(data.max_nights),
+      maximum_days_stays: Number(data.max_nights), // Swagger key
+      amenities: data.amenities,
+    },
+  });
 
-    createListingDetailsPayload(payload, {
+  // ── Handlers ──
+  const onNext = (data: StepTwoFormValues) => {
+    // 1. Update Store taake local state sync rahe
+    updateListing({
+      size_sqm: Number(data.size_sqm),
+      bedrooms: Number(data.bedrooms),
+      beds: Number(data.beds),
+      kitchen: data.kitchen === 'true',
+      pool: data.pool === 'true',
+      amenities: data.amenities,
+    });
+
+    // 2. API Hit aur Navigation
+    createListingDetailsPayload(buildPayload(data, false), {
       onSuccess: (res) => {
-        const createdListingId = res?.listing_id || listing_id;
-        // ✅ Update amenities after listing is created
-        handleAmenitiesUpdate(data.amenities, createdListingId);
+        // Agar amenities alag se update karni hain
+        handleAmenitiesUpdate(data.amenities, res?.listing_id || listing_id);
         navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
-      }
+      },
     });
   };
 
   const onSaveExit = (data: StepTwoFormValues) => {
-    const payload: CreateListingDetailsPayload = {
-      channel_id,
-      listing_id: listing?.listing_id || listing_id,
-      user_id: Number(user?.id),
-      listing: {
-        bedrooms: Number(data.bedrooms),
-        beds: Number(data.beds),
-        bathrooms: Number(data.bathrooms),
-        min_nights: Number(data.min_nights),
-        check_in_time: data.check_in_time,
-        check_out_time: data.check_out_time,
-        instant_booking: data.instant_booking === 'true',
-        name: propertyDetail?.name || 'New Listing',
-      },
-    };
+    const payload = buildPayload(data, true);
 
     if (isEdit) {
       updateListingDetails(payload, {
         onSuccess: () => {
-          // ✅ Update amenities for edit mode
-          handleAmenitiesUpdate(data.amenities, listing?.listing_id || listing_id);
+          handleAmenitiesUpdate(data.amenities, listing_id);
           goBack();
-        }
+        },
       });
     } else {
       createListingDetailsPayload(payload, {
         onSuccess: (res) => {
-          const createdListingId = res?.listing_id || listing_id;
-          handleAmenitiesUpdate(data.amenities, createdListingId);
+          handleAmenitiesUpdate(data.amenities, res?.listing_id || listing_id);
           navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        }
+        },
       });
     }
   };
@@ -167,6 +165,6 @@ export default function useAboutThePlaceContainer() {
     navigation,
     isLoading: isCreating || isUpdating || isUpdatingAmenities,
     getAmunities: mappedAmenities || [],
-    isLoadingGetAmunities
+    isLoadingGetAmunities,
   };
 }

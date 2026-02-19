@@ -1,5 +1,6 @@
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
+import Toast from 'react-native-toast-message';
 
 export default function useAccountContainer() {
   const accountOptions = [
@@ -16,7 +17,11 @@ export default function useAccountContainer() {
       navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
     }
     if (route === 'PROFILE_SETTINGS') {
-      navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+       Toast.show({
+            type: 'success',
+            text1: 'Coming soon',
+          });
+      // navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
     }
     if (route === 'MANAGE_LISTING') {
       navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
