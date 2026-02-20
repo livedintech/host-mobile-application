@@ -282,7 +282,7 @@ export default function useAddCardDetailContainer() {
 
     try {
       // Prepare payment request
-      const amount = 0.01; // Fallback to test amount
+      const amount = 1; // Fallback to test amount
       const executeRequest = new MFExecutePaymentRequest(amount);
       executeRequest.SessionId = sessionId;
 
@@ -319,6 +319,7 @@ export default function useAddCardDetailContainer() {
           card_token: transactionId || result.SessionId || phoneNumber,
           card_holder_name: result.CustomerName || 'Anonymous',
           zipcode: result.CustomerMobile || phoneNumber,
+          customer_identifier:result.CustomerMobile || phoneNumber,
         });
       } else {
         // Payment failed or pending

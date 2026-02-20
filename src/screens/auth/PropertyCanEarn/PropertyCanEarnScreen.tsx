@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -13,11 +13,13 @@ import PropertyAreaChart from '../../../components/organisms/PropertyAreaChart/P
 const PropertyCanEarnScreen = () => {
   const { control, errors, handleSubmit, showResults, isLoading, goTologinWithPhone, availableCityItems, availableDistrictItems, selectedcity, chartPoints, roundedMax,yAxisLabels,xAxisLabels,chartData } =
     usePropertyCanEarnContainer();
-    console.log('chartDatsa',chartData?.data);
-    
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         {/* Title */}
         <View style={styles.titleSection}>
@@ -152,7 +154,7 @@ const PropertyCanEarnScreen = () => {
 
       {/* Pagination Footer */}
       <Pagination activeIndex={0} />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

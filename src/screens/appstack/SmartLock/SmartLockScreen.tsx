@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import useSmartLockContainer from './SmartLockContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const SmartLockScreen = () => {
-  const { handleConnectAccount } = useSmartLockContainer()
+  // const { handleConnectAccount } = useSmartLockContainer()
+  const handleConnectAccount = useCallback(() => {
+    navigate(NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS)
+  }, []);
   return (
     <View style={styles.container}>
       <AppText text={'No Smart Lock Available'} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mb={40} />
@@ -35,7 +40,7 @@ const SmartLockScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 25, justifyContent: 'center', backgroundColor: Colors.WHITE },
+  container: { flex: 1,justifyContent: 'center', backgroundColor: Colors.WHITE, },
   infoCard: { padding: 20, borderRadius: 30, borderWidth: 1, borderColor: '#E0E0E0', backgroundColor: Colors.WHITE },
   row: { flexDirection: 'row', alignItems: 'center' },
   avatarContainer: { position: 'relative', backgroundColor: '#BDF0C5', borderRadius: 100, width: Metrics.scale(72), height: Metrics.scale(72), justifyContent: 'center', alignItems: 'center' },

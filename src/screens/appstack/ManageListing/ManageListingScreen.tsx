@@ -22,79 +22,90 @@ const ManageListingScreen = () => {
 
   const data = listings?.data ?? [];
 
-  const renderProperty = ({ item }: ManageListingMapItem) => (
-    <GradientBorder borderRadius={16} style={styles.cardWrapper}>
-      <View style={styles.cardInner}>
-        <View style={styles.cardInfo}>
-          <View style={styles.infoRow}>
-            <AppText
-              text="Property Name: "
-              type="Bold"
-              color={Colors.BRUNSWICK_GREEN}
-              fontSize={14}
-            />
-            <View style={{ flex: 1 }}>
+  const renderProperty = ({ item }: ManageListingMapItem) => {
+    const hasFullAddress =
+      item?.country?.name &&
+      item?.state?.name &&
+      item?.city?.name &&
+      item?.district?.name;
+    return (
+      <GradientBorder borderRadius={16} style={styles.cardWrapper}>
+        <View style={styles.cardInner}>
+          <View style={styles.cardInfo}>
+            {item?.name && (
+              <View style={styles.infoRow}>
+                <AppText
+                  text="Property Name: "
+                  type="Bold"
+                  color={Colors.BRUNSWICK_GREEN}
+                  fontSize={14}
+                />
+                <View style={{ flex: 1 }}>
+                  <AppText
+                    text={item?.name}
+                    color={Colors.PINE_FOREST}
+                    fontSize={14}
+                    numberOfLines={1}
+                  />
+                </View>
+              </View>
+            )}
+            <View style={styles.infoRow}>
               <AppText
-                text={item?.name}
-                color={Colors.PINE_FOREST}
-                fontSize={14}
-                numberOfLines={1}
-              />
-            </View>
-          </View>
-          <View style={styles.infoRow}>
-            <AppText
-              text="Property ID: "
-              type="Bold"
-              color={Colors.BRUNSWICK_GREEN}
-              fontSize={14}
-            />
-            <View style={{ flex: 1 }}>
-              <AppText
-                text={item?.id?.toString()}
-                color={Colors.PINE_FOREST}
+                text="Property ID: "
+                type="Bold"
+                color={Colors.BRUNSWICK_GREEN}
                 fontSize={14}
               />
+              <View style={{ flex: 1 }}>
+                <AppText
+                  text={item?.id?.toString()}
+                  color={Colors.PINE_FOREST}
+                  fontSize={14}
+                />
+              </View>
             </View>
+            {hasFullAddress && (
+              <View style={styles.infoRow}>
+                <AppText
+                  text="Address:"
+                  type="Bold"
+                  color={Colors.BRUNSWICK_GREEN}
+                  fontSize={14}
+                />
+                <View style={{ flex: 1 }}>
+                  <AppText
+                    text={[
+                      item?.country?.name,
+                      item?.state?.name,
+                      item?.city?.name,
+                      item?.district?.name,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')
+                    }
+                    color={Colors.PINE_FOREST}
+                    fontSize={14}
+                    numberOfLines={1}
+                  />
+                </View>
+              </View>
+            )}
           </View>
 
-          <View style={styles.infoRow}>
-            <AppText
-              text="Address:"
-              type="Bold"
-              color={Colors.BRUNSWICK_GREEN}
-              fontSize={14}
-            />
-            <View style={{ flex: 1 }}>
-              <AppText
-                text={[
-                  item?.apt,
-                  item?.state,
-                  item?.city,
-                ]
-                  .filter(Boolean)
-                  .join(', ')
-                }
-                color={Colors.PINE_FOREST}
-                fontSize={14}
-                numberOfLines={1}
-              />
-            </View>
-          </View>
+          {/* Arrow */}
+          <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
+            <Pressable
+              style={styles.arrowCircle}
+              onPress={() => goToPropertyDetail(item)}
+            >
+              <Svgicons path="arrowRightIcon" size={22} />
+            </Pressable>
+          </GradientBorder>
         </View>
-
-        {/* Arrow */}
-        <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
-          <Pressable
-            style={styles.arrowCircle}
-            onPress={() => goToPropertyDetail(item)}
-          >
-            <Svgicons path="arrowRightIcon" size={22} />
-          </Pressable>
-        </GradientBorder>
-      </View>
-    </GradientBorder>
-  );
+      </GradientBorder>
+    )
+  };
 
   return (
     <View style={styles.container}>

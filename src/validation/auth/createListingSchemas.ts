@@ -259,7 +259,7 @@ export const pricingSchema = yup.object().shape({
 
   extra_guest_fee: yup
     .string()
-    .required('Extra guest fee is required'),
+    .optional(),
 });
 
 export type PricingFormValues = {

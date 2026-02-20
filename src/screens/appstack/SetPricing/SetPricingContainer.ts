@@ -32,18 +32,17 @@ export default function useSetPricingContainer() {
     useForm<PricingFormValues>({
       resolver: yupResolver(pricingSchema) as any,
       defaultValues: {
-  weekday_base_price: listing?.prices?.weekday?.toString() || '',
-  weekend_base_price: listing?.prices?.weekend?.toString() || '',
-  discount: String(listing?.discounts ?? 0),           // ✅ listing.discounts
-  tax_vat: String(listing?.tax ?? 0),                  // ✅ already correct
-  markup_price: String(listing?.markup ?? 0),          // ✅ already correct
-  cleaning_fee: listing?.prices?.cleaning_fee?.toString() || '',
-  airbnb_discount: String(listing?.prices?.airbnb_discount ?? 0),
-  gathern_discount: String(listing?.prices?.gathern_discount ?? 0),
-  booking_discount: String(listing?.prices?.bookingCom_discount ?? 0),
-  extra_guest_fee: listing?.prices?.price_per_extra_person?.toString() || '',
-},
-
+        weekday_base_price: listing?.prices?.weekday?.toString() || '',
+        weekend_base_price: listing?.prices?.weekend?.toString() || '',
+        discount: String(listing?.discounts ?? 0),           // ✅ listing.discounts
+        tax_vat: String(listing?.tax ?? 0),                  // ✅ already correct
+        markup_price: String(listing?.markup ?? 0),          // ✅ already correct
+        cleaning_fee: listing?.prices?.cleaning_fee?.toString() || '',
+        airbnb_discount: String(listing?.prices?.airbnb_discount ?? 0),
+        gathern_discount: String(listing?.prices?.gathern_discount ?? 0),
+        booking_discount: String(listing?.prices?.bookingCom_discount ?? 0),
+        extra_guest_fee: listing?.prices?.price_per_extra_person?.toString() || '',
+      },
     });
 
 
@@ -85,8 +84,8 @@ export default function useSetPricingContainer() {
       weekday: Number(data.weekday_base_price),
       weekend: Number(data.weekend_base_price),
       cleaning_fee: Number(data.cleaning_fee),
-      security_deposit: 0, // Agar form mein nahi hai toh default 0 bhejien
-      price_per_extra_person: Number(data.extra_guest_fee || 0),
+      security_deposit: 0, 
+      ...data.extra_guest_fee && { price_per_extra_person: Number(data.extra_guest_fee)},
       discount: Number(data.discount || 0),
       tax: Number(data.tax_vat || 0),
       markup: Number(data.markup_price || 0),

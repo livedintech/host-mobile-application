@@ -4,7 +4,7 @@ import Toast from 'react-native-toast-message';
 
 export default function useAccountContainer() {
   const accountOptions = [
-    { id: '1', title: 'Profile Setting', route: 'PROFILE_SETTINGS' },
+    { id: '1', title: 'Profile Settings', route: 'PROFILE_SETTINGS' },
     { id: '2', title: 'Manage Booking Platform', route: 'MANAGE_BOOKING' },
     { id: '3', title: 'Manage Listing', route: 'MANAGE_LISTING' },
     { id: '4', title: 'User Management', route: 'USER_MANAGEMENT' },

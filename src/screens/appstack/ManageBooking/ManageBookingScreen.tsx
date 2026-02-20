@@ -125,8 +125,8 @@ const ManageBookingScreen = () => {
                     <AppButton
                         title="Connect Airbnb"
                         onPress={() => handleConnect('Airbnb')}
-                        disabled={isPending}
                         mb={15}
+                        loading={isPending}
                     />
                     <AppButton
                         title="Connect Gathern"
