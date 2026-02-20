@@ -351,7 +351,7 @@ const ChatScreen = () => {
     const isSelected = selectedMessageId === item._id;
     const isHighlighted = highlightedMessageId === item._id;
 
-    console.log("testtingflatlist", isHost)
+    console.log('testtingflatlist', item);
 
     return (
       <View>
@@ -530,7 +530,17 @@ const ChatScreen = () => {
               <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
             </MenuTrigger>
             <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-              <MenuOption style={styles.menuItem}>
+              <MenuOption
+                style={styles.menuItem}
+                onSelect={() => {
+                  navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+                    screen: NavigationRoutes.APP_STACK.LISTING,
+                    params: {
+                      listing_id: conversationData?.listing_id || listing_id,
+                    },
+                  });
+                }}
+              >
                 <AppText
                   text="View Listing Calendar"
                   fontSize={14}
@@ -541,7 +551,13 @@ const ChatScreen = () => {
               <MenuOption
                 style={styles.menuItem}
                 onSelect={() =>
-                  navigate(NavigationRoutes.APP_STACK.RESERVATION_DETAILS)
+                  // navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN)
+                  navigate(
+                    NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
+                    {
+                      booking_id: conversationData?.booking_id,
+                    },
+                  )
                 }
               >
                 <AppText

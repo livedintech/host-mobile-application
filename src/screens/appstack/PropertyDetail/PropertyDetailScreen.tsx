@@ -83,7 +83,7 @@ const PropertyDetailScreen = () => {
               <Svgicons path="channelIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
             </MenuOption>
 
-            <MenuOption onSelect={() => handleMenuAction('task')} style={styles.menuItem}>
+            <MenuOption onSelect={() => handleMenuAction('task')} style={styles.menuItem} >
               <AppText text="Task" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
               <Svgicons path="taskIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
             </MenuOption>

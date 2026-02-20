@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { s, vs } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useAuthStore } from '@/store/useAuthStore';
@@ -33,6 +33,10 @@ import Toast from 'react-native-toast-message';
 import { getOtaConfig } from '@/constants/ota_config';
 
 const ListingScreen = () => {
+    const route = useRoute<any>();
+   console.log("routeTestt",route.params);
+   const listingIdFromParams = route.params?.listing_id;
+  
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const navigation = useNavigation<any>();
@@ -53,10 +57,22 @@ const ListingScreen = () => {
   const { control, watch, handleSubmit, setValue, reset, clearErrors, formState: { errors } } = useForm<createBookingFormValues>({
     resolver: yupResolver(createBookingSchema) as any,
     context: { bookingType: bookingType },
-    defaultValues: { listing_selection: '', name: '', email: '', phone: '', booking_type: 'host', end_date: '', start_date: '', rate: '', listing_id: '' },
+    defaultValues: { listing_selection: listingIdFromParams ? String(listingIdFromParams) : '', name: '', email: '', phone: '', booking_type: 'host', end_date: '', start_date: '', rate: '', listing_id: '' },
   });
 
   const selectedListingId = watch('listing_selection');
+
+  // --- PRE-FILL LOGIC ---
+  useEffect(() => {
+    if (listingIdFromParams) {
+      // Convert to string as most dropdown values are stored as strings
+      const targetId = String(listingIdFromParams);
+      if (selectedListingId !== targetId) {
+        setValue('listing_selection', targetId);
+      }
+    }
+  }, [listingIdFromParams, setValue]);
+  
 
   useEffect(() => { clearErrors(); }, [bookingType, clearErrors]);
   useEffect(() => { if (selectedDateForBooking) setValue('start_date', selectedDateForBooking); }, [selectedDateForBooking, setValue]);
@@ -65,6 +81,8 @@ const ListingScreen = () => {
     queryKey: ['USER_LISTINGS', user?.id],
     queryFn: () => getUserListingsApi(user?.id || ''),
   });
+
+  console.log("listingOptionsmmm",listingOptions)
 
   const { data: reservationRawData = [], isLoading: resLoading } = useQuery({
     queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter],

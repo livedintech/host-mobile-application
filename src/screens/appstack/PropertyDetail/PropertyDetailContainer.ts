@@ -1,6 +1,9 @@
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { deleteListingApi, getManageListingDetailById } from '@/services/ createListingService';
+import {
+  deleteListingApi,
+  getManageListingDetailById,
+} from '@/services/ createListingService';
 import { goBack, navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -27,18 +30,24 @@ export default function usePropertyDetailContainer() {
     enabled: Boolean(listing_id),
   });
 
-  // Delete User 
-  const {
-    mutate: deletePropertyPayload,
-  } = useMutation<any, Error, DeleteListingPayloadType>({
+  console.log("ListingDetailData",data?.data?.listing?.id)
+
+  // Delete User
+  const { mutate: deletePropertyPayload } = useMutation<
+    any,
+    Error,
+    DeleteListingPayloadType
+  >({
     mutationFn: deleteListingApi,
     onSuccess: ({ message }) => {
       Toast.show({
         type: 'success',
         text1: message,
       });
-      goBack()
-      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+      goBack();
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
+      });
     },
     onError: error => {
       Toast.show({
@@ -54,15 +63,13 @@ export default function usePropertyDetailContainer() {
   const listing_descriptionParsed =
     typeof rawDescription === 'string'
       ? (() => {
-        try {
-          return JSON.parse(rawDescription);
-        } catch {
-          return [];
-        }
-      })()
+          try {
+            return JSON.parse(rawDescription);
+          } catch {
+            return [];
+          }
+        })()
       : rawDescription; // If it's already parsed or just a string
-
-
 
   const propertyData = {
     discounts: listing?.discounts ? `${listing.discounts}%` : '',
@@ -95,19 +102,23 @@ export default function usePropertyDetailContainer() {
     },
 
     houseDetails: {
-      description: typeof listing_descriptionParsed === 'string'
-        ? listing_descriptionParsed
-        : listing_descriptionParsed?.description || '',
+      description:
+        typeof listing_descriptionParsed === 'string'
+          ? listing_descriptionParsed
+          : listing_descriptionParsed?.description || '',
       wifiUsername: listing?.wifi_network || '',
       wifiPassword: listing?.wifi_password || '',
       doorLockCode: listing?.door_lock_code,
     },
 
     bookingDetails: {
-      bookingType: listing?.prices?.instant_booking === 1 ? 'Instant' : 'Request',
+      bookingType:
+        listing?.prices?.instant_booking === 1 ? 'Instant' : 'Request',
       guestEligibility: listing?.guest_eligibility === 1,
-      checkIn: dayjs(listing?.check_in_time, "HH:mm:ss").format("hh:mm a") || '',
-      checkOut: dayjs(listing?.check_out_time, "HH:mm:ss").format("hh:mm a") || '',
+      checkIn:
+        dayjs(listing?.check_in_time, 'HH:mm:ss').format('hh:mm a') || '',
+      checkOut:
+        dayjs(listing?.check_out_time, 'HH:mm:ss').format('hh:mm a') || '',
     },
 
     guidelines: {
@@ -128,12 +139,8 @@ export default function usePropertyDetailContainer() {
     },
 
     pricing: {
-      weekday: listing?.prices?.weekday
-        ? `SAR ${listing.prices.weekday}`
-        : '',
-      weekend: listing?.prices?.weekend
-        ? `SAR ${listing.prices.weekend}`
-        : '',
+      weekday: listing?.prices?.weekday ? `SAR ${listing.prices.weekday}` : '',
+      weekend: listing?.prices?.weekend ? `SAR ${listing.prices.weekend}` : '',
       discount: listing?.discounts ? `${listing.discounts}%` : '',
       tax: listing?.tax ? `${listing.tax}%` : '',
       markup: listing?.markup ? `${listing.markup}%` : '',
@@ -167,34 +174,54 @@ export default function usePropertyDetailContainer() {
   const handleEditSection = (section: string) => {
     switch (section) {
       case 'Address':
-        navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, {
+          paramData: data?.data,
+        });
         break;
       case 'PlaceInfo':
-        navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE, {
+          paramData: data?.data,
+        });
         break;
       case 'HouseDetails':
-        navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE, {
+          paramData: data?.data,
+        });
         break;
       case 'BookingDetails':
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL, {
+          paramData: data?.data,
+        });
         break;
       case 'Guidelines':
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES, {
+          paramData: data?.data,
+        });
         break;
       case 'CancelPolicies':
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES, {
+          paramData: data?.data,
+        });
         break;
       case 'AIPricing':
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING, {
+          paramData: data?.data,
+        });
         break;
       case 'Pricing':
-        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING, {
+          paramData: data?.data,
+        });
         break;
       case 'Disclosure':
-        navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE, {
+          paramData: data?.data,
+        });
         break;
       case 'Documents':
-        navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, { paramData: data?.data });
+        navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD, {
+          paramData: data?.data,
+        });
         break;
       default:
         console.log(`Section: ${section} not mapped`);
@@ -203,20 +230,50 @@ export default function usePropertyDetailContainer() {
 
   const handleMenuAction = (action: string) => {
     switch (action) {
+      case 'task':
+        // New Task Navigation Logic
+        navigate(NavigationRoutes.APP_STACK.CREATE_TASK, {
+          listing_id: data?.data?.listing?.id,
+          fromChat: false,
+          conversation_id: null,
+        });
+        break;
+
       case 'channel':
         navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA);
         break;
+
       case 'delete':
-        Alert.alert('Delete Property', 'Are you sure you want to delete this listing?', [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Delete', style: 'destructive', onPress: () => deletePropertyPayload({
-              listing_id: listing_id,
-              reason: 'Listing temporarily closed',
-              user_id: user?.id
-            })
+        Alert.alert(
+          'Delete Property',
+          'Are you sure you want to delete this listing?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: () =>
+                deletePropertyPayload({
+                  listing_id: listing_id,
+                  reason: 'Listing temporarily closed',
+                  user_id: user?.id,
+                }),
+            },
+          ],
+        );
+        break;
+
+      case 'calendar':
+        // navigate(NavigationRoutes.APP_STACK.LISTING,{
+        //   listing_id: data?.data?.listing?.id,
+        // });
+
+        navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+          screen: NavigationRoutes.APP_STACK.LISTING,
+          params: {
+            listing_id: data?.data?.listing?.id,
           },
-        ]);
+        });
         break;
       default:
         console.log(`Action: ${action} selected`);
