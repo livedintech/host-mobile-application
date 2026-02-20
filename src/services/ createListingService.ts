@@ -2,7 +2,7 @@ import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import { createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
 import Utils from "@/utility/Utils";
-import { CreateEditlistingCitiesPayloadType, CreateEditlistingDistrictsPayloadType, CreateEditlistingStatePayloadType, getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { CreateEditlistingCitiesPayloadType, CreateEditlistingDistrictsPayloadType, CreateEditlistingStatePayloadType, DeleteListingPayloadType, getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 
 export const createListingApi = async (payload: CreateListingPayload) => {
     const { ok, response, data } = await apiService.post(
@@ -202,6 +202,19 @@ export const getListingDistrictsApi = async (payload: CreateEditlistingDistricts
     const { ok, response, data } = await apiService.get(url);
     if (ok) {
         return data?.data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// Delete
+export const deleteListingApi = async (payload: DeleteListingPayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.DELETE_PROPERTY,{}, //URL
+    );
+
+    const { ok, response, data } = await apiService.delete(url, {...payload}); // body
+    if (ok) {
+        return data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };

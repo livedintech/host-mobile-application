@@ -1,13 +1,16 @@
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { getManageListingDetailById } from '@/services/ createListingService';
-import { navigate } from '@/services/navigationService';
+import { deleteListingApi, getManageListingDetailById } from '@/services/ createListingService';
+import { goBack, navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import Toast from 'react-native-toast-message';
+import { queryClient } from '@/services/api';
+import { DeleteListingPayloadType } from '@/types/api/bookingManagementTypes';
 dayjs.extend(customParseFormat);
 
 export default function usePropertyDetailContainer() {
@@ -22,6 +25,27 @@ export default function usePropertyDetailContainer() {
         user_id: user?.id!,
       }),
     enabled: Boolean(listing_id),
+  });
+
+  // Delete User 
+  const {
+    mutate: deletePropertyPayload,
+  } = useMutation<any, Error, DeleteListingPayloadType>({
+    mutationFn: deleteListingApi,
+    onSuccess: ({ message }) => {
+      Toast.show({
+        type: 'success',
+        text1: message,
+      });
+      goBack()
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Something went wrong',
+      });
+    },
   });
 
   const listing = data?.data?.listing;
@@ -185,7 +209,13 @@ export default function usePropertyDetailContainer() {
       case 'delete':
         Alert.alert('Delete Property', 'Are you sure you want to delete this listing?', [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Delete', style: 'destructive', onPress: () => console.log('Deleted') },
+          {
+            text: 'Delete', style: 'destructive', onPress: () => deletePropertyPayload({
+              listing_id: listing_id,
+              reason: 'Listing temporarily closed',
+              user_id: user?.id
+            })
+          },
         ]);
         break;
       default:

@@ -17,9 +17,6 @@ import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 
 const PropertyDetailScreen = () => {
   const { propertyData, handleEditSection, handleMenuAction, refetch, isLoading, handleEditPhotosVideos } = usePropertyDetailContainer();
-
-
-
   const isOwnership = propertyData?.documents?.ownership?.length > 0;
   const isLicense = propertyData?.documents?.authority_license?.length > 0;
   const isNational_id = propertyData?.documents?.national_id?.length > 0;

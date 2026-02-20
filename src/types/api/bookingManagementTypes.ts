@@ -51,3 +51,11 @@ export interface CreateEditlistingCitiesPayloadType {
 export interface CreateEditlistingDistrictsPayloadType {
     city_id: string | number
 }
+
+export interface DeleteListingPayloadType {
+    user_id: string | number | undefined;
+    listing_id: string | number;
+    reason: string;
+
+
+}
