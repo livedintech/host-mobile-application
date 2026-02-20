@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
-import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '../AppText/AppText';
 
@@ -12,14 +11,11 @@ const COLUMN_WIDTH = (SCREEN_WIDTH - CALENDAR_PADDING) / 7;
 const SELECTION_HEIGHT = vs(46); 
 
 const getOTASource = (source?: string) => {
-  const s = source?.toLowerCase();
-  let iconName: any; 
-  if (s === 'airbnb') iconName = 'airbnb';
-  else if (s === 'bookingcom' || s === 'booking.com' || s === 'booking') iconName = 'booking';
-  else if (s === 'gathern') iconName = 'gathern';
-  else iconName = 'livedin'; 
-
-  return { icon: iconName };
+  const name = source?.toLowerCase() || '';
+  if (name.includes('airbnb')) return { icon: 'airbnb' };
+  if (name.includes('booking')) return { icon: 'booking' };
+  if (name.includes('gathern')) return { icon: 'gathern' };
+  return { icon: 'livedin' };
 };
 
 const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
@@ -27,17 +23,25 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
   const isActive = !!type && type !== 'none';
   const themeColor = color || '#3B82F6';
   
-  // Logic: 17th or Standalone stays a circle if both start and end exist
   const isSingle = type === 'single' || (marking?.starting && marking?.ending);
-  const isStarting = type === 'starting' && !isSingle;
-  const isEnding = type === 'ending' && !isSingle;
+  const isStarting = marking?.starting && !isSingle;
+  const isEnding = marking?.ending && !isSingle;
   
   const otaIconData = getOTASource(ota);
   const displayPrice = rate || price || defaultPrice;
 
+  // --- MANUAL TRUNCATION LOGIC ---
+  // If it's a single circle, we limit the name strictly to fit the diameter
+  const truncateName = (name: string, limit: number) => {
+    if (!name) return '';
+    return name.length > limit ? `${name.substring(0, limit)}..` : name;
+  };
+
+  const displayName = isSingle ? truncateName(guest, 4) : truncateName(guest, 10);
+
   return (
     <View style={styles.dayCell}>
-      {/* SELECTION LAYER */}
+      {/* 1. SELECTION BACKGROUND */}
       {isActive && (
         <View
           pointerEvents="none"
@@ -47,7 +51,6 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
               backgroundColor: themeColor,
               width: isSingle ? SELECTION_HEIGHT : '100%',
               left: isSingle ? (COLUMN_WIDTH - SELECTION_HEIGHT) / 2 : 0,
-              borderRadius: isSingle ? SELECTION_HEIGHT / 2 : 0,
               borderTopLeftRadius: (isSingle || isStarting) ? SELECTION_HEIGHT / 2 : 0,
               borderBottomLeftRadius: (isSingle || isStarting) ? SELECTION_HEIGHT / 2 : 0,
               borderTopRightRadius: (isSingle || isEnding) ? SELECTION_HEIGHT / 2 : 0,
@@ -57,41 +60,46 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
         />
       )}
 
+      {/* 2. CONTENT CONTAINER */}
       <TouchableOpacity
         style={styles.dayContainer}
         onPress={() => onPress(date)}
         activeOpacity={0.8}
       >
         <View style={styles.contentWrapper}>
-          {/* GUEST LABEL - FORCED CENTER ALIGNMENT */}
+          {/* TRUNCATED GUEST LABEL */}
           {showLabel && (
             <View style={styles.labelPositioner} pointerEvents="none">
-              <View style={styles.labelRow}>
-                <Svgicons path={otaIconData.icon as any} size={ms(8)} />
+              <View style={[
+                styles.labelRow, 
+                isSingle && { maxWidth: SELECTION_HEIGHT * 0.9 }
+              ]}>
+                <Svgicons path={otaIconData.icon as any} size={ms(7)} />
                 <AppText 
-                  text={guest} 
+                  text={displayName} 
                   style={styles.guestTextInside} 
                   numberOfLines={1} 
                 />
               </View>
             </View>
           )}
-          
-          <Text style={[
-            styles.dayNumber, 
-            state === 'disabled' ? styles.disabledText : { color: isActive ? '#FFF' : '#1A332C' }
-          ]}>
-            {date.day}
-          </Text>
-          
-          {state !== 'disabled' && (
+
+          <View style={styles.textGroup}>
+            <Text style={[
+              styles.dayNumber, 
+              { color: isActive ? '#FFF' : '#1A332C' },
+              state === 'disabled' && styles.disabledText
+            ]}>
+              {date.day}
+            </Text>
+            
             <Text style={[
               styles.priceText, 
-              { color: isActive ? 'rgba(255,255,255,0.85)' : '#9E9E9E' }
+              { color: isActive ? 'rgba(255,255,255,0.85)' : '#7B8D88' }
             ]}>
               SAR {displayPrice}
             </Text>
-          )}
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -105,24 +113,12 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: 
         current={currentDate}
         markingType="custom"
         markedDates={markedDates}
-        dayComponent={({ date, state, marking }: any) => (
-          <CustomDay 
-            date={date} 
-            state={state} 
-            marking={marking} 
-            onPress={onDayPress} 
-            defaultPrice={defaultPrice} 
-          />
-        )}
-        renderArrow={(dir) => (
-          dir === 'left' ? <ChevronLeft size={ms(22)} color="#A0A0A0" /> : <ChevronRight size={ms(22)} color="#1A332C" />
-        )}
+        dayComponent={(props: any) => <CustomDay {...props} defaultPrice={defaultPrice} onPress={onDayPress} />}
         theme={{
           calendarBackground: 'transparent',
           monthTextColor: '#1A332C',
           textMonthFontWeight: '700',
           textMonthFontSize: ms(18),
-          textSectionTitleColor: '#7B8D88',
         } as any}
       />
     </View>
@@ -133,10 +129,9 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#FFF', width: '100%' },
   dayCell: {
     width: COLUMN_WIDTH,
-    height: vs(60),
+    height: vs(55),
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
   },
   selectionBase: {
     position: 'absolute',
@@ -145,52 +140,49 @@ const styles = StyleSheet.create({
   },
   dayContainer: {
     width: '100%',
-    height: '100%',
+    height: SELECTION_HEIGHT,
     zIndex: 10,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   contentWrapper: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    height: SELECTION_HEIGHT,
-    width: '100%',
-    position: 'relative',
   },
   labelPositioner: {
     position: 'absolute',
-    top: vs(2), 
-    // This width ensures the container spans the whole day cell for centering
-    width: COLUMN_WIDTH,
-    left: 0,
+    top: vs(2),
+    zIndex: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 30,
+    width: '100%',
   },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: s(2),
-    width: '100%',
-    paddingHorizontal: s(2),
+    overflow: 'hidden',
+  },
+  textGroup: {
+    alignItems: 'center',
+    marginTop: vs(8),
   },
   guestTextInside: {
-    fontSize: ms(6.5),
+    fontSize: ms(6),
     fontWeight: '800',
     color: '#FFF',
     textAlign: 'center',
   },
   dayNumber: { 
-    fontSize: ms(14), 
+    fontSize: ms(13), 
     fontWeight: '700',
-    // marginTop provides space for the centered label above it
-    marginTop: vs(8), 
+    lineHeight: ms(15),
   },
   priceText: { 
     fontSize: ms(7), 
-    fontWeight: '600', 
-    marginTop: 0 
+    fontWeight: '600',
   },
   disabledText: { color: '#E0E0E0' },
 });

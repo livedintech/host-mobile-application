@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Image, ActivityIndicator } from 'react-native';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -9,7 +9,21 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
-// IMPORT YOUR API HERE
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+
+// --- Interface for Task Data ---
+interface Task {
+  id: number;
+  task_id: number;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  assigned_user_name: string;
+  property_address: string;
+  listing_title: string;
+  date: string;
+}
 
 const DetailRow = ({
   label,
@@ -37,16 +51,13 @@ const DetailRow = ({
 );
 
 const ReviewDetailScreen = ({ route }: any) => {
-  // 1. Existing flow: Extract data from params
   const initialBookingData = route?.params?.bookingData || {};
   const booking_id = route?.params?.booking_id;
 
-  // 2. State for API handling
   const [apiData, setApiData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Only call API if bookingData wasn't passed and we have an ID
     if (Object.keys(initialBookingData).length === 0 && booking_id) {
       fetchBookingDetails();
     }
@@ -57,7 +68,6 @@ const ReviewDetailScreen = ({ route }: any) => {
       setIsLoading(true);
       const formattedId = `O${booking_id}`;
       const response = await getBookingDetailsApi(formattedId);
-      // Adjust based on your API structure (e.g., response.data.data)
       setApiData(response?.data || response);
     } catch (error) {
       console.error('Failed to fetch booking details:', error);
@@ -66,16 +76,17 @@ const ReviewDetailScreen = ({ route }: any) => {
     }
   };
 
-  // 3. Determine which data to use (Passed data vs Fetched data)
-  const bookingData = Object.keys(initialBookingData).length > 0 ? initialBookingData : (apiData || {});
+  const bookingData =
+    Object.keys(initialBookingData).length > 0
+      ? initialBookingData
+      : apiData || {};
 
-  // Destructure for easier access
   const {
     guest,
     property,
-    booking_dates,
     guest_property_ratings,
     payment_breakdown,
+    tasks = [], // Array of tasks from API
   } = bookingData;
 
   const RatingBar = ({
@@ -110,21 +121,101 @@ const ReviewDetailScreen = ({ route }: any) => {
     </View>
   );
 
-  // Show loader only when fetching from API
-  if (isLoading) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={Colors.PINE_FOREST} />
-      </View>
-    );
-  }
+  // --- Task Card Renderer ---
+  // --- Task Card Renderer ---
+  const renderTaskItem = ({ item }: { item: Task }) => {
+    // Extracts the date part only (e.g., 2026-02-21)
+    // const formattedDate = item?.assign_datetime ? item.assign_datetime.split('T')[0] : 'N/A';
 
-  return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}
-    >
-      {/* 1. Profile Header */}
+    return (
+      <GradientBorder
+        borderRadius={24}
+        style={styles.taskGradient}
+        borderWidth={1.5}
+      >
+        <View style={styles.taskInnerCard}>
+          <View style={styles.taskHeader}>
+            {/* Title */}
+            <View style={{ marginBottom: 12 }}>
+              <AppText
+                text={item.title}
+                type="Bold"
+                fontSize={18}
+                color={Colors.PINE_FOREST}
+              />
+            </View>
+
+            {/* Description */}
+            <View style={styles.rowWrapper}>
+              <AppText
+                text={'Description: '}
+                type="Bold"
+                fontSize={16}
+                color={Colors.PINE_FOREST}
+              />
+              <AppText
+                text={item.description}
+                type="Regular"
+                fontSize={16}
+                color={Colors.PINE_FOREST}
+                style={{ flex: 1 }} // Fixes cutoff: allows text to wrap
+              />
+            </View>
+
+            {/* Property */}
+            <View style={styles.rowWrapper}>
+              <AppText
+                text={'Property: '}
+                type="Bold"
+                fontSize={16}
+                color={Colors.PINE_FOREST}
+              />
+              <AppText
+                text={item.listing_title}
+                type="Regular"
+                fontSize={16}
+                color={Colors.PINE_FOREST}
+                style={{ flex: 1 }} // Fixes cutoff: allows text to wrap
+              />
+            </View>
+
+            {/* Due Date */}
+            {/* <View style={styles.rowWrapper}>
+              <AppText text={"Due Date: "} type="Bold" fontSize={16} color={Colors.PINE_FOREST} />
+              <AppText text={formattedDate} type="Regular" fontSize={16} color={Colors.PINE_FOREST} />
+            </View> */}
+
+            {/* Task Status */}
+            <View style={styles.rowWrapper}>
+              <AppText
+                text={'Task Status: '}
+                type="Bold"
+                fontSize={16}
+                color={Colors.PINE_FOREST}
+              />
+              <AppText
+                text={item.status}
+                type="Regular"
+                fontSize={16}
+                color={
+                  item.status === 'todo'
+                    ? Colors.ALERT_RED
+                    : item.status === 'inprogress'
+                    ? Colors.GOLDEN_YELLOW
+                    : Colors.TEAL_GREEN
+                }
+              />
+            </View>
+          </View>
+        </View>
+      </GradientBorder>
+    );
+  };
+
+  // --- Main Header UI ---
+  const ListHeader = () => (
+    <View>
+      {/* 1. Profile Section */}
       <View style={styles.profileSection}>
         <View style={styles.profileImageWrapper}>
           <Image
@@ -132,7 +223,6 @@ const ReviewDetailScreen = ({ route }: any) => {
             style={styles.profileImage}
           />
         </View>
-
         <View style={styles.infoCol}>
           <AppText
             text="Guest Name:"
@@ -227,10 +317,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           />
         </View>
         <AppText
-          text={
-            guest?.ai_chat_summary ||
-            'No chat summary available for this booking.'
-          }
+          text={guest?.ai_chat_summary || 'No chat summary available.'}
           fontSize={15}
           color={Colors.PINE_FOREST}
           opacity={0.7}
@@ -251,7 +338,7 @@ const ReviewDetailScreen = ({ route }: any) => {
       </View>
 
       {/* 3. Property Details */}
-      <View style={[styles.section, { marginTop: 30 }]}>
+      <View style={styles.section}>
         <View style={styles.headingRow}>
           <Svgicons path="homeIcon" size={22} mr={8} />
           <AppText
@@ -261,52 +348,14 @@ const ReviewDetailScreen = ({ route }: any) => {
             color={Colors.PINE_FOREST}
           />
         </View>
-        <View style={styles.propRow}>
-          <AppText
-            text="Property Name: "
-            type="Bold"
-            color={Colors.PINE_FOREST}
-            fontSize={15}
-          />
-          <View style={{ flex: 1 }}>
-            <AppText
-              text={property?.name || 'N/A'}
-              color={Colors.PINE_FOREST}
-              fontSize={15}
-              opacity={0.7}
-            />
-          </View>
-        </View>
-        <View style={styles.propRow}>
-          <AppText
-            text="Property Address: "
-            type="Bold"
-            color={Colors.PINE_FOREST}
-            fontSize={15}
-          />
-          <View style={{ flex: 1 }}>
-            <AppText
-              text={property?.address || 'N/A'}
-              color={Colors.PINE_FOREST}
-              fontSize={15}
-              opacity={0.7}
-            />
-          </View>
-        </View>
-
         <GradientBorder borderRadius={24} style={styles.gradientWrapper}>
           <View style={styles.innerCard}>
             <DetailRow
               label="Booking Platform:"
               value={
-                property?.booking_platform === 'host_booking' 
-                  ? 'Livedin' 
+                property?.booking_platform === 'host_booking'
+                  ? 'Livedin'
                   : property?.booking_platform || 'N/A'
-              }
-              valueColor={
-                property?.booking_platform?.toLowerCase() === 'airbnb'
-                  ? Colors.AIRBNB_RED
-                  : Colors.PINE_FOREST
               }
             />
             <DetailRow
@@ -317,9 +366,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               label="Number of Nights:"
               value={String(property?.number_of_nights || '0')}
             />
-
             <View style={styles.verticalSpacer} />
-
             <DetailRow
               label="Check-in Time:"
               value={property?.check_in_time || 'N/A'}
@@ -332,19 +379,16 @@ const ReviewDetailScreen = ({ route }: any) => {
               label="Confirmation Code:"
               value={property?.confirmation_code || 'N/A'}
             />
-
             <View style={styles.verticalSpacer} />
-
             <DetailRow
               label="Door Code:"
               value={property?.door_code || 'N/A'}
             />
             <DetailRow
-              label="Payment Status:"
+              label="Payment Status: "
               value={
-                property?.payment_status
-                  ?.replace('_', ' ')
-                  .toUpperCase() || 'N/A'
+                property?.payment_status?.replace('_', ' ').toUpperCase() ||
+                'N/A'
               }
               valueColor={
                 property?.payment_status === 'payment_unverified'
@@ -388,21 +432,11 @@ const ReviewDetailScreen = ({ route }: any) => {
               value={guest_property_ratings?.checkin}
             />
             <RatingBar label="Value" value={guest_property_ratings?.value} />
-
-            <AppButton
-              title="View Detail"
-              backgroundColor={Colors.WHITE}
-              color={Colors.PINE_FOREST}
-              borderColor={Colors.SMOOTH_GREY}
-              mt={25}
-              borderRadius={25}
-              onPress={() => {}}
-            />
           </View>
         </GradientBorder>
       </View>
 
-      {/* 5. Payment Breakdown */}
+      {/* 5. Cancellation Policy & Action */}
       <View style={styles.section}>
         <AppButton
           title="Rate Your Guest"
@@ -410,7 +444,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           color={Colors.PINE_FOREST}
           borderColor={Colors.SMOOTH_GREY}
           mt={10}
-          mb={50}
+          mb={30}
           borderRadius={25}
           onPress={() =>
             navigate(
@@ -418,7 +452,6 @@ const ReviewDetailScreen = ({ route }: any) => {
             )
           }
         />
-
         <View style={styles.cancellationPolicy}>
           <AppText
             text="Cancellation policy"
@@ -482,53 +515,64 @@ const ReviewDetailScreen = ({ route }: any) => {
         </View>
       </View>
 
-      {/* 6. Assigned Task */}
-      <View style={styles.section}>
-        <View style={styles.headingRow}>
-          <Svgicons path="taskIcon" size={22} mr={8} />
-          <AppText
-            text="Assigned Task"
-            type="Bold"
-            fontSize={20}
-            color={Colors.PINE_FOREST}
-          />
-        </View>
-
-        <GradientBorder borderRadius={24} style={styles.gradientWrapper}>
-          <View style={styles.innerCard}>
-            <AppText
-              text="No Tasks Assigned"
-              type="Bold"
-              fontSize={16}
-              color={Colors.PINE_FOREST}
-            />
-            <AppText
-              text="There are currently no tasks associated with this booking."
-              fontSize={14}
-              color={Colors.SUPER_GREY}
-              mt={8}
-            />
-          </View>
-        </GradientBorder>
-
-        <AppButton
-          title="Create New Task"
-          borderColor={Colors.SMOOTH_GREY}
-          mt={50}
-          mb={20}
-          borderRadius={25}
-          textStyle={{ color: Colors.PINE_FOREST }}
-          onPress={() => navigate(NavigationRoutes.APP_STACK.CREATE_TASK)}
+      {/* 6. Tasks Heading */}
+      <View style={[styles.headingRow, { marginTop: 20, marginBottom: 15 }]}>
+        <Svgicons path="taskIcon" size={22} mr={8} />
+        <AppText
+          text="Assigned Tasks"
+          type="Bold"
+          fontSize={20}
+          color={Colors.PINE_FOREST}
         />
       </View>
-    </ScrollView>
+    </View>
+  );
+
+  const ListFooter = () => (
+    <AppButton
+      title="Create New Task"
+      borderColor={Colors.SMOOTH_GREY}
+      mt={30}
+      mb={50}
+      borderRadius={25}
+      textStyle={{ color: Colors.PINE_FOREST }}
+      onPress={() => navigate(NavigationRoutes.APP_STACK.CREATE_TASK)}
+    />
+  );
+
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <ActivityIndicator size="large" color={Colors.PINE_FOREST} />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <FlatListSimpleHandler
+        data={tasks}
+        renderItem={renderTaskItem}
+        isLoading={isLoading}
+        HeaderComponent={ListHeader}
+        ListFooterComponent={ListFooter}
+        contentContainerStyle={styles.scrollContent}
+        listEmptyText="No tasks assigned "
+        keyExtractor={(item: Task) => item.task_id.toString()}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
   scrollContent: { padding: 24 },
-  profileSection: { alignItems: 'center', marginBottom: 60 },
+  profileSection: { alignItems: 'center', marginBottom: 50 },
   profileImageWrapper: {
     width: 140,
     height: 140,
@@ -540,14 +584,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#829e98',
   },
   profileImage: { width: '100%', height: '100%' },
-  infoCol: { width: '100%', alignItems: 'flex-start' },
+  infoCol: { width: '100%' },
   starRow: { flexDirection: 'row', alignItems: 'center' },
   section: { marginBottom: 35 },
   headingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   headingRowCenter: {
     flexDirection: 'row',
@@ -570,33 +614,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
   },
-  propRow: {
-    flexDirection: 'row',
-    marginBottom: 8,
-    gap: 4,
-  },
-  gradientWrapper: {
-    marginTop: 15,
-    padding: 1.5,
-  },
-  innerCard: {
-    padding: 24,
-    backgroundColor: Colors.WHITE,
-    borderRadius: 24,
-  },
+  gradientWrapper: { marginTop: 15, padding: 1.5 },
+  innerCard: { padding: 24, backgroundColor: Colors.WHITE, borderRadius: 24 },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
   },
-  verticalSpacer: {
-    height: 20,
-  },
-  barRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
+  verticalSpacer: { height: 20 },
+  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
   barContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -622,16 +648,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   paymentBox: { width: '47%', paddingVertical: 12 },
-  taskCard: {
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
-    marginTop: 15,
+  cancellationPolicy: { marginBottom: 30 },
+
+  // --- Task Styles ---
+  taskGradient: { marginBottom: 16, padding: 1.5 },
+  rowWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', // Keeps label at the top if text wraps
+    marginBottom: 4,
+    flexWrap: 'wrap', // Ensures text doesn't push off screen
   },
-  cancellationPolicy: {
-    marginBottom: 50,
+  taskInnerCard: {
+    padding: 16,
+    backgroundColor: Colors.WHITE,
   },
+  taskHeader: {},
+  priorityBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  taskFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#F2F2F2',
+    paddingTop: 12,
+    marginTop: 5,
+  },
+  iconInfo: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  statusRow: { flexDirection: 'row', alignItems: 'center' },
+  dot: { width: 8, height: 8, borderRadius: 4 },
 });
 
 export default ReviewDetailScreen;
