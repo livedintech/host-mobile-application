@@ -86,12 +86,13 @@ export default function useAddNewPaymentMethodContainer() {
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
   const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
   
-  const { user } = useAuthStore();
-  
+  const { user } = useAuthStore();  
+
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const cardPaymentView = useRef<any>(null);
+
 
   // Get customer details from user
   const customerName = user?.name && user?.surname 
@@ -264,16 +265,18 @@ export default function useAddNewPaymentMethodContainer() {
     setIsProcessingPayment(true);
 
     try {
-      const amount = 0.01; // Test amount
+      const amount = 1; // Test amount
       const executeRequest = new MFExecutePaymentRequest(amount);
       executeRequest.SessionId = sessionId;
       
-      if (paymentMethodId) {
-        executeRequest.PaymentMethodId = paymentMethodId;
-        console.log(`💳 Using ${paymentMethodName} (ID: ${paymentMethodId})`);
-      }
+      // ⚠️ CRITICAL: DON'T set PaymentMethodId for embedded card payments
+      // The card form handles method selection automatically
+      // Uncomment below ONLY if you want to show specific card type
+      // if (paymentMethodId) {
+      //   executeRequest.PaymentMethodId = paymentMethodId;
+      // }
 
-      console.log('💳 Processing payment...');
+      console.log('💳 Processing card payment (embedded)...');
 
       const result: PaymentResult = await cardPaymentView.current?.pay(
         executeRequest,
@@ -294,6 +297,7 @@ export default function useAddNewPaymentMethodContainer() {
           card_token: transaction?.TransactionId || result.SessionId || customerPhone,
           card_holder_name: result.CustomerName || customerName,
           zipcode: result.CustomerMobile || customerPhone,
+          customer_identifier:customerPhone,
         });
       } else {
         Toast.show({
@@ -332,7 +336,7 @@ export default function useAddNewPaymentMethodContainer() {
     setIsProcessingPayment(true);
 
     try {
-      const amount = 0.01; // Test amount
+      const amount = 1; // Test amount
       
       // Create payment request for redirect methods
       const paymentRequest = new MFSendPaymentRequest(amount, MFCurrencyISO.SAUDIARABIA_SAR);
@@ -348,7 +352,7 @@ export default function useAddNewPaymentMethodContainer() {
       paymentRequest.CallBackUrl = ''; // Add your callback URL if needed
       paymentRequest.ErrorUrl = ''; // Add your error URL if needed
       
-      // Set specific payment method
+      // ✅ MUST set PaymentMethodId for wallet/redirect payments
       if (paymentMethodId) {
         paymentRequest.PaymentMethodId = paymentMethodId;
         console.log(`💳 Using ${paymentMethodName} (ID: ${paymentMethodId})`);

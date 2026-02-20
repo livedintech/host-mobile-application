@@ -30,8 +30,6 @@ export default function useEnterPasswordContainer() {
   const { setToken, setUser } = useAuthStore();
 
   const { params } = useRoute();
-  console.log('params',params);
-  
 
   const {
     control,

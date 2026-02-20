@@ -18,9 +18,9 @@ import { usePhoneStore } from '@/store/usePhoneStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
 
 export default function useLoginWithPhoneContainer() {
-    const {callingCode,cca2,clearCredentials,password,phoneNumber:storePhoneNo,rememberMe,setRememberMe,setPassword} = useRememberMeStore()
-  
-  
+  const { callingCode, cca2, clearCredentials, password, phoneNumber: storePhoneNo, rememberMe, setRememberMe, setPassword } = useRememberMeStore()
+
+
   const setPhoneData = usePhoneStore((state) => state.setPhoneData);
 
   const [phoneNumber, setphoneNumber] = useState('');
@@ -32,18 +32,18 @@ export default function useLoginWithPhoneContainer() {
   } = useForm<checkUserisExistFormValues>({
     resolver: yupResolver(checkUserisExistSchema),
     defaultValues: {
-      country: { cca2: cca2 || 'SA', callingCode: callingCode|| '966' },
-      phoneNumber:storePhoneNo|| '',
+      country: { cca2: cca2 || 'SA', callingCode: callingCode || '966' },
+      phoneNumber: storePhoneNo || '',
     },
   });
   const countryCca2 = watch('country')?.cca2;
   const countryCallingCode = watch('country')?.callingCode;
   const phoneNo = watch('phoneNumber');
 
-  console.log('countryCca2',countryCca2);
-  console.log('countryCallingCode',countryCallingCode);
+  console.log('countryCca2', countryCca2);
+  console.log('countryCallingCode', countryCallingCode);
 
-  
+
 
 
 
@@ -69,17 +69,17 @@ export default function useLoginWithPhoneContainer() {
         })
         navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phoneNumber);
       }
-      Toast.show({
-        type: 'error',
-        text1: error.message || 'Something went wrong',
-      });
+      // Toast.show({
+      //   type: 'error',
+      //   text1: error.message || 'Something went wrong',
+      // });
     },
   });
 
   const onSubmit = async (data: checkUserisExistFormValues) => {
-    
+
     const payload = {
-      phone_number: data?.country?.callingCode +data?.phoneNumber,
+      phone_number: data?.country?.callingCode + data?.phoneNumber,
     };
     setphoneNumber(payload?.phone_number);
     checkUserPayload(payload);

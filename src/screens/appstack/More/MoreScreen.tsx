@@ -66,7 +66,7 @@ const MoreScreen = () => {
       style={styles.container}
       contentContainerStyle={{ padding: 20 }}
     >
-      <ButtonView style={styles.profileRow} onPress={goToProfile}>
+      <ButtonView style={styles.profileRow}>
         <View style={styles.avatarCircle} />
         <View style={{ marginLeft: 15 }}>
           <AppText text={user?.name || ''} fontSize={18} type="Bold" />

@@ -16,6 +16,9 @@ import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 import * as yup from 'yup';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
+import { BASE_URL_DEV } from '@env';
+
+const BASE_URL = BASE_URL_DEV;
 
 // Schema for OTA Account selection
 const otaAccountSchema = yup.object({
@@ -27,9 +30,10 @@ type OtaAccountFormValues = {
 };
 
 export default function useCreateEditListingDocumentUploadContainer() {
+  const [isLoading, setIsLoading] = useState(false);
   const { params } = useRoute();
   const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
@@ -208,30 +212,69 @@ export default function useCreateEditListingDocumentUploadContainer() {
     };
   };
 
-  const onSaveExit = (data: DocumentFormValues) => {
+  // const onSaveExit = (data: DocumentFormValues) => {
+  //   if (!data.propertyOwnership && !data.authorityLicense && !data.nationalId) {
+  //     Toast.show({ type: 'error', text1: 'Please upload at least one document' });
+  //     return;
+  //   }
+
+  //   const payload = buildPayload(data, 1);
+
+  //   if (isEdit) {
+  //     updateListingDetails(payload);
+  //   } else {
+  //     createListingDetailsPayload(payload, {
+  //       onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+  //     });
+  //   }
+  // };
+  const onSaveExit = async (data: DocumentFormValues) => {
     if (!data.propertyOwnership && !data.authorityLicense && !data.nationalId) {
       Toast.show({ type: 'error', text1: 'Please upload at least one document' });
       return;
     }
 
     const payload = buildPayload(data, 1);
+    setIsLoading(true); // 👈 start loading
 
-    if (isEdit) {
-      updateListingDetails(payload);
-    } else {
-      createListingDetailsPayload(payload, {
-        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+    try {
+      const response = await fetch(`${BASE_URL}api/v2/channelmanagement/create-listing/documents`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
       });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Toast.show({ type: 'success', text1: result?.message || 'Documents uploaded successfully' });
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id] });
+
+        if (isEdit) {
+          goBack();
+        } else {
+          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        }
+      } else {
+        throw new Error(result.message || 'Upload failed');
+      }
+    } catch (error: any) {
+      Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+    } finally {
+      setIsLoading(false); // 👈 stop loading (success & error dono mein)
     }
   };
-
   return {
     control,
     errors,
     handleSubmit,
     onSaveExit,
     isEdit,
-    isLoading: isCreating || isUpdating,
+    isLoading,
     propertyOwnershipDoc,
     authorityLicenseDoc,
     nationalIdDoc,
