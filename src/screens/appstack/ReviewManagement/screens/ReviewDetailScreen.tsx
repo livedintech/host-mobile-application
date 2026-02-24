@@ -248,7 +248,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             mb={2}
           />
           <AppText
-            text={property?.booking_platform === 'airbnb' ? 'bismasiddiqui.295@gmail.com' : guest?.email || 'N/A'}
+            text={guest?.email || 'N/A'}
             fontSize={16}
             mb={25}
             color={Colors.PINE_FOREST}
@@ -372,10 +372,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             />
             <DetailRow
               label="Number of Guests:"
-              // value={property?.number_of_guests || 'N/A'}
-              value={property?.number_of_guests || property?.booking_platform === 'airbnb' && 1 || 'N/A'}
-
-
+              value={property?.number_of_guests || 'N/A'}
             />
             <DetailRow
               label="Number of Nights:"
