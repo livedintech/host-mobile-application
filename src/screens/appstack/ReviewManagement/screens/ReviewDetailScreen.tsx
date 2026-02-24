@@ -37,13 +37,13 @@ const DetailRow = ({
   <View style={styles.detailRow}>
     <AppText
       text={label}
-      fontSize={16}
+      fontSize={15}
       color={Colors.PINE_FOREST}
       type="Medium"
     />
     <AppText
       text={value}
-      fontSize={16}
+      fontSize={14}
       color={valueColor || Colors.SUPER_GREY}
       type="Medium"
     />
@@ -99,7 +99,7 @@ const ReviewDetailScreen = ({ route }: any) => {
     <View style={styles.barRow}>
       <AppText
         text={label}
-        fontSize={16}
+        fontSize={15}
         color={Colors.PINE_FOREST}
         style={{ flex: 1 }}
         type="Medium"
@@ -201,8 +201,8 @@ const ReviewDetailScreen = ({ route }: any) => {
                   item.status === 'todo'
                     ? Colors.ALERT_RED
                     : item.status === 'inprogress'
-                    ? Colors.GOLDEN_YELLOW
-                    : Colors.TEAL_GREEN
+                      ? Colors.GOLDEN_YELLOW
+                      : Colors.TEAL_GREEN
                 }
               />
             </View>
@@ -211,6 +211,7 @@ const ReviewDetailScreen = ({ route }: any) => {
       </GradientBorder>
     );
   };
+  // console.log('conversation_id',guest?.conversation_id);
 
   // --- Main Header UI ---
   const ListHeader = () => (
@@ -247,7 +248,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             mb={2}
           />
           <AppText
-            text={guest?.email || 'N/A'}
+            text={property?.booking_platform === 'airbnb' ? 'bismasiddiqui.295@gmail.com' : guest?.email || 'N/A'}
             fontSize={16}
             mb={25}
             color={Colors.PINE_FOREST}
@@ -306,36 +307,47 @@ const ReviewDetailScreen = ({ route }: any) => {
       </View>
 
       {/* 2. AI Chat Summary */}
-      <View style={styles.section}>
-        <View style={styles.headingRowCenter}>
-          <Svgicons path="sparkleIcon" size={24} mr={8} />
-          <AppText
-            text="AI Chat Summary"
-            type="Medium"
-            fontSize={22}
-            color={Colors.PINE_FOREST}
-          />
-        </View>
-        <AppText
-          text={guest?.ai_chat_summary || 'No chat summary available.'}
-          fontSize={15}
-          color={Colors.PINE_FOREST}
-          opacity={0.7}
-          textAlign="center"
-          lineHeight={24}
-        />
-        <View style={styles.chatActionRow}>
-          <ButtonView style={styles.chatBtn}>
+      {property?.booking_platform === 'airbnb' && (
+        guest?.conversation_id && (
+          <View style={styles.section}>
+            <View style={styles.headingRowCenter}>
+              <Svgicons path="sparkleIcon" size={24} mr={8} />
+              <AppText
+                text="AI Chat Summary"
+                type="Medium"
+                fontSize={22}
+                color={Colors.PINE_FOREST}
+              />
+            </View>
             <AppText
-              text="Continue Chat"
+              text={guest?.ai_chat_summary || 'No chat summary available.'}
+              fontSize={15}
               color={Colors.PINE_FOREST}
-              fontSize={14}
-              type="Medium"
-              style={{ textAlign: 'center' }}
+              opacity={0.7}
+              textAlign="center"
+              lineHeight={24}
             />
-          </ButtonView>
-        </View>
-      </View>
+            <View style={styles.chatActionRow}>
+              <ButtonView style={styles.chatBtn} onPress={() => {
+                navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+                  conversation_id: guest?.conversation_id,
+                  listing_id: guest?.listing_id
+                });
+              }}>
+                <AppText
+                  text="Continue Chat"
+                  color={Colors.PINE_FOREST}
+                  fontSize={14}
+                  type="Medium"
+                  style={{ textAlign: 'center' }}
+                />
+              </ButtonView>
+            </View>
+          </View>
+        )
+
+      )}
+
 
       {/* 3. Property Details */}
       <View style={styles.section}>
@@ -360,7 +372,10 @@ const ReviewDetailScreen = ({ route }: any) => {
             />
             <DetailRow
               label="Number of Guests:"
-              value={property?.number_of_guests || 'N/A'}
+              // value={property?.number_of_guests || 'N/A'}
+              value={property?.number_of_guests || property?.booking_platform === 'airbnb' && 1 || 'N/A'}
+
+
             />
             <DetailRow
               label="Number of Nights:"
@@ -384,7 +399,27 @@ const ReviewDetailScreen = ({ route }: any) => {
               label="Door Code:"
               value={property?.door_code || 'N/A'}
             />
-            <DetailRow
+            {property?.booking_platform === 'airbnb' ? (
+              <DetailRow
+                label="Payment Status: "
+                value={'Verified'}
+                valueColor={Colors.BOTTLE_GREEN}
+              />
+            ) : (
+              <DetailRow
+                label="Payment Status: "
+                value={
+                  property?.payment_status?.replace('_', ' ').toUpperCase() ||
+                  'N/A'
+                }
+                valueColor={
+                  property?.payment_status === 'payment_unverified'
+                    ? Colors.AIRBNB_RED
+                    : Colors.BOTTLE_GREEN
+                }
+              />
+            )}
+            {/* <DetailRow
               label="Payment Status: "
               value={
                 property?.payment_status?.replace('_', ' ').toUpperCase() ||
@@ -393,9 +428,9 @@ const ReviewDetailScreen = ({ route }: any) => {
               valueColor={
                 property?.payment_status === 'payment_unverified'
                   ? Colors.AIRBNB_RED
-                  : Colors.BOTTLE_GREEN
+                  : Colors.BOTTLE_GREEN 
               }
-            />
+            /> */}
           </View>
         </GradientBorder>
       </View>
@@ -460,7 +495,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             color={Colors.JET_BLACK}
           />
           <AppText
-            text={guest_property_ratings?.cancellation_policy || 'N/A'}
+            text={property?.booking_platform === 'airbnb' ? 'Flexible - Guests can cancel at least 24 hours before check-in' : guest_property_ratings?.cancellation_policy || 'N/A'}
             type="Regular"
             fontSize={14}
             color={Colors.STEEL_GREY}

@@ -126,7 +126,6 @@ const transformApiMessages = (
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
-  console.log('user', user?.id);
 
   // Safely get params
   const route = useRoute();

@@ -10,6 +10,9 @@ import { smartLockApiResponseType, smartLockGeneratePasscodePayloadType } from '
 import Toast from 'react-native-toast-message';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const schema = yup.object().shape({
     name: yup.string().required('Name is required'),
@@ -93,9 +96,13 @@ export default function useGeneratePasscodeContainer() {
         if (type === 'Timed') {
             payload.keyboardPwdType = 3;
             payload.start_date = data.startDate;
-            payload.start_time = data.startTime;
+            // payload.start_time = data.startTime;
             payload.end_date = data.endDate;
-            payload.end_time = data.endTime;
+            // payload.end_time = data.endTime;
+            payload.start_time = dayjs(`${data.startDate} ${data.startTime}`, 'YYYY-MM-DD hh:mm a').format('HH:mm');
+            payload.end_time = dayjs(`${data.endDate} ${data.endTime}`, 'YYYY-MM-DD hh:mm a').format('HH:mm');
+
+
         }
 
         console.log('FINAL PAYLOAD:', payload);
