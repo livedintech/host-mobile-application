@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '../AppText/AppText';
 
@@ -18,66 +19,84 @@ const getOTASource = (source?: string) => {
   return { icon: 'livedin' };
 };
 
-const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
-  const { type, color, guest, price, rate, showLabel, ota } = marking || {};
+const getSolidLightColor = (hex: string) => {
+  if (hex === '#3B82F6') return '#D6E4FF';
+  return '#F3F4F6';
+};
+
+const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
+  const { type, color, guest, price, rate, showLabel, ota, bookingData } = marking || {};
   const isActive = !!type && type !== 'none';
   const themeColor = color || '#3B82F6';
   
-  const isSingle = type === 'single' || (marking?.starting && marking?.ending);
-  const isStarting = marking?.starting && !isSingle;
-  const isEnding = marking?.ending && !isSingle;
-  
-  const otaIconData = getOTASource(ota);
-  const displayPrice = rate || price || defaultPrice;
+  const dateString = date.dateString;
+  const arrival = bookingData?.arrival_date;
+  const departure = bookingData?.departure_date;
 
-  // --- MANUAL TRUNCATION LOGIC ---
-  // If it's a single circle, we limit the name strictly to fit the diameter
+  const isArrival = isActive && dateString === arrival;
+  const isDeparture = isActive && dateString === departure;
+  const isSingleDay = isActive && isArrival && isDeparture;
+  const isStart = isActive && isArrival && !isDeparture;
+  const isEnd = isActive && isDeparture && !isArrival;
+  const isMid = isActive && !isArrival && !isDeparture;
+
+  const otaIconData = getOTASource(ota);
+  const solidLight = getSolidLightColor(themeColor);
+
   const truncateName = (name: string, limit: number) => {
-    if (!name) return '';
+    if (!name || typeof name !== 'string') return '';
     return name.length > limit ? `${name.substring(0, limit)}..` : name;
   };
-
-  const displayName = isSingle ? truncateName(guest, 4) : truncateName(guest, 10);
+  const displayName = isSingleDay ? truncateName(guest, 6) : truncateName(guest, 12);
 
   return (
     <View style={styles.dayCell}>
-      {/* 1. SELECTION BACKGROUND */}
-      {isActive && (
+      {isActive && !isSingleDay && (
         <View
           pointerEvents="none"
           style={[
             styles.selectionBase,
             { 
-              backgroundColor: themeColor,
-              width: isSingle ? SELECTION_HEIGHT : '100%',
-              left: isSingle ? (COLUMN_WIDTH - SELECTION_HEIGHT) / 2 : 0,
-              borderTopLeftRadius: (isSingle || isStarting) ? SELECTION_HEIGHT / 2 : 0,
-              borderBottomLeftRadius: (isSingle || isStarting) ? SELECTION_HEIGHT / 2 : 0,
-              borderTopRightRadius: (isSingle || isEnding) ? SELECTION_HEIGHT / 2 : 0,
-              borderBottomRightRadius: (isSingle || isEnding) ? SELECTION_HEIGHT / 2 : 0,
+              backgroundColor: solidLight,
+              width: COLUMN_WIDTH,
+              left: 0, 
+              borderTopLeftRadius: isStart ? SELECTION_HEIGHT / 2 : 0,
+              borderBottomLeftRadius: isStart ? SELECTION_HEIGHT / 2 : 0,
+              borderTopRightRadius: isEnd ? SELECTION_HEIGHT / 2 : 0,
+              borderBottomRightRadius: isEnd ? SELECTION_HEIGHT / 2 : 0,
+              zIndex: 1,
             }
           ]}
         />
       )}
 
-      {/* 2. CONTENT CONTAINER */}
-      <TouchableOpacity
-        style={styles.dayContainer}
-        onPress={() => onPress(date)}
-        activeOpacity={0.8}
-      >
+      {/* 2. SOLID DARK CIRCLE (Start, End, and Single) */}
+      {(isStart || isEnd || isSingleDay) && (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.selectionBase,
+            {
+              backgroundColor: themeColor,
+              width: SELECTION_HEIGHT,
+              left: (COLUMN_WIDTH - SELECTION_HEIGHT) / 2,
+              borderRadius: SELECTION_HEIGHT / 2,
+              zIndex: 2,
+            }
+          ]}
+        />
+      )}
+
+      {/* 3. CONTENT */}
+      <TouchableOpacity style={styles.dayContainer} onPress={() => onPress(date)} activeOpacity={0.8}>
         <View style={styles.contentWrapper}>
-          {/* TRUNCATED GUEST LABEL */}
-          {showLabel && (
+          {showLabel && isActive && (
             <View style={styles.labelPositioner} pointerEvents="none">
-              <View style={[
-                styles.labelRow, 
-                isSingle && { maxWidth: SELECTION_HEIGHT * 0.9 }
-              ]}>
+              <View style={[styles.labelRow, isSingleDay && { maxWidth: SELECTION_HEIGHT * 0.85 }]}>
                 <Svgicons path={otaIconData.icon as any} size={ms(7)} />
                 <AppText 
                   text={displayName} 
-                  style={styles.guestTextInside} 
+                  style={[styles.guestTextInside, { color: isMid ? themeColor : '#FFF' }]} 
                   numberOfLines={1} 
                 />
               </View>
@@ -85,19 +104,11 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
           )}
 
           <View style={styles.textGroup}>
-            <Text style={[
-              styles.dayNumber, 
-              { color: isActive ? '#FFF' : '#1A332C' },
-              state === 'disabled' && styles.disabledText
-            ]}>
+            <Text style={[styles.dayNumber, { color: isActive ? (isMid ? '#1A332C' : '#FFF') : '#1A332C' }]}>
               {date.day}
             </Text>
-            
-            <Text style={[
-              styles.priceText, 
-              { color: isActive ? 'rgba(255,255,255,0.85)' : '#7B8D88' }
-            ]}>
-              SAR {displayPrice}
+            <Text style={[styles.priceText, { color: isActive ? (isMid ? '#7B8D88' : 'rgba(255,255,255,0.85)') : '#7B8D88' }]}>
+              SAR {rate || price || defaultPrice}
             </Text>
           </View>
         </View>
@@ -105,7 +116,6 @@ const CustomDay = ({ date, state, marking, onPress, defaultPrice }: any) => {
     </View>
   );
 };
-
 const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: any) => {
   return (
     <View style={styles.card}>
@@ -114,6 +124,9 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: 
         markingType="custom"
         markedDates={markedDates}
         dayComponent={(props: any) => <CustomDay {...props} defaultPrice={defaultPrice} onPress={onDayPress} />}
+        renderArrow={(dir: any) => (
+          dir === 'left' ? <ChevronLeft size={ms(22)} color="#A0A0A0" /> : <ChevronRight size={ms(22)} color="#1A332C" />
+        )}
         theme={{
           calendarBackground: 'transparent',
           monthTextColor: '#1A332C',
@@ -136,7 +149,6 @@ const styles = StyleSheet.create({
   selectionBase: {
     position: 'absolute',
     height: SELECTION_HEIGHT,
-    zIndex: 1,
   },
   dayContainer: {
     width: '100%',
@@ -153,7 +165,7 @@ const styles = StyleSheet.create({
   },
   labelPositioner: {
     position: 'absolute',
-    top: vs(2),
+    top: vs(4),
     zIndex: 20,
     alignItems: 'center',
     width: '100%',
@@ -163,7 +175,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: s(2),
-    overflow: 'hidden',
   },
   textGroup: {
     alignItems: 'center',
@@ -172,7 +183,6 @@ const styles = StyleSheet.create({
   guestTextInside: {
     fontSize: ms(6),
     fontWeight: '800',
-    color: '#FFF',
     textAlign: 'center',
   },
   dayNumber: { 
@@ -184,7 +194,6 @@ const styles = StyleSheet.create({
     fontSize: ms(7), 
     fontWeight: '600',
   },
-  disabledText: { color: '#E0E0E0' },
 });
 
 export default CustomCalendar;
