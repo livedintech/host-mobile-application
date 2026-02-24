@@ -16,8 +16,12 @@ import {
 import { goBack } from '@/services/navigationService';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import { useRoute } from '@react-navigation/native';
 
 const AssignChatScreen = () => {
+    const {params} = useRoute();
+    console.log('paramss',params?.guestName);
+    
     const { userManagement, handleAssignUser, confirm, isLoadingRemoved, removeSheetRef, selectedUser,isLoading,refetch } = useAssignChatContainer();
     const renderUserItem = ({ item }: { item: any }) => (
         <ButtonView
@@ -52,13 +56,13 @@ const AssignChatScreen = () => {
                     </Pressable>
                 </GradientBorder>
                 <AppText
-                    text="Abdulrahman Al Hassan"
+                    text={params?.guestName}
                     fontSize={18}
                     type="Bold"
                     color={Colors.MIDNIGHT}
                 />
 
-                <Menu>
+                {/* <Menu>
                     <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
                         <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
                     </MenuTrigger>
@@ -96,7 +100,8 @@ const AssignChatScreen = () => {
                             <Svgicons path="note" size={24} />
                         </MenuOption>
                     </MenuOptions>
-                </Menu>
+                </Menu> */}
+                <View/>
             </View>
 
             <View style={styles.titleSection}>

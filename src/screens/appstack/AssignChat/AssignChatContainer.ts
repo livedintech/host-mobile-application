@@ -24,6 +24,8 @@ export default function useAssignChatContainer() {
      const route = useRoute();
       const params = route?.params as { conversation_id?: number } | undefined;
       const conversation_id = params?.conversation_id;
+      console.log('conversation_idss',conversation_id);
+      
 
     // User Management List
     const { data: userManagement = [], refetch, isLoading } = useQuery({

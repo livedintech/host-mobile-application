@@ -571,7 +571,8 @@ const ChatScreen = () => {
                 style={styles.menuItem}
                 onSelect={() => {
                   navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, {
-                    conversation_id,
+                    conversation_id:conversation_id,
+                    guestName:conversationData?.name
                   });
                 }}
               >

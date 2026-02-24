@@ -6,7 +6,7 @@ import useSelectPaymentContainer from './SelectPaymentContainer';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const SelectPaymentScreen = () => {
-  const { paymentMethods, onSelect, navigation } = useSelectPaymentContainer();
+  const { paymentMethods, onSelect } = useSelectPaymentContainer();
 
   return (
     <View style={styles.container}>
