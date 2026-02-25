@@ -29,14 +29,65 @@ import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 
+interface RouteParams {
+  plan?: {
+    price: number;
+    country?: string;
+    name?: string;
+  };
+  paymentMethodType?: string;
+  paymentMethodId?: number;
+  paymentMethodName?: string;
+  isCardMethod?: boolean;
+}
+
+interface PaymentResult {
+  InvoiceStatus?: string;
+  InvoiceId?: number;
+  InvoiceReference?: string;
+  InvoiceValue?: number;
+  InvoiceDisplayValue?: string;
+  CustomerName?: string;
+  CustomerMobile?: string;
+  CreatedDate?: string;
+  ExpiryDate?: string;
+  RecurringId?: string;
+  CardToken?: string;
+  CustomerReference?: string;
+  InvoiceError?: string;
+  SessionId?: string;
+  PaymentURL?: string;
+  InvoiceTransactions?: Array<{
+    TransactionId?: string;
+    PaymentId?: string;
+    AuthorizationId?: string;
+    TransactionStatus?: string;
+    TransactionDate?: string;
+    PaymentGateway?: string;
+    CardNumber?: string;
+    Currency?: string;
+    PaidCurrency?: string;
+    PaidCurrencyValue?: string;
+    TransationValue?: string;
+    DueValue?: string;
+    CustomerServiceCharge?: string;
+    ReferenceId?: string;
+    TrackId?: string;
+    ErrorCode?: string;
+  }>;
+  InvoiceItems?: any[];
+  Suppliers?: any[];
+}
+
 export default function useAddNewPaymentMethodContainer() {
   const { params } = useRoute<any>();
-  const navigation = useNavigation();
-  const plan = params?.plan;
-  const paymentMethodType = params?.paymentMethodType;
-  const paymentMethodId = params?.paymentMethodId;
-  const paymentMethodName = params?.paymentMethodName;
-  const isCardMethod = params?.isCardMethod ?? true;  
+  const navigation = useNavigation(); 
+
+  const plan = (params as RouteParams)?.plan;
+  const paymentMethodType = (params as RouteParams)?.paymentMethodType;
+  const paymentMethodId = (params as RouteParams)?.paymentMethodId;
+  const paymentMethodName = (params as RouteParams)?.paymentMethodName;
+  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;  
   const { user } = useAuthStore();
  
   const [sessionId, setSessionId] = useState('');
@@ -52,11 +103,19 @@ export default function useAddNewPaymentMethodContainer() {
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
     mutationFn: savePaymentIdentifierApi,
     onSuccess: () => {
-      Toast.show({ type: 'success', text1: 'Payment Successful' });
+      Toast.show({
+        type: 'success',
+        text1: 'Payment Successful',
+        text2: 'Your payment has been processed successfully'
+      });
       goBack();
     },
     onError: (error: any) => {
-      Toast.show({ type: 'error', text1: 'Payment Save Failed', text2: error?.message });
+      Toast.show({
+        type: 'error',
+        text1: 'Payment Save Failed',
+        text2: error?.message || 'Failed to save payment information',
+      });
     },
   });
 
