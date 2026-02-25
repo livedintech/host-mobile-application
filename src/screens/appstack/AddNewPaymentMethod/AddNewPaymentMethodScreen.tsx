@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MFCardPaymentView } from 'myfatoorah-reactnative';
+import { MFCardPaymentView, MFGooglePayButton, GooglePayButtonConstants } from 'myfatoorah-reactnative';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -16,6 +16,9 @@ const AddNewPaymentMethodScreen = () => {
     isSaving,
     cardLoading,
     paymentMethodName,
+    paymentMethodType, 
+    googlePayRef,     
+    sessionId,    
     isCardMethod,
     cardPaymentView,
     getCardViewStyle,
@@ -108,7 +111,6 @@ const AddNewPaymentMethodScreen = () => {
             fontSize={14}
             color={Colors.BLACK}
             ml={10}
-
           />
         </View>
       </View>
@@ -150,8 +152,25 @@ const AddNewPaymentMethodScreen = () => {
             {/* Show loading overlay when processing */}
             {cardLoading && <LoadingOverlay />}
 
+            {/* Google Pay Button */}
+            {paymentMethodType === 'google_pay' && !isLoading && (
+              <View style={{ flex: 1, justifyContent: 'center' }}>
+                {sessionId ? (
+                  <MFGooglePayButton
+                    ref={googlePayRef}
+                    style={{ width: '100%', height: 55 }}
+                    theme={GooglePayButtonConstants.Themes.Dark}
+                    type={GooglePayButtonConstants.Types.Buy}
+                    radius={12}
+                  />
+                ) : (
+                  <ActivityIndicator color={Colors.INDIAN_RED} />
+                )}
+              </View>
+            )}
+
             {/* CARD METHOD: Show MyFatoorah Card Form */}
-            {isCardMethod && (
+            {isCardMethod && paymentMethodType !== 'google_pay' && (
               <>
                 <MFCardPaymentView
                   ref={cardPaymentView}
@@ -162,7 +181,6 @@ const AddNewPaymentMethodScreen = () => {
                   ]}
                 />
 
-                {/* Retry Button if loading failed */}
                 {!isLoading && !cardPaymentView.current && (
                   <TouchableOpacity
                     style={styles.retryButton}
@@ -179,8 +197,8 @@ const AddNewPaymentMethodScreen = () => {
               </>
             )}
 
-            {/* WALLET METHOD: Show Instructions */}
-            {!isCardMethod && !isLoading && (
+            {/* WALLET METHOD: Show Instructions (STC Pay, etc.) */}
+            {!isCardMethod && paymentMethodType !== 'google_pay' && !isLoading && (
               <WalletInstructions />
             )}
           </View>
@@ -199,23 +217,25 @@ const AddNewPaymentMethodScreen = () => {
 
           {/* Footer with Pay Button */}
           <View style={styles.footer}>
-            <AppButton
-              title={
-                isProcessingPayment
-                  ? "Processing Payment..."
-                  : isSaving
-                    ? "Saving Details..."
-                    : !isCardMethod
-                      ? `Pay with ${paymentMethodName}`
-                      : "Pay Now"
-              }
-              onPress={handlePay}
-              disabled={cardLoading}
-              loading={cardLoading}
-            />
+            {/* Hide main button for Google Pay as it has its own button */}
+            {paymentMethodType !== 'google_pay' && (
+              <AppButton
+                title={
+                  isProcessingPayment
+                    ? "Processing Payment..."
+                    : isSaving
+                      ? "Saving Details..."
+                      : !isCardMethod
+                        ? `Pay with ${paymentMethodName}`
+                        : "Pay Now"
+                }
+                onPress={handlePay}
+                disabled={cardLoading}
+                loading={cardLoading}
+              />
+            )}
 
-            {/* Reset Session Button (for card methods only) */}
-            {!cardLoading && isCardMethod && (
+            {!cardLoading && isCardMethod && paymentMethodType !== 'google_pay' && (
               <TouchableOpacity
                 style={styles.resetButton}
                 onPress={retrySession}
@@ -229,7 +249,6 @@ const AddNewPaymentMethodScreen = () => {
               </TouchableOpacity>
             )}
 
-            {/* Additional Info */}
             <AppText
               text="By proceeding, you agree to our terms and conditions"
               fontSize={11}
@@ -246,96 +265,21 @@ const AddNewPaymentMethodScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.WHITE
-  },
-  innerContainer: {
-    flex: 1,
-    paddingHorizontal: Metrics.scale(20)
-  },
-  headerSection: {
-    paddingTop: Metrics.verticalScale(10),
-    paddingBottom: Metrics.verticalScale(20),
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.SUPER_GREY || '#F0F0F0',
-  },
-  cardSection: {
-    flex: 1,
-    marginTop: Metrics.verticalScale(20),
-    position: 'relative',
-  },
-  loaderContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    zIndex: 10,
-    borderRadius: 12,
-  },
-  mfCardView: {
-    height: Metrics.verticalScale(400),
-    width: '100%',
-    minHeight: 350,
-  },
-  retryButton: {
-    marginTop: Metrics.verticalScale(20),
-    padding: Metrics.scale(15),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.INDIAN_RED,
-    borderRadius: 12,
-    backgroundColor: Colors.WHITE,
-  },
-  // Wallet payment styles
-  walletContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: Metrics.verticalScale(40),
-  },
-  walletIcon: {
-    width: Metrics.scale(100),
-    height: Metrics.scale(100),
-    borderRadius: 50,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  instructionsList: {
-    marginTop: Metrics.verticalScale(30),
-    width: '100%',
-  },
-  instructionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Metrics.verticalScale(15),
-    padding: Metrics.scale(12),
-    backgroundColor: '#F8F9FA',
-    borderRadius: 8,
-  },
-  securityInfo: {
-    paddingVertical: Metrics.verticalScale(15),
-    alignItems: 'center',
-  },
-  securityBadge: {
-    backgroundColor: '#F8F9FA',
-    paddingHorizontal: Metrics.scale(15),
-    paddingVertical: Metrics.verticalScale(10),
-    borderRadius: 8,
-  },
-  footer: {
-    paddingTop: Metrics.verticalScale(15),
-    paddingBottom: Metrics.verticalScale(20),
-    borderTopWidth: 1,
-    borderTopColor: Colors.SUPER_GREY || '#F0F0F0',
-  },
-  resetButton: {
-    marginTop: Metrics.verticalScale(10),
-    padding: Metrics.scale(8),
-    alignItems: 'center',
-  },
+  container: { flex: 1, backgroundColor: Colors.WHITE },
+  innerContainer: { flex: 1, paddingHorizontal: Metrics.scale(20) },
+  headerSection: { paddingTop: Metrics.verticalScale(10), paddingBottom: Metrics.verticalScale(20), borderBottomWidth: 1, borderBottomColor: Colors.SUPER_GREY || '#F0F0F0' },
+  cardSection: { flex: 1, marginTop: Metrics.verticalScale(20), position: 'relative' },
+  loaderContainer: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.95)', zIndex: 10, borderRadius: 12 },
+  mfCardView: { height: Metrics.verticalScale(400), width: '100%', minHeight: 350 },
+  retryButton: { marginTop: Metrics.verticalScale(20), padding: Metrics.scale(15), alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.INDIAN_RED, borderRadius: 12, backgroundColor: Colors.WHITE },
+  walletContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: Metrics.verticalScale(40) },
+  walletIcon: { width: Metrics.scale(100), height: Metrics.scale(100), borderRadius: 50, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center' },
+  instructionsList: { marginTop: Metrics.verticalScale(30), width: '100%' },
+  instructionItem: { flexDirection: 'row', alignItems: 'center', marginBottom: Metrics.verticalScale(15), padding: Metrics.scale(12), backgroundColor: '#F8F9FA', borderRadius: 8 },
+  securityInfo: { paddingVertical: Metrics.verticalScale(15), alignItems: 'center' },
+  securityBadge: { backgroundColor: '#F8F9FA', paddingHorizontal: Metrics.scale(15), paddingVertical: Metrics.verticalScale(10), borderRadius: 8 },
+  footer: { paddingTop: Metrics.verticalScale(15), paddingBottom: Metrics.verticalScale(20), borderTopWidth: 1, borderTopColor: Colors.SUPER_GREY || '#F0F0F0' },
+  resetButton: { marginTop: Metrics.verticalScale(10), padding: Metrics.scale(8), alignItems: 'center' },
 });
 
 export default AddNewPaymentMethodScreen;
