@@ -112,6 +112,8 @@ export const SERVICE_CONFIG_URLS = {
     DISTRICTS: `${authController}/districts?city_id={city_id}`,
     DELETE_CHAT:`${authController}/chat/inbox/soft-delete/{message_id}`,
     DELETE_PROPERTY:`${authController}/channelmanagement/listing/soft-delete`,
+        GET_USER:`${authController}/user`,
+
 
   },
 };

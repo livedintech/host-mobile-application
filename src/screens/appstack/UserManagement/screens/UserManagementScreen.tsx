@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -16,32 +16,25 @@ const UserManagementScreen = () => {
     handleDeleteUser,
     userManagement,
     isLoading,
-    refetch, // 👈 assuming tum container se de sakte ho
+    isSubmitting,
+    refetch,
   } = useUserManagementContainer();
 
-
   const renderUser = ({ item }: any) => (
-    <GradientBorder
-      borderRadius={16}
-      borderWidth={1}
-      style={styles.cardWrapper}
-    >
+    <GradientBorder borderRadius={16} borderWidth={1} style={styles.cardWrapper}>
       <View style={styles.cardInner}>
         <View style={styles.cardHeader}>
-          <AppText
-            text={item.name}
-            fontSize={20}
-            type="Bold"
-            color={Colors.PINE_FOREST}
-          />
-
+          <AppText text={item.name} fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
           <View style={styles.actionRow}>
-            {/* Delete */}
-            <ButtonView mr={15} onPress={() => handleDeleteUser(item.id)}>
+            {/* Disable delete while an action is pending */}
+            <ButtonView 
+              mr={15} 
+              onPress={() => handleDeleteUser(item.id)}
+              disabled={isSubmitting}
+            >
               <Svgicons path="TrashFull" size={20} />
             </ButtonView>
 
-            {/* Edit */}
             <ButtonView onPress={() => handleEditUser(item)}>
               <Svgicons path="editIconUserManagement" size={20} />
             </ButtonView>
@@ -49,12 +42,7 @@ const UserManagementScreen = () => {
         </View>
 
         <View style={styles.infoRow}>
-          <AppText
-            text={item.role_namwe}
-            fontSize={18}
-            color={Colors.PINE_FOREST}
-            mr={8}
-          />
+          <AppText text={item.role_namwe} fontSize={18} color={Colors.PINE_FOREST} mr={8} />
           <Svgicons path="roleIcon" size={18} />
         </View>
       </View>
@@ -65,7 +53,7 @@ const UserManagementScreen = () => {
     <View style={styles.container}>
       <FlatListSimpleHandler
         data={userManagement}
-        isLoading={isLoading}
+        isLoading={isLoading} 
         renderItem={renderUser}
         listEmptyText="No users found"
         onRefresh={refetch}
@@ -73,19 +61,12 @@ const UserManagementScreen = () => {
         contentContainerStyle={styles.scrollContent}
         HeaderComponent={
           <View style={styles.titleRow}>
-            <AppText
-              text="User Management"
-              fontSize={23}
-              type="Bold"
-              color={Colors.PINE_FOREST}
-              mr={10}
-            />
+            <AppText text="User Management" fontSize={23} type="Bold" color={Colors.PINE_FOREST} mr={10} />
             <Svgicons path="userManagementIcon" size={30} />
           </View>
         }
       />
 
-      {/* Create Button */}
       <View style={styles.footer}>
         <AppButton
           title="Create New User"
@@ -93,7 +74,7 @@ const UserManagementScreen = () => {
           backgroundColor={Colors.WHITE}
           borderColor={Colors.ARGENT}
           color={Colors.PINE_FOREST}
-          loading={isLoading}
+          loading={isSubmitting} 
         />
       </View>
     </View>
@@ -101,6 +82,7 @@ const UserManagementScreen = () => {
 };
 
 export default UserManagementScreen;
+
 
 const styles = StyleSheet.create({
   container: {
