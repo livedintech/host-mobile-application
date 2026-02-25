@@ -109,6 +109,13 @@ const AuthStack = () => {
           require('@/screens/auth/TrialSuccess/TrialSuccessScreen').default
         }
       />
+      <Screen
+        options={{ header: () => <HeaderApp isGoBack isLang isLogo/> }}
+        name={NavigationRoutes.AUTH_STACK.THREE_PLUS_LISTING}
+        getComponent={() =>
+          require('@/screens/auth/ThreePlusListing/ThreePlusListingScreen').default
+        }
+      />
     </Navigator>
   );
 };

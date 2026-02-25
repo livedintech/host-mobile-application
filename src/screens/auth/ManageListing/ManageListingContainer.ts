@@ -14,8 +14,8 @@ import Toast from 'react-native-toast-message';
 
 export const listingData = [
   { id: '3', label: '1-3', isEnable: true },
-  { id: '2', label: '4-30', isEnable: false },
-  { id: '1', label: '30+', isEnable: false },
+  { id: '2', label: '4-30', isEnable:  true},
+  { id: '1', label: '30+', isEnable: true },
 ];
 
 export default function useManageListingContainer() {
@@ -41,11 +41,17 @@ export default function useManageListingContainer() {
   });
 
   const onSelect = useCallback((id: string) => {
+    if(id === '3'){
+
     setSelectedListing(id);
     const payload = {
       phone_number: params,
     };
     resendOtpPayload(payload);
+    } else{
+      navigate(NavigationRoutes.AUTH_STACK.THREE_PLUS_LISTING)
+    } 
+
   }, []);
 
   return {
