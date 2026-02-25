@@ -62,6 +62,9 @@ export default function useSavedRepliesCreateEditContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_SAVED_REPLIES]
             });
+            queryClient.invalidateQueries({
+                queryKey: [STORAGE_CONST.GET_CHAT_DETAIL_SAVED_REPLIES]
+            });
             goBack()
         },
         onError: error => {
