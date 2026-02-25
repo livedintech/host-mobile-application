@@ -86,20 +86,18 @@ export default function useAddNewPaymentMethodContainer() {
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
   const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
   
-  const { user } = useAuthStore();  
-
+  const { user } = useAuthStore();
+  
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const cardPaymentView = useRef<any>(null);
-
 
   // Get customer details from user
   const customerName = user?.name && user?.surname 
     ? `${user.name} ${user.surname}` 
     : user?.name || 'Customer';
   const customerPhone = user?.phone || '';
-  const customerEmail = user?.email || '';
   const customerId = user?.id?.toString() || `user_${Date.now()}`;
 
   console.log('💳 Payment Method Config:', {
@@ -108,6 +106,7 @@ export default function useAddNewPaymentMethodContainer() {
     name: paymentMethodName,
     isCardMethod,
     customer: customerName,
+    phone: customerPhone,
   });
 
   // Save Payment Mutation
@@ -265,7 +264,7 @@ export default function useAddNewPaymentMethodContainer() {
     setIsProcessingPayment(true);
 
     try {
-      const amount = 1; // Test amount
+      const amount = 1; // ✅ Minimum 1 SAR (0.01 is too small)
       const executeRequest = new MFExecutePaymentRequest(amount);
       executeRequest.SessionId = sessionId;
       
@@ -297,7 +296,6 @@ export default function useAddNewPaymentMethodContainer() {
           card_token: transaction?.TransactionId || result.SessionId || customerPhone,
           card_holder_name: result.CustomerName || customerName,
           zipcode: result.CustomerMobile || customerPhone,
-          customer_identifier:customerPhone,
         });
       } else {
         Toast.show({
@@ -336,7 +334,7 @@ export default function useAddNewPaymentMethodContainer() {
     setIsProcessingPayment(true);
 
     try {
-      const amount = 1; // Test amount
+      const amount = 1; // ✅ Minimum 1 SAR (0.01 is too small)
       
       // Create payment request for redirect methods
       const paymentRequest = new MFSendPaymentRequest(amount, MFCurrencyISO.SAUDIARABIA_SAR);
@@ -348,9 +346,14 @@ export default function useAddNewPaymentMethodContainer() {
       
       // Optional fields
       paymentRequest.CustomerMobile = customerPhone;
-      paymentRequest.CustomerEmail = customerEmail || ''; // Empty if no email
-      paymentRequest.CallBackUrl = ''; // Add your callback URL if needed
-      paymentRequest.ErrorUrl = ''; // Add your error URL if needed
+      paymentRequest.NotificationOption = 'SMS'; // ✅ Required: SMS, EML, LNK, or ALL
+      
+      // Email not used in this app - signup is phone-based only
+      // paymentRequest.CustomerEmail not set
+      
+      // Callback URLs (add if you have deep linking setup)
+      // paymentRequest.CallBackUrl = 'yourapp://payment-success';
+      // paymentRequest.ErrorUrl = 'yourapp://payment-error';
       
       // ✅ MUST set PaymentMethodId for wallet/redirect payments
       if (paymentMethodId) {
