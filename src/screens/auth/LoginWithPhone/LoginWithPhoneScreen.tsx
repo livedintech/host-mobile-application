@@ -7,11 +7,16 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import Metrics from '@/utility/Metrics';
 import useLoginWithPhoneContainer from './LoginWithPhoneContainer';
 import { configureGoogleSignIn } from '@/services/googleConfig';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, isSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { socialAuthApi } from '@/services/authApi';
+import { SocialAuthPayload } from '@/types/api/authTypes';
+import { useAuthStore } from '@/store/useAuthStore';
+import Toast from 'react-native-toast-message';
 
 const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit } = useLoginWithPhoneContainer();
+  const { setToken, setUser } = useAuthStore();
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -20,8 +25,21 @@ const LoginWithPhoneScreen = () => {
   const handleGoogleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const userInfo = await GoogleSignin.signIn();
-      Alert.alert(JSON.stringify(userInfo))
+      const response = await GoogleSignin.signIn();
+      if (isSuccessResponse(response)) {
+        const { user } = response.data;
+        const payload: SocialAuthPayload = {
+          sub: user.id,
+          name: user.name || '',
+          email: user.email,
+          fcm_token: ''
+        };
+
+        const result = await socialAuthApi(payload);
+        setToken(result?.access_token);
+        setUser(result?.user)
+        Toast.show({ type: 'success', text1: result?.message || "Logged in successfully" });
+      }
     } catch (error: any) {
       if (error.code !== statusCodes.SIGN_IN_CANCELLED) {
         Alert.alert('Google Sign-In error', error.message);
