@@ -84,18 +84,17 @@ export default function useAddNewPaymentMethodContainer() {
   const paymentMethodType = (params as RouteParams)?.paymentMethodType;
   const paymentMethodId = (params as RouteParams)?.paymentMethodId;
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
-  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
-  
+  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;  
   const { user } = useAuthStore();
-  
+ 
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const cardPaymentView = useRef<any>(null);
 
   // Get customer details from user
-  const customerName = user?.name && user?.surname 
-    ? `${user.name} ${user.surname}` 
+  const customerName = user?.name && user?.surname
+    ? `${user.name} ${user.surname}`
     : user?.name || 'Customer';
   const customerPhone = user?.phone || '';
   const customerId = user?.id?.toString() || `user_${Date.now()}`;
@@ -113,8 +112,8 @@ export default function useAddNewPaymentMethodContainer() {
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
     mutationFn: savePaymentIdentifierApi,
     onSuccess: () => {
-      Toast.show({ 
-        type: 'success', 
+      Toast.show({
+        type: 'success',
         text1: 'Payment Successful',
         text2: 'Your payment has been processed successfully'
       });
@@ -133,9 +132,9 @@ export default function useAddNewPaymentMethodContainer() {
   const getCardViewStyle = useCallback(() => {
     const boxShadow = new MFBoxShadow(0, 2, 4, 0, processColor('#00000010'));
     const placeholder = new MFCardViewPlaceHolder(
-      'Name on Card', 
-      'Card Number', 
-      'MM / YY', 
+      'Name on Card',
+      'Card Number',
+      'MM / YY',
       'CVV'
     );
 
@@ -150,7 +149,7 @@ export default function useAddNewPaymentMethodContainer() {
       12,
       boxShadow
     );
-    
+
     cardViewInput.PlaceHolder = placeholder;
 
     const cardViewLabel = new MFCardViewLabel(
@@ -160,9 +159,9 @@ export default function useAddNewPaymentMethodContainer() {
       MFFontFamily.Helvetica,
       MFFontWeight.Medium,
       new MFCardViewText(
-        'Card Holder Name', 
-        'Card Number', 
-        'Expiry Date', 
+        'Card Holder Name',
+        'Card Number',
+        'Expiry Date',
         'Security Code'
       )
     );
@@ -191,7 +190,7 @@ export default function useAddNewPaymentMethodContainer() {
       request.SaveToken = true;
 
       const response = await MFSDK.initiateSession(request);
-      
+
       if (!response?.SessionId) {
         throw new Error('Invalid session response');
       }
@@ -234,7 +233,7 @@ export default function useAddNewPaymentMethodContainer() {
   const initiateWalletPayment = useCallback(async () => {
     setIsLoading(true);
     console.log(`🔄 Preparing ${paymentMethodName} payment...`);
-    
+
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
@@ -243,8 +242,8 @@ export default function useAddNewPaymentMethodContainer() {
   // Handle Card Payment (Mada, Visa/Master)
   const handleCardPayment = async () => {
     if (!sessionId) {
-      Toast.show({ 
-        type: 'error', 
+      Toast.show({
+        type: 'error',
         text1: 'Session Expired',
         text2: 'Reinitializing payment session...'
       });
@@ -267,7 +266,7 @@ export default function useAddNewPaymentMethodContainer() {
       const amount = 1; // ✅ Minimum 1 SAR (0.01 is too small)
       const executeRequest = new MFExecutePaymentRequest(amount);
       executeRequest.SessionId = sessionId;
-      
+
       // ⚠️ CRITICAL: DON'T set PaymentMethodId for embedded card payments
       // The card form handles method selection automatically
       // Uncomment below ONLY if you want to show specific card type
@@ -289,7 +288,7 @@ export default function useAddNewPaymentMethodContainer() {
 
       if (result?.InvoiceStatus === 'Paid') {
         const transaction = result.InvoiceTransactions?.[0];
-        
+
         saveIdentifier({
           country: plan?.country || customerPhone,
           status: result.InvoiceStatus || 'Paid',
@@ -306,7 +305,7 @@ export default function useAddNewPaymentMethodContainer() {
       }
     } catch (error: any) {
       console.error('❌ Payment Error:', error);
-      
+
       const errorMessage = (error?.message || '').toLowerCase();
       if (errorMessage.includes('invalid data') || errorMessage.includes('session')) {
         Toast.show({
@@ -318,7 +317,7 @@ export default function useAddNewPaymentMethodContainer() {
         await initiateCardSession();
         return;
       }
-      
+
       Toast.show({
         type: 'error',
         text1: 'Payment Error',
@@ -335,15 +334,14 @@ export default function useAddNewPaymentMethodContainer() {
 
     try {
       const amount = 1; // ✅ Minimum 1 SAR (0.01 is too small)
-      
       // Create payment request for redirect methods
       const paymentRequest = new MFSendPaymentRequest(amount, MFCurrencyISO.SAUDIARABIA_SAR);
-      
+
       // Required fields - Using actual user data
       paymentRequest.CustomerIdentifier = customerId;
       paymentRequest.CustomerName = customerName; // ✅ Actual user name
       paymentRequest.DisplayCurrencyIso = MFCurrencyISO.SAUDIARABIA_SAR;
-      
+
       // Optional fields
       paymentRequest.CustomerMobile = customerPhone;
       paymentRequest.NotificationOption = 'SMS'; // ✅ Required: SMS, EML, LNK, or ALL
@@ -354,7 +352,14 @@ export default function useAddNewPaymentMethodContainer() {
       // Callback URLs (add if you have deep linking setup)
       // paymentRequest.CallBackUrl = 'yourapp://payment-success';
       // paymentRequest.ErrorUrl = 'yourapp://payment-error';
-      
+
+      // Email not used in this app - signup is phone-based only
+      // paymentRequest.CustomerEmail not set
+
+      // Callback URLs (add if you have deep linking setup)
+      // paymentRequest.CallBackUrl = 'yourapp://payment-success';
+      // paymentRequest.ErrorUrl = 'yourapp://payment-error';
+
       // ✅ MUST set PaymentMethodId for wallet/redirect payments
       if (paymentMethodId) {
         paymentRequest.PaymentMethodId = paymentMethodId;
@@ -370,21 +375,14 @@ export default function useAddNewPaymentMethodContainer() {
       console.log('📊 Wallet Payment Result:', result);
 
       // Handle redirect URL
-      if (result?.PaymentURL) {
-        console.log('🔗 Opening payment URL:', result.PaymentURL);
-        await Linking.openURL(result.PaymentURL);
-        
-        Toast.show({
-          type: 'info',
-          text1: `${paymentMethodName} Opened`,
-          text2: 'Complete payment and return to app',
-        });
+      if (result?.InvoiceURL) {
+        await Linking.openURL(result.InvoiceURL);
       }
 
       // Check if already paid (rare, but possible)
       if (result?.InvoiceStatus === 'Paid') {
         const transaction = result.InvoiceTransactions?.[0];
-        
+
         saveIdentifier({
           country: plan?.country || customerPhone,
           status: result.InvoiceStatus,
@@ -395,7 +393,7 @@ export default function useAddNewPaymentMethodContainer() {
       }
     } catch (error: any) {
       console.error('❌ Wallet Payment Error:', error);
-      
+
       // Show detailed error message
       const errorMessage = error?.message || 'Failed to process payment';
       console.log('Error details:', {
@@ -403,7 +401,7 @@ export default function useAddNewPaymentMethodContainer() {
         error: error?.error,
         validationErrors: error?.ValidationErrors,
       });
-      
+
       Toast.show({
         type: 'error',
         text1: 'Payment Error',
@@ -438,14 +436,14 @@ export default function useAddNewPaymentMethodContainer() {
     isProcessingPayment,
     isSaving,
     cardLoading: isLoading || isProcessingPayment || isSaving,
-    
+
     // Method info
     paymentMethodName,
     isCardMethod,
-    
+
     // Refs
     cardPaymentView,
-    
+
     // Functions
     getCardViewStyle,
     handlePay,
