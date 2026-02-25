@@ -38,6 +38,12 @@ export interface LoginPayload {
 export interface CheckUserExistPayload {
 
 }
+export interface SocialAuthPayload {
+  sub: string;
+  name: string;
+  email: string;
+  fcm_token?: string;
+}
 
 export interface ForgotPasswordPayload {
 

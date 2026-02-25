@@ -84,10 +84,9 @@ export default function useAddNewPaymentMethodContainer() {
   const paymentMethodType = (params as RouteParams)?.paymentMethodType;
   const paymentMethodId = (params as RouteParams)?.paymentMethodId;
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
-  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
-
+  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;  
   const { user } = useAuthStore();
-
+ 
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -335,7 +334,6 @@ export default function useAddNewPaymentMethodContainer() {
 
     try {
       const amount = 1; // ✅ Minimum 1 SAR (0.01 is too small)
-
       // Create payment request for redirect methods
       const paymentRequest = new MFSendPaymentRequest(amount, MFCurrencyISO.SAUDIARABIA_SAR);
 
@@ -347,6 +345,13 @@ export default function useAddNewPaymentMethodContainer() {
       // Optional fields
       paymentRequest.CustomerMobile = customerPhone;
       paymentRequest.NotificationOption = 'SMS'; // ✅ Required: SMS, EML, LNK, or ALL
+      
+      // Email not used in this app - signup is phone-based only
+      // paymentRequest.CustomerEmail not set
+      
+      // Callback URLs (add if you have deep linking setup)
+      // paymentRequest.CallBackUrl = 'yourapp://payment-success';
+      // paymentRequest.ErrorUrl = 'yourapp://payment-error';
 
       // Email not used in this app - signup is phone-based only
       // paymentRequest.CustomerEmail not set
