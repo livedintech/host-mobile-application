@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { CreateAccountPayload, ForgotPasswordPayload, LoginPayload, ResetPasswordPayload, VerifyOtpPayload } from "@/types/api/authTypes";
+import { CreateAccountPayload, ForgotPasswordPayload, LoginPayload, ResetPasswordPayload, SocialAuthPayload, VerifyOtpPayload } from "@/types/api/authTypes";
 
 // Check User
 export const CheckUserApi = async (payload: LoginPayload) => {
@@ -137,5 +137,19 @@ export const getChartDataApi = async (
     console.error('Chart API error:', error);
     return { monthly: '0', yearly: '0', months: [] };
   }
+};
+
+// Social Authentication (Google)
+export const socialAuthApi = async (payload: SocialAuthPayload) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.GOOGLE_LOGIN,
+        payload, 
+    );
+    
+    if (ok) {
+        return data;
+    }
+    
+    throw response;
 };
 

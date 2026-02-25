@@ -15,6 +15,7 @@ export const SERVICE_CONFIG_URLS = {
     CHART_DATA: `${authController}/external-get-amount-latest-mom`,
     PAYMENT_SAVE_CARD: `${api}/save/customer/identifier`,
     SUBSCRIPTION_SAVE_CARD: `${api}/subscription/saved-cards`,
+    GOOGLE_LOGIN: `${authController}/social-authentication`,
 
   },
   APP: {

@@ -24,6 +24,7 @@ import myFatoorahConfig, {
 } from '@/config/myfatoorah.config';
 import linking from '@/navigation/linkingConfig';
 import { MenuProvider } from 'react-native-popup-menu';
+import { configureGoogleSignIn } from '@/services/googleConfig';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -31,6 +32,7 @@ const App = () => {
 
   useEffect(() => {
     initializeApp();
+    configureGoogleSignIn()
   }, []);
 
   const initializeApp = async () => {
