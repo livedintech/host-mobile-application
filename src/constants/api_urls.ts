@@ -15,6 +15,7 @@ export const SERVICE_CONFIG_URLS = {
     CHART_DATA: `${authController}/external-get-amount-latest-mom`,
     PAYMENT_SAVE_CARD: `${api}/save/customer/identifier`,
     SUBSCRIPTION_SAVE_CARD: `${api}/subscription/saved-cards`,
+    GOOGLE_LOGIN: `${authController}/social-authentication`,
 
   },
   APP: {
@@ -112,6 +113,8 @@ export const SERVICE_CONFIG_URLS = {
     DISTRICTS: `${authController}/districts?city_id={city_id}`,
     DELETE_CHAT:`${authController}/chat/inbox/soft-delete/{message_id}`,
     DELETE_PROPERTY:`${authController}/channelmanagement/listing/soft-delete`,
+        GET_USER:`${authController}/user`,
+
 
   },
 };

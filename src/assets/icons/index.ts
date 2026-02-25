@@ -115,6 +115,8 @@ import gathern from "./gathern.svg";
 import livedin from "./livedin.svg";
 import clipboardIcon from './clipboardIcon.svg';
 import wavy_check from './wavy_check.svg'
+import google from "./google.svg";
+import apple from "./apple.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -233,5 +235,7 @@ export const icons = {
     gathern,
     livedin,
     clipboardIcon,
-    wavy_check
+    wavy_check,
+    google,
+    apple
 };
