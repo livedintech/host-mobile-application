@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { CreateAccountPayload, ForgotPasswordPayload, LoginPayload, ResetPasswordPayload, SocialAuthPayload, VerifyOtpPayload } from "@/types/api/authTypes";
+import { CreateAccountPayload, ForgotPasswordPayload, LoginPayload, ResetPasswordPayload, SocialAuthPayload, VerifyOtpPayload , UpdatePasswordPayload} from "@/types/api/authTypes";
 
 // Check User
 export const CheckUserApi = async (payload: LoginPayload) => {
@@ -153,3 +153,16 @@ export const socialAuthApi = async (payload: SocialAuthPayload) => {
     throw response;
 };
 
+// Update Password (First Time Login)
+export const updateFirstTimePasswordApi = async (payload: UpdatePasswordPayload) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.AUTH.UPDATE_PASSWORD,
+    payload
+  );
+
+  if (ok) {
+    return data;
+  }
+
+  throw response;
+};

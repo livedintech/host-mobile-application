@@ -13,6 +13,7 @@ interface PhoneInputFieldProps {
     label: string;
     countryFieldName: string;
     phoneFieldName: string;
+    activeColor?: string;
 }
 
 const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
@@ -21,6 +22,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
     label,
     countryFieldName,
     phoneFieldName,
+    activeColor = Colors.BRUNSWICK_GREEN,
 }) => {
     const [pickerVisible, setPickerVisible] = React.useState(false);
 
@@ -44,7 +46,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
 
     const animatedBorderColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [Colors.BRUNSWICK_GREEN, Colors.BRUNSWICK_GREEN],
+        outputRange: [Colors.BRUNSWICK_GREEN, activeColor],
     });
 
     const animatedBackgroundColor = animation.interpolate({
