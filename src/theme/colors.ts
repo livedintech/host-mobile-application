@@ -37,5 +37,6 @@ export const Colors = {
   DEEP_TEAL: '#07524D',
   STEEL_GREY: '#717375',
   LIGHT_GRAY: '#D5D5D5',
-
+  DISABLED_GREY: '#A0A0A0',
+  DISABLED_BG: '#F5F5F5',
 };

@@ -18,9 +18,11 @@ const ManageListingScreen = () => {
     goToPropertyDetail,
     isLoading,
     refetch,
+    UserPermission,
   } = useManageListingContainer();
 
   const data = listings?.data ?? [];
+  const isSupervisor = UserPermission?.role_key === 'supervisor';
 
   const renderProperty = ({ item }: ManageListingMapItem) => {
     const hasFullAddress =
@@ -82,8 +84,7 @@ const ManageListingScreen = () => {
                       item?.district?.name,
                     ]
                       .filter(Boolean)
-                      .join(', ')
-                    }
+                      .join(', ')}
                     color={Colors.PINE_FOREST}
                     fontSize={14}
                     numberOfLines={1}
@@ -94,7 +95,11 @@ const ManageListingScreen = () => {
           </View>
 
           {/* Arrow */}
-          <GradientBorder borderRadius={20} borderWidth={1} style={styles.arrowCircle}>
+          <GradientBorder
+            borderRadius={20}
+            borderWidth={1}
+            style={styles.arrowCircle}
+          >
             <Pressable
               style={styles.arrowCircle}
               onPress={() => goToPropertyDetail(item)}
@@ -104,7 +109,7 @@ const ManageListingScreen = () => {
           </GradientBorder>
         </View>
       </GradientBorder>
-    )
+    );
   };
 
   return (
@@ -131,11 +136,19 @@ const ManageListingScreen = () => {
           title="Create New Listing"
           onPress={onCreateNew}
           mt={20}
+          disabled={isSupervisor}
+          style={StyleSheet.flatten([
+            isSupervisor ? styles.disabledAppButton : undefined,
+          ])}
         />
         <AppButton
           title="Add New Listing"
           onPress={onCreateNewListing}
           mt={15}
+          disabled={isSupervisor}
+          style={StyleSheet.flatten([
+            isSupervisor ? styles.disabledAppButton : undefined,
+          ])}
         />
       </View>
     </View>
@@ -197,5 +210,11 @@ const styles = StyleSheet.create({
     marginTop: Metrics.verticalScale(10),
     paddingBottom: Metrics.verticalScale(20),
     paddingHorizontal: Metrics.baseMargin,
+  },
+  disabledAppButton: {
+    backgroundColor: Colors.DISABLED_BG,
+    opacity: 0.8,
+    borderColor: '#E8E8E8',
+    
   },
 });
