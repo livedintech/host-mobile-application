@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { getManageYourListings } from '@/services/ createListingService';
 import { ManageListingItem, ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { getUser } from '@/services/UserPermission';
 
 export default function useManageListingContainer() {
   const { user } = useAuthStore();
@@ -38,5 +39,15 @@ export default function useManageListingContainer() {
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   }, [])
 
-  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail, refetch, isLoading };
+  // ROLES PERMISSION
+
+  const {
+    data: UserPermission = [],
+    isLoading: isUserLoading,
+    refetch : refetchRolesPermission,
+  } = useQuery({
+    queryKey: [STORAGE_CONST.GET_USER],
+    queryFn: getUser,
+  });
+  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail, refetch, isLoading ,UserPermission};
 }
