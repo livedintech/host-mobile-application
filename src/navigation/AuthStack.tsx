@@ -116,6 +116,27 @@ const AuthStack = () => {
           require('@/screens/auth/updatePassword/UpdatePasswordScreen').default
         }
       />
+      <Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM}
+        getComponent={() =>
+          require('@/screens/auth/HubspotDetailForm/HubspotDetailFormScreen').default
+        }
+      />
+      <Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR}
+        getComponent={() =>
+          require('@/screens/auth/HubspotCalendar/HubspotCalendarScreen').default
+        }
+      />
+      <Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU}
+        getComponent={() =>
+          require('@/screens/auth/HubspotThankyou/HubspotThankyouScreen').default
+        }
+      />
     </Navigator>
   );
 };

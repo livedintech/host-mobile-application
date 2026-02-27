@@ -11,4 +11,6 @@ declare module '@env' {
   export const BASE_URL_DEV: string;
   export const BASE_URL_PROD: string;
   export const MY_FATOORAH_API: string;
+  export const HUBSPOT_ACCESS_TOKEN: string;
+
 }
