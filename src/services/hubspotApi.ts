@@ -1,10 +1,9 @@
-// @/services/hubspotApi.ts
+import { HUBSPOT_ACCESS_TOKEN} from '@env';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONFIG — Fill these with your real values
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const HUBSPOT_ACCESS_TOKEN = ''; // 🔑 Your HubSpot Private App Access Token
 
 // 4 Agents — replace slugs and ownerIds with real values
 // meetingSlug → last part of https://meetings.hubspot.com/YOUR-SLUG
