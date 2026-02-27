@@ -26,7 +26,17 @@ const signInSchema = yup.object().shape({
 });
 
 export default function useEnterPasswordContainer() {
-  const {callingCode,cca2,clearCredentials,password,phoneNumber,rememberMe,setPhoneData,setRememberMe,setPassword} = useRememberMeStore()
+  const {
+    callingCode,
+    cca2,
+    clearCredentials,
+    password,
+    phoneNumber,
+    rememberMe,
+    setPhoneData,
+    setRememberMe,
+    setPassword,
+  } = useRememberMeStore();
   const { setToken, setUser } = useAuthStore();
 
   const { params } = useRoute();
@@ -50,9 +60,15 @@ export default function useEnterPasswordContainer() {
     isIdle,
   } = useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginApi,
-    onSuccess: ({data, message }) => {
+    onSuccess: ({ data, message }) => {
+      if (data?.is_first_login == 1) {
+        navigate(NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD, {
+          userId: data?.user?.id,
+        });
+        return;
+      }
       setToken(data?.access_token);
-      setUser(data?.user)
+      setUser(data?.user);
       Toast.show({ type: 'success', text1: message });
     },
     onError: ({ message }) => {
@@ -71,7 +87,7 @@ export default function useEnterPasswordContainer() {
       Toast.show({ type: 'success', text1: message });
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: true,
-        phone: params
+        phone: params,
       });
     },
     onError: ({ message }) => {
@@ -81,13 +97,17 @@ export default function useEnterPasswordContainer() {
 
   const onSubmit = (data: any) => {
     const payload = {
-      phone_number: params?.countryCallingCode +params?.phoneNo,
+      phone_number: params?.countryCallingCode + params?.phoneNo,
       password: data?.password,
     };
-     // Remember Me logic
+    // Remember Me logic
     if (data.rememberMe) {
       setRememberMe(true);
-      setPhoneData(params?.phoneNo, params?.countryCca2, params?.countryCallingCode);
+      setPhoneData(
+        params?.phoneNo,
+        params?.countryCca2,
+        params?.countryCallingCode,
+      );
       setPassword(data.password);
     } else {
       setRememberMe(false);
@@ -98,7 +118,7 @@ export default function useEnterPasswordContainer() {
 
   const gotToVerifyOTP = () => {
     const payload = {
-      phone_number:  params?.phoneNo +params?.countryCallingCode,
+      phone_number: params?.phoneNo + params?.countryCallingCode,
     };
     forgotPayload(payload);
   };

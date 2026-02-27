@@ -14,6 +14,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import { DeleteListingPayloadType } from '@/types/api/bookingManagementTypes';
+import { getUser } from '@/services/UserPermission';
 dayjs.extend(customParseFormat);
 
 export default function usePropertyDetailContainer() {
@@ -289,6 +290,18 @@ export default function usePropertyDetailContainer() {
     });
   };
 
+
+  // ROLES PERMISSION
+
+  const {
+    data: UserPermission = [],
+    isLoading: isUserLoading,
+    refetch : refectUserPermission,
+  } = useQuery({
+    queryKey: [STORAGE_CONST.GET_USER],
+    queryFn: getUser,
+  });
+
   return {
     propertyData,
     handleEditSection,
@@ -297,5 +310,6 @@ export default function usePropertyDetailContainer() {
     refetch,
     data,
     handleEditPhotosVideos,
+    UserPermission
   };
 }

@@ -109,6 +109,13 @@ const AuthStack = () => {
           require('@/screens/auth/TrialSuccess/TrialSuccessScreen').default
         }
       />
+      <Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD}
+        getComponent={() =>
+          require('@/screens/auth/updatePassword/UpdatePasswordScreen').default
+        }
+      />
     </Navigator>
   );
 };
