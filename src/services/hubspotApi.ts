@@ -1,7 +1,6 @@
 // ⚠️ TEMP ONLY — MOVE TO BACKEND LATER
 export const HUBSPOT_ACCESS_TOKEN = 'pat-na1-0d3ea7c2-bcdf-44d7-851d-b641dc84a4c4';
 
-
 // Slug for https://meetings.hubspot.com/SLUG
 export const AGENTS = [
   {
@@ -41,62 +40,51 @@ export interface LeadInfo {
   city: string;
 }
 
-// ───────────────── 1️⃣ FETCH SLOTS ─────────────────
-// IMPORTANT:
-// availability-page returns workingHours + busyTimes
-// It does NOT return ready-made slots.
-// We generate simple 30-min slots from workingHours.
-
-const MEETING_DURATION_MS = 30 * 60 * 1000;
-
+// ───────────────── 1️⃣ GENERATE SLOTS ─────────────────
 const generateSlots = (
-  startTime: number,
-  endTime: number,
-  busyTimes: { start: number; end: number }[]
+  startTime: number, // local ms
+  endTime: number,   // local ms
+  busyTimes: { start: number; end: number }[], // UTC from API
+  meetingDuration: number
 ): HubSpotSlot[] => {
   const slots: HubSpotSlot[] = [];
+  let cursor = startTime;
 
-  for (
-    let time = startTime;
-    time + MEETING_DURATION_MS <= endTime;
-    time += MEETING_DURATION_MS
-  ) {
-    const slotEnd = time + MEETING_DURATION_MS;
+  while (cursor + meetingDuration <= endTime) {
+    const slotEnd = cursor + meetingDuration;
 
+    // The API sends busyTimes in UTC, ensure comparison is accurate
     const isBusy = busyTimes.some(
       (busy) =>
-        (time >= busy.start && time < busy.end) ||
-        (slotEnd > busy.start && slotEnd <= busy.end)
+        (cursor >= busy.start && cursor < busy.end) || // Slot starts during busy time
+        (slotEnd > busy.start && slotEnd <= busy.end) || // Slot ends during busy time
+        (cursor <= busy.start && slotEnd >= busy.end)    // Slot covers busy time
     );
 
     if (!isBusy) {
-      slots.push({
-        startTime: time,
-        endTime: slotEnd,
-      });
+      slots.push({ startTime: cursor, endTime: slotEnd });
     }
+
+    cursor += meetingDuration; // Move to next potential slot
   }
 
   return slots;
 };
 
-const fetchSlotsForDate = async (
-  slug: string,
-  date: string
-): Promise<HubSpotSlot[]> => {
+// ───────────────── 2️⃣ FETCH SLOTS FOR DATE ─────────────────
+
+const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
   try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const startTime = new Date(date + 'T09:00:00').getTime();
-    const endTime = new Date(date + 'T18:00:00').getTime();
+    // Start & end of the selected day in local time
+    const startTimeLocal = new Date(`${date}T00:00:00`).getTime();
+    const endTimeLocal = new Date(`${date}T23:59:59`).getTime();
 
-    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startTime}&endTime=${endTime}&timezone=${timezone}`;
+    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startTimeLocal}&endTime=${endTimeLocal}&timezone=${timezone}`;
 
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: getHeaders(),
-    });
-
+    const res = await fetch(url, { method: 'GET', headers: getHeaders() });
+    
     if (!res.ok) {
       console.error('[HubSpot] Slot fetch failed', await res.text());
       return [];
@@ -104,16 +92,24 @@ const fetchSlotsForDate = async (
 
     const data = await res.json();
 
-    const busyTimes = data.busyTimes || [];
+    // 1. Navigate to the nested availability data
+    // We look for '900000' (15 mins) as a default, or handle dynamic durations if needed
+    const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['900000']?.availabilities || [];
+    
+    // 2. Map the API response to your expected HubSpotSlot format
+    const slots = availabilityData.map((slot: any) => ({
+      startTime: slot.startMillisUtc,
+      endTime: slot.endMillisUtc
+    }));
 
-    return generateSlots(startTime, endTime, busyTimes);
+    return slots;
   } catch (error) {
-    console.error('[HubSpot] Slot error', error);
+    console.error('[HubSpot] Slot fetch error', error);
     return [];
   }
 };
 
-// ───────────────── FETCH ALL AGENTS AVAILABLE DATES (FOR CALENDAR) ─────────────────
+// ───────────────── 3️⃣ FETCH ALL AGENTS AVAILABLE DATES ─────────────────
 
 export const fetchAllAgentsAvailableDates = async (
   year: number,
@@ -128,11 +124,7 @@ export const fetchAllAgentsAvailableDates = async (
     AGENTS.map(async (agent) => {
       const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${agent.meetingSlug}?startTime=${startTime}&endTime=${endTime}&timezone=${timezone}`;
 
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: getHeaders(),
-      });
-
+      const res = await fetch(url, { method: 'GET', headers: getHeaders() });
       if (!res.ok) return [];
 
       const data = await res.json();
@@ -140,23 +132,20 @@ export const fetchAllAgentsAvailableDates = async (
     })
   );
 
-  // Generate available dates (basic 9am–6pm logic)
   const availableDates: Record<string, boolean> = {};
-
   const daysInMonth = new Date(year, month, 0).getDate();
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = new Date(year, month - 1, day)
       .toISOString()
       .split('T')[0];
-
-    availableDates[dateStr] = true; // basic assumption
+    availableDates[dateStr] = true;
   }
 
   return availableDates;
 };
 
-// ───────────────── 2️⃣ FIND FIRST AVAILABLE AGENT ─────────────────
+// ───────────────── 4️⃣ FETCH FIRST AVAILABLE AGENT ─────────────────
 
 export const fetchFirstAvailableAgentForDate = async (
   date: string
@@ -171,7 +160,7 @@ export const fetchFirstAvailableAgentForDate = async (
   return results.find((r) => r.slots.length > 0) || null;
 };
 
-// ───────────────── 3️⃣ CREATE CONTACT ─────────────────
+// ───────────────── 5️⃣ CREATE HUBSPOT CONTACT ─────────────────
 
 const createHubSpotContact = async (
   lead: LeadInfo,
@@ -219,7 +208,7 @@ const createHubSpotContact = async (
   }
 };
 
-// ───────────────── 4️⃣ BOOK MEETING ─────────────────
+// ───────────────── 6️⃣ BOOK MEETING ─────────────────
 
 const bookHubSpotMeeting = async (
   lead: LeadInfo,
@@ -230,11 +219,13 @@ const bookHubSpotMeeting = async (
     const nameParts = lead.fullName.trim().split(' ');
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ') || '-';
-
+    const duration = slot.endTime - slot.startTime;
+    
     const body = {
       slug,
       startTime: slot.startTime,
       endTime: slot.endTime,
+      duration,
       firstName,
       lastName,
       email: lead.email,
@@ -242,14 +233,11 @@ const bookHubSpotMeeting = async (
       locale: 'en',
     };
 
-    const res = await fetch(
-      `${BASE_URL}/scheduler/v3/meetings/meeting-links/book`,
-      {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(body),
-      }
-    );
+    const res = await fetch(`${BASE_URL}/scheduler/v3/meetings/meeting-links/book`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(body),
+    });
 
     if (!res.ok) {
       console.error('[HubSpot] Booking failed', await res.text());
@@ -263,7 +251,7 @@ const bookHubSpotMeeting = async (
   }
 };
 
-// ───────────────── 5️⃣ MAIN FUNCTION ─────────────────
+// ───────────────── 7️⃣ MAIN FUNCTION ─────────────────
 
 export const submitLeadAndBookMeeting = async (
   lead: LeadInfo,
