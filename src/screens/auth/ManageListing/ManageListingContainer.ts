@@ -49,7 +49,7 @@ export default function useManageListingContainer() {
     };
     resendOtpPayload(payload);
     } else{
-      navigate(NavigationRoutes.AUTH_STACK.THREE_PLUS_LISTING)
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM)
     } 
 
   }, []);
