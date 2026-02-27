@@ -4,7 +4,7 @@
 // CONFIG — Fill these with your real values
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const HUBSPOT_ACCESS_TOKEN = 'pat-na1-92872a57-fa2e-4462-b0a8-728474dc3cfe'; // 🔑 Your HubSpot Private App Access Token
+export const HUBSPOT_ACCESS_TOKEN = ''; // 🔑 Your HubSpot Private App Access Token
 
 // 4 Agents — replace slugs and ownerIds with real values
 // meetingSlug → last part of https://meetings.hubspot.com/YOUR-SLUG
