@@ -110,10 +110,10 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang isLogo/> }}
-        name={NavigationRoutes.AUTH_STACK.THREE_PLUS_LISTING}
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD}
         getComponent={() =>
-          require('@/screens/auth/ThreePlusListing/ThreePlusListingScreen').default
+          require('@/screens/auth/updatePassword/UpdatePasswordScreen').default
         }
       />
     </Navigator>

@@ -66,7 +66,9 @@ export interface LoginResponse {
     access_token: string;
     token_type: string;
     user: User;
-  }
+    is_first_login: number;
+  },
+  
 }
 
 export interface CheckUserExistResponse {
@@ -107,4 +109,10 @@ export interface CreateAccountResponse {
   data: {
 
   };
+}
+
+export interface UpdatePasswordPayload {
+  user_id: number;
+  new_password: string;
+  new_password_confirmation: string;
 }

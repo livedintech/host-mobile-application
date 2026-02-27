@@ -16,7 +16,7 @@ export default function useHomeContainer() {
   };
 
   const {
-    data: user = [],
+    data: UserPermission = [],
     isLoading: isUserLoading,
     refetch,
   } = useQuery({
@@ -24,6 +24,6 @@ export default function useHomeContainer() {
     queryFn: getUser,
   });
 
-  console.log("userDatat",user)
-  return { onConnect };
+  console.log("UserPermission",UserPermission)
+  return { onConnect , UserPermission};
 }
