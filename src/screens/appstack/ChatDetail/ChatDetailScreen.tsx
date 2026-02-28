@@ -157,6 +157,7 @@ const ChatScreen = () => {
     | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
+  console.log("listing_idchatdetail",listing_id)
 
   const {
     messages,
@@ -197,9 +198,12 @@ const ChatScreen = () => {
     refetch,
     conversationData,
     sendAiSuggestion,
+    assigned_to_ids,
   } = useChatContainer();
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  console.log("conversationDataconversationDatamm",conversationData?.listing_id)
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
@@ -567,22 +571,26 @@ const ChatScreen = () => {
                 />
                 <Svgicons path="reservationDetail" size={24} />
               </MenuOption>
-              <MenuOption
-                style={styles.menuItem}
-                onSelect={() => {
-                  navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, {
-                    conversation_id:conversation_id,
-                    guestName:conversationData?.name
-                  });
-                }}
-              >
-                <AppText
-                  text="Assign Chat To User"
-                  fontSize={14}
-                  color={Colors.CHARCOAL}
-                />
-                <Svgicons path="expandIcon" size={24} />
-              </MenuOption>
+              {user?.role_key !== 'supervisor' && (
+                <MenuOption
+                  style={styles.menuItem}
+                  onSelect={() => {
+                    navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, {
+                      conversation_id: conversation_id,
+                      guestName: conversationData?.name,
+                      assigned_to_ids: assigned_to_ids,
+                      listing_id: conversationData?.listing_id || listing_id
+                    });
+                  }}
+                >
+                  <AppText
+                    text={'Assign Chat To User'}
+                    fontSize={14}
+                    color={Colors.CHARCOAL}
+                  />
+                  <Svgicons path="expandIcon" size={24} />
+                </MenuOption>
+              )}
               {/* <MenuOption style={[styles.menuItem, { borderBottomWidth: 0 }]}>
                 <AppText
                   text="Add Internal Notes"
