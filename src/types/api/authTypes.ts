@@ -30,6 +30,7 @@ export interface User {
   profile_picture: string;
   created_at: string;
   updated_at: string;
+  role_key : string;
 }
 
 export interface LoginPayload {

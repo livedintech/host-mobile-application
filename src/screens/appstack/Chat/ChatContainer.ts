@@ -120,6 +120,8 @@ export const useChatContainer = () => {
   const { data: rawData, isLoading, isFetching } = dataQuery;
   const data = useInfiniteListData(rawData?.pages);
 
+  console.log("chatList",data)
+
   /* --------------------------------- MUTATIONS --------------------------------- */
 
   const invalidateChats = () => {
@@ -213,7 +215,9 @@ export const useChatContainer = () => {
     id: string;
     latest_message?: { id: number };
     listing_id: string;
+    assigned_to_ids: number[];
   }) => {
+    console.log("otemm",item)
     if (item?.latest_message?.id) {
       markRead({
         conversation_id: item.id,
@@ -224,6 +228,7 @@ export const useChatContainer = () => {
     navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
       conversation_id: item.id,
       listing_id: item.listing_id,
+       assigned_to_ids: item.assigned_to_ids, 
     });
   };
 

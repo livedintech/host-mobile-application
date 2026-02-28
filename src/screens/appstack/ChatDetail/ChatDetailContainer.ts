@@ -10,7 +10,7 @@ import {
   ChatMessageSendApi,
   getChatDetailApi,
   getChatDetailSavedRepliesApi,
-  deleteChatMessageApi
+  deleteChatMessageApi,
 } from '@/services/chatApi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -130,10 +130,17 @@ export const useChatContainer = () => {
   // Safely get params
   const route = useRoute();
   const params = route?.params as
-    | { conversation_id?: string; listing_id?: string }
+    | {
+        conversation_id?: string;
+        listing_id?: string;
+        assigned_to_ids?: number[];
+      }
     | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
+  const assigned_to_ids = params?.assigned_to_ids;
+  console.log("assigned_to_ids",assigned_to_ids)
+
 
   // Core Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -215,10 +222,10 @@ export const useChatContainer = () => {
 
   console.log('API Data:', data);
 
-
   // Delete Message Mutation
   const { mutate: deleteChatMessage } = useMutation({
-    mutationFn: (messageId: string | number) => deleteChatMessageApi({ message_id: messageId }),
+    mutationFn: (messageId: string | number) =>
+      deleteChatMessageApi({ message_id: messageId }),
     onSuccess: () => {
       // Invalidate queries to refresh chat list and detail from server
       queryClient.invalidateQueries({
@@ -244,11 +251,11 @@ export const useChatContainer = () => {
       refetch();
     },
   });
-  
 
   // Update messages when API data changes
-useEffect(() => {
-    if (data?.messages) { // Don't block on user?.id here
+  useEffect(() => {
+    if (data?.messages) {
+      // Don't block on user?.id here
       const transformedMessages = transformApiMessages(
         data.messages,
         Number(user?.id || 0), // Fallback to 0 if not loaded yet
@@ -454,15 +461,18 @@ useEffect(() => {
     setSelectedMessageId(null);
   }, []);
 
-const handleDeleteMessage = useCallback((messageId: string | number) => {
-    // 1. Optimistic UI update: Remove from local state immediately
-    setMessages(prev => prev.filter(msg => msg._id !== messageId));
-    setSelectedMessageId(null);
-    setSelectedMessageData(null);
+  const handleDeleteMessage = useCallback(
+    (messageId: string | number) => {
+      // 1. Optimistic UI update: Remove from local state immediately
+      setMessages(prev => prev.filter(msg => msg._id !== messageId));
+      setSelectedMessageId(null);
+      setSelectedMessageData(null);
 
-    // 2. Trigger API Call
-    deleteChatMessage(messageId);
-  }, [deleteChatMessage]);
+      // 2. Trigger API Call
+      deleteChatMessage(messageId);
+    },
+    [deleteChatMessage],
+  );
 
   // Media Handlers
   const handleCamera = useCallback(async () => {
@@ -664,7 +674,7 @@ const handleDeleteMessage = useCallback((messageId: string | number) => {
     }
   }, [addMessage, replyingToMessage, user]);
 
-  console.log("messages", )
+  console.log('messages');
   return {
     // State
     messages,
@@ -712,5 +722,8 @@ const handleDeleteMessage = useCallback((messageId: string | number) => {
     scrollToMessage,
     SAVED_REPLIES: savedReplies?.data?.items,
     refetch,
+
+    //ASSIGN CHAT IDS
+    assigned_to_ids
   };
 };
