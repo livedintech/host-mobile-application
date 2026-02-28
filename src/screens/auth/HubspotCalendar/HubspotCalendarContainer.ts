@@ -114,8 +114,7 @@ export default function useHubspotCalendarContainer(
     onSuccess: (result) => {
       if (result.success) {
         // Navigate to Thank You screen
-        navigate(NavigationRoutes.HUBSPOT_STACK.THANK_YOU);
-        // 👆 Replace with your actual route name
+        navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
       } else {
         Toast.show({
           type: 'error',
