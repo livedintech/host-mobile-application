@@ -191,7 +191,7 @@ const CalendarScreen = ({ route }: Props) => {
                       activeOpacity={0.7}
                     >
                       <AppText
-                        text={formatTime(slot.startMilliseconds)}
+                        text={formatTime(slot.startTime)}
                         fontSize={14}
                         color={selectedSlot === slot ? '#fff' : '#1B4D3E'}
                       />
