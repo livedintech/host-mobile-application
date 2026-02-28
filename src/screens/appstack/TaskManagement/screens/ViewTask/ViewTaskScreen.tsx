@@ -51,6 +51,7 @@ const EditTaskScreen = () => {
     isSavingVendor,
     isSavingChecklist,
   } = EditTaskContainer();
+  console.log('taskStatus', taskStatus);
 
   const [isImageViewerVisible, setImageViewerVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState<ImageSource[]>([]);
@@ -427,13 +428,15 @@ const EditTaskScreen = () => {
         </View>
       </Modal>
 
-      <View style={styles.taskCompleted}>
-        <Svgicons path="taskCompletedIcon" size={24} />
-        <AppText
-          text="Task Completed Successfully"
-          color={Colors.BRUNSWICK_GREEN}
-        />
-      </View>
+      {taskStatus == 'completed' && (
+        <View style={styles.taskCompleted}>
+          <Svgicons path="taskCompletedIcon" size={24} />
+          <AppText
+            text="Task Completed Successfully"
+            color={Colors.BRUNSWICK_GREEN}
+          />
+        </View>
+      )}
     </View>
   );
 };
