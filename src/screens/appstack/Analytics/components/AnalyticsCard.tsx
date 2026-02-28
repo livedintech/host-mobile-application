@@ -90,7 +90,7 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
                   ]}
                 />
                 <AppText
-                  text={item.status}
+                  text={item.assessment}
                   fontSize={10}
                   color={item.statusTextColor}
                   type="Medium"
