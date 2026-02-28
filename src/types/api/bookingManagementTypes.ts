@@ -22,6 +22,31 @@ export interface creatGathernChannelType {
   user_id: number,
   platform_user_id: string
 }
+
+export interface createListingImportType {
+  listing_id: number,
+  channel_id: string,
+  user_id?: number
+}
+export interface createListingImportGathernType {
+  parent_listing_id: number;
+  property_id: string;
+  property_title: string;
+  mapping_type: string;
+  pms_uuid: string;
+}
+export interface CreateGathernUserPayloadType {
+  gender: string;
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  country_code: string;
+  mobile: string;
+  platform_user_id: string;
+  check_in_hour?: string;
+  check_out_hour?: string;
+}
 export interface creatGathernChannelResponse {
   status: string;
   message: string;

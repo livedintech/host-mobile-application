@@ -6,6 +6,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
+  createListingImportApi,
   createMapListingbyUserIDApi,
   getChannexListingsById,
   getUserListingsByUserIDApi,
@@ -14,6 +15,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
 import { CreateAccountResponse } from '@/types/api/authTypes';
 import Toast from 'react-native-toast-message';
+import { createListingImportType, creatGathernChannelResponse } from '@/types/api/bookingManagementTypes';
 
 type FormValues = {
   [key: string]: string; // key = Airbnb property id, value = Livedin listing id
@@ -109,15 +111,55 @@ export default function useAirbnbImportContainer() {
       },
     });
 
+  const { mutate: createListingImportPayload, isPending, isIdle } = useMutation<
+    creatGathernChannelResponse,
+    Error,
+    createListingImportType
+  >({
+    mutationFn: createListingImportApi,
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+      });
+      Toast.show({ type: 'success', text1: message });
+    },
+    onError: (error) => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Something went wrong',
+      });
+      console.log('error', error);
+
+    },
+  });
+
   // Handle individual import (dropdown selection)
   const handleIndividualImport = (fieldName: string) => {
+
+   
     const selectedValue = watch(fieldName);
     const airbnbListingId = Number(fieldName);
 
-    createMapListingbyUserID({
+    if(selectedValue){
+      createMapListingbyUserID({
       listing_id: airbnbListingId,
       // channel_id: channelId!,
     });
+    }else{
+      createListingImportPayload({
+        channel_id: channelId,
+        listing_id: airbnbListingId
+      })
+      
+    }
+
+    // createMapListingbyUserID({
+    //   listing_id: airbnbListingId,
+    //   // channel_id: channelId!,
+    // });
 
     console.log('Mapping Airbnb listing:', {
       airbnb_listing_id: airbnbListingId,

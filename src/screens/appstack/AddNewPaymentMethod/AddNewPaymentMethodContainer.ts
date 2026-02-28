@@ -20,10 +20,10 @@ import {
   MFSendPaymentRequest,
   MFCurrencyISO,
   MFGooglePayRequest,
-  MFCountry,           
+  MFCountry,
 } from 'myfatoorah-reactnative';
 
-import { savePaymentIdentifierApi } from '@/services/paymentService';
+import { savePaymentIdentifierApi, savePaymentinfoApi } from '@/services/paymentService';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
@@ -81,32 +81,36 @@ interface PaymentResult {
 
 export default function useAddNewPaymentMethodContainer() {
   const { params } = useRoute<any>();
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const plan = (params as RouteParams)?.plan;
   const paymentMethodType = (params as RouteParams)?.paymentMethodType;
   const paymentMethodId = (params as RouteParams)?.paymentMethodId;
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
-  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;  
+  const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
+  const sessionResponse = useRef<any>(null);
   const { user } = useAuthStore();
- 
+
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const cardPaymentView = useRef<any>(null);
-  const googlePayRef = useRef<any>(null); 
+  const googlePayRef = useRef<any>(null);
 
-  const customerName = user?.name && user?.surname ? `${user.name} ${user.surname}` : user?.name || 'Customer';
+  const customerName =
+    user?.name && user?.surname
+      ? `${user.name} ${user.surname}`
+      : user?.name || 'Customer';
   const customerPhone = user?.phone || '';
   const customerId = user?.id?.toString() || `user_${Date.now()}`;
 
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
-    mutationFn: savePaymentIdentifierApi,
+    mutationFn: savePaymentinfoApi,
     onSuccess: () => {
       Toast.show({
         type: 'success',
         text1: 'Payment Successful',
-        text2: 'Your payment has been processed successfully'
+        text2: 'Your payment has been processed successfully',
       });
       goBack();
     },
@@ -121,11 +125,50 @@ export default function useAddNewPaymentMethodContainer() {
 
   const getCardViewStyle = useCallback(() => {
     const boxShadow = new MFBoxShadow(0, 2, 4, 0, processColor('#00000010'));
-    const placeholder = new MFCardViewPlaceHolder('Name on Card', 'Card Number', 'MM / YY', 'CVV');
-    const cardViewInput = new MFCardViewInput(processColor(Colors.BLACK), 16, MFFontFamily.Helvetica, 40, Metrics.verticalScale(20), processColor(Colors.BLACK), 1, 12, boxShadow);
+    const placeholder = new MFCardViewPlaceHolder(
+      'Name on Card',
+      'Card Number',
+      'MM / YY',
+      'CVV'
+    );
+    const cardViewInput = new MFCardViewInput(
+      processColor(Colors.BLACK),
+      16,
+      MFFontFamily.Helvetica,
+      40,
+      Metrics.verticalScale(20),
+      processColor(Colors.BLACK),
+      1,
+      12,
+      boxShadow
+    );
     cardViewInput.PlaceHolder = placeholder;
-    const cardViewLabel = new MFCardViewLabel(true, processColor(Colors.SUPER_GREY), 14, MFFontFamily.Helvetica, MFFontWeight.Medium, new MFCardViewText('Card Holder Name', 'Card Number', 'Expiry Date', 'Security Code'));
-    return new MFCardViewStyle(false, 'initial', 340, cardViewInput, cardViewLabel, new MFCardViewError(processColor(Colors.INDIAN_RED), 8));
+
+    const cardViewLabel = new MFCardViewLabel(
+      true,
+      processColor(Colors.SUPER_GREY),
+      14,
+      MFFontFamily.Helvetica,
+      MFFontWeight.Medium,
+      new MFCardViewText(
+        'Card Holder Name',
+        'Card Number',
+        'Expiry Date',
+        'Security Code'
+      )
+    );
+
+    const style = new MFCardViewStyle(
+      false,
+      'initial',
+      340,
+      cardViewInput,
+      cardViewLabel,
+      new MFCardViewError(processColor(Colors.INDIAN_RED), 8)
+    );
+
+    // ✅ style object clean - onCardBinChanged load() ka 2nd arg hai, style ki property nahi
+    return style;
   }, []);
 
   const initiateSession = useCallback(async () => {
@@ -134,15 +177,44 @@ export default function useAddNewPaymentMethodContainer() {
       const request = new MFInitiateSessionRequest(customerId);
       const response = await MFSDK.initiateSession(request);
       setSessionId(response.SessionId?.toString() ?? '');
-      if (isCardMethod && paymentMethodType !== 'google_pay' && cardPaymentView.current) {
-        setTimeout(() => cardPaymentView.current?.load(response), 200);
-      }
+      sessionResponse.current = response;
     } catch (error) {
-       console.error(error);
+      console.error(error);
     } finally {
-       setIsLoading(false);
+      setIsLoading(false);
     }
-  }, [customerId, isCardMethod, paymentMethodType]);
+  }, [customerId]);
+
+  // Card view load karo jab isLoading false ho jaye
+  useEffect(() => {
+    if (
+      !isLoading &&
+      isCardMethod &&
+      paymentMethodType !== 'google_pay' &&
+      sessionResponse.current
+    ) {
+      const onCardBinChanged = (bin: string) => {
+        console.log('Card BIN changed:', bin);
+      };
+
+      const tryLoad = (attempt: number) => {
+        if (cardPaymentView.current && sessionResponse.current) {
+          try {
+            // ✅ KEY FIX: onCardBinChanged 2nd argument hai load() ka
+            cardPaymentView.current.load(sessionResponse.current, onCardBinChanged);
+            console.log('✅ Card view loaded on attempt', attempt);
+          } catch (e) {
+            console.error('❌ Load attempt', attempt, 'failed:', e);
+          }
+        } else if (attempt < 5) {
+          setTimeout(() => tryLoad(attempt + 1), 300);
+        }
+      };
+
+      const timer = setTimeout(() => tryLoad(1), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, isCardMethod, paymentMethodType]);
 
   // Google Pay Handshake
   useEffect(() => {
@@ -150,8 +222,18 @@ export default function useAddNewPaymentMethodContainer() {
     if (sessionId && paymentMethodType === 'google_pay') {
       timer = setTimeout(() => {
         if (googlePayRef.current) {
-          const googlePayRequest = new MFGooglePayRequest((plan?.price || 1).toString(), "", "My App", MFCountry.SAUDIARABIA, MFCurrencyISO.SAUDIARABIA_SAR);
-          googlePayRef.current.setupGooglePayHelper(sessionId, googlePayRequest, navigation);
+          const googlePayRequest = new MFGooglePayRequest(
+            (plan?.price || 1).toString(),
+            '',
+            'My App',
+            MFCountry.SAUDIARABIA,
+            MFCurrencyISO.SAUDIARABIA_SAR
+          );
+          googlePayRef.current.setupGooglePayHelper(
+            sessionId,
+            googlePayRequest,
+            navigation
+          );
         }
       }, 1000);
     }
@@ -164,25 +246,46 @@ export default function useAddNewPaymentMethodContainer() {
     try {
       const executeRequest = new MFExecutePaymentRequest(plan?.price || 1);
       executeRequest.SessionId = sessionId;
-      const result: any = await cardPaymentView.current?.pay(executeRequest, MFLanguage.ENGLISH);
+      // ✅ FIX: onInvoiceCreated 3rd argument hai - undefined hone par crash karta hai
+      const onInvoiceCreated = (invoiceId: string) => {
+        console.log('Invoice created:', invoiceId);
+      };
+      const result: any = await cardPaymentView.current?.pay(
+        executeRequest,
+        MFLanguage.ENGLISH,
+        onInvoiceCreated
+      );
       if (result?.InvoiceStatus === 'Paid') {
         saveIdentifier({
-          country: plan?.country || 'SA',
-          status: 'Paid',
-          card_token: result.InvoiceTransactions?.[0]?.TransactionId || result.SessionId,
-          card_holder_name: result.CustomerName || customerName,
-          zipcode: customerPhone,
+          host_id: user?.id?.toString(),
+          amount: result?.InvoiceTransactions?.[0]?.TransationValue,
+          card_type: result?.InvoiceTransactions?.[0]?.PaymentGateway,
+          customer_identifier: customerPhone,
+          is_active: true,
+          token: result?.InvoiceTransactions?.[0]?.CardNumber,
         });
       }
     } catch (error: any) {
-      Toast.show({ type: 'error', text1: 'Payment Error', text2: error?.message });
-    } finally { setIsProcessingPayment(false); }
+      console.log('🔴 Full error object:', JSON.stringify(error));
+      console.log('🔴 Error message:', error?.message);
+      console.log('🔴 Error string:', String(error));
+      Toast.show({
+        type: 'error',
+        text1: 'Payment Error',
+        text2: error?.message || JSON.stringify(error) || 'Unknown error',
+      });
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   const handleWalletPayment = async () => {
     setIsProcessingPayment(true);
     try {
-      const paymentRequest = new MFSendPaymentRequest(plan?.price || 1, MFCurrencyISO.SAUDIARABIA_SAR);
+      const paymentRequest = new MFSendPaymentRequest(
+        plan?.price || 1,
+        MFCurrencyISO.SAUDIARABIA_SAR
+      );
       paymentRequest.CustomerName = customerName;
       paymentRequest.CustomerMobile = customerPhone;
       paymentRequest.NotificationOption = 'SMS';
@@ -190,8 +293,17 @@ export default function useAddNewPaymentMethodContainer() {
       const result = await MFSDK.sendPayment(paymentRequest, MFLanguage.ENGLISH);
       if (result?.InvoiceURL) await Linking.openURL(result.InvoiceURL);
     } catch (error: any) {
-      Toast.show({ type: 'error', text1: 'Payment Error', text2: error?.message });
-    } finally { setIsProcessingPayment(false); }
+      console.log('🔴 Full error object:', JSON.stringify(error));
+      console.log('🔴 Error message:', error?.message);
+      console.log('🔴 Error string:', String(error));
+      Toast.show({
+        type: 'error',
+        text1: 'Payment Error',
+        text2: error?.message || JSON.stringify(error) || 'Unknown error',
+      });
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   const handlePay = async () => {
@@ -199,13 +311,23 @@ export default function useAddNewPaymentMethodContainer() {
     else await handleWalletPayment();
   };
 
-  useEffect(() => { initiateSession(); }, [initiateSession]);
+  useEffect(() => {
+    initiateSession();
+  }, [initiateSession]);
 
   return {
-    isLoading, isProcessingPayment, isSaving,
+    isLoading,
+    isProcessingPayment,
+    isSaving,
     cardLoading: isLoading || isProcessingPayment || isSaving,
-    paymentMethodName, paymentMethodType, isCardMethod,
-    cardPaymentView, googlePayRef, sessionId,
-    getCardViewStyle, handlePay, retrySession: initiateSession,
+    paymentMethodName,
+    paymentMethodType,
+    isCardMethod,
+    cardPaymentView,
+    googlePayRef,
+    sessionId,
+    getCardViewStyle,
+    handlePay,
+    retrySession: initiateSession,
   };
 }

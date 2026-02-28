@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -9,8 +9,6 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import { shortId } from '@/utility/Utils';
-import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
 import useGathernImportContainer from './GathernImportContainer';
 
 const PropertyCard = ({
@@ -21,27 +19,22 @@ const PropertyCard = ({
   listingOptions,
   handleIndividualImport,
   watch,
-  isMap,
 }: any) => {
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
-
-
 
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View>
           <View style={styles.infoRow}>
-            <AppText text="Gathern Property ID: " type="Bold" color={Colors.PINE_FOREST} />
-            <AppText text={shortId(id)} color={Colors.PINE_FOREST} />
+            <AppText text="Airbnb Property ID: " type="Bold" color={Colors.PINE_FOREST} />
+            <AppText text={shortId(id) } color={Colors.PINE_FOREST} />
           </View>
 
           <View style={styles.infoRow}>
-            <AppText text="Gathern Listing: " type="Bold" color={Colors.PINE_FOREST} />
-            <View style={{ flex: 1 }}>
-              <AppText text={name} color={Colors.PINE_FOREST} numberOfLines={1} />
-            </View>
+            <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
+            <AppText text={name} color={Colors.PINE_FOREST} />
           </View>
 
           <View style={styles.infoRow}>
@@ -52,7 +45,6 @@ const PropertyCard = ({
             />
           </View>
         </View>
-
         <Svgicons path="houseLineIcon" />
       </View>
 
@@ -66,8 +58,8 @@ const PropertyCard = ({
       />
 
       <AppButton
-        title={isMap ? 'Unmapped Listing' : "Map Listing"}
-        onPress={() => handleIndividualImport(fieldName,name)}
+        title="Import Listing"
+        onPress={() => handleIndividualImport(fieldName)}
         mt={12}
       />
     </View>
@@ -84,35 +76,11 @@ const GathernImportScreen = () => {
     handleIndividualImport,
     refetch,
     watch,
-    isLoading,
     listingOptions,
   } = useGathernImportContainer();
 
-  console.log('properties',properties);
-  
-
-
-
-  const renderItem = ({ item }: any) => (
-    <PropertyCard
-    id={item.listing_id}
-      name={item.title}
-      control={control}
-      errors={errors}
-      listingOptions={listingOptions}
-      handleIndividualImport={handleIndividualImport}
-      watch={watch}
-      isMap={item?.isMap}
-    />
-  );
-
   return (
     <View style={styles.container}>
-       {isLoading && (
-      <View style={styles.loaderContainer}>
-        <SpinnerLoader />
-      </View>
-    )}
       {/* Header */}
       <View style={styles.fixedHeader}>
         <View style={styles.headerRow}>
@@ -134,20 +102,28 @@ const GathernImportScreen = () => {
         />
       </View>
 
-      {/* FlatList */}
-      <FlatListSimpleHandler
-        onRefresh={refetch}
-        isLoading={false}
-        data={properties}
-keyExtractor={(item) => item.listing_id.toString()}
-        renderItem={renderItem}
+      {/* Cards */}
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        ListFooterComponent={
-          <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
-        }
-      />
+      >
+        {properties.map((item: { listing_id: number, title: string, type: string }) => (
+          <PropertyCard
+            key={item?.listing_id}
+            id={item?.listing_id}
+            name={item?.title}
+            property={item?.type}
+            control={control}
+            errors={errors}
+            listingOptions={listingOptions}
+            handleIndividualImport={handleIndividualImport}
+            watch={watch}   // 👈 ADD THIS
+          />
+        ))}
+
+        <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
+      </ScrollView>
     </View>
   );
 };
@@ -155,12 +131,7 @@ keyExtractor={(item) => item.listing_id.toString()}
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
   fixedHeader: { paddingHorizontal: 22, paddingTop: 15 },
-
-  scrollContent: {
-    paddingHorizontal: 22,
-    paddingBottom: 40,
-    paddingTop: 20,
-  },
+  scrollContent: { paddingHorizontal: 22, paddingBottom: 40, paddingTop: 20 },
 
   headerRow: {
     flexDirection: 'row',
@@ -196,18 +167,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 8,
   },
-  loaderContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-  },
-
 });
 
 export default GathernImportScreen;

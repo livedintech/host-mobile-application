@@ -1,32 +1,25 @@
+import STORAGE_CONST from "@/constants/storage";
 import NavigationRoutes from "@/navigation/NavigationRoutes";
 import { navigate } from "@/services/navigationService";
 import { getSubscriptionSaveCardsApi } from "@/services/paymentService";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export default function usePaymentMethodListContainer() {
   const { user } = useAuthStore();
 
   const [isSecure, setIsSecure] = useState(true);
-  const [isDefault, setIsDefault] = useState(true);
+  const [isDefault, setIsDefault] = useState<string | null>(null); // fix: was boolean
 
-  const [cards, setCards] = useState<any[]>([]);
-
-  const { mutate: getSubscriptionSaveCardsPayload, isPending, isIdle } =
-    useMutation({
-      mutationFn: getSubscriptionSaveCardsApi,
-      onSuccess: (res) => {
-        // 👇 tokens array save kar rahe hain
-        setCards(res?.tokens || []);
-      },
-    });
-
-  useEffect(() => {
-    getSubscriptionSaveCardsPayload({
-      customer_identifier: user?.phone,
-    });
-  }, []);
+  const { data, refetch, isLoading } = useQuery({
+    queryKey: [STORAGE_CONST.SAVED_CARDS],
+    queryFn: () =>
+      getSubscriptionSaveCardsApi({
+        customer_identifier: user?.phone,
+      }),
+    enabled: !!user?.id,
+  });
 
   const onAddNew = () => {
     navigate(NavigationRoutes.APP_STACK.SELECT_PAYMENT_METHOD);
@@ -38,7 +31,8 @@ export default function usePaymentMethodListContainer() {
     isDefault,
     setIsDefault,
     onAddNew,
-    cards,
-    isLoading: isPending && !isIdle,
+    cards: data?.tokens ?? [],
+    isLoading,
+    refetch,
   };
 }
