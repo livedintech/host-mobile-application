@@ -8,7 +8,6 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
 const AccountScreen = () => {
   const { accountOptions, handlePress } = useAccountContainer();
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -23,19 +22,19 @@ const AccountScreen = () => {
         <View style={styles.listContainer}>
           {accountOptions.map((item) => (
             <GradientBorder key={item.id} borderRadius={22} style={styles.optionCardWrapper}>
-              <Pressable 
+              <View 
                 style={styles.optionCardInner} 
-                onPress={() => handlePress(item.route)}
+                
               >
                 <AppText text={item.title} fontSize={20} type="Medium" color={Colors.PINE_FOREST} />
                 
                 {/* Arrow with gradient */}
                 <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-                  <Pressable onPress={()=>null} style={styles.arrowCircleInner}>
+                  <Pressable onPress={() => handlePress(item?.route)} style={styles.arrowCircleInner}>
                       <Svgicons path='ArrowUpRightIcon' size={30} />
                   </Pressable>
                 </GradientBorder>
-              </Pressable>
+              </View>
             </GradientBorder>
           ))}
         </View>
