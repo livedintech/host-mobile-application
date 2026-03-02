@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Pressable, SafeAreaView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -9,9 +9,18 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useProfileContainer from './ProfileContainer';
 import Metrics from '@/utility/Metrics';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 
 const ProfileScreen = () => {
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
   const { control, errors, handleSubmit, onSave,goToChangePassword } = useProfileContainer();
+
+  const handleDeleteAccount = () => {
+    setDeleteModalVisible(false);
+    console.log("Account Deleted");
+    // Trigger your delete API here
+  };
 
   return (
     <View style={styles.container}>
@@ -88,12 +97,13 @@ const ProfileScreen = () => {
             errors={errors}
             countryFieldName="phone_country"
             phoneFieldName="phone_number"
+            disabled
           />
 
           {/* Secondary Action Buttons */}
           <View style={styles.rowButtons}>
             <AppButton title="Change Password" onPress={goToChangePassword} style={styles.halfBtn} />
-            <AppButton title="Delete Account" onPress={() => { }} style={styles.halfBtn} />
+            <AppButton title="Delete Account" onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} />
           </View>
 
           <AppButton
@@ -103,6 +113,13 @@ const ProfileScreen = () => {
           />
         </View>
       </ScrollView>
+      <AccountDeleteModal
+        isVisible={isDeleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        onConfirm={handleDeleteAccount}
+        title="Are you sure you want to delete your account?"
+        description="This action is permanent and cannot be undone."
+      />
     </View>
   );
 };
