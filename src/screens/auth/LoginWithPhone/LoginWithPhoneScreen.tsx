@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
 import PhoneInputField from '@/components/molecules/Input/PhoneInputField';
@@ -19,7 +19,6 @@ const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit } = useLoginWithPhoneContainer();
   const { setToken, setUser } = useAuthStore();
   const [isAppleLoading, setIsAppleLoading] = useState(false);
-  
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -52,46 +51,40 @@ const LoginWithPhoneScreen = () => {
   };
 
   const handleOnAppleLogin = async () => {
-      setIsAppleLoading(true); // Show loader on Apple button
-      console.log('👉 Starting Apple Login Handler');
-  
-      try {
-        const {error, userInfo} = await appleAuthLogin();
-  
-        if (error) {
-          console.log('❌ Apple Login Failed:', error);
-          return;
-        }
-  
-        if (!userInfo) {
-          console.log('❌ No Apple Credential Found in Storage!');
-          return;
-        }
-  
-        console.log('✅ Apple User Info:', userInfo);
-  
-        const endpoint = 'social-authetication'; // Ensure correct API path
-        const requestData = {
-          email: userInfo.email, // Now, always has an email
-          name: userInfo.fullName?.givenName || '',
-          surname: userInfo.fullName?.familyName || '',
-          sub: userInfo.user, // Unique Apple ID
-          fcm_token: '',
-        };
-  
-        console.log('📦 Apple Request Payload:', requestData);
-  
-        // const response = await post(endpoint, requestData);
-  
-        // console.log('✅ Apple API Response:', response);
-  
-        // await LoginApiCall(response, 'APPLE', userInfo);
-      } catch (err) {
-        console.log('❌ Error in handleOnAppleLogin:', err);
-      } finally {
-        setIsAppleLoading(false); // Hide loader
+    setIsAppleLoading(true);
+    console.log('👉 Starting Apple Login Handler');
+
+    try {
+      const { error, userInfo } = await appleAuthLogin();
+
+      if (error) {
+        console.log('❌ Apple Login Failed:', error);
+        return;
       }
-    };
+
+      if (!userInfo) {
+        console.log('❌ No Apple Credential Found in Storage!');
+        return;
+      }
+
+      console.log('✅ Apple User Info:', userInfo);
+
+      const endpoint = 'social-authetication';
+      const requestData = {
+        email: userInfo.email,
+        name: userInfo.fullName?.givenName || '',
+        surname: userInfo.fullName?.familyName || '',
+        sub: userInfo.user,
+        fcm_token: '',
+      };
+
+      console.log('📦 Apple Request Payload:', requestData);
+    } catch (err) {
+      console.log('❌ Error in handleOnAppleLogin:', err);
+    } finally {
+      setIsAppleLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,73 +95,93 @@ const LoginWithPhoneScreen = () => {
         <View style={styles.circleSmall} />
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.centerContent}>
-          <AppText
-            text="Please enter your phone number to continue."
-            textAlign="center"
-            fontSize={28}
-            px={20}
-            mb={40}
-          />
-          <PhoneInputField
-            label="Phone Number*"
-            control={control}
-            errors={errors}
-            countryFieldName="country"
-            phoneFieldName="phoneNumber"
-          />
-        </View>
+      {/* ✅ KeyboardAvoidingView wraps the main content */}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            <View style={styles.centerContent}>
+              <AppText
+                text="Please enter your phone number to continue."
+                textAlign="center"
+                fontSize={28}
+                px={20}
+                mb={40}
+              />
+              <PhoneInputField
+                label="Phone Number*"
+                control={control}
+                errors={errors}
+                countryFieldName="country"
+                phoneFieldName="phoneNumber"
+              />
+            </View>
 
-        {/* 1. Next Button (Original Component) */}
-        <AppButton
-          title="Next"
-          onPress={handleSubmit(onSubmit)}
-          loading={isLoading}
-        />
+            {/* 1. Next Button */}
+            <AppButton
+              title="Next"
+              onPress={handleSubmit(onSubmit)}
+              loading={isLoading}
+            />
 
-        {/* 2. "Or" Separator Section */}
-        <View style={styles.separatorRow}>
-          <View style={styles.line} />
-          <View style={{ marginHorizontal: 16 }}>
-             <AppText text="Or" fontSize={16} />
+            {/* 2. "Or" Separator Section */}
+            <View style={styles.separatorRow}>
+              <View style={styles.line} />
+              <View style={{ marginHorizontal: 16 }}>
+                <AppText text="Or" fontSize={16} />
+              </View>
+              <View style={styles.line} />
+            </View>
+
+            {/* 3. Social Login Buttons */}
+            <View style={styles.socialWrapper}>
+              <TouchableOpacity style={styles.socialButton} onPress={handleGoogleSignIn}>
+                <View style={styles.iconWrapper}>
+                  <Svgicons path="google" size={20} />
+                </View>
+                <AppText text="Continue with Google" fontSize={16} />
+              </TouchableOpacity>
+
+              {/* <TouchableOpacity style={[styles.socialButton, { marginTop: 16 }]} onPress={handleOnAppleLogin}>
+                <View style={styles.iconWrapper}>
+                  <Svgicons path="apple" size={20} />
+                </View>
+                <AppText text="Continue with Apple" fontSize={16} />
+              </TouchableOpacity> */}
+            </View>
           </View>
-          <View style={styles.line} />
-        </View>
-
-        {/* 3. Social Login Buttons */}
-        <View style={styles.socialWrapper}>
-          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleSignIn}>
-            <View style={styles.iconWrapper}>
-              <Svgicons path="google" size={20} />
-            </View>
-            <AppText text="Continue with Google" fontSize={16} />
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity style={[styles.socialButton, { marginTop: 16 }]} onPress={handleOnAppleLogin}>
-            <View style={styles.iconWrapper}>
-              <Svgicons path="apple" size={20} />
-            </View>
-            <AppText text="Continue with Apple" fontSize={16} />
-          </TouchableOpacity> */}
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF' },
+
+  // ✅ KeyboardAvoidingView full flex
+  keyboardAvoidingView: { flex: 1 },
+
+  // ✅ ScrollView content stretches to fill screen
+  scrollContent: { flexGrow: 1 },
+
   content: { flex: 1, paddingHorizontal: 24, paddingBottom: 40 },
   centerContent: { flex: 1, justifyContent: 'center' },
 
   iconWrapper: {
-    marginRight: 12, // This provides the pixel-perfect gap seen in the SS
+    marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
-  // Pixel Perfect Separator
+
+  // Separator
   separatorRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -178,10 +191,10 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#EEEEEE', // Very light grey from SS
+    backgroundColor: '#EEEEEE',
   },
 
-  // Social Button Styling
+  // Social Buttons
   socialWrapper: {
     width: '100%',
   },
@@ -190,9 +203,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 56,
-    borderRadius: 100, // Pill shape
+    borderRadius: 100,
     borderWidth: 1,
-    borderColor: '#E0E0E0', // Subtle border
+    borderColor: '#E0E0E0',
     backgroundColor: '#FFFFFF',
   },
 

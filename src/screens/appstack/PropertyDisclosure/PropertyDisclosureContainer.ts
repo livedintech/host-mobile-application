@@ -25,15 +25,16 @@ export default function usePropertyDisclosureContainer() {
     } = useForm<DisclosureFormValues>({
         resolver: yupResolver(disclosureSchema),
         defaultValues: {
-            securityCameras:
-                routeListing?.exterior_security_camera === 1 ? 'Yes' : 'No',
-
-            noiseMonitor:
-                routeListing?.noise_decibel_monitor === 1 ? 'Yes' : 'No',
-
-            weaponsOnProperty:
-                routeListing?.weapon_on_property === 1 ? 'Yes' : 'No',
-        },
+  securityCameras: isEdit
+    ? (routeListing?.exterior_security_camera === 1 ? 'Yes' : 'No')
+    : '',
+  noiseMonitor: isEdit
+    ? (routeListing?.noise_decibel_monitor === 1 ? 'Yes' : 'No')
+    : '',
+  weaponsOnProperty: isEdit
+    ? (routeListing?.weapon_on_property === 1 ? 'Yes' : 'No')
+    : '',
+},
     });
 
 

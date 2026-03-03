@@ -112,7 +112,7 @@ const SetPricingScreen = () => {
                 label="Cleaning Fee"
                 control={control}
                 errors={errors}
-                placeholder="2.0%"
+                placeholder="SAR 250"
               />
             </View>
           </View>
