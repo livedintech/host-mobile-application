@@ -28,6 +28,7 @@ const LoginWithPhoneScreen = () => {
   const handleGoogleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      await GoogleSignin.signOut();
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
         const { user } = response.data;
