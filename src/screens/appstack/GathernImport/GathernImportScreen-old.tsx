@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
-import useAirbnbImportContainer from './AirbnbImportContainer';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -10,8 +9,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import { shortId } from '@/utility/Utils';
-import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
+import useGathernImportContainer from './GathernImportContainer';
 
 const PropertyCard = ({
   id,
@@ -21,18 +19,9 @@ const PropertyCard = ({
   listingOptions,
   handleIndividualImport,
   watch,
-  isMap,
 }: any) => {
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
-
-  const getButtonTitle = () => {
-    const isMatch = String(selectedLivedinId) === String(id); // ✅ item.id vs dropdown item.id
-
-    if (!isMatch) return 'Import';
-    else if (!isMap) return 'Map Listing';
-    else return 'Unmapped Listing';
-  };
 
   return (
     <View style={styles.card}>
@@ -40,25 +29,22 @@ const PropertyCard = ({
         <View>
           <View style={styles.infoRow}>
             <AppText text="Airbnb Property ID: " type="Bold" color={Colors.PINE_FOREST} />
-            <AppText text={shortId(id)} color={Colors.PINE_FOREST} />
+            <AppText text={shortId(id) } color={Colors.PINE_FOREST} />
           </View>
 
           <View style={styles.infoRow}>
             <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
-            <View style={{ flex: 1 }}>
-              <AppText text={name} color={Colors.PINE_FOREST} numberOfLines={1} />
-            </View>
+            <AppText text={name} color={Colors.PINE_FOREST} />
           </View>
 
-          {/* <View style={styles.infoRow}>
+          <View style={styles.infoRow}>
             <AppText text="Livedin ID: " type="Bold" color={Colors.PINE_FOREST} />
             <AppText
               text={selectedLivedinId ? String(selectedLivedinId) : '-'}
               color={Colors.PINE_FOREST}
             />
-          </View> */}
+          </View>
         </View>
-
         <Svgicons path="houseLineIcon" />
       </View>
 
@@ -72,15 +58,15 @@ const PropertyCard = ({
       />
 
       <AppButton
-        title={getButtonTitle()}
-        onPress={() => handleIndividualImport(fieldName, id, isMap)}
+        title="Import Listing"
+        onPress={() => handleIndividualImport(fieldName)}
         mt={12}
       />
     </View>
   );
 };
 
-const AirbnbImportScreen = () => {
+const GathernImportScreen = () => {
   const {
     control,
     errors,
@@ -90,31 +76,11 @@ const AirbnbImportScreen = () => {
     handleIndividualImport,
     refetch,
     watch,
-    isLoading,
     listingOptions,
-  } = useAirbnbImportContainer();
-
-
-  const renderItem = ({ item }: any) => (
-    <PropertyCard
-      id={item.id}
-      name={item.title}
-      control={control}
-      errors={errors}
-      listingOptions={listingOptions}
-      handleIndividualImport={handleIndividualImport}
-      watch={watch}
-      isMap={item?.isMap}
-    />
-  );
+  } = useGathernImportContainer();
 
   return (
     <View style={styles.container}>
-      {isLoading && (
-        <View style={styles.loaderContainer}>
-          <SpinnerLoader />
-        </View>
-      )}
       {/* Header */}
       <View style={styles.fixedHeader}>
         <View style={styles.headerRow}>
@@ -128,7 +94,7 @@ const AirbnbImportScreen = () => {
         </View>
 
         <AppText
-          text="Airbnb Properties"
+          text="Gathern Properties"
           fontSize={30}
           type="Bold"
           color={Colors.BRUNSWICK_GREEN}
@@ -136,20 +102,28 @@ const AirbnbImportScreen = () => {
         />
       </View>
 
-      {/* FlatList */}
-      <FlatListSimpleHandler
-        onRefresh={refetch}
-        isLoading={false}
-        data={properties}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
+      {/* Cards */}
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        ListFooterComponent={
-          <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
-        }
-      />
+      >
+        {properties.map((item: { listing_id: number, title: string, type: string }) => (
+          <PropertyCard
+            key={item?.listing_id}
+            id={item?.listing_id}
+            name={item?.title}
+            property={item?.type}
+            control={control}
+            errors={errors}
+            listingOptions={listingOptions}
+            handleIndividualImport={handleIndividualImport}
+            watch={watch}   // 👈 ADD THIS
+          />
+        ))}
+
+        <AppButton title="Next" onPress={handleSubmit(onNext)} mt={10} />
+      </ScrollView>
     </View>
   );
 };
@@ -157,12 +131,7 @@ const AirbnbImportScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.WHITE },
   fixedHeader: { paddingHorizontal: 22, paddingTop: 15 },
-
-  scrollContent: {
-    paddingHorizontal: 22,
-    paddingBottom: 40,
-    paddingTop: 20,
-  },
+  scrollContent: { paddingHorizontal: 22, paddingBottom: 40, paddingTop: 20 },
 
   headerRow: {
     flexDirection: 'row',
@@ -198,18 +167,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 8,
   },
-  loaderContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-  },
-
 });
 
-export default AirbnbImportScreen;
+export default GathernImportScreen;

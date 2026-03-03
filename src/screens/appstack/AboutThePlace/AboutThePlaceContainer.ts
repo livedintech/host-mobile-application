@@ -158,6 +158,7 @@ export default function useAboutThePlaceContainer() {
       max_nights: Number(data.max_nights),
       maximum_days_stays: Number(data.max_nights), // Swagger key
       amenities: data.amenities,
+      bathrooms: 1,
     },
   });
 

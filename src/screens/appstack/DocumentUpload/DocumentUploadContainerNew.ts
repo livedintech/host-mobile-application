@@ -4,8 +4,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DocumentFormValues, documentUploadSchema } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useMutation } from '@tanstack/react-query';
-import { CreateListingDetailsResponse, CreateListingDetailsPayload } from '@/types/api/createListingTypes';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { CreateListingDetailsResponse, CreateListingDetailsPayload, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 import Toast from 'react-native-toast-message';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -15,8 +15,9 @@ import RNFS from 'react-native-fs';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 import * as yup from 'yup';
-import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
+import { createListingExportApi, editListingApi } from '@/services/ createListingService';
 import { BASE_URL_DEV } from '@env';
+import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 
 const BASE_URL = BASE_URL_DEV;
 
@@ -39,12 +40,20 @@ export default function useCreateEditListingDocumentUploadContainer() {
 
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
+  const { data: response, isLoading: isLoadingChannelList, refetch } = useQuery({
+    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
+    queryFn: () =>
+      getChannelsUserbyId({
+        user_id: Number(user?.id)
+      }),
+    enabled: !!user?.id,
+  });
+
+  const connectedAccounts = response?.data || [];
+
+
   // OTA account options (can be fetched from API)
-  const otaAccountOptions = [
-    { label: "Tooba's airbnb account", value: 'tooba_airbnb' },
-    { label: "Ahmad's booking.com account", value: 'ahmad_booking' },
-    { label: "Sarah's gathern account", value: 'sarah_gathern' },
-  ];
+
 
   // --- Map existing documents for edit mode ---
   const mapExistingDocuments = (): DocumentFormValues => ({
@@ -82,6 +91,7 @@ export default function useCreateEditListingDocumentUploadContainer() {
     control: otaControl,
     handleSubmit: handleOtaSubmit,
     formState: { errors: otaErrors },
+    watch: newWatch
   } = useForm<OtaAccountFormValues>({
     resolver: yupResolver(otaAccountSchema) as any,
     defaultValues: {
@@ -92,6 +102,8 @@ export default function useCreateEditListingDocumentUploadContainer() {
   const propertyOwnershipDoc = watch('propertyOwnership');
   const authorityLicenseDoc = watch('authorityLicense');
   const nationalIdDoc = watch('nationalId');
+  const ota_Account = newWatch('ota_account')
+
 
   // ---- Document Picker ----
   const pickDocument = async (fieldName: 'propertyOwnership' | 'authorityLicense' | 'nationalId') => {
@@ -136,9 +148,20 @@ export default function useCreateEditListingDocumentUploadContainer() {
   };
 
   // ---- Mutations ----
-  const { mutate: createListingDetailsPayload, isPending: isCreating } =
-    useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
-      mutationFn: createListingDetailsApi,
+  const { mutate: createListingExportPayload, isPending: isCreating } =
+    useMutation<CreateListingDetailsResponse, Error, CreateListingExportPayloadType>({
+      mutationFn: createListingExportApi,
+      onSuccess: ({ message }) => {
+        setBottomSheetVisible(false);
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
+        });
+        Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+      },
       onError: error => {
         Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
       },
@@ -167,8 +190,12 @@ export default function useCreateEditListingDocumentUploadContainer() {
   };
 
   const handleExportSubmit = (data: OtaAccountFormValues) => {
-    Toast.show({ type: 'success', text1: `Exporting listing to ${data.ota_account}...` });
-    setBottomSheetVisible(false);
+    // Toast.show({ type: 'success', text1: `Exporting listing to ${data.ota_account}...` });
+    // setBottomSheetVisible(false);
+    createListingExportPayload({
+      channel_id: ota_Account,
+      listing_id: String(listing_id),
+    })
   };
 
   const buildPayload = (data: DocumentFormValues, isSaveAndExit: number): any => {
@@ -233,6 +260,8 @@ export default function useCreateEditListingDocumentUploadContainer() {
       Toast.show({ type: 'error', text1: 'Please upload at least one document' });
       return;
     }
+    // handleExport()
+    // return false
 
     const payload = buildPayload(data, 1);
     setIsLoading(true); // 👈 start loading
@@ -254,10 +283,13 @@ export default function useCreateEditListingDocumentUploadContainer() {
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id] });
 
+
+
+
         if (isEdit) {
           goBack();
         } else {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          handleExport()
         }
       } else {
         throw new Error(result.message || 'Upload failed');
@@ -268,6 +300,10 @@ export default function useCreateEditListingDocumentUploadContainer() {
       setIsLoading(false); // 👈 stop loading (success & error dono mein)
     }
   };
+  const listingOptions = connectedAccounts?.map((item: any) => ({
+    label: item.connection_type,
+    value: item.ch_channel_id,
+  })) ?? [];
   return {
     control,
     errors,
@@ -283,10 +319,13 @@ export default function useCreateEditListingDocumentUploadContainer() {
     handleExport,
     bottomSheetVisible,
     setBottomSheetVisible,
-    otaAccountOptions,
     otaControl,
     otaErrors,
     handleOtaSubmit,
     handleExportSubmit,
+    connectedAccounts,
+    listingOptions,
+    isLoadingChannelList,
+    isCreating
   };
 }

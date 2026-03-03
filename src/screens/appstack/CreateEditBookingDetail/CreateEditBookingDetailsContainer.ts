@@ -35,16 +35,20 @@ export default function useBookingDetailsContainer() {
 
   const { control, handleSubmit, formState: { errors } } = useForm<BookingDetailsFormValues>({
     resolver: yupResolver(bookingDetailsSchema) as any,
-    defaultValues: {
-      booking_type: listing?.instant_booking === true ? 'instant' : 'request',
-      guest_eligibility: listing?.guest_eligibility === true ? 'true' : 'false',
-      check_in_time: listing?.check_in_time 
-      ? dayjs(listing.check_in_time, "HH:mm").format("hh:mm a") 
-      : '04:00 pm',
-    check_out_time: listing?.check_out_time 
-      ? dayjs(listing.check_out_time, "HH:mm").format("hh:mm a") 
-      : '12:00 pm',
-    }
+   defaultValues: {
+  booking_type: isEdit && listing?.instant_booking != null
+    ? (listing.instant_booking === true ? 'instant' : 'request')
+    : '',
+  guest_eligibility: isEdit && listing?.guest_eligibility != null
+    ? (listing.guest_eligibility === true ? 'true' : 'false')
+    : '',
+  check_in_time: isEdit && listing?.check_in_time
+    ? dayjs(listing.check_in_time, "HH:mm").format("hh:mm a")
+    : '',
+  check_out_time: isEdit && listing?.check_out_time
+    ? dayjs(listing.check_out_time, "HH:mm").format("hh:mm a")
+    : '',
+}
   });
 
   // ---- Mutations ----

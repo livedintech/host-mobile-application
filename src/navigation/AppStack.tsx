@@ -144,7 +144,7 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.GATHREN_PMSID}
         getComponent={() =>
-          require('@/screens/appstack/GathrenPmsid/GathrenPmsidScreen').default
+          require('@/screens/appstack/GathrenCreateAccount/GathrenCreateAccountScreen').default
         }
       />
       <Stack.Screen

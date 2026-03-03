@@ -14,7 +14,6 @@ const SubscriptionHistoryScreen = () => {
   const totalAmount = listings?.length > 0 
   ? listings.length * 1500 
   : 0;
-  console.log('totalAmounts',totalAmount);
   
 
   return (
@@ -69,7 +68,7 @@ const SubscriptionHistoryScreen = () => {
         {/* Footer Actions */}
         <GradientBorder borderRadius={24} style={styles.cardWrapper}>
           <View style={[styles.innerCard, styles.renewalBox]}>
-            <AppText text="Renews 26 January 2026" fontSize={18} type="Medium" color={Colors.BRUNSWICK_GREEN} />
+            <AppText text="Renew 26 January 2026" fontSize={18} type="Medium" color={Colors.BRUNSWICK_GREEN} />
             <AppText text={`SAR ${totalAmount}`} fontSize={14} color={Colors.PINE_FOREST} />
           </View>
         </GradientBorder>
