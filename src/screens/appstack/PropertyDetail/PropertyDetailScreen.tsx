@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -14,6 +14,8 @@ import Metrics from '@/utility/Metrics';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
+import AppButton from '@/components/molecules/AppButton/AppButton';
+import DropdownField from '@/components/molecules/Input/DropdownField';
 
 const PropertyDetailScreen = () => {
   const {
@@ -24,6 +26,18 @@ const PropertyDetailScreen = () => {
     isLoading,
     handleEditPhotosVideos,
     UserPermission,
+    connectedAccounts,
+    data,
+    handleExportSubmit,
+    handleOtaSubmit,
+    isLoadingChannelList,
+    listingOptions,
+    bottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleExport,
+    setBottomSheetVisible,
+    isPendingExporting
   } = usePropertyDetailContainer();
   const isOwnership = propertyData?.documents?.ownership?.length > 0;
   const isLicense = propertyData?.documents?.authority_license?.length > 0;
@@ -399,84 +413,84 @@ const PropertyDetailScreen = () => {
         {(propertyData.guidelines.arrivalGuide ||
           propertyData.guidelines.houseRules ||
           propertyData.guidelines.checkoutInstructions) && (
-          <InfoCard
-            title="House Guidelines"
-            icon="bookIcon"
-            onEdit={() => handleEditSection('Guidelines')}
-          >
-            {propertyData.guidelines.arrivalGuide && (
-              <>
-                <AppText
-                  text="Arrival Guide:"
-                  type="Bold"
-                  color={Colors.BRUNSWICK_GREEN}
-                  mb={5}
-                />
-                <AppText
-                  text={propertyData.guidelines.arrivalGuide}
-                  color={Colors.BRUNSWICK_GREEN}
-                  mb={15}
-                  lineHeight={20}
-                />
-              </>
-            )}
-            {propertyData.guidelines.houseRules && (
-              <>
-                <AppText
-                  text="House Rules:"
-                  type="Bold"
-                  color={Colors.BRUNSWICK_GREEN}
-                  mb={5}
-                />
-                <AppText
-                  text={propertyData.guidelines.houseRules}
-                  color={Colors.BRUNSWICK_GREEN}
-                  mb={15}
-                  lineHeight={20}
-                />
-              </>
-            )}
-            {propertyData.guidelines.checkoutInstructions && (
-              <>
-                <AppText
-                  text="Checkout Instructions:"
-                  type="Bold"
-                  color={Colors.BRUNSWICK_GREEN}
-                  mb={5}
-                />
-                <AppText
-                  text={propertyData.guidelines.checkoutInstructions}
-                  color={Colors.BRUNSWICK_GREEN}
-                  lineHeight={20}
-                />
-              </>
-            )}
-          </InfoCard>
-        )}
+            <InfoCard
+              title="House Guidelines"
+              icon="bookIcon"
+              onEdit={() => handleEditSection('Guidelines')}
+            >
+              {propertyData.guidelines.arrivalGuide && (
+                <>
+                  <AppText
+                    text="Arrival Guide:"
+                    type="Bold"
+                    color={Colors.BRUNSWICK_GREEN}
+                    mb={5}
+                  />
+                  <AppText
+                    text={propertyData.guidelines.arrivalGuide}
+                    color={Colors.BRUNSWICK_GREEN}
+                    mb={15}
+                    lineHeight={20}
+                  />
+                </>
+              )}
+              {propertyData.guidelines.houseRules && (
+                <>
+                  <AppText
+                    text="House Rules:"
+                    type="Bold"
+                    color={Colors.BRUNSWICK_GREEN}
+                    mb={5}
+                  />
+                  <AppText
+                    text={propertyData.guidelines.houseRules}
+                    color={Colors.BRUNSWICK_GREEN}
+                    mb={15}
+                    lineHeight={20}
+                  />
+                </>
+              )}
+              {propertyData.guidelines.checkoutInstructions && (
+                <>
+                  <AppText
+                    text="Checkout Instructions:"
+                    type="Bold"
+                    color={Colors.BRUNSWICK_GREEN}
+                    mb={5}
+                  />
+                  <AppText
+                    text={propertyData.guidelines.checkoutInstructions}
+                    color={Colors.BRUNSWICK_GREEN}
+                    lineHeight={20}
+                  />
+                </>
+              )}
+            </InfoCard>
+          )}
 
         {/* Booking Cancel Policies */}
         {(propertyData.cancelPolicies.airbnb ||
           propertyData.cancelPolicies.gathern ||
           propertyData.cancelPolicies.booking) && (
-          <InfoCard
-            title="Booking Cancel Policies"
-            icon="clipboardIcon"
-            onEdit={() => handleEditSection('CancelPolicies')}
-          >
-            <LabelValue
-              label="Cancel Policy Airbnb"
-              value={propertyData.cancelPolicies?.airbnb?.title}
-            />
-            <LabelValue
-              label="Cancel Policy Gathern"
-              value={propertyData.cancelPolicies?.gathern?.title}
-            />
-            <LabelValue
-              label="Cancel Policy Booking.com"
-              value={propertyData.cancelPolicies?.booking?.title}
-            />
-          </InfoCard>
-        )}
+            <InfoCard
+              title="Booking Cancel Policies"
+              icon="clipboardIcon"
+              onEdit={() => handleEditSection('CancelPolicies')}
+            >
+              <LabelValue
+                label="Cancel Policy Airbnb"
+                value={propertyData.cancelPolicies?.airbnb?.title}
+              />
+              <LabelValue
+                label="Cancel Policy Gathern"
+                value={propertyData.cancelPolicies?.gathern?.title}
+              />
+              <LabelValue
+                label="Cancel Policy Booking.com"
+                value={propertyData.cancelPolicies?.booking?.title}
+              />
+            </InfoCard>
+          )}
 
         {/* AI Dynamic Pricing */}
         <InfoCard
@@ -559,25 +573,25 @@ const PropertyDetailScreen = () => {
         {(propertyData.disclosure.cameras ||
           propertyData.disclosure.weapons ||
           propertyData.disclosure.noise) && (
-          <InfoCard
-            title="Property Disclosure Details"
-            icon="bookIcon"
-            onEdit={() => handleEditSection('Disclosure')}
-          >
-            <LabelValue
-              label="Exterior Security Camera"
-              value={propertyData.disclosure.cameras}
-            />
-            <LabelValue
-              label="Noise Hidden Monitor"
-              value={propertyData.disclosure.noise}
-            />
-            <LabelValue
-              label="Weapon on Property"
-              value={propertyData.disclosure.weapons}
-            />
-          </InfoCard>
-        )}
+            <InfoCard
+              title="Property Disclosure Details"
+              icon="bookIcon"
+              onEdit={() => handleEditSection('Disclosure')}
+            >
+              <LabelValue
+                label="Exterior Security Camera"
+                value={propertyData.disclosure.cameras}
+              />
+              <LabelValue
+                label="Noise Hidden Monitor"
+                value={propertyData.disclosure.noise}
+              />
+              <LabelValue
+                label="Weapon on Property"
+                value={propertyData.disclosure.weapons}
+              />
+            </InfoCard>
+          )}
 
         {/* Ownership Documents */}
         <View style={styles.card}>
@@ -629,8 +643,8 @@ const PropertyDetailScreen = () => {
                 isOwnership && !isSupervisor
                   ? Colors.WHITE
                   : isSupervisor
-                  ? Colors.DISABLED_GREY
-                  : Colors.BLACK
+                    ? Colors.DISABLED_GREY
+                    : Colors.BLACK
               }
             />
           </ButtonView>
@@ -664,8 +678,8 @@ const PropertyDetailScreen = () => {
                 isLicense && !isSupervisor
                   ? Colors.WHITE
                   : isSupervisor
-                  ? Colors.DISABLED_GREY
-                  : Colors.BLACK
+                    ? Colors.DISABLED_GREY
+                    : Colors.BLACK
               }
             />
           </ButtonView>
@@ -699,13 +713,45 @@ const PropertyDetailScreen = () => {
                 isNational_id && !isSupervisor
                   ? Colors.WHITE
                   : isSupervisor
-                  ? Colors.DISABLED_GREY
-                  : Colors.BLACK
+                    ? Colors.DISABLED_GREY
+                    : Colors.BLACK
               }
             />
           </ButtonView>
         </View>
+        <AppButton title="Save & Export" onPress={handleExport} mt={20} loading={isPendingExporting}/>
+
       </RefreshableScrollView>
+      <Modal
+        visible={bottomSheetVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setBottomSheetVisible(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+          <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+
+            {/* Handle Bar */}
+            <View style={styles.handleBar} />
+
+            <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+
+            {/* OTA Account Dropdown */}
+            <DropdownField
+              name="ota_account"
+              control={otaControl}
+              errors={otaErrors}
+              label=""
+              data={listingOptions}
+              placeholder="Select Account"
+            />
+
+            {/* Export Button */}
+            <AppButton title="Export" onPress={handleOtaSubmit(handleExportSubmit)} mt={20} loading={isPendingExporting}/>
+
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -789,6 +835,27 @@ const styles = StyleSheet.create({
   disabledBtn: {
     backgroundColor: Colors.DISABLED_BG,
     borderColor: '#E8E8E8',
+  },
+   modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor: Colors.WHITE,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 40,
+  },
+  handleBar: {
+    width: 40,
+    height: 4,
+    backgroundColor: Colors.SMOOTH_GREY,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
 

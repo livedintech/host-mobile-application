@@ -151,6 +151,7 @@ const SetPricingScreen = () => {
                 errors={errors}
                 data={discountOptions}
                 placeholder="10.5%"
+                dropdownPosition='top'
               />
             </View>
             <View style={styles.half}>

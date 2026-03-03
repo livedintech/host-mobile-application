@@ -26,11 +26,13 @@ const DocumentUploadScreen = () => {
     handleExport,
     bottomSheetVisible,
     setBottomSheetVisible,
-    otaAccountOptions,
     otaControl,
     otaErrors,
     handleOtaSubmit,
     handleExportSubmit,
+    listingOptions,
+    isLoadingChannelList,
+    isCreating
   } = useCreateEditListingDocumentUploadContainer();
 
   const renderUploadButton = (
@@ -82,7 +84,6 @@ const DocumentUploadScreen = () => {
           <View style={styles.wavyCheck}>
             <Svgicons path='wavy_check' size={20} />
           </View>
-
         </View>
 
         {/* Title */}
@@ -105,8 +106,6 @@ const DocumentUploadScreen = () => {
         {renderUploadButton('Property Ownership / Rental Documents*', 'propertyOwnership', propertyOwnershipDoc)}
         {renderUploadButton('Authority license', 'authorityLicense', authorityLicenseDoc)}
         {renderUploadButton('Aqama / National ID', 'nationalId', nationalIdDoc)}
-
-        {/* Footer Buttons */}
         <View style={styles.footer}>
           {/* <AppButton title="Export" onPress={handleExport} /> */}
           <AppButton
@@ -116,7 +115,6 @@ const DocumentUploadScreen = () => {
             // mt={15}
           />
         </View>
-
       </ScrollView>
 
       {/* Bottom Sheet Modal */}
@@ -140,12 +138,12 @@ const DocumentUploadScreen = () => {
               control={otaControl}
               errors={otaErrors}
               label=""
-              data={otaAccountOptions}
-              placeholder="Tooba's airbnb account"
+              data={listingOptions}
+              placeholder="Select Account"
             />
 
             {/* Export Button */}
-            <AppButton title="Export" onPress={handleOtaSubmit(handleExportSubmit)} mt={20} />
+            <AppButton title="Export" onPress={handleOtaSubmit(handleExportSubmit)} mt={20} loading={isLoadingChannelList || isCreating}/>
 
           </Pressable>
         </Pressable>

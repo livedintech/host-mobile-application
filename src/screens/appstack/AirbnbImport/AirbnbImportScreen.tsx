@@ -26,7 +26,13 @@ const PropertyCard = ({
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
 
+  const getButtonTitle = () => {
+    const isMatch = String(selectedLivedinId) === String(id); // ✅ item.id vs dropdown item.id
 
+    if (!isMatch) return 'Import';
+    else if (!isMap) return 'Map Listing';
+    else return 'Unmapped Listing';
+  };
 
   return (
     <View style={styles.card}>
@@ -44,13 +50,13 @@ const PropertyCard = ({
             </View>
           </View>
 
-          <View style={styles.infoRow}>
+          {/* <View style={styles.infoRow}>
             <AppText text="Livedin ID: " type="Bold" color={Colors.PINE_FOREST} />
             <AppText
               text={selectedLivedinId ? String(selectedLivedinId) : '-'}
               color={Colors.PINE_FOREST}
             />
-          </View>
+          </View> */}
         </View>
 
         <Svgicons path="houseLineIcon" />
@@ -66,8 +72,8 @@ const PropertyCard = ({
       />
 
       <AppButton
-        title={isMap ? 'Unmapped Listing' : "Map Listing"}
-        onPress={() => handleIndividualImport(fieldName)}
+        title={getButtonTitle()}
+        onPress={() => handleIndividualImport(fieldName, id, isMap)}
         mt={12}
       />
     </View>
@@ -104,11 +110,11 @@ const AirbnbImportScreen = () => {
 
   return (
     <View style={styles.container}>
-       {isLoading && (
-      <View style={styles.loaderContainer}>
-        <SpinnerLoader />
-      </View>
-    )}
+      {isLoading && (
+        <View style={styles.loaderContainer}>
+          <SpinnerLoader />
+        </View>
+      )}
       {/* Header */}
       <View style={styles.fixedHeader}>
         <View style={styles.headerRow}>

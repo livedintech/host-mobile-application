@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
+import { createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateListingExportPayloadType, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
 import Utils from "@/utility/Utils";
 import { CreateEditlistingCitiesPayloadType, CreateEditlistingDistrictsPayloadType, CreateEditlistingStatePayloadType, DeleteListingPayloadType, getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 
@@ -217,4 +217,15 @@ export const deleteListingApi = async (payload: DeleteListingPayloadType) => {
         return data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+export const createListingExportApi = async (payload: CreateListingExportPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CREATE_LISTING_EXPORT,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
 };

@@ -94,6 +94,10 @@ export interface CreateListingDetailsPayload {
   listing_id?: string | null;
   listing?: ListingDetails;
 }
+export interface CreateListingExportPayloadType {
+  channel_id?: string | null;
+  listing_id?: string | null;
+}
 
 export interface CreateListingDetailsResponse {
   status: string;

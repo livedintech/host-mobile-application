@@ -1,6 +1,7 @@
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import {
+  createListingExportApi,
   deleteListingApi,
   getManageListingDetailById,
 } from '@/services/ createListingService';
@@ -15,11 +16,91 @@ import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import { DeleteListingPayloadType } from '@/types/api/bookingManagementTypes';
 import { getUser } from '@/services/UserPermission';
+import { useState } from 'react';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
+import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+
+
 dayjs.extend(customParseFormat);
+
+const otaAccountSchema = yup.object({
+  ota_account: yup.string().required('Please select an OTA account'),
+});
+
+type OtaAccountFormValues = {
+  ota_account: string;
+};
+
 
 export default function usePropertyDetailContainer() {
   const { user } = useAuthStore();
   const { listing_id } = useCreateListingStore();
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+
+  const {
+    control: otaControl,
+    handleSubmit: handleOtaSubmit,
+    formState: { errors: otaErrors },
+    watch: newWatch
+  } = useForm<OtaAccountFormValues>({
+    resolver: yupResolver(otaAccountSchema) as any,
+    defaultValues: {
+      ota_account: '',
+    },
+  });
+  const ota_Account = newWatch('ota_account');
+
+
+  const { mutate: createListingExportPayload, isPending: isPendingExporting } =
+    useMutation<CreateListingDetailsResponse, Error, CreateListingExportPayloadType>({
+      mutationFn: createListingExportApi,
+      onSuccess: ({ message }) => {
+        setBottomSheetVisible(false);
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
+        });
+        Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+        goBack()
+      },
+      onError: error => {
+        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+      },
+    });
+  const { data: response, isLoading: isLoadingChannelList } = useQuery({
+    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
+    queryFn: () =>
+      getChannelsUserbyId({
+        user_id: Number(user?.id)
+      }),
+    enabled: !!user?.id,
+  });
+
+  const connectedAccounts = response?.data || [];
+  const listingOptions = connectedAccounts?.map((item: any) => ({
+    label: item.connection_type,
+    value: item.ch_channel_id,
+  })) ?? [];
+  const handleExport = () => {
+    setBottomSheetVisible(true);
+  };
+
+  const handleExportSubmit = (data: OtaAccountFormValues) => {
+    // Toast.show({ type: 'success', text1: `Exporting listing to ${data.ota_account}...` });
+    // setBottomSheetVisible(false);
+    createListingExportPayload({
+      channel_id: ota_Account,
+      listing_id: String(listing_id),
+    })
+  };
+
+
+
 
   const { data, refetch, isLoading } = useQuery({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
@@ -31,7 +112,7 @@ export default function usePropertyDetailContainer() {
     enabled: Boolean(listing_id),
   });
 
-  console.log("ListingDetailData",data?.data?.listing?.id)
+  console.log("ListingDetailData", data?.data?.listing?.id)
 
   // Delete User
   const { mutate: deletePropertyPayload } = useMutation<
@@ -64,12 +145,12 @@ export default function usePropertyDetailContainer() {
   const listing_descriptionParsed =
     typeof rawDescription === 'string'
       ? (() => {
-          try {
-            return JSON.parse(rawDescription);
-          } catch {
-            return [];
-          }
-        })()
+        try {
+          return JSON.parse(rawDescription);
+        } catch {
+          return [];
+        }
+      })()
       : rawDescription; // If it's already parsed or just a string
 
   const propertyData = {
@@ -296,7 +377,7 @@ export default function usePropertyDetailContainer() {
   const {
     data: UserPermission = [],
     isLoading: isUserLoading,
-    refetch : refectUserPermission,
+    refetch: refectUserPermission,
   } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER],
     queryFn: getUser,
@@ -310,6 +391,17 @@ export default function usePropertyDetailContainer() {
     refetch,
     data,
     handleEditPhotosVideos,
-    UserPermission
+    UserPermission,
+    handleOtaSubmit,
+    handleExportSubmit,
+    connectedAccounts,
+    listingOptions,
+    isLoadingChannelList,
+    otaControl,
+    otaErrors,
+    setBottomSheetVisible,
+    bottomSheetVisible,
+    handleExport,
+    isPendingExporting
   };
 }

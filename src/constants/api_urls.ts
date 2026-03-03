@@ -30,6 +30,7 @@ export const SERVICE_CONFIG_URLS = {
     GET_GATHERN_LISTING: `${authController}/gathern/listings?channel_id={channel_id}`,
     CREATE_LISTING: `${authController}/channelmanagement/create-listing`,
     CREATE_LISTING_DETAILS: `${authController}/channelmanagement/create-listing/details`,
+    CREATE_LISTING_EXPORT: `${authController}/channelmanagement/listing/export`,
     CREATE_LISTING_PRICING: `${authController}/channelmanagement/create-listing/pricing`,
     CREATE_EDIT_AMENITIES: `${authController}/channelmanagement/create-listing/amenities`,
     GET_MANAGE_YOUR_LISTINGS: `${authController}/user/listings/{user}`,
