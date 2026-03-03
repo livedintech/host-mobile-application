@@ -17,11 +17,7 @@ export default function useAccountContainer() {
       navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
     }
     if (route === 'PROFILE_SETTINGS') {
-       Toast.show({
-            type: 'success',
-            text1: 'Coming soon',
-          });
-      // navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+      navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
     }
     if (route === 'MANAGE_LISTING') {
       navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);

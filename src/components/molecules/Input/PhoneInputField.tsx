@@ -7,6 +7,7 @@ import ButtonView from '../AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+
 interface PhoneInputFieldProps {
     control: Control<any>;
     errors: FieldErrors;
@@ -14,6 +15,7 @@ interface PhoneInputFieldProps {
     countryFieldName: string;
     phoneFieldName: string;
     activeColor?: string;
+    disabled?: boolean; // New prop for uneditable state
 }
 
 const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
@@ -23,12 +25,13 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
     countryFieldName,
     phoneFieldName,
     activeColor = Colors.BRUNSWICK_GREEN,
+    disabled = false, // Default to enabled
 }) => {
     const [pickerVisible, setPickerVisible] = React.useState(false);
-
     const animation = useRef(new Animated.Value(0)).current;
 
     const handleFocus = () => {
+        if (disabled) return;
         Animated.timing(animation, {
             toValue: 1,
             duration: 200,
@@ -46,12 +49,12 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
 
     const animatedBorderColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [Colors.BRUNSWICK_GREEN, activeColor],
+        outputRange: [disabled ? Colors.HYPER_SILVER : Colors.BRUNSWICK_GREEN, activeColor],
     });
 
     const animatedBackgroundColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [Colors.WHITE, Colors.WHITE],
+        outputRange: [disabled ? '#F9F9F9' : Colors.WHITE, Colors.WHITE],
     });
 
     return (
@@ -62,17 +65,21 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                 style={[
                     styles.container,
                     {
-                         borderColor: errors[phoneFieldName] ? Colors.INDIAN_RED : animatedBorderColor,
+                        borderColor: errors[phoneFieldName] ? Colors.INDIAN_RED : animatedBorderColor,
                         backgroundColor: animatedBackgroundColor,
                     },
                 ]}
             >
-                {/* Country Picker */}
+                {/* Country Picker Section */}
                 <Controller
                     control={control}
                     name={countryFieldName}
                     render={({ field: { onChange, value } }) => (
-                        <ButtonView onPress={() => setPickerVisible(true)} style={styles.pickerButton}>
+                        <ButtonView 
+                            onPress={() => !disabled && setPickerVisible(true)} 
+                            style={styles.pickerButton}
+                            activeOpacity={disabled ? 1 : 0.7}
+                        >
                             <CountryPicker
                                 withFlag
                                 withFilter
@@ -84,22 +91,28 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                                         callingCode: country.callingCode[0] || '',
                                     });
                                 }}
-                                visible={pickerVisible}
+                                visible={!disabled && pickerVisible}
                                 onClose={() => setPickerVisible(false)}
                             />
-                            <AppText text={`+${value.callingCode}`} />
-                            <Svgicons path='ChevronDownIcon' size={10} pl={5}/>
+                            <AppText 
+                                text={`+${value.callingCode}`} 
+                                color={disabled ? Colors.SUPER_GREY : Colors.BLACK} 
+                            />
+                            {!disabled && <Svgicons path='ChevronDownIcon' size={10} pl={5}/>}
                         </ButtonView>
                     )}
                 />
 
-                {/* Phone Number Input */}
+                {/* Phone Number Input Section */}
                 <Controller
                     control={control}
                     name={phoneFieldName}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input, 
+                                disabled && { color: Colors.SUPER_GREY }
+                            ]}
                             onFocus={handleFocus}
                             onBlur={() => {
                                 handleBlur();
@@ -107,7 +120,8 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                             }}
                             onChangeText={onChange}
                             value={value}
-                            placeholder="Your Phone Number"
+                            editable={!disabled}
+                            placeholder=""
                             placeholderTextColor={Colors.SUPER_GREY}
                             keyboardType="phone-pad"
                         />
@@ -148,16 +162,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 12,
     },
-    callingCodeText: {
-        marginHorizontal: 8,
-        fontSize: Metrics.generatedFontSize(16),
-        color: Colors.BLACK,
-    },
     input: {
         color: Colors.BLACK,
         fontSize: Metrics.generatedFontSize(14),
         paddingVertical: 0,
-        flex:1
+        flex: 1,
     },
     errorText: {
         marginTop: Metrics.verticalScale(5),
