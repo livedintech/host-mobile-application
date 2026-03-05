@@ -38,6 +38,29 @@ export const forgotPasswordApi = async (payload: ForgotPasswordPayload) => {
     throw response;
 };
 
+// Change Password
+export const changePasswordApi = async (payload: any) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.CHANGE_PASSWORD,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response; // This allows React Query to catch the error
+};
+
+// Delete Account (Soft Delete)
+export const deleteAccountApi = async () => {
+    const { ok, response, data } = await apiService.delete(
+        SERVICE_CONFIG_URLS.AUTH.DELETE_ACCOUNT
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
 // Verify OTP
 export const verifyOtpApi = async (payload: VerifyOtpPayload) => {
     const { ok, response, data } = await apiService.post(
