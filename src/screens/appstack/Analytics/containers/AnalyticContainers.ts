@@ -74,6 +74,8 @@ const AnalyticContainers = () => {
     }),
   });
 
+  console.log("AnalyticChannelChartDatadatabbb",AnalyticChannelChartData)
+
   return {
     listingOptions,
     channelOptions,

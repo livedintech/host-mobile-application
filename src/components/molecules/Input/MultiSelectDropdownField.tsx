@@ -24,6 +24,7 @@ interface MultiSelectDropdownFieldProps {
   disabled?: boolean;
   rules?: object;
   dropdownPosition?: 'auto' | 'top' | 'bottom';
+  labelStyle?: object;
 }
 
 const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
@@ -35,7 +36,8 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
   placeholder = 'Select',
   disabled = false,
   rules,
-  dropdownPosition
+  dropdownPosition,
+  labelStyle,
 }) => {
   const error = errors[name]?.message as string;
 
@@ -48,6 +50,7 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
         color={Colors.PINE_FOREST}
         fontSize={14}
         type="Medium"
+        style={labelStyle}
       />
       <Controller
         control={control}
@@ -76,7 +79,7 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
 
           return (
             <MultiSelect
-            dropdownPosition={dropdownPosition}
+              dropdownPosition={dropdownPosition}
               searchPlaceholder="Search..."
               search
               style={[

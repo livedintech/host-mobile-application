@@ -117,6 +117,7 @@ import clipboardIcon from './clipboardIcon.svg';
 import wavy_check from './wavy_check.svg'
 import google from "./google.svg";
 import apple from "./apple.svg";
+import moneyBagIcon from "./moneyBagIcon.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -237,5 +238,6 @@ export const icons = {
     clipboardIcon,
     wavy_check,
     google,
-    apple
+    apple,
+    moneyBagIcon
 };

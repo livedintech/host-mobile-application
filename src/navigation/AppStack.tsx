@@ -43,12 +43,10 @@ const AppStack = () => {
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
-
         getComponent={() =>
           require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen')
             .default
         }
-        
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
@@ -144,7 +142,8 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.GATHREN_PMSID}
         getComponent={() =>
-          require('@/screens/appstack/GathrenCreateAccount/GathrenCreateAccountScreen').default
+          require('@/screens/appstack/GathrenCreateAccount/GathrenCreateAccountScreen')
+            .default
         }
       />
       <Stack.Screen
@@ -222,8 +221,7 @@ const AppStack = () => {
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.OTHER_VIDEOS}
         getComponent={() =>
-          require('@/screens/appstack/OtherPhotos/OtherPhotosScreen')
-            .default
+          require('@/screens/appstack/OtherPhotos/OtherPhotosScreen').default
         }
       />
       <Stack.Screen
@@ -251,14 +249,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-         options={{ headerShown: false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.SET_YOUR_PRICING}
         getComponent={() =>
           require('@/screens/appstack/SetPricing/SetPricingScreen').default
         }
       />
       <Stack.Screen
-         options={{ headerShown: false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE}
         getComponent={() =>
           require('@/screens/appstack/PropertyDisclosure/PropertyDisclosureScreen')
@@ -266,7 +264,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-         options={{ headerShown: false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD}
         getComponent={() =>
           require('@/screens/appstack/DocumentUpload/DocumentUploadScreen')
@@ -402,8 +400,7 @@ const AppStack = () => {
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.ASSIGN_CHAT}
         getComponent={() =>
-          require('@/screens/appstack/AssignChat/AssignChatScreen')
-            .default
+          require('@/screens/appstack/AssignChat/AssignChatScreen').default
         }
       />
       <Stack.Screen
@@ -447,15 +444,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown:false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.ACTIVE_CODES}
         getComponent={() =>
-          require('@/screens/appstack/ActiveCodes/ActiveCodesScreen')
-            .default
+          require('@/screens/appstack/ActiveCodes/ActiveCodesScreen').default
         }
       />
       <Stack.Screen
-        options={{ headerShown:false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL}
         getComponent={() =>
           require('@/screens/appstack/CreateEditBookingDetail/CreateEditBookingDetailsScreen')
@@ -463,7 +459,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown:false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_HOUSE_GUIDELINES}
         getComponent={() =>
           require('@/screens/appstack/CreateEditListingHouseGuidelines/CreateEditListingHouseGuidelinesScreen')
@@ -471,7 +467,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown:false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_CANCEL_POLICIES}
         getComponent={() =>
           require('@/screens/appstack/CreateEditListingCancelPolicies/CreateEditListingCancelPoliciesScreen')
@@ -479,14 +475,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown:false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING}
         getComponent={() =>
           require('@/screens/appstack/CreateEditListingAiDynamicPricing/CreateEditListingAiDynamicPricingScreen')
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.GENERATE_PASSCODE}
         getComponent={() =>
@@ -498,30 +494,60 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT}
         getComponent={() =>
-          require('@/screens/appstack/ReviewManagement/screens/ReviewManagementScreen').default
+          require('@/screens/appstack/ReviewManagement/screens/ReviewManagementScreen')
+            .default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN}
         getComponent={() =>
-          require('@/screens/appstack/ReviewManagement/screens/RateYourGuestScreen').default
+          require('@/screens/appstack/ReviewManagement/screens/RateYourGuestScreen')
+            .default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN}
         getComponent={() =>
-          require('@/screens/appstack/ReviewManagement/screens/ReviewDetailScreen').default
+          require('@/screens/appstack/ReviewManagement/screens/ReviewDetailScreen')
+            .default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN}
         getComponent={() =>
-          require('@/screens/appstack/ReviewManagement/screens/ViewReviewScreen').default
+          require('@/screens/appstack/ReviewManagement/screens/ViewReviewScreen')
+            .default
         }
       />
+      {/* NEW ANALYTIC SCREEN START */}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.STATISTICS_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/Analytics/screens/StatisticsScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE}
+        getComponent={() =>
+          require('@/screens/appstack/Analytics/screens/ChannelPerformanceScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.LISTING_PERFORMANCE}
+        getComponent={() =>
+          require('@/screens/appstack/Analytics/screens/ListingPerformanceScreen')
+            .default
+        }
+      />
+      {/* NEW ANALYTIC SCREEN END */}
     </Stack.Navigator>
   );
 };

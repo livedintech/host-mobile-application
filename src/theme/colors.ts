@@ -39,4 +39,5 @@ export const Colors = {
   LIGHT_GRAY: '#D5D5D5',
   DISABLED_GREY: '#A0A0A0',
   DISABLED_BG: '#F5F5F5',
+  DARK_CHARCOAL: '#333333',
 };

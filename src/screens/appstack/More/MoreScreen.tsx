@@ -21,7 +21,7 @@ const MoreScreen = () => {
     navigate(NavigationRoutes.APP_STACK.ACCOUNT);
   }, []);
   const goToAnalytics = useCallback(() => {
-    navigate(NavigationRoutes.APP_STACK.ANALYTIC_SCREEN);
+    navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE);
   }, []);
   const goToProfile = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);

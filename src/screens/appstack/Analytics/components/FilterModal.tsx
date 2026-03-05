@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { useForm } from 'react-hook-form';
@@ -18,9 +18,16 @@ const FilterModal = ({
   filters,
 }: any) => {
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: filters,
   });
+
+  // Sync internal form state whenever filters change or modal opens
+  useEffect(() => {
+    if (isVisible) {
+      reset(filters);
+    }
+  }, [filters, isVisible, reset]);
 
   return (
     <Modal
@@ -42,6 +49,8 @@ const FilterModal = ({
           placeholder="Select Listings"
         />
 
+        <View style={{ height: 15 }} />
+
         <MultiSelectDropdownField
           label="Channel"
           name="channel"
@@ -50,6 +59,8 @@ const FilterModal = ({
           data={channelOptions}
           placeholder="Select Channels"
         />
+
+        <View style={{ height: 15 }} />
 
         <MultiSelectDropdownField
           label="Date Range"
@@ -70,6 +81,8 @@ const FilterModal = ({
             style={{ flex: 1, marginRight: 10 }}
             backgroundColor={Colors.WHITE}
             color={Colors.PINE_FOREST}
+            // borderWidth={1}
+            borderColor={Colors.PINE_FOREST}
           />
 
           <AppButton
@@ -78,9 +91,9 @@ const FilterModal = ({
               applyFilters(values);
               onClose();
             })}
-            style={{ flex: 1 }}
-            backgroundColor={Colors.WHITE}
-            color={Colors.PINE_FOREST}
+            style={{ flex: 1, borderWidth:1 }}
+            backgroundColor={Colors.PINE_FOREST}
+            color={Colors.WHITE}
           />
         </View>
       </View>
@@ -88,10 +101,17 @@ const FilterModal = ({
   );
 };
 
-export default FilterModal;
-
 const styles = StyleSheet.create({
-  centeredModal: { justifyContent: 'center', alignItems: 'center', margin: 20 },
-  modalContent: { backgroundColor: 'white', padding: 24, borderRadius: 24, width: '100%' },
-  buttonRow: { flexDirection: 'row', marginTop: 10 },
+  centeredModal: { justifyContent: 'flex-end', margin: 0 },
+  modalContent: { 
+    backgroundColor: 'white', 
+    padding: 24, 
+    borderTopLeftRadius: 32, 
+    borderTopRightRadius: 32, 
+    width: '100%',
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24
+  },
+  buttonRow: { flexDirection: 'row', marginTop: 30 },
 });
+
+export default FilterModal;
