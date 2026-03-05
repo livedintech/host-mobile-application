@@ -51,14 +51,23 @@ export const changePasswordApi = async (payload: any) => {
 };
 
 // Delete Account (Soft Delete)
+// @/services/authService.ts
+
+// Delete Account (Updated to POST and new endpoint)
 export const deleteAccountApi = async () => {
-    const { ok, response, data } = await apiService.delete(
-        SERVICE_CONFIG_URLS.AUTH.DELETE_ACCOUNT
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.DELETE_ACCOUNT,
+        {}
     );
+
+    // If ok is true, we RETURN data. This triggers onSuccess.
     if (ok) {
-        return data;
+        return data; 
     }
-    throw response;
+
+    // If ok is false, we THROW response. This triggers onError.
+    // If you 'return response' instead of 'throw', it goes to onSuccess!
+    throw response; 
 };
 
 // Verify OTP

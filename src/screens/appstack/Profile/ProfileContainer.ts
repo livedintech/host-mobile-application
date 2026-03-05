@@ -12,7 +12,7 @@ import Toast from 'react-native-toast-message';
 
 export default function useProfileContainer() {
   const navigation = useNavigation();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   const getInitialPhoneData = () => {
     const rawPhone = user?.phone?.toString() || '';
@@ -79,13 +79,15 @@ export default function useProfileContainer() {
   const { mutate: deleteAccount, isPending: isDeleting } = useMutation({
     mutationFn: deleteAccountApi,
     onSuccess: (data) => {
+      console.log('Sucesssss')
       Toast.show({
         type: 'success',
-        text1: data?.message || 'Account deleted successfully',
+        text1: 'Account deleted successfully',
       });
       logout();
     },
     onError: (error: any) => {
+      console.log('Errorrr')
       Toast.show({
         type: 'error',
         text1: error?.message || 'Failed to delete account',
