@@ -10,15 +10,17 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useProfileContainer from './ProfileContainer';
 import Metrics from '@/utility/Metrics';
 import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const ProfileScreen = () => {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-
-  const { control, errors, handleSubmit, onSave,goToChangePassword } = useProfileContainer();
+  const { logout } = useAuthStore();
+  const { control, errors, handleSubmit, onSave,goToChangePassword, deleteAccount, isDeleting } = useProfileContainer();
 
   const handleDeleteAccount = () => {
     setDeleteModalVisible(false);
     console.log("Account Deleted");
+    deleteAccount();
     // Trigger your delete API here
   };
 
@@ -103,7 +105,7 @@ const ProfileScreen = () => {
           {/* Secondary Action Buttons */}
           <View style={styles.rowButtons}>
             <AppButton title="Change Password" onPress={goToChangePassword} style={styles.halfBtn} />
-            <AppButton title="Delete Account" onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} />
+            <AppButton title="Delete Account" loading={isDeleting} onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} />
           </View>
 
           <AppButton
