@@ -199,7 +199,8 @@ const handleIndividualImport = (fieldName: string, id: any, isMap: boolean) => {
     isLoadingDropdown || // initial fetch user listings
     isFetchingListing || // refetch Airbnb listings
     isFetchingDropdown || // refetch user listings
-    isMappingLoading; // mutation running
+    isMappingLoading || 
+    isPending; // mutation running
 
 
   return {

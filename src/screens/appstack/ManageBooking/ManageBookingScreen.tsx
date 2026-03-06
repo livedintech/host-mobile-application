@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, Image, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useManageBookingContainer from './ManageBookingContainer';
@@ -18,47 +18,49 @@ const ManageBookingScreen = () => {
         refetch,
         response,
         goToListing,
-        isOtaConnected
+        isOtaConnected,
+        connectedAccounts
     } = useManageBookingContainer();
 
-    const PlatformCard = ({ type, id, name, count, status, onPress }: any) => {
+    const isAirbnbConnected = connectedAccounts?.some(
+        (acc: any) => acc.connection_type === 'Airbnb'
+    );
+    const isGathernConnected = connectedAccounts?.some(
+        (acc: any) => acc.connection_type === 'Gathern'
+    );
+
+    const PlatformCard = ({ type, id, status, onPress }: any) => {
         const pfType = type ? type : 'Airbnb'
         return (
             <View>
-                {/* <AppText text={`${pfType} Account`} mb={13} color={Colors.BRUNSWICK_GREEN} fontSize={18}/> */}
                 <GradientBorder borderRadius={24} style={styles.cardWrapper}>
-                <View style={styles.cardInner}>
-                    <View style={styles.rowContent}>
-                        <AppText text={`${pfType} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
-                        <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
+                    <View style={styles.cardInner}>
+                        <View style={styles.rowContent}>
+                            <AppText text={`${pfType} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
+                            <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
+                        </View>
+
+                        <View style={styles.rowContent}>
+                            <AppText text="Platform Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                            <AppText text={pfType} color={Colors.PINE_FOREST} type="Medium" />
+                        </View>
+
+                        <View style={styles.statusRow}>
+                            <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                            <AppText
+                                text={status}
+                                color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
+                            />
+
+                            {/* Arrow Button */}
+                            <GradientBorder borderRadius={16} style={styles.arrowWrapper}>
+                                <Pressable style={styles.arrowInner} onPress={onPress}>
+                                    <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
+                                </Pressable>
+                            </GradientBorder>
+                        </View>
                     </View>
-
-                    <View style={styles.rowContent}>
-                        <AppText text="Platform Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                        <AppText text={pfType} color={Colors.PINE_FOREST} type="Medium" />
-                    </View>
-
-                    {/* <View style={styles.rowContent}>
-                        <AppText text="Total Property Count: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                        <AppText text={count} color={Colors.PINE_FOREST} type="Medium" />
-                    </View> */}
-
-                    <View style={styles.statusRow}>
-                        <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                        <AppText
-                            text={status}
-                            color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
-                        />
-
-                        {/* Arrow Button */}
-                        <GradientBorder borderRadius={16} style={styles.arrowWrapper}>
-                            <Pressable style={styles.arrowInner} onPress={onPress}>
-                                <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
-                            </Pressable>
-                        </GradientBorder>
-                    </View>
-                </View>
-            </GradientBorder>
+                </GradientBorder>
             </View>
         )
     };
@@ -123,13 +125,13 @@ const ManageBookingScreen = () => {
                 {/* Bottom Connect Buttons */}
                 <View style={styles.btnFooter}>
                     <AppButton
-                        title="Connect Airbnb"
+                        title={isAirbnbConnected ? 'Airbnb Connected ✓' : 'Connect Airbnb'}
                         onPress={() => handleConnect('Airbnb')}
                         mb={15}
                         loading={isPending}
                     />
                     <AppButton
-                        title="Connect Gathern"
+                        title={isGathernConnected ? 'Gathern Connected ✓' : 'Connect Gathern'}
                         onPress={() => handleConnect('Gathern')}
                         disabled={isPending}
                     />

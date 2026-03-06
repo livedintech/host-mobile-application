@@ -44,10 +44,14 @@ const PropertyCard = ({
           </View>
 
           <View style={styles.infoRow}>
-            <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
+            {/* <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
             <View style={{ flex: 1 }}>
               <AppText text={name} color={Colors.PINE_FOREST} numberOfLines={1} />
-            </View>
+            </View> */}
+            <AppText color={Colors.PINE_FOREST} fontSize={14} mb={2}>
+                  <AppText text="Airbnb Listing: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+                  {name}
+                </AppText>
           </View>
 
           {/* <View style={styles.infoRow}>
@@ -68,7 +72,7 @@ const PropertyCard = ({
         errors={errors}
         label="Existing Listing:"
         data={listingOptions}
-        placeholder="Select.."
+        placeholder="None"
       />
 
       <AppButton

@@ -36,20 +36,10 @@ const ManageListingScreen = () => {
           <View style={styles.cardInfo}>
             {item?.name && (
               <View style={styles.infoRow}>
-                <AppText
-                  text="Property Name: "
-                  type="Bold"
-                  color={Colors.BRUNSWICK_GREEN}
-                  fontSize={14}
-                />
-                <View style={{ flex: 1 }}>
-                  <AppText
-                    text={item?.name}
-                    color={Colors.PINE_FOREST}
-                    fontSize={14}
-                    numberOfLines={1}
-                  />
-                </View>
+                <AppText color={Colors.PINE_FOREST} fontSize={14} mb={2}>
+                  <AppText text="Property Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+                  {item?.name}
+                </AppText>
               </View>
             )}
             <View style={styles.infoRow}>
@@ -215,6 +205,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.DISABLED_BG,
     opacity: 0.8,
     borderColor: '#E8E8E8',
-    
+
   },
 });
