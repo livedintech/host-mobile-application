@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, FlatList, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { s, vs } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
@@ -16,6 +16,8 @@ import { CreateBookingSheet } from '@/components/molecules/CreateBookingSheet/Cr
 import { Colors } from '@/theme/colors';
 import { getOtaConfig } from '@/constants/ota_config';
 import { useAuthStore } from '@/store/useAuthStore';
+// import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
+// import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
 const ListingScreen = () => {
   const { user } = useAuthStore();
@@ -30,7 +32,8 @@ const ListingScreen = () => {
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<
     string[]
   >([]);
-  console.log('useruserm', user?.role_key);
+
+  // const { isOtaConnected } = useManageBookingContainer();
 
   const {
     control,
@@ -81,15 +84,33 @@ const ListingScreen = () => {
     const success = await onCreateBooking(data);
     if (success) setIsBookingOpen(false);
   };
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+    {/* //   <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
+    //       <View style={styles.infoCardInner}>
+    //           <View style={styles.row}>
+    //               <View style={styles.activeDot} />
+    //               <View style={styles.avatarContainer}>
+    //                   <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
+    //               </View>
+    //               <View style={{ flex: 1, marginLeft: 15 }}>
+    //                   <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
+    //                   <AppText
+    //                       text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+    //                       color={Colors.NIGHT_OPACITY}
+    //                       mt={5}
+    //                       lineHeight={20}
+    //                   />
+    //               </View>
+    //           </View>
+    //       </View>
+    //   </GradientBorder> */}
       <BookingDetailsView
         isVisible={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
         data={selectedBookingDetails}
         onCardPress={handleReservationPress}
-      />
+      /> 
 
       {isFetchingDetails && (
         <View style={styles.overlayLoader}>
@@ -173,9 +194,9 @@ const ListingScreen = () => {
             </View>
           )}
         </>
-      )}
+      )} 
 
-      <FilterModalView
+       <FilterModalView
         isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}
         initialSelectedValues={selectedPropertyValues}
@@ -194,7 +215,6 @@ const ListingScreen = () => {
             !(opt.label || '').toLowerCase().includes('all listing'),
         )}
       />
-
       <CreateBookingSheet
         isVisible={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
@@ -225,6 +245,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: vs(100),
   },
+  infoCardWrapper: { 
+    marginBottom: 33,
+    width: '94%',     
+    alignSelf: 'center', 
+    marginTop: 20,
+    minHeight: vs(150),  
+  },
+
+  infoCardInner: { 
+    padding: 25, 
+    borderRadius: 35, 
+    backgroundColor: Colors.WHITE,
+    flex: 1,              // Add this so the inner content also expands
+    justifyContent: 'center', // Centers the row vertically
+  },
+  row: { flexDirection: 'row', alignItems: 'center', },
+  avatar: { width: 46, height: 54 },
+  activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 },
+  avatarContainer: { backgroundColor: Colors.ADRIANA, borderRadius: 100, width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
   overlayLoader: {
     ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(255,255,255,0.7)',

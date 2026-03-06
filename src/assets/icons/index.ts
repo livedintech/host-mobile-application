@@ -126,6 +126,10 @@ import logoutIcon from "./logoutIcon.svg";
 import statsIcon from "./statsIcon.svg";
 import performanceIcon from "./performanceIcon.svg";
 import direct from "./direct.svg";
+import platform from "./reservations/platform.svg";
+import propertyIcon from "./reservations/property.svg";
+import calendar from "./reservations/calendar.svg";
+import checkout from "./reservations/checkout.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -255,5 +259,9 @@ export const icons = {
     logoutIcon,
     statsIcon,
     performanceIcon,
-    direct
+    direct,
+    platform,
+    propertyIcon,
+    calendar,
+    checkout
 };

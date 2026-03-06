@@ -15,6 +15,7 @@ interface Props {
 }
 
 export const BookingDetailsView = ({ isVisible, onClose, data, onCardPress }: Props) => {
+  console.log('DATA HERE =>', data)
   return (
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
