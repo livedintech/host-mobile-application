@@ -330,21 +330,22 @@ const ChatScreen = () => {
         onPress={() => handleReplyQuotePress(replyTo._id)}
         style={styles.replyQuoteContainer}
       >
-        <View style={styles.replyQuoteBorder} />
-        <View style={styles.replyQuoteContent}>
-          <AppText
+        {/* <View style={styles.replyQuoteBorder} /> */}
+        {/* <View style={styles.replyQuoteContent}> */}
+          {/* <AppText
             text={replyTo.userName}
             fontSize={11}
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}
-          />
+          /> */}
           <AppText
-            text={replyTo.text.substring(0, 80)}
+            text={replyTo.text.length > 80 ? replyTo.text.substring(0, 80) + '...' : replyTo.text}
+            // text={replyTo.text.substring(0, 80)}
             fontSize={11}
             color={Colors.GREY_SHADOW}
             numberOfLines={2}
           />
-        </View>
+        {/* </View> */}
       </Pressable>
     );
   };
@@ -355,7 +356,6 @@ const ChatScreen = () => {
     const isSelected = selectedMessageId === item._id;
     const isHighlighted = highlightedMessageId === item._id;
 
-    console.log('testtingflatlist', item);
 
     return (
       <View>

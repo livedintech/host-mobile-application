@@ -51,10 +51,10 @@ export default function useAirbnbImportContainer() {
   });
 
   // Prepare dropdown options (values must be strings)
- const listingOptions = apiResponse?.data?.map((item: any) => ({
-  label: item.name,
-  value: String(item.id), // ✅ listing_id nahi, id use karo
-})) ?? [];
+  const listingOptions = apiResponse?.data?.map((item: any) => ({
+    label: item.name,
+    value: String(item.id), // ✅ listing_id nahi, id use karo
+  })) ?? [];
 
 
   // Initialize form
@@ -69,25 +69,25 @@ export default function useAirbnbImportContainer() {
   });
 
   // When data loads, set default values for pre-selected dropdowns
-useEffect(() => {
-  if (airbnbData && apiResponse) {
-    const defaultFormValues: FormValues = {};
+  useEffect(() => {
+    if (airbnbData && apiResponse) {
+      const defaultFormValues: FormValues = {};
 
-    airbnbData.forEach((property: any) => {
-      // ✅ id se id match karo
-      const match = apiResponse.data?.find(
-        (item: any) => String(item.id) === String(property.id)
-      );
+      airbnbData.forEach((property: any) => {
+        // ✅ id se id match karo
+        const match = apiResponse.data?.find(
+          (item: any) => String(item.id) === String(property.id)
+        );
 
-      if (match) {
-        // ✅ value mein item.id set karo (kyunke listingOptions ka value = item.id hai)
-        defaultFormValues[String(property.id)] = String(match.id);
-      }
-    });
+        if (match) {
+          // ✅ value mein item.id set karo (kyunke listingOptions ka value = item.id hai)
+          defaultFormValues[String(property.id)] = String(match.id);
+        }
+      });
 
-    reset(defaultFormValues); // ✅ dropdown pre-select ho jayega
-  }
-}, [airbnbData, apiResponse, reset]);
+      reset(defaultFormValues); // ✅ dropdown pre-select ho jayega
+    }
+  }, [airbnbData, apiResponse, reset]);
 
 
   // Mutation to map Airbnb listing to Livedin listing
@@ -141,7 +141,7 @@ useEffect(() => {
   // Handle individual import (dropdown selection)
   // const handleIndividualImport = (fieldName: string) => {
 
-   
+
   //   const selectedValue = watch(fieldName);
   //   const airbnbListingId = Number(fieldName);
 
@@ -155,7 +155,7 @@ useEffect(() => {
   //       channel_id: channelId,
   //       listing_id: airbnbListingId
   //     })
-      
+
   //   }
 
   //   // createMapListingbyUserID({
@@ -168,25 +168,29 @@ useEffect(() => {
   //     livedin_listing_id: selectedValue,
   //   });
   // };
+  const handleIndividualImport = (fieldName: string, id: any, isImport: boolean) => {
+    const selectedValue = watch(fieldName);
+    createListingImportPayload({ channel_id: channelId, listing_id: id, reimport: isImport, local_listin_id: selectedValue });
+  };
 
-const handleIndividualImport = (fieldName: string, id: any, isMap: boolean) => {
-  const selectedValue = watch(fieldName);
-  const isMatch = String(selectedValue) === String(id);
+  // const handleIndividualImport = (fieldName: string, id: any, isMap: boolean) => {
+  //   const selectedValue = watch(fieldName);
+  //   const isMatch = String(selectedValue) === String(id);
 
-  console.log('=== DEBUG ===');
-  console.log('fieldName:', fieldName);
-  console.log('id:', id, typeof id);
-  console.log('selectedValue:', selectedValue, typeof selectedValue);
-  console.log('isMatch:', isMatch);
-  console.log('isMap:', isMap);
-  console.log('=============');
+  //   console.log('=== DEBUG ===');
+  //   console.log('fieldName:', fieldName);
+  //   console.log('id:', id, typeof id);
+  //   console.log('selectedValue:', selectedValue, typeof selectedValue);
+  //   console.log('isMatch:', isMatch);
+  //   console.log('isMap:', isMap);
+  //   console.log('=============');
 
-  if (selectedValue && isMatch) {
-    createMapListingbyUserID({ listing_id: Number(id) });
-  } else {
-    createListingImportPayload({ channel_id: channelId, listing_id: id });
-  }
-};
+  //   if (selectedValue && isMatch) {
+  //     createMapListingbyUserID({ listing_id: Number(id) });
+  //   } else {
+  //     createListingImportPayload({ channel_id: channelId, listing_id: id });
+  //   }
+  // };
 
   // Final submit
   const onNext = (data: FormValues) => {
@@ -199,7 +203,7 @@ const handleIndividualImport = (fieldName: string, id: any, isMap: boolean) => {
     isLoadingDropdown || // initial fetch user listings
     isFetchingListing || // refetch Airbnb listings
     isFetchingDropdown || // refetch user listings
-    isMappingLoading || 
+    isMappingLoading ||
     isPending; // mutation running
 
 
