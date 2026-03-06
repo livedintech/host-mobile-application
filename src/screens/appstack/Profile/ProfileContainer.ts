@@ -6,10 +6,13 @@ import { useCallback } from 'react';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useMutation } from '@tanstack/react-query';
+import { deleteAccountApi } from '@/services/authApi';
+import Toast from 'react-native-toast-message';
 
 export default function useProfileContainer() {
   const navigation = useNavigation();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   const getInitialPhoneData = () => {
     const rawPhone = user?.phone?.toString() || '';
@@ -73,6 +76,25 @@ export default function useProfileContainer() {
     // updateProfile(payload);
   };
 
+  const { mutate: deleteAccount, isPending: isDeleting } = useMutation({
+    mutationFn: deleteAccountApi,
+    onSuccess: (data) => {
+      console.log('Sucesssss')
+      Toast.show({
+        type: 'success',
+        text1: 'Account deleted successfully',
+      });
+      logout();
+    },
+    onError: (error: any) => {
+      console.log('Errorrr')
+      Toast.show({
+        type: 'error',
+        text1: error?.message || 'Failed to delete account',
+      });
+    },
+  });
+
   return {
     control,
     errors,
@@ -81,6 +103,12 @@ export default function useProfileContainer() {
     isLoading: false,
     navigation,
     watch,
-    goToChangePassword
+    goToChangePassword,
+    deleteAccount,
+    isDeleting
   };
+}
+
+function logout() {
+  throw new Error('Function not implemented.');
 }

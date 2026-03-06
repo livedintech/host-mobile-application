@@ -16,8 +16,9 @@ export const SERVICE_CONFIG_URLS = {
     PAYMENT_SAVE_CARD: `${api}/save/customer/identifier`,
     SUBSCRIPTION_SAVE_CARD: `${api}/subscription/saved-cards`,
     GOOGLE_LOGIN: `${authController}/social-authentication`,
-    UPDATE_PASSWORD: `${authController}/update-password`
-
+    UPDATE_PASSWORD: `${authController}/update-password`,
+    CHANGE_PASSWORD: `${authController}/user/change-password`,
+    DELETE_ACCOUNT: `${authController}/user/delete-account`
   },
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,

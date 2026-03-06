@@ -38,6 +38,38 @@ export const forgotPasswordApi = async (payload: ForgotPasswordPayload) => {
     throw response;
 };
 
+// Change Password
+export const changePasswordApi = async (payload: any) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.CHANGE_PASSWORD,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response; // This allows React Query to catch the error
+};
+
+// Delete Account (Soft Delete)
+// @/services/authService.ts
+
+// Delete Account (Updated to POST and new endpoint)
+export const deleteAccountApi = async () => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.DELETE_ACCOUNT,
+        {}
+    );
+
+    // If ok is true, we RETURN data. This triggers onSuccess.
+    if (ok) {
+        return data; 
+    }
+
+    // If ok is false, we THROW response. This triggers onError.
+    // If you 'return response' instead of 'throw', it goes to onSuccess!
+    throw response; 
+};
+
 // Verify OTP
 export const verifyOtpApi = async (payload: VerifyOtpPayload) => {
     const { ok, response, data } = await apiService.post(
