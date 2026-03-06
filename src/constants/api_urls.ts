@@ -26,6 +26,7 @@ export const SERVICE_CONFIG_URLS = {
     GET_CHANNEX_LISTINGS: `${authController}/channex/listings/{channel_id}`,
     GET_CHANNEX_GATHERN_LISTINGS: `${authController}/gathern/listings?channel_id={channel_id}`,
     GET_USER_LISTINGS_BY_USER_ID: `${authController}/user/listings/{user}`,
+    GET_FETCH_LISTING_FOR_AIRBNB: `${authController}/user/listings/{user}?is_local=1`,
     CREATE_MAP_LISTING_BY_USER_ID: `${authController}/mapListing/{user}`,
     CREATE_GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel?user_id={user_id}`,
     GET_GATHERN_LISTING: `${authController}/gathern/listings?channel_id={channel_id}`,

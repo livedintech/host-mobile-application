@@ -26,7 +26,9 @@ export interface creatGathernChannelType {
 export interface createListingImportType {
   listing_id: number,
   channel_id: string,
-  user_id?: number
+  user_id?: number,
+  reimport: boolean,
+  local_listin_id?: number | string
 }
 export interface createListingImportGathernType {
   parent_listing_id: number;
@@ -68,19 +70,19 @@ export interface getManageListingDetailByIdApiTypePayload {
 }
 
 export interface CreateEditlistingStatePayloadType {
-    country_id: string | number
+  country_id: string | number
 }
 export interface CreateEditlistingCitiesPayloadType {
-    state_id: string | number
+  state_id: string | number
 }
 export interface CreateEditlistingDistrictsPayloadType {
-    city_id: string | number
+  city_id: string | number
 }
 
 export interface DeleteListingPayloadType {
-    user_id: string | number | undefined;
-    listing_id: string | number;
-    reason: string;
+  user_id: string | number | undefined;
+  listing_id: string | number;
+  reason: string;
 
 
 }

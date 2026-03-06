@@ -70,7 +70,7 @@ export const getChannexListingsById = async (payload: getChannexListingsByIdPayl
 
 export const getUserListingsByUserIDApi = async (payload: getUserListingsByUserID) => {
     const url = Utils.createDynamicUrl(
-        SERVICE_CONFIG_URLS.APP.GET_USER_LISTINGS_BY_USER_ID,
+        SERVICE_CONFIG_URLS.APP.GET_FETCH_LISTING_FOR_AIRBNB,
         { user: payload.user },
     );
 

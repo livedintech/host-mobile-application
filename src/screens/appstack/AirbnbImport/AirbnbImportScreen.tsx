@@ -25,13 +25,15 @@ const PropertyCard = ({
 }: any) => {
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
+  const isMatch = String(selectedLivedinId) === String(id);
 
   const getButtonTitle = () => {
-    const isMatch = String(selectedLivedinId) === String(id); // ✅ item.id vs dropdown item.id
-
-    if (!isMatch) return 'Import';
-    else if (!isMap) return 'Map Listing';
-    else return 'Unmapped Listing';
+    // const isMatch = String(selectedLivedinId) === String(id); // ✅ item.id vs dropdown item.id
+    // if (!isMatch) return 'Import Listing';
+    // else return 'Re-import Listing';
+    // if (!isMatch) return 'Import';
+    // else if (!isMap) return 'Map Listing';
+    // else return 'Unmapped Listing';
   };
 
   return (
@@ -44,10 +46,14 @@ const PropertyCard = ({
           </View>
 
           <View style={styles.infoRow}>
-            <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
+            {/* <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
             <View style={{ flex: 1 }}>
               <AppText text={name} color={Colors.PINE_FOREST} numberOfLines={1} />
-            </View>
+            </View> */}
+            <AppText color={Colors.PINE_FOREST} fontSize={14} mb={2}>
+              <AppText text="Airbnb Listing: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
+              {name}
+            </AppText>
           </View>
 
           {/* <View style={styles.infoRow}>
@@ -63,17 +69,18 @@ const PropertyCard = ({
       </View>
 
       <DropdownField
+        disabled={isMatch}
         name={fieldName}
         control={control}
         errors={errors}
         label="Existing Listing:"
         data={listingOptions}
-        placeholder="Select.."
+        placeholder="None"
       />
 
       <AppButton
-        title={getButtonTitle()}
-        onPress={() => handleIndividualImport(fieldName, id, isMap)}
+        title={!isMatch ? 'Import Listing' : 'Re-import Listing'}
+        onPress={() => handleIndividualImport(fieldName, id, isMatch)}
         mt={12}
       />
     </View>

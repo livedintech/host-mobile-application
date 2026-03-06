@@ -22,6 +22,7 @@ const AppText = ({
   numberOfLines,
   m, mt, mb, ml, mr, mx, my,
   p, pt, pb, pl, pr, px, py,
+  children
 }: AppTextProps) => {
 
   const fontFamily = italic
@@ -64,6 +65,7 @@ const AppText = ({
       numberOfLines={numberOfLines}
     >
       {text}
+      {children}
     </Text>
   );
 };

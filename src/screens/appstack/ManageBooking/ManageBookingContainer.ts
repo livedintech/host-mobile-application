@@ -9,6 +9,7 @@ import { navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Linking, Alert } from 'react-native';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Toast from 'react-native-toast-message';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
@@ -43,12 +44,45 @@ export default function useManageBookingContainer() {
   });
 
   const handleConnect = (platform: string) => {
-    if (platform === 'Airbnb') {
-      createChannexAccount();
+      if (platform === 'Airbnb') {
+    const isAirbnbConnected = connectedAccounts.some(
+      (acc: any) => acc.connection_type === 'Airbnb'
+    );
+    
+    if (isAirbnbConnected) {
+      Toast.show({
+        type: 'info',
+        text1: 'Airbnb Already Connected',
+        text2: 'Your Airbnb account is already connected.',
+      });
+      return;
     }
-    if (platform === 'Gathern') {
-      navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
+    
+    createChannexAccount();
+  }
+
+  if (platform === 'Gathern') {
+    const isGathernConnected = connectedAccounts.some(
+      (acc: any) => acc.connection_type === 'Gathern'
+    );
+
+    if (isGathernConnected) {
+      Toast.show({
+        type: 'info',
+        text1: 'Gathern Already Connected',
+        text2: 'Your Gathern account is already connected.',
+      });
+      return;
     }
+
+    navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
+  }
+    // if (platform === 'Airbnb') {
+    //   createChannexAccount();
+    // }
+    // if (platform === 'Gathern') {
+    //   navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
+    // }
   };
 
   const goToListing = (item: { connection_type: string, ch_channel_id: string }) => {
@@ -67,6 +101,7 @@ export default function useManageBookingContainer() {
     isPending,
     refetch,
     response,
-    goToListing
+    goToListing,
+    connectedAccounts
   };
 }
