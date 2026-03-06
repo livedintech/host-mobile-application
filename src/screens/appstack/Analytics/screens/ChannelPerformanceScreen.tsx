@@ -3,12 +3,11 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   ActivityIndicator,
   ImageBackground,
 } from 'react-native';
 import AnalyticContainers from '../containers/AnalyticContainers';
-import { useForm, useWatch } from 'react-hook-form'; // Added useWatch
+import { useForm, useWatch } from 'react-hook-form'; 
 import { Colors } from '@/theme/colors';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
 import AnalyticsChart from '../components/AnalyticsChart';
@@ -76,7 +75,7 @@ const ChannelPerformanceScreen = () => {
 
   return (
     <ImageBackground source={BG_IMAGE} style={styles.backgroundImage} resizeMode="cover">
-      <SafeAreaView style={styles.safe}>
+      <View style={styles.safe}>
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
           <AnalyticsTabBar
             activeTab={activeTab}
@@ -94,7 +93,7 @@ const ChannelPerformanceScreen = () => {
             <AnalyticsChart activeTab={activeTab} data={chartData} total={totalValue} />
           )}
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </ImageBackground>
   );
 };

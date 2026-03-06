@@ -1,96 +1,111 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import GlassCard from './GlassCard';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const PerformanceCard = ({ data }: any) => {
-  // Assessment styling logic
   const getAssessmentStyle = (type: string) => {
     switch (type?.toLowerCase()) {
       case 'top performer':
-        return { color: '#2D9171', bg: 'rgba(45, 145, 113, 0.1)' };
+        return { color: '#2D9171', bg: '#D9D9D933' };
       case 'average':
-        return { color: '#D4A017', bg: 'rgba(212, 160, 23, 0.1)' };
+        return { color: '#D4A017', bg: '#D9D9D933' };
       default:
-        return { color: '#E57373', bg: 'rgba(229, 115, 115, 0.1)' };
+        return { color: '#E57373', bg: '#D9D9D933' };
     }
   };
 
   const style = getAssessmentStyle(data.assessment);
-  
-  // Dynamic trend logic
-  const isPositive = data.delta_pct >= 0 || !data.delta_pct; // Defaulting to positive if missing
+  const isPositive = data.delta_pct >= 0 || !data.delta_pct;
   const trendColor = isPositive ? '#2D9171' : '#E57373';
 
   return (
     <GlassCard width="100%" style={styles.cardContainer}>
       <View style={styles.topRow}>
-        
         {/* Image wrapped in GlassCard */}
-        <GlassCard width={90} style={styles.imageGlassWrapper}>
-          <Image 
-            source={require('@/assets/img/appartment.png')} 
-            style={styles.listingImage} 
+        <GlassCard width={75} style={styles.imageGlassWrapper}>
+          <Image
+            source={require('@/assets/img/appartment.png')}
+            style={styles.listingImage}
             resizeMode="cover"
           />
         </GlassCard>
-        
+
         <View style={styles.headerInfo}>
-          <AppText text={data.title} fontSize={16} type="Bold" numberOfLines={1} mb={8} />
-          
+          <AppText
+            text={data.title}
+            fontSize={14}
+            type="Bold"
+            numberOfLines={2}
+            mb={8}
+          />
+
           <View style={styles.metricsRow}>
+            {/* Removed flex: 1 from these items */}
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
-                <Svgicons path="revenue_mini" size={12} mr={4} />
+                <Svgicons path="walletIcon" size={12} mr={4} />
                 <AppText text="Revenue" fontSize={10} color={Colors.DIM_GREY} />
               </View>
-              <AppText text={`SAR ${data.revenue}`} fontSize={13} type="Bold" />
+              <AppText text={`SAR ${data.revenue}`} fontSize={11} type="Bold" />
             </View>
 
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
-                <Svgicons path="occupancy_mini" size={12} mr={4} />
-                <AppText text="Occupancy" fontSize={10} color={Colors.DIM_GREY} />
+                <Svgicons path="occupancy" size={12} mr={4} />
+                <AppText
+                  text="Occupancy"
+                  fontSize={10}
+                  color={Colors.DIM_GREY}
+                />
               </View>
-              <AppText text={`${data.occupancy}%`} fontSize={13} type="Bold" />
+              <AppText text={`${data.occupancy}%`} fontSize={11} type="Bold" />
             </View>
 
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
-                <Svgicons path="adr_mini" size={12} mr={4} />
+                <Svgicons path="adr" size={12} mr={4} />
                 <AppText text="ADR" fontSize={10} color={Colors.DIM_GREY} />
               </View>
-              <AppText text={`SAR ${data.adr}`} fontSize={13} type="Bold" />
+              <AppText text={`SAR ${data.adr}`} fontSize={11} type="Bold" />
             </View>
           </View>
         </View>
 
-        <View style={styles.starIcon}>
-           <Svgicons path="sparkle_icon" size={20} />
-        </View>
+        <GlassCard width={36} style={styles.sparkleGlass}>
+          <Svgicons path="sparkleRewardIcon" size={18} />
+        </GlassCard>
       </View>
 
       <View style={styles.bottomRow}>
-        {/* Assessment Badge */}
-        <View style={[styles.badge, { backgroundColor: style.bg }]}>
-          <View style={[styles.dot, { backgroundColor: style.color }]} />
-          <AppText text={data.assessment} fontSize={11} color={style.color} type="Medium" />
-        </View>
+        <GlassCard
+          width="auto"
+          style={[styles.assessmentGlass, { backgroundColor: style.bg }]}
+        >
+          <View style={styles.badgeContent}>
+            <View style={[styles.dot, { backgroundColor: style.color }]} />
+            <AppText
+              text={data.assessment}
+              fontSize={11}
+              color={style.color}
+              type="Medium"
+            />
+          </View>
+        </GlassCard>
 
-        {/* Insight Badge - Dynamic based on performance */}
         <GlassCard width="auto" style={styles.insightBadge}>
           <View style={styles.insightContent}>
-            <Svgicons 
-              path={isPositive ? "trend_up_green" : "trend_down_red"} 
-              size={14} 
-              mr={4} 
+            <Svgicons
+              path={isPositive ? 'trendUpIcon' : 'trendDownIcon'}
+              size={14}
+              mr={4}
             />
-            <AppText 
-              text={`${data.delta_pct || 0}% vs previous period`} 
-              fontSize={11} 
-              color={trendColor} 
+            <AppText
+              text={`${data.delta_pct || 0}% vs previous period`}
+              fontSize={11}
+              color={trendColor}
               type="Medium"
             />
           </View>
@@ -103,46 +118,51 @@ const PerformanceCard = ({ data }: any) => {
 const styles = StyleSheet.create({
   cardContainer: {
     padding: 15,
-    borderRadius: 24,
+    borderRadius: 32,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor:"#D9D9D900"
   },
   topRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     marginBottom: 15,
   },
   imageGlassWrapper: {
-    padding: 5, // Creates the border spacing for the glass effect
+    padding: 5,
     borderRadius: 18,
     marginRight: 12,
     marginBottom: 0,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   listingImage: {
-    width: 80,
-    height: 80,
+    width: 65,
+    height: 65,
     borderRadius: 14,
   },
   headerInfo: {
     flex: 1,
+    paddingRight: 5,
   },
   metricsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   metricItem: {
-    flex: 1,
+    alignItems: 'flex-start',
   },
   labelGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 2,
   },
-  starIcon: {
-    alignSelf: 'flex-start',
-    marginTop: 4,
+  sparkleGlass: {
+    height: 36,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginLeft: 4,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -150,12 +170,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5,
   },
-  badge: {
+  assessmentGlass: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  badgeContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
   },
   dot: {
     width: 6,
@@ -164,18 +188,17 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   insightBadge: {
-    marginBottom: 0,
-    padding: 6,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    backgroundColor: '#D9D9D933',
     borderWidth: 1,
     borderColor: '#FFFFFF',
   },
   insightContent: {
     flexDirection: 'row',
     alignItems: 'center',
-  }
+  },
 });
 
 export default PerformanceCard;

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   View, 
   StyleSheet, 
-  ScrollView, 
   ImageBackground, 
   StatusBar, 
   Platform, 
@@ -12,11 +11,12 @@ import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
 import StatCard from '../components/StatCard';
-import GlassCard from '../components/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AnalyticContainers from '../containers/AnalyticContainers';
 import FilterModal from '../components/FilterModal';
 import { Colors } from '@/theme/colors';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const StatisticsScreen = () => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -29,10 +29,9 @@ const StatisticsScreen = () => {
     dateOptions, 
     applyFilters, 
     resetFilters, 
-    filters 
+    filters,
   } = AnalyticContainers();
 
-  // Safe helper to extract data from the API array by key
   const getStatData = (key: string) => {
     return AnalyticsSummary?.data?.find((item: any) => item.key === key) || { 
       value: 0, 
@@ -46,9 +45,18 @@ const StatisticsScreen = () => {
   const avgStay = getStatData('avg_stay_revenue');
   const stayLength = getStatData('avg_length_of_stay');
 
+  // Logic for pull-to-refresh
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const onHandleRefresh = async () => {
+    setIsRefreshing(true);
+    // Trigger any refetch logic here if available in your container
+    // await refetchAnalytics(); 
+    setTimeout(() => setIsRefreshing(false), 2000); 
+  };
+
   return (
     <ImageBackground 
-      source={require('@/assets/img/background/statsBG.png')} 
+      source={require('@/assets/img/background/linearBG.png')} 
       style={styles.container}
       resizeMode="cover"
     >
@@ -62,46 +70,50 @@ const StatisticsScreen = () => {
           </ButtonView>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          <AppText text="Statistics" type="Medium" fontSize={32} textAlign='center' mt={10} mb={47} color="#000" />
-
-          {isLoadingAnalytics ? (
+        <RefreshableScrollView 
+          contentContainerStyle={styles.scrollContent}
+          isLoading={isLoadingAnalytics}
+          refreshing={isRefreshing}
+          onRefresh={onHandleRefresh}
+          skeletonComponent={
             <View style={styles.loaderContainer}>
                <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
             </View>
-          ) : (
-            <View style={styles.grid}>
-              <StatCard 
-                title="Rental Revenue" 
-                value={`SAR ${revenue.value}`} 
-                subText="vs last month" 
-                trend={revenue.delta_pct} 
-                icon="walletIcon" 
-              />
-              <StatCard 
-                title="Occupancy" 
-                value={`${occupancy.value}%`} 
-                subText="vs last 30 days" 
-                trend={occupancy.delta_pct} 
-                icon="occupancy" 
-              />
-              <StatCard 
-                title="Avg Stay Revenue" 
-                value={`SAR ${avgStay.value}`} 
-                subText="vs last 30 days" 
-                trend={avgStay.delta_pct} 
-                icon="avg_stay_revenue" 
-              />
-              <StatCard 
-                title="Avg Length of Stay" 
-                value={`${stayLength.value} Nights`} 
-                subText="vs last 30 days" 
-                trend={stayLength.delta_pct} 
-                icon="avg_length_of_stay" 
-              />
-            </View>
-          )}
-        </ScrollView>
+          }
+        >
+          <AppText text="Statistics" type="Medium" fontSize={26} textAlign='center' mt={10} mb={47} color="#000" />
+
+          <View style={styles.grid}>
+            <StatCard 
+              title="Rental Revenue" 
+              value={`SAR ${revenue.value}`} 
+              subText="vs last month" 
+              trend={revenue.delta_pct} 
+              icon="walletIcon" 
+            />
+            <StatCard 
+              title="Occupancy" 
+              value={`${occupancy.value}%`} 
+              subText="vs last 30 days" 
+              trend={occupancy.delta_pct} 
+              icon="occupancy" 
+            />
+            <StatCard 
+              title="Avg Stay Revenue" 
+              value={`SAR ${avgStay.value}`} 
+              subText="vs last 30 days" 
+              trend={avgStay.delta_pct} 
+              icon="avg_stay_revenue" 
+            />
+            <StatCard 
+              title="Avg Length of Stay" 
+              value={`${stayLength.value} Nights`} 
+              subText="vs last 30 days" 
+              trend={stayLength.delta_pct} 
+              icon="avg_length_of_stay" 
+            />
+          </View>
+        </RefreshableScrollView>
       </View>
 
       <FilterModal
@@ -145,9 +157,21 @@ const styles = StyleSheet.create({
       android: { elevation: 3 }, 
     }),
   },
-  scrollContent: { paddingHorizontal: Metrics.scale(16), paddingBottom: Metrics.verticalScale(40) },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  loaderContainer: { marginTop: 100, alignItems: 'center' }
+  scrollContent: { 
+    paddingHorizontal: Metrics.scale(16), 
+    paddingBottom: Metrics.verticalScale(40) 
+  },
+  grid: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between' 
+  },
+  loaderContainer: { 
+    flex: 1,
+    marginTop: 100, 
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
 
 export default StatisticsScreen;

@@ -4,7 +4,7 @@ import { PieChart } from 'react-native-gifted-charts';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import GlassCard from './GlassCard';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const AnalyticsChart = ({ activeTab, data, total }: any) => {
   const isReservation = activeTab === 'reservation';

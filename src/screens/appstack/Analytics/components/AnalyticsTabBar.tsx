@@ -3,8 +3,8 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
-import GlassCard from './GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const tabs = [
   { id: 'reservation', label: 'Reservation' },

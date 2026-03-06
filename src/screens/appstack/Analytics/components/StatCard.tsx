@@ -3,8 +3,8 @@ import { View, StyleSheet } from 'react-native';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
-import GlassCard from './GlassCard';
 import { Colors } from '@/theme/colors';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 interface StatCardProps {
   title: string;

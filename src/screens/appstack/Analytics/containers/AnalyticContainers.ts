@@ -51,7 +51,7 @@ const AnalyticContainers = () => {
     setChartListingIds(ids);
   }, []);
 
-  const { data: AnalyticsSummary, isLoading: isLoadingAnalytics } = useQuery({
+  const { data: AnalyticsSummary, isLoading: isLoadingAnalytics, refetch: refetchSummary} = useQuery({
     queryKey: [STORAGE_CONST.GET_ANALYTICS_SUMMARY, filters],
     queryFn: () => getAnalyticSummary({
       listing_ids: filters.listings.join(','),
@@ -60,7 +60,7 @@ const AnalyticContainers = () => {
     }),
   });
 
-  const { data: AnalyticsPerformance, isLoading: isLoadingAnalyticsPerformance } = useQuery({
+  const { data: AnalyticsPerformance, isLoading: isLoadingAnalyticsPerformance , refetch: refetchPerformance} = useQuery({
     queryKey: [STORAGE_CONST.GET_ANALYTICS_PERFORMANCE],
     queryFn: () => getListingPerformance(),
   });
@@ -87,11 +87,13 @@ const AnalyticContainers = () => {
     handleChartListingChange,
     AnalyticsSummary,
     isLoadingAnalytics,
+    refetchSummary,
     AnalyticsPerformance,
     isLoadingAnalyticsPerformance,
     AnalyticChannelChartData,
     isLoadingAnalyticsChannelChart,
-    listingsLoading
+    listingsLoading,
+    refetchPerformance
   };
 };
 

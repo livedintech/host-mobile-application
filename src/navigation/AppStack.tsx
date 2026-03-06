@@ -48,13 +48,13 @@ const AppStack = () => {
             .default
         }
       />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+      {/* <Stack.Screen
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}
         getComponent={() =>
           require('@/screens/appstack/More/MoreScreen').default
         }
-      />
+      /> */}
       <Stack.Screen
         options={{
           header: () => <HeaderApp isLogo isGoBackAfterLogo isLang />,
