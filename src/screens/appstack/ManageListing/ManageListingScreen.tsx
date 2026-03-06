@@ -119,7 +119,7 @@ const ManageListingScreen = () => {
         listEmptyText="No listings found"
         onRefresh={refetch}
         keyExtractor={item => item.id}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, data.length === 0 && { flex: 1 }]}
       />
       <View style={styles.footer}>
         <AppButton

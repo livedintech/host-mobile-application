@@ -5,6 +5,7 @@ import { MapPin, Calendar as CalendarIcon, Clock, Smartphone } from 'lucide-reac
 import AppText from '@/components/molecules/AppText/AppText';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '../AppButton/ButtonView';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface ReservationCardProps {
   id: string | number;
@@ -42,36 +43,36 @@ const ReservationCard = ({
           <AppText text={guestName} type="Bold" fontSize={20} color="#1A332C" mb={vs(12)} />
           
           <View style={styles.infoRow}>
-            <Smartphone size={ms(18)} color="#1A332C" />
+            <Svgicons path="platform" size={18} />
             <AppText text=" Booking Platform: " color="#1A332C" fontSize={14} ml={s(4)} />
             <AppText text={platform} color={platformColor} type="Bold" fontSize={14} />
           </View>
 
           <View style={styles.infoRow}>
-            <MapPin size={ms(18)} color="#1A332C" />
+            <Svgicons path="propertyIcon" size={18} />
             <AppText text=" Property: " color="#1A332C" fontSize={14} ml={s(4)} />
             <AppText text={property} color="#4A615C" fontSize={14} style={{ flex: 1 }} numberOfLines={1}/>
           </View>
 
           <View style={styles.infoRow}>
-            <CalendarIcon size={ms(18)} color="#1A332C" />
+            <Svgicons path="calendar" size={18} />
             <AppText text="Start Date: " color="#1A332C" fontSize={14} ml={s(4)} />
             <AppText text={startDate} color="#4A615C" fontSize={14} />
           </View>
         <View style={styles.infoRow}>
-            <CalendarIcon size={ms(18)} color="#1A332C" />
+            <Svgicons path="calendar" size={18} />
             <AppText text="End Date: " color="#1A332C" fontSize={14} ml={s(4)} />
             <AppText text={endDate} color="#4A615C" fontSize={14} />
           </View>
 
           <View style={styles.infoRow}>
-            <Clock size={ms(18)} color="#1A332C" />
+            <Clock size={ms(14)} color="#1A332C" />
             <AppText text=" Check-in Time: " color="#1A332C" fontSize={14} ml={s(4)} />
             <AppText text={checkIn} color="#4A615C" fontSize={14} />
           </View>
 
           <View style={styles.infoRow}>
-            <Clock size={ms(18)} color="#1A332C" />
+            <Svgicons path="checkout" size={18} />
             <AppText text=" Check-out Time: " color="#1A332C" fontSize={14} ml={s(4)} />
             <AppText text={checkOut} color="#4A615C" fontSize={14} />
           </View>
