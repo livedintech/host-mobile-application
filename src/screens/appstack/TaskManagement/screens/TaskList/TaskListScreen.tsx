@@ -98,6 +98,17 @@ const TaskListScreen: React.FC = () => {
               />
             </View>
             <View style={styles.infoRow}>
+              <AppText
+                text="Due Date: "
+                type="Bold"
+                color={Colors.PINE_FOREST}
+              />
+              <AppText
+                text={new Date(item.assign_datetime).toLocaleString()}
+                color={Colors.PINE_FOREST}
+              />
+            </View>
+            <View style={styles.infoRow}>
               <AppText text="Status: " type="Bold" color={Colors.PINE_FOREST} />
               <AppText
                 text={item.status.toUpperCase()}
