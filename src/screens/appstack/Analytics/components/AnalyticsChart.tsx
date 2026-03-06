@@ -3,109 +3,90 @@ import { View, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const AnalyticsChart = ({ activeTab, data, total }: any) => {
   const isReservation = activeTab === 'reservation';
-  const hasData = data && data.length > 0;
+
+  const renderHeader = (title: string) => (
+    <View style={styles.cardHeader}>
+      <View>
+        <AppText text={title} type="Bold" fontSize={18} color={Colors.BLACK} />
+        {isReservation && <AppText text={`Total ${total} reservations`} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />}
+      </View>
+      <GlassCard width={48} style={styles.iconGlass}>
+        <Svgicons path="moneyBagIcon" size={30} />
+      </GlassCard>
+    </View>
+  );
 
   return (
-    <View style={styles.wrapper}>
-      <AppText
-        text={isReservation ? "Reservations per Channel" : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} per Channel`}
-        type="Bold"
-        fontSize={18}
-        color={Colors.BRUNSWICK_GREEN}
-        mb={15}
-      />
-
-      <GradientBorder borderRadius={20} borderWidth={1.5}>
-        <View style={styles.cardInner}>
-          {!hasData ? (
-            /* EMPTY STATE MODULE */
-            <View style={styles.emptyContainer}>
-              <Svgicons path="analyticsIcon" size={40} opacity={0.2} />
-              <AppText 
-                text="No data found for the selected listing" 
-                fontSize={14} 
-                color={Colors.DIM_GREY} 
-                mt={10} 
-                type="Medium"
-              />
-            </View>
-          ) : isReservation ? (
-            <View style={styles.donutRow}>
-              <View style={styles.legendContainer}>
-                <AppText text={`Total: ${total} reservations`} fontSize={14} color={Colors.PINE_FOREST} mb={18} opacity={0.7} />
+    <View style={{ paddingHorizontal: 20 }}>
+      <GlassCard width="100%" style={styles.mainGlass}>
+        {isReservation ? (
+          <View>
+            {renderHeader('Reservations Per Channel')}
+            <View style={styles.contentRow}>
+              <View style={styles.legendWrapper}>
                 {data.map((item: any, index: number) => (
-                  <View key={index} style={styles.legendItem}>
-                    <View style={[styles.dot, { backgroundColor: item.color }]} />
-                    <AppText 
-                      text={`${item.label} - ${item.percentage} (${item.count})`} 
-                      fontSize={14} 
-                      type="Bold"
-                      color={item.color} 
-                    />
-                  </View>
+                  <GlassCard key={index} width="100%" style={styles.subGlassCard}>
+                    <View style={styles.legendRowItem}>
+                      <Svgicons path={item.label.toLowerCase()} size={22} />
+                      <View style={styles.legendText}>
+                        <AppText text={`${item.label} (${item.percentage.toFixed(0)}%)`} fontSize={12} color={Colors.BLACK} />
+                        <AppText text={`${item.count} Reservations`} fontSize={13} type="Bold" color={item.color} />
+                      </View>
+                    </View>
+                  </GlassCard>
                 ))}
               </View>
-
               <PieChart
-                data={data}
-                donut
-                radius={65}
-                innerRadius={50}
+                data={data.map((d: any) => ({ value: d.value, color: d.color }))}
+                donut radius={55} innerRadius={42}
                 centerLabelComponent={() => (
-                  <View style={styles.centerLabel}>
-                    <AppText text="Total" fontSize={10} color={Colors.DIM_GREY} type='Medium'/>
+                  <View style={{ alignItems: 'center' }}>
+                    <AppText text="Total" fontSize={11} color={Colors.DIM_GREY} />
                     <AppText text={total.toString()} type="Bold" fontSize={18} color={Colors.BLACK} />
                   </View>
                 )}
               />
             </View>
-          ) : (
+          </View>
+        ) : (
+          <View>
+            {renderHeader(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Per Channel`)}
             <View style={styles.barList}>
               {data.map((item: any, index: number) => (
                 <View key={index} style={styles.barRow}>
-                  <AppText text={item.label} fontSize={11} color={item.color} style={{ width: 70 }} />
-                  <View style={styles.barBg}>
-                    <View style={[styles.barFill, { width: item.percentage, backgroundColor: item.color }]} />
+                  <AppText text={item.label} fontSize={14} color={item.color} style={{ width: 65 }} />
+                  <View style={styles.barBackground}>
+                    <View style={[styles.barFill, { width: `${item.percentage}%`, backgroundColor: item.color }]} />
                   </View>
-                  <AppText text={item.value} fontSize={12} ml={10} type="Bold" />
+                  <AppText text={activeTab === 'revenue' ? `SAR ${item.value}` : `${item.value} Nights`} fontSize={13} ml={10} type="Bold" />
                 </View>
               ))}
             </View>
-          )}
-        </View>
-      </GradientBorder>
+          </View>
+        )}
+      </GlassCard>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: { marginBottom: 20 },
-  cardInner: { 
-    padding: 20, 
-    backgroundColor: Colors.WHITE, 
-    borderRadius: 20,
-    minHeight: 180, // Ensures consistency when empty
-    justifyContent: 'center'
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-  },
-  donutRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  legendContainer: { flex: 1 },
-  centerLabel: { alignItems: 'center', justifyContent: 'center' },
-  legendItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
-  dot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
-  barList: { paddingVertical: 5 },
-  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  barBg: { flex: 1, height: 8, backgroundColor: '#F0F0F0', borderRadius: 4, overflow: 'hidden' },
-  barFill: { height: 8, borderRadius: 4 },
+  mainGlass: { backgroundColor: 'transparent', borderRadius: 32, padding: 20, marginBottom: 20, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.8)' },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
+  iconGlass: { height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center', padding: 0, marginBottom: 0, backgroundColor: 'rgba(255,255,255,0.3)' },
+  contentRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  legendWrapper: { flex: 1, marginRight: 15 },
+  subGlassCard: { backgroundColor: 'rgba(203, 206, 205, 0.15)', padding: 10, borderRadius: 18, marginBottom: 12, borderWidth: 1, borderColor: '#fff' },
+  legendRowItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  legendText: { flex: 1 },
+  barList: { marginTop: 10 },
+  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 25 },
+  barBackground: { flex: 1, height: 10, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 10, overflow: 'hidden' },
+  barFill: { height: '100%', borderRadius: 10 }
 });
 
 export default AnalyticsChart;

@@ -36,7 +36,7 @@ import closeCircleIcon from './closeCircleIcon.svg'
 import videoIcon from './videoIcon.svg'
 import cameraIcon from './cameraIcon.svg'
 import imageIcon from './imageIcon.svg'
-import sparkleIcon from './sparkleIcon.svg'
+import sparkleIcon from './sparkle_icon.svg'
 import homeIcon from './home_icon.svg'
 import bookIcon from './bookIcon.svg'
 import attachmentIcon from './attachmentIcon.svg'
@@ -117,6 +117,15 @@ import clipboardIcon from './clipboardIcon.svg';
 import wavy_check from './wavy_check.svg'
 import google from "./google.svg";
 import apple from "./apple.svg";
+import moneyBagIcon from "./moneyBagIcon.svg";
+import sparkleRewardIcon from "./sparkleRewardIcon.svg";
+import userOutline from "./userOutline.svg";
+import analyticsOutline from "./analyticsOutline.svg";
+import cardOutline from "./cardOutline.svg";
+import logoutIcon from "./logoutIcon.svg";
+import statsIcon from "./statsIcon.svg";
+import performanceIcon from "./performanceIcon.svg";
+import direct from "./direct.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -237,5 +246,14 @@ export const icons = {
     clipboardIcon,
     wavy_check,
     google,
-    apple
+    apple,
+    moneyBagIcon,
+    sparkleRewardIcon,
+    userOutline,
+    analyticsOutline,
+    cardOutline,
+    logoutIcon,
+    statsIcon,
+    performanceIcon,
+    direct
 };

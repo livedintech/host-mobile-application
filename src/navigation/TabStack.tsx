@@ -8,9 +8,7 @@ const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
   return (
-    <Tab.Navigator
-      tabBar={(props) => <BottomTab {...props} />}
-    >
+    <Tab.Navigator tabBar={props => <BottomTab {...props} />}>
       <Tab.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.HOME}
@@ -30,10 +28,13 @@ const TabStack = () => {
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
         // component={require('@/screens/appstack/Task/TaskScreen').default}
-        component={require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen').default}
+        component={
+          require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen')
+            .default
+        }
       />
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}
         component={require('@/screens/appstack/More/MoreScreen').default}
       />

@@ -73,5 +73,5 @@ const AppText = ({
 export default AppText;
 
 const styles = StyleSheet.create({
-  AppText: {},
+  AppText: {backgroundColor: 'transparent',},
 });
