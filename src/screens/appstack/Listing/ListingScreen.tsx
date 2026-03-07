@@ -16,6 +16,7 @@ import { CreateBookingSheet } from '@/components/molecules/CreateBookingSheet/Cr
 import { Colors } from '@/theme/colors';
 import { getOtaConfig } from '@/constants/ota_config';
 import { useAuthStore } from '@/store/useAuthStore';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 // import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
 // import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
@@ -56,6 +57,8 @@ const ListingScreen = () => {
     setAppliedListingIds,
     handleReservationPress,
     onCreateBooking,
+    handleRefresh,
+    isRefreshing
   } = useListingContainer(route.params?.listing_id, selectedTab);
 
   const handleDayPress = (day: any) => {
@@ -86,7 +89,7 @@ const ListingScreen = () => {
   };
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-    {/* //   <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
+      {/* //   <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
     //       <View style={styles.infoCardInner}>
     //           <View style={styles.row}>
     //               <View style={styles.activeDot} />
@@ -110,7 +113,7 @@ const ListingScreen = () => {
         onClose={() => setIsDetailsOpen(false)}
         data={selectedBookingDetails}
         onCardPress={handleReservationPress}
-      /> 
+      />
 
       {isFetchingDetails && (
         <View style={styles.overlayLoader}>
@@ -148,6 +151,8 @@ const ListingScreen = () => {
               markedDates={calendarDataMap}
               onDayPress={handleDayPress}
               defaultPrice={defaultDailyPrice}
+               isLoading={isRefreshing}
+                  onRefresh={handleRefresh}
             />
           ) : (
             <View style={{ flex: 1 }}>
@@ -159,9 +164,12 @@ const ListingScreen = () => {
                   />
                 </View>
               ) : (
-                <FlatList
+                <FlatListSimpleHandler
+                  showsVerticalScrollIndicator={false}
+                  isLoading={isRefreshing}
+                  onRefresh={handleRefresh}
                   data={filteredReservations}
-                  keyExtractor={(item, index) => String(item.id || index)}
+                  keyExtractor={item => item.id}
                   contentContainerStyle={styles.listContent}
                   ListEmptyComponent={
                     <View style={styles.centerContainer}>
@@ -194,9 +202,9 @@ const ListingScreen = () => {
             </View>
           )}
         </>
-      )} 
+      )}
 
-       <FilterModalView
+      <FilterModalView
         isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}
         initialSelectedValues={selectedPropertyValues}
@@ -245,17 +253,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: vs(100),
   },
-  infoCardWrapper: { 
+  infoCardWrapper: {
     marginBottom: 33,
-    width: '94%',     
-    alignSelf: 'center', 
+    width: '94%',
+    alignSelf: 'center',
     marginTop: 20,
-    minHeight: vs(150),  
+    minHeight: vs(150),
   },
 
-  infoCardInner: { 
-    padding: 25, 
-    borderRadius: 35, 
+  infoCardInner: {
+    padding: 25,
+    borderRadius: 35,
     backgroundColor: Colors.WHITE,
     flex: 1,              // Add this so the inner content also expands
     justifyContent: 'center', // Centers the row vertically
