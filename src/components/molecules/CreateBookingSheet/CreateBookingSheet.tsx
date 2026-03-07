@@ -215,6 +215,7 @@ import { Colors } from '@/theme/colors';
 import AppButton from '../AppButton/AppButton';
 
 interface Props {
+  isLoading?:boolean;
   isVisible: boolean;
   onClose: () => void;
   bookingType: string;
@@ -236,6 +237,7 @@ export const CreateBookingSheet = ({
   listingOptions,
   selectedListingId,
   onSubmit,
+  isLoading
 }: Props) => {
   const today = new Date();
   const startDateValue = useWatch({ control, name: 'start_date' });
@@ -264,7 +266,7 @@ export const CreateBookingSheet = ({
           {/* Type Selector */}
           <View style={styles.radioRow}>
             {['direct', 'pricing'].map((type) => (
-              <Pressable key={type} style={styles.radioItem} onPress={() => setBookingType(type)}>
+              <Pressable disabled={isLoading} key={type} style={styles.radioItem} onPress={() => setBookingType(type)}>
                 <View style={[styles.radioOuter, bookingType === type && styles.radioActive]}>
                   {bookingType === type && <View style={styles.radioInner} />}
                 </View>
@@ -330,6 +332,7 @@ export const CreateBookingSheet = ({
             <AppButton 
               title={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"} 
               onPress={onSubmit}
+              loading={isLoading}
             />
           </View>
         </ScrollView>

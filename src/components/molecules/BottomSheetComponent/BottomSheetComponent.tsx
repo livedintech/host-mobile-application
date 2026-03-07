@@ -116,7 +116,7 @@ import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { s, vs, ms } from 'react-native-size-matters';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const SHEET_HEIGHT = SCREEN_HEIGHT * 0.88; 
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.85; 
 const TOP_OFFSET = SCREEN_HEIGHT * 0.12; 
 
 interface BottomSheetProps {

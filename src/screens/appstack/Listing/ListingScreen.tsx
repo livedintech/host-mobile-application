@@ -25,7 +25,6 @@ const ListingScreen = () => {
   const route = useRoute<any>();
   const [selectedTab, setSelectedTab] = useState(0);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<any[]>(
     [],
@@ -58,7 +57,10 @@ const ListingScreen = () => {
     handleReservationPress,
     onCreateBooking,
     handleRefresh,
-    isRefreshing
+    isRefreshing,
+    isBookingOpen,
+    setIsBookingOpen,
+    isLoading
   } = useListingContainer(route.params?.listing_id, selectedTab);
 
   const handleDayPress = (day: any) => {
@@ -223,7 +225,8 @@ const ListingScreen = () => {
             !(opt.label || '').toLowerCase().includes('all listing'),
         )}
       />
-      <CreateBookingSheet
+      {isBookingOpen && (
+        <CreateBookingSheet
         isVisible={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
         bookingType={bookingType}
@@ -233,7 +236,10 @@ const ListingScreen = () => {
         listingOptions={listingOptions}
         selectedListingId={selectedListingId || ''}
         onSubmit={handleSubmit(onBookingSubmit)}
+        isLoading={isLoading}
       />
+      )} 
+      
     </SafeAreaView>
   );
 };
