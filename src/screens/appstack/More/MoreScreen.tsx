@@ -1,206 +1,203 @@
-import React from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  ImageBackground,
-  Image,
-  Pressable,
-} from 'react-native';
+import React, { useCallback } from 'react';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
+import { Colors } from '@/theme/colors';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import MenuSection from '@/components/molecules/MenuSection/MenuSection';
 import { useAuthStore } from '@/store/useAuthStore';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Toast from 'react-native-toast-message';
 
 const MoreScreen = () => {
-  const { user, logout } = useAuthStore();
+
+  const { logout,user } = useAuthStore();
+  const goToBilling = useCallback(() => {
+    navigate(NavigationRoutes.APP_STACK.BILLING);
+  }, []);
+  const goToAccount = useCallback(() => {
+    navigate(NavigationRoutes.APP_STACK.ACCOUNT);
+  }, []);
+  const goToAnalytics = useCallback(() => {
+    navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE);
+  }, []);
+  const goToProfile = useCallback(() => {
+    navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+  }, []);
+
+  const referComingSoon = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Coming soon',
+    });
+  };
+
+
+  const MenuCard = ({ title, items, icon, onPress }: any) => (
+    <GradientBorder borderRadius={20} style={styles.menuCardWrapper}>
+      <Pressable style={styles.menuCardInner} onPress={onPress}>
+        <View style={styles.rowBetween}>
+          <AppText text={title} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+          <GradientBorder
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
+            <Pressable onPress={onPress} style={styles.arrowCircleInner}>
+              <Svgicons path="ArrowUpRightIcon" size={21} />
+            </Pressable>
+          </GradientBorder>
+        </View>
+        <Svgicons path={icon} style={styles.centerIcon} size={59} />
+        <AppText
+          text={items.join('\n')}
+          fontSize={13}
+          color="#666"
+          lineHeight={20}
+        />
+      </Pressable>
+    </GradientBorder>
+  );
+
   return (
-    <ImageBackground
-      source={require('@/assets/img/background/moreScreenBG.png')}
+    <ScrollView
       style={styles.container}
+      contentContainerStyle={{ padding: 20 }}
     >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Profile Header */}
-        <Pressable
-          onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}
-        >
-          <GlassCard width="auto" style={styles.profileCard}>
-            <View style={styles.profileInfo}>
-              <Image
-                source={require('@/assets/img/profile.png')}
-                style={styles.avatar}
-              />
-              <View>
-                <AppText
-                  text={user?.name ?? 'User Name'}
-                  type="Bold"
-                  fontSize={16}
-                />
-                <AppText
-                  text={user?.phone ?? 'No Phone'}
-                  fontSize={12}
-                  color="grey"
-                />
-              </View>
-            </View>
-          </GlassCard>
-        </Pressable>
+      <ButtonView style={styles.profileRow} onPress={goToProfile}>
+        <View style={styles.avatarCircle} />
+        <View style={{ marginLeft: 15 }}>
+          <AppText text={user?.name || ''} fontSize={18} type="Bold" />
+          <AppText text={user?.phone || ''} color="#999" />
+        </View>
+      </ButtonView>
 
-        {/* Account Section */}
-        <MenuSection
+      <View style={styles.grid}>
+        <MenuCard
           title="Account"
-          headerIcon="userOutline"
-          items={[
-            {
-              title: 'Listing Management',
-              icon: 'direct',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-              },
-            },
-            {
-              title: 'Booking Platform Management',
-              icon: 'bookingIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
-              },
-            },
-            {
-              title: 'User Management',
-              icon: 'userManagementIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
-              },
-            },
-            { title: 'Review Management', icon: 'starIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)} },
-            {
-              title: 'Smart Lock Management',
-              icon: 'lockIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS);
-              },
-            },
-          ]}
+          items={['Profile Settings', 'Manage Listings', 'User Management']}
+          icon={'userIcon'}
+          onPress={goToAccount}
         />
-
-        {/* Analytics Section */}
-        <MenuSection
+        <MenuCard
           title="Analytics"
-          headerIcon="analyticsOutline"
-          items={[
-            {
-              title: 'Statistics',
-              icon: 'statsIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN),
-            },
-            {
-              title: 'Listing Performance',
-              icon: 'performanceIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE),
-            },
-            {
-              title: 'Channel Performance',
-              icon: 'performanceIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE),
-            },
-          ]}
+          items={['Statistics', 'Listing Performance', 'Channel Performance']}
+          icon={'analyticsIcon'}
+          onPress={goToAnalytics}
         />
-
-        {/* Billing Section */}
-        <MenuSection
-          title="Billing"
-          headerIcon="cardOutline"
-          items={[
-            { title: 'Payment Methods', icon: 'walletIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST)} },
-            { title: 'Subscription', icon: 'subIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY)} },
-            {
-              title: 'Transaction History',
-              icon: 'historyIcon',
-              onPress: () => {navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY)},
-            },
-          ]}
+        <MenuCard title="Billing" items={['Payment Method', 'Subscription', 'Transaction History']} icon={'cardIcon'} onPress={goToBilling} />
+       
+        <MenuCard
+          title="Refer App"
+          items={['Refer App', 'To Another', 'Host']}
+          icon={'heartIcon'}
+          onPress={referComingSoon}
         />
-
-        {/* Logout at the bottom */}
-        <Pressable onPress={() => logout()}>
-          <GlassCard width="100%" style={styles.logoutCard}>
-            <View style={styles.logoutContent}>
-              <AppText text="Logout" type="Medium" fontSize={16} />
-
-              <GlassCard width={36} style={styles.logoutIconGlass}>
-                <Svgicons path="logoutIcon" size={18} />
-              </GlassCard>
+      </View>
+      <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
+        <Pressable style={styles.logoutBtn} onPress={() => null}>
+          <AppText
+            text="General"
+            fontSize={24}
+            type="Bold"
+            color={Colors.BRUNSWICK_GREEN}
+          />
+          <GradientBorder
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
+            <View style={styles.arrowCircleInner}>
+              <Svgicons path="ArrowUpRightIcon" size={21} />
             </View>
-          </GlassCard>
+          </GradientBorder>
         </Pressable>
-      </ScrollView>
-    </ImageBackground>
+      </GradientBorder>
+      <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
+        <Pressable style={styles.logoutBtn} onPress={() => logout()}>
+          <AppText
+            text="Logout"
+            fontSize={24}
+            type="Bold"
+            color={Colors.BRUNSWICK_GREEN}
+          />
+          <GradientBorder
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
+            <View style={styles.arrowCircleInner}>
+              <Svgicons path="ArrowUpRightIcon" size={21} />
+            </View>
+          </GradientBorder>
+        </Pressable>
+      </GradientBorder>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: {
-    paddingHorizontal: Metrics.scale(20),
-    paddingTop: Metrics.verticalScale(20),
-    paddingBottom: Metrics.verticalScale(20),
+  container: { flex: 1, backgroundColor: Colors.WHITE },
+  profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 30 , alignSelf:'flex-start'},
+  avatarCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#CCC',
   },
-  profileCard: {
-    alignSelf: 'flex-start',
-    padding: Metrics.scale(8),
-    paddingRight: Metrics.scale(30),
-    borderRadius: 100,
-    backgroundColor: '#D9D9D933',
-    marginBottom: Metrics.verticalScale(30),
-  },
-  profileInfo: {
+
+  grid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
+
+  menuCardWrapper: { width: '48%', marginBottom: 15 },
+  menuCardInner: {
+    padding: 15,
+    borderRadius: 20,
+    backgroundColor: Colors.WHITE,
+    height:240
   },
-  logoutCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 24,
-    paddingVertical: Metrics.verticalScale(10),
-    paddingHorizontal: Metrics.scale(16),
-    marginBottom: Metrics.verticalScale(20),
+  centerIcon: {
+    width: 50,
+    height: 50,
+    alignSelf: 'center',
+    marginVertical: 15,
   },
-  logoutContent: {
+  rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  logoutIconGlass: {
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    alignItems: 'center',
+  smallIcon: {
+    borderRadius: 100,
+    height: Metrics.scale(32),
+    width: Metrics.scale(32),
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
     justifyContent: 'center',
-    padding: 0,
-    marginBottom: 0,
+    alignItems: 'center',
   },
-  iconCircleSmall: {
+
+  logoutWrapper: { marginTop: 10 },
+  logoutBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 20,
+    backgroundColor: Colors.WHITE,
+  },
+  arrowCircleInner: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    alignItems: 'center',
+    backgroundColor: Colors.WHITE,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

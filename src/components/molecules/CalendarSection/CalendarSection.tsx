@@ -4,6 +4,7 @@ import { vs } from 'react-native-size-matters';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import CustomCalendar from '@/components/molecules/CustomCalendar/CustomCalendar';
 import MultiChannelCalendar from '@/components/molecules/MultiChannelCalendar/MultiChannelCalendar';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 interface Props {
   control: any;
@@ -12,10 +13,12 @@ interface Props {
   selectedListingId: string;
   markedDates: any;
   onDayPress: (day: any) => void;
-  defaultPrice?: number
+  defaultPrice?: number,
+   onRefresh?: () => Promise<any> | void;
+     isLoading: boolean;
 }
-export const CalendarSection = ({ control, errors, listingOptions, selectedListingId, markedDates, onDayPress, defaultPrice }: Props) => (
-  <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}>
+export const CalendarSection = ({ control, errors, listingOptions, selectedListingId, markedDates, onDayPress, defaultPrice, isLoading,onRefresh  }: Props) => (
+  <RefreshableScrollView isLoading={isLoading} onRefresh={onRefresh} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}>
     <DropdownField name="listing_selection" control={control} errors={errors} label="Property" data={listingOptions} placeholder="All Listings" />
     <View style={{ marginTop: vs(20) }}>
       {selectedListingId ? (
@@ -24,5 +27,5 @@ export const CalendarSection = ({ control, errors, listingOptions, selectedListi
         <MultiChannelCalendar markedDates={markedDates} onDayPress={onDayPress} />
       )}
     </View>
-  </ScrollView>
+  </RefreshableScrollView>
 );
