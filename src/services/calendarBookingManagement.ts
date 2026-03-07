@@ -69,24 +69,26 @@ export const getCalendarBookingsByListingIdApi = async (listingIds: string | str
 
 export const getReservationsApi = async (listingIds?: string, activeFilter?: string) => {
   const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
-  let queryParams = ``;
-  if (listingIds) {
-    queryParams += `&apartment_id=${listingIds}`;
-  }
+  const params = new URLSearchParams();
+
+  // Status filter
   if (activeFilter === 'today') {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
-
-    queryParams += `&created_at=${formattedDate}`;
-  }
-  else if (activeFilter && activeFilter !== 'all') {
-    queryParams += `?status=${encodeURIComponent(activeFilter)}`;
+    params.append('created_at', `${day}-${month}-${year}`);
+  } else if (activeFilter && activeFilter !== 'all') {
+    params.append('status', activeFilter);
   }
 
-  const url = `${baseUrl}${queryParams}`;
+  // Listing ID
+  if (listingIds) {
+    params.append('apartment_id', listingIds);
+  }
+
+  const queryString = params.toString();
+  const url = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
 
   const { ok, data } = await apiService.get(url);
 

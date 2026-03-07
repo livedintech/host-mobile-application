@@ -22,6 +22,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const navigation = useNavigation<any>();
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
 
   // UI State
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +32,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   const [appliedListingIds, setAppliedListingIds] = useState<string>('');
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setisLoading] = useState(false)
 
 
   // Form Initialization (Preserving context and default values exactly)
@@ -270,29 +273,34 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
       const res = bookingType === 'direct'
         ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'host' })
         : await updateCalendarPricingApi({ ...payload, price: formData.rate || '' });
-
+      setisLoading(true)
       if (res) {
         Toast.show({ type: 'success', text1: bookingType === 'direct' ? 'Booking created' : 'Pricing updated' });
         reset();
         queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
         queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
+        setIsBookingOpen(false)
         return true;
       }
     } catch (error: any) {
+      setisLoading(false)
       const serverMessage = error?.data?.message || error?.response?.data?.message || "Something went wrong";
       Toast.show({ type: 'error', text1: serverMessage, visibilityTime: 4000 });
+    }
+    finally {
+      setisLoading(false)
     }
     return false;
   };
 
   const handleRefresh = async () => {
-  setIsRefreshing(true);
-  try {
-    await Promise.all([refetchCalendar(), refetchReservations()]);
-  } finally {
-    setIsRefreshing(false);
-  }
-};
+    setIsRefreshing(true);
+    try {
+      await Promise.all([refetchCalendar(), refetchReservations()]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   return {
     control, errors, handleSubmit, setValue, selectedListingId, listingOptions,
@@ -301,5 +309,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     bookingType, setBookingType, setAppliedListingIds, handleReservationPress, onCreateBooking,
     isRefreshing,
     handleRefresh,
+    isBookingOpen,
+    setIsBookingOpen,
+    isLoading
   };
 }
