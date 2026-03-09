@@ -17,6 +17,8 @@ export interface User {
   gender: string | null;
   country: string | null;
   city: string | null;
+  country_id?: number | string; 
+  city_id?: number | string;
   host_activation_id: number | null;
   email_verified_at: string | null;
   plan_verified: number;

@@ -198,3 +198,15 @@ export const updateFirstTimePasswordApi = async (payload: UpdatePasswordPayload)
 
   throw response;
 };
+
+export const updateProfileApi = async (formData: FormData) => {
+   const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.AUTH.UPDATE_PROFILE,
+    formData
+  );
+  if (ok) {
+    return data;
+  }
+
+  throw response;
+};

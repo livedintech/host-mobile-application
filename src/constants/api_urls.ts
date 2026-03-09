@@ -18,7 +18,8 @@ export const SERVICE_CONFIG_URLS = {
     GOOGLE_LOGIN: `${authController}/social-authentication`,
     UPDATE_PASSWORD: `${authController}/update-password`,
     CHANGE_PASSWORD: `${authController}/user/change-password`,
-    DELETE_ACCOUNT: `${authController}/user/delete-account`
+    DELETE_ACCOUNT: `${authController}/user/delete-account`,
+    UPDATE_PROFILE: `${authController}/user/update`,
   },
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,
@@ -119,6 +120,8 @@ export const SERVICE_CONFIG_URLS = {
     DELETE_CHAT: `${authController}/chat/inbox/soft-delete/{message_id}`,
     DELETE_PROPERTY: `${authController}/channelmanagement/listing/soft-delete`,
     GET_USER: `${authController}/user`,
+    GET_COUNTRIES: `${authController}/countries`,
+    GET_CITIES: `${authController}/cities`,
     CHANNEL_MANAGEMENT_LISTING_IMPORT: `${authController}/channelmanagement/listing/import`,
     CHANNEL_MANAGEMENT_LISTING_GATHERN_IMPORT: `${authController}/gathern/map-listing`,
     GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel`,

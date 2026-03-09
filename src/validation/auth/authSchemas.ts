@@ -63,6 +63,15 @@ export const profileSchema = yup.object({
         .string()
         .required('Phone number is required')
         .matches(/^\d{8,15}$/, 'Phone number must be 8-15 digits'),
+    profile_picture: yup
+        .object()
+        .shape({
+            uri: yup.string().required(),
+            name: yup.string().required(),
+            type: yup.string().required(),
+        })
+        .nullable()
+        .optional(),   
 });
 
 export type profileFormValues = yup.InferType<typeof profileSchema>;

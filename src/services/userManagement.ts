@@ -80,3 +80,28 @@ export const deleteUserManagementApi = async (payload: userManagementDeleteUserA
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+export const getCountriesApi = async () => {
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_COUNTRIES
+  );
+
+	if (ok) {
+    return data.data;
+  }
+
+  throw response.message;
+};
+
+export const getProfileCitiesApi = async (countryId: string | number) => {
+  const { ok, response, data } = await apiService.get(
+    `${SERVICE_CONFIG_URLS.APP.GET_CITIES}?country_id=${countryId}`
+  );
+
+  if (ok) {
+    return data?.data || [];
+  }
+
+  // FIX 3: Ensure you are throwing a clean error message
+  throw response?.message || "Failed to fetch cities";
+};
