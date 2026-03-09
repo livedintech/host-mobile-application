@@ -1,112 +1,123 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { s, vs } from 'react-native-size-matters';
+
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import PasswordField from '@/components/molecules/Input/PasswordField';
 import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
 import useAddNewPasswordContainer from './AddNewPasswordContainer';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+
+const FIGMA_TEAL = '#20957B';
 
 const AddNewPasswordScreen = () => {
-  const { isLoading, control, errors, handleSubmit, } = useAddNewPasswordContainer();
+  const { isLoading, control, errors, handleSubmit } = useAddNewPasswordContainer();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
-        
-        {/* Title Section */}
-        <View style={styles.titleSection}>
-          <AppText 
-            text="Please enter your new Password." 
-            fontSize={32} 
-            type="Medium" 
-            color={Colors.PINE_FOREST} 
-            textAlign="center" 
-          />
-        </View>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.mainContent}>
+              {/* Title Section - Left Aligned Pattern */}
+              <View style={styles.headerSection}>
+                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                  Please enter your
+                </AppText>
+                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
+                  new{' '}
+                  <AppText type="Regular" fontSize={32} color={Colors.BLACK}>
+                    password
+                  </AppText>
+                </AppText>
+              </View>
 
-        {/* Form Fields */}
-        <View style={styles.form}>
-          <PasswordField
-            label="Password *"
-            name="password"
-            control={control}
-            errors={errors}
-            placeholder=""
-          />
+              {/* Form Fields */}
+              <View style={styles.form}>
+                <PasswordField
+                  label="New Password*"
+                  name="password"
+                  control={control}
+                  errors={errors}
+                  placeholder=""
+                />
 
-          <View style={{ marginTop: 20 }}>
-            <PasswordField
-              label="Confirm Password *"
-              name="confirmPassword"
-              control={control}
-              errors={errors}
-              placeholder=""
-            />
-          </View>
+                <View style={{ marginTop: vs(20) }}>
+                  <PasswordField
+                    label="Confirm Password*"
+                    name="confirmPassword"
+                    control={control}
+                    errors={errors}
+                    placeholder=""
+                  />
+                </View>
 
-          {/* Password Strength Hint */}
-          <AppText 
-            text="Please choose a stronger password. Try a mix of letters, numbers, and symbols." 
-            fontSize={12} 
-            color="#707070" 
-            mt={15} 
-            lineHeight={18}
-          />
-        </View>
+                {/* Password Strength Hint */}
+                <AppText
+                  text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
+                  fontSize={13}
+                  color="#707070"
+                  mt={vs(15)}
+                  lineHeight={20}
+                />
+              </View>
 
-        {/* Continue Button */}
-        <View style={styles.bottomSec}>
-          <AppButton
-            loading={isLoading}
-            onPress={handleSubmit}
-            title="Continue"
-          />
-        </View>
-
-      </ScrollView>
-    </SafeAreaView>
+              {/* Action Button */}
+              <View style={styles.bottomSec}>
+                <AppButton
+                  loading={isLoading}
+                  onPress={handleSubmit}
+                  title="Continue"
+                  backgroundColor={FIGMA_TEAL}
+                  color={Colors.WHITE}
+                  borderRadius={100}
+                  type="Bold"
+                  fontSize={18}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  scrollContainer: { flexGrow: 1, paddingHorizontal: 20 },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    marginTop: 20 
+  container: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(60), // Space for status bar/potential back button
   },
-  headerRight: { flexDirection: 'row', alignItems: 'center' },
-  circleBtn: { 
-    width: 40, height: 40, borderRadius: 20, 
-    borderWidth: 1, borderColor: '#E0E0E0', 
-    justifyContent: 'center', alignItems: 'center', marginRight: 8 
+  headerSection: {
+    marginBottom: vs(40),
   },
-  backBtn: { 
-    paddingHorizontal: 25, height: 40, borderRadius: 20, 
-    borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center' 
+  form: {
+    width: '100%',
   },
-  titleSection: { 
-    marginTop: Metrics.verticalScale(80), 
-    alignItems: 'center',
-    paddingHorizontal: 10
+  bottomSec: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: vs(30),
+    marginTop: vs(20),
   },
-  form: { marginTop: Metrics.verticalScale(40) },
-  bottomSec: { 
-    flex: 1, 
-    justifyContent: 'flex-end', 
-    paddingBottom: Metrics.verticalScale(30) 
-  },
-  continueBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.BRUNSWICK_GREEN,
-    borderRadius: 100,
-    height: 56,
-  }
 });
 
 export default AddNewPasswordScreen;
