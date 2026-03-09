@@ -1,21 +1,113 @@
+// import React from 'react';
+// import { View, ScrollView, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+// import { s, vs, ms } from 'react-native-size-matters';
+// import { X } from 'lucide-react-native';
+// import AppText from '@/components/molecules/AppText/AppText';
+// import ReservationCard from '@/components/molecules/ReservationCard/ReservationCard';
+// import { getOtaConfig } from '@/constants/ota_config';
+
+// interface Props {
+//   isVisible: boolean;
+//   onClose: () => void;
+//   data: any[];
+//   onCardPress: (bookingId: string | number) => void;
+// }
+
+// export const BookingDetailsView = ({ isVisible, onClose, data, onCardPress }: Props) => {
+//   return (
+//     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
+//       <SafeAreaView style={styles.container}>
+//         <View style={styles.header}>
+//           <AppText text="Reservation Details" type="Bold" fontSize={18} color="#1A332C" />
+//           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+//             <X size={ms(24)} color="#1A332C" />
+//           </TouchableOpacity>
+//         </View>
+
+//         <ScrollView contentContainerStyle={styles.scroll}>
+//           {data && data.length > 0 ? (
+//             data.map((item: any, index: number) => {
+//               const otaConfig = getOtaConfig(item.source);
+//               const platformLabel = item.source_type === 'livedin' ? 'Livedin' : (item.source || 'Direct');
+              
+//               return (
+//                 <View key={index} style={styles.cardWrapper}>
+//                   <ReservationCard
+//                     id={item.id}
+//                     guestName={item.guest}
+//                     platform={platformLabel}
+//                     property={item.listing_title}
+//                     endDate={item?.end_date || ''}
+//                     startDate={item?.start_date || ''}
+//                     checkIn={item.checkIn || "04:00 PM"}
+//                     checkOut={item.checkOut || "12:00 AM"}
+//                     platformColor={otaConfig.color}
+//                     onPress={() => {
+//                       onClose();
+//                       onCardPress(item.booking_id);
+//                     }}
+//                   />
+//                 </View>
+//               );
+//             })
+//           ) : (
+//             <View style={styles.empty}>
+//               <AppText text="No booking information available." color="#666" />
+//             </View>
+//           )}
+//         </ScrollView>
+//       </SafeAreaView>
+//     </Modal>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: '#F8F9FA' },
+//   header: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//     padding: s(16),
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#EEE',
+//     backgroundColor: '#FFF'
+//   },
+//   closeButton: { padding: s(4) },
+//   scroll: { padding: s(16), paddingBottom: vs(40) },
+//   cardWrapper: { marginBottom: vs(12) },
+//   empty: { alignItems: 'center', marginTop: vs(100) }
+// });
+
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, ActivityIndicator, SafeAreaView } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { X } from 'lucide-react-native';
+import { useQuery } from '@tanstack/react-query';
 import AppText from '@/components/molecules/AppText/AppText';
 import ReservationCard from '@/components/molecules/ReservationCard/ReservationCard';
 import { getOtaConfig } from '@/constants/ota_config';
+import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
 
 interface Props {
   isVisible: boolean;
   onClose: () => void;
-  data: any[];
+  bookingId: string | null; // Pass the ID instead of the data array
   onCardPress: (bookingId: string | number) => void;
 }
 
-export const BookingDetailsView = ({ isVisible, onClose, data, onCardPress }: Props) => {
-  console.log('DATA HERE =>', data)
+export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress }: Props) => {
+  
+  // Fetch data only when modal is visible and bookingId exists
+  const { data: apiData, isLoading, isError } = useQuery({
+    queryKey: ['BOOKING_DETAILS', bookingId],
+    queryFn: () => getBookingDetailsApi(bookingId!),
+    enabled: isVisible && !!bookingId,
+  });
+
+  // Ensure we are working with an array (API might return a single object or array)
+  const bookings = Array.isArray(apiData) ? apiData : apiData ? [apiData] : [];
+
   return (
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
@@ -26,38 +118,52 @@ export const BookingDetailsView = ({ isVisible, onClose, data, onCardPress }: Pr
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scroll}>
-          {data && data.length > 0 ? (
-            data.map((item: any, index: number) => {
-              const otaConfig = getOtaConfig(item.source);
-              const platformLabel = item.source_type === 'livedin' ? 'Livedin' : (item.source || 'Direct');
-              
-              return (
-                <View key={index} style={styles.cardWrapper}>
-                  <ReservationCard
-                    id={item.id}
-                    guestName={item.guest}
-                    platform={platformLabel}
-                    property={item.listing_title}
-                    endDate={item?.end_date || ''}
-                    startDate={item?.start_date || ''}
-                    checkIn={item.checkIn || "04:00 PM"}
-                    checkOut={item.checkOut || "12:00 AM"}
-                    platformColor={otaConfig.color}
-                    onPress={() => {
-                      onClose();
-                      onCardPress(item.booking_id);
-                    }}
-                  />
-                </View>
-              );
-            })
-          ) : (
-            <View style={styles.empty}>
-              <AppText text="No booking information available." color="#666" />
-            </View>
-          )}
-        </ScrollView>
+        {isLoading ? (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color="#1A332C" />
+            <AppText text="Fetching details..." mt={10} color="#666" />
+          </View>
+        ) : isError ? (
+          <View style={styles.center}>
+            <AppText text="Failed to load booking details." color="red" />
+            <TouchableOpacity onPress={onClose} style={styles.retryBtn}>
+              <AppText text="Close" color="#1A332C" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={styles.scroll}>
+            {bookings.length > 0 ? (
+              bookings.map((item: any, index: number) => {
+                const otaConfig = getOtaConfig(item.source);
+                const platformLabel = (item?.data?.property?.booking_platform === 'livedin' || item?.data?.property?.booking_platform === 'host_booking') ? 'Livedin' : (item?.data?.property?.booking_platform || 'Direct');
+                console.log('Soingle Item Data', item?.data)
+                return (
+                  <View key={index} style={styles.cardWrapper}>
+                    <ReservationCard
+                      id={item.id}
+                      guestName={item?.data?.guest?.name || 'Guest'}
+                      platform={platformLabel}
+                      property={item?.data?.property?.name || 'Property'}
+                      endDate={item?.data?.property?.booking_dates?.to || ''}
+                      startDate={item?.data?.property?.booking_dates?.from || ''}
+                      checkIn={item?.data?.property?.check_in_time || "04:00 PM"}
+                      checkOut={item?.data?.property?.check_out_time || "12:00 PM"}
+                      platformColor={otaConfig.color}
+                      onPress={() => {
+                        onClose();
+                        onCardPress(bookingId || '');
+                      }}
+                    />
+                  </View>
+                );
+              })
+            ) : (
+              <View style={styles.empty}>
+                <AppText text="No booking information available." color="#666" />
+              </View>
+            )}
+          </ScrollView>
+        )}
       </SafeAreaView>
     </Modal>
   );
@@ -77,5 +183,7 @@ const styles = StyleSheet.create({
   closeButton: { padding: s(4) },
   scroll: { padding: s(16), paddingBottom: vs(40) },
   cardWrapper: { marginBottom: vs(12) },
-  empty: { alignItems: 'center', marginTop: vs(100) }
+  empty: { alignItems: 'center', marginTop: vs(100) },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  retryBtn: { marginTop: 20, padding: 10, borderWidth: 1, borderRadius: 5, borderColor: '#DDD' }
 });

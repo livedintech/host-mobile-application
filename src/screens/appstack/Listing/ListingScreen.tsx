@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { s, vs } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
@@ -17,23 +17,24 @@ import { Colors } from '@/theme/colors';
 import { getOtaConfig } from '@/constants/ota_config';
 import { useAuthStore } from '@/store/useAuthStore';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-// import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
-// import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
+import NoListing from './NoListing';
 
 const ListingScreen = () => {
-  const { user } = useAuthStore();
+  // Fix for the Render Error
+  const authStore = useAuthStore();
+  const user = authStore?.user; 
+
   const route = useRoute<any>();
   const [selectedTab, setSelectedTab] = useState(0);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [selectedBookingDetails, setSelectedBookingDetails] = useState<any[]>(
-    [],
-  );
-  const [selectedPropertyValues, setSelectedPropertyValues] = useState<
-    string[]
-  >([]);
+  const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
 
-  // const { isOtaConnected } = useManageBookingContainer();
+  const { isOtaConnected } = useManageBookingContainer();
 
   const {
     control,
@@ -63,23 +64,37 @@ const ListingScreen = () => {
     isLoading
   } = useListingContainer(route.params?.listing_id, selectedTab);
 
+  // --- CONNECT ACCOUNT REDIRECT ---
+  const handleConnectAccount = () => {
+    navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
+  };
+
+  // --- EARLY RETURN FOR NO OTA ---
+  if (!isOtaConnected) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <NoListing onConnect={handleConnectAccount} />
+      </SafeAreaView>
+    );
+  }
+
   const handleDayPress = (day: any) => {
     const dateData = calendarDataMap[day.dateString];
     const isBooked = selectedListingId
       ? dateData?.type && dateData.type !== 'none'
-      : dateData?.channels?.length > 0;
+      : (dateData?.channels?.length ?? 0) > 0;
 
     if (isBooked) {
-      setSelectedBookingDetails(
-        selectedListingId ? [dateData.bookingData] : dateData.bookings || [],
-      );
-      setIsDetailsOpen(true);
-    } else {
-      if (user?.role_key === 'supervisor') {
-        console.log('Supervisors cannot create bookings');
-        return;
-      }
+      const bookingCode = selectedListingId 
+        ? dateData.bookingData?.booking_id 
+        : dateData.bookings?.[0]?.booking_id;
 
+      if (bookingCode) {
+        setSelectedBookingId(bookingCode);
+        setIsDetailsOpen(true);
+      }
+    } else {
+      if (user?.role_key === 'supervisor') return;
       setValue('start_date', day.dateString);
       setIsBookingOpen(true);
     }
@@ -89,31 +104,16 @@ const ListingScreen = () => {
     const success = await onCreateBooking(data);
     if (success) setIsBookingOpen(false);
   };
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* //   <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
-    //       <View style={styles.infoCardInner}>
-    //           <View style={styles.row}>
-    //               <View style={styles.activeDot} />
-    //               <View style={styles.avatarContainer}>
-    //                   <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
-    //               </View>
-    //               <View style={{ flex: 1, marginLeft: 15 }}>
-    //                   <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
-    //                   <AppText
-    //                       text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
-    //                       color={Colors.NIGHT_OPACITY}
-    //                       mt={5}
-    //                       lineHeight={20}
-    //                   />
-    //               </View>
-    //           </View>
-    //       </View>
-    //   </GradientBorder> */}
       <BookingDetailsView
         isVisible={isDetailsOpen}
-        onClose={() => setIsDetailsOpen(false)}
-        data={selectedBookingDetails}
+        onClose={() => {
+          setIsDetailsOpen(false);
+          setSelectedBookingId(null);
+        }}
+        bookingId={selectedBookingId}
         onCardPress={handleReservationPress}
       />
 
@@ -153,17 +153,14 @@ const ListingScreen = () => {
               markedDates={calendarDataMap}
               onDayPress={handleDayPress}
               defaultPrice={defaultDailyPrice}
-               isLoading={isRefreshing}
-                  onRefresh={handleRefresh}
+              isLoading={isRefreshing}
+              onRefresh={handleRefresh}
             />
           ) : (
             <View style={{ flex: 1 }}>
               {resLoading ? (
                 <View style={styles.centerContainer}>
-                  <ActivityIndicator
-                    size="large"
-                    color={Colors.BRUNSWICK_GREEN}
-                  />
+                  <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
                 </View>
               ) : (
                 <FlatListSimpleHandler
@@ -184,11 +181,7 @@ const ListingScreen = () => {
                       <ReservationCard
                         id={item.booking_id || item.id}
                         guestName={item.guest}
-                        platform={
-                          item.source_type === 'livedin'
-                            ? 'Livedin'
-                            : config.label
-                        }
+                        platform={item.source_type === 'livedin' ? 'Livedin' : config.label}
                         property={item.listing_title || 'Property'}
                         endDate={item.end_date}
                         startDate={item.start_date}
@@ -225,21 +218,21 @@ const ListingScreen = () => {
             !(opt.label || '').toLowerCase().includes('all listing'),
         )}
       />
+      
       {isBookingOpen && (
         <CreateBookingSheet
-        isVisible={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        bookingType={bookingType}
-        setBookingType={setBookingType}
-        control={control}
-        errors={errors}
-        listingOptions={listingOptions}
-        selectedListingId={selectedListingId || ''}
-        onSubmit={handleSubmit(onBookingSubmit)}
-        isLoading={isLoading}
-      />
+          isVisible={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          bookingType={bookingType}
+          setBookingType={setBookingType}
+          control={control}
+          errors={errors}
+          listingOptions={listingOptions}
+          selectedListingId={selectedListingId || ''}
+          onSubmit={handleSubmit(onBookingSubmit)}
+          isLoading={isLoading}
+        />
       )} 
-      
     </SafeAreaView>
   );
 };
@@ -259,25 +252,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: vs(100),
   },
-  infoCardWrapper: {
-    marginBottom: 33,
-    width: '94%',
-    alignSelf: 'center',
-    marginTop: 20,
-    minHeight: vs(150),
-  },
-
-  infoCardInner: {
-    padding: 25,
-    borderRadius: 35,
-    backgroundColor: Colors.WHITE,
-    flex: 1,              // Add this so the inner content also expands
-    justifyContent: 'center', // Centers the row vertically
-  },
-  row: { flexDirection: 'row', alignItems: 'center', },
-  avatar: { width: 46, height: 54 },
-  activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 },
-  avatarContainer: { backgroundColor: Colors.ADRIANA, borderRadius: 100, width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
   overlayLoader: {
     ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(255,255,255,0.7)',
