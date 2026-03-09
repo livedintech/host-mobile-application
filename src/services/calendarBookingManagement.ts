@@ -153,20 +153,15 @@ export const updateCalendarPricingApi = async (payload: {
 /**
  * 7. FETCH SPECIFIC BOOKING DETAILS
  */
+
 export const getBookingDetailsApi = async (bookingId: string | number) => {
-  try {
-    const url = SERVICE_CONFIG_URLS.APP.GET_BOOKINGS_DETAILS.replace('{booking_id}', String(bookingId));
+  const url = SERVICE_CONFIG_URLS.APP.GET_BOOKINGS_DETAILS.replace('{booking_id}', String(bookingId));
 
-    const { ok, data } = await apiService.get(url);
+  const { ok, data, response } = await apiService.get(url);
 
-    // We return 'data' which contains the full response including the .data property 
-    // needed by your navigation logic
-    if (ok) {
-      return data;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching booking details:', error);
-    return null;
+  if (ok) {
+    return data; 
   }
+
+  throw response;
 };
