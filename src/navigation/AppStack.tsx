@@ -40,7 +40,8 @@ const AppStack = () => {
           require('@/screens/appstack/Chat/ChatScreen').default
         }
       />
-      <Stack.Screen
+      {/* TASK SCREEN OLD */}
+      {/* <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
         getComponent={() =>
@@ -48,6 +49,44 @@ const AppStack = () => {
             .default
         }
       />
+
+
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/CreateTask/CreateTaskScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_CHECKLIST}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/CreateChecklist/CreateChecklistScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.EDIT_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/EditTask/EditTaskScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.VIEW_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/ViewTask/ViewTaskScreen')
+            .default
+        }
+      /> */}
+
+      {/* TASK SCREEN OLD END */}
+
+
       {/* <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}
@@ -309,40 +348,7 @@ const AppStack = () => {
             .default
         }
       />
-      {/* TASK MANAGAMENT ROUTES */}
 
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
-        name={NavigationRoutes.APP_STACK.CREATE_TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/CreateTask/CreateTaskScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
-        name={NavigationRoutes.APP_STACK.CREATE_CHECKLIST}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/CreateChecklist/CreateChecklistScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
-        name={NavigationRoutes.APP_STACK.EDIT_TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/EditTask/EditTaskScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
-        name={NavigationRoutes.APP_STACK.VIEW_TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/ViewTask/ViewTaskScreen')
-            .default
-        }
-      />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.SAVED_REPLIES}
@@ -548,6 +554,67 @@ const AppStack = () => {
         }
       />
       {/* NEW ANALYTIC SCREEN END */}
+
+      {/* /TASK LIST SCREEN NEW */}
+
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.NO_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/NoTaskScreen/NoTaskScreen')
+            .default
+        }
+      />
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/RecurringInitialScreen/RecurringInitialScreen')
+            .default
+        }
+      />
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.RECURRING_TASK_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/RecurringTaskScreen/RecurringTaskScreen')
+            .default
+        }
+      />
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/viewChecklistAll/viewChecklistAll')
+            .default
+        }
+      />
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CHECKLIST_DETAIL}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/ChecklistDetail/ChecklistDetail')
+            .default
+        }
+      />
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.STAFF_NOTES}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/StaffNotes/StaffNotes')
+            .default
+        }
+      />
+          <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask')
+            .default
+        }
+      />
+
+      {/* /TASK LIST SCREEN OLD */}
     </Stack.Navigator>
   );
 };

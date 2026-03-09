@@ -74,12 +74,12 @@ const MoreScreen = () => {
             },
             {
               title: 'User Management',
-              icon: 'userManagementIcon',
+              icon: 'userManagementIconNew',
               onPress: () => {
                 navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
               },
             },
-            { title: 'Review Management', icon: 'starIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)} },
+            { title: 'Review Management', icon: 'reviewManagementIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)} },
             {
               title: 'Smart Lock Management',
               icon: 'lockIcon',
@@ -121,11 +121,11 @@ const MoreScreen = () => {
           title="Billing"
           headerIcon="cardOutline"
           items={[
-            { title: 'Payment Methods', icon: 'walletIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST)} },
-            { title: 'Subscription', icon: 'subIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY)} },
+            { title: 'Payment Methods', icon: 'paymentIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST)} },
+            { title: 'Subscription', icon: 'subscriptionIcon', onPress: () => {navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY)} },
             {
               title: 'Transaction History',
-              icon: 'historyIcon',
+              icon: 'transactionIcon',
               onPress: () => {navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY)},
             },
           ]}
