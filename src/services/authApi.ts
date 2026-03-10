@@ -1,6 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import { CreateAccountPayload, ForgotPasswordPayload, LoginPayload, ResetPasswordPayload, SocialAuthPayload, VerifyOtpPayload , UpdatePasswordPayload} from "@/types/api/authTypes";
+import Utils from "@/utility/Utils";
 
 // Check User
 export const CheckUserApi = async (payload: LoginPayload) => {
@@ -93,6 +94,19 @@ export const resendOtpApi = async (payload: VerifyOtpPayload) => {
     }
     throw response;
 };
+
+export const getSelectListingApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_SELECT_LISTING
+    );
+
+    if (ok) {
+        return data?.data;
+    }
+
+    throw response.message;
+};
+
 
 // Reset Password
 export const resetPasswordApi = async (payload: ResetPasswordPayload) => {
@@ -197,4 +211,30 @@ export const updateFirstTimePasswordApi = async (payload: UpdatePasswordPayload)
   }
 
   throw response;
+};
+
+// export const getSubscriptionFeaturesApi = async (payload: {subscription_id:number}) => {
+//     const url = Utils.createDynamicUrl(
+//         SERVICE_CONFIG_URLS.APP.GET_SUBSCRIPTION_FEATURES,
+//         { id: payload.subscription_id },
+//     );
+
+//     const { ok, response, data } = await apiService.get(url, {...payload}); // body
+//     if (ok) {
+//         return data;
+//     }
+//     throw new Error(response.message || 'Failed to fetch sub-categories');
+// }; 
+
+export const getSubscriptionFeaturesApi = async (payload: {subscription_id:number}) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.GET_SUBSCRIPTION_FEATURES,
+        { id: payload.subscription_id }, // params
+    );
+
+    const { ok, response, data } = await apiService.get(url, {}); // body
+    if (ok) {
+        return data?.data || [];
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
 };

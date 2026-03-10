@@ -4,12 +4,12 @@ import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import useManageListingContainer, { listingData } from './ManageListingContainer';
+import useManageListingContainer from './ManageListingContainer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const ManageListingScreen = () => {
-    const { selectedListing, onSelect, isLoading} = useManageListingContainer();
+    const { selectedListing, onSelect, isLoading,listingData} = useManageListingContainer();
 
     if (isLoading) {
     return (
@@ -49,16 +49,15 @@ const ManageListingScreen = () => {
                 />
 
                 <View style={styles.grid}>
-                    {listingData.map((item) => {
-                        const isSelected = selectedListing === item.id;
+                    {listingData.map((item:{value?:number; label?:string}) => {
+                        const isSelected = selectedListing === item.value;
                         
                         return (
                             <ButtonView 
-                                key={item.id}
+                                key={item.value}
                                 activeOpacity={0.9}
                                 style={[styles.card, isSelected && styles.cardActive]}
-                                onPress={() => onSelect(item.id)}
-                                disabled={!item?.isEnable}
+                                onPress={() => onSelect(item?.value)}
                             >
                                 <Svgicons path='property' size={40}/>
                                 <AppText 

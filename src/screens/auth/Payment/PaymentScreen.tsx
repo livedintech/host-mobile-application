@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const PaymentScreen = () => {
-    const { selectedPlan, onPlanSelect, handleStartTrial, handleSkipThis } = usePaymentContainer();
+    const { selectedPlan, onPlanSelect, handleStartTrial, handleSkipThis,addons,base } = usePaymentContainer();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -32,14 +32,14 @@ const PaymentScreen = () => {
 
                 {/* Selection Cards */}
                 <View style={styles.planSection}>
-                    <ButtonView
+                    {/* <ButtonView
                         activeOpacity={0.9}
                         onPress={() => onPlanSelect('annual')}
                         style={[styles.planCard, selectedPlan === 'annual' && styles.activeCard]}
                     >
                         <AppText text="Annual" fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
                         <AppText text="First 14 days free – Then SAR 17000/Year" fontSize={14} color={Colors.PINE_FOREST} mt={6} />
-                    </ButtonView>
+                    </ButtonView> */}
 
                     <ButtonView
                         activeOpacity={0.9}
@@ -47,7 +47,7 @@ const PaymentScreen = () => {
                         style={[styles.planCard, selectedPlan === 'monthly' && styles.activeCard, { marginTop: 16 }]}
                     >
                         <AppText text="Monthly" fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
-                        <AppText text="First 7 days free – Then SAR 1500/Month" fontSize={14} color={Colors.PINE_FOREST} mt={6} />
+                        <AppText text="14-day free trial, then SAR 190/month per listing" fontSize={14} color={Colors.PINE_FOREST} mt={6} />
                     </ButtonView>
                 </View>
 

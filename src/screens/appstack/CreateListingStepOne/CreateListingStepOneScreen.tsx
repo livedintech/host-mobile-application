@@ -40,10 +40,11 @@ const CreateListingStepOneScreen = () => {
 
           <View style={styles.footer}>
             <AppButton
-              loading={isLoading || isChannelMissing}
+              loading={isLoading}
               title="Next"
               onPress={handleSubmit(onNext)}
               mt={20}
+              disabled={isChannelMissing}
             />
             <AppButton
               title="Save & Exit"
