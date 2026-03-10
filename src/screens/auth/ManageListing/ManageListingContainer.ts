@@ -13,9 +13,9 @@ import { forgotPasswordApi, resendOtpApi } from '@/services/authApi';
 import Toast from 'react-native-toast-message';
 
 export const listingData = [
-  { id: '3', label: '1-3', isEnable: true },
-  { id: '2', label: '4-30', isEnable:  true},
-  { id: '1', label: '30+', isEnable: true },
+  { id: '3', label: '1-3 Listings', isEnable: true, icon: 'onetothree' },
+  { id: '2', label: '4-30 Listings', isEnable:  true, icon: 'fourtothirty'},
+  { id: '1', label: '30+ Listings', isEnable: true, icon: 'thirtyplus' },
 ];
 
 export default function useManageListingContainer() {

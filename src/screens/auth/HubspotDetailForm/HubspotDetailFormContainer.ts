@@ -35,6 +35,26 @@ export const CITIES_BY_COUNTRY: Record<string, string[]> = {
   'Other':        ['Other'],
 };
 
+export const COUNTRY_FLAGS: Record<string, string> = {
+  'Saudi Arabia': '🇸🇦',
+  'UAE': '🇦🇪',
+  'Kuwait': '🇰🇼',
+  'Qatar': '🇶🇦',
+  'Bahrain': '🇧🇭',
+  'Oman': '🇴🇲',
+  'Pakistan': '🇵🇰',
+  'India': '🇮🇳',
+  'Egypt': '🇪🇬',
+  'Jordan': '🇯🇴',
+  'Lebanon': '🇱🇧',
+  'Turkey': '🇹🇷',
+  'United Kingdom': '🇬🇧',
+  'United States': '🇺🇸',
+  'Canada': '🇨🇦',
+  'Australia': '🇦🇺',
+  'Other': '🌍',
+};
+
 export default function useHubspotDetailFormContainer() {
   const {
     control,
