@@ -166,6 +166,10 @@ import task_calendar from './task_calendar.svg';
 import deleteTask from './deleteTask.svg';
 import kitchen from './kitchen.svg';
 
+import home from "./home.svg";
+import onetothree from "./1-3.svg";
+import fourtothirty from "./4-30.svg";
+import thirtyplus from "./30+.svg";
 export const icons = {
   eyeSlash: EyeSlash,
   eye: Eye,
@@ -333,5 +337,9 @@ export const icons = {
   assignTask,
   task_calendar,
   deleteTask,
-  kitchen
+  kitchen,
+    home,
+    onetothree,
+    fourtothirty,
+    thirtyplus
 };
