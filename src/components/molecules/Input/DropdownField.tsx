@@ -41,7 +41,6 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   rules,
   dropdownPosition,
   onSelect,
-  extraPayload,
 }) => {
   const error = errors[name]?.message as string;
 
@@ -70,6 +69,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
               !!error && styles.errorBorder,
               disabled && styles.disabled,
             ]}
+            // This styles the actual popup menu
+            containerStyle={styles.popupListContainer}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
             itemTextStyle={styles.itemTextStyle}
@@ -78,7 +79,6 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             valueField="value"
             placeholder={placeholder}
             value={value}
-            // onChange={item => onChange(item.value)}
             onChange={item => {
               onChange(item.value);
               if (onSelect) {
@@ -87,7 +87,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             }}
             disable={disabled}
             renderRightIcon={() => (
-              <Svgicons path="ChevronDownIcon" width={15} height={15} />
+              <Svgicons path="ChevronDownIcon" width={15} height={15} color="#2D3142" />
             )}
             autoScroll={false}
             searchPlaceholder="Search..."
@@ -111,33 +111,41 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     overflow: 'visible',
   },
-  label: {
-    color: Colors.BRUNSWICK_GREEN,
-    marginBottom: 8,
-    fontSize: Metrics.generatedFontSize(14),
-  },
   dropdown: {
-    height: Metrics.verticalScale(56),
-    backgroundColor: Colors.WHITE,
-    borderRadius: 12,
+    height: Metrics.verticalScale(54),
+    // --- GLASS STYLING ---
+    backgroundColor: 'transparent',
+    borderRadius: 24,             
     paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.6)', 
+  },
+  popupListContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    marginTop: 5,
+    borderWidth: 0,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   disabled: {
-    backgroundColor: Colors.ANTI_FLASH_WHITE,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   errorBorder: {
     borderColor: Colors.INDIAN_RED,
   },
   placeholderStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: Colors.SUPER_GREY,
+    color: '#7B8D88', // Matches calendar price color
     fontWeight: '500',
   },
   selectedTextStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: Colors.MIDNIGHT,
+    color: '#1A332C', // Deep forest color for contrast
+    fontWeight: '600',
   },
   itemTextStyle: {
     fontSize: Metrics.generatedFontSize(14),
@@ -150,6 +158,8 @@ const styles = StyleSheet.create({
   },
   inputSearchStyle: {
     color: Colors.MIDNIGHT,
+    borderRadius: 10,
+    backgroundColor: '#F8F9FA',
   },
 });
 
