@@ -7,6 +7,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '../AppText/AppText';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Match original padding and column math
 const CALENDAR_PADDING = s(32);
 const COLUMN_WIDTH = (SCREEN_WIDTH - CALENDAR_PADDING) / 7;
 const SELECTION_HEIGHT = vs(46); 
@@ -22,11 +23,11 @@ const getOTASource = (source?: string) => {
 const getSolidLightColor = (hex: string) => {
   const color = hex?.toUpperCase();
   switch (color) {
-    case '#FF5A5F': return '#FFEBEB'; 
-    case '#A855F7': return '#F3E8FF';
-    case '#003580': return '#EBF3FF';
-    case '#3B82F6': return '#D6E4FF';
-    default: return '#F3F4F6'; 
+    case '#FF5A5F': return 'rgba(255, 90, 95, 0.15)'; 
+    case '#A855F7': return 'rgba(168, 85, 247, 0.15)';
+    case '#003580': return 'rgba(0, 53, 128, 0.15)';
+    case '#3B82F6': return 'rgba(59, 130, 246, 0.15)';
+    default: return 'rgba(243, 244, 246, 0.15)'; 
   }
 };
 
@@ -112,12 +113,10 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
             </View>
           )}
 
-          <View style={[styles.textGroup, ...(showLabel ? [{ marginTop: vs(12) }] : [])]}>
+          <View style={[styles.textGroup, showLabel && isActive && { marginTop: vs(12) }]}>
             <Text style={[styles.dayNumber, { color: isActive ? (isMid ? '#1A332C' : '#FFF') : '#1A332C' } as TextStyle]}>
               {date.day}
             </Text>
-            
-            {/* FIXED: Only show price if the day is NOT part of a booking */}
             {!isActive && (
               <Text style={styles.priceText}>
                 SAR {rate || price || defaultPrice}
@@ -132,7 +131,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
 
 const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: any) => {
   return (
-    <View style={styles.card}>
+    <View style={styles.glassCard}>
       <Calendar
         current={currentDate}
         markingType="custom"
@@ -141,8 +140,35 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: 
         renderArrow={(dir: any) => (
           dir === 'left' ? <ChevronLeft size={ms(22)} color="#A0A0A0" /> : <ChevronRight size={ms(22)} color="#1A332C" />
         )}
+        style={{ backgroundColor: 'transparent' }}
         theme={{
+          backgroundColor: 'transparent',
           calendarBackground: 'transparent',
+          // CRITICAL: Hollow out the internal library components
+          'stylesheet.calendar.main': {
+            container: {
+              paddingLeft: 0,
+              paddingRight: 0,
+              backgroundColor: 'transparent',
+            },
+            monthView: {
+              backgroundColor: 'transparent',
+            }
+          },
+          'stylesheet.calendar.header': {
+            header: {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              backgroundColor: 'transparent',
+            },
+            week: {
+              marginTop: 7,
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              backgroundColor: 'transparent',
+            }
+          },
           monthTextColor: '#1A332C',
           textMonthFontWeight: '700',
           textMonthFontSize: ms(18),
@@ -153,7 +179,15 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: 
 };
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#FFF', width: '100%' },
+  glassCard: { 
+    backgroundColor: 'transparent', 
+    width: '100%',
+    borderRadius: ms(24),
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    overflow: 'hidden',
+    paddingVertical: vs(10),
+  },
   dayCell: {
     width: COLUMN_WIDTH,
     height: vs(55),
