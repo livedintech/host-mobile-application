@@ -54,6 +54,8 @@ export const SERVICE_CONFIG_URLS = {
     EDIT_USER_MANAGEMENT: `${authController}/host/users/{id}`,
     DELETE_USER_MANAGEMENT: `${authController}/host/users/{id}`,
     GET_CHAT_LIST_CITY: `${authController}/states`,
+    GET_SELECT_LISTING: `${authController}/subscriptions`,
+    GET_SUBSCRIPTION_FEATURES: `${authController}/subscription-features?subscription_id={id}`,
     GET_SAVED_REPLIES: `${authController}/chat/saved-replies`,
     GET_SAVED_REPLIES_CHAT_DETAIL: `${authController}/chat/saved-replies?offset={offset}&limit={limit}&listing_id={listing_id}&is_active={is_active}`,
     CREATE_SAVED_REPLIES: `${authController}/chat/saved-replies`,

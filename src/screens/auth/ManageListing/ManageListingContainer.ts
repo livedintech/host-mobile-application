@@ -1,25 +1,18 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
-  ForgotPasswordPayload,
-  ForgotPasswordResponse,
   OtpVerifyResponse,
-  VerifyOtpPayload,
+  VerifyOtpPayload
 } from '@/types/api/authTypes';
-import { forgotPasswordApi, resendOtpApi } from '@/services/authApi';
+import { getSelectListingApi, resendOtpApi } from '@/services/authApi';
 import Toast from 'react-native-toast-message';
-
-export const listingData = [
-  { id: '3', label: '1-3', isEnable: true },
-  { id: '2', label: '4-30', isEnable:  true},
-  { id: '1', label: '30+', isEnable: true },
-];
+import STORAGE_CONST from '@/constants/storage';
 
 export default function useManageListingContainer() {
-  const [selectedListing, setSelectedListing] = useState<string | null>(null);
+  const [selectedListing, setSelectedListing] = useState<number | null>(null);
   const { params } = useRoute();
 
   const {
@@ -28,7 +21,7 @@ export default function useManageListingContainer() {
     isIdle: isIdleResendOtp,
   } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
     mutationFn: resendOtpApi,
-    onSuccess: ({ message }) => {
+    onSuccess: () => {
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: false,
         phone: params,
@@ -40,23 +33,35 @@ export default function useManageListingContainer() {
     },
   });
 
-  const onSelect = useCallback((id: string) => {
-    if(id === '3'){
+  const onSelect = (value: number | undefined) => {
+    if (value === 1) {
 
-    setSelectedListing(id);
-    const payload = {
-      phone_number: params,
-    };
-    resendOtpPayload(payload);
-    } else{
+      setSelectedListing(value);
+      const payload = {
+        phone_number: params,
+      };
+      resendOtpPayload(payload);
+    } else {
       navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM)
-    } 
+    }
 
-  }, []);
+  };
+
+  const { data: data = [] } = useQuery({
+    queryKey: [STORAGE_CONST.SELECT_LISTING],
+    queryFn: getSelectListingApi,
+  });
+
+  const listingData =
+    data?.map((item: { name: string; id: string }) => ({
+      label: item.name,
+      value: item.id,
+    })) || [];
 
   return {
     isLoading: isPendingResendOtp && !isIdleResendOtp,
     selectedListing,
     onSelect,
+    listingData
   };
 }
