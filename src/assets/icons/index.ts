@@ -139,6 +139,10 @@ import transactionIcon from "./transactionIcon.svg";
 import subscriptionIcon from "./subscriptionIcon.svg";
 import noAccountTask from "./noAccountTask.svg";
 import recurringImg from "./recurringImg.svg";
+import home from "./home.svg";
+import onetothree from "./1-3.svg";
+import fourtothirty from "./4-30.svg";
+import thirtyplus from "./30+.svg";
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -281,5 +285,9 @@ export const icons = {
     transactionIcon,
     subscriptionIcon,
     noAccountTask,
-    recurringImg
+    recurringImg,
+    home,
+    onetothree,
+    fourtothirty,
+    thirtyplus
 };

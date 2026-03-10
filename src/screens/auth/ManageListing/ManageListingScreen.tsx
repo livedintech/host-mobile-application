@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, ScrollView, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { s, vs } from 'react-native-size-matters';
+import { s, vs, ms } from 'react-native-size-matters';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -15,13 +15,10 @@ const FIGMA_TEAL = '#20957B';
 
 const ManageListingScreen = () => {
   const { onSelect, isLoading } = useManageListingContainer();
-  
-  // 1. Initialize as string | null to match listingData and container types
   const [localSelectedId, setLocalSelectedId] = useState<string | null>(null);
 
   const handleNextPress = () => {
     if (localSelectedId !== null) {
-      // 2. Both are strings now, so this is a direct pass
       onSelect(localSelectedId);
     }
   };
@@ -30,15 +27,18 @@ const ManageListingScreen = () => {
     return (
       <SafeAreaView style={styles.loaderContainer}>
         <ActivityIndicator size="large" color={FIGMA_TEAL} />
-        <AppText
-          text="Loading listings..."
-          fontSize={14}
-          color={Colors.SUPER_GREY}
-          style={{ marginTop: 10 }}
-        />
       </SafeAreaView>
     );
   }
+
+  // Define button style dynamically to avoid the 'false | Style' type error
+  const getNextButtonStyle = (): ViewStyle[] => {
+    const baseStyle: ViewStyle = styles.nextBtn;
+    if (!localSelectedId) {
+      return [baseStyle, styles.nextBtnDisabled];
+    }
+    return [baseStyle];
+  };
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -46,66 +46,75 @@ const ManageListingScreen = () => {
         <ScrollView 
           contentContainerStyle={styles.scrollContent} 
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          bounces={false}
         >
           <View style={styles.mainContent}>
             
             {/* Title Section */}
             <View style={styles.headerSection}>
               <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                How many{' '}
-                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                  listings
-                </AppText>
-              </AppText>
-              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                you manage?
+                How many&nbsp;
+                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>listings</AppText> do you manage?
               </AppText>
             </View>
 
-            {/* Selection Grid */}
-            <View style={styles.grid}>
-              {listingData.map((item) => {
-                // 3. Types match: string | null === string
-                const isSelected = localSelectedId === item.id;
-                
-                return (
-                  <ButtonView 
-                    key={item.id}
-                    activeOpacity={0.9}
-                    // 4. Passing string to string state - No more ts(2345)
-                    onPress={() => setLocalSelectedId(item.id)}
-                    style={[styles.card, isSelected && styles.cardActive]}
-                    disabled={!item?.isEnable}
-                  >
-                    <Svgicons 
-                      path='property' 
-                      size={40} 
-                      color={isSelected ? FIGMA_TEAL : Colors.BLACK}
-                    />
-                    <AppText 
-                      text={item.label} 
-                      fontSize={16} 
-                      type={isSelected ? "Bold" : "Medium"} 
-                      color={isSelected ? FIGMA_TEAL : Colors.BLACK}
-                      style={styles.cardLabel}
-                    />
-                  </ButtonView>
-                );
-              })}
+            {/* Glassmorphism Selection Card */}
+            <View style={styles.glassCard}>
+              <View style={styles.cardHeader}>
+                <AppText text="Listing Selection" type="Bold" fontSize={22} color={Colors.BLACK} />
+                <View style={styles.iconCircle}>
+                  <Svgicons path="home" size={24} color={Colors.BLACK} />
+                </View>
+              </View>
+
+              <View style={styles.listWrapper}>
+                {listingData.map((item) => {
+                  const isSelected = localSelectedId === item.id;
+                  
+                  return (
+                    <ButtonView 
+                      key={item.id}
+                      activeOpacity={0.8}
+                      onPress={() => setLocalSelectedId(item.id)}
+                      style={[
+                        styles.listItem, 
+                        isSelected ? styles.listItemActive : {}
+                      ]}
+                    >
+                      <View style={styles.itemContent}>
+                        <View style={styles.iconWrapper}>
+                          <Svgicons 
+                            path={item.icon as any} 
+                            size={30} 
+                            color={Colors.BLACK}
+                          />
+                        </View>
+                        <AppText 
+                          text={item.label} 
+                          fontSize={18} 
+                          type={isSelected ? "Bold" : "Medium"} 
+                          color={Colors.BLACK}
+                          style={styles.itemLabel}
+                        />
+                      </View>
+                    </ButtonView>
+                  );
+                })}
+              </View>
             </View>
 
-            {/* Bottom Action Button - Now handles navigation only */}
+            {/* Bottom Button Section */}
             <View style={styles.bottomSec}>
               <AppButton
                 title="Next"
                 onPress={handleNextPress}
                 disabled={localSelectedId === null || isLoading}
-                backgroundColor={FIGMA_TEAL}
-                color={Colors.WHITE}
+                backgroundColor={localSelectedId ? FIGMA_TEAL : 'rgba(255, 255, 255, 0.4)'}
+                color={localSelectedId ? Colors.WHITE : 'rgba(0, 0, 0, 0.3)'}
                 borderRadius={100}
                 type="Bold"
                 fontSize={18}
+                style={getNextButtonStyle()}
               />
             </View>
           </View>
@@ -118,51 +127,102 @@ const ManageListingScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(30),
+  },
+  headerSection: {
+    marginBottom: vs(35),
+  },
+  glassCard: {
+    // backgroundColor: 'rgba(255, 255, 255, 0.45)',
+    backgroundColor: 'rgba(212, 223, 221, 0.5)',
+    borderRadius: ms(32),
+    padding: s(24),
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.7)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(25),
+  },
+  iconCircle: {
+    width: s(44),
+    height: s(44),
+    borderRadius: ms(14),
+    backgroundColor: 'rgba(218, 234, 231, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,  
+    
+    // For Android
+    elevation: 4, 
+
+    // Subtle border to define the shape on the glass background
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)', 
+  },
+  listWrapper: {
+    gap: vs(14),
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: vs(64),
+    paddingHorizontal: s(20),
+    borderRadius: ms(16),
+    backgroundColor: 'rgba(218, 234, 231, 0.8)',
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  listItemActive: {
+    backgroundColor: '#FFFFFF',
+    borderColor: FIGMA_TEAL,
+    borderWidth: 1.8,
+  },
+  itemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    width: s(30),
+    alignItems: 'center',
+  },
+  itemLabel: {
+    marginLeft: s(12),
+  },
+  bottomSec: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: vs(40),
+  },
+  nextBtn: {
+    width: '100%',
+    height: vs(56),
+    justifyContent: 'center',
+    alignItems: 'center',     
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  nextBtnDisabled: {
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-  },
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: s(24),
-    paddingTop: vs(60),
-  },
-  headerSection: {
-    marginBottom: vs(50),
-  },
-  grid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    flexWrap: 'wrap',
-  },
-  card: {
-    width: '30%', 
-    aspectRatio: 1,
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    marginBottom: vs(15),
-  },
-  cardActive: {
-    borderColor: FIGMA_TEAL,
-    borderWidth: 2,
-    backgroundColor: '#FFFFFF',
-  },
-  cardLabel: {
-    marginTop: vs(10),
-    textAlign: 'center',
-  },
-  bottomSec: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: vs(30),
-    marginTop: vs(40),
   },
 });
 

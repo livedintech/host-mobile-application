@@ -11,6 +11,7 @@ export const onboardingData = [
         subtitle: 'Powered by intelligent automation',
         primaryBtn: 'Continue',
         secondaryBtn: 'Skip',
+        bg: require('@/assets/img/unlock_onboard.png'),
     },
     {
         id: '2',
@@ -19,6 +20,7 @@ export const onboardingData = [
         primaryBtn: 'Continue',
         secondaryBtn: 'Skip',
         isItalicTitle: true,
+        bg: require('@/assets/img/intelligent.png'),
     },
     {
         id: '3',
@@ -26,6 +28,7 @@ export const onboardingData = [
         subtitle: 'Agent ALI does the work. You stay in charge.',
         primaryBtn: 'Get Started',
         secondaryBtn: 'Login with Phone Number',
+        bg: require('@/assets/img/control.png'),
     },
 ];
 
