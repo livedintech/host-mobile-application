@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import { navigate } from '@/services/navigationService'; // Apna navigation service import karein
-import NavigationRoutes from '@/navigation/NavigationRoutes'; // Apne routes import karein
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 interface PaginationProps {
   activeIndex: number;
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: Metrics.verticalScale(35),
-    backgroundColor: Colors.BRUNSWICK_GREEN_16, // Light background
+    // backgroundColor: Colors.BRUNSWICK_GREEN_16, 
     width: '100%',
   },
   dot: {
