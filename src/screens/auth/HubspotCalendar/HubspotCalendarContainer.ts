@@ -1,4 +1,3 @@
-// screens/HubspotMeeting/CalendarScreen/CalendarScreenContainer.ts
 
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -103,8 +102,8 @@ export default function useHubspotCalendarContainer(
       submitLeadAndBookMeeting(
         {
           fullName: userInfo.fullName,
-          phone: userInfo.phone,
-          email: userInfo.email,
+          phone: userInfo.phone || '',
+          email: userInfo.email || '',
           country: userInfo.country,
           city: userInfo.city,
         },

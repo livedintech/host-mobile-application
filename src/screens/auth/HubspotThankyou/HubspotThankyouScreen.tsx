@@ -1,88 +1,78 @@
-// screens/HubspotMeeting/ThankYouScreen/ThankYouScreen.tsx
-
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { s, vs } from 'react-native-size-matters';
+
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { Colors } from '@/theme/colors';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+
+const FIGMA_TEAL = '#20957B';
 
 const ThankYouScreen = () => {
   const handleClose = () => {
-    // navigate(NavigationRoutes.MAIN_STACK.HOME);
-    // 👆 Replace with your actual home route
+    navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Background circles */}
-      <View style={styles.circleContainer} pointerEvents="none">
-        <View style={styles.circleLarge} />
-        <View style={styles.circleMedium} />
-        <View style={styles.circleSmall} />
-      </View>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <SafeAreaView style={styles.container}>
+        
+        {/* --- Central Content --- */}
+        <View style={styles.content}>
+          
+          <View style={styles.starIcon}>
+             <Svgicons path="hubspot_thanks" size={100} />
+          </View>
 
-      {/* ─── Content ─────────────────────────────────────────────────────────── */}
-      <View style={styles.content}>
-        <AppText
-          text="Thank you! Our agent will contact you soon."
-          textAlign="center"
-          fontSize={32}
-          px={36}
-        />
-      </View>
+          <AppText type="Bold" fontSize={32} color={Colors.BLACK} textAlign="center" lineHeight={40}>
+            Thank you our agent {'\n'}
+            will <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>contact you</AppText> {'\n'}
+            soon!
+          </AppText>
+        </View>
 
-      {/* ─── Close Button ────────────────────────────────────────────────────── */}
-      <View style={styles.footer}>
-        <AppButton title="Close" onPress={handleClose} />
-      </View>
-    </SafeAreaView>
+        {/* --- Footer Button --- */}
+        <View style={styles.btnWrapper}>
+          <AppButton
+            title="Close"
+            onPress={handleClose}
+            backgroundColor={FIGMA_TEAL}
+            color={Colors.WHITE}
+            borderRadius={100}
+            type="Bold"
+            fontSize={18}
+          />
+        </View>
+      </SafeAreaView>
+    </BGImage>
   );
 };
 
-export default ThankYouScreen;
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
+  container: { 
+    flex: 1 
+  },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: s(24),
   },
-  footer: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-  circleContainer: {
-    ...StyleSheet.absoluteFillObject,
+  starIcon: {
+    marginBottom: vs(20),
+    height: vs(100),
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: -1,
   },
-  circleLarge: {
-    width: Metrics.screenWidth * 1.5,
-    height: Metrics.screenWidth * 1.5,
-    borderRadius: 1000,
-    borderWidth: 1,
-    borderColor: '#F8F8F8',
-    position: 'absolute',
-  },
-  circleMedium: {
-    width: Metrics.screenWidth * 1.1,
-    height: Metrics.screenWidth * 1.1,
-    borderRadius: 1000,
-    borderWidth: 1,
-    borderColor: '#F4F4F4',
-    position: 'absolute',
-  },
-  circleSmall: {
-    width: Metrics.screenWidth * 0.7,
-    height: Metrics.screenWidth * 0.7,
-    borderRadius: 1000,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    position: 'absolute',
+  btnWrapper: {
+    paddingHorizontal: s(24),
+    paddingBottom: vs(40),
   },
 });
+
+export default ThankYouScreen;

@@ -1,5 +1,5 @@
 // ⚠️ TEMP ONLY — MOVE TO BACKEND LATER
-export const HUBSPOT_ACCESS_TOKEN = 'pat-na1-0d3ea7c2-bcdf-44d7-851d-b641dc84a4c4';
+export const HUBSPOT_ACCESS_TOKEN = 'pat-na1-e0dac369-5f93-4eba-b96a-ea18f767487f';
 
 // Slug for https://meetings.hubspot.com/SLUG
 export const AGENTS = [
