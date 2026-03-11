@@ -5,6 +5,7 @@ import {
   AddSectionPayload,
   InsertChecklistItemPayload,
   taskManagementCreateApiPayload,
+  UpdateChecklistItemPayload
 } from '@/types/api/taskManagentType';
 
 //Get Category
@@ -47,7 +48,7 @@ export const getTaskManagementVendor = async () => {
 };
 
 // Create TASK DRAFT
-export const taskManagementCreateTaskDraft = async (
+export const taskManagementCreateTask = async (
   payload: taskManagementCreateApiPayload,
 ) => {
   const { ok, response, data } = await apiService.post(
@@ -59,6 +60,8 @@ export const taskManagementCreateTaskDraft = async (
   }
   throw response;
 };
+
+
 
 //GET CHECKLIST
 export const getTaskChecklist = async (
@@ -142,7 +145,7 @@ interface editChecklistItemPayload {
   ids: number[];
 }
 
-export const editChecklistItem = async (payload: editChecklistItemPayload) => {
+export const filterChecklistItem = async (payload: editChecklistItemPayload) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_SINGLE_CHECKLIST_ITEM_UPDATE,
     { id: payload.task_id },
@@ -157,10 +160,27 @@ export const editChecklistItem = async (payload: editChecklistItemPayload) => {
   throw new Error(response?.message || 'Failed to edit automation template');
 };
 
+//CHECKLIST ITEM NAME UPDATE
+export const updateSingleChecklistItem = async (
+  payload: UpdateChecklistItemPayload,
+) => {
+  const { ok, response, data } = await apiService.put(
+    SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_ITEM_NAME_UPDATE,
+    payload,
+  );
+
+  if (ok) {
+    return data;
+  }
+
+  throw new Error(response?.message || 'Failed to update checklist item');
+};
+
 // TASK CRAETE STATUS UPDATE
 interface taskCreateStatusUpdatePayload {
   task_id: number;
   is_draft: 0 | 1;
+  description: string;
 }
 export const taskCreateStatusUpdate = async (
   payload: taskCreateStatusUpdatePayload,

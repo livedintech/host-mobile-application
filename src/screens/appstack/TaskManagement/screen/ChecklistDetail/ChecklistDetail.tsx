@@ -1,139 +1,164 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
-import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import InputField from '@/components/molecules/Input/InputField';
-import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Checkbox from '@/components/molecules/Input/CheckBox';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import useChecklistDetailContainer from '../../container/ChecklistDetailContainer/ChecklistDetailContainer';
+import { navigate, goBack } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ChecklistDetail = ({ route }: any) => {
-  const title = route?.params?.title || 'Bedroom 2';
+  const { title, sectionId } = route.params;
+  const {
+    localItems,
+    isLoading,
+    toggleItem,
+    addItem,
+    updateItem,
+    saveAndContinue,
+    onRefresh,
+  } = useChecklistDetailContainer(sectionId);
+
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['45%'], []);
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null); // Track which item we are editing
-  
-  const [taskData, setTaskData] = useState([
-    { id: 1, text: 'Empty the trash bins and replace the new liner', checked: true },
-    { id: 2, text: 'Windows glass & channels cleaned', checked: true },
-    { id: 3, text: 'Curtains Set / Unstained', checked: true },
-    { id: 4, text: 'Wardrobe Check and Dust', checked: true },
-    { id: 5, text: 'Floor Mopped / Carpet Vacuum', checked: true },
-    { id: 6, text: 'Sofa Set & Cushions', checked: true },
-    { id: 7, text: 'Ceiling Lights Working', checked: true },
-  ]);
-
-  const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
     defaultValues: { itemName: '' },
   });
 
-  const toggleTask = (id: number) => {
-    setTaskData(prev => prev.map(item => 
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
+  const handleOpenAdd = () => {
+    setSelectedItem(null);
+    reset({ itemName: '' });
+    bottomSheetRef.current?.expand();
   };
 
-  const handleOpenPress = (item?: any) => {
-    if (item) {
-      setEditingId(item.id);
-      setValue('itemName', item.text); // Populate the input with existing text
-    } else {
-      setEditingId(null);
-      reset({ itemName: '' });
-    }
+  const handleOpenEdit = (item: any) => {
+    setSelectedItem({ id: item.id, name: item.name });
+    setValue('itemName', item.name);
     bottomSheetRef.current?.expand();
   };
 
   const handleClosePress = () => {
     bottomSheetRef.current?.close();
-    setEditingId(null);
+    setSelectedItem(null);
     reset();
   };
 
-  const onSubmit = (data: any) => {
-    if (editingId) {
-      // UPDATE existing item
-      setTaskData(prev => prev.map(item => 
-        item.id === editingId ? { ...item, text: data.itemName } : item
-      ));
+  const onFormSubmit = (data: any) => {
+    if (selectedItem) {
+      updateItem(selectedItem.id, data.itemName);
     } else {
-      // ADD new item
-      const newItem = {
-        id: Date.now(),
-        text: data.itemName,
-        checked: true
-      };
-      setTaskData(prev => [...prev, newItem]);
+      addItem(data.itemName);
     }
     handleClosePress();
   };
 
-  const onRefresh = useCallback(() => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 2000);
-  }, []);
+  const handleSaveAndContinue = async () => {
+    try {
+      await saveAndContinue();
+      goBack();
+    } catch (error) {
+      // Error handled in container mutation
+    }
+  };
 
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} />,
-    []
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+      />
+    ),
+    [],
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <GlassCard width="100%" style={styles.taskCard}>
+        <View style={styles.taskRow}>
+          <Checkbox
+            isChecked={item.isChecked}
+            onPress={() => toggleItem(item.id)}
+          />
+          <ButtonView
+            style={{ flex: 1, marginLeft: 8 }}
+            onPress={() => handleOpenEdit(item)}
+          >
+            <AppText text={item.name} fontSize={14} color={Colors.BLACK} />
+          </ButtonView>
+        </View>
+      </GlassCard>
+    ),
+    [toggleItem],
+  );
+
+  const ListHeader = () => (
+    <View>
+      <AppText
+        text={`${title} Checklist`}
+        fontSize={28}
+        type="Bold"
+        mb={12}
+        mt={20}
+      />
+      <View style={styles.addMoreContainer}>
+        <ButtonView onPress={handleOpenAdd}>
+          <GlassCard width="auto" style={styles.addMoreBtn}>
+            <AppText text="Add more" fontSize={12} type="Medium" />
+          </GlassCard>
+        </ButtonView>
+      </View>
+    </View>
   );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
-
-
-        <RefreshableScrollView
-          style={styles.content}
+        <FlatListSimpleHandler
+          data={localItems}
+          renderItem={renderItem}
+          isLoading={isLoading}
           onRefresh={onRefresh}
-          refreshing={isRefreshing}
-          isLoading={isPageLoading}
-        >
-          <AppText text={`${title} Checklist`} fontSize={28} type="Bold" lineHeight={38} mb={12} />
-          <AppText 
-            text="Please select what you require from the user for this checklist."
-            fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} mb={20}
+          contentContainerStyle={styles.listContent}
+          HeaderComponent={<ListHeader />}
+          ListFooterComponent={<View style={{ height: 120 }} />}
+          keyExtractor={item => item.id.toString()}
+        />
+
+        <View style={styles.footer}>
+          <AppButton
+            title="Save"
+            backgroundColor={Colors.PRIMARY_TEAL}
+            borderColor={Colors.PRIMARY_TEAL}
+            color={Colors.WHITE}
+            onPress={handleSaveAndContinue}
+            loading={isLoading}
           />
-
-          <View style={styles.addMoreContainer}>
-            <TouchableOpacity onPress={() => handleOpenPress()}>
-              <GlassCard width="auto" style={styles.addMoreBtn}>
-                <AppText text="Add more" fontSize={12} type="Medium" />
-              </GlassCard>
-            </TouchableOpacity>
-          </View>
-
-          {taskData.map((item) => (
-            <TouchableOpacity key={item.id} activeOpacity={0.8} onPress={() => handleOpenPress(item)}>
-                <GlassCard width="100%" style={styles.taskCard}>
-                <View style={styles.taskRow}>
-                    <Checkbox 
-                    isChecked={item.checked} 
-                    onPress={() => toggleTask(item.id)} 
-                    />
-                    <AppText
-                    text={item.text}
-                    fontSize={14}
-                    color={Colors.BLACK}
-                    ml={12}
-                    style={{ flex: 1 }}
-                    />
-                </View>
-                </GlassCard>
-            </TouchableOpacity>
-          ))}
-          <View style={{ height: 60 }} />
-        </RefreshableScrollView>
+        </View>
 
         <BottomSheet
           ref={bottomSheetRef}
@@ -141,31 +166,32 @@ const ChecklistDetail = ({ route }: any) => {
           snapPoints={snapPoints}
           enablePanDownToClose
           backdropComponent={renderBackdrop}
-          handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
-              <AppText text={editingId ? "Update Item" : "Add Item"} fontSize={24} type="Bold" />
-              <TouchableOpacity onPress={handleClosePress}>
-                <Svgicons path="closeIcon" size={24} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.inputWrapper}>
-              <InputField
-                name="itemName"
-                label="Item Name"
-                control={control}
-                errors={errors}
-                placeholder="Enter checklist item"
-                rules={{ required: 'Item name is required' }}
+              <AppText
+                text={selectedItem ? 'Update Item' : 'Add Item'}
+                fontSize={24}
+                type="Bold"
               />
+              <ButtonView onPress={handleClosePress}>
+                <Svgicons path="closeIcon" size={24} />
+              </ButtonView>
             </View>
+            <InputField
+              name="itemName"
+              control={control}
+              errors={errors}
+              placeholder="Enter checklist item"
+              rules={{ required: 'Required' }}
+            />
             <AppButton
-              title={editingId ? "Update" : "Add"}
+              title={selectedItem ? 'Update' : 'Add'}
               mt={20}
               backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor={Colors.PRIMARY_TEAL}
               color={Colors.WHITE}
-              onPress={handleSubmit(onSubmit)}
+              onPress={handleSubmit(onFormSubmit)}
             />
           </BottomSheetView>
         </BottomSheet>
@@ -176,20 +202,31 @@ const ChecklistDetail = ({ route }: any) => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
-  content: { flex: 1, paddingHorizontal: 25 },
-  addMoreContainer: { alignItems: 'flex-end', marginBottom: 8 },
+  listContent: { paddingHorizontal: 25 },
+  addMoreContainer: { alignItems: 'flex-end', marginBottom: 12 },
   addMoreBtn: { paddingVertical: 8, paddingHorizontal: 15, borderRadius: 12 },
   taskCard: {
     minHeight: 64,
     justifyContent: 'center',
     marginBottom: 12,
     borderRadius: 20,
+    paddingHorizontal: 15,
     paddingVertical: 10,
   },
   taskRow: { flexDirection: 'row', alignItems: 'center' },
+  footer: {
+    position: 'absolute',
+    bottom: 30,
+    left: 25,
+    right: 25,
+  },
   sheetContent: { padding: 25 },
-  sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  inputWrapper: { marginTop: 10 },
+  sheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
 });
 
 export default ChecklistDetail;
