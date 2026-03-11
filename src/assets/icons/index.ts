@@ -170,6 +170,8 @@ import home from "./home.svg";
 import onetothree from "./1-3.svg";
 import fourtothirty from "./4-30.svg";
 import thirtyplus from "./30+.svg";
+import hubspot_thanks from "./hubspot_thanks.svg";
+
 export const icons = {
   eyeSlash: EyeSlash,
   eye: Eye,
@@ -341,5 +343,6 @@ export const icons = {
     home,
     onetothree,
     fourtothirty,
-    thirtyplus
+    thirtyplus,
+    hubspot_thanks
 };

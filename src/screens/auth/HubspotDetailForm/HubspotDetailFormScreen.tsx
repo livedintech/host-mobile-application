@@ -19,7 +19,6 @@ import useHubspotDetailFormContainer, { COUNTRIES, COUNTRY_FLAGS } from './Hubsp
 const FIGMA_TEAL = '#20957B';
 
 const HubspotDetailFormScreen = () => {
-  // KEEPING ALL LOGIC EXACTLY AS PROVIDED
   const {
     control,
     errors,
@@ -42,6 +41,7 @@ const HubspotDetailFormScreen = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* --- Header Section --- */}
           <View style={styles.headerSection}>
             <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40}>
               Please enter your {'\n'}
@@ -56,6 +56,7 @@ const HubspotDetailFormScreen = () => {
             />
           </View>
 
+          {/* --- Form Section --- */}
           <View style={styles.formContainer}>
             <InputField
               name="fullName"
@@ -65,6 +66,25 @@ const HubspotDetailFormScreen = () => {
               placeholder="Enter Legal Name"
             />
 
+            <InputField
+              name="phone"
+              control={control}
+              errors={errors}
+              label="Phone Number *"
+              placeholder="+966 5XX XXX XXXX"
+              keyboardType="phone-pad"
+            />
+
+            <InputField
+              name="email"
+              control={control}
+              errors={errors}
+              label="Email *"
+              placeholder="example@email.com"
+              keyboardType="email-address"
+            />
+
+            {/* Country Picker Trigger */}
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
@@ -93,6 +113,7 @@ const HubspotDetailFormScreen = () => {
               </View>
             </TouchableOpacity>
 
+            {/* City Picker Trigger */}
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
@@ -131,7 +152,7 @@ const HubspotDetailFormScreen = () => {
           </View>
         </ScrollView>
 
-        {/* ─── Country Picker Logic (Untouched) ─────────────────── */}
+        {/* --- Country Picker Bottom Sheet --- */}
         {showCountryPicker && (
           <View style={styles.pickerOverlay}>
             <TouchableOpacity style={styles.pickerBackdrop} onPress={() => setShowCountryPicker(false)} />
@@ -149,24 +170,19 @@ const HubspotDetailFormScreen = () => {
                     key={c}
                     style={[styles.pickerItem, selectedCountry === c && styles.pickerItemSelected]}
                     onPress={() => {
-                      onCountrySelect(c); // This triggers the city population in your container
+                      onCountrySelect(c);
                       setShowCountryPicker(false);
                     }}
                   >
                     <View style={styles.countryRow}>
-                      <AppText 
-                        text={COUNTRY_FLAGS[c] || '🏳️'} 
-                        fontSize={22} 
-                        mr={12} 
-                      />
+                      <AppText text={COUNTRY_FLAGS[c] || '🏳️'} fontSize={22} mr={12} />
                       <AppText
                         text={c}
                         fontSize={16}
-                        color={selectedCountry === c ? '#20957B' : '#222'}
+                        color={selectedCountry === c ? FIGMA_TEAL : '#222'}
                         type={selectedCountry === c ? 'Bold' : 'Regular'}
                       />
                     </View>
-                    {/* <AppText text={c} fontSize={15} color={selectedCountry === c ? FIGMA_TEAL : Colors.BLACK} /> */}
                     {selectedCountry === c && <AppText text="✓" fontSize={16} color={FIGMA_TEAL} />}
                   </TouchableOpacity>
                 ))}
@@ -175,7 +191,7 @@ const HubspotDetailFormScreen = () => {
           </View>
         )}
 
-        {/* ─── City Picker Logic (Untouched) ────────────────────── */}
+        {/* --- City Picker Bottom Sheet --- */}
         {showCityPicker && (
           <View style={styles.pickerOverlay}>
             <TouchableOpacity style={styles.pickerBackdrop} onPress={() => setShowCityPicker(false)} />
@@ -209,7 +225,6 @@ const HubspotDetailFormScreen = () => {
   );
 };
 
-// ... Styles (using vs, s, ms for responsiveness as before)
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: {
@@ -242,9 +257,31 @@ const styles = StyleSheet.create({
     maxHeight: '60%', 
     paddingBottom: vs(32) 
   },
-  pickerHandle: { width: s(40), height: vs(4), backgroundColor: '#ddd', borderRadius: 2, alignSelf: 'center', marginTop: 10, marginBottom: 4 },
-  pickerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  pickerItem: { paddingHorizontal: 20, paddingVertical: 14, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  pickerHandle: { 
+    width: s(40), 
+    height: vs(4), 
+    backgroundColor: '#ddd', 
+    borderRadius: 2, 
+    alignSelf: 'center', 
+    marginTop: 10, 
+    marginBottom: 4 
+  },
+  pickerHeader: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingHorizontal: 20, 
+    paddingVertical: 14, 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#eee' 
+  },
+  pickerItem: { 
+    paddingHorizontal: 20, 
+    paddingVertical: 14, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  },
   pickerItemSelected: { backgroundColor: '#F0F7F4' },
 });
 
