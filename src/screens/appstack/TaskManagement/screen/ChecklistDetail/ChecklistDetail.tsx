@@ -43,7 +43,6 @@ const ChecklistDetail = ({ route }: any) => {
     id: number;
     name: string;
   } | null>(null);
-
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['25%'], []);
 

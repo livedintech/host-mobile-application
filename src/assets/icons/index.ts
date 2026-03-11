@@ -171,6 +171,14 @@ import onetothree from "./1-3.svg";
 import fourtothirty from "./4-30.svg";
 import thirtyplus from "./30+.svg";
 import hubspot_thanks from "./hubspot_thanks.svg";
+import edit_pencil_icon from './edit_pencil_icon.svg';
+import copiedIcon from './copiedIcon.svg';
+import taskTimeline from './taskTimeline.svg';
+import taskCalendar from './taskCalendar.svg';
+import taskStartDate from './taskStartDate.svg';
+import taskStar from './taskStar.svg';
+import taskEndDate from './taskEndDate.svg';
+import fallbackChecklistIcon from './fallbackChecklistIcon.svg';
 
 export const icons = {
   eyeSlash: EyeSlash,
@@ -344,5 +352,13 @@ export const icons = {
     onetothree,
     fourtothirty,
     thirtyplus,
-    hubspot_thanks
+    hubspot_thanks,
+  edit_pencil_icon,
+  copiedIcon,
+  taskTimeline,
+  taskCalendar,
+  taskStartDate,
+  taskStar,
+  taskEndDate,
+  fallbackChecklistIcon,
 };
