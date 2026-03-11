@@ -7,6 +7,8 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { vs } from 'react-native-size-matters';
 
 const AgentIntroScreen = () => {
     
@@ -15,65 +17,70 @@ const AgentIntroScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Title Section */}
-        <View style={styles.introSection}>
-          <View style={styles.titleRow}>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Title Section */}
+          <View style={[styles.introSection, { alignItems: 'flex-start' }]}>
+            <View style={styles.titleRow}>
+              <AppText
+                text="Hi, I’m "
+                fontSize={32}
+                type="Medium"
+                color={Colors.BLACK}
+              />
+              <AppText
+                text="Agent A.I."
+                fontSize={32}
+                type="BoldItalic"
+                color={Colors.BLACK}
+              />
+            </View>
             <AppText
-              text="Hi, I’m "
+              text="Let’s get you started."
               fontSize={32}
               type="Medium"
               color={Colors.BLACK}
+              textAlign="left" // Changed from center
             />
+
             <AppText
-              text="Agent A.I."
-              fontSize={32}
-              type="BoldItalic"
-              color={Colors.BLACK}
+              text="I’m your dedicated expert to guide you from scratch; from creating your listing to securing your first booking. No experience needed."
+              textAlign="left" // Changed from center
+              color={Colors.PINE_FOREST}
+              mt={20}
+              fontSize={15}
+              lineHeight={22}
             />
           </View>
-          <AppText
-            text="Let’s get you started."
-            fontSize={32}
-            type="Medium"
-            color={Colors.BLACK}
-            textAlign="center"
-          />
 
-          <AppText
-            text="I’m your dedicated expert to guide you from scratch; from creating your listing to securing your first booking. No experience needed."
-            textAlign="center"
-            color={Colors.PINE_FOREST}
-            mt={20}
-            fontSize={15}
-            lineHeight={22}
-          />
-        </View>
+          {/* Agent/Sphere Graphic */}
+          <View style={styles.graphicContainer}>
+            <Image
+              source={require('@/assets/img/agent_ali.png')}
+              style={styles.sphereImage}
+              resizeMode="contain"
+            />
+          </View>
 
-        {/* Agent/Sphere Graphic */}
-        <View style={styles.graphicContainer}>
-          <Image
-            source={require('@/assets/img/agent_ali.png')}
-            style={styles.sphereImage}
-            resizeMode="contain"
+          {/* Action Button */}
+          <AppButton
+            mt={62}
+            title="Start my Setup"
+            style={styles.connectBtn}
+            onPress={goToLoginViaPhoneNumber}
+            color='#FFFFFF'
           />
-        </View>
-
-        {/* Action Button */}
-        <AppButton
-          mt={62}
-          title="Start my Setup"
-          onPress={goToLoginViaPhoneNumber}
-        />
-      </ScrollView>
+        </ScrollView>
 
       {/* Pagination - Active dot is the 3rd one */}
       <Pagination activeIndex={2} />
     </View>
+    </BGImage>
+    
   );
 };
 
@@ -82,8 +89,17 @@ export default AgentIntroScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
+  connectBtn: {
+      backgroundColor: '#21AA8F',
+      borderRadius: 100,
+      height: vs(52),
+      width: '100%',
+      marginTop: vs(40),
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 0,
+    },
   scrollContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
