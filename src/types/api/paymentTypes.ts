@@ -1,12 +1,13 @@
 export interface getSubscriptionSaveCardsPayloadType {
-    customer_identifier:number
+    customer_identifier:string | null | undefined
 }
 
 export interface savePaymentinfoPayloadType {
-  host_id: string;
-  amount: number;
-  token: string;
-  card_type: string;
-  customer_identifier: string;
-  is_active: boolean;
+  phone_number?: string;
+  amount?: number;
+  token?: string;
+  card_type?: string;
+  is_active?: boolean;
+  subscription_id?:number;
+  auto_renew?:boolean
 }

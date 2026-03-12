@@ -1,25 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
-import { useMutation } from '@tanstack/react-query';
-import {
-  ForgotPasswordPayload,
-  ForgotPasswordResponse,
-  OtpVerifyResponse,
-  VerifyOtpPayload,
-} from '@/types/api/authTypes';
-import { forgotPasswordApi, resendOtpApi } from '@/services/authApi';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { OtpVerifyResponse, VerifyOtpPayload } from '@/types/api/authTypes';
+import { getSelectListingApi, resendOtpApi } from '@/services/authApi';
 import Toast from 'react-native-toast-message';
-
-export const listingData = [
-  { id: '3', label: '1-3 Listings', isEnable: true, icon: 'onetothree' },
-  { id: '2', label: '4-30 Listings', isEnable:  true, icon: 'fourtothirty'},
-  { id: '1', label: '30+ Listings', isEnable: true, icon: 'thirtyplus' },
-];
+import STORAGE_CONST from '@/constants/storage';
 
 export default function useManageListingContainer() {
-  const [selectedListing, setSelectedListing] = useState<string | null>(null);
+  const [localSelectedId, setLocalSelectedId] = useState<number | null>(null);
   const { params } = useRoute();
 
   const {
@@ -28,11 +18,11 @@ export default function useManageListingContainer() {
     isIdle: isIdleResendOtp,
   } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
     mutationFn: resendOtpApi,
-    onSuccess: ({ message }) => {
+    onSuccess: () => {
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: false,
         phone: params,
-        listing_count: selectedListing
+        listing_count: localSelectedId,
       });
     },
     onError: ({ message }) => {
@@ -40,23 +30,36 @@ export default function useManageListingContainer() {
     },
   });
 
-  const onSelect = useCallback((id: string) => {
-    if(id === '3'){
+  const onSelect = (value: number | null) => {
+    if (!value) return;
+    
+    // Assuming 1 is the ID for the first option. Adjust according to your DB IDs.
+    if (value === 1) {
+      const payload = {
+        phone_number: params,
+      };
+      resendOtpPayload(payload);
+    } else {
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM);
+    }
+  };
 
-    setSelectedListing(id);
-    const payload = {
-      phone_number: params,
-    };
-    resendOtpPayload(payload);
-    } else{
-      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM)
-    } 
+  const { data: data = [] } = useQuery({
+    queryKey: [STORAGE_CONST.SELECT_LISTING],
+    queryFn: getSelectListingApi,
+  });
 
-  }, []);
+  const listingData =
+    data?.map((item: { name: string; id: string }) => ({
+      label: item.name,
+      value: item.id,
+    })) || [];
 
   return {
     isLoading: isPendingResendOtp && !isIdleResendOtp,
-    selectedListing,
+    localSelectedId,
+    setLocalSelectedId,
     onSelect,
+    listingData,
   };
 }

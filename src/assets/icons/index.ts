@@ -139,6 +139,13 @@ import transactionIcon from "./transactionIcon.svg";
 import subscriptionIcon from "./subscriptionIcon.svg";
 import noAccountTask from "./noAccountTask.svg";
 import recurringImg from "./recurringImg.svg";
+import giftImg from "./gift.svg";
+import LogoMasterCardIcon from './LogoMasterCard.svg'
+import LogoVisaCardIcon from './LogoVisaCard.svg'
+import LogoMadaCardIcon from './LogoMadaCardIcon.svg'
+import LogoStcCardIcon from './LogoStcCardIcon.svg'
+import LogoAppleCardICon from './LogoAppleCardICon.svg'
+import LogoGooglePayCardIcon from './LogoGooglePayCardIcon.svg'
 import home from "./home.svg";
 import onetothree from "./1-3.svg";
 import fourtothirty from "./4-30.svg";
@@ -287,6 +294,13 @@ export const icons = {
     subscriptionIcon,
     noAccountTask,
     recurringImg,
+    giftImg,
+    LogoMasterCardIcon,
+    LogoVisaCardIcon,
+    LogoMadaCardIcon,
+    LogoStcCardIcon,
+    LogoAppleCardICon,
+    LogoGooglePayCardIcon,
     home,
     onetothree,
     fourtothirty,

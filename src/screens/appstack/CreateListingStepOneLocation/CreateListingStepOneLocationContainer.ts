@@ -5,30 +5,25 @@ import { Platform, PermissionsAndroid, Alert } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { useAuthStore } from '@/store/useAuthStore';
-import { useMutation } from '@tanstack/react-query';
-import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
 import Toast from 'react-native-toast-message';
-import { createListingDetailsApi } from '@/services/ createListingService';
 
 interface GooglePlaceDetail {
-  geometry: {
-    location: {
-      lat: number;
-      lng: number;
-    };
-  };
+  geometry: { location: { lat: number; lng: number } };
   formatted_address: string;
 }
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao';
+const GOOGLE_MAPS_APIKEY = 'AIzaSyBFLqCFWozTt6lfoGyNGl95OYsceWSo8LE';
+
+let geocodeTimer: ReturnType<typeof setTimeout> | null = null;
 
 export default function useCreateListingStepOneLocationContainer() {
-  const { updateListing, listing_id, channel_id } = useCreateListingStore();
-  const { user } = useAuthStore()
-  const mapRef = useRef<any>(null);
-  const placesRef = useRef<any>(null);
-  const isManuallySearching = useRef(false);
+
+  // ── All hooks at top — never conditional ──────────────────────────────────
+  const { updateListing } = useCreateListingStore();
+
+  const mapRef        = useRef<any>(null);
+  const placesRef     = useRef<any>(null);
+  const isPlaceSelected = useRef(false);
 
   const [region, setRegion] = useState<Region>({
     latitude: 24.7136,
@@ -36,221 +31,143 @@ export default function useCreateListingStepOneLocationContainer() {
     latitudeDelta: 0.015,
     longitudeDelta: 0.0121,
   });
-
   const [currentAddress, setCurrentAddress] = useState('');
+  const [isGeocoding, setIsGeocoding]       = useState(false);
+  const [isLocating, setIsLocating]         = useState(false);
 
-  // 🔹 Reverse Geocoding - Get address from lat/lng
-  const getAddressFromCoordinates = async (latitude: number, longitude: number) => {
+  useEffect(() => {
+    getAddressFromCoordinates(24.7136, 46.6753);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Plain functions ───────────────────────────────────────────────────────
+
+  const getAddressFromCoordinates = async (lat: number, lng: number) => {
     try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_APIKEY}`
+      setIsGeocoding(true);
+      const res  = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_APIKEY}`
       );
-      const data = await response.json();
-
-      if (data.results && data.results.length > 0) {
-        const address = data.results[0].formatted_address;
+      const data = await res.json();
+      if (data.status === 'OK' && data.results?.length > 0) {
+        const address: string = data.results[0].formatted_address;
         setCurrentAddress(address);
-
-        // Update GooglePlacesAutocomplete input
-        if (placesRef.current) {
-          placesRef.current.setAddressText(address);
-        }
-
-        console.log('Address:', address);
+        placesRef.current?.setAddressText(address);
         return address;
       }
-    } catch (error) {
-      console.error('Reverse Geocoding Error:', error);
+    } catch (e) {
+      console.error('Geocoding error:', e);
+    } finally {
+      setIsGeocoding(false);
     }
     return '';
   };
 
-  // 🔹 Permission (Android)
-  const requestLocationPermission = async () => {
+  const requestPermission = async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Location Permission',
-            message: 'This app needs access to your location',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
+      const result = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'This app needs your location to set the listing address.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+      return result === PermissionsAndroid.RESULTS.GRANTED;
     }
     return true;
   };
 
-  // 🔹 Get current location and animate map
   const handleLocateMe = async () => {
-    const hasPermission = await requestLocationPermission();
-    if (!hasPermission) {
-      Alert.alert('Permission Denied', 'Location permission is required');
+    const ok = await requestPermission();
+    if (!ok) {
+      Alert.alert('Permission Denied', 'Enable location permission in Settings.');
       return;
     }
-
+    setIsLocating(true);
     Geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
-
-        const newRegion: Region = {
-          latitude,
-          longitude,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-        };
-
-        // Update region state
+        const newRegion: Region = { latitude, longitude, latitudeDelta: 0.015, longitudeDelta: 0.0121 };
         setRegion(newRegion);
-
-        // Animate map to current location
-        if (mapRef.current) {
-          mapRef.current.animateToRegion(newRegion, 1000);
-        }
-
-        // Get and update address
+        mapRef.current?.animateToRegion(newRegion, 1000);
         getAddressFromCoordinates(latitude, longitude);
-
-        console.log('Current Location:', { latitude, longitude });
+        setIsLocating(false);
       },
       error => {
-        console.log('Location Error:', error);
-        Alert.alert('Error', 'Unable to get current location');
+        console.error('GPS error:', error);
+        setIsLocating(false);
+        Alert.alert('Error', 'Unable to get current location. Check GPS settings.');
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 10000,
-      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
   };
 
-  // 🔹 Handle Google Places selection
   const handlePlaceSelect = (details: GooglePlaceDetail) => {
-    isManuallySearching.current = true;
-
+    isPlaceSelected.current = true;
     const { lat, lng } = details.geometry.location;
-
-    const newRegion: Region = {
-      latitude: lat,
-      longitude: lng,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
-    };
-
-    // Update region state
+    const newRegion: Region = { latitude: lat, longitude: lng, latitudeDelta: 0.015, longitudeDelta: 0.0121 };
     setRegion(newRegion);
-
-    // Update address
     setCurrentAddress(details.formatted_address);
-
-    // Animate map to selected place
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(newRegion, 1000);
-    }
-
-    console.log('Selected Place:', {
-      latitude: lat,
-      longitude: lng,
-      address: details.formatted_address,
-    });
-
-    // Reset flag after animation
-    setTimeout(() => {
-      isManuallySearching.current = false;
-    }, 1500);
-  };
-
-  const {
-    mutate: createListingDetailsPayload,
-    isPending,
-    isIdle,
-  } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
-    mutationFn: createListingDetailsApi,
-    onSuccess: ({ message }) => {
-      Toast.show({
-        type: 'success',
-        text1: message || 'Something went wrong',
-      });
-      navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
-    },
-    onError: error => {
-      Toast.show({
-        type: 'error',
-        text1: error.message || 'Something went wrong',
-      });
-    },
-  });
-
-  const handleConfirm = () => {
-    console.log('Final Selected Location:', region);
-    console.log('Address:', currentAddress);
-    console.log('Coordinates:', {
-      latitude: region.latitude,
-      longitude: region.longitude,
-    });
-    updateListing({
-      lat: region.latitude,
-      lng: region.longitude,
-    })
-    const payload = {
-      channel_id,
-      listing_id,
-      user_id: user?.id,
-      listing: {
-        lat: region.latitude,
-        lng: region.longitude,
-        name: 'New Listing',
-        
-      }
-    }
-    // createListingDetailsPayload(payload)
-    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
-
-  };
-
-  const handleSetManually = () => {
-    console.log('Manual Entry Mode');
-    // You can navigate to manual entry screen or show a modal
+    placesRef.current?.setAddressText(details.formatted_address);
+    mapRef.current?.animateToRegion(newRegion, 1000);
+    setTimeout(() => { isPlaceSelected.current = false; }, 1500);
   };
 
   const onRegionChangeComplete = (newRegion: Region) => {
     setRegion(newRegion);
-
-    // Only update address if user is not actively searching
-    if (!isManuallySearching.current) {
-      // Get address for new location with debounce
+    if (isPlaceSelected.current) return;
+    if (geocodeTimer) clearTimeout(geocodeTimer);
+    geocodeTimer = setTimeout(() => {
       getAddressFromCoordinates(newRegion.latitude, newRegion.longitude);
-    }
-
-    console.log('Map moved to:', {
-      latitude: newRegion.latitude,
-      longitude: newRegion.longitude,
-    });
+    }, 600);
   };
 
-  // 🔹 Initial address load
-  useEffect(() => {
-    getAddressFromCoordinates(region.latitude, region.longitude);
-  }, []);
+  /**
+   * CONFIRM BUTTON
+   * - Saves lat/lng to store
+   * - Navigates to ConfirmAddress screen
+   * - API call happens on ConfirmAddress screen (createListingDetailsApi)
+   */
+  const handleConfirm = () => {
+    if (!currentAddress) {
+      Toast.show({ type: 'error', text1: 'Please wait for address to resolve.' });
+      return;
+    }
+    updateListing({
+      lat: region.latitude,
+      lng: region.longitude,
+    });
+    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
+  };
+
+  /**
+   * SET MANUALLY BUTTON
+   * - Saves current lat/lng to store (best guess from current map center)
+   * - Navigates to ConfirmAddress screen where user fills form fields manually
+   * - API call happens on ConfirmAddress screen (createListingDetailsApi)
+   */
+  const handleSetManually = () => {
+    updateListing({
+      lat: region.latitude,
+      lng: region.longitude,
+    });
+    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
+  };
 
   return {
     region,
     mapRef,
     placesRef,
     currentAddress,
+    isGeocoding,
+    isLocating,
     handleConfirm,
     handleSetManually,
     onRegionChangeComplete,
     handleLocateMe,
     handlePlaceSelect,
-    isLoading: isPending && !isIdle
   };
 }

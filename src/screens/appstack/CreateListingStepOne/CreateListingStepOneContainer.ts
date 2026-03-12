@@ -124,6 +124,7 @@ export default function useCreateListingStepOneContainer() {
 
 
   return {
-    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading: isPending && !isIdle || isLoading,isChannelMissing
+    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading: isPending || isLoading,
+  isChannelMissing
   };
 }

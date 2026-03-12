@@ -3,8 +3,10 @@ import { StyleSheet, View, ScrollView, Image, KeyboardAvoidingView, Platform } f
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
-import { vs } from 'react-native-size-matters';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { vs } from 'react-native-size-matters';
 
 const ConnectCalendarsIntroScreen = () => {
   return (
@@ -63,19 +65,18 @@ const ConnectCalendarsIntroScreen = () => {
             />
           </View>
 
-          {/* Button - Using the color prop fix */}
-          <AppButton 
-            title="Connect Account" 
-            onPress={() => console.log("Navigate to Sync logic")}
-            style={styles.connectBtn}
-            color="#FFFFFF" 
-            type="Bold"
-          />
-        </ScrollView>
-
-        <Pagination activeIndex={1} />
+        {/* Button */}
+        <AppButton 
+          title="Connect Account" 
+          onPress={() => navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)}
+          mt={34}
+        />
+      </ScrollView>
+      <Pagination 
+        activeIndex={1} 
+      />
       </KeyboardAvoidingView>
-    </BGImage>
+      </BGImage>
   );
 };
 

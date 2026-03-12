@@ -28,6 +28,11 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
+import { usePhoneStore } from '@/store/usePhoneStore';
+import { reset } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { queryClient } from '@/services/api';
+import STORAGE_CONST from '@/constants/storage';
 
 interface RouteParams {
   plan?: {
@@ -39,6 +44,7 @@ interface RouteParams {
   paymentMethodId?: number;
   paymentMethodName?: string;
   isCardMethod?: boolean;
+  isAuthFlow?: boolean;
 }
 
 interface PaymentResult {
@@ -82,14 +88,16 @@ interface PaymentResult {
 export default function useAddNewPaymentMethodContainer() {
   const { params } = useRoute<any>();
   const navigation = useNavigation();
-
   const plan = (params as RouteParams)?.plan;
   const paymentMethodType = (params as RouteParams)?.paymentMethodType;
   const paymentMethodId = (params as RouteParams)?.paymentMethodId;
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
   const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
   const sessionResponse = useRef<any>(null);
+
   const { user } = useAuthStore();
+  const { phoneNumber: authPhoneNumber } = usePhoneStore();
+  const isAuthFlow = !!authPhoneNumber;
 
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -97,12 +105,10 @@ export default function useAddNewPaymentMethodContainer() {
   const cardPaymentView = useRef<any>(null);
   const googlePayRef = useRef<any>(null);
 
-  const customerName =
-    user?.name && user?.surname
-      ? `${user.name} ${user.surname}`
-      : user?.name || 'Customer';
-  const customerPhone = user?.phone || '';
-  const customerId = user?.id?.toString() || `user_${Date.now()}`;
+  const customerName = isAuthFlow ? 'Customer' : user?.name && user?.surname ? `${user.name} ${user.surname}` : user?.name || 'Customer';
+  const customerPhone = isAuthFlow ? authPhoneNumber || '' : user?.phone || '';
+  const customerId = isAuthFlow ? authPhoneNumber : user?.phone;
+
 
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
     mutationFn: savePaymentinfoApi,
@@ -112,7 +118,12 @@ export default function useAddNewPaymentMethodContainer() {
         text1: 'Payment Successful',
         text2: 'Your payment has been processed successfully',
       });
-      goBack();
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.SAVED_CARDS] });
+      if (isAuthFlow) {
+        reset(NavigationRoutes.AUTH_STACK.TRIAL_SUCCESS, { plan });
+      } else {
+        goBack();
+      }
     },
     onError: (error: any) => {
       Toast.show({
@@ -167,7 +178,6 @@ export default function useAddNewPaymentMethodContainer() {
       new MFCardViewError(processColor(Colors.INDIAN_RED), 8)
     );
 
-    // ✅ style object clean - onCardBinChanged load() ka 2nd arg hai, style ki property nahi
     return style;
   }, []);
 
@@ -175,6 +185,7 @@ export default function useAddNewPaymentMethodContainer() {
     setIsLoading(true);
     try {
       const request = new MFInitiateSessionRequest(customerId);
+      request.SaveToken = true;
       const response = await MFSDK.initiateSession(request);
       setSessionId(response.SessionId?.toString() ?? '');
       sessionResponse.current = response;
@@ -246,7 +257,6 @@ export default function useAddNewPaymentMethodContainer() {
     try {
       const executeRequest = new MFExecutePaymentRequest(plan?.price || 1);
       executeRequest.SessionId = sessionId;
-      // ✅ FIX: onInvoiceCreated 3rd argument hai - undefined hone par crash karta hai
       const onInvoiceCreated = (invoiceId: string) => {
         console.log('Invoice created:', invoiceId);
       };
@@ -257,12 +267,13 @@ export default function useAddNewPaymentMethodContainer() {
       );
       if (result?.InvoiceStatus === 'Paid') {
         saveIdentifier({
-          host_id: user?.id?.toString(),
+          phone_number: customerPhone,
           amount: result?.InvoiceTransactions?.[0]?.TransationValue,
           card_type: result?.InvoiceTransactions?.[0]?.PaymentGateway,
-          customer_identifier: customerPhone,
           is_active: true,
           token: result?.InvoiceTransactions?.[0]?.CardNumber,
+          subscription_id: 1,
+          auto_renew: true
         });
       }
     } catch (error: any) {
