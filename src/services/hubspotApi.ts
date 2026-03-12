@@ -1,5 +1,5 @@
 // ⚠️ TEMP ONLY — MOVE TO BACKEND LATER
-export const HUBSPOT_ACCESS_TOKEN = 'pat-na1-e0dac369-5f93-4eba-b96a-ea18f767487f';
+import { HUBSPOT_ACCESS_TOKEN } from '@env';
 
 // Slug for https://meetings.hubspot.com/SLUG
 export const AGENTS = [
@@ -10,7 +10,6 @@ export const AGENTS = [
     ownerId: '88880167',
   },
 ];
-
 const BASE_URL = 'https://api.hubapi.com';
 
 const getHeaders = () => ({
