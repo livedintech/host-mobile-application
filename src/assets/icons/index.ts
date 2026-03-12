@@ -130,6 +130,22 @@ import platform from "./reservations/platform.svg";
 import propertyIcon from "./reservations/property.svg";
 import calendar from "./reservations/calendar.svg";
 import checkout from "./reservations/checkout.svg";
+import bookingIcon from "./bookingIcon.svg"
+import lockIcon from "./lockIcon.svg"
+import reviewManagementIcon from "./reviewManagementIcon.svg"
+import userManagementIconNew from "./userManagementIcon.svg"
+import paymentIcon from "./paymentIcon.svg";
+import transactionIcon from "./transactionIcon.svg";
+import subscriptionIcon from "./subscriptionIcon.svg";
+import noAccountTask from "./noAccountTask.svg";
+import recurringImg from "./recurringImg.svg";
+import giftImg from "./gift.svg";
+import LogoMasterCardIcon from './LogoMasterCard.svg'
+import LogoVisaCardIcon from './LogoVisaCard.svg'
+import LogoMadaCardIcon from './LogoMadaCardIcon.svg'
+import LogoStcCardIcon from './LogoStcCardIcon.svg'
+import LogoAppleCardICon from './LogoAppleCardICon.svg'
+import LogoGooglePayCardIcon from './LogoGooglePayCardIcon.svg'
 
 export const icons = {
     eyeSlash: EyeSlash,
@@ -263,5 +279,21 @@ export const icons = {
     platform,
     propertyIcon,
     calendar,
-    checkout
+    checkout,
+    bookingIcon,
+    lockIcon,
+    userManagementIconNew,
+    reviewManagementIcon,
+    paymentIcon,
+    transactionIcon,
+    subscriptionIcon,
+    noAccountTask,
+    recurringImg,
+    giftImg,
+    LogoMasterCardIcon,
+    LogoVisaCardIcon,
+    LogoMadaCardIcon,
+    LogoStcCardIcon,
+    LogoAppleCardICon,
+    LogoGooglePayCardIcon
 };

@@ -1,24 +1,43 @@
 import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import STORAGE_CONST from '@/constants/storage';
-import { getManageYourListings } from '@/services/ createListingService';
+import { getManageYourListings, getSubscrptionUserPlanApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { ManageListingsResponse } from '@/types/api/createListingTypes';
+import { GetSubscriptionUserPlanResponse, ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
 
 export default function useSubscriptionHistoryContainer() {
-    const { user } = useAuthStore();
-  
+  const { user } = useAuthStore();
   const navigation = useNavigation();
   const removeSheetRef = useRef<ConfirmActionRef>(null);
 
-  const { data,refetch,isLoading } = useQuery<ManageListingsResponse>({
+  const {
+    data,
+    refetch,
+    isLoading,
+  } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
     queryFn: () =>
       getManageYourListings({
         user: user?.id!,
       }),
+    enabled: Boolean(user?.id),
+  });
+
+  const {
+    data: getSubscrptionUserPlan,
+    refetch: refetchGetSubscrptionUserPlan,
+    isLoading: isLoadingGetSubscrptionUserPlan,
+  } = useQuery<GetSubscriptionUserPlanResponse>({
+    queryKey: [STORAGE_CONST.GET_SUBSCRPTION_USER_PLAN, user?.id],
+    queryFn: async () => {
+      const response = await getSubscrptionUserPlanApi({ user_id: user?.id! });
+      // API returns { success: false, message: "..." } when no subscription found.
+      // Return it as-is so the screen can check response.success gracefully
+      // instead of letting useQuery treat it as an error.
+      return response;
+    },
     enabled: Boolean(user?.id),
   });
 
@@ -28,12 +47,28 @@ export default function useSubscriptionHistoryContainer() {
     { id: 3, label: 'Task\nManagement', icon: 'briefcaseIcon' },
     { id: 4, label: 'Multi-\ncalendar', icon: 'calendarGridIcon' },
   ];
+
   const openSheet = () => {
     removeSheetRef.current?.open();
-  }
-  const closeSheet = () =>{
-    removeSheetRef.current?.close();
+  };
 
-  }
-  return { listings:data?.data, features, navigation, removeSheetRef, openSheet,closeSheet ,refetch, isLoading};
+  // FIX: closeSheet should close the bottom sheet after confirmation
+  // TODO: Add actual cancel subscription API call here before closing
+  const closeSheet = () => {
+    removeSheetRef.current?.close();
+  };
+
+  return {
+    listings: data?.data ?? [], // FIX: default to empty array instead of undefined
+    features,
+    navigation,
+    removeSheetRef,
+    openSheet,
+    closeSheet,
+    refetch,
+    isLoading,
+    // FIX: export this so the screen can show loader for subscription card
+    isLoadingGetSubscrptionUserPlan,
+    getSubscrptionUserPlan,
+  };
 }

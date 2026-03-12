@@ -5,6 +5,8 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const ConnectCalendarsIntroScreen = () => {
   return (
@@ -56,7 +58,7 @@ const ConnectCalendarsIntroScreen = () => {
         {/* Button */}
         <AppButton 
           title="Connect Account" 
-          onPress={() => console.log("Navigate to Sync logic")}
+          onPress={() => navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)}
           mt={34}
         />
       </ScrollView>

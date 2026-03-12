@@ -24,19 +24,18 @@ const TabStack = () => {
         name={NavigationRoutes.APP_STACK.CHAT}
         component={require('@/screens/appstack/Chat/ChatScreen').default}
       />
-      <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
-        name={NavigationRoutes.APP_STACK.TASK}
-        // component={require('@/screens/appstack/Task/TaskScreen').default}
-        component={
-          require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen')
-            .default
-        }
-      />
+    <Tab.Screen
+  name={NavigationRoutes.APP_STACK.TASK}
+  component={
+    require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask')
+      .default
+  }
+  options={{ headerShown: false }}
+/>
       <Tab.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}
-        component={require('@/screens/appstack/More/MoreScreen').default}
+        component={require('@/screens/appstack/More/MoreScreenNew').default}
       />
     </Tab.Navigator>
   );

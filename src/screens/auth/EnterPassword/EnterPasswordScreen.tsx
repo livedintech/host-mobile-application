@@ -1,123 +1,139 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { s, vs } from 'react-native-size-matters';
+
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import PasswordField from '@/components/molecules/Input/PasswordField';
 import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
 import useEnterPasswordContainer from './EnterPasswordContainer';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import Checkbox from '@/components/molecules/Input/CheckBox';
-import { Controller } from 'react-hook-form';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+
+const FIGMA_TEAL = '#20957B';
 
 const EnterPasswordScreen = () => {
   const { isLoading, control, errors, handleSubmit, gotToVerifyOTP } = useEnterPasswordContainer();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <ScrollView 
+            contentContainerStyle={styles.scrollContent} 
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.mainContent}>
+              {/* Title Section - Left Aligned */}
+              <View style={styles.headerSection}>
+                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                  Please enter your
+                </AppText>
+                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                  password to{' '}
+                  <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
+                    continue
+                  </AppText>
+                </AppText>
+              </View>
 
-        {/* Title Section */}
-        <View style={styles.titleSection}>
-          <AppText
-            text="Please enter your Password to continue."
-            fontSize={28}
-            textAlign="center"
-          />
-        </View>
+              {/* Form Fields */}
+              <View style={styles.form}>
+                <PasswordField
+                  label="Password *"
+                  name="password"
+                  control={control}
+                  errors={errors}
+                  placeholder=""
+                />
 
-        {/* Form Fields */}
-        <View style={styles.form}>
-          <PasswordField
-            label="Password *"
-            name="password"
-            control={control}
-            errors={errors}
-            placeholder=""
-          />
+                {/* Forgot Password Link */}
+                <View style={styles.forgotRow}>
+                  <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
+                    <AppText text="Forgot password?" color={Colors.BLACK} fontSize={14} />
+                  </ButtonView>
+                </View>
+              </View>
 
-          {/* Remember Me & Forgot Password Row */}
-          <View style={styles.row}>
-            <View style={styles.rememberMe}>
-              {/* <View style={styles.checkbox} /> */}
-              <Controller
-                control={control}
-                name="rememberMe"
-                render={({ field: { value, onChange } }) => (
-                  <Checkbox
-                    isChecked={value}
-                    onPress={() => onChange(!value)}
-                  />
-                )}
-              />
-
-              <AppText text="Remember me" color={Colors.PINE_FOREST} type='Medium' />
+              {/* Bottom Action Button */}
+              <View style={styles.bottomSec}>
+                <AppButton
+                  loading={isLoading}
+                  onPress={handleSubmit}
+                  title="Continue"
+                  backgroundColor={FIGMA_TEAL}
+                  color={Colors.WHITE}
+                  borderRadius={100}
+                  type="Bold"
+                  fontSize={18}
+                />
+              </View>
             </View>
-            <ButtonView onPress={gotToVerifyOTP}>
-              <AppText text="Forgot password?" color={Colors.BRUNSWICK_GREEN} type="Medium" />
-            </ButtonView>
-          </View>
-        </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </BGImage>
 
-        {/* Action Button */}
-        <View style={styles.bottomSec}>
-          <AppButton
-            loading={isLoading}
-            onPress={handleSubmit}
-            title="Continue"
-          />
-        </View>
-
-      </ScrollView>
-    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  scrollContainer: { flexGrow: 1, paddingHorizontal: 20 },
+  container: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(40),
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: s(20),
+    paddingTop: vs(10),
     alignItems: 'center',
-    marginTop: 20
   },
-  headerRight: { flexDirection: 'row', alignItems: 'center' },
-  circleBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    borderWidth: 1, borderColor: '#E0E0E0',
-    justifyContent: 'center', alignItems: 'center', marginRight: 8
+  backButton: {
+    width: s(40),
+    height: s(40),
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.WHITE,
   },
-  backBtn: {
-    paddingHorizontal: 25, height: 40, borderRadius: 20,
-    borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center'
+  langButton: {
+    paddingHorizontal: s(15),
+    paddingVertical: vs(5),
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    backgroundColor: Colors.WHITE,
   },
-  titleSection: { marginTop: Metrics.verticalScale(80), alignItems: 'center' },
-  form: { marginTop: Metrics.verticalScale(40) },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 15,
-    alignItems: 'center'
+  headerSection: {
+    marginBottom: vs(50),
   },
-  rememberMe: { flexDirection: 'row', alignItems: 'center' },
-  checkbox: {
-    width: 18, height: 18, borderWidth: 1,
-    borderColor: '#E0E0E0', borderRadius: 4, marginRight: 8
+  form: {
+    width: '100%',
+  },
+  forgotRow: {
+    alignItems: 'flex-end',
+    marginTop: vs(10),
+  },
+  forgotBtn: {
+    paddingVertical: 5,
   },
   bottomSec: {
     flex: 1,
     justifyContent: 'flex-end',
-    paddingBottom: Metrics.verticalScale(30)
+    paddingBottom: vs(30),
+    marginTop: vs(20),
   },
-  continueBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.BRUNSWICK_GREEN,
-    borderRadius: 100,
-    height: 56,
-  }
 });
 
 export default EnterPasswordScreen;

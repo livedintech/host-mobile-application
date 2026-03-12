@@ -2,7 +2,7 @@ import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import { createEditAmenitiesPayloadType, CreateListingDetailsPayload, CreateListingExportPayloadType, CreateListingPayload, createListingPricingPayload, getTransactionHistoryPayloadType } from "@/types/api/createListingTypes";
 import Utils from "@/utility/Utils";
-import { CreateEditlistingCitiesPayloadType, CreateEditlistingDistrictsPayloadType, CreateEditlistingStatePayloadType, DeleteListingPayloadType, getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { CreateEditlistingCitiesPayloadType, CreateEditlistingDistrictsPayloadType, CreateEditlistingStatePayloadType, DeleteListingPayloadType, getChannelsUserIdPayload, getManageListingDetailByIdApiTypePayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 
 export const createListingApi = async (payload: CreateListingPayload) => {
     const { ok, response, data } = await apiService.post(
@@ -50,6 +50,21 @@ export const getManageYourListings = async (payload: getUserListingsByUserID) =>
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+// Subscription User Plan
+export const getSubscrptionUserPlanApi = async (payload: getChannelsUserIdPayload) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.GET_SUBSCRPTION_USER_PLAN,
+        { user_id: payload.user_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
 
 // Manage Listing Details By ID
 export const getManageListingDetailById = async (

@@ -277,3 +277,32 @@ export interface DocumentUploadPayload {
   channel_id: string;
   documents: DocumentItem[];
 }
+
+export interface Subscription {
+  id: number;
+  name: string;
+  icon_code: string | null;
+  price: string;
+  currency: string;
+  duration_days: number;
+  is_active: boolean;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserSubscription {
+  user_id: number;
+  status: string;
+  auto_renew: boolean;
+  start_date: string;
+  end_date: string;
+  next_renewal_at: string;
+  subscription: Subscription;
+}
+
+// FIX: API returns { success: false, message: "No subscription found for this user" }
+// when user has no subscription. Union type covers both cases.
+export type GetSubscriptionUserPlanResponse =
+  | { success: true; data: UserSubscription }
+  | { success: false; message: string; data?: undefined };

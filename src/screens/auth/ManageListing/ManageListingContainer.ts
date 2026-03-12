@@ -13,6 +13,7 @@ import STORAGE_CONST from '@/constants/storage';
 
 export default function useManageListingContainer() {
   const [selectedListing, setSelectedListing] = useState<number | null>(null);
+  const [localSelectedId , setLocalSelectedId] = useState<number | null>(null);
   const { params } = useRoute();
 
   const {
@@ -62,6 +63,7 @@ export default function useManageListingContainer() {
     isLoading: isPendingResendOtp && !isIdleResendOtp,
     selectedListing,
     onSelect,
-    listingData
+    listingData,
+    localSelectedId
   };
 }

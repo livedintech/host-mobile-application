@@ -28,6 +28,9 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
+import { usePhoneStore } from '@/store/usePhoneStore';
+import { reset } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 interface RouteParams {
   plan?: {
@@ -39,6 +42,7 @@ interface RouteParams {
   paymentMethodId?: number;
   paymentMethodName?: string;
   isCardMethod?: boolean;
+  isAuthFlow?: boolean;
 }
 
 interface PaymentResult {
@@ -82,14 +86,19 @@ interface PaymentResult {
 export default function useAddNewPaymentMethodContainer() {
   const { params } = useRoute<any>();
   const navigation = useNavigation();
-
   const plan = (params as RouteParams)?.plan;
   const paymentMethodType = (params as RouteParams)?.paymentMethodType;
   const paymentMethodId = (params as RouteParams)?.paymentMethodId;
   const paymentMethodName = (params as RouteParams)?.paymentMethodName;
   const isCardMethod = (params as RouteParams)?.isCardMethod ?? true;
   const sessionResponse = useRef<any>(null);
+
   const { user } = useAuthStore();
+  const { phoneNumber: authPhoneNumber } = usePhoneStore();
+  const isAuthFlow = !!authPhoneNumber;
+
+  // console.log('authPhoneNumber',user?.phone);
+  
 
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -97,12 +106,9 @@ export default function useAddNewPaymentMethodContainer() {
   const cardPaymentView = useRef<any>(null);
   const googlePayRef = useRef<any>(null);
 
-  const customerName =
-    user?.name && user?.surname
-      ? `${user.name} ${user.surname}`
-      : user?.name || 'Customer';
-  const customerPhone = user?.phone || '';
-  const customerId = user?.id?.toString() || `user_${Date.now()}`;
+  const customerName = isAuthFlow ? 'Customer' : user?.name && user?.surname ? `${user.name} ${user.surname}` : user?.name || 'Customer';
+  const customerPhone = isAuthFlow ? authPhoneNumber || '' : user?.phone || '';
+  const customerId = isAuthFlow ? `phone_${authPhoneNumber}` : user?.id?.toString() || `user_${Date.now()}`;
 
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
     mutationFn: savePaymentinfoApi,
@@ -112,7 +118,11 @@ export default function useAddNewPaymentMethodContainer() {
         text1: 'Payment Successful',
         text2: 'Your payment has been processed successfully',
       });
-      goBack();
+      if (isAuthFlow) {
+        reset(NavigationRoutes.AUTH_STACK.TRIAL_SUCCESS, { plan });
+      } else {
+        goBack();
+      }
     },
     onError: (error: any) => {
       Toast.show({
@@ -257,12 +267,14 @@ export default function useAddNewPaymentMethodContainer() {
       );
       if (result?.InvoiceStatus === 'Paid') {
         saveIdentifier({
-          host_id: user?.id?.toString(),
+          phone_number: customerPhone,
           amount: result?.InvoiceTransactions?.[0]?.TransationValue,
           card_type: result?.InvoiceTransactions?.[0]?.PaymentGateway,
-          customer_identifier: customerPhone,
+          // customer_identifier: customerPhone,
           is_active: true,
           token: result?.InvoiceTransactions?.[0]?.CardNumber,
+          subscription_id: 1,
+          auto_renew: true
         });
       }
     } catch (error: any) {

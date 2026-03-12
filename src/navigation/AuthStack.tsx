@@ -19,14 +19,14 @@ const AuthStack = () => {
         }
       />
       <Screen
-       options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE}
         getComponent={() =>
           require('@/screens/auth/LoginWithPhone/LoginWithPhoneScreen').default
         }
       />
       <Screen
-       options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN}
         getComponent={() =>
           require('@/screens/auth/PropertyCanEarn/PropertyCanEarnScreen')
@@ -49,8 +49,8 @@ const AuthStack = () => {
             .default
         }
       />
-       <Screen
-        options={{ header: () => <HeaderApp isGoBack/> }}
+      <Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER}
         getComponent={() =>
           require('@/screens/auth/VerifyPhoneNumber/VerifyPhoneNumberScreen')
@@ -66,7 +66,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-       options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT}
         getComponent={() =>
           require('@/screens/auth/CreateAccount/CreateAccountScreen')
@@ -74,7 +74,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.ENTER_PASSWORD}
         getComponent={() =>
           require('@/screens/auth/EnterPassword/EnterPasswordScreen')
@@ -82,21 +82,37 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD}
         getComponent={() =>
           require('@/screens/auth/AddNewPassword/AddNewPasswordScreen').default
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.PAYMENT}
         getComponent={() =>
           require('@/screens/auth/Payment/PaymentScreen').default
         }
       />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD}
+        getComponent={() =>
+          require('@/screens/appstack/SelectPayment/SelectPaymentScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.AUTH_STACK.ADD_NEW_PAYMENT_METHOD}
+        getComponent={() =>
+          require('@/screens/appstack/AddNewPaymentMethod/AddNewPaymentMethodScreen')
+            .default
+        }
+      />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack/> }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.AUTH_STACK.ADD_CARD_DETAIL}
         getComponent={() =>
           require('@/screens/auth/AddCardDetail/AddCardDetailScreen').default

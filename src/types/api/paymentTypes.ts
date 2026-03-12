@@ -3,10 +3,9 @@ export interface getSubscriptionSaveCardsPayloadType {
 }
 
 export interface savePaymentinfoPayloadType {
-  host_id: string;
+  phone_number: string;
   amount: number;
   token: string;
   card_type: string;
-  customer_identifier: string;
   is_active: boolean;
 }

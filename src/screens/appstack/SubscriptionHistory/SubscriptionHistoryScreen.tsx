@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, FlatList, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useSubscriptionHistoryContainer from './SubscriptionHistoryContainer';
@@ -8,28 +8,86 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import Metrics from '@/utility/Metrics';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import dayjs from 'dayjs';
 
 const SubscriptionHistoryScreen = () => {
-  const { listings, features, removeSheetRef, closeSheet, openSheet,isLoading,refetch } = useSubscriptionHistoryContainer();
-  const totalAmount = listings?.length > 0 
-  ? listings.length * 1500 
-  : 0;
-  
+  const {
+    listings,
+    features,
+    removeSheetRef,
+    closeSheet,
+    openSheet,
+    isLoading,
+    isLoadingGetSubscrptionUserPlan,
+    refetch,
+    getSubscrptionUserPlan,
+  } = useSubscriptionHistoryContainer();
+
+  const pricePerListing = parseFloat(getSubscrptionUserPlan?.data?.subscription?.price ?? '0') || 0;
+  const listingCount = listings?.length ?? 0;
+  const totalAmount = listingCount * pricePerListing;
+
+  const hasSubscription = getSubscrptionUserPlan?.success === true;
+  const subscriptionPrice = hasSubscription
+    ? getSubscrptionUserPlan?.data?.subscription?.price ?? '—'
+    : '—';
+  const nextRenewal = hasSubscription
+    ? getSubscrptionUserPlan?.data?.next_renewal_at
+    : null;
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-        <AppText text="Listing Cost" fontSize={24} type="Medium" color={Colors.BRUNSWICK_GREEN} mt={45} mb={15} />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <AppText
+          text="Listing Cost"
+          fontSize={24}
+          type="Medium"
+          color={Colors.BRUNSWICK_GREEN}
+          mt={45}
+          mb={15}
+        />
 
         {/* Price Card */}
         <GradientBorder borderRadius={24} style={styles.cardWrapper}>
           <View style={styles.innerCard}>
-            <AppText text="Monthly" fontSize={14} color={Colors.BRUNSWICK_GREEN} type="Bold" />
-            <View style={styles.row}>
-              <AppText text="SAR1,500.00" fontSize={26} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-              <AppText text=" /per listing" fontSize={14} color={Colors.BRUNSWICK_GREEN} />
-            </View>
+            {isLoadingGetSubscrptionUserPlan ? (
+              <ActivityIndicator color={Colors.BRUNSWICK_GREEN} />
+            ) : hasSubscription ? (
+              <>
+                <AppText
+                  text="Monthly"
+                  fontSize={14}
+                  color={Colors.BRUNSWICK_GREEN}
+                  type="Bold"
+                />
+                <View style={styles.row}>
+                  <AppText
+                    text={`SAR ${subscriptionPrice}`}
+                    fontSize={26}
+                    type="Bold"
+                    color={Colors.BRUNSWICK_GREEN}
+                  />
+                  <AppText
+                    text=" /per listing"
+                    fontSize={14}
+                    color={Colors.BRUNSWICK_GREEN}
+                  />
+                </View>
+              </>
+            ) : (
+              <View style={styles.emptyState}>
+                <AppText
+                  text="No active subscription"
+                  fontSize={14}
+                  color={Colors.PINE_FOREST}
+                  mt={8}
+                  textAlign="center"
+                />
+              </View>
+            )}
           </View>
         </GradientBorder>
 
@@ -39,62 +97,132 @@ const SubscriptionHistoryScreen = () => {
             {features.map((item) => (
               <View key={item.id} style={styles.featureItem}>
                 <Svgicons path={item.icon} size={45} />
-                <AppText text={item.label} fontSize={6} textAlign="center" color={Colors.PINE_FOREST} mt={8} type='Medium' />
+                <AppText
+                  text={item.label}
+                  fontSize={6}
+                  textAlign="center"
+                  color={Colors.PINE_FOREST}
+                  mt={8}
+                  type="Medium"
+                />
               </View>
             ))}
           </View>
         </GradientBorder>
 
-        <AppText text="Your Listings" fontSize={24} type="Medium" color={Colors.BRUNSWICK_GREEN} mt={30} mb={15} />
-
-        {/* Horizontal Listings */}
-        <FlatListSimpleHandler
-          horizontal
-          data={listings || []}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item?.id?.toString()}
-          renderItem={({ item }) => (
-            <GradientBorder borderRadius={24} style={styles.listingItem}>
-              <View style={styles.innerCard}>
-                <Svgicons path='listingIcon' size={49} />
-                <AppText text={item.title || item.name ||  ''} fontSize={14} color={Colors.PINE_FOREST} mt={10} numberOfLines={1}/>
-              </View>
-            </GradientBorder>
-          )}
-          isLoading={isLoading}
-          onRefresh={refetch}
+        <AppText
+          text="Your Listings"
+          fontSize={24}
+          type="Medium"
+          color={Colors.BRUNSWICK_GREEN}
+          mt={30}
+          mb={15}
         />
 
-        {/* Footer Actions */}
-        <GradientBorder borderRadius={24} style={styles.cardWrapper}>
-          <View style={[styles.innerCard, styles.renewalBox]}>
-            <AppText text="Renew 26 January 2026" fontSize={18} type="Medium" color={Colors.BRUNSWICK_GREEN} />
-            <AppText text={`SAR ${totalAmount}`} fontSize={14} color={Colors.PINE_FOREST} />
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator color={Colors.BRUNSWICK_GREEN} />
           </View>
-        </GradientBorder>
-
-        {/* Cancel Subscription */}
-        <Pressable onPress={openSheet}> 
-          <GradientBorder borderRadius={24} style={styles.cancelBtnGradient}>
-            <View style={[styles.innerCard, styles.cancelBtn]}>
-              <AppText text="Cancel Subscription" fontSize={22} type="Medium" color={Colors.BRUNSWICK_GREEN} />
-              <GradientBorder borderRadius={16} borderWidth={1}>
-                <View style={styles.arrowCircleInner}>
-                  <Svgicons path='ArrowUpRightIcon' />
-                </View>
-              </GradientBorder>
+        ) : listingCount === 0 ? (
+          <GradientBorder borderRadius={24} style={styles.cardWrapper}>
+            <View style={[styles.innerCard, styles.emptyListingsBox]}>
+              <Svgicons path="listingIcon" size={48} />
+              <AppText
+                text="No listings yet"
+                fontSize={16}
+                type="Medium"
+                color={Colors.BRUNSWICK_GREEN}
+                mt={10}
+              />
+              <AppText
+                text="Your active listings will appear here"
+                fontSize={12}
+                color={Colors.PINE_FOREST}
+                mt={4}
+                textAlign="center"
+              />
             </View>
           </GradientBorder>
-        </Pressable>
+        ) : (
+          <FlatListSimpleHandler
+            horizontal
+            data={listings}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item?.id?.toString()}
+            renderItem={({ item }) => (
+              <GradientBorder borderRadius={24} style={styles.listingItem}>
+                <View style={styles.innerCard}>
+                  <Svgicons path="listingIcon" size={49} />
+                  {/* FIX: Fallback text if both title and name are missing */}
+                  <AppText
+                    text={item.title || item.name || 'Untitled'}
+                    fontSize={14}
+                    color={Colors.PINE_FOREST}
+                    mt={10}
+                    numberOfLines={1}
+                  />
+                </View>
+              </GradientBorder>
+            )}
+            isLoading={isLoading}
+            onRefresh={refetch}
+          />
+        )}
 
+        {/* Footer: Renewal info — only show if subscription exists */}
+        {hasSubscription && (
+          <GradientBorder borderRadius={24} style={styles.cardWrapper}>
+            <View style={[styles.innerCard, styles.renewalBox]}>
+              <AppText
+                text={
+                  nextRenewal
+                    ? `Renew ${dayjs(nextRenewal).format('DD MMMM YYYY')}`
+                    : 'Renewal date unavailable'
+                }
+                fontSize={18}
+                type="Medium"
+                color={Colors.BRUNSWICK_GREEN}
+              />
+              {/* FIX: Only show total if listings exist */}
+              <AppText
+                text={listingCount > 0 ? `SAR ${totalAmount.toFixed(2)}` : 'SAR 0.00'}
+                fontSize={14}
+                color={Colors.PINE_FOREST}
+              />
+            </View>
+          </GradientBorder>
+        )}
+
+        {/* Cancel Subscription — only show if subscription is active */}
+        {hasSubscription && getSubscrptionUserPlan?.data?.status === 'active' && (
+          <Pressable onPress={openSheet}>
+            <GradientBorder borderRadius={24} style={styles.cancelBtnGradient}>
+              <View style={[styles.innerCard, styles.cancelBtn]}>
+                <AppText
+                  text="Cancel Subscription"
+                  fontSize={22}
+                  type="Medium"
+                  color={Colors.BRUNSWICK_GREEN}
+                />
+                <GradientBorder borderRadius={16} borderWidth={1}>
+                  <View style={styles.arrowCircleInner}>
+                    <Svgicons path="ArrowUpRightIcon" />
+                  </View>
+                </GradientBorder>
+              </View>
+            </GradientBorder>
+          </Pressable>
+        )}
       </ScrollView>
+
+      {/* ConfirmAction sheet */}
       <ConfirmAction
         ref={removeSheetRef}
-        title={'Cancel Subscription'}
-        content="Are you sure you want cancel?"
-        confirmText='Yes'
-        closeText='No'
-        onConfirm={closeSheet}
+        title="Cancel Subscription"
+        content="Are you sure you want to cancel your subscription?"
+        confirmText="Yes, Cancel"
+        closeText="No"
+        onConfirm={closeSheet} // TODO: replace closeSheet with actual cancel API call
       />
     </View>
   );
@@ -110,23 +238,53 @@ const styles = StyleSheet.create({
     paddingVertical: Metrics.scale(16),
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal:Metrics.scale(16),
+    paddingHorizontal: Metrics.scale(16),
   },
-  featuresContainer: { flexDirection: 'row', justifyContent: 'space-between' },
+  featuresContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   featureItem: { alignItems: 'center', flex: 1 },
-
-  renewalBox: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: Metrics.scale(10) },
-  cancelBtn: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-
+  renewalBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Metrics.scale(10),
+  },
+  cancelBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+  },
   cardWrapper: { marginBottom: 15 },
   cancelBtnGradient: { marginTop: 15 },
-
-  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+  arrowCircleInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   listingItem: {
     width: Metrics.scale(105),
     marginRight: Metrics.scale(13),
-    marginBottom: Metrics.verticalScale(46)
-  }
+    marginBottom: Metrics.verticalScale(46),
+  },
+  // FIX: New styles for empty/loading states
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: Metrics.scale(10),
+  },
+  emptyListingsBox: {
+    paddingVertical: Metrics.scale(30),
+  },
+  loadingContainer: {
+    height: Metrics.scale(120),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default SubscriptionHistoryScreen;

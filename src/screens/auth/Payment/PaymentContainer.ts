@@ -11,16 +11,16 @@ export default function usePaymentContainer() {
   const { params } = useRoute();
   const phone = params?.phone;
 
-  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('annual');
+  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('monthly');
 
   const onPlanSelect = (plan: 'annual' | 'monthly') => {
     setSelectedPlan(plan);
   };
 
   const handleStartTrial = () => {
-    const days = selectedPlan === 'annual' ? 14 : 7;
+    const days = selectedPlan === 'annual' ? 14 : 14;
     console.log(`Starting ${days}-day free trial`);
-    navigate(NavigationRoutes.AUTH_STACK.ADD_CARD_DETAIL, { plan: selectedPlan, phone: phone })
+    navigate(NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD, { plan: selectedPlan, phone: phone })
   };
 
   const handleSkipThis = () => {

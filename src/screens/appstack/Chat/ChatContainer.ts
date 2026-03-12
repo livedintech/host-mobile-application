@@ -109,7 +109,7 @@ export const useChatContainer = () => {
         limit: PAGE_SIZE,
         ...finalFilters,
       }),
-    // refetchInterval: 4000,
+    refetchInterval: 4000,
     initialPageParam: 1,
     getNextPageParam: lastPage =>
       lastPage?.current_page < lastPage?.total_pages

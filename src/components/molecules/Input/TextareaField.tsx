@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         marginBottom: Metrics.verticalScale(8),
     },
     label: {
-        color: Colors.PINE_FOREST,
+        color: Colors.NIGHT,
         fontSize: Metrics.generatedFontSize(14),
     },
     inputContainer: {
