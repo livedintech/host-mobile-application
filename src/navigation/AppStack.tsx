@@ -628,6 +628,14 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.PRE_ACTIVITY_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/PreActivity/PreActivity')
+            .default
+        }
+      />
 
       {/* /TASK LIST SCREEN NEW END */}
     </Stack.Navigator>

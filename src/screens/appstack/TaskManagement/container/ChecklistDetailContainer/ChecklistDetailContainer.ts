@@ -1,30 +1,36 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  getTaskChecklistDetail, 
-  taskManagementInsertChecklist, 
+import {
+  getTaskChecklistDetail,
+  taskManagementInsertChecklist,
   updateSingleChecklistItem,
-  filterChecklistItem
+  filterChecklistItem,
 } from '@/services/TaskManagementApi';
 import { useTaskStore } from '@/store/taskStore';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
+import { goBack } from '@/services/navigationService';
 
-const useChecklistDetailContainer = (sectionId: number) => {
+const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => {
   const queryClient = useQueryClient();
-  const { taskId, taskType } = useTaskStore();
+  const { taskId: storeTaskId, taskType: storeTaskType } = useTaskStore();
+
+  const effectiveTaskId = propTaskId || storeTaskId;
+  const effectiveTaskType = storeTaskType || 'maintenance';
+
   const [localItems, setLocalItems] = useState<any[]>([]);
 
   // 1. Fetch Checklist Items
   const { isLoading, refetch, data: remoteData } = useQuery({
-    queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL, sectionId, taskId],
-    queryFn: () => getTaskChecklistDetail(sectionId, taskType!, taskId!),
-    enabled: !!sectionId && !!taskId,
+    queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL, sectionId, effectiveTaskId],
+    queryFn: () => getTaskChecklistDetail(sectionId, effectiveTaskType, effectiveTaskId!),
+    enabled: !!sectionId && !!effectiveTaskId,
     staleTime: 0,
   });
 
-  // 2. Initialize items (All checked by default)
-  useEffect(() => {
+
+
+    useEffect(() => {
     if (remoteData?.data) {
       const initialized = remoteData.data.map((item: any) => ({ 
         ...item, 
@@ -34,56 +40,62 @@ const useChecklistDetailContainer = (sectionId: number) => {
     }
   }, [remoteData]);
 
-  // 3. Mutation: Add New Item
+  // 3. Mutation: Add Item
   const insertItemMutation = useMutation({
-    mutationFn: (itemName: string) =>
+    mutationFn: (name: string) =>
       taskManagementInsertChecklist({
-        task_id: taskId!,
-        task_checklist_detail_id: sectionId,
-        checklist_names: [itemName],
+        task_id: effectiveTaskId!,
+        checklist_name: name,
+        section_id: sectionId,
       }),
-    onSuccess: async () => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL] });
       Toast.show({ type: 'success', text1: 'Item added successfully' });
-      await queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL, sectionId] });
-      refetch();
     },
   });
 
-  // 4. Mutation: Update Existing Item Name
+  // 4. Mutation: Update Item Name
   const updateItemMutation = useMutation({
     mutationFn: (payload: { id: number; checklist_name: string }) =>
-      updateSingleChecklistItem(payload),
-    onSuccess: async () => {
+      updateSingleChecklistItem(payload.id, payload.checklist_name),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL] });
       Toast.show({ type: 'success', text1: 'Item updated successfully' });
-      await queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL, sectionId] });
-      refetch();
     },
   });
 
-  // 5. Mutation: Filter (Save Checked Items)
+  // 5. Mutation: Save Selection
   const filterMutation = useMutation({
-    mutationFn: (selectedIds: number[]) => 
+    mutationFn: (selectedIds: number[]) =>
       filterChecklistItem({
-        task_id: taskId!,
-        ids: selectedIds,
+        task_id: effectiveTaskId!,
+        section_id: sectionId,
+        ids: selectedIds, // Ensure this matches your API param (ids or checklist_ids)
       }),
-    onError: (err: any) => {
-      Toast.show({ type: 'error', text1: err.message || 'Failed to save selection' });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL] });
+      Toast.show({ type: 'success', text1: 'Checklist saved' });
+      goBack();
+    },
+    onError: (error) => {
+      console.error("Filter Mutation Error:", error);
+      Toast.show({ type: 'error', text1: 'Failed to save checklist' });
     }
   });
 
   const toggleItem = (id: number) => {
-    setLocalItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isChecked: !item.isChecked } : item))
+    setLocalItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, isChecked: !item.isChecked } : item,
+      ),
     );
   };
 
   const saveAndContinue = async () => {
     const selectedIds = localItems
-      .filter((item) => item.isChecked)
-      .map((item) => item.id);
-    
-    // Returns a promise so the UI can wait for success before navigating
+      .filter(item => item.isChecked)
+      .map(item => item.id);
+
     return filterMutation.mutateAsync(selectedIds);
   };
 

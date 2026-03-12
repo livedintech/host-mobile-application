@@ -5,11 +5,13 @@ import BottomSheet, {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
+import { useRoute } from '@react-navigation/native';
+
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { navigate } from '@/services/navigationService';
+import { navigate, goBack } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
@@ -20,8 +22,14 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { getChecklistIcon } from '@/utility/getChecklistIcon';
 
 const ViewChecklistAll = () => {
+  const route = useRoute<any>();
+  const { taskId, fromEdit, taskType } = route.params || {};
+  console.log('taskIDINViewCheclist', taskId);
+
+  // Pass navigation params directly to the container
   const { checklistData, isLoading, addSection, onRefresh } =
-    useViewChecklistAllContainer();
+    useViewChecklistAllContainer({ taskId, taskType });
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['45%'], []);
 
@@ -64,6 +72,7 @@ const ViewChecklistAll = () => {
           navigate(NavigationRoutes.APP_STACK.CHECKLIST_DETAIL, {
             title: item.name,
             sectionId: item.id,
+            taskId: taskId,
           })
         }
       >
@@ -77,25 +86,27 @@ const ViewChecklistAll = () => {
         </GlassCard>
       </ButtonView>
     ),
-    [],
+    [taskId],
   );
 
   const ListHeader = () => (
     <View>
       <AppText
-        text="Checklist Management"
+        text={fromEdit ? 'Post-activity Preview' : 'Checklist Management'}
         fontSize={28}
         type="Bold"
         mb={16}
         mt={20}
       />
-      <View style={styles.addSectionContainer}>
-        <ButtonView onPress={handleOpenPress}>
-          <GlassCard width="auto" style={styles.addSectionBtn}>
-            <AppText text="Add Section" fontSize={14} type="Medium" />
-          </GlassCard>
-        </ButtonView>
-      </View>
+      {!fromEdit && (
+        <View style={styles.addSectionContainer}>
+          <ButtonView onPress={handleOpenPress}>
+            <GlassCard width="auto" style={styles.addSectionBtn}>
+              <AppText text="Add Section" fontSize={14} type="Medium" />
+            </GlassCard>
+          </ButtonView>
+        </View>
+      )}
     </View>
   );
 
@@ -114,13 +125,20 @@ const ViewChecklistAll = () => {
         />
         <View style={styles.footer}>
           <AppButton
-            title="Next"
+            title={fromEdit ? 'Done' : 'Next'}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}
             borderColor={Colors.TEAL_GREEN}
-            onPress={() => navigate(NavigationRoutes.APP_STACK.STAFF_NOTES)}
+            onPress={() => {
+              if (fromEdit) {
+                goBack();
+              } else {
+                navigate(NavigationRoutes.APP_STACK.STAFF_NOTES);
+              }
+            }}
           />
         </View>
+
         <BottomSheet
           ref={bottomSheetRef}
           index={-1}
@@ -140,7 +158,7 @@ const ViewChecklistAll = () => {
               label="Section Name"
               control={control}
               errors={errors}
-              placeholder="Kitchen"
+              placeholder="e.g. Kitchen"
               rules={{ required: 'Required' }}
             />
             <AppButton

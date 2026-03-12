@@ -40,7 +40,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         .of(yup.mixed())
         .min(1, 'Please select at least one listing')
         .required('Listing selection is required'),
-    password: yup.string().test('is-password-req', 'Password is required for operator', function(value) {
+    password: yup.string().test('is-password-req', 'Password is required', function(value) {
       const { role } = this.parent;
       const selectedRole = roles?.find((r: any) => String(r.id) === String(role));
       if (selectedRole?.role_type === 'operator' && !value) {

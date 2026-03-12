@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
     bottom: Metrics.verticalScale(30),
     left: 25,
     right: 25,
+    // backgroundColor:Colors.WHITE
   },
 });
 

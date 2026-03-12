@@ -1,7 +1,7 @@
 export const CHECKLIST_ICON_MAP: Record<string, string> = {
   kitchen: 'kitchenChecklistIcon',
-  bathroom: 'bathroomChecklistIcon',
-  bedroom: 'bedroomChecklistIcon',
+  bathroom: 'bathroom',
+  bedroom: 'bedroom',
   laundry: 'laundryChecklistIcon',
   livingroom: 'livingRoomChecklistIcon',
 };

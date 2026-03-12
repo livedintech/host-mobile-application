@@ -4,14 +4,16 @@ import STORAGE_CONST from '@/constants/storage';
 import { 
   getHostTaskList, 
   getTaskManagementListing, 
-  getTaskManagementVendor 
+  getTaskManagementVendor ,
+  getTaskDetail
 } from '@/services/TaskManagementApi';
 
 const AllTaskContainer = () => {
   const STATUS_MAP: Record<string, string> = {
     'To-do': 'todo',
     'In Progress': 'inprogress',
-    'Complete': 'done',
+    'Complete': 'completed',
+    'Template': 'template',
   };
 
   const [activeTab, setActiveTab] = useState('To-do');

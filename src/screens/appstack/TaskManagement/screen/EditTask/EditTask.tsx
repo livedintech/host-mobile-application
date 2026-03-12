@@ -1,6 +1,8 @@
-import React from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Platform, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
+
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -9,8 +11,11 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import { goBack, navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import STORAGE_CONST from '@/constants/storage';
+import { getTaskDetail } from '@/services/TaskManagementApi';
 
-// Native Formatters
 const formatDate = (dateString: string) => {
   if (!dateString) return '--';
   return new Intl.DateTimeFormat('en-GB', {
@@ -20,46 +25,65 @@ const formatDate = (dateString: string) => {
   }).format(new Date(dateString));
 };
 
-const formatTime = (dateString: string) => {
-  if (!dateString) return '--';
-  return new Intl.DateTimeFormat('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  }).format(new Date(dateString));
-};
-
 const EditTask = ({ route }: any) => {
-  // Extract data from navigation params
-  const task = route?.params?.taskData || {};
-  console.log("taskkkk",task)
-  
-  // Map API status to UI Logic
-  // API: 'todo' | 'inprogress' | 'done'
+  // Extract ID and Type passed from AllTask screen
+  const { taskId, taskType } = route?.params || {};
+
+  // 1. Fetch Task Detail API
+  const {
+    data: task,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [STORAGE_CONST.GET_TASK_DETAIL, taskId],
+    queryFn: () => getTaskDetail(taskId, taskType),
+    enabled: !!taskId,
+  });
+
   const apiStatus = task?.status || 'todo';
-  const isCompleted = apiStatus === 'done';
+  const isCompleted = apiStatus === 'completed';
   const isEditable = apiStatus === 'todo' || apiStatus === 'inprogress';
 
-  // Map API status strings to UI display text
-  const statusDisplay = {
-    todo: 'To do',
-    inprogress: 'In Progress',
-    done: 'Completed',
-  }[apiStatus as 'todo' | 'inprogress' | 'done'] || 'To do';
+  const statusDisplay =
+    {
+      todo: 'To do',
+      inprogress: 'In Progress',
+      completed: 'Completed',
+    }[apiStatus as 'todo' | 'inprogress' | 'completed'] || 'To do';
 
   const {
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      assignee: task?.assigned_user_id?.toString() || '',
+      assignee: '',
     },
   });
 
+  // Update form when data arrives
+  useEffect(() => {
+    if (task?.assigned_user?.id) {
+      setValue('assignee', task.assigned_user.id.toString());
+    }
+  }, [task, setValue]);
+
   const assigneeOptions = [
-    { label: task?.assigned_user_name || 'Select User', value: task?.assigned_user_id?.toString() || '' },
-    // In a real app, you'd fetch all vendors here
+    {
+      label: task?.assigned_user?.name || 'Select User',
+      value: task?.assigned_user?.id?.toString() || '',
+    },
   ];
+
+  if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+        </View>
+      </BGImage>
+    );
+  }
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -67,9 +91,12 @@ const EditTask = ({ route }: any) => {
         <RefreshableScrollView
           contentContainerStyle={styles.scrollContent}
           isLoading={false}
+          onRefresh={refetch}
         >
           <AppText
-            text={task?.task_type ? task.task_type.charAt(0).toUpperCase() + task.task_type.slice(1) + ' Task' : 'Task Details'}
+            text={`${task?.task_type_key
+              ?.charAt(0)
+              .toUpperCase()}${task?.task_type_key?.slice(1)} Task`}
             fontSize={28}
             type="Bold"
             mb={30}
@@ -83,9 +110,14 @@ const EditTask = ({ route }: any) => {
             </View>
 
             <View style={styles.detailSection}>
-              <AppText text="Task Instructions" fontSize={14} type="Bold" mb={4} />
               <AppText
-                text={task?.description || 'No instructions provided for this task.'}
+                text="Task Instructions"
+                fontSize={14}
+                type="Bold"
+                mb={4}
+              />
+              <AppText
+                text={task?.description || 'No instructions provided.'}
                 fontSize={14}
                 color={Colors.DARK_CHARCOAL}
                 mb={20}
@@ -106,14 +138,18 @@ const EditTask = ({ route }: any) => {
                   control={control}
                   errors={errors}
                   data={assigneeOptions}
-                  placeholder="Select Assignee"
                 />
               ) : (
                 <View>
-                  <AppText text="Assign Task" fontSize={14} type="Bold" mb={8} />
+                  <AppText
+                    text="Assign Task"
+                    fontSize={14}
+                    type="Bold"
+                    mb={8}
+                  />
                   <View style={styles.readOnlyBox}>
                     <AppText
-                      text={task?.assigned_user_name || 'Unassigned'}
+                      text={task?.assigned_user?.name || 'Unassigned'}
                       fontSize={14}
                       color={Colors.DARK_CHARCOAL}
                     />
@@ -132,17 +168,17 @@ const EditTask = ({ route }: any) => {
             <TimelineItem
               icon="taskCalendar"
               label="Task Date"
-              value={formatDate(task?.date)}
+              value={formatDate(task?.start_date)}
             />
             <TimelineItem
               icon="taskStartDate"
               label="Start Time"
-              value={formatTime(task?.date)} // Adjust key if backend sends separate start_time
+              value={task?.start_time || '--'}
             />
             <TimelineItem
               icon="taskEndDate"
               label="End Time"
-              value={formatTime(task?.assign_datetime)} // Adjust key if backend sends separate end_time
+              value={task?.end_time || '--'}
             />
 
             <View style={styles.timelineRow}>
@@ -177,14 +213,23 @@ const EditTask = ({ route }: any) => {
                 borderColor={Colors.SMOOTH_GREY}
                 color={Colors.BLACK}
                 mb={12}
-                onPress={() => {}}
+                onPress={() =>
+                  navigate(NavigationRoutes.APP_STACK.PRE_ACTIVITY_SCREEN, {
+                    taskData: task,
+                  })
+                }
               />
               <AppButton
                 title="Post Activity Preview"
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
-                onPress={() => {}}
+                   onPress={() =>
+                  navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, {
+                    taskId,
+                    fromEdit: true,
+                  })
+                }
               />
             </>
           ) : (
@@ -195,14 +240,18 @@ const EditTask = ({ route }: any) => {
                 borderColor={Colors.SMOOTH_GREY}
                 color={Colors.BLACK}
                 mb={12}
-                onPress={() => navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, { taskId: task.id })}
+                onPress={() =>
+                  navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, {
+                    taskId,
+                    fromEdit: true,
+                  })
+                }
               />
               <AppButton
                 title="Save Changes"
                 backgroundColor={Colors.PRIMARY_TEAL}
-                borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
-                onPress={() => {}}
+                onPress={() => goBack()}
               />
             </>
           )}
@@ -212,7 +261,7 @@ const EditTask = ({ route }: any) => {
   );
 };
 
-const TimelineItem = ({ icon, label, value }: { icon: string; label: string; value: string }) => (
+const TimelineItem = ({ icon, label, value }: any) => (
   <View style={styles.timelineRow}>
     <View style={styles.iconCircle}>
       <Svgicons path={icon} size={22} />
@@ -226,9 +275,15 @@ const TimelineItem = ({ icon, label, value }: { icon: string; label: string; val
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 25 },
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scrollContent: { paddingBottom: 180 },
   glassCard: { padding: 20, marginBottom: 20 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   detailSection: { marginTop: 10 },
   readOnlyBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
@@ -248,7 +303,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 15,
   },
-  footer: { position: 'absolute', bottom: Platform.OS === 'ios' ? 40 : 20, left: 25, right: 25 },
+  footer: {
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 40 : 20,
+    left: 25,
+    right: 25,
+  },
 });
 
 export default EditTask;

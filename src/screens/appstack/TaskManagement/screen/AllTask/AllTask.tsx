@@ -1,6 +1,9 @@
 import React, { useRef, useMemo, useCallback } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
 
 import { Colors } from '@/theme/colors';
@@ -30,15 +33,26 @@ const formatDate = (dateString: string) => {
 };
 
 const AllTask = () => {
-  const { 
-    taskList, meta, isLoading, activeTab, 
-    handleTabChange, listingOptions, assigneeOptions, applyFilters 
+  const {
+    taskList,
+    meta,
+    isLoading,
+    activeTab,
+    handleTabChange,
+    listingOptions,
+    assigneeOptions,
+    applyFilters,
   } = AllTaskContainer();
 
   const filterSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['60%'], []);
 
-  const { control, handleSubmit, formState: { errors }, reset } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     defaultValues: { listings: [], assignees: [] },
   });
 
@@ -58,7 +72,12 @@ const AllTask = () => {
 
   const renderBackdrop = useCallback(
     (props: any) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} />
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+      />
     ),
     [],
   );
@@ -68,7 +87,11 @@ const AllTask = () => {
       <View style={styles.cardHeader}>
         <View style={{ flex: 1, marginBottom: 20 }}>
           <AppText
-            text={item.type ? item.type.charAt(0).toUpperCase() + item.type.slice(1) : 'Task'}
+            text={
+              item.type
+                ? item.type.charAt(0).toUpperCase() + item.type.slice(1)
+                : 'Task'
+            }
             fontSize={22}
             type="Medium"
             color={Colors.BLACK}
@@ -84,7 +107,12 @@ const AllTask = () => {
         </View>
 
         <ButtonView
-          onPress={() => navigate(NavigationRoutes.APP_STACK.EDIT_TASK, { taskData: item })}
+          onPress={() =>
+            navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
+              taskId: item.id,
+              taskType: item.type,
+            })
+          }
         >
           <GlassCard width={40} style={styles.editGlassIcon}>
             <Svgicons path="edit_pencil_icon" size={24} />
@@ -105,7 +133,7 @@ const AllTask = () => {
         <View style={styles.infoRow}>
           <Svgicons path="taskCalendar" size={16} />
           <AppText
-            text={`Date: ${formatDate(item.date)}`}
+            text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
             fontSize={13}
             ml={10}
             color={Colors.DARK_CHARCOAL}
@@ -120,7 +148,7 @@ const AllTask = () => {
       <AppText text="Task Management" fontSize={26} type="Medium" mb={24} />
       <View style={styles.filterRow}>
         <View style={styles.tabContainer}>
-          {['To-do', 'In Progress', 'Complete'].map(tab => (
+          {['To-do', 'In Progress', 'Complete', 'Template'].map(tab => (
             <ButtonView
               key={tab}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
@@ -130,7 +158,11 @@ const AllTask = () => {
                 text={tab}
                 fontSize={13}
                 type="Medium"
-                color={activeTab === tab ? Colors.WHITE : Colors.DARK_CHARCOAL_OPACITY_80}
+                color={
+                  activeTab === tab
+                    ? Colors.WHITE
+                    : Colors.DARK_CHARCOAL_OPACITY_80
+                }
               />
             </ButtonView>
           ))}
@@ -158,7 +190,11 @@ const AllTask = () => {
           <GradientBorder
             borderRadius={14}
             borderWidth={1}
-            colors={['rgba(128, 128, 128, 0.66)', 'rgba(255, 255, 255, 0.66)', 'rgba(128, 128, 128, 0.66)']}
+            colors={[
+              'rgba(128, 128, 128, 0.66)',
+              'rgba(255, 255, 255, 0.66)',
+              'rgba(128, 128, 128, 0.66)',
+            ]}
             locations={[0, 0.5356, 1]}
             style={styles.gradientMargin}
           >
@@ -166,7 +202,9 @@ const AllTask = () => {
               title="Setup Cleaning Schedule"
               style={styles.outlineBtn}
               color={Colors.BLACK}
-              onPress={() => navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN)}
+              onPress={() =>
+                navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN)
+              }
             />
           </GradientBorder>
 
@@ -175,7 +213,9 @@ const AllTask = () => {
             backgroundColor={Colors.PRIMARY_TEAL}
             borderColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}
-            onPress={() => navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING)}
+            onPress={() =>
+              navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING)
+            }
           />
         </View>
 
@@ -189,9 +229,13 @@ const AllTask = () => {
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
-              <AppText text="Apply Filter" fontSize={24} type="Bold" />
+              <AppText text="Apply Filter" fontSize={24} type="Medium" />
               <ButtonView onPress={onResetFilter}>
-                <AppText text="Reset" color={Colors.PRIMARY_TEAL} type="Medium" />
+                <AppText
+                  text="Reset"
+                  color={Colors.PRIMARY_TEAL}
+                  type="Medium"
+                />
               </ButtonView>
             </View>
 
@@ -234,23 +278,66 @@ const AllTask = () => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
-  listContent: { paddingHorizontal: 25, paddingTop: Metrics.verticalScale(20), paddingBottom: 220 },
+  listContent: {
+    paddingHorizontal: 25,
+    paddingTop: Metrics.verticalScale(20),
+    paddingBottom: 220,
+  },
   header: { marginBottom: 20 },
-  filterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  tabContainer: { flexDirection: 'row', backgroundColor: 'rgba(255, 255, 255, 0.4)', borderRadius: 25, padding: 4, flex: 0.95 },
+  filterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 25,
+    padding: 4,
+    flex: 0.95,
+  },
   tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 20 },
   activeTab: { backgroundColor: Colors.PRIMARY_TEAL },
-  filterIconButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255, 255, 255, 0.4)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.5)' },
+  filterIconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+  },
   taskCard: { padding: 24, borderRadius: 28, marginBottom: 16 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  editGlassIcon: { height: 40, borderRadius: 16, justifyContent: 'center', alignItems: 'center', padding: 0 },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  editGlassIcon: {
+    height: 40,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+  },
   infoContainer: { gap: 8 },
   infoRow: { flexDirection: 'row', alignItems: 'center' },
-  actionFooter: { position: 'absolute', bottom: Platform.OS === 'ios' ? 40 : 20, left: 25, right: 25 },
+  actionFooter: {
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 40 : 20,
+    left: 25,
+    right: 25,
+  },
   gradientMargin: { marginBottom: 12 },
   outlineBtn: { backgroundColor: '#fff', borderRadius: 13, borderWidth: 0 },
   sheetContent: { padding: 25 },
-  sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  sheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
   formContent: { marginTop: 10 },
 });
 
