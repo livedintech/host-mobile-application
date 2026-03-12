@@ -83,58 +83,6 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   const rawData = calendarResponse?.bookings || [];
   const defaultDailyPrice = calendarResponse?.defaultDailyPrice || 0;
 
-  // const calendarDataMap = useMemo(() => {
-  //   const marks: any = {};
-  //   if (!Array.isArray(rawData)) return marks;
-
-  //   const normalizeBooking = (item: any) => ({
-  //     id: item.id || item.booking_id,
-  //     guest: item.guest || item.guest_name || 'Guest',
-  //     source: item.source || item.type || 'direct',
-  //     source_type: item.source_type || item.type,
-  //     listing_title: item.listing_title || 'Property',
-  //     start_date: item.start_date || item.arrival_date,
-  //     end_date: item.end_date || item.departure_date,
-  //     checkIn: item.checkIn || "04:00 PM",
-  //     checkOut: item.checkOut || "12:00 AM",
-  //     ...item
-  //   });
-
-  //   rawData.forEach((item: any) => {
-  //     if (item.calender_date) {
-  //       const dateKey = item.calender_date;
-  //       marks[dateKey] = { price: item.rate || defaultDailyPrice };
-  //       if (item.bookings && item.bookings.length > 0) {
-  //         const booking = normalizeBooking(item.bookings[0]);
-  //         const config = getOtaConfig(booking.source);
-  //         let type = 'middle';
-  //         if (dateKey === booking.start_date) type = 'starting';
-  //         else if (dateKey === booking.end_date) type = 'ending';
-  //         if (booking.start_date === booking.end_date) type = 'single';
-  //         marks[dateKey] = { ...marks[dateKey], type, ota: config.key, color: config.color, guest: booking.guest, showLabel: type === 'starting' || type === 'single', bookingData: booking };
-  //       }
-  //     } else if (item.start_date && item.end_date) {
-  //       const normalizedItem = normalizeBooking(item);
-  //       const config = getOtaConfig(normalizedItem.source_type === 'livedin' ? 'direct' : normalizedItem.source);
-  //       const current = new Date(normalizedItem.start_date);
-  //       const last = new Date(normalizedItem.end_date);
-  //       while (current <= last) {
-  //         const dKey = current.toISOString().split('T')[0];
-  //         if (!marks[dKey]) {
-  //           marks[dKey] = { ota: config.key, channels: [config.key.toLowerCase()], price: normalizedItem.amount || defaultDailyPrice, bookings: [normalizedItem] };
-  //         } else {
-  //           const existingChannels = marks[dKey].channels || [];
-  //           if (!existingChannels.includes(config.key.toLowerCase())) marks[dKey].channels = [...existingChannels, config.key.toLowerCase()];
-  //           if (marks[dKey].bookings) marks[dKey].bookings.push(normalizedItem);
-  //         }
-  //         current.setDate(current.getDate() + 1);
-  //       }
-  //     }
-  //   });
-  //   return marks;
-  // }, [rawData, defaultDailyPrice]);
-
-
   const calendarDataMap = useMemo(() => {
     const marks: any = {};
     if (!Array.isArray(rawData)) return marks;
@@ -153,11 +101,9 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     });
 
     rawData.forEach((item: any) => {
-      // --- PART 1: Handle Calendar Daily Rates/Specific Day Bookings ---
+      // --- PART 1: Handle Calendar Daily Rates/Specific Day Bookings (Single Listing) ---
       if (item.calender_date) {
         const dateKey = item.calender_date;
-
-        // FIX: Use spread to avoid overwriting existing data from previous loops
         marks[dateKey] = {
           ...marks[dateKey],
           price: item.rate || marks[dateKey]?.price || defaultDailyPrice
@@ -170,8 +116,6 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
           let type = 'middle';
           if (dateKey === booking.start_date) type = 'starting';
           else if (dateKey === booking.end_date) type = 'ending';
-
-          // Handle Single Day (Start and End is same)
           if (booking.start_date === booking.end_date) type = 'single';
 
           marks[dateKey] = {
@@ -180,29 +124,33 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
             ota: config.key,
             color: config.color,
             guest: booking.guest,
-            // Show label only on the start/single day to avoid clutter
             showLabel: type === 'starting' || type === 'single',
             bookingData: booking
           };
         }
       }
 
-      // --- PART 2: Handle Date Range Bookings (start_date to end_date) ---
+      // --- PART 2: Handle Date Range Bookings ---
       else if (item.start_date && item.end_date) {
         const normalizedItem = normalizeBooking(item);
         const config = getOtaConfig(normalizedItem.source_type === 'livedin' ? 'direct' : normalizedItem.source);
 
+        const isMultiCalendar = !selectedListingId || selectedListingId === 'all' || selectedListingId === '';
+        const rangeEndDate = (isMultiCalendar && item.calendar_end_date) 
+          ? item.calendar_end_date 
+          : normalizedItem.end_date;
+        // --- NEW LOGIC END ---
+
         let current = new Date(normalizedItem.start_date);
-        const last = new Date(normalizedItem.end_date);
+        const last = new Date(rangeEndDate);
 
         while (current <= last) {
           const dKey = current.toISOString().split('T')[0];
 
-          // Determine type for this specific date in the range
           let dateType = 'middle';
           if (dKey === normalizedItem.start_date) dateType = 'starting';
-          else if (dKey === normalizedItem.end_date) dateType = 'ending';
-          if (normalizedItem.start_date === normalizedItem.end_date) dateType = 'single';
+          else if (dKey === rangeEndDate) dateType = 'ending'; // Use the rangeEndDate for markers
+          if (normalizedItem.start_date === rangeEndDate) dateType = 'single';
 
           if (!marks[dKey]) {
             marks[dKey] = {
@@ -217,7 +165,6 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
               bookings: [normalizedItem]
             };
           } else {
-            // Merge logic if date exists
             const existingChannels = marks[dKey].channels || [];
             if (!existingChannels.includes(config.key.toLowerCase())) {
               marks[dKey].channels = [...existingChannels, config.key.toLowerCase()];
@@ -226,15 +173,14 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
               marks[dKey].bookings.push(normalizedItem);
             }
           }
-
-          // Move to next day
           current.setDate(current.getDate() + 1);
         }
       }
     });
 
     return marks;
-  }, [rawData, defaultDailyPrice]);
+  }, [rawData, defaultDailyPrice, selectedListingId]);
+  
   const filteredReservations = useMemo(() => {
     return (reservationRawData || []).filter((item: any) =>
       (item.guest || item.name || '').toLowerCase().includes(searchQuery.toLowerCase())

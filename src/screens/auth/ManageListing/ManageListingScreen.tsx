@@ -1,38 +1,39 @@
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
 import useManageListingContainer from './ManageListingContainer';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { s, vs } from 'react-native-size-matters';
+import { ms, s, vs } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#333333';
 
 const ManageListingScreen = () => {
-    const { selectedListing, onSelect, isLoading,listingData, localSelectedId} = useManageListingContainer();
+  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId } = useManageListingContainer();
 
   const handleNextPress = () => {
     if (localSelectedId !== null) {
-      // 2. Both are strings now, so this is a direct pass
       onSelect(localSelectedId);
     }
+  };
+
+  // Helper function to pick correct icon based on label text
+  const getIconForListing = (label: string = '') => {
+    const lowerLabel = label.toLowerCase();
+    if (lowerLabel.includes('1-3')) return 'onetothree'; // Replace with your exact SVG path name
+    if (lowerLabel.includes('30+')) return 'property'; // Replace with your exact SVG path name
+    return 'fourtothirty'; // Fallback icon
   };
 
   if (isLoading) {
     return (
       <SafeAreaView style={styles.loaderContainer}>
         <ActivityIndicator size="large" color={FIGMA_TEAL} />
-        <AppText
-          text="Loading listings..."
-          fontSize={14}
-          color={Colors.SUPER_GREY}
-          style={{ marginTop: 10 }}
-        />
       </SafeAreaView>
     );
   }
@@ -41,70 +42,68 @@ const ManageListingScreen = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
         <ScrollView
-          contentContainerStyle={styles.scrollContent} 
+          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          bounces={false}
         >
           <View style={styles.mainContent}>
-            
-            {/* Title Section */}
-            <View style={styles.headerSection}>
+
+            {/* Main Title */}
+            <View style={styles.titleSection}>
               <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
                 How many{' '}
-                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                  listings
-                </AppText>
-              </AppText>
-              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                you manage?
+                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>listings</AppText> do{'\n'}you manage?
               </AppText>
             </View>
 
-            {/* Main Content */}
-            <View style={styles.content}>
-                <AppText 
-                    text="How many listing do you manage?" 
-                    textAlign="center" 
-                    fontSize={32} 
-                    color={Colors.BLACK}
-                    style={styles.title}
-                />
-
-                <View style={styles.grid}>
-                    {listingData.map((item:{value?:number; label?:string}) => {
-                        const isSelected = selectedListing === item.value;
-                        
-                        return (
-                            <ButtonView 
-                                key={item.value}
-                                activeOpacity={0.9}
-                                style={[styles.card, isSelected && styles.cardActive]}
-                                onPress={() => onSelect(item?.value)}
-                            >
-                                <Svgicons path='property' size={40}/>
-                                <AppText 
-                                    text={item.label} 
-                                    fontSize={16} 
-                                    type="Medium" 
-                                    color={isSelected ? Colors.BRUNSWICK_GREEN : Colors.BLACK}
-                                    style={styles.cardLabel}
-                                />
-                            </ButtonView>
-                        );
-                    })}
+            {/* Glass Card & Options */}
+            <GlassCard width="100%">
+              <View style={styles.cardHeader}>
+                <AppText text="Listing Selection" fontSize={20} type="Medium" color={Colors.BLACK} />
+                <View style={styles.iconCircle}>
+                  <Svgicons path="home" size={24} />
                 </View>
-            </View>
+              </View>
+              <View style={styles.listWrapper}>
+                {listingData.map((item: { value?: number; label?: string }) => {
+                  const isSelected = localSelectedId === item.value;
 
-            {/* Bottom Action Button - Now handles navigation only */}
+                  return (
+                    <ButtonView
+                      key={item.value}
+                      activeOpacity={0.9}
+                      style={[styles.listItem, isSelected && styles.listItemActive]}
+                      onPress={() => setLocalSelectedId(item.value || null)}
+                    >
+                      <View style={styles.itemIconWrapper}>
+                        <Svgicons
+                          path={getIconForListing(item.label)}
+                          size={24}
+                          color={isSelected ? FIGMA_TEAL : Colors.BLACK}
+                        />
+                      </View>
+                      <AppText
+                        text={item.label}
+                        fontSize={16}
+                        type="Regular"
+                        color={isSelected ? FIGMA_TEAL : Colors.BLACK}
+                        style={styles.itemLabel}
+                      />
+                    </ButtonView>
+                  );
+                })}
+              </View>
+            </GlassCard>
+
+            {/* Bottom Button Section */}
             <View style={styles.bottomSec}>
               <AppButton
                 title="Next"
                 disabled={localSelectedId === null || isLoading}
-                backgroundColor={FIGMA_TEAL}
+                backgroundColor={localSelectedId !== null ? Colors.MEDIUM_JUNGLE_GREEN : 'rgba(32, 149, 123, 0.5)'}
                 color={Colors.WHITE}
                 borderRadius={100}
-                type="Bold"
-                fontSize={18}
+                fontSize={16}
                 onPress={handleNextPress}
               />
             </View>
@@ -117,52 +116,106 @@ const ManageListingScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
   },
+  topHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: s(24),
+    paddingTop: vs(10),
+    paddingBottom: vs(15),
+  },
+  iconBtn: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  langBtn: {
+    paddingHorizontal: s(16),
+    paddingVertical: vs(8),
+    borderRadius: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: { flexGrow: 1 },
   mainContent: {
     flex: 1,
     paddingHorizontal: s(24),
-    paddingTop: vs(60),
+    paddingTop: vs(20),
   },
-  headerSection: {
-    marginBottom: vs(50),
+  titleSection: {
+    marginBottom: vs(40),
   },
-  grid: {
+  glassCard: {
+    backgroundColor: 'rgba(212, 223, 221, 0.4)',
+    borderRadius: ms(24),
+    padding: s(20),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+  },
+  cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginBottom: vs(24),
   },
-  card: {
-    width: '30%', 
-    aspectRatio: 1,
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
-    borderRadius: 16,
+  iconCircle: {
+    width: ms(44),
+    height: ms(44),
+    borderRadius: ms(12),
+    backgroundColor: 'rgba(225, 235, 233, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    marginBottom: vs(15),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
   },
-  cardActive: {
+  listWrapper: {
+    gap: vs(12),
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: vs(56),
+    paddingHorizontal: s(16),
+    borderRadius: ms(16),
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: Colors.WHITE,
+  },
+  listItemActive: {
     borderColor: FIGMA_TEAL,
-    borderWidth: 2,
-    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
   },
-  cardLabel: {
-    marginTop: vs(10),
-    textAlign: 'center',
+  itemIconWrapper: {
+    width: s(32),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemLabel: {
+    marginLeft: s(10),
   },
   bottomSec: {
     flex: 1,
     justifyContent: 'flex-end',
-    paddingBottom: vs(30),
-    marginTop: vs(40),
+    paddingBottom: vs(20),
+    paddingTop: vs(40),
   },
 });
 

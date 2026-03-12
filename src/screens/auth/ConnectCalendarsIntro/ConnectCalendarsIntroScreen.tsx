@@ -1,59 +1,69 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, ScrollView, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
-import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { vs } from 'react-native-size-matters';
 
 const ConnectCalendarsIntroScreen = () => {
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Calendar Card Area */}
-        <View style={styles.cardContainer}>
-            <Image 
-              source={require('@/assets/img/calendar_view.png')} 
-              style={styles.img} 
-              resizeMode="contain" 
-            />
-        </View>
-        <View style={styles.titleSection}>
-          <AppText 
-            text="Airbnb. Gathern." 
-            fontSize={32} 
-            type="Bold" 
-            textAlign="center" 
-            color={Colors.PINE_FOREST} 
-          />
-          <View style={styles.row}>
-            <AppText text="Or Just " fontSize={32} color={Colors.PINE_FOREST} />
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <KeyboardAvoidingView
+        style={[styles.container, { backgroundColor: 'transparent' }]} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <ScrollView 
+          style={{ flex: 1, backgroundColor: 'transparent' }}
+          contentContainerStyle={styles.scrollContent} 
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Calendar Card Area */}
+          <View style={styles.cardContainer}>
+              <Image 
+                source={require('@/assets/img/calendar_view.png')} 
+                style={styles.img} 
+                resizeMode="contain" 
+              />
+          </View>
+
+          <View style={styles.titleSection}>
             <AppText 
-              text="Getting " 
+              text="Airbnb. Gathern." 
               fontSize={32} 
-              type="SemiBold" 
-              color={Colors.PINE_FOREST} 
-              italic
+              type="Medium" 
+              textAlign="center"
+              color="#1A332C" 
+            />
+            <AppText 
+              text="Booking.com. Or just" 
+              fontSize={32} 
+              type="Medium" 
+              textAlign="center"
+              color="#1A332C" 
+              mt={-5}
+            />
+            <AppText 
+              text="getting started." 
+              fontSize={32} 
+              type="Bold" 
+              color="#21AA8F" 
+              textAlign="center"
+              mt={-5}
+            />
+            
+            <AppText 
+              text="Connect your calendars in 1 click. Prevent double bookings and sync your rates instantly."
+              textAlign="center"
+              color="#5A716A" 
+              mt={25} 
+              fontSize={15}
+              lineHeight={22}
             />
           </View>
-          <AppText 
-              text="Started." 
-              fontSize={32} 
-              type="SemiBold" 
-              color={Colors.PINE_FOREST} 
-              italic
-            />
-          <AppText 
-            text="Connect your calendars in 1 click. Prevent double bookings and sync your rates instantly."
-            textAlign="center" 
-            color={Colors.PINE_FOREST} 
-            mt={15} 
-            fontSize={15}
-            px={15}
-          />
-        </View>
 
         {/* Button */}
         <AppButton 
@@ -65,18 +75,39 @@ const ConnectCalendarsIntroScreen = () => {
       <Pagination 
         activeIndex={1} 
       />
-    </View>
+      </KeyboardAvoidingView>
+      </BGImage>
   );
 };
 
-export default ConnectCalendarsIntroScreen;
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 20 },
-  cardContainer: { marginTop: 30, alignItems: 'center' },
+  container: { flex: 1 },
+  scrollContent: { 
+    paddingHorizontal: 25, 
+    paddingBottom: 100,
+    paddingTop: vs(20) 
+  },
+  cardContainer: { 
+    marginTop: vs(10), 
+    alignItems: 'center',
+  },
   img: { width: '100%', height: '100%' },
-  titleSection: { marginTop: 30, alignItems: 'center', paddingHorizontal: Metrics.scale(30) },
-  row: { flexDirection: 'row', alignItems: 'center' },
  
+  titleSection: { 
+    marginTop: vs(20), 
+    alignItems: 'center',
+    width: '100%',
+  },
+  connectBtn: {
+    backgroundColor: '#21AA8F',
+    borderRadius: 100,
+    height: vs(52),
+    width: '100%',
+    marginTop: vs(40),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0,
+  },
 });
+
+export default ConnectCalendarsIntroScreen;

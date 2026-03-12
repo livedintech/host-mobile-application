@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { maskPhoneNumber } from '@/utility/helpers';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import Metrics from '@/utility/Metrics';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -137,14 +138,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   otpInput: {
-    width: s(52),
-    height: vs(60),
+    width: Metrics.scale(74),
+    height: Metrics.verticalScale(60),
     borderWidth: 1,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderBottomWidth: 1, // Ensure no underline style is forced
+    borderRadius: 10,
+    borderBottomWidth: 1,
     color: Colors.BLACK,
     fontSize: 24,
+    borderColor: Colors.BLACK
   },
   footerSec: {
     flexDirection: 'row',

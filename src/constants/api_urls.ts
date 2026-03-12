@@ -126,5 +126,7 @@ export const SERVICE_CONFIG_URLS = {
     CHANNEL_MANAGEMENT_LISTING_GATHERN_IMPORT: `${authController}/gathern/map-listing`,
     GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel`,
     SAVE_PAYMENT_INFO: `${authController}/subscription/payments`,
+    SUBSCRIPTION_ACTIVE: `${authController}/subscription/activate`,
+
   },
 };

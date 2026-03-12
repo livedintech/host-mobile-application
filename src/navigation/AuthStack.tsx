@@ -58,7 +58,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp /> }}
+        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
         name={NavigationRoutes.AUTH_STACK.MANAGE_LISTING}
         getComponent={() =>
           require('@/screens/auth/ManageListing/ManageListingScreen')

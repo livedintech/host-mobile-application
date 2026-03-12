@@ -1,7 +1,5 @@
-// PaymentMethodListScreen.tsx
 import React from 'react';
 import { StyleSheet, View, Image, TextInput, Switch } from 'react-native';
-
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import usePaymentMethodListContainer from './PaymentMethodListContainer';
@@ -15,91 +13,91 @@ const PaymentMethodListScreen = () => {
     isSecure,
     setIsSecure,
     isDefault,
-    setIsDefault,
     onAddNew,
     cards,
     isLoading,
     refetch,
+    handleSetDefault
   } = usePaymentMethodListContainer();
 
-const renderCard = ({ item, index }: { item: any; index: number }) => (
-  <View style={styles.paymentCard}>
-    {/* Header */}
-    <View style={styles.cardHeader}>
-      <AppText
-        text={`${item.CardBrand} Card`}
-        fontSize={16}
-        type="SemiBold"
-        color={Colors.PINE_FOREST}
-      />
-      {/* 3DS Verified Badge */}
-      {item.Is3DSVerified && (
+  const renderCard = ({ item, index }: { item: any; index: number }) => (
+    <View style={styles.paymentCard}>
+      {/* Header */}
+      <View style={styles.cardHeader}>
         <AppText
-          text="3DS Verified"
-          fontSize={12}
-          color={Colors.BRUNSWICK_GREEN}
+          text={`${item.CardBrand} Card`}
+          fontSize={16}
+          type="SemiBold"
+          color={Colors.PINE_FOREST}
+        />
+        {/* 3DS Verified Badge */}
+        {item.Is3DSVerified && (
+          <AppText
+            text="3DS Verified"
+            fontSize={12}
+            color={Colors.BRUNSWICK_GREEN}
+          />
+        )}
+      </View>
+
+      {/* Brand Logo */}
+      {item.CardBrand === 'Master' && (
+        <Image
+          source={require('@/assets/img/mastercard.png')}
+          style={styles.mcLogo}
         />
       )}
-    </View>
 
-    {/* Brand Logo */}
-    {item.CardBrand === 'Master' && (
-      <Image
-        source={require('@/assets/img/mastercard.png')}
-        style={styles.mcLogo}
+      {/* Card Number */}
+      <AppText
+        text="Card Number"
+        fontSize={14}
+        color={Colors.PINE_FOREST}
+        mt={15}
+        mb={8}
       />
-    )}
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={styles.flexInput}
+          value={item.CardNumber || '--'}
+          secureTextEntry={isSecure}
+          editable={false}
+        />
+        <ButtonView onPress={() => setIsSecure(!isSecure)}>
+          <Svgicons path={isSecure ? 'eyeSlash' : 'eye'} />
+        </ButtonView>
+      </View>
 
-    {/* Card Number */}
-    <AppText
-      text="Card Number"
-      fontSize={14}
-      color={Colors.PINE_FOREST}
-      mt={15}
-      mb={8}
-    />
-    <View style={styles.inputWrapper}>
+      {/* Token Type */}
+      <AppText
+        text="Card Type"
+        fontSize={14}
+        color={Colors.PINE_FOREST}
+        mt={15}
+        mb={8}
+      />
       <TextInput
-        style={styles.flexInput}
-        value={item.CardNumber || '--'}
-        secureTextEntry={isSecure}
+        style={styles.disabledInput}
+        value={item.CardBrand || '--'}
         editable={false}
       />
-      <ButtonView onPress={() => setIsSecure(!isSecure)}>
-        <Svgicons path={isSecure ? 'eyeSlash' : 'eye'} />
-      </ButtonView>
-    </View>
 
-    {/* Token Type */}
-    <AppText
-      text="Card Type"
-      fontSize={14}
-      color={Colors.PINE_FOREST}
-      mt={15}
-      mb={8}
-    />
-    <TextInput
-      style={styles.disabledInput}
-      value={item.CardBrand || '--'}
-      editable={false}
-    />
-
-    {/* Default Switch */}
-    <View style={styles.switchRow}>
-      <AppText
-        text="Set as default"
-        fontSize={16}
-        color={Colors.PINE_FOREST}
-      />
-      <Switch
-        value={isDefault === item.Token}
-        onValueChange={() => setIsDefault(item.Token)}
-        trackColor={{ false: '#E0E0E0', true: Colors.BRUNSWICK_GREEN }}
-        thumbColor={Colors.WHITE}
-      />
+      {/* Default Switch */}
+      <View style={styles.switchRow}>
+        <AppText
+          text="Set as default"
+          fontSize={16}
+          color={Colors.PINE_FOREST}
+        />
+        <Switch
+          value={isDefault === item.Token}
+          onValueChange={() => handleSetDefault(item.Token)}
+          trackColor={{ false: '#E0E0E0', true: Colors.BRUNSWICK_GREEN }}
+          thumbColor={Colors.WHITE}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
 
   return (
     <View style={styles.container}>
