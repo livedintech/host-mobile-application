@@ -14,15 +14,15 @@ export const meetingDetailsSchema = yup.object({
     .required('Full name is required')
     .min(3, 'Name must be at least 3 characters'),
 
-  // phone: yup
-  //   .string()
-  //   .required('Phone number is required')
-  //   .min(7, 'Enter a valid phone number'),
+  phone: yup
+    .string()
+    .required('Phone number is required')
+    .min(7, 'Enter a valid phone number'),
 
-  // email: yup
-  //   .string()
-  //   .required('Email is required')
-  //   .email('Enter a valid email address'),
+  email: yup
+    .string()
+    .required('Email is required')
+    .email('Enter a valid email address'),
 
   country: yup
     .string()
