@@ -90,10 +90,10 @@ export default function useAboutThePlaceContainer() {
     queryFn: getAmenitiesApi,
   });
 
-  const mappedAmenities = (getAmunitiesResponse || []).map((item: string) => ({
-    label: item.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-    value: item,
-  }));
+const mappedAmenities = (getAmunitiesResponse || []).map((item: { key: string }) => ({
+  label: item?.key?.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+  value: item?.key,
+}));
 
   // ---- Mutations ----
   const { mutate: createListingDetailsPayload, isPending: isCreating } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({

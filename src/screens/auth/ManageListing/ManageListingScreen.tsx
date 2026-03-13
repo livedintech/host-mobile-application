@@ -10,11 +10,12 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const FIGMA_TEAL = '#333333';
 
 const ManageListingScreen = () => {
-  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId } = useManageListingContainer();
+  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId, refetch, } = useManageListingContainer();
 
   const handleNextPress = () => {
     if (localSelectedId !== null) {
@@ -30,18 +31,13 @@ const ManageListingScreen = () => {
     return 'fourtothirty'; // Fallback icon
   };
 
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={FIGMA_TEAL} />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <ScrollView
+        <RefreshableScrollView
+          isLoading={isLoading}
+          onRefresh={refetch}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           bounces={false}
@@ -108,7 +104,7 @@ const ManageListingScreen = () => {
               />
             </View>
           </View>
-        </ScrollView>
+        </RefreshableScrollView>
       </SafeAreaView>
     </BGImage>
   );

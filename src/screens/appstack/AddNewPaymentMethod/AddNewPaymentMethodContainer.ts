@@ -107,7 +107,11 @@ export default function useAddNewPaymentMethodContainer() {
 
   const customerName = isAuthFlow ? 'Customer' : user?.name && user?.surname ? `${user.name} ${user.surname}` : user?.name || 'Customer';
   const customerPhone = isAuthFlow ? authPhoneNumber || '' : user?.phone || '';
-  const customerId = isAuthFlow ? authPhoneNumber : user?.phone;
+const customerId = isAuthFlow ? authPhoneNumber : user?.phone || user?.id?.toString() || `user_${Date.now()}`;
+
+
+  console.log('customerPhone::',customerPhone);
+  
 
 
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
