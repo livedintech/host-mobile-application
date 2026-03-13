@@ -20,7 +20,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer';
-import NoTaskScreen from '../../screens/NoTask/NoTaskScreen';
+import NoTaskScreen from '../NoTaskScreen/NoTaskScreen';
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -85,6 +85,7 @@ const AllTask = () => {
     ),
     [],
   );
+  console.log("isAccountEmpty",isAccountEmpty)
 
   // --- CONDITIONAL RENDERING ---
   if (!isLoading && isAccountEmpty) {

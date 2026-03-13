@@ -48,6 +48,8 @@ const AllTaskContainer = () => {
     queryFn: () => getHostTaskList({ page: 1, per_page: 1 }), 
   });
 
+  console.log("globalCheckResponse",globalCheckResponse)
+
 
   // 2. Fetch Listing Options for Filter
   const { data: rawListings = [] } = useQuery({
@@ -92,7 +94,7 @@ const AllTaskContainer = () => {
 
   return {
     taskList: taskResponse?.data || [],
-    isAccountEmpty: globalCheckResponse?.meta?.total === 0,
+    isAccountEmpty: globalCheckResponse?.data?.length === 0,
     meta: {
       hasNextPage: taskResponse?.meta?.current_page < taskResponse?.meta?.last_page,
       isFetchingNextPage: isRefetching,
