@@ -1,5 +1,5 @@
 import React, { useRef, useMemo, useCallback } from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
+import { StyleSheet, View, Platform, ScrollView } from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -20,6 +20,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer';
+import NoTaskScreen from '../../screens/NoTask/NoTaskScreen';
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -35,6 +36,7 @@ const formatDate = (dateString: string) => {
 const AllTask = () => {
   const {
     taskList,
+    isAccountEmpty,
     meta,
     isLoading,
     activeTab,
@@ -55,6 +57,8 @@ const AllTask = () => {
   } = useForm({
     defaultValues: { listings: [], assignees: [] },
   });
+
+ 
 
   const handleOpenFilter = () => filterSheetRef.current?.expand();
   const handleCloseFilter = () => filterSheetRef.current?.close();
@@ -82,6 +86,11 @@ const AllTask = () => {
     [],
   );
 
+  // --- CONDITIONAL RENDERING ---
+  if (!isLoading && isAccountEmpty) {
+    return <NoTaskScreen />;
+  }
+
   const renderTaskItem = ({ item }: { item: any }) => (
     <GlassCard width="100%" style={styles.taskCard}>
       <View style={styles.cardHeader}>
@@ -92,17 +101,17 @@ const AllTask = () => {
                 ? item.type.charAt(0).toUpperCase() + item.type.slice(1)
                 : 'Task'
             }
-            fontSize={22}
+            fontSize={18}
             type="Medium"
             color={Colors.BLACK}
-            mb={8}
+            mb={16}
           />
           <AppText
             text={item.listing_title || 'No Location Provided'}
-            fontSize={14}
+            fontSize={13}
             color={Colors.BLACK}
             mb={16}
-            lineHeight={20}
+            lineHeight={16}
           />
         </View>
 
@@ -114,7 +123,8 @@ const AllTask = () => {
             })
           }
         >
-          <GlassCard width={40} style={styles.editGlassIcon}>
+          {/* Using GlassCard for the edit icon button as requested */}
+          <GlassCard width={44} style={styles.editGlassIcon}>
             <Svgicons path="edit_pencil_icon" size={24} />
           </GlassCard>
         </ButtonView>
@@ -122,7 +132,7 @@ const AllTask = () => {
 
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <Svgicons path="userIcon" size={16} />
+          <Svgicons path="assignTask" size={16} />
           <AppText
             text={`Assigned to ${item.assigned_user_name || 'Unassigned'}`}
             fontSize={13}
@@ -131,7 +141,7 @@ const AllTask = () => {
           />
         </View>
         <View style={styles.infoRow}>
-          <Svgicons path="taskCalendar" size={16} />
+          <Svgicons path="task_calendar" size={16} />
           <AppText
             text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
             fontSize={13}
@@ -147,26 +157,33 @@ const AllTask = () => {
     <View style={styles.header}>
       <AppText text="Task Management" fontSize={26} type="Medium" mb={24} />
       <View style={styles.filterRow}>
-        <View style={styles.tabContainer}>
-          {['To-do', 'In Progress', 'Complete', 'Template'].map(tab => (
-            <ButtonView
-              key={tab}
-              style={[styles.tab, activeTab === tab && styles.activeTab]}
-              onPress={() => handleTabChange(tab)}
-            >
-              <AppText
-                text={tab}
-                fontSize={13}
-                type="Medium"
-                color={
-                  activeTab === tab
-                    ? Colors.WHITE
-                    : Colors.DARK_CHARCOAL_OPACITY_80
-                }
-              />
-            </ButtonView>
-          ))}
+        <View style={styles.tabScrollWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tabContainer}
+          >
+            {['To-do', 'In Progress', 'Complete', 'Template'].map(tab => (
+              <ButtonView
+                key={tab}
+                style={[styles.tab, activeTab === tab && styles.activeTab]}
+                onPress={() => handleTabChange(tab)}
+              >
+                <AppText
+                  text={tab}
+                  fontSize={14}
+                  type={activeTab === tab ? 'Bold' : 'Medium'}
+                  color={
+                    activeTab === tab
+                      ? Colors.WHITE
+                      : Colors.DARK_CHARCOAL_OPACITY_80
+                  }
+                />
+              </ButtonView>
+            ))}
+          </ScrollView>
         </View>
+
         <ButtonView style={styles.filterIconButton} onPress={handleOpenFilter}>
           <Svgicons path="filterIcon" size={20} />
         </ButtonView>
@@ -281,7 +298,7 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 25,
     paddingTop: Metrics.verticalScale(20),
-    paddingBottom: 220,
+    paddingBottom: Metrics.verticalScale(160),
   },
   header: { marginBottom: 20 },
   filterRow: {
@@ -289,37 +306,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  tabScrollWrapper: {
+    flex: 1,
+    marginRight: 12,
+  },
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderRadius: 25,
+    borderRadius: 30,
     padding: 4,
-    flex: 0.95,
+    alignItems: 'center',
   },
-  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 20 },
-  activeTab: { backgroundColor: Colors.PRIMARY_TEAL },
+  tab: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderRadius: 25,
+    marginRight: 4,
+    // borderWidth:1,
+    // borderColor: Colors.WHITE
+    // backgroundColor:Colors.WHITE
+  },
+  activeTab: {
+    backgroundColor: Colors.EMERALD_TEAL,
+    // Soft shadow for active tab
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.EMERALD_TEAL,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+      android: { elevation: 4 },
+    }),
+  },
   filterIconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
-  taskCard: { padding: 24, borderRadius: 28, marginBottom: 16 },
+  taskCard: {
+    padding: 24,
+    borderRadius: 28,
+    marginBottom: 16,
+    // Add extra shadow logic here if you want tasks to pop even more
+  },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
   editGlassIcon: {
-    height: 40,
-    borderRadius: 16,
+    height: 44,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 0,
+    marginBottom: 0, // Reset margin for the icon
+    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   infoContainer: { gap: 8 },
   infoRow: { flexDirection: 'row', alignItems: 'center' },

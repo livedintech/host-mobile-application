@@ -1,12 +1,5 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  Modal,
-  Dimensions,
-} from 'react-native';
+import { StyleSheet, View, Image, Modal, Dimensions } from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -26,11 +19,12 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import useChecklistDetailContainer from '../../container/ChecklistDetailContainer/ChecklistDetailContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Metrics from '@/utility/Metrics';
 
 const { width, height } = Dimensions.get('window');
 
 const ChecklistDetail = ({ route }: any) => {
-  const { title, sectionId, taskId } = route.params;
+  const { title, sectionId, taskId, fromEdit } = route.params;
 
   const {
     localItems,
@@ -51,7 +45,7 @@ const ChecklistDetail = ({ route }: any) => {
   } | null>(null);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%'], []);
+  const snapPoints = useMemo(() => ['25%'], []);
 
   const {
     control,
@@ -63,7 +57,6 @@ const ChecklistDetail = ({ route }: any) => {
     defaultValues: { itemName: '' },
   });
 
-  // Hides "Add more" if any existing item has media from API
   const hasExistingMedia = useMemo(() => {
     return localItems?.some(item => item.images && item.images.length > 0);
   }, [localItems]);
@@ -94,7 +87,7 @@ const ChecklistDetail = ({ route }: any) => {
             media.type === 'video' ||
             media.file_path?.toLowerCase().endsWith('.mp4');
           return (
-            <TouchableOpacity
+            <ButtonView
               key={media.id || index}
               style={styles.mediaBox}
               onPress={() => {
@@ -128,7 +121,7 @@ const ChecklistDetail = ({ route }: any) => {
                   style={styles.imageAsset}
                 />
               )}
-            </TouchableOpacity>
+            </ButtonView>
           );
         })}
       </View>
@@ -153,9 +146,9 @@ const ChecklistDetail = ({ route }: any) => {
             >
               <AppText
                 text={item.name}
-                fontSize={15}
+                fontSize={14}
                 color={Colors.BLACK}
-                lineHeight={20}
+                lineHeight={18}
               />
             </ButtonView>
           </View>
@@ -194,19 +187,10 @@ const ChecklistDetail = ({ route }: any) => {
                     }}
                   >
                     <GlassCard width="auto" style={styles.addMoreBtn}>
-                      <View style={styles.addMoreInner}>
-                        <Svgicons
-                          path="plusIcon"
-                          size={14}
-                          color={Colors.BLACK}
-                        />
-                        <AppText
-                          text="Add more"
-                          fontSize={12}
-                          type="Medium"
-                          ml={6}
-                        />
-                      </View>
+                      {/* <View style={styles.addMoreInner}> */}
+
+                      <AppText text="Add more" fontSize={12} type="Medium" />
+                      {/* </View> */}
                     </GlassCard>
                   </ButtonView>
                 </View>
@@ -217,16 +201,18 @@ const ChecklistDetail = ({ route }: any) => {
           keyExtractor={item => item.id.toString()}
         />
 
-        <View style={styles.footer}>
-          <AppButton
-            title="Save"
-            backgroundColor={Colors.PRIMARY_TEAL}
-            borderColor={Colors.PRIMARY_TEAL}
-            color={Colors.WHITE}
-            onPress={saveAndContinue}
-            loading={isLoading}
-          />
-        </View>
+        {!fromEdit && (
+          <View style={styles.footer}>
+            <AppButton
+              title="Save"
+              backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              onPress={saveAndContinue}
+              loading={isLoading}
+            />
+          </View>
+        )}
 
         {/* Video Player Modal */}
         <Modal
@@ -235,12 +221,12 @@ const ChecklistDetail = ({ route }: any) => {
           animationType="fade"
         >
           <View style={styles.videoModalContainer}>
-            <TouchableOpacity
+            <ButtonView
               style={styles.closeBtn}
               onPress={() => setSelectedVideo(null)}
             >
               <Svgicons path="closeIcon" size={30} color={Colors.WHITE} />
-            </TouchableOpacity>
+            </ButtonView>
             {selectedVideo && (
               <Video
                 source={{ uri: selectedVideo }}
@@ -278,6 +264,12 @@ const ChecklistDetail = ({ route }: any) => {
               text={selectedItem ? 'Edit Checklist' : 'Add New Checklist'}
               fontSize={20}
               type="Bold"
+              mb={25}
+            />
+            <AppText
+              text={'Add Item'}
+              fontSize={14}
+              type="Medium"
               mb={15}
             />
             <InputField
@@ -290,6 +282,7 @@ const ChecklistDetail = ({ route }: any) => {
             <AppButton
               title={selectedItem ? 'Update' : 'Add'}
               backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor= {Colors.PRIMARY_TEAL}
               color={Colors.WHITE}
               mt={20}
               onPress={handleSubmit(onFormSubmit)}
@@ -303,11 +296,14 @@ const ChecklistDetail = ({ route }: any) => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
-  listContent: { paddingHorizontal: 25, paddingBottom: 150 },
+  listContent: {
+    paddingHorizontal: 25,
+    paddingBottom: Metrics.verticalScale(0),
+  },
   taskCard: { padding: 16, marginBottom: 15, borderRadius: 20 },
-  taskRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  taskRow: { flexDirection: 'row', alignItems: 'center' },
   addMoreContainer: { alignItems: 'flex-end', marginBottom: 12 },
-  addMoreBtn: { paddingVertical: 8, paddingHorizontal: 15, borderRadius: 12 },
+  addMoreBtn: { paddingVertical: 10, paddingHorizontal: 18, borderRadius: 12 },
   addMoreInner: { flexDirection: 'row', alignItems: 'center' },
   mediaGrid: {
     flexDirection: 'row',
@@ -340,7 +336,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  footer: { position: 'absolute', bottom: 30, left: 25, right: 25, },
+  footer: { position: 'absolute', bottom: 30, left: 25, right: 25 },
   videoModalContainer: {
     flex: 1,
     backgroundColor: '#000',

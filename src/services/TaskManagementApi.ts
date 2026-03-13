@@ -284,3 +284,25 @@ export const vendorUpdate = async ({
 
   throw new Error(response?.message || 'Failed to update vendor');
 };
+
+
+
+// DELETE TASK
+export const deleteTaskManagement = async (taskId: number | string) => {
+  if (!taskId) {
+    throw new Error('taskId is required');
+  }
+
+  const endpoint = SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_DELETE.replace(
+    '{id}',
+    String(taskId),
+  );
+
+  const { ok, response, data } = await apiService.delete(endpoint);
+
+  if (ok) {
+    return data;
+  }
+
+  throw new Error(response?.message || 'Failed to delete task');
+};

@@ -73,6 +73,7 @@ const ViewChecklistAll = () => {
             title: item.name,
             sectionId: item.id,
             taskId: taskId,
+            fromEdit,
           })
         }
       >
@@ -95,8 +96,17 @@ const ViewChecklistAll = () => {
         text={fromEdit ? 'Post-activity Preview' : 'Checklist Management'}
         fontSize={28}
         type="Bold"
-        mb={16}
         mt={20}
+        mb={25}
+      />
+      <AppText
+        text={
+          'Click on each section to view images section-wise and verify the condition after the task is completed.'
+        }
+        color={Colors.DARK_CHARCOAL_OPACITY}
+        fontSize={14}
+        type="Regular"
+        mb={45}
       />
       {!fromEdit && (
         <View style={styles.addSectionContainer}>
@@ -123,21 +133,23 @@ const ViewChecklistAll = () => {
           ListFooterComponent={<View style={{ height: 120 }} />}
           keyExtractor={item => item.id.toString()}
         />
-        <View style={styles.footer}>
-          <AppButton
-            title={fromEdit ? 'Done' : 'Next'}
-            backgroundColor={Colors.PRIMARY_TEAL}
-            color={Colors.WHITE}
-            borderColor={Colors.TEAL_GREEN}
-            onPress={() => {
-              if (fromEdit) {
-                goBack();
-              } else {
-                navigate(NavigationRoutes.APP_STACK.STAFF_NOTES);
-              }
-            }}
-          />
-        </View>
+        {!fromEdit && (
+          <View style={styles.footer}>
+            <AppButton
+              title={fromEdit ? 'Done' : 'Next'}
+              backgroundColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              borderColor={Colors.PRIMARY_TEAL}
+              onPress={() => {
+                if (fromEdit) {
+                  goBack();
+                } else {
+                  navigate(NavigationRoutes.APP_STACK.STAFF_NOTES);
+                }
+              }}
+            />
+          </View>
+        )}
 
         <BottomSheet
           ref={bottomSheetRef}

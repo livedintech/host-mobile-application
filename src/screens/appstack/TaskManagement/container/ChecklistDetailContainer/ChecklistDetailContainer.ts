@@ -11,7 +11,10 @@ import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { goBack } from '@/services/navigationService';
 
-const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => {
+const useChecklistDetailContainer = (
+  sectionId: number,
+  propTaskId?: number,
+) => {
   const queryClient = useQueryClient();
   const { taskId: storeTaskId, taskType: storeTaskType } = useTaskStore();
 
@@ -21,20 +24,27 @@ const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => 
   const [localItems, setLocalItems] = useState<any[]>([]);
 
   // 1. Fetch Checklist Items
-  const { isLoading, refetch, data: remoteData } = useQuery({
-    queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL, sectionId, effectiveTaskId],
-    queryFn: () => getTaskChecklistDetail(sectionId, effectiveTaskType, effectiveTaskId!),
+  const {
+    isLoading,
+    refetch,
+    data: remoteData,
+  } = useQuery({
+    queryKey: [
+      STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL,
+      sectionId,
+      effectiveTaskId,
+    ],
+    queryFn: () =>
+      getTaskChecklistDetail(sectionId, effectiveTaskType, effectiveTaskId!),
     enabled: !!sectionId && !!effectiveTaskId,
     staleTime: 0,
   });
 
-
-
-    useEffect(() => {
+  useEffect(() => {
     if (remoteData?.data) {
-      const initialized = remoteData.data.map((item: any) => ({ 
-        ...item, 
-        isChecked: true 
+      const initialized = remoteData.data.map((item: any) => ({
+        ...item,
+        isChecked: true,
       }));
       setLocalItems(initialized);
     }
@@ -45,11 +55,13 @@ const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => 
     mutationFn: (name: string) =>
       taskManagementInsertChecklist({
         task_id: effectiveTaskId!,
-        checklist_name: name,
-        section_id: sectionId,
+        checklist_names: [name],
+        task_checklist_detail_id: sectionId,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL] });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
+      });
       Toast.show({ type: 'success', text1: 'Item added successfully' });
     },
   });
@@ -59,7 +71,9 @@ const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => 
     mutationFn: (payload: { id: number; checklist_name: string }) =>
       updateSingleChecklistItem(payload.id, payload.checklist_name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL] });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
+      });
       Toast.show({ type: 'success', text1: 'Item updated successfully' });
     },
   });
@@ -73,14 +87,16 @@ const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => 
         ids: selectedIds, // Ensure this matches your API param (ids or checklist_ids)
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL] });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
+      });
       Toast.show({ type: 'success', text1: 'Checklist saved' });
       goBack();
     },
-    onError: (error) => {
-      console.error("Filter Mutation Error:", error);
+    onError: error => {
+      console.error('Filter Mutation Error:', error);
       Toast.show({ type: 'error', text1: 'Failed to save checklist' });
-    }
+    },
   });
 
   const toggleItem = (id: number) => {
@@ -101,10 +117,15 @@ const useChecklistDetailContainer = (sectionId: number, propTaskId?: number) => 
 
   return {
     localItems,
-    isLoading: isLoading || insertItemMutation.isPending || updateItemMutation.isPending || filterMutation.isPending,
+    isLoading:
+      isLoading ||
+      insertItemMutation.isPending ||
+      updateItemMutation.isPending ||
+      filterMutation.isPending,
     toggleItem,
     addItem: (name: string) => insertItemMutation.mutate(name),
-    updateItem: (id: number, name: string) => updateItemMutation.mutate({ id, checklist_name: name }),
+    updateItem: (id: number, name: string) =>
+      updateItemMutation.mutate({ id, checklist_name: name }),
     saveAndContinue,
     onRefresh: refetch,
   };

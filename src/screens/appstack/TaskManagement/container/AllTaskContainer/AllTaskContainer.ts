@@ -42,6 +42,13 @@ const AllTaskContainer = () => {
       }),
   });
 
+  // Global Check: Fetch with no status to see if the user has ANY tasks at all
+  const { data: globalCheckResponse, isLoading: isLoadingGlobal } = useQuery({
+    queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST, 'account-total-check'],
+    queryFn: () => getHostTaskList({ page: 1, per_page: 1 }), 
+  });
+
+
   // 2. Fetch Listing Options for Filter
   const { data: rawListings = [] } = useQuery({
     queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_LISTING],
@@ -85,6 +92,7 @@ const AllTaskContainer = () => {
 
   return {
     taskList: taskResponse?.data || [],
+    isAccountEmpty: globalCheckResponse?.meta?.total === 0,
     meta: {
       hasNextPage: taskResponse?.meta?.current_page < taskResponse?.meta?.last_page,
       isFetchingNextPage: isRefetching,

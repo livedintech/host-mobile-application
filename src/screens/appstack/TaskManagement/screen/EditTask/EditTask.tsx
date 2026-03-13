@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, Platform, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Platform,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,10 +17,12 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 import { getTaskDetail } from '@/services/TaskManagementApi';
+import EditTaskContainer from '../../container/EditTaskContainer/EditTaskContainer';
 
 const formatDate = (dateString: string) => {
   if (!dateString) return '--';
@@ -26,10 +34,9 @@ const formatDate = (dateString: string) => {
 };
 
 const EditTask = ({ route }: any) => {
-  // Extract ID and Type passed from AllTask screen
+  const { onDeleteTask, isDeleting } = EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
 
-  // 1. Fetch Task Detail API
   const {
     data: task,
     isLoading,
@@ -56,12 +63,9 @@ const EditTask = ({ route }: any) => {
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      assignee: '',
-    },
+    defaultValues: { assignee: '' },
   });
 
-  // Update form when data arrives
   useEffect(() => {
     if (task?.assigned_user?.id) {
       setValue('assignee', task.assigned_user.id.toString());
@@ -75,11 +79,12 @@ const EditTask = ({ route }: any) => {
     },
   ];
 
-  if (isLoading) {
+  if (isLoading || isDeleting) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+          {isDeleting && <AppText text="Deleting task..." mt={10} />}
         </View>
       </BGImage>
     );
@@ -88,10 +93,20 @@ const EditTask = ({ route }: any) => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <ButtonView
+            onPress={() => onDeleteTask(taskId)}
+            style={styles.iconBtn}
+          >
+            <Svgicons path="deleteTask" size={24} />
+          </ButtonView>
+        </View>
+
         <RefreshableScrollView
           contentContainerStyle={styles.scrollContent}
           isLoading={false}
           onRefresh={refetch}
+          showsVerticalScrollIndicator={false}
         >
           <AppText
             text={`${task?.task_type_key
@@ -224,7 +239,7 @@ const EditTask = ({ route }: any) => {
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
-                   onPress={() =>
+                onPress={() =>
                   navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, {
                     taskId,
                     fromEdit: true,
@@ -275,6 +290,17 @@ const TimelineItem = ({ icon, label, value }: any) => (
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 25 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scrollContent: { paddingBottom: 180 },
   glassCard: { padding: 20, marginBottom: 20 },
