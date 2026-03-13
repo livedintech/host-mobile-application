@@ -41,6 +41,7 @@ const AllTaskContainer = () => {
         vendor_id: appliedFilters.assignees.length > 0 ? Number(appliedFilters.assignees[0]) : undefined,
       }),
   });
+  console.log("taskResponse",taskResponse)
 
   // Global Check: Fetch with no status to see if the user has ANY tasks at all
   const { data: globalCheckResponse, isLoading: isLoadingGlobal } = useQuery({
@@ -92,9 +93,11 @@ const AllTaskContainer = () => {
     setPage(1);
   };
 
+  console.log("globalCheckResponse?.data?.length === 0ss",globalCheckResponse?.data?.length > 0)
+
   return {
     taskList: taskResponse?.data || [],
-    isAccountEmpty: globalCheckResponse?.data?.length === 0,
+    isAccountEmpty: globalCheckResponse?.data?.length > 0,
     meta: {
       hasNextPage: taskResponse?.meta?.current_page < taskResponse?.meta?.last_page,
       isFetchingNextPage: isRefetching,

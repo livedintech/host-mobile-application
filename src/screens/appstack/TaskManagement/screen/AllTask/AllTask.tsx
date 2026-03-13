@@ -85,10 +85,11 @@ const AllTask = () => {
     ),
     [],
   );
-  console.log("isAccountEmpty",isAccountEmpty)
+  console.log("isAccountEmpty",isAccountEmpty);
+  console.log("isLoading",isLoading)
 
   // --- CONDITIONAL RENDERING ---
-  if (!isLoading && isAccountEmpty) {
+  if ( !isAccountEmpty) {
     return <NoTaskScreen />;
   }
 
