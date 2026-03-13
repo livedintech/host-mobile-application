@@ -139,32 +139,7 @@ import transactionIcon from './transactionIcon.svg';
 import subscriptionIcon from './subscriptionIcon.svg';
 import noAccountTask from './noAccountTask.svg';
 import recurringImg from './recurringImg.svg';
-import edit_pencil_icon from './edit_pencil_icon.svg';
-import copiedIcon from './copiedIcon.svg';
-import taskTimeline from './taskTimeline.svg';
-import taskCalendar from './taskCalendar.svg';
-import taskStartDate from './taskStartDate.svg';
-import taskStar from './taskStar.svg';
-import taskEndDate from './taskEndDate.svg';
-import fallbackChecklistIcon from './fallbackChecklistIcon.svg';
-import fallbackChecklistIcon2 from './fallbackChecklistIcon2.svg';
-import fallbackChecklistIcon3 from './fallbackChecklistIcon3.svg';
-import plumbing from './plumbing.svg';
-import electrical from './electrical.svg';
-import hvac from './hvac.svg';
-import furniture_fixtures from './furniture_fixtures.svg';
-import outdoor_maintenance from './outdoor_maintenance.svg';
-import cleaning_sanitization from './cleaning_sanitization.svg';
-import safety_security from './safety_security.svg';
-import water_damage_leakage from './water_damage_leakage.svg';
-import inventory from './inventory.svg';
-import security from './security.svg';
-import living_room from './living_room.svg';
-import main_building_exterior from './main_building_exterior.svg';
-import assignTask from './assignTask.svg';
-import task_calendar from './task_calendar.svg';
-import deleteTask from './deleteTask.svg';
-import kitchen from './kitchen.svg';
+
 
 import home from "./home.svg";
 import onetothree from "./1-3.svg";
@@ -371,30 +346,5 @@ export const icons = {
     fourtothirty,
     thirtyplus,
     hubspot_thanks,
-  edit_pencil_icon,
-  copiedIcon,
-  taskTimeline,
-  taskCalendar,
-  taskStartDate,
-  taskStar,
-  taskEndDate,
-  fallbackChecklistIcon,
-  plumbing,
-  electrical,
-  hvac,
-  furniture_fixtures,
-  outdoor_maintenance,
-  cleaning_sanitization,
-  safety_security,
-  water_damage_leakage,
-  inventory,
-  security,
-  living_room,
-  main_building_exterior,
-  fallbackChecklistIcon2,
-  fallbackChecklistIcon3,
-  assignTask,
-  task_calendar,
-  deleteTask,
-  kitchen
+  
 };

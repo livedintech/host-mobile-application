@@ -19,11 +19,13 @@ const useStaffNotesContainer = () => {
       }),
     onSuccess: () => {
       // Navigate to the next screen (e.g., Task Success or Task List)
-      navigate(NavigationRoutes.APP_STACK.TASK); 
-      Toast.show({ type: 'success', text1: 'Task created successfully!' });
-         queryClient.invalidateQueries({
+          queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST],
       });
+      
+      navigate(NavigationRoutes.APP_STACK.TASK); 
+      Toast.show({ type: 'success', text1: 'Task created successfully!' });
+     
     },
     onError: (error: any) => {
       Toast.show({

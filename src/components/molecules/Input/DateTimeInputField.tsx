@@ -16,7 +16,6 @@ import { Controller, Control, FieldErrors } from 'react-hook-form';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 type Props = {
   name: string;
@@ -31,7 +30,7 @@ type Props = {
   rightIcon?: React.ReactNode;
   rules?: object;
   editable?: boolean;
-  minimumDate?: Date; // Added this line
+  minimumDate?: Date;
 };
 
 const DateTimeInputField = ({
@@ -46,8 +45,7 @@ const DateTimeInputField = ({
   leftIcon,
   rightIcon,
   rules,
-  editable = false,
-  minimumDate, // Added this line
+  minimumDate,
 }: Props) => {
   const [showPicker, setShowPicker] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState(new Date());
@@ -70,22 +68,23 @@ const DateTimeInputField = ({
     }).start();
   };
 
+  // --- GLASS ANIMATION LOGIC ---
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.SMOOTH_GREY, Colors.BRUNSWICK_GREEN],
+    outputRange: ['rgba(255, 255, 255, 0.6)', Colors.BRUNSWICK_GREEN],
   });
 
   const animatedBackgroundColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.WHITE, Colors.WHITE],
+    outputRange: ['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.1)'],
   });
 
   const formatDate = (date: Date): string => {
-  const year = date.getFullYear(); // Full 4 digits (2026)
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`; // Returns YYYY-MM-DD
-};
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const formatTime = (date: Date): string => {
     const hours = String(date.getHours() % 12 || 12).padStart(2, '0');
@@ -99,7 +98,6 @@ const DateTimeInputField = ({
     date: Date | undefined,
     onChange: (value: string) => void
   ) => {
-    // For Android, we close immediately on selection
     if (Platform.OS === 'android') {
       setShowPicker(false);
       handleBlur();
@@ -114,18 +112,14 @@ const DateTimeInputField = ({
 
   const handleOpenPicker = (onFocus: () => void, currentValue: string) => {
     onFocus();
-    
-    // Attempt to set picker to the currently selected value if it exists
     if (currentValue) {
       const parsedDate = new Date(currentValue);
       if (!isNaN(parsedDate.getTime())) {
         setSelectedDateTime(parsedDate);
       }
     } else if (minimumDate && minimumDate > new Date()) {
-        // If no value but minimumDate is in the future, start picker there
-        setSelectedDateTime(minimumDate);
+      setSelectedDateTime(minimumDate);
     }
-    
     setShowPicker(true);
   };
 
@@ -139,7 +133,7 @@ const DateTimeInputField = ({
       name={name}
       control={control}
       rules={rules}
-      render={({ field: { onChange, value, onBlur } }) => (
+      render={({ field: { onChange, value } }) => (
         <View style={styles.wrapper}>
           {label && (
             <AppText
@@ -152,41 +146,34 @@ const DateTimeInputField = ({
           )}
 
           <TouchableOpacity
-            activeOpacity={1}
+            activeOpacity={0.9}
             onPress={() => handleOpenPicker(handleFocus, value)}
           >
             <Animated.View
               style={[
                 styles.container,
                 {
-                  borderColor: error
-                    ? Colors.INDIAN_RED
-                    : animatedBorderColor,
+                  borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
                   backgroundColor: animatedBackgroundColor,
                 },
                 wrapperStyle,
               ]}
             >
-              {leftIcon && (
-                <View style={styles.iconWrapper}>{leftIcon}</View>
-              )}
+              {leftIcon && <View style={styles.leftIconWrapper}>{leftIcon}</View>}
 
               <TextInput
                 style={[styles.input, style]}
                 placeholder={placeholder}
-                placeholderTextColor={Colors.SUPER_GREY}
+                placeholderTextColor="#7B8D88" // Matches your dropdown placeholder
                 value={value}
                 editable={false}
                 pointerEvents="none"
               />
 
               {rightIcon && (
-                <ButtonView
-                  style={styles.iconWrapper}
-                  onPress={() => handleOpenPicker(handleFocus, value)}
-                >
+                <View style={styles.rightIconWrapper}>
                   {rightIcon}
-                </ButtonView>
+                </View>
               )}
             </Animated.View>
           </TouchableOpacity>
@@ -198,7 +185,7 @@ const DateTimeInputField = ({
               <DateTimePicker
                 value={selectedDateTime}
                 mode={mode}
-                minimumDate={minimumDate} // Pass the prop here
+                minimumDate={minimumDate}
                 display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                 onChange={(event, date) =>
                   handleDateTimeChange(event, date, onChange)
@@ -232,23 +219,29 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
+    // --- MATCHED GLASS STYLING FROM DROPDOWN ---
+    height: Metrics.verticalScale(54), 
+    borderRadius: 24,
     paddingHorizontal: 16,
-    height: Metrics.verticalScale(58),
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   input: {
     flex: 1,
-    color: Colors.BLACK,
+    // --- MATCHED TEXT STYLING ---
+    color: '#1A332C', 
     fontSize: Metrics.generatedFontSize(14),
+    fontWeight: '600',
     paddingVertical: 0,
   },
-  iconWrapper: {
+  leftIconWrapper: {
     marginRight: 10,
+  },
+  rightIconWrapper: {
+    marginLeft: 10,
   },
   errorText: {
     color: Colors.INDIAN_RED,
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 5,
     marginLeft: 4,
   },
@@ -258,9 +251,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingHorizontal: Metrics.scale(16),
     paddingVertical: Metrics.verticalScale(16),
-    marginBottom: Metrics.verticalScale(16),
-    borderTopWidth: 1,
-    borderTopColor: Colors.SMOOTH_GREY,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: Colors.SMOOTH_GREY,
   },
   pickerButtonContainer: {
     flexDirection: 'row',

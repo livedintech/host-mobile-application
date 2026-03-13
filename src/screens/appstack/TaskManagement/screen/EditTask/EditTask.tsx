@@ -23,6 +23,8 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 import { getTaskDetail } from '@/services/TaskManagementApi';
 import EditTaskContainer from '../../container/EditTaskContainer/EditTaskContainer';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import Metrics from '@/utility/Metrics';
 
 const formatDate = (dateString: string) => {
   if (!dateString) return '--';
@@ -34,7 +36,7 @@ const formatDate = (dateString: string) => {
 };
 
 const EditTask = ({ route }: any) => {
-  const { onDeleteTask, isDeleting } = EditTaskContainer();
+  const { onDeleteTask, isDeleting,assigneeOptions } = EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
 
   const {
@@ -47,10 +49,12 @@ const EditTask = ({ route }: any) => {
     enabled: !!taskId,
   });
 
-  const apiStatus = task?.status || 'todo';
-  const isCompleted = apiStatus === 'completed';
-  const isEditable = apiStatus === 'todo' || apiStatus === 'inprogress';
+  console.log("task",task)
 
+  const apiStatus = task?.status || 'todo';
+  console.log("apiStatus",apiStatus)
+  const isCompleted = apiStatus === 'completed';
+const isEditable = ['todo', 'inprogress', 'pending'].includes(apiStatus);
   const statusDisplay =
     {
       todo: 'To do',
@@ -72,12 +76,12 @@ const EditTask = ({ route }: any) => {
     }
   }, [task, setValue]);
 
-  const assigneeOptions = [
-    {
-      label: task?.assigned_user?.name || 'Select User',
-      value: task?.assigned_user?.id?.toString() || '',
-    },
-  ];
+  // const assigneeOptions = [
+  //   {
+  //     label: task?.assigned_user?.name || 'Select User',
+  //     value: task?.assigned_user?.id?.toString() || '',
+  //   },
+  // ];
 
   if (isLoading || isDeleting) {
     return (
@@ -249,19 +253,29 @@ const EditTask = ({ route }: any) => {
             </>
           ) : (
             <>
-              <AppButton
-                title="Checklist Management"
-                backgroundColor={Colors.WHITE}
-                borderColor={Colors.SMOOTH_GREY}
-                color={Colors.BLACK}
-                mb={12}
-                onPress={() =>
-                  navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, {
-                    taskId,
-                    fromEdit: true,
-                  })
-                }
-              />
+              <GradientBorder
+                borderRadius={14}
+                borderWidth={1}
+                colors={[
+                  'rgba(128, 128, 128, 0.66)',
+                  'rgba(255, 255, 255, 0.66)',
+                  'rgba(128, 128, 128, 0.66)',
+                ]}
+                locations={[0, 0.5356, 1]}
+                style={styles.gradientMargin}
+              >
+                <AppButton
+                  title="Checklist Management"
+                  style={styles.outlineBtn}
+                  color={Colors.BLACK}
+                  onPress={() =>
+                    navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, {
+                      taskId,
+                      fromEdit: true,
+                    })
+                  }
+                />
+              </GradientBorder>
               <AppButton
                 title="Save Changes"
                 backgroundColor={Colors.PRIMARY_TEAL}
@@ -302,7 +316,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  scrollContent: { paddingBottom: 180 },
+  scrollContent: { paddingBottom: Metrics.verticalScale(160) },
   glassCard: { padding: 20, marginBottom: 20 },
   cardHeader: {
     flexDirection: 'row',
@@ -334,6 +348,12 @@ const styles = StyleSheet.create({
     bottom: Platform.OS === 'ios' ? 40 : 20,
     left: 25,
     right: 25,
+  },
+  gradientMargin: { marginBottom: 12 },
+  outlineBtn: {
+    backgroundColor: '#fff',
+    borderRadius: 13,
+    borderWidth: 0, 
   },
 });
 

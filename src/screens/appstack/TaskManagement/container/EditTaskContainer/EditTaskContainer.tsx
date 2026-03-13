@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
-import { deleteTaskManagement } from '@/services/TaskManagementApi';
+import { useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
+import { deleteTaskManagement, getTaskManagementVendor } from '@/services/TaskManagementApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage'; // Import your constants
@@ -8,7 +8,7 @@ import { Alert } from 'react-native';
 
 const EditTaskContainer = () => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const queryClient = useQueryClient(); // Initialize Query Client
+  const queryClient = useQueryClient();
 
   const onDeleteTask = async (taskId: number | string) => {
     Alert.alert(
@@ -43,9 +43,25 @@ const EditTaskContainer = () => {
     );
   };
 
+
+    // 3. Fetch Vendor Options for Filter
+  const { data: rawVendors = [] } = useQuery({
+    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_VENDOR],
+    queryFn: getTaskManagementVendor,
+  });
+
+
+
+  const assigneeOptions = useMemo(() => 
+    rawVendors?.map((item: any) => ({
+      label: item.name,
+      value: item.id.toString(),
+    })) || [], [rawVendors]);
+
   return {
     onDeleteTask,
     isDeleting,
+    assigneeOptions
   };
 };
 

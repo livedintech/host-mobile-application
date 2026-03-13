@@ -31,7 +31,7 @@ const ViewChecklistAll = () => {
     useViewChecklistAllContainer({ taskId, taskType });
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%'], []);
+  const snapPoints = useMemo(() => ['30%'], []);
 
   const {
     control,

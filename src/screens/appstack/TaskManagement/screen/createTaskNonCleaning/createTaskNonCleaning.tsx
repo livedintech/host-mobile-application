@@ -15,7 +15,12 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import CreateTaskContainer from '../../container/CreateTaskContainer/CreateTaskContainer';
 
 const VALIDATION_RULES = {
-  REQUIRED: { required: 'Required' },
+  LISTING: { required: 'Please select a listing' },
+  CATEGORY: { required: 'Please select a category' },
+  DATE: { required: 'Please select a date' },
+  START_TIME: { required: 'Start time is required' },
+  END_TIME: { required: 'End time is required' },
+  USER: { required: 'Please assign a user to this task' },
 };
 
 const CreateTaskNonCleaning = () => {
@@ -75,7 +80,7 @@ const CreateTaskNonCleaning = () => {
               data={transformedListing}
               placeholder="Select Listing"
               errors={errors}
-              rules={VALIDATION_RULES.REQUIRED}
+              rules={VALIDATION_RULES.LISTING}
             />
 
             <DropdownField
@@ -85,7 +90,7 @@ const CreateTaskNonCleaning = () => {
               data={transformedCategory}
               placeholder="Select Category"
               errors={errors}
-              rules={VALIDATION_RULES.REQUIRED}
+              rules={VALIDATION_RULES.CATEGORY}
             />
 
             <DateTimeInputField
@@ -96,7 +101,7 @@ const CreateTaskNonCleaning = () => {
               errors={errors}
               placeholder="mm/dd/yy"
               rightIcon={calendarIcon}
-              rules={VALIDATION_RULES.REQUIRED}
+              rules={VALIDATION_RULES.DATE}
             />
 
             <View style={{ flex: 1 }}>
@@ -108,7 +113,7 @@ const CreateTaskNonCleaning = () => {
                 errors={errors}
                 placeholder="-- : --"
                 rightIcon={clockIcon}
-                rules={VALIDATION_RULES.REQUIRED}
+                rules={VALIDATION_RULES.START_TIME}
               />
             </View>
             <View style={{ flex: 1 }}>
@@ -120,7 +125,7 @@ const CreateTaskNonCleaning = () => {
                 errors={errors}
                 placeholder="-- : --"
                 rightIcon={clockIcon}
-                rules={VALIDATION_RULES.REQUIRED}
+                rules={VALIDATION_RULES.END_TIME}
               />
             </View>
 
@@ -131,7 +136,7 @@ const CreateTaskNonCleaning = () => {
               data={transformedVendor}
               placeholder="Select User"
               errors={errors}
-              rules={VALIDATION_RULES.REQUIRED}
+              rules={VALIDATION_RULES.USER}
             />
 
             <View style={styles.hintContainer}>

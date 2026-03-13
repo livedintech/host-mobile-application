@@ -93,10 +93,7 @@ const AllTask = () => {
     return <NoTaskScreen />;
   }
 
-  // --- CONDITIONAL RENDERING ---
-  if (!isLoading && isAccountEmpty) {
-    return <NoTaskScreen />;
-  }
+
 
   const renderTaskItem = ({ item }: { item: any }) => (
     <GlassCard width="100%" style={styles.taskCard}>
