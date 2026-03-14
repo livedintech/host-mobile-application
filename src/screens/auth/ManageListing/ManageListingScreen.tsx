@@ -10,6 +10,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import useManageListingContainer from './ManageListingContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -61,7 +62,7 @@ const ManageListingScreen = () => {
             </View>
 
             {/* Glassmorphism Selection Card */}
-            <View style={styles.glassCard}>
+            <GlassCard style={styles.glassCard}>
               <View style={styles.cardHeader}>
                 <AppText text="Listing Selection" type="Bold" fontSize={22} color={Colors.BLACK} />
                 <View style={styles.iconCircle}>
@@ -103,20 +104,18 @@ const ManageListingScreen = () => {
                   );
                 })}
               </View>
-            </View>
+            </GlassCard>
 
             {/* Bottom Button Section */}
             <View style={styles.bottomSec}>
               <AppButton
                 title="Next"
-                onPress={handleNextPress}
                 disabled={localSelectedId === null || isLoading}
-                backgroundColor={localSelectedId ? FIGMA_TEAL : 'rgba(255, 255, 255, 0.4)'}
-                color={localSelectedId ? Colors.WHITE : 'rgba(0, 0, 0, 0.3)'}
+                backgroundColor={localSelectedId !== null ? Colors.MEDIUM_JUNGLE_GREEN : 'rgba(32, 149, 123, 0.5)'}
+                color={Colors.WHITE}
                 borderRadius={100}
-                type="Bold"
-                fontSize={18}
-                style={getNextButtonStyle()}
+                fontSize={16}
+                onPress={handleNextPress}
               />
             </View>
           </View>
@@ -128,103 +127,106 @@ const ManageListingScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: s(24),
-    paddingTop: vs(30),
-  },
-  headerSection: {
-    marginBottom: vs(35),
-  },
-  glassCard: {
-    // backgroundColor: 'rgba(255, 255, 255, 0.45)',
-    backgroundColor: 'rgba(212, 223, 221, 0.5)',
-    borderRadius: ms(32),
-    padding: s(24),
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.7)',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: vs(25),
-  },
-  iconCircle: {
-    width: s(44),
-    height: s(44),
-    borderRadius: ms(14),
-    backgroundColor: 'rgba(218, 234, 231, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,  
-    
-    // For Android
-    elevation: 4, 
-
-    // Subtle border to define the shape on the glass background
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)', 
-  },
-  listWrapper: {
-    gap: vs(14),
-  },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: vs(64),
-    paddingHorizontal: s(20),
-    borderRadius: ms(16),
-    backgroundColor: 'rgba(218, 234, 231, 0.8)',
-    borderWidth: 1,
-    borderColor: '#FFFFFF',
-  },
-  listItemActive: {
-    backgroundColor: '#FFFFFF',
-    borderColor: FIGMA_TEAL,
-    borderWidth: 1.8,
-  },
-  itemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    width: s(30),
-    alignItems: 'center',
-  },
-  itemLabel: {
-    marginLeft: s(12),
-  },
-  bottomSec: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: vs(40),
-  },
-  nextBtn: {
-    width: '100%',
-    height: vs(56),
-    justifyContent: 'center',
-    alignItems: 'center',     
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    paddingTop: 0,
-    paddingBottom: 0,
-  },
-  nextBtnDisabled: {
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+  },
+  topHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: s(24),
+    paddingTop: vs(10),
+    paddingBottom: vs(15),
+  },
+  iconBtn: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  langBtn: {
+    paddingHorizontal: s(16),
+    paddingVertical: vs(8),
+    borderRadius: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(20),
+  },
+  titleSection: {
+    marginBottom: vs(40),
+  },
+  glassCard: {
+    backgroundColor: 'rgba(212, 223, 221, 0.4)',
+    borderRadius: ms(24),
+    padding: s(20),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(24),
+  },
+  iconCircle: {
+    width: ms(44),
+    height: ms(44),
+    borderRadius: ms(12),
+    backgroundColor: 'rgba(225, 235, 233, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  listWrapper: {
+    gap: vs(12),
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: vs(56),
+    paddingHorizontal: s(16),
+    borderRadius: ms(16),
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: Colors.WHITE,
+  },
+  listItemActive: {
+    borderColor: FIGMA_TEAL,
+    borderWidth: 1.5,
+  },
+  itemIconWrapper: {
+    width: s(32),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemLabel: {
+    marginLeft: s(10),
+  },
+  bottomSec: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: vs(20),
+    paddingTop: vs(40),
   },
 });
 

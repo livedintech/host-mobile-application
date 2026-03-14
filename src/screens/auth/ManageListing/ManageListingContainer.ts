@@ -3,16 +3,13 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  OtpVerifyResponse,
-  VerifyOtpPayload
-} from '@/types/api/authTypes';
+import { OtpVerifyResponse, VerifyOtpPayload } from '@/types/api/authTypes';
 import { getSelectListingApi, resendOtpApi } from '@/services/authApi';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 
 export default function useManageListingContainer() {
-  const [selectedListing, setSelectedListing] = useState<number | null>(null);
+  const [localSelectedId, setLocalSelectedId] = useState<number | null>(null);
   const { params } = useRoute();
 
   const {
@@ -25,7 +22,7 @@ export default function useManageListingContainer() {
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: false,
         phone: params,
-        listing_count: selectedListing
+        listing_count: localSelectedId,
       });
     },
     onError: ({ message }) => {
@@ -33,18 +30,18 @@ export default function useManageListingContainer() {
     },
   });
 
-  const onSelect = (value: number | undefined) => {
+  const onSelect = (value: number | null) => {
+    if (!value) return;
+    
+    // Assuming 1 is the ID for the first option. Adjust according to your DB IDs.
     if (value === 1) {
-
-      setSelectedListing(value);
       const payload = {
         phone_number: params,
       };
       resendOtpPayload(payload);
     } else {
-      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM)
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM);
     }
-
   };
 
   const { data: data = [] } = useQuery({
@@ -60,8 +57,9 @@ export default function useManageListingContainer() {
 
   return {
     isLoading: isPendingResendOtp && !isIdleResendOtp,
-    selectedListing,
+    localSelectedId,
+    setLocalSelectedId,
     onSelect,
-    listingData
+    listingData,
   };
 }

@@ -15,6 +15,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
+import { usePhoneStore } from '@/store/usePhoneStore';
 
 // Validation Schema
 const signInSchema = yup.object().shape({
@@ -38,6 +39,7 @@ export default function useEnterPasswordContainer() {
     setPassword,
   } = useRememberMeStore();
   const { setToken, setUser } = useAuthStore();
+  const {clearPhoneData} = usePhoneStore()
 
   const { params } = useRoute();
 
@@ -67,6 +69,7 @@ export default function useEnterPasswordContainer() {
         });
         return;
       }
+      clearPhoneData()
       setToken(data?.access_token);
       setUser(data?.user);
       Toast.show({ type: 'success', text1: message });

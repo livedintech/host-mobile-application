@@ -3,8 +3,10 @@ import { StyleSheet, View, ScrollView, Image, KeyboardAvoidingView, Platform } f
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
-import { vs } from 'react-native-size-matters';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { vs } from 'react-native-size-matters';
 
 const ConnectCalendarsIntroScreen = () => {
   return (

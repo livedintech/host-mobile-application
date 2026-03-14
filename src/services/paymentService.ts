@@ -55,3 +55,14 @@ export const savePaymentinfoApi = async (payload: savePaymentinfoPayloadType) =>
     }
     throw response;
 };
+
+export const subscriptionActiveApi = async (payload: savePaymentinfoPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.SUBSCRIPTION_ACTIVE,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};

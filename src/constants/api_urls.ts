@@ -36,6 +36,7 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_LISTING_PRICING: `${authController}/channelmanagement/create-listing/pricing`,
     CREATE_EDIT_AMENITIES: `${authController}/channelmanagement/create-listing/amenities`,
     GET_MANAGE_YOUR_LISTINGS: `${authController}/user/listings/{user}`,
+    GET_SUBSCRPTION_USER_PLAN: `${authController}/subscription/user-plan?user_id={user_id}`,
     CREATE_LISTINGS_BEFORE: `${authController}/channels/{user_id}?conntection_type=null&limit=1`,
     GET_MANAGE_YOUR_LISTING_DETAIL: `${authController}/listing-details/{listing_id}`,
     EDIT_MANAGE_YOUR_LISTING_DETAIL: `${authController}/channelmanagement/create-listing/details`,
@@ -126,6 +127,8 @@ export const SERVICE_CONFIG_URLS = {
     CHANNEL_MANAGEMENT_LISTING_IMPORT: `${authController}/channelmanagement/listing/import`,
     CHANNEL_MANAGEMENT_LISTING_GATHERN_IMPORT: `${authController}/gathern/map-listing`,
     GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel`,
-    SAVE_PAYMENT_INFO: `${authController}/subscription/activate`,
+    SAVE_PAYMENT_INFO: `${authController}/subscription/payments`,
+    SUBSCRIPTION_ACTIVE: `${authController}/subscription/activate`,
+
   },
 };

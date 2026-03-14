@@ -139,13 +139,18 @@ import transactionIcon from './transactionIcon.svg';
 import subscriptionIcon from './subscriptionIcon.svg';
 import noAccountTask from './noAccountTask.svg';
 import recurringImg from './recurringImg.svg';
-
-
-import home from "./home.svg";
-import onetothree from "./1-3.svg";
-import fourtothirty from "./4-30.svg";
-import thirtyplus from "./30+.svg";
-import hubspot_thanks from "./hubspot_thanks.svg";
+import giftImg from './gift.svg';
+import LogoMasterCardIcon from './LogoMasterCard.svg';
+import LogoVisaCardIcon from './LogoVisaCard.svg';
+import LogoMadaCardIcon from './LogoMadaCardIcon.svg';
+import LogoStcCardIcon from './LogoStcCardIcon.svg';
+import LogoAppleCardICon from './LogoAppleCardICon.svg';
+import LogoGooglePayCardIcon from './LogoGooglePayCardIcon.svg';
+import home from './home.svg';
+import onetothree from './1-3.svg';
+import fourtothirty from './4-30.svg';
+import thirtyplus from './30+.svg';
+import hubspot_thanks from './hubspot_thanks.svg';
 import edit_pencil_icon from './edit_pencil_icon.svg';
 import copiedIcon from './copiedIcon.svg';
 import taskTimeline from './taskTimeline.svg';
@@ -341,10 +346,16 @@ export const icons = {
   task_calendar,
   deleteTask,
   kitchen,
-    home,
-    onetothree,
-    fourtothirty,
-    thirtyplus,
-    hubspot_thanks,
-  
+  giftImg,
+  LogoMasterCardIcon,
+  LogoVisaCardIcon,
+  LogoMadaCardIcon,
+  LogoStcCardIcon,
+  LogoAppleCardICon,
+  LogoGooglePayCardIcon,
+  home,
+  onetothree,
+  fourtothirty,
+  thirtyplus,
+  hubspot_thanks,
 };
