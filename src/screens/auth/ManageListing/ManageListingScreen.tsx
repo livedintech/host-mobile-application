@@ -1,33 +1,29 @@
-import React from 'react';
-import { View, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, ScrollView, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { s, vs, ms } from 'react-native-size-matters';
+
 import AppText from '@/components/molecules/AppText/AppText';
+import AppButton from '@/components/molecules/AppButton/AppButton';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import useManageListingContainer from './ManageListingContainer';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ms, s, vs } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import AppButton from '@/components/molecules/AppButton/AppButton';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
-const FIGMA_TEAL = '#333333';
+const FIGMA_TEAL = '#20957B';
 
 const ManageListingScreen = () => {
-  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId } = useManageListingContainer();
+  const { onSelect, isLoading, listingData } = useManageListingContainer();
+  
+  // 1. Initialize as string | null to match listingData and container types
+  const [localSelectedId, setLocalSelectedId] = useState<string | null>(null);
 
   const handleNextPress = () => {
     if (localSelectedId !== null) {
       onSelect(localSelectedId);
     }
-  };
-
-  // Helper function to pick correct icon based on label text
-  const getIconForListing = (label: string = '') => {
-    const lowerLabel = label.toLowerCase();
-    if (lowerLabel.includes('1-3')) return 'onetothree'; // Replace with your exact SVG path name
-    if (lowerLabel.includes('30+')) return 'property'; // Replace with your exact SVG path name
-    return 'fourtothirty'; // Fallback icon
   };
 
   if (isLoading) {
@@ -38,57 +34,72 @@ const ManageListingScreen = () => {
     );
   }
 
+  // Define button style dynamically to avoid the 'false | Style' type error
+  const getNextButtonStyle = (): ViewStyle[] => {
+    const baseStyle: ViewStyle = styles.nextBtn;
+    if (!localSelectedId) {
+      return [baseStyle, styles.nextBtnDisabled];
+    }
+    return [baseStyle];
+  };
+
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent} 
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
           <View style={styles.mainContent}>
-
-            {/* Main Title */}
-            <View style={styles.titleSection}>
+            
+            {/* Title Section */}
+            <View style={styles.headerSection}>
               <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                How many{' '}
-                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>listings</AppText> do{'\n'}you manage?
+                How many&nbsp;
+                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>listings</AppText> do you manage?
               </AppText>
             </View>
 
-            {/* Glass Card & Options */}
-            <GlassCard width="100%">
+            {/* Glassmorphism Selection Card */}
+            <GlassCard style={styles.glassCard}>
               <View style={styles.cardHeader}>
-                <AppText text="Listing Selection" fontSize={20} type="Medium" color={Colors.BLACK} />
+                <AppText text="Listing Selection" type="Bold" fontSize={22} color={Colors.BLACK} />
                 <View style={styles.iconCircle}>
-                  <Svgicons path="home" size={24} />
+                  <Svgicons path="home" size={24} color={Colors.BLACK} />
                 </View>
               </View>
-              <View style={styles.listWrapper}>
-                {listingData.map((item: { value?: number; label?: string }) => {
-                  const isSelected = localSelectedId === item.value;
 
+              <View style={styles.listWrapper}>
+                {listingData.map((item) => {
+                  const isSelected = localSelectedId === item.id;
+                  
                   return (
-                    <ButtonView
-                      key={item.value}
-                      activeOpacity={0.9}
-                      style={[styles.listItem, isSelected && styles.listItemActive]}
-                      onPress={() => setLocalSelectedId(item.value || null)}
+                    <ButtonView 
+                      key={item.id}
+                      activeOpacity={0.8}
+                      onPress={() => setLocalSelectedId(item.id)}
+                      style={[
+                        styles.listItem, 
+                        isSelected ? styles.listItemActive : {}
+                      ]}
                     >
-                      <View style={styles.itemIconWrapper}>
-                        <Svgicons
-                          path={getIconForListing(item.label)}
-                          size={24}
-                          color={isSelected ? FIGMA_TEAL : Colors.BLACK}
+                      <View style={styles.itemContent}>
+                        <View style={styles.iconWrapper}>
+                          <Svgicons 
+                            path={item.icon as any} 
+                            size={30} 
+                            color={Colors.BLACK}
+                          />
+                        </View>
+                        <AppText 
+                          text={item.label} 
+                          fontSize={18} 
+                          type={isSelected ? "Bold" : "Medium"} 
+                          color={Colors.BLACK}
+                          style={styles.itemLabel}
                         />
                       </View>
-                      <AppText
-                        text={item.label}
-                        fontSize={16}
-                        type="Regular"
-                        color={isSelected ? FIGMA_TEAL : Colors.BLACK}
-                        style={styles.itemLabel}
-                      />
                     </ButtonView>
                   );
                 })}

@@ -1,171 +1,290 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { StyleSheet, View, Image, Modal, Dimensions } from 'react-native';
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
-import Metrics from '@/utility/Metrics';
+import Video from 'react-native-video';
+import ImageView from 'react-native-image-viewing';
+
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import InputField from '@/components/molecules/Input/InputField';
-import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Checkbox from '@/components/molecules/Input/CheckBox';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import useChecklistDetailContainer from '../../container/ChecklistDetailContainer/ChecklistDetailContainer';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Metrics from '@/utility/Metrics';
+
+const { width, height } = Dimensions.get('window');
 
 const ChecklistDetail = ({ route }: any) => {
-  const title = route?.params?.title || 'Bedroom 2';
+  const { title, sectionId, taskId, fromEdit } = route.params;
+
+  const {
+    localItems,
+    isLoading,
+    toggleItem,
+    addItem,
+    updateItem,
+    saveAndContinue,
+    onRefresh,
+  } = useChecklistDetailContainer(sectionId, taskId);
+
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
+  const [currentImage, setCurrentImage] = useState<{ uri: string }[]>([]);
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%'], []);
+  const snapPoints = useMemo(() => ['25%'], []);
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null); // Track which item we are editing
-  
-  const [taskData, setTaskData] = useState([
-    { id: 1, text: 'Empty the trash bins and replace the new liner', checked: true },
-    { id: 2, text: 'Windows glass & channels cleaned', checked: true },
-    { id: 3, text: 'Curtains Set / Unstained', checked: true },
-    { id: 4, text: 'Wardrobe Check and Dust', checked: true },
-    { id: 5, text: 'Floor Mopped / Carpet Vacuum', checked: true },
-    { id: 6, text: 'Sofa Set & Cushions', checked: true },
-    { id: 7, text: 'Ceiling Lights Working', checked: true },
-  ]);
-
-  const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
     defaultValues: { itemName: '' },
   });
 
-  const toggleTask = (id: number) => {
-    setTaskData(prev => prev.map(item => 
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
-  };
+  const hasExistingMedia = useMemo(() => {
+    return localItems?.some(item => item.images && item.images.length > 0);
+  }, [localItems]);
 
-  const handleOpenPress = (item?: any) => {
-    if (item) {
-      setEditingId(item.id);
-      setValue('itemName', item.text); // Populate the input with existing text
+  const onFormSubmit = (data: any) => {
+    if (selectedItem) {
+      updateItem(selectedItem.id, data.itemName);
     } else {
-      setEditingId(null);
-      reset({ itemName: '' });
+      addItem(data.itemName);
     }
-    bottomSheetRef.current?.expand();
-  };
-
-  const handleClosePress = () => {
     bottomSheetRef.current?.close();
-    setEditingId(null);
     reset();
   };
 
-  const onSubmit = (data: any) => {
-    if (editingId) {
-      // UPDATE existing item
-      setTaskData(prev => prev.map(item => 
-        item.id === editingId ? { ...item, text: data.itemName } : item
-      ));
-    } else {
-      // ADD new item
-      const newItem = {
-        id: Date.now(),
-        text: data.itemName,
-        checked: true
-      };
-      setTaskData(prev => [...prev, newItem]);
-    }
-    handleClosePress();
+  const handleOpenEdit = (item: any) => {
+    if (item.images && item.images.length > 0) return;
+    setSelectedItem({ id: item.id, name: item.name });
+    setValue('itemName', item.name);
+    bottomSheetRef.current?.expand();
   };
 
-  const onRefresh = useCallback(() => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 2000);
-  }, []);
+  const renderMedia = (mediaItems: any[]) => {
+    if (!mediaItems || mediaItems.length === 0) return null;
+    return (
+      <View style={styles.mediaGrid}>
+        {mediaItems.map((media, index) => {
+          const isVideo =
+            media.type === 'video' ||
+            media.file_path?.toLowerCase().endsWith('.mp4');
+          return (
+            <ButtonView
+              key={media.id || index}
+              style={styles.mediaBox}
+              onPress={() => {
+                if (isVideo) setSelectedVideo(media.file_path);
+                else {
+                  setCurrentImage([{ uri: media.file_path }]);
+                  setIsImageViewerVisible(true);
+                }
+              }}
+            >
+              {isVideo ? (
+                <View style={styles.videoPlaceholder}>
+                  <Video
+                    source={{ uri: media.file_path }}
+                    style={StyleSheet.absoluteFill}
+                    paused
+                    resizeMode="cover"
+                    muted
+                  />
+                  <View style={styles.playIconCircle}>
+                    <Svgicons
+                      path="webcampIcon"
+                      size={18}
+                      color={Colors.WHITE}
+                    />
+                  </View>
+                </View>
+              ) : (
+                <Image
+                  source={{ uri: media.file_path }}
+                  style={styles.imageAsset}
+                />
+              )}
+            </ButtonView>
+          );
+        })}
+      </View>
+    );
+  };
 
-  const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} />,
-    []
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => {
+      const isLocked = item.images && item.images.length > 0;
+      return (
+        <GlassCard width="100%" style={styles.taskCard}>
+          <View style={styles.taskRow}>
+            <Checkbox
+              isChecked={item.isChecked}
+              onPress={() => toggleItem(item.id)}
+              disabled={isLocked}
+            />
+            <ButtonView
+              style={{ flex: 1, marginLeft: 10 }}
+              onPress={() => handleOpenEdit(item)}
+              activeOpacity={isLocked ? 1 : 0.7}
+            >
+              <AppText
+                text={item.name}
+                fontSize={14}
+                color={Colors.BLACK}
+                lineHeight={18}
+              />
+            </ButtonView>
+          </View>
+          {renderMedia(item.images)}
+        </GlassCard>
+      );
+    },
+    [toggleItem],
   );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
-
-
-        <RefreshableScrollView
-          style={styles.content}
+        <FlatListSimpleHandler
+          data={localItems}
+          renderItem={renderItem}
+          isLoading={isLoading}
           onRefresh={onRefresh}
-          refreshing={isRefreshing}
-          isLoading={isPageLoading}
-        >
-          <AppText text={`${title} Checklist`} fontSize={28} type="Bold" lineHeight={38} mb={12} />
-          <AppText 
-            text="Please select what you require from the user for this checklist."
-            fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} mb={20}
-          />
+          contentContainerStyle={styles.listContent}
+          HeaderComponent={
+            <View>
+              <AppText
+                text={`${title} Checklist`}
+                fontSize={28}
+                type="Bold"
+                mb={12}
+                mt={20}
+              />
+              {!hasExistingMedia && (
+                <View style={styles.addMoreContainer}>
+                  <ButtonView
+                    onPress={() => {
+                      setSelectedItem(null);
+                      reset();
+                      bottomSheetRef.current?.expand();
+                    }}
+                  >
+                    <GlassCard width="auto" style={styles.addMoreBtn}>
+                      {/* <View style={styles.addMoreInner}> */}
 
-          <View style={styles.addMoreContainer}>
-            <TouchableOpacity onPress={() => handleOpenPress()}>
-              <GlassCard width="auto" style={styles.addMoreBtn}>
-                <AppText text="Add more" fontSize={12} type="Medium" />
-              </GlassCard>
-            </TouchableOpacity>
-          </View>
-
-          {taskData.map((item) => (
-            <TouchableOpacity key={item.id} activeOpacity={0.8} onPress={() => handleOpenPress(item)}>
-                <GlassCard width="100%" style={styles.taskCard}>
-                <View style={styles.taskRow}>
-                    <Checkbox 
-                    isChecked={item.checked} 
-                    onPress={() => toggleTask(item.id)} 
-                    />
-                    <AppText
-                    text={item.text}
-                    fontSize={14}
-                    color={Colors.BLACK}
-                    ml={12}
-                    style={{ flex: 1 }}
-                    />
+                      <AppText text="Add more" fontSize={12} type="Medium" />
+                      {/* </View> */}
+                    </GlassCard>
+                  </ButtonView>
                 </View>
-                </GlassCard>
-            </TouchableOpacity>
-          ))}
-          <View style={{ height: 60 }} />
-        </RefreshableScrollView>
+              )}
+            </View>
+          }
+          ListFooterComponent={<View style={{ height: 120 }} />}
+          keyExtractor={item => item.id.toString()}
+        />
 
+        {!fromEdit && (
+          <View style={styles.footer}>
+            <AppButton
+              title="Save"
+              backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              onPress={saveAndContinue}
+              loading={isLoading}
+            />
+          </View>
+        )}
+
+        {/* Video Player Modal */}
+        <Modal
+          visible={!!selectedVideo}
+          transparent={false}
+          animationType="fade"
+        >
+          <View style={styles.videoModalContainer}>
+            <ButtonView
+              style={styles.closeBtn}
+              onPress={() => setSelectedVideo(null)}
+            >
+              <Svgicons path="closeIcon" size={30} color={Colors.WHITE} />
+            </ButtonView>
+            {selectedVideo && (
+              <Video
+                source={{ uri: selectedVideo }}
+                style={styles.fullScreenVideo}
+                controls
+                resizeMode="contain"
+              />
+            )}
+          </View>
+        </Modal>
+
+        {/* Image Viewer */}
+        <ImageView
+          images={currentImage}
+          visible={isImageViewerVisible}
+          onRequestClose={() => setIsImageViewerVisible(false)}
+        />
+
+        {/* Bottom Sheet for Add/Edit */}
         <BottomSheet
           ref={bottomSheetRef}
           index={-1}
           snapPoints={snapPoints}
           enablePanDownToClose
-          backdropComponent={renderBackdrop}
-          handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
+          backdropComponent={props => (
+            <BottomSheetBackdrop
+              {...props}
+              disappearsOnIndex={-1}
+              appearsOnIndex={0}
+            />
+          )}
         >
           <BottomSheetView style={styles.sheetContent}>
-            <View style={styles.sheetHeader}>
-              <AppText text={editingId ? "Update Item" : "Add Item"} fontSize={24} type="Bold" />
-              <TouchableOpacity onPress={handleClosePress}>
-                <Svgicons path="closeIcon" size={24} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.inputWrapper}>
-              <InputField
-                name="itemName"
-                label="Item Name"
-                control={control}
-                errors={errors}
-                placeholder="Enter checklist item"
-                rules={{ required: 'Item name is required' }}
-              />
-            </View>
+            <AppText
+              text={selectedItem ? 'Edit Checklist' : 'Add New Checklist'}
+              fontSize={20}
+              type="Bold"
+              mb={25}
+            />
+            <AppText
+              text={'Add Item'}
+              fontSize={14}
+              type="Medium"
+              mb={15}
+            />
+            <InputField
+              name="itemName"
+              control={control}
+              errors={errors}
+              placeholder="e.g. Clean the windows"
+              rules={{ required: 'Required' }}
+            />
             <AppButton
-              title={editingId ? "Update" : "Add"}
-              mt={20}
+              title={selectedItem ? 'Update' : 'Add'}
               backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor= {Colors.PRIMARY_TEAL}
               color={Colors.WHITE}
-              onPress={handleSubmit(onSubmit)}
+              mt={20}
+              onPress={handleSubmit(onFormSubmit)}
             />
           </BottomSheetView>
         </BottomSheet>
@@ -176,20 +295,55 @@ const ChecklistDetail = ({ route }: any) => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
-  content: { flex: 1, paddingHorizontal: 25 },
-  addMoreContainer: { alignItems: 'flex-end', marginBottom: 8 },
-  addMoreBtn: { paddingVertical: 8, paddingHorizontal: 15, borderRadius: 12 },
-  taskCard: {
-    minHeight: 64,
-    justifyContent: 'center',
-    marginBottom: 12,
-    borderRadius: 20,
-    paddingVertical: 10,
+  listContent: {
+    paddingHorizontal: 25,
+    paddingBottom: Metrics.verticalScale(0),
   },
+  taskCard: { padding: 16, marginBottom: 15, borderRadius: 20 },
   taskRow: { flexDirection: 'row', alignItems: 'center' },
+  addMoreContainer: { alignItems: 'flex-end', marginBottom: 12 },
+  addMoreBtn: { paddingVertical: 10, paddingHorizontal: 18, borderRadius: 12 },
+  addMoreInner: { flexDirection: 'row', alignItems: 'center' },
+  mediaGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 15,
+    marginHorizontal: -5,
+  },
+  mediaBox: {
+    width: (width - 110) / 2,
+    height: 120,
+    margin: 5,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  imageAsset: { width: '100%', height: '100%' },
+  videoPlaceholder: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIconCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footer: { position: 'absolute', bottom: 30, left: 25, right: 25 },
+  videoModalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+  },
+  fullScreenVideo: { width: width, height: height * 0.8 },
+  closeBtn: { position: 'absolute', top: 50, right: 25, zIndex: 10 },
   sheetContent: { padding: 25 },
-  sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  inputWrapper: { marginTop: 10 },
 });
 
 export default ChecklistDetail;

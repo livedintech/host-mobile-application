@@ -1,29 +1,37 @@
-import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useRef, useMemo, useCallback } from 'react';
+import { StyleSheet, View } from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
-import Metrics from '@/utility/Metrics';
+import { useRoute } from '@react-navigation/native';
+
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { navigate } from '@/services/navigationService';
+import { navigate, goBack } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import InputField from '@/components/molecules/Input/InputField';
-import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import useViewChecklistAllContainer from '../../container/viewChecklistAllContainer/viewChecklistAllContainer';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { getChecklistIcon } from '@/utility/getChecklistIcon';
 
 const ViewChecklistAll = () => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%'], []);
+  const route = useRoute<any>();
+  const { taskId, fromEdit, taskType } = route.params || {};
+  console.log('taskIDINViewCheclist', taskId);
 
-  // State for RefreshableScrollView
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  // Pass navigation params directly to the container
+  const { checklistData, isLoading, addSection, onRefresh } =
+    useViewChecklistAllContainer({ taskId, taskType });
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['30%'], []);
 
   const {
     control,
@@ -34,23 +42,14 @@ const ViewChecklistAll = () => {
     defaultValues: { sectionName: '' },
   });
 
-  // Mock Refresh Logic
-  const onRefresh = useCallback(() => {
-    setIsRefreshing(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 2000);
-  }, []);
-
   const handleOpenPress = () => bottomSheetRef.current?.expand();
   const handleClosePress = () => {
     bottomSheetRef.current?.close();
     reset();
   };
 
-  const onAddSection = (data: any) => {
-    console.log('New Section:', data.sectionName);
+  const onAddSectionSubmit = (data: any) => {
+    addSection(data.sectionName);
     handleClosePress();
   };
 
@@ -66,86 +65,91 @@ const ViewChecklistAll = () => {
     [],
   );
 
-  const sections = [
-    { id: '1', title: 'Bedroom 1', icon: 'bedroom' },
-    { id: '2', title: 'Bedroom 2', icon: 'bedroom' },
-    { id: '3', title: 'Bathroom', icon: 'bedroom' },
-  ];
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <ButtonView
+        onPress={() =>
+          navigate(NavigationRoutes.APP_STACK.CHECKLIST_DETAIL, {
+            title: item.name,
+            sectionId: item.id,
+            taskId: taskId,
+            fromEdit,
+          })
+        }
+      >
+        <GlassCard width="100%" style={styles.cardInternal}>
+          <View style={styles.cardRow}>
+            <Svgicons path={getChecklistIcon(item.key)} size={24} />
+            <View style={{ flex: 1, marginLeft: 16 }}>
+              <AppText text={item.name} fontSize={18} type="Medium" />
+            </View>
+          </View>
+        </GlassCard>
+      </ButtonView>
+    ),
+    [taskId],
+  );
+
+  const ListHeader = () => (
+    <View>
+      <AppText
+        text={fromEdit ? 'Post-activity Preview' : 'Checklist Management'}
+        fontSize={28}
+        type="Bold"
+        mt={20}
+        mb={25}
+      />
+      <AppText
+        text={
+          'Click on each section to view images section-wise and verify the condition after the task is completed.'
+        }
+        color={Colors.DARK_CHARCOAL_OPACITY}
+        fontSize={14}
+        type="Regular"
+        mb={45}
+      />
+      {!fromEdit && (
+        <View style={styles.addSectionContainer}>
+          <ButtonView onPress={handleOpenPress}>
+            <GlassCard width="auto" style={styles.addSectionBtn}>
+              <AppText text="Add Section" fontSize={14} type="Medium" />
+            </GlassCard>
+          </ButtonView>
+        </View>
+      )}
+    </View>
+  );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
-        {/* Swapped ScrollView for RefreshableScrollView */}
-        <RefreshableScrollView
-          style={styles.content}
+        <FlatListSimpleHandler
+          data={checklistData}
+          renderItem={renderItem}
+          isLoading={isLoading}
           onRefresh={onRefresh}
-          refreshing={isRefreshing}
-          isLoading={isPageLoading}
-        >
-          <AppText
-            text="Checklist Management"
-            fontSize={28}
-            type="Bold"
-            lineHeight={32}
-            mb={16}
-          />
-          <AppText
-            text="Select the required checklist items for this section. Open the section and choose the checklist(s) you want the user to complete."
-            fontSize={14}
-            color={Colors.DARK_CHARCOAL_OPACITY}
-            lineHeight={20}
-            mb={24}
-          />
-
-          <View style={styles.addSectionContainer}>
-            <TouchableOpacity onPress={handleOpenPress}>
-              <GlassCard width="auto" style={styles.addSectionBtn}>
-                <AppText
-                  text="Add Section"
-                  fontSize={14}
-                  type="Medium"
-                  color={Colors.BLACK}
-                />
-              </GlassCard>
-            </TouchableOpacity>
+          contentContainerStyle={styles.listContent}
+          HeaderComponent={<ListHeader />}
+          ListFooterComponent={<View style={{ height: 120 }} />}
+          keyExtractor={item => item.id.toString()}
+        />
+        {!fromEdit && (
+          <View style={styles.footer}>
+            <AppButton
+              title={fromEdit ? 'Done' : 'Next'}
+              backgroundColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              borderColor={Colors.PRIMARY_TEAL}
+              onPress={() => {
+                if (fromEdit) {
+                  goBack();
+                } else {
+                  navigate(NavigationRoutes.APP_STACK.STAFF_NOTES);
+                }
+              }}
+            />
           </View>
-
-          {sections.map(item => (
-            <TouchableOpacity
-              key={item.id}
-              onPress={() =>
-                navigate(NavigationRoutes.APP_STACK.CHECKLIST_DETAIL, {
-                  title: item.title,
-                })
-              }
-            >
-              <GlassCard width="100%" style={styles.cardInternal}>
-                <View style={styles.cardRow}>
-                  <Svgicons path={item.icon} size={24} />
-                  <AppText
-                    text={item.title}
-                    fontSize={18}
-                    type="Medium"
-                    ml={16}
-                  />
-                </View>
-              </GlassCard>
-            </TouchableOpacity>
-          ))}
-          <View style={{ height: 100 }} />
-        </RefreshableScrollView>
-
-        <View style={styles.footer}>
-          <AppButton
-            title="Next"
-            backgroundColor={Colors.PRIMARY_TEAL}
-            borderColor={Colors.PRIMARY_TEAL}
-            color={Colors.WHITE}
-            onPress={() => {
-              navigate(NavigationRoutes.APP_STACK.STAFF_NOTES);
-            }}
-          />
-        </View>
+        )}
 
         <BottomSheet
           ref={bottomSheetRef}
@@ -153,33 +157,29 @@ const ViewChecklistAll = () => {
           snapPoints={snapPoints}
           enablePanDownToClose
           backdropComponent={renderBackdrop}
-          handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
               <AppText text="Add Section" fontSize={24} type="Bold" />
-              <TouchableOpacity onPress={handleClosePress}>
+              <ButtonView onPress={handleClosePress}>
                 <Svgicons path="closeIcon" size={24} />
-              </TouchableOpacity>
+              </ButtonView>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <InputField
-                name="sectionName"
-                label="Section Name"
-                control={control}
-                errors={errors}
-                placeholder="Kitchen"
-                rules={{ required: 'Section name is required' }}
-              />
-            </View>
-
+            <InputField
+              name="sectionName"
+              label="Section Name"
+              control={control}
+              errors={errors}
+              placeholder="e.g. Kitchen"
+              rules={{ required: 'Required' }}
+            />
             <AppButton
               title="Add"
               mt={20}
               backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor={Colors.PRIMARY_TEAL}
               color={Colors.WHITE}
-              onPress={handleSubmit(onAddSection)}
+              onPress={handleSubmit(onAddSectionSubmit)}
             />
           </BottomSheetView>
         </BottomSheet>
@@ -190,22 +190,21 @@ const ViewChecklistAll = () => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
-  content: { flex: 1, paddingHorizontal: 25, paddingTop: 20 },
-  addSectionContainer: { alignItems: 'flex-end', marginBottom: 8 },
+  listContent: { paddingHorizontal: 25 },
+  addSectionContainer: { alignItems: 'flex-end', marginBottom: 12 },
   addSectionBtn: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 12,
   },
-  cardInternal: { height: 80, justifyContent: 'center', paddingHorizontal: 20 },
-  cardRow: { flexDirection: 'row', alignItems: 'center' },
-  footer: {
-    paddingHorizontal: 25,
-    marginBottom: 30,
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
+  cardInternal: {
+    height: 80,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 12,
   },
+  cardRow: { flexDirection: 'row', alignItems: 'center' },
+  footer: { position: 'absolute', bottom: 30, left: 25, right: 25 },
   sheetContent: { padding: 25 },
   sheetHeader: {
     flexDirection: 'row',
@@ -213,7 +212,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  inputWrapper: { marginTop: 10 },
 });
 
 export default ViewChecklistAll;

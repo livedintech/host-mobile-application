@@ -64,10 +64,10 @@ const NoTaskScreen = () => {
               <AppButton
                 title="Setup Cleaning Schedule"
                 backgroundColor={Colors.WHITE}
-                borderColor="transparent" 
+                borderColor="transparent"
                 color={Colors.BLACK}
                 fontSize={16}
-                style={styles.buttonReset} 
+                style={styles.buttonReset}
                 onPress={() => {
                   navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
                 }}
@@ -80,7 +80,9 @@ const NoTaskScreen = () => {
               borderColor={Colors.PRIMARY_TEAL}
               color={Colors.WHITE}
               fontSize={16}
-              onPress={() => {}}
+              onPress={() => {
+                navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
+              }}
             />
           </View>
         </View>
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(30),
   },
   gradientWrapper: {
-    borderRadius: 100, 
+    borderRadius: 100,
     padding: 1, // The 1px border thickness
     marginBottom: Metrics.verticalScale(16),
   },

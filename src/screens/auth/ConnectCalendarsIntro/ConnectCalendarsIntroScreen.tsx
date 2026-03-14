@@ -65,18 +65,19 @@ const ConnectCalendarsIntroScreen = () => {
             />
           </View>
 
-        {/* Button */}
-        <AppButton 
-          title="Connect Account" 
-          onPress={() => navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)}
-          mt={34}
-        />
-      </ScrollView>
-      <Pagination 
-        activeIndex={1} 
-      />
+          {/* Button - Using the color prop fix */}
+          <AppButton 
+            title="Connect Account" 
+            onPress={() => console.log("Navigate to Sync logic")}
+            style={styles.connectBtn}
+            color="#FFFFFF" 
+            type="Bold"
+          />
+        </ScrollView>
+
+        <Pagination activeIndex={1} />
       </KeyboardAvoidingView>
-      </BGImage>
+    </BGImage>
   );
 };
 
