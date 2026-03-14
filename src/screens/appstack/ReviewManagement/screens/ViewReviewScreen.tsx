@@ -4,21 +4,26 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  Alert,
+  Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useRoute } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import TextareaField from '@/components/molecules/Input/TextareaField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
+
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 import useReviewDetail from '../containers/useReviewDetail';
-import Toast from 'react-native-toast-message';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ViewReviewScreen = () => {
   const route = useRoute<any>();
@@ -26,16 +31,18 @@ const ViewReviewScreen = () => {
 
   const { reviewDetail, isLoading, starRating, submitReply, isSubmitting } =
     useReviewDetail(id);
-    console.log("starRating",starRating)
 
   const {
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: { reply: '' },
   });
+
+  const replyText = watch('reply');
 
   useEffect(() => {
     if (reviewDetail?.reply_review) {
@@ -53,50 +60,36 @@ const ViewReviewScreen = () => {
             text1: 'Reply submitted successfully',
           }),
         onError: () =>
-          Toast.show({
-            type: 'error',
-            text1: 'Failed to Submit Reply',
-          }),
+          Toast.show({ type: 'error', text1: 'Failed to Submit Reply' }),
       },
     );
   };
 
-  console.log("reviewDetail",reviewDetail)
+  // UPDATED: Bar is now below the Label
+  const FeedbackBar = ({
+    label,
+    value,
+    icon,
+  }: {
+    label: string;
+    value: number;
+    icon: string;
+  }) => (
+    <View style={styles.barItemContainer}>
+      <View style={styles.barLabelRow}>
+        <View style={styles.iconBox}>
+          <Svgicons path={icon} size={18} />
+        </View>
+        <AppText
+          text={label}
+          fontSize={15}
+          color={Colors.BLACK}
+          type="Medium"
+          ml={12}
+        />
+      </View>
 
-  const renderStars = (rating: number) => (
-    <View style={styles.starRow}>
-      {[1, 2, 3, 4, 5].map(index => {
-        const isFilled = index <= Math.round(rating);
-        return (
-          <Svgicons
-            key={index}
-            path={isFilled ? 'reviewStarIcon' : 'reviewStartUnfilledIcon'}
-            size={24}
-            fill={isFilled ? Colors.BOTTLE_GREEN : Colors.ARGENT}
-            mr={4}
-          />
-        );
-      })}
-      <AppText
-        text={`${rating}/5`}
-        ml={8}
-        color={Colors.SUPER_GREY}
-        fontSize={18}
-        type="Medium"
-      />
-    </View>
-  );
-
-  const FeedbackBar = ({ label, value }: { label: string; value: number }) => (
-    <View style={styles.barRow}>
-      <AppText
-        text={label}
-        style={styles.barLabel}
-        fontSize={16}
-        color={Colors.PINE_FOREST}
-        type="Medium"
-      />
-      <View style={styles.barContainer}>
+      <View style={styles.progressSection}>
         <View style={styles.barBg}>
           <View style={[styles.barFill, { width: `${(value / 5) * 100}%` }]} />
         </View>
@@ -104,7 +97,7 @@ const ViewReviewScreen = () => {
           text={value.toFixed(1)}
           ml={12}
           type="Bold"
-          fontSize={14}
+          fontSize={12}
           color={Colors.PINE_FOREST}
         />
       </View>
@@ -113,151 +106,221 @@ const ViewReviewScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center' }]}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={Colors.BOTTLE_GREEN} />
       </View>
     );
   }
 
+  const borderColors = [
+    'rgba(128, 128, 128, 0.66)',
+    'rgba(255, 255, 255, 0.66)',
+    'rgba(128, 128, 128, 0.66)',
+  ];
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.headerRow}>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.headerTitleRow}>
+          <Svgicons path="smileIcon" size={32} />
+        </View>
         <AppText
           text="Overall Rating"
-          fontSize={24}
+          fontSize={30}
           type="Bold"
-          color={Colors.PINE_FOREST}
+          color={Colors.BLACK}
+          mb={30}
         />
-        <ButtonView style={styles.starIconHeader}>
-          <Svgicons path="starRewardIcon" size={24} />
-        </ButtonView>
-      </View>
 
-      {renderStars(starRating)}
-
-      <View style={styles.sectionHeader}>
         <AppText
-          text="Review"
-          type="Bold"
-          fontSize={22}
-          color={Colors.PINE_FOREST}
-          mr={8}
+          text={reviewDetail?.review?.private || 'No review text provided.'}
+          color={Colors.DARK_CHARCOAL_OPACITY_74}
+          lineHeight={22}
+          fontSize={15}
+          type="Regular"
+          style={styles.description}
         />
-        <Svgicons path="chatBubbleIcon" size={18} />
-      </View>
 
-      <AppText
-        text={
-          reviewDetail?.review
-            ? `${reviewDetail.review.private}`
-            : 'No review text available.'
-        }
-        color={Colors.PINE_FOREST}
-        lineHeight={22}
-        fontSize={14}
-        type="Regular"
-        opacity={0.7}
-      />
+        <GlassCard width="100%" style={styles.glassCard}>
+          <View style={styles.glassHeader}>
+            <AppText
+              text="Guest Property Ratings"
+              fontSize={18}
+              type="Medium"
+              color={Colors.BLACK}
+            />
+            <View style={styles.idIconBox}>
+              <Svgicons path="identityCard" size={25} />
+            </View>
+          </View>
 
-      <View style={styles.replyHeader}>
+          <FeedbackBar
+            label="Booking Platform"
+            value={starRating || 5.0}
+            icon="bookingPlatform"
+          />
+          <FeedbackBar
+            label="Accuracy"
+            value={reviewDetail?.scores?.accuracy || 0}
+            icon="accuracy"
+          />
+          <FeedbackBar
+            label="Communication"
+            value={reviewDetail?.scores?.communication || 0}
+            icon="communication"
+          />
+          <FeedbackBar
+            label="Location"
+            value={reviewDetail?.scores?.location || 0}
+            icon="location"
+          />
+          <FeedbackBar
+            label="Check-in"
+            value={reviewDetail?.scores?.check_in || 0}
+            icon="checkIn"
+          />
+          <FeedbackBar
+            label="Value"
+            value={reviewDetail?.scores?.value || 0}
+            icon="value"
+          />
+        </GlassCard>
+
         <AppText
           text="Your Reply"
           type="Bold"
-          fontSize={16}
-          color={Colors.PINE_FOREST}
-          mr={8}
+          fontSize={26}
+          color={Colors.BLACK}
+          mt={30}
+          mb={15}
         />
-        <Svgicons path="mailIcon" size={18} />
-      </View>
 
-      <View style={styles.replyContainer}>
-        <TextareaField
-          name="reply"
-          control={control}
-          errors={errors}
-          placeholder="Type here"
-          multiline
+        <View style={styles.replyBox}>
+          <TextareaField
+            name="reply"
+            control={control}
+            errors={errors}
+            placeholder="Thank you for your response..."
+            multiline
+            style={styles.textArea}
+          />
+        </View>
+        <AppText
+          text={`${replyText?.length || 0}/500 characters`}
+          fontSize={12}
+          color={Colors.DARK_CHARCOAL}
+          mt={0}
         />
-        <View style={styles.submitContainer}>
+
+        <View style={styles.bottomButtons}>
+          <GradientBorder
+            colors={borderColors}
+            borderRadius={28}
+            style={styles.fullWidthGradient}
+          >
+            <ButtonView
+              onPress={handleSubmit(onFormSubmit)}
+              style={styles.submitInner}
+            >
+              <AppText
+                text="Submit"
+                fontSize={16}
+                type="Medium"
+                color={Colors.BLACK}
+              />
+            </ButtonView>
+          </GradientBorder>
+
           <AppButton
-            title="Submit"
-            loading={isSubmitting}
-            style={styles.submitBtn}
-            textStyle={styles.submitBtnText}
-            onPress={handleSubmit(onFormSubmit)}
+            title="Save & Exit"
+            onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)}
+            style={styles.exitBtn}
+            color={Colors.WHITE}
+            backgroundColor={Colors.BOTTLE_GREEN}
+            borderColor={Colors.BOTTLE_GREEN}
           />
         </View>
-      </View>
-
-      <GradientBorder style={styles.detailsCardGradient} borderRadius={16}>
-        <View style={styles.detailsCardInner}>
-          <AppText
-            text="Detailed Feedback"
-            type="Bold"
-            fontSize={20}
-            mb={20}
-            color={Colors.PINE_FOREST}
-          />
-          <FeedbackBar label="Cleanliness" value={reviewDetail.scores.cleanliness} />
-          <FeedbackBar label="Accuracy" value={reviewDetail.scores.accuracy} />
-          <FeedbackBar label="Communication" value={reviewDetail.scores.cleanliness} />
-          <FeedbackBar label="Location" value={reviewDetail.scores.location} />
-          <FeedbackBar label="Check-in" value={reviewDetail.scores.check_in} />
-          <FeedbackBar label="Value" value={reviewDetail.scores.value} />
-        </View>
-      </GradientBorder>
-    </ScrollView>
+      </ScrollView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  content: { padding: 24 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  starIconHeader: { padding: 4, marginLeft: 8 },
-  starRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 24 },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 12,
+  container: { flex: 1 },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  content: {
+    padding: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingBottom: 60,
   },
-  replyHeader: {
-    flexDirection: 'row',
+  backCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 12,
+    marginBottom: 20,
   },
-  replyContainer: { marginBottom: 20 },
-  submitContainer: { alignItems: 'flex-end', marginTop: 10 },
-  submitBtn: { width: 120 },
-  submitBtnText: { color: Colors.PINE_FOREST, fontSize: 14 },
-  detailsCardGradient: { marginTop: 40, marginBottom: 20 },
-  detailsCardInner: { padding: 14, backgroundColor: Colors.WHITE },
-  barRow: {
+  headerTitleRow: { marginBottom: 30 },
+  description: { marginBottom: 40, lineHeight: 22 },
+  glassCard: { padding: 20 },
+  glassHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 18,
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 25,
   },
-  barLabel: { flex: 1 },
-  barContainer: {
+  idIconBox: {
+    padding: 8,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 10,
+  },
+
+  // Bar Styling matching the image
+  barItemContainer: { marginBottom: 12 },
+  barLabelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
+  iconBox: {
+    width: 34,
+    height: 34,
+    backgroundColor: 'rgba(0,0,0,0.04)',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1.5,
-    justifyContent: 'flex-end',
+    paddingLeft: 46,
   },
   barBg: {
-    width: 120,
+    flex: 1,
     height: 4,
-    backgroundColor: Colors.ANTI_FLASH_WHITE,
+    backgroundColor: 'rgba(0,0,0,0.06)',
     borderRadius: 2,
   },
-  barFill: {
-    height: '100%',
-    backgroundColor: Colors.BOTTLE_GREEN,
-    borderRadius: 2,
+  barFill: { height: '100%', backgroundColor: '#40B69C', borderRadius: 2 }, // Teal color from img
+
+  replyBox: { marginTop: 5 },
+  textArea: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 15,
+    borderBottomWidth: 0,
   },
+  bottomButtons: { marginTop: 30 },
+  fullWidthGradient: { width: '100%', marginBottom: 15 },
+  submitInner: {
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.WHITE,
+  },
+  exitBtn: { height: 52, backgroundColor: '#1DBB9F', borderRadius: 28 },
+  exitBtnText: {},
 });
 
 export default ViewReviewScreen;

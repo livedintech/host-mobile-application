@@ -2,10 +2,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+
 import { ReviewItem } from '../containers/useFetchReviews';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 interface ReviewCardProps {
   item: ReviewItem;
@@ -13,6 +16,7 @@ interface ReviewCardProps {
   onTalkToGuest: () => void;
   onRequestRating: () => void;
   onRateGuest: () => void;
+  hostRating?: number | null;
 }
 
 const ReviewCard = ({
@@ -20,161 +24,239 @@ const ReviewCard = ({
   onViewReview,
   onTalkToGuest,
   onRateGuest,
+  onRequestRating,
+  hostRating = null,
 }: ReviewCardProps) => {
-  // API score is out of 10, converting to 5-star scale (e.g., 3 / 2 = 1.5)
-  const displayRating = (item.overall_score || 0);
+  const guestRating = item.overall_score || 0;
 
-  const renderStars = (rating: number = 0) => {
-    return (
-      <View style={styles.starRow}>
-        {[1, 2, 3, 4, 5].map(index => {
-          let iconPath: any = 'reviewStartUnfilledIcon';
-          let iconColor = Colors.ARGENT;
+ 
+  const borderColors = [
+    'rgba(128, 128, 128, 0.66)',
+    'rgba(255, 255, 255, 0.66)',
+    'rgba(128, 128, 128, 0.66)',
+  ];
 
-          if (rating >= index) {
-            // Full Star (e.g., rating is 4, index is 3)
-            iconPath = 'reviewStarIcon';
-            iconColor = Colors.BOTTLE_GREEN;
-          } else if (rating >= index - 0.5) {
-            // Half Star (e.g., rating is 1.5, index is 2. 1.5 >= 2 - 0.5 is true)
-            iconPath = 'reviewStarHalfIcon';
-            iconColor = Colors.BOTTLE_GREEN;
-          }
-
-          return (
-            <Svgicons
-              key={index}
-              path={iconPath}
-              size={24}
-              fill={iconColor}
-              mr={4}
-            />
-          );
-        })}
-        <AppText
-          text={`${rating}/5`}
-          ml={8}
-          color={Colors.SUPER_GREY}
-          fontSize={16}
-        />
+  const renderProgressBar = (score: number) => (
+    <View style={styles.progressWrapper}>
+      <View style={styles.track}>
+        <View style={[styles.fill, { width: `${(score / 5) * 100}%` }]} />
       </View>
-    );
-  };
+      <AppText
+        text={score.toFixed(1)}
+        fontSize={12}
+        type="Bold"
+        ml={10}
+        color={Colors.PINE_FOREST}
+      />
+    </View>
+  );
 
   return (
-    <GradientBorder style={styles.container} borderRadius={16}>
-      <View style={styles.inner}>
+    <GlassCard width="100%" style={styles.card}>
+      <AppText
+        text={item.guest_name || 'Guest'}
+        fontSize={18}
+        type="Bold"
+        color={Colors.BLACK}
+        mb={27}
+      />
+
+      <View style={styles.detailsContainer}>
         <AppText
-          text={item?.guest_name ?? 'Guest'}
-          fontSize={18}
+          text={item.listing_name}
+          fontSize={14}
           type="Bold"
-          color={Colors.PINE_FOREST}
-          mb={15}
+          color={Colors.BLACK}
+          mb={24}
         />
+        {/* <AppText
+          text="Al Riyadh Housing, Street 4"
+          fontSize={12}
+          color={Colors.SUPER_GREY}
+        />
+        <AppText
+          text="Opposite Burj Al Arab"
+          fontSize={12}
+          color={Colors.SUPER_GREY}
+        /> */}
 
-        {/* Property Info Rows */}
-        <View style={styles.infoRow}>
-          <Svgicons path="navigationMap" size={18} mr={10} />
-          <AppText
-            text="Booking Platform: "
-            color={Colors.PINE_FOREST}
-            fontSize={14}
-            type="Bold"
-          />
-          <AppText
-            text={item.booking_platform}
-            style={{ flex: 1 }}
-            color={Colors.PINE_FOREST}
-            fontSize={13}
-          />
-        </View>
+        <AppText
+          text="Booking Dates"
+          fontSize={14}
+          type="Bold"
+          color={Colors.BLACK}
+          mt={12}
+        />
+        <AppText
+          text={`${item.arrival_date} - ${item.departure_date}`}
+          fontSize={13}
+          color={Colors.BLACK}
+        />
+      </View>
 
-        <View style={styles.infoRow}>
-          <Svgicons path="reviewHouse" size={18} mr={10} />
-          <AppText
-            text="Property: "
-            color={Colors.PINE_FOREST}
-            fontSize={14}
-            type="Bold"
-          />
-          <AppText
-            text={item.listing_name}
-            style={{ flex: 1 }}
-            color={Colors.PINE_FOREST}
-            fontSize={13}
-          />
-        </View>
-        <View style={styles.infoRow}>
-          <Svgicons path="Calendar_Days" size={18} mr={10} mt={2} />
-          <AppText
-            text="Date: "
-            color={Colors.PINE_FOREST}
-            fontSize={14}
-            type="Bold"
-          />
-          <AppText
-            text={item.departure_date}
-            style={{ flex: 1 }}
-            color={Colors.PINE_FOREST}
-            fontSize={13}
-          />
-        </View>
-
-        <View style={styles.divider} />
-
-        <View style={styles.sectionHeader}>
-          <Svgicons path="smileySparksIcon" size={18} mr={10} />
+      {/* SECTION: Guest Experience Rating */}
+      <View style={styles.sectionMargin}>
+        <View style={styles.rowAlignCenter}>
+          <View style={styles.iconBox}>
+            <Svgicons path="guestExpIcon" size={30} />
+          </View>
           <AppText
             text="Guest Experience Rating"
-            fontSize={15}
+            fontSize={14}
             type="Bold"
             color={Colors.PINE_FOREST}
+            ml={10}
           />
         </View>
 
-        <View style={{ marginTop: 10 }}>
-          {renderStars(displayRating)}
+        {guestRating > 0 ? (
+          <View>
+            {renderProgressBar(guestRating)}
+            <View style={styles.buttonRow}>
+              {/* View Details with Gradient Border */}
+              <GradientBorder
+                colors={borderColors}
+                borderRadius={25}
+                style={styles.flex1}
+              >
+                <ButtonView
+                  onPress={onViewReview}
+                  style={styles.gradientBtnInner}
+                >
+                  <AppText
+                    text="View Details"
+                    fontSize={13}
+                    color={Colors.BLACK}
+                  />
+                </ButtonView>
+              </GradientBorder>
 
-          <View style={styles.buttonRow}>
-            <View style={styles.flexWrapper}>
               <AppButton
                 title="Talk To Guest"
                 onPress={onTalkToGuest}
-                borderColor={Colors.SMOOTH_GREY}
-              />
-            </View>
-            <View style={[styles.flexWrapper, { marginRight: 0 }]}>
-              <AppButton
-                title="View Review"
-                onPress={onViewReview}
-                borderColor={Colors.SMOOTH_GREY}
+                color={Colors.WHITE}
+                backgroundColor={Colors.BOTTLE_GREEN}
+                borderColor={Colors.BOTTLE_GREEN}
+                style={styles.primaryBtn}
               />
             </View>
           </View>
-          <View style={styles.btnRateYourGuest}>
-            <AppButton title="Rate Your Guest" onPress={onRateGuest} />
+        ) : (
+          <View>
+            <AppText
+              text="The guest hasn't submitted a review yet. Reach out via chat."
+              fontSize={12}
+              color={Colors.SUPER_GREY}
+              mt={8}
+            />
+            <GradientBorder
+              colors={borderColors}
+              borderRadius={25}
+              style={styles.smallGradientBtn}
+            >
+              <ButtonView
+                onPress={onRequestRating}
+                style={styles.gradientBtnInner}
+              >
+                <AppText
+                  text="Request Rating"
+                  fontSize={12}
+                  color={Colors.PINE_FOREST}
+                />
+              </ButtonView>
+            </GradientBorder>
           </View>
-        </View>
+        )}
       </View>
-    </GradientBorder>
+
+      {/* SECTION: Guest Rating - By You */}
+      <View style={styles.sectionMargin}>
+        <View style={styles.rowAlignCenter}>
+          <View style={styles.iconBox}>
+            <Svgicons path="guestExpIcon" size={30} />
+          </View>
+          <AppText
+            text="Guest Rating - By You"
+            fontSize={14}
+            type="Bold"
+            color={Colors.PINE_FOREST}
+            ml={10}
+          />
+        </View>
+        {
+        // hostRating !== null ? 
+        false ?
+        (
+          renderProgressBar(hostRating)
+        ) : (
+          <GradientBorder
+            colors={borderColors}
+            borderRadius={25}
+            style={styles.smallGradientBtn}
+          >
+            <ButtonView
+              onPress={onRateGuest}
+              style={styles.gradientBtnInner}
+            >
+              <AppText
+                text="Rate Your Guest"
+                fontSize={12}
+                color={Colors.PINE_FOREST}
+              />
+            </ButtonView>
+          </GradientBorder>
+        )}
+      </View>
+    </GlassCard>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 20 },
-  inner: { padding: 20, backgroundColor: Colors.WHITE },
-  infoRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
-  sectionHeader: { flexDirection: 'row', alignItems: 'center' },
-  starRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 12 },
-  divider: {
-    marginBottom: 25,
-    height: 1,
-    backgroundColor: Colors.SMOOTH_GREY,
-    opacity: 0.3,
+  card: { padding: 20, marginBottom: 15 },
+  detailsContainer: { marginBottom: 15 },
+  sectionMargin: { marginTop: 15 },
+  rowAlignCenter: { flexDirection: 'row', alignItems: 'center' },
+  iconBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  buttonRow: { flexDirection: 'row', marginTop: 10 },
-  flexWrapper: { flex: 1, marginRight: 10 },
-  btnRateYourGuest: { marginTop: 20 },
+  progressWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  track: {
+    flex: 1,
+    height: 5,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  fill: { height: '100%', backgroundColor: Colors.BOTTLE_GREEN },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  flex1: { flex: 1 },
+  gradientBtnInner: {
+    height: 40,
+    backgroundColor: Colors.WHITE, 
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  primaryBtn: {
+    flex: 1,
+    height: 42,
+    backgroundColor: '#4DB6AC',
+    borderRadius: 25,
+    marginLeft: 10,
+  },
+  smallGradientBtn: { width: 140, marginTop: 10 },
 });
 
 export default ReviewCard;

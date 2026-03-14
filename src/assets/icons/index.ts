@@ -177,6 +177,17 @@ import assignTask from './assignTask.svg';
 import task_calendar from './task_calendar.svg';
 import deleteTask from './deleteTask.svg';
 import kitchen from './kitchen.svg';
+import guestExpIcon from './guestExpIcon.svg';
+import smileIcon from './smileIcon.svg';
+import identityCard from './identityCard.svg';
+import accuracy from './accuracy.svg';
+import bookingPlatform from './bookingPlatform.svg';
+import checkIn from './checkIn.svg';
+import communication from './communication.svg';
+import location from './location.svg';
+import value from './value.svg';
+import reviewStartImg from './reviewStartImg.svg';
+import cleanWaterIcon from './cleanWaterIcon.svg';
 
 export const icons = {
   eyeSlash: EyeSlash,
@@ -358,4 +369,16 @@ export const icons = {
   fourtothirty,
   thirtyplus,
   hubspot_thanks,
+  guestExpIcon,
+  smileIcon,
+  identityCard,
+  bookingPlatform,
+  value,
+  location,
+  accuracy,
+  communication,
+  checkIn,
+  reviewStartImg,
+  cleanWaterIcon
+
 };
