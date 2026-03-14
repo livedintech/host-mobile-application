@@ -5,33 +5,37 @@ import { TouchableOpacity, View, StyleSheet } from 'react-native';
 interface CheckboxProps {
   isChecked: boolean;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-const Checkbox = ({ isChecked, onPress }: CheckboxProps) => (
-  <TouchableOpacity 
-    onPress={onPress} 
+const Checkbox = ({ isChecked, onPress, disabled = false }: CheckboxProps) => (
+  <TouchableOpacity
+    onPress={() => {
+      if (!disabled) onPress();
+    }}
     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-    style={[styles.container, isChecked && styles.checkedContainer]}
+    style={[
+      styles.container,
+      isChecked && styles.checkedContainer,
+      disabled && styles.disabled, 
+    ]}
+    activeOpacity={disabled ? 1 : 1} 
   >
-    {/* {isChecked && <Icon name="check" size={14} color="#FFF" />} */}
-    <Svgicons path={isChecked ? 'CheckboxCheckedIcon' : 'CheckboxUncheckedIcon'} size={38} />
+    <Svgicons
+      path={isChecked ? 'CheckboxCheckedIcon' : 'CheckboxUncheckedIcon'}
+      size={38}
+      color={disabled ? '#A0A0A0' : undefined} 
+    />
   </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
   container: {
-    // width: 22,
-    // height: 22,
-    // borderRadius: 6,
-    // borderWidth: 1.5,
-    // borderColor: '#A0A0A0',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: 'transparent',
   },
   checkedContainer: {
-    // backgroundColor: '#004D40', 
-    // borderColor: '#004D40',
+  },
+  disabled: {
+    opacity: 1, 
   },
 });
 

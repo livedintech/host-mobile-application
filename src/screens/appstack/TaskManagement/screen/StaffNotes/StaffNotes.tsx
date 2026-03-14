@@ -1,16 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
 import AppText from '@/components/molecules/AppText/AppText';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import TextareaField from '@/components/molecules/Input/TextareaField'; 
-import { goBack, navigate } from '@/services/navigationService';
+import useStaffNotesContainer from '../../container/StaffNotesContainer/StaffNotesContainer';
 
 const StaffNotes = () => {
+  const { onSubmitNotes, isLoading } = useStaffNotesContainer();
+  
   const {
     control,
     handleSubmit,
@@ -21,16 +21,9 @@ const StaffNotes = () => {
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log('Staff Notes Data:', data);
-    // Navigate to next screen
-  };
-
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
-
-
         <View style={styles.container}>
           {/* Main Title */}
           <AppText
@@ -39,6 +32,7 @@ const StaffNotes = () => {
             type="Bold"
             lineHeight={32}
             mb={16}
+            mt={20}
           />
 
           {/* Subtitle / Description */}
@@ -60,8 +54,6 @@ const StaffNotes = () => {
             multiline={true}
             style={styles.textArea}
             wrapperStyle={styles.textAreaWrapper}
-            // Applying transparent/glass look to match design
-            // inputContainerStyle={styles.glassInputContainer} 
           />
         </View>
 
@@ -72,7 +64,8 @@ const StaffNotes = () => {
             backgroundColor={Colors.PRIMARY_TEAL}
             borderColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(onSubmitNotes)}
+            loading={isLoading}
           />
         </View>
       </View>
@@ -84,7 +77,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-
   container: {
     flex: 1,
     paddingHorizontal: 25,
@@ -97,14 +89,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.BLACK,
   },
-  glassInputContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Glass effect
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 16,
-  },
   footer: {
     paddingHorizontal: 25,
-    paddingBottom: 20,
+    paddingBottom: 30, // Adjusted for safe area
   },
 });
 

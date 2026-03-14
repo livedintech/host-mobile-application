@@ -120,3 +120,7 @@ export interface ChecklistTaskApi {
 }
 
 
+export interface UpdateChecklistItemPayload {
+  id: number;
+  checklist_name: string;
+}
