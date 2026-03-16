@@ -1,6 +1,6 @@
 import apiService from "./apiService";
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
-import { createChannelsUserIdPayload, CreateGathernUserPayloadType, createListingImportGathernType, createListingImportType, createMapListingbyUserIDType, creatGathernChannelType, getChannelsUserIdPayload, getChannexListingsByIdPayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { bookingcomConnectionPayloadType, bookingcomTestConnectionPayloadType, createChannelsUserIdPayload, CreateGathernUserPayloadType, createListingImportGathernType, createListingImportType, createMapListingbyUserIDType, creatGathernChannelType, getChannelsUserIdPayload, getChannexListingsByIdPayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 import Utils from "@/utility/Utils";
 
 export const createChannelsUserbyId = async (payload: createChannelsUserIdPayload) => {
@@ -188,6 +188,28 @@ export const getChannexListingsGathernById = async (payload: getChannexListingsB
 export const createListingImportGathernApi = async (payload: createListingImportGathernType) => {
     const { ok, response, data } = await apiService.post(
         SERVICE_CONFIG_URLS.APP.CHANNEL_MANAGEMENT_LISTING_GATHERN_IMPORT,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const bookingcomTestConnectionApi = async (payload: bookingcomTestConnectionPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.BOOING_COM_TEST_CONNECTION,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const bookingcomConnectionApi = async (payload: bookingcomConnectionPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.BOOING_COM_CONNECTION,
         payload,
     );
     if (ok) {

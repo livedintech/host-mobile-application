@@ -9,6 +9,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import ManageBookingSkeleton from '@/components/Skeletons/ManageBookingSkeleton';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const ManageBookingScreen = () => {
     const {
@@ -27,6 +28,9 @@ const ManageBookingScreen = () => {
     );
     const isGathernConnected = connectedAccounts?.some(
         (acc: any) => acc.connection_type === 'Gathern'
+    );
+    const isBookingConnected = connectedAccounts?.some(
+        (acc: any) => acc.connection_type === 'Booking.com'
     );
 
     const PlatformCard = ({ type, id, status, onPress }: any) => {
@@ -66,62 +70,63 @@ const ManageBookingScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <RefreshableScrollView
-                isLoading={isLoading}
-                onRefresh={refetch}
-                style={styles.scrollContent}
-                skeletonComponent={<ManageBookingSkeleton />}
-            >
-                {/* Header Title Switch */}
-                <View style={styles.headerSection}>
-                    <AppText
-                        text={isOtaConnected ? 'Connected Booking Platform' : 'No Account Found'}
-                        fontSize={32}
-                        type="Bold"
-                        color={Colors.BRUNSWICK_GREEN}
-                        textAlign="left"
-                    />
-                </View>
-
-                {isOtaConnected ? (
-                    /* UI When Data Exists */
-                    <View style={styles.listContainer}>
-                        {response?.data?.map((acc: any) => (
-                            <PlatformCard
-                                key={acc?.id}
-                                type={acc?.connection_type}
-                                id={acc?.id}
-                                name="Dummy"
-                                count="0"
-                                status="Active"
-                                onPress={() => goToListing(acc)}
-                            />
-                        ))}
+        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+            <View style={styles.container}>
+                <RefreshableScrollView
+                    isLoading={isLoading}
+                    onRefresh={refetch}
+                    style={styles.scrollContent}
+                    skeletonComponent={<ManageBookingSkeleton />}
+                >
+                    {/* Header Title Switch */}
+                    <View style={styles.headerSection}>
+                        <AppText
+                            text={isOtaConnected ? 'Connected Booking Platform' : 'No Account Found'}
+                            fontSize={32}
+                            type="Bold"
+                            color={Colors.BRUNSWICK_GREEN}
+                            textAlign="left"
+                        />
                     </View>
-                ) : (
-                    /* UI When No Data */
-                    <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
-                        <View style={styles.infoCardInner}>
-                            <View style={styles.row}>
-                                <View style={styles.activeDot} />
-                                <View style={styles.avatarContainer}>
-                                    <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
-                                </View>
-                                <View style={{ flex: 1, marginLeft: 15 }}>
-                                    <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                                    <AppText
-                                        text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
-                                        color={Colors.NIGHT_OPACITY}
-                                        mt={5}
-                                        lineHeight={20}
-                                    />
+
+                    {isOtaConnected ? (
+                        /* UI When Data Exists */
+                        <View style={styles.listContainer}>
+                            {response?.data?.map((acc: any) => (
+                                <PlatformCard
+                                    key={acc?.id}
+                                    type={acc?.connection_type}
+                                    id={acc?.id}
+                                    name="Dummy"
+                                    count="0"
+                                    status="Active"
+                                    onPress={() => goToListing(acc)}
+                                />
+                            ))}
+                        </View>
+                    ) : (
+                        /* UI When No Data */
+                        <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
+                            <View style={styles.infoCardInner}>
+                                <View style={styles.row}>
+                                    <View style={styles.activeDot} />
+                                    <View style={styles.avatarContainer}>
+                                        <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
+                                    </View>
+                                    <View style={{ flex: 1, marginLeft: 15 }}>
+                                        <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                                        <AppText
+                                            text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+                                            color={Colors.NIGHT_OPACITY}
+                                            mt={5}
+                                            lineHeight={20}
+                                        />
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-                    </GradientBorder>
-                )}
-
+                        </GradientBorder>
+                    )}
+                </RefreshableScrollView>
                 {/* Bottom Connect Buttons */}
                 <View style={styles.btnFooter}>
                     <AppButton
@@ -133,17 +138,23 @@ const ManageBookingScreen = () => {
                     <AppButton
                         title={isGathernConnected ? 'Gathern Connected ✓' : 'Connect Gathern'}
                         onPress={() => handleConnect('Gathern')}
+                        mb={15}
+                        disabled={isPending}
+                    />
+                    <AppButton
+                        title={isBookingConnected ? 'Booking.com Connected ✓' : 'Connect Booking.com'}
+                        onPress={() => handleConnect('Booking.com')}
                         disabled={isPending}
                     />
                 </View>
-            </RefreshableScrollView>
-        </View>
+            </View>
+        </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    scrollContent: { paddingHorizontal: 22, paddingBottom: 40 },
+    container: { flex: 1 },
+    scrollContent: { paddingHorizontal: Metrics.scale(22), paddingBottom: Metrics.verticalScale(40) },
     headerSection: { marginTop: 50, marginBottom: 40 },
     listContainer: { marginBottom: 20 },
     connectedCard: {
@@ -167,7 +178,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    btnFooter: { marginTop: 10 },
+    btnFooter: { marginTop: 10, paddingHorizontal: Metrics.scale(22) },
     infoCardWrapper: { marginBottom: 33 },
     infoCardInner: { padding: 25, borderRadius: 35, backgroundColor: Colors.WHITE },
     avatarContainer: { backgroundColor: Colors.ADRIANA, borderRadius: 100, width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
