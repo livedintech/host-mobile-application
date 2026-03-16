@@ -1,245 +1,449 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import Modal from 'react-native-modal';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Platform,
+  SafeAreaView,
+} from 'react-native';
+import { useForm } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
 import { goBack } from '@/services/navigationService';
 import AppText from '@/components/molecules/AppText/AppText';
-import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
-import TextareaField from '@/components/molecules/Input/TextareaField';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import TextareaField from '@/components/molecules/Input/TextareaField';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { useRateGuest } from '../containers/useRateGuest';
+import { useRateStore } from '@/store/useRateStore';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
-// Tags extracted from your image
-const HOUSE_RULES_TAGS = [
-  { label: 'Arrived too early', value: 'Arrived too early' },
-  { label: 'Stayed past checkout', value: 'Stayed past checkout' },
-  { label: 'Unapproved guests', value: 'Unapproved guests' },
-  { label: 'Unapproved pet', value: 'Unapproved pet' },
-  { label: 'Didn’t respect quiet hours', value: 'Didn’t respect quiet hours' },
-  { label: 'Unapproved filming or photography', value: 'Unapproved filming or photography' },
-  { label: 'Unapproved event', value: 'Unapproved event' },
-  { label: 'Smoking', value: 'Smoking' },
-];
+const TAGS_DATA = {
+  clean: [
+    'Damaged Property',
+    'Ignored Checkout Directions',
+    'Messy Kitchen',
+    'Excessive Rubbish',
+    'Ruined Bed Linen',
+    'Something Else'
+  ],
+  comm: ['Unreachable','Unhelpful Response','Disrespectful','Slow Response','Something Else'],
+  house: ['Arrived Too Early', 'Stayed Past Checkout', 'Unapproved Guests', 'Something Else'],
+};
 
-const COMMUNICATION_TAGS = [
-  { label: 'Helpful messages', value: 'Helpful messages' },
-  { label: 'Respectful', value: 'Respectful' },
-  { label: 'Always responded', value: 'Always responded' },
-  { label: 'Unhelpful responses', value: 'Unhelpful responses' },
-  { label: 'Disrespectful', value: 'Disrespectful' },
-  { label: 'Unreachable', value: 'Unreachable' },
-  { label: 'Slow responses', value: 'Slow responses' },
-];
-
-const CLEANLINESS_TAGS = [
-  { label: 'Neat & tidy', value: 'Neat & tidy' },
-  { label: 'Kept in good condition', value: 'Kept in good condition' },
-  { label: 'Took care of garbage', value: 'Took care of garbage' },
-  { label: 'Ignored check-out directions', value: 'Ignored check-out directions' },
-  { label: 'Excessive garbage', value: 'Excessive garbage' },
-  { label: 'Messy kitchen', value: 'Messy kitchen' },
-  { label: 'Damaged property', value: 'Damaged property' },
-  { label: 'Ruined bed linens', value: 'Ruined bed linens' },
-];
+// Map ratings to the specific labels you requested
+const RATING_LABELS: Record<number, string> = {
+  1: 'Not at all clean',
+  2: 'Not very clean',
+  3: 'Fairly clean',
+  4: 'Very clean',
+  5: 'Extremely clean',
+};
 
 const RateYourGuestScreen = ({ route }: any) => {
+  const { step, setStep, formValues, updateForm, resetStore } = useRateStore();
   const { submitReply, isSubmitting } = useRateGuest();
-  const [isSuccessVisible, setSuccessVisible] = useState(false);
-  
-  const guestName = route.params?.name || 'Guest';
-  const reviewId = route.params?.id;
+  const guestName = route.params?.name || 'Tooba';
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      // Set default rating to 1 star as requested
-      respect_house_rules: 1,
-      communication: 1,
-      cleanliness: 1,
-      house_tags: [],
-      comm_tags: [],
-      clean_tags: [],
-      public_review: '',
-      private_review: '',
-    },
+  const { control, handleSubmit, watch, setValue } = useForm({
+    defaultValues: formValues,
   });
 
-  const onSubmit = (data: any) => {
-    const combinedTags = [
-      ...(data.house_tags || []),
-      ...(data.comm_tags || []),
-      ...(data.clean_tags || []),
-    ];
+  const currentValues = watch();
 
+  const saveAndNavigate = (targetStep: number) => {
+    updateForm(currentValues);
+    setStep(targetStep);
+  };
+
+  const handleSaveAndExit = () => {
+    updateForm(currentValues);
+    goBack();
+  };
+
+  const toggleTag = (fieldName: string, tag: string) => {
+    const current = [
+      ...(currentValues[fieldName as keyof typeof currentValues] as string[]),
+    ];
+    const index = current.indexOf(tag);
+    if (index > -1) current.splice(index, 1);
+    else current.push(tag);
+    setValue(fieldName as any, current);
+  };
+
+  const handleFinalSubmit = (data: any) => {
     const payload = {
-      review_id: reviewId,
+      review_id: route.params?.id,
       respect_house_rules: data.respect_house_rules,
       communication: data.communication,
       cleanliness: data.cleanliness,
-      public_review: data.public_review,
-      private_review: data.private_review,
-      // Logic: returns true if 4 or 5, else false
-      // is_reviewee_recommended: data.respect_house_rules >= 4, 
-      is_reviewee_recommended : true,
-      tags: combinedTags,
+      tags: [...data.clean_tags, ...data.comm_tags, ...data.house_tags],
+      is_reviewee_recommended: data.recommend,
+      private_review: data.feedback,
     };
 
     submitReply(payload, {
-      onSuccess: () => setSuccessVisible(true),
+      onSuccess: () => {
+        resetStore();
+        goBack();
+      },
     });
   };
 
-  const StarRatingInput = ({ name, label }: { name: string; label: string }) => (
-    <Controller
-      control={control}
-      name={name as any}
-      render={({ field: { onChange, value } }) => (
-        <View style={styles.ratingSection}>
-          <AppText text={label} type="Bold" fontSize={20} mb={12} color={Colors.PINE_FOREST} />
-          <View style={styles.starRow}>
-            {[1, 2, 3, 4, 5].map((index) => (
-              <TouchableOpacity key={index} onPress={() => onChange(index)}>
-                <Svgicons
-                  path={index <= value ? 'reviewStarIcon' : 'reviewStartUnfilledIcon'}
-                  size={24}
-                  mr={6}
-                  fill={index <= value ? Colors.BOTTLE_GREEN : Colors.ARGENT}
+  const renderFooter = () => {
+    const showBackNext = step > 0;
+    return (
+      <View style={styles.footerContainer}>
+        {showBackNext ? (
+          <View style={styles.actionRow}>
+            <View style={styles.btnStyle}>
+              <ButtonView
+                onPress={() => saveAndNavigate(step - 1)}
+                style={styles.buttonInner}
+              >
+                <AppText
+                  text="Back"
+                  fontSize={16}
+                  type="Medium"
+                  color={Colors.BLACK}
                 />
-              </TouchableOpacity>
-            ))}
-            <AppText text={`${value}/5`} ml={8} fontSize={18} color={Colors.SUPER_GREY} type="Medium" />
+              </ButtonView>
+            </View>
+
+            <View style={styles.btnStyle}>
+              <ButtonView
+                onPress={
+                  step === 4
+                    ? handleSubmit(handleFinalSubmit)
+                    : () => saveAndNavigate(step + 1)
+                }
+                style={styles.buttonInner}
+              >
+                <AppText
+                  text={
+                    step === 4
+                      ? isSubmitting
+                        ? 'Submitting...'
+                        : 'Submit'
+                      : 'Next'
+                  }
+                  fontSize={16}
+                  type="Medium"
+                  color={Colors.BLACK}
+                />
+              </ButtonView>
+            </View>
           </View>
-        </View>
-      )}
-    />
-  );
+        ) : (
+          <AppButton
+            title="Next"
+            onPress={() => saveAndNavigate(1)}
+            color={Colors.WHITE}
+            backgroundColor={Colors.BOTTLE_GREEN}
+            borderColor={Colors.BOTTLE_GREEN}
+          />
+        )}
+
+        <AppButton
+          title="Save & Exit"
+          onPress={handleSaveAndExit}
+          color={Colors.WHITE}
+          backgroundColor={Colors.BOTTLE_GREEN}
+          borderColor={Colors.BOTTLE_GREEN}
+          mt={12}
+        />
+      </View>
+    );
+  };
+
+  const renderStepContent = () => {
+    switch (step) {
+      case 0:
+        return (
+          <View style={styles.stepContainer}>
+            <Svgicons
+              path="reviewStartImg"
+              size={300}
+              style={{ alignSelf: 'center', marginVertical: 30 }}
+            />
+            <AppText
+              text={`Write a review for\n${guestName}`}
+              fontSize={28}
+              type="Bold"
+              color={Colors.BLACK}
+            />
+            <AppText
+              text="Your feedback helps other hosts manage better experiences."
+              fontSize={16}
+              color={Colors.DARK_CHARCOAL_OPACITY}
+              mt={10}
+            />
+          </View>
+        );
+      case 1:
+      case 2:
+      case 3:
+        const config = [
+          {
+            title: `How clean did ${guestName} leave your place?`,
+            sub: 'We’ll share this with Tooba and other hosts.',
+            field: 'cleanliness',
+            tagsField: 'clean_tags',
+            icon: 'cleanWaterIcon',
+            tags: TAGS_DATA.clean,
+          },
+          {
+            title: 'Communication',
+            sub: 'Was the guest easy to reach?',
+            field: 'communication',
+            tagsField: 'comm_tags',
+            icon: 'cleanWaterIcon',
+            tags: TAGS_DATA.comm,
+          },
+          {
+            title: 'Respect House Rules',
+            sub: 'Did the guest follow rules?',
+            field: 'respect_house_rules',
+            tagsField: 'house_tags',
+            icon: 'cleanWaterIcon',
+            tags: TAGS_DATA.house,
+          },
+        ][step - 1];
+        const ratingValue = currentValues[
+          config.field as keyof typeof currentValues
+        ] as number;
+        const selectedTags = currentValues[
+          config.tagsField as keyof typeof currentValues
+        ] as string[];
+
+        return (
+          <View style={styles.stepContainer}>
+            <Svgicons path={config.icon} size={40} mb={20} mt={30} />
+            <AppText
+              text={config.title}
+              fontSize={28}
+              type="Bold"
+              color={Colors.BLACK}
+              mb={10}
+            />
+            <AppText
+              text={config.sub}
+              fontSize={15}
+              color={Colors.DARK_CHARCOAL_OPACITY_74}
+              mb={30}
+            />
+            <View style={styles.starRow}>
+              {[1, 2, 3, 4, 5].map(s => (
+                <ButtonView
+                  key={s}
+                  onPress={() => setValue(config.field as any, s)}
+                >
+                  <Svgicons
+                    path={
+                      s <= ratingValue
+                        ? 'reviewStarIcon'
+                        : 'reviewStartUnfilledIcon'
+                    }
+                    size={45}
+                    mr={10}
+                  />
+                </ButtonView>
+              ))}
+            </View>
+
+            {/* Added Dynamic Rating Label here */}
+            {ratingValue > 0 && (
+              <AppText
+                text={RATING_LABELS[ratingValue]}
+                fontSize={16}
+                color={Colors.BLACK}
+                mt={25}
+              />
+            )}
+
+            {ratingValue > 0 && ratingValue < 5 && (
+              <View style={styles.tagSection}>
+                <AppText
+                  text="Tell us what happened"
+                  type="Bold"
+                  fontSize={22}
+                  mt={25}
+                  mb={15}
+                />
+                <View style={styles.pillContainer}>
+                  {config.tags.map(tag => (
+                    <GlassCard
+                      key={tag}
+                      style={[
+                        styles.pill,
+                        selectedTags.includes(tag) && styles.activePill,
+                      ]}
+                    >
+                      <ButtonView
+                        onPress={() => toggleTag(config.tagsField, tag)}
+                      >
+                        <AppText
+                          text={tag}
+                          fontSize={13}
+                          color={Colors.BLACK}
+                        />
+                      </ButtonView>
+                    </GlassCard>
+                  ))}
+                </View>
+              </View>
+            )}
+          </View>
+        );
+      case 4:
+        return (
+          <View style={styles.stepContainer}>
+            <AppText
+              text={`Would you recommend ${guestName}?`}
+              fontSize={28}
+              type="Bold"
+              color={Colors.BLACK}
+              mb={20}
+              mt={30}
+            />
+            <View style={styles.recommendRow}>
+              <GradientBorder
+                colors={
+                  currentValues.recommend === true
+                    ? ['#000', '#000']
+                    : ['rgba(128,128,128,0.6)', '#fff', 'rgba(128,128,128,0.6)']
+                }
+                borderRadius={32}
+                style={styles.choiceGradient}
+              >
+                <ButtonView
+                  onPress={() => setValue('recommend', true)}
+                  style={styles.choiceInner}
+                >
+                  <AppText text="Yes" type="Medium" color={Colors.BLACK} />
+                </ButtonView>
+              </GradientBorder>
+              <GradientBorder
+                colors={
+                  currentValues.recommend === false
+                    ? ['#000', '#000']
+                    : ['rgba(128,128,128,0.6)', '#fff', 'rgba(128,128,128,0.6)']
+                }
+                borderRadius={32}
+                style={styles.choiceGradient}
+              >
+                <ButtonView
+                  onPress={() => setValue('recommend', false)}
+                  style={styles.choiceInner}
+                >
+                  <AppText text="No" type="Medium" color={Colors.BLACK} />
+                </ButtonView>
+              </GradientBorder>
+            </View>
+            {currentValues.recommend === false && (
+              <View style={styles.textAreaBox}>
+                <AppText
+                  text={`Why don't you recommend ${guestName}?`}
+                  fontSize={22}
+                  type="Bold"
+                  mt={30}
+                  mb={15}
+                />
+                <TextareaField
+                  name="feedback"
+                  control={control}
+                  errors={{}}
+                  placeholder="We’re curious because you gave them a high rating. (Required)"
+                  multiline
+                  // wordLimit={100}
+                />
+              </View>
+            )}
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.headerRow}>
-        <AppText text="Rate Your Guest" fontSize={26} type="Bold" color={Colors.PINE_FOREST} />
-        <Svgicons path="starRewardIcon" size={24} ml={10} />
-      </View>
-
-      <AppText
-        text={`Tell us how your hosting experience went with ${guestName}, writing a review for guest helps other hosts to manage better experiences in advance.`}
-        color={Colors.PINE_FOREST}
-        lineHeight={22}
-        fontSize={15}
-        mb={30}
-        opacity={0.7}
-      />
-
-      <StarRatingInput name="respect_house_rules" label="Respect House rules" />
-      <MultiSelectDropdownField
-        name="house_tags"
-        control={control}
-        errors={errors}
-        label="Select all that apply"
-        data={HOUSE_RULES_TAGS}
-      />
-
-      <StarRatingInput name="communication" label="Communication" />
-      <MultiSelectDropdownField
-        name="comm_tags"
-        control={control}
-        errors={errors}
-        label="Select all that apply"
-        data={COMMUNICATION_TAGS}
-      />
-
-      <StarRatingInput name="cleanliness" label="Cleanliness" />
-      <MultiSelectDropdownField
-        name="clean_tags"
-        control={control}
-        errors={errors}
-        label="Select all that apply"
-        data={CLEANLINESS_TAGS}
-      />
-
-      <View style={styles.textAreaSection}>
-        <TextareaField
-          name="public_review"
-          control={control}
-          errors={errors}
-          label="Write A Review"
-          placeholder="Type here"
-          multiline
-          sparkleIcon
-        />
-      </View>
-
-      <View style={styles.textAreaSection}>
-        <TextareaField
-          name="private_review"
-          control={control}
-          errors={errors}
-          label={`Write a Private note to ${guestName.split(' ')[0]}`}
-          placeholder="Type here"
-          multiline
-          sparkleIcon
-        />
-      </View>
-
-      <AppButton
-        title={isSubmitting ? "Submitting..." : "Submit Rating"}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-        mt={30}
-        mb={50}
-        borderColor={Colors.SMOOTH_GREY}
-        textStyle={{ color: Colors.PINE_FOREST }}
-      />
-
-      <Modal isVisible={isSuccessVisible} backdropOpacity={0.5}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalIconContainer}>
-            <Svgicons path="checkCircleIcon" size={40} fill={Colors.BOTTLE_GREEN} />
-          </View>
-          <AppText
-            text="Your review and rating have been submitted. Thank you for sharing your feedback."
-            textAlign="center"
-            fontSize={16}
-            type="Medium"
-            color={Colors.PINE_FOREST}
-            mb={30}
-          />
-          <AppButton
-            title="Close"
-            onPress={() => {
-              setSuccessVisible(false);
-              goBack();
-            }}
-            style={styles.modalCloseBtn}
-          />
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.safeArea}>
+        <View style={styles.mainWrapper}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
+            {renderStepContent()}
+          </ScrollView>
+          {renderFooter()}
         </View>
-      </Modal>
-    </ScrollView>
+      </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  content: { padding: 24 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  ratingSection: { marginTop: 10 },
-  starRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  textAreaSection: { marginBottom: 25 },
-  modalContent: {
-    backgroundColor: Colors.WHITE,
-    padding: 30,
-    borderRadius: 30,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY
+  safeArea: {
+    flex: 1,
   },
-  modalIconContainer: { marginBottom: 20 },
-  modalCloseBtn: { width: '100%' },
+  mainWrapper: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 10 : 20,
+    paddingBottom: 20,
+    flexGrow: 1,
+  },
+  stepContainer: { flex: 1 },
+  starRow: { flexDirection: 'row', marginTop: 10 },
+  tagSection: { marginTop: 10 },
+  pillContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, // Adjusted gap for spacing
+  pill: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12 },
+  activePill: {
+    borderWidth: 1.5,
+    borderColor: Colors.BOTTLE_GREEN,
+    borderBottomColor:Colors.BOTTLE_GREEN,
+    backgroundColor: 'rgba(29, 187, 159, 0.05)',
+  },
+  recommendRow: { flexDirection: 'row', gap: 15 },
+  choiceGradient: { flex: 1 },
+  choiceInner: {
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.WHITE,
+    borderRadius: 32,
+  },
+  footerContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 30,
+    backgroundColor: 'transparent',
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  buttonInner: {
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.WHITE,
+    borderRadius: 28,
+  },
+  btnStyle: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#808080',
+    borderRadius: 50,
+  },
+  textAreaBox: { marginTop: 10 },
 });
 
 export default RateYourGuestScreen;
