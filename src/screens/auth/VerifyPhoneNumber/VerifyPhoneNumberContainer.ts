@@ -28,6 +28,8 @@ export default function useVerifyPhoneNumberContainer() {
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const { params } = useRoute();
   const phone = params?.phone;
+  const pricing = params?.pricing;
+
   const listing_count = params?.listing_count;
 
   const isLoginScreen = params?.isLoginScreen;
@@ -63,7 +65,8 @@ export default function useVerifyPhoneNumberContainer() {
       else{
         navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
           phone: phone,
-          listing_count: listing_count
+          listing_count: listing_count,
+          pricing,
         });
       }
     },

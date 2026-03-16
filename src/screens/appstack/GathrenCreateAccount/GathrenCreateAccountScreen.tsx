@@ -6,8 +6,8 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import InputField from '@/components/molecules/Input/InputField';
 import PhoneInputField from '@/components/molecules/Input/PhoneInputField';
-import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import useGathrenCreateAccountContainer from './GathrenCreateAccountContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const GENDER_OPTIONS = [
   { label: 'Male', value: 'male' },
@@ -19,8 +19,9 @@ const GathrenCreateAccountScreen = () => {
     useGathrenCreateAccountContainer();
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
-      <View style={styles.circleBg} />
+      {/* <View style={styles.circleBg} /> */}
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -106,38 +107,6 @@ const GathrenCreateAccountScreen = () => {
             phoneFieldName="mobile"
           />
 
-          {/* PMS ID */}
-          {/* <InputField
-            name="platform_user_id"
-            control={control}
-            errors={errors}
-            label="PMS ID*"
-            placeholder="Enter PMS ID"
-            rules={{ required: 'PMS ID is required' }}
-          /> */}
-
-          {/* Check-in Hour */}
-          {/* <DateTimeInputField
-            name="check_in_hour"
-            control={control}
-            errors={errors}
-            label="Check-in Hour*"
-            placeholder="Select Check-in Time"
-            mode="time"
-            rules={{ required: 'Check-in hour is required' }}
-          /> */}
-
-          {/* Check-out Hour */}
-          {/* <DateTimeInputField
-            name="check_out_hour"
-            control={control}
-            errors={errors}
-            label="Check-out Hour*"
-            placeholder="Select Check-out Time"
-            mode="time"
-            rules={{ required: 'Check-out hour is required' }}
-          /> */}
-
         </View>
 
         <View style={styles.footer}>
@@ -155,11 +124,12 @@ const GathrenCreateAccountScreen = () => {
         </View>
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1},
   circleBg: {
     position: 'absolute',
     top: -100,

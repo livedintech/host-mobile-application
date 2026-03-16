@@ -33,7 +33,7 @@ export default function usePaymentMethodListContainer() {
   const { mutate: subscriptionActivePayload, isPending: isSaving } = useMutation({
     mutationFn: subscriptionActiveApi,
     onSuccess: ({ message }) => {
-      Toast.show({ type: 'success', text1: message });
+      // Toast.show({ type: 'success', text1: message });
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.SAVED_CARDS] });
 
     },

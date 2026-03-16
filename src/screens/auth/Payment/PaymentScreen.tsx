@@ -9,14 +9,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const PaymentScreen = () => {
-    const { selectedPlan, onPlanSelect, handleStartTrial, handleSkipThis, addons, base } = usePaymentContainer();
+    const { selectedPlan, onPlanSelect, handleStartTrial, handleSkipThis, addons, base,pricing,isLoading,refetch } = usePaymentContainer();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <SafeAreaView style={styles.container}>
-                <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+                <RefreshableScrollView isLoading={isLoading} onRefresh={refetch} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                     {/* Title & Subtitle */}
                     <View style={styles.titleSection}>
                         <AppText text="Payment" fontSize={36} type="Bold" color={Colors.BRUNSWICK_GREEN} />
@@ -65,7 +66,7 @@ const PaymentScreen = () => {
                             style={[styles.planCard, selectedPlan === 'monthly' && styles.activeCard, { marginTop: 16 }]}
                         >
                             <AppText text="Monthly" fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
-                            <AppText text="14-day free trial, then SAR 190/month per listing" fontSize={13} color={Colors.BLACK} mt={6} />
+                            <AppText text={`14-day free trial, then SAR ${pricing}/month per listing`} fontSize={13} color={Colors.BLACK} mt={6} />
                         </Pressable>
                     </GlassCard>
                     <GlassCard style={styles.features}>
@@ -134,7 +135,7 @@ const PaymentScreen = () => {
                             . Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.
                         </Text>
                     </View>
-                </ScrollView>
+                </RefreshableScrollView>
             </SafeAreaView>
         </BGImage>
     );

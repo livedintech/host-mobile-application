@@ -86,3 +86,20 @@ export interface DeleteListingPayloadType {
 
 
 }
+
+export interface bookingcomTestConnectionPayloadType {
+  hotel_id: string
+}
+
+export interface bookingcomTestConnectionResponse {
+  status: string;
+  message: string;
+  data: {
+ 
+  };
+}
+export interface bookingcomConnectionPayloadType {
+  title: string;
+  listing_id: string | number;
+  hotel_id: string;
+}

@@ -44,49 +44,60 @@ export default function useManageBookingContainer() {
   });
 
   const handleConnect = (platform: string) => {
-      if (platform === 'Airbnb') {
-    const isAirbnbConnected = connectedAccounts.some(
-      (acc: any) => acc.connection_type === 'Airbnb'
-    );
-    
-    if (isAirbnbConnected) {
-      Toast.show({
-        type: 'info',
-        text1: 'Airbnb Already Connected',
-        text2: 'Your Airbnb account is already connected.',
-      });
-      return;
-    }
-    
-    createChannexAccount();
-  }
+    if (platform === 'Airbnb') {
+      const isAirbnbConnected = connectedAccounts.some(
+        (acc: any) => acc.connection_type === 'Airbnb'
+      );
 
-  if (platform === 'Gathern') {
-    const isGathernConnected = connectedAccounts.some(
-      (acc: any) => acc.connection_type === 'Gathern'
-    );
+      if (isAirbnbConnected) {
+        Toast.show({
+          type: 'info',
+          text1: 'Airbnb Already Connected',
+          text2: 'Your Airbnb account is already connected.',
+        });
+        return;
+      }
 
-    if (isGathernConnected) {
-      Toast.show({
-        type: 'info',
-        text1: 'Gathern Already Connected',
-        text2: 'Your Gathern account is already connected.',
-      });
-      return;
+      createChannexAccount();
     }
 
-    navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
-  }
-    // if (platform === 'Airbnb') {
-    //   createChannexAccount();
-    // }
-    // if (platform === 'Gathern') {
-    //   navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
-    // }
+    if (platform === 'Gathern') {
+      const isGathernConnected = connectedAccounts.some(
+        (acc: any) => acc.connection_type === 'Gathern'
+      );
+
+      if (isGathernConnected) {
+        Toast.show({
+          type: 'info',
+          text1: 'Gathern Already Connected',
+          text2: 'Your Gathern account is already connected.',
+        });
+        return;
+      }
+
+      navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
+    }
+
+    if (platform === 'Booking.com') {
+      const isBookingConnected = connectedAccounts.some(
+        (acc: any) => acc.connection_type === 'Booking.com'
+      );
+
+      if (isBookingConnected) {
+        Toast.show({
+          type: 'info',
+          text1: 'Booking.com Already Connected',
+          text2: 'Your Booking.com account is already connected.',
+        });
+        return;
+      }
+
+      navigate(NavigationRoutes.APP_STACK.BOOKING_COM_PMSID);
+    }
   };
 
   const goToListing = (item: { connection_type: string, ch_channel_id: string }) => {
- 
+
     if (item?.connection_type === 'Gathern') {
       navigate(NavigationRoutes.APP_STACK.GATHERN_IMPORT, { ch_channel_id: item?.ch_channel_id });
     } else {

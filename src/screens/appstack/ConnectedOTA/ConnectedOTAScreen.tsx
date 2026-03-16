@@ -3,11 +3,13 @@ import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useConnectedOTAContainer from './ConnectedOTAContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const ConnectedOTAScreen = () => {
   const { platforms, handlePlatformPress } = useConnectedOTAContainer();
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header Title */}
@@ -52,13 +54,13 @@ const ConnectedOTAScreen = () => {
         ))}
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
   scrollContent: {
     padding: 24,
