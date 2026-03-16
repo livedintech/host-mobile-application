@@ -319,7 +319,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.WHITE,
   },
-  exitBtn: { height: 52, backgroundColor: '#1DBB9F', borderRadius: 28 },
+  exitBtn: { 
+    height: 52, backgroundColor: '#1DBB9F', borderRadius: 28 },
   exitBtnText: {},
 });
 
