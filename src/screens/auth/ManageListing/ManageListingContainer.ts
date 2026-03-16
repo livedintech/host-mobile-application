@@ -12,27 +12,11 @@ export default function useManageListingContainer() {
   const [localSelectedId, setLocalSelectedId] = useState<number | null>(null);
   const { params } = useRoute();
 
-  const {
-    mutate: resendOtpPayload,
-    isPending: isPendingResendOtp,
-    isIdle: isIdleResendOtp,
-  } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
-    mutationFn: resendOtpApi,
-    onSuccess: () => {
-      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
-        isLoginScreen: false,
-        phone: params,
-        listing_count: localSelectedId,
-      });
-    },
-    onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
-    },
-  });
+
 
   const onSelect = (value: number | null) => {
     if (!value) return;
-    
+
     // Assuming 1 is the ID for the first option. Adjust according to your DB IDs.
     if (value === 1) {
       const payload = {
@@ -44,7 +28,7 @@ export default function useManageListingContainer() {
     }
   };
 
-  const { data: data = [] } = useQuery({
+  const { data: data = [], isLoading, refetch } = useQuery({
     queryKey: [STORAGE_CONST.SELECT_LISTING],
     queryFn: getSelectListingApi,
   });
@@ -55,11 +39,35 @@ export default function useManageListingContainer() {
       value: item.id,
     })) || [];
 
+  const plan = data.find(item => item.id === 1);
+
+
+  const {
+    mutate: resendOtpPayload,
+    isPending: isPendingResendOtp,
+    isIdle: isIdleResendOtp,
+  } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
+    mutationFn: resendOtpApi,
+    onSuccess: () => {
+      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
+        isLoginScreen: false,
+        phone: params,
+        listing_count: localSelectedId,
+        pricing: plan?.price
+      });
+    },
+    onError: ({ message }) => {
+      Toast.show({ type: 'error', text1: message || 'Login failed' });
+    },
+  });
+
+
   return {
-    isLoading: isPendingResendOtp && !isIdleResendOtp,
+    isLoading: isPendingResendOtp && !isIdleResendOtp || isLoading,
     localSelectedId,
     setLocalSelectedId,
     onSelect,
     listingData,
+    refetch
   };
 }

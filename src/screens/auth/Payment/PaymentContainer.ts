@@ -10,6 +10,7 @@ import Toast from 'react-native-toast-message';
 export default function usePaymentContainer() {
   const { params } = useRoute();
   const phone = params?.phone;
+    const pricing = params?.pricing;
 
   const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('monthly');
 
@@ -56,6 +57,9 @@ export default function usePaymentContainer() {
     handleStartTrial,
     handleSkipThis,
     addons,
-    base
+    base,
+    pricing,
+    isLoading,
+    refetch
   };
 }

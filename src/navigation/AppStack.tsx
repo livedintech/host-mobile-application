@@ -194,6 +194,14 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.BOOKING_COM_PMSID}
+        getComponent={() =>
+          require('@/screens/appstack/BookingComPMSID/BookingComPMSIDScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.PROFILE_SETTING}
         getComponent={() =>
           require('@/screens/appstack/Profile/ProfileScreen').default
