@@ -21,21 +21,19 @@ import {
 } from '@react-native-google-signin/google-signin';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { socialAuthApi } from '@/services/authApi';
-// import { appleAuthLogin } from '@/services/appleLogin';
-import { SocialAuthPayload } from '@/types/api/authTypes';
 import { useAuthStore } from '@/store/useAuthStore';
 import Toast from 'react-native-toast-message';
 import { Colors } from '@/theme/colors';
 import { s, vs } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import Checkbox from '@/components/molecules/Input/CheckBox';
 
-// The exact Figma shade you requested
 const FIGMA_TEAL = '#20957B';
 
 const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit } = useLoginWithPhoneContainer();
   const { setToken, setUser } = useAuthStore();
-  const [isAppleLoading, setIsAppleLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // Local state - won't break your Container types
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -48,14 +46,12 @@ const LoginWithPhoneScreen = () => {
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
         const { user } = response.data;
-        const payload: SocialAuthPayload = {
+        const result = await socialAuthApi({
           sub: user.id,
           name: user.name || '',
           email: user.email,
           fcm_token: '',
-        };
-
-        const result = await socialAuthApi(payload);
+        });
         setToken(result?.access_token);
         setUser(result?.user);
         Toast.show({ type: 'success', text1: result?.message || 'Logged in successfully' });
@@ -66,30 +62,6 @@ const LoginWithPhoneScreen = () => {
       }
     }
   };
-
-  // const handleOnAppleLogin = async () => {
-  //   setIsAppleLoading(true);
-  //   try {
-  //     const { error, userInfo } = await appleAuthLogin();
-  //     if (error || !userInfo) return;
-
-  //     const payload: SocialAuthPayload = {
-  //       email: userInfo.email || '',
-  //       name: userInfo.fullName?.givenName || '',
-  //       sub: userInfo.user,
-  //       fcm_token: '',
-  //     };
-      
-  //     const result = await socialAuthApi(payload);
-  //     setToken(result?.access_token);
-  //     setUser(result?.user);
-  //     Toast.show({ type: 'success', text1: "Logged in successfully" });
-  //   } catch (err) {
-  //     console.log('❌ Error in handleOnAppleLogin:', err);
-  //   } finally {
-  //     setIsAppleLoading(false);
-  //   }
-  // };
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -104,7 +76,6 @@ const LoginWithPhoneScreen = () => {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.content}>
-              {/* Header Text Section */}
               <View style={styles.headerSection}>
                 <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
                   Please enter your
@@ -117,7 +88,6 @@ const LoginWithPhoneScreen = () => {
                 </AppText>
               </View>
 
-              {/* Input Section */}
               <View style={styles.inputSection}>
                 <PhoneInputField
                   label="Phone Number*"
@@ -128,7 +98,21 @@ const LoginWithPhoneScreen = () => {
                 />
               </View>
 
-              {/* Main Action Button - Color Updated to Figma Shade */}
+              <View style={styles.rememberMeRow}>
+                <View style={styles.rememberMeContainer}>
+                  <Checkbox
+                    isChecked={rememberMe}
+                    onPress={() => setRememberMe(!rememberMe)}
+                  />
+                  <AppText 
+                    text="Remember me" 
+                    color={Colors.PINE_FOREST} 
+                    type="Medium" 
+                    fontSize={14} 
+                  />
+                </View>
+              </View>
+
               <AppButton
                 title="Next"
                 onPress={handleSubmit(onSubmit)}
@@ -141,14 +125,12 @@ const LoginWithPhoneScreen = () => {
                 type="Bold"
               />
 
-              {/* Or Separator */}
               <View style={styles.separatorRow}>
                 <View style={styles.line} />
                 <AppText text="Or" fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
                 <View style={styles.line} />
               </View>
 
-              {/* Social Logins */}
               <View style={styles.socialWrapper}>
                 <TouchableOpacity 
                     style={styles.socialButton} 
@@ -158,15 +140,6 @@ const LoginWithPhoneScreen = () => {
                   <Svgicons path="google" size={20} />
                   <AppText text="Continue with Google" fontSize={16} ml={10} color={Colors.BLACK} />
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity 
-                    style={[styles.socialButton, { marginTop: 16 }]} 
-                    onPress={handleOnAppleLogin}
-                    activeOpacity={0.8}
-                >
-                  <Svgicons path="apple" size={20} />
-                  <AppText text="Continue with Apple" fontSize={16} ml={10} color={Colors.BLACK} />
-                </TouchableOpacity> */}
               </View>
             </View>
           </ScrollView>
@@ -183,14 +156,19 @@ const styles = StyleSheet.create({
   content: { 
     flex: 1, 
     paddingHorizontal: s(24), 
-    paddingTop: vs(60), // Pushing it down slightly to match SS
+    paddingTop: vs(60), 
     paddingBottom: vs(20) 
   },
-  headerSection: {
-    marginBottom: vs(50),
+  headerSection: { marginBottom: vs(50) },
+  inputSection: { marginBottom: vs(15) },
+  rememberMeRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: vs(25),
   },
-  inputSection: {
-    marginBottom: vs(15),
+  rememberMeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   separatorRow: {
     flexDirection: 'row',
@@ -198,14 +176,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: vs(25),
   },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#EAEAEA',
-  },
-  socialWrapper: {
-    width: '100%',
-  },
+  line: { flex: 1, height: 1, backgroundColor: '#EAEAEA' },
+  socialWrapper: { width: '100%' },
   socialButton: {
     flexDirection: 'row',
     alignItems: 'center',
