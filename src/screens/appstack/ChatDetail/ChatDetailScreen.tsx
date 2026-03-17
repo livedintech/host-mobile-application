@@ -31,6 +31,7 @@ import { useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 
@@ -342,7 +343,7 @@ const ChatScreen = () => {
             text={replyTo.text.length > 80 ? replyTo.text.substring(0, 80) + '...' : replyTo.text}
             // text={replyTo.text.substring(0, 80)}
             fontSize={11}
-            color={Colors.GREY_SHADOW}
+            color={Colors.BLACK}
             numberOfLines={2}
           />
         {/* </View> */}
@@ -466,7 +467,7 @@ const ChatScreen = () => {
               <AppText
                 text={item.text}
                 fontSize={13}
-                color={isHost && !isAutomated ? Colors.WHITE : Colors.MIDNIGHT}
+                color={isHost && !isAutomated ? Colors.BLACK : Colors.MIDNIGHT}
               />
             )}
 
@@ -476,7 +477,7 @@ const ChatScreen = () => {
               fontSize={11}
               color={
                 isHost && !isAutomated
-                  ? 'rgba(255,255,255,0.7)'
+                  ? Colors.GREY_SHADOW
                   : Colors.GREY_SHADOW
               }
               mt={8}
@@ -503,6 +504,7 @@ const ChatScreen = () => {
   };
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={20}
@@ -936,13 +938,13 @@ const ChatScreen = () => {
         )}
       </View>
     </KeyboardAvoidingView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
   header: {
     flexDirection: 'row',
@@ -1021,24 +1023,26 @@ const styles = StyleSheet.create({
   },
   messageBubbleHighlighted: {
     backgroundColor: 'rgba(39, 174, 96, 0.15)',
-    shadowColor: Colors.BRUNSWICK_GREEN,
+    shadowColor: Colors.TEAL_20_OPACITY,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
   hostBubble: {
-    backgroundColor: Colors.BRUNSWICK_GREEN,
+    backgroundColor: Colors.TEAL_20_OPACITY,
     borderBottomRightRadius: 2,
   },
   guestBubble: {
-    backgroundColor: '#F2F2F2',
+    // backgroundColor: '#F2F2F2',
     borderBottomLeftRadius: 2,
+    borderWidth:1,
+    borderColor: Colors.WHITE
   },
   automatedBubble: {
     borderStyle: 'dotted',
     borderWidth: 1.5,
-    borderColor: Colors.BRUNSWICK_GREEN,
+    borderColor: Colors.TEAL_20_OPACITY,
     backgroundColor: '#F9FCFB',
   },
   automatedLabel: {

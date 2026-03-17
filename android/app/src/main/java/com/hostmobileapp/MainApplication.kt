@@ -1,4 +1,4 @@
-package com.hostmobileapp
+package com.livedinapp
 
 import android.app.Application
 import com.facebook.react.PackageList
