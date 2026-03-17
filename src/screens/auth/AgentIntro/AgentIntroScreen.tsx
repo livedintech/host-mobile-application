@@ -1,14 +1,16 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, ScrollView, Image, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import { navigate } from '@/services/navigationService';
+import { navigate, goBack } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import { vs } from 'react-native-size-matters';
+import { s, vs } from 'react-native-size-matters';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder'; 
 
 const AgentIntroScreen = () => {
     
@@ -23,6 +25,16 @@ const AgentIntroScreen = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* --- ADDED BACK BUTTON --- */}
+          <View style={styles.headerRow}>
+            <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+                <Svgicons path='arrowLeftIcon' size={24} />
+              </Pressable>
+            </GradientBorder>
+          </View>
+          {/* ------------------------ */}
+
           {/* Title Section */}
           <View style={[styles.introSection, { alignItems: 'flex-start' }]}>
             <View style={styles.titleRow}>
@@ -44,12 +56,12 @@ const AgentIntroScreen = () => {
               fontSize={32}
               type="Medium"
               color={Colors.BLACK}
-              textAlign="left" // Changed from center
+              textAlign="left"
             />
 
             <AppText
               text="I’m your dedicated expert to guide you from scratch; from creating your listing to securing your first booking. No experience needed."
-              textAlign="left" // Changed from center
+              textAlign="left"
               color={Colors.PINE_FOREST}
               mt={20}
               fontSize={15}
@@ -76,64 +88,50 @@ const AgentIntroScreen = () => {
           />
         </ScrollView>
 
-      {/* Pagination - Active dot is the 3rd one */}
       <Pagination activeIndex={2} />
     </View>
     </BGImage>
-    
   );
 };
-
-export default AgentIntroScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  // ADDED HEADER STYLES
+  headerRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: vs(10),
+    marginBottom: vs(10),
+  },
+  arrowCircleInner: { 
+    width: 32, 
+    height: 32, 
+    borderRadius: 16, 
+    backgroundColor: Colors.WHITE, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  // ------------------
   connectBtn: {
-      backgroundColor: '#21AA8F',
-      borderRadius: 100,
-      height: vs(52),
-      width: '100%',
-      marginTop: vs(40),
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 0,
-    },
+    backgroundColor: '#21AA8F',
+    borderRadius: 100,
+    height: vs(48), // Increased height for better UX
+    width: s(240),
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0,
+  },
   scrollContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerCircleBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  getStartedBtn: {
-    paddingHorizontal: 15,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
+    paddingTop: vs(10),
   },
   introSection: {
-    marginTop: 50,
+    marginTop: vs(20),
     alignItems: 'center',
   },
   titleRow: {
@@ -149,18 +147,6 @@ const styles = StyleSheet.create({
     width: Metrics.scale(280),
     height: Metrics.scale(280),
   },
-  outlineBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.BRUNSWICK_GREEN,
-    borderRadius: 100,
-    marginTop: 20,
-    width: '100%',
-    height: 56,
-  },
-  btnText: {
-    color: Colors.BRUNSWICK_GREEN,
-    fontSize: 16,
-    fontWeight: '700',
-  },
 });
+
+export default AgentIntroScreen;

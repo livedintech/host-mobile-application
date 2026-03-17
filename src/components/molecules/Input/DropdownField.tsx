@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     height: Metrics.verticalScale(54),
     // --- GLASS STYLING ---
     backgroundColor: 'transparent',
-    borderRadius: 24,             
+    borderRadius: 10,             
     paddingHorizontal: 16,
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.6)', 

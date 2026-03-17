@@ -33,7 +33,7 @@ const FIGMA_TEAL = '#20957B';
 const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit } = useLoginWithPhoneContainer();
   const { setToken, setUser } = useAuthStore();
-  const [rememberMe, setRememberMe] = useState(false); // Local state - won't break your Container types
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -88,7 +88,7 @@ const LoginWithPhoneScreen = () => {
                 </AppText>
               </View>
 
-              <View style={styles.inputSection}>
+              <View>
                 <PhoneInputField
                   label="Phone Number*"
                   control={control}
@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
     paddingBottom: vs(20) 
   },
   headerSection: { marginBottom: vs(50) },
-  inputSection: { marginBottom: vs(15) },
   rememberMeRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',

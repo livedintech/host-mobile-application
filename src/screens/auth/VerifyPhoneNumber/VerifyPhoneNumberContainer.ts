@@ -17,7 +17,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 const otpVerifySchema = yup.object().shape({
   otpCode: yup
     .string()
-    .length(4, 'OTP must be exactly 4 digits')
+    .length(5, 'OTP must be exactly 5 digits')
     .required('Verification code is required'),
 });
 
@@ -27,7 +27,9 @@ export default function useVerifyPhoneNumberContainer() {
   const [timer, setTimer] = useState<number>(RESEND_TIME_LIMIT);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const { params } = useRoute();
-  const phone = params?.phone;
+  const phone = typeof params === 'string' 
+    ? params 
+    : (params as any)?.phone || (params as any)?.phoneNumber;
   const pricing = params?.pricing;
 
   const listing_count = params?.listing_count;
@@ -126,7 +128,14 @@ export default function useVerifyPhoneNumberContainer() {
       phone_number: phone,
       otp: data.otpCode,
     };
-    otpVerifyPayload(payload);
+    otpVerifyPayload(payload, {
+      onSuccess: () => {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phone);
+      },
+      onError: (error) => {
+        console.log("OTP Error:", error);
+      }
+    });
   };
 
   const formatTimer = (seconds: number) => {

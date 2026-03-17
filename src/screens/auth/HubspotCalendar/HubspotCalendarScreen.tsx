@@ -111,7 +111,7 @@ const CalendarScreen = ({ route }: any) => {
         </View>
 
         <Modal
-          animationType="none" // ⚠️ Set to none to avoid the double-animation glitch
+          animationType="none" 
           transparent={true}
           visible={selectedDate !== ''}
           onRequestClose={closeSheet}
