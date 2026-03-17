@@ -43,8 +43,8 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo,a
           )} */}
 
           {isGoBack && (
-            <ButtonView style={styles.getStartedBtn} onPress={() => goBack()}>
-              <AppText text="Back" fontSize={12} type="Medium" />
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
             </ButtonView>
           )}
           {isGetStarted && (

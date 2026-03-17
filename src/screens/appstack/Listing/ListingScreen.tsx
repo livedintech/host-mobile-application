@@ -371,7 +371,7 @@ const ListingScreen = () => {
   };
 
   return (
-    <BGImage source={require('@/assets/img/background/statsCardBG.png')}>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.transparentContainer} edges={['top']}>
         <StatusBar barStyle="dark-content" />
         <BookingDetailsView

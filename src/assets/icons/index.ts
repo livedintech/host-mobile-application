@@ -107,6 +107,7 @@ import mailIcon from './mailIcon.svg';
 import starRewardIcon from './starRewardIcon.svg';
 import chatBubbleIcon from './chatBubbleIcon.svg';
 import paymentCardIcon from './paymentCard.svg';
+import paymentIconNew from './payment_icon.svg';
 import reviewStarHalfIcon from './reviewStarHalfIcon.svg';
 import stc_pay_logo from './stc_pay_logo.svg';
 import mada_logo from './mada_logo.svg';
@@ -177,6 +178,28 @@ import assignTask from './assignTask.svg';
 import task_calendar from './task_calendar.svg';
 import deleteTask from './deleteTask.svg';
 import kitchen from './kitchen.svg';
+import guestExpIcon from './guestExpIcon.svg';
+import smileIcon from './smileIcon.svg';
+import identityCard from './identityCard.svg';
+import accuracy from './accuracy.svg';
+import bookingPlatform from './bookingPlatform.svg';
+import checkIn from './checkIn.svg';
+import communication from './communication.svg';
+import location from './location.svg';
+import value from './value.svg';
+import reviewStartImg from './reviewStartImg.svg';
+import cleanWaterIcon from './cleanWaterIcon.svg';
+import guestDetailIcon from './guest_detail.svg';
+import assignTaskNew from './assign_task.svg';
+import guestEmail from './guest_email.svg';
+import guestContact from './guest_contact.svg';
+import guestRating from './guest_rating.svg';
+import livedinLogo from './livedin-new.svg';
+import baseprice from './base-price.svg';
+import bookingCode from './sms-code.svg';
+import aiChat from './ai-chat-new.svg';
+import overallRating from './overallRating.svg';
+import back from './back.svg';
 
 export const icons = {
   eyeSlash: EyeSlash,
@@ -316,6 +339,7 @@ export const icons = {
   userManagementIconNew,
   reviewManagementIcon,
   paymentIcon,
+  paymentIconNew,
   transactionIcon,
   subscriptionIcon,
   noAccountTask,
@@ -358,4 +382,27 @@ export const icons = {
   fourtothirty,
   thirtyplus,
   hubspot_thanks,
+  guestExpIcon,
+  smileIcon,
+  identityCard,
+  bookingPlatform,
+  value,
+  location,
+  accuracy,
+  communication,
+  checkIn,
+  reviewStartImg,
+  cleanWaterIcon,
+
+  guestDetailIcon,
+  assignTaskNew,
+  guestEmail,
+  guestContact,
+  guestRating,
+  livedinLogo,
+  baseprice,
+  bookingCode,
+  aiChat,
+  overallRating,
+  back
 };
