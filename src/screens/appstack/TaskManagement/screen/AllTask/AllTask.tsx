@@ -44,6 +44,7 @@ const AllTask = () => {
     listingOptions,
     assigneeOptions,
     applyFilters,
+    setTaskStatus,
   } = AllTaskContainer();
 
   const filterSheetRef = useRef<BottomSheet>(null);
@@ -57,8 +58,6 @@ const AllTask = () => {
   } = useForm({
     defaultValues: { listings: [], assignees: [] },
   });
-
- 
 
   const handleOpenFilter = () => filterSheetRef.current?.expand();
   const handleCloseFilter = () => filterSheetRef.current?.close();
@@ -85,15 +84,13 @@ const AllTask = () => {
     ),
     [],
   );
-  console.log("isAccountEmpty",isAccountEmpty);
-  console.log("isLoading",isLoading)
+  console.log('isAccountEmpty', isAccountEmpty);
+  console.log('isLoading', isLoading);
 
   // --- CONDITIONAL RENDERING ---
-  if ( !isAccountEmpty) {
+  if (!isAccountEmpty) {
     return <NoTaskScreen />;
   }
-
-
 
   const renderTaskItem = ({ item }: { item: any }) => (
     <GlassCard width="100%" style={styles.taskCard}>
@@ -120,12 +117,14 @@ const AllTask = () => {
         </View>
 
         <ButtonView
-          onPress={() =>
+          onPress={() => {
+            setTaskStatus(item.id, item.status, item.description);
+
             navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
               taskId: item.id,
               taskType: item.type,
-            })
-          }
+            });
+          }}
         >
           {/* Using GlassCard for the edit icon button as requested */}
           <GlassCard width={44} style={styles.editGlassIcon}>
@@ -247,16 +246,18 @@ const AllTask = () => {
           enablePanDownToClose
           backdropComponent={renderBackdrop}
           handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
+          backgroundStyle={{backgroundColor:Colors.TRANSLUCENT_WHITE}}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
               <AppText text="Apply Filter" fontSize={24} type="Medium" />
               <ButtonView onPress={onResetFilter}>
-                <AppText
+                {/* <AppText
                   text="Reset"
-                  color={Colors.PRIMARY_TEAL}
+                  color={Colors.BLACK}
                   type="Medium"
-                />
+                /> */}
+                <Svgicons path='crossIcon' size={30}/>
               </ButtonView>
             </View>
 
@@ -270,7 +271,7 @@ const AllTask = () => {
                 errors={errors}
               />
 
-              <View style={{ marginTop: 20 }}>
+              <View style={{ marginTop: 10 }}>
                 <MultiSelectDropdownField
                   name="assignees"
                   label="Select Task Assignee"
@@ -384,13 +385,13 @@ const styles = StyleSheet.create({
     right: 25,
   },
   gradientMargin: { marginBottom: 12 },
-  outlineBtn: { backgroundColor: '#fff', borderRadius: 13, borderWidth: 0 },
+  outlineBtn: { backgroundColor: '#fff', borderRadius: 14, borderWidth: 0 ,},
   sheetContent: { padding: 25 },
   sheetHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   formContent: { marginTop: 10 },
 });

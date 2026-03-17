@@ -53,14 +53,16 @@ const EditTask = ({ route }: any) => {
 
   const apiStatus = task?.status || 'todo';
   console.log("apiStatus",apiStatus)
+  console.log("apiStatus",apiStatus)
   const isCompleted = apiStatus === 'completed';
-const isEditable = ['todo', 'inprogress', 'pending'].includes(apiStatus);
+const isEditable = ['todo', 'inprogress', 'pending','template'].includes(apiStatus);
   const statusDisplay =
     {
       todo: 'To do',
       inprogress: 'In Progress',
       completed: 'Completed',
-    }[apiStatus as 'todo' | 'inprogress' | 'completed'] || 'To do';
+      template: 'Template',
+    }[apiStatus as 'todo' | 'inprogress' | 'completed' | 'template'] || 'To do';
 
   const {
     control,

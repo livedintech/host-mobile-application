@@ -7,8 +7,10 @@ import {
   getTaskManagementVendor ,
   getTaskDetail
 } from '@/services/TaskManagementApi';
+import { useTaskStore } from '@/store/taskStore';
 
 const AllTaskContainer = () => {
+  const { setTaskStatus } = useTaskStore();
   const STATUS_MAP: Record<string, string> = {
     'To-do': 'todo',
     'In Progress': 'inprogress',
@@ -107,6 +109,7 @@ const AllTaskContainer = () => {
       fetchNextPage: handleLoadMore,
       refetch: refetch,
     },
+    setTaskStatus,
     isLoading: isLoadingTasks,
     activeTab,
     handleTabChange,

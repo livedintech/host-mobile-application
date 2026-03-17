@@ -18,6 +18,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const MoreScreen = () => {
   const { user, logout } = useAuthStore();
+  console.log("userioin",user)
   return (
     <ImageBackground
       source={require('@/assets/img/background/moreScreenBG.png')}

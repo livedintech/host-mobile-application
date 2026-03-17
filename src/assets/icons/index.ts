@@ -188,6 +188,7 @@ import location from './location.svg';
 import value from './value.svg';
 import reviewStartImg from './reviewStartImg.svg';
 import cleanWaterIcon from './cleanWaterIcon.svg';
+import crossIcon from './crossIcon.svg';
 
 export const icons = {
   eyeSlash: EyeSlash,
@@ -379,6 +380,7 @@ export const icons = {
   communication,
   checkIn,
   reviewStartImg,
-  cleanWaterIcon
+  cleanWaterIcon,
+  crossIcon
 
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
@@ -7,25 +7,36 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import TextareaField from '@/components/molecules/Input/TextareaField'; 
 import useStaffNotesContainer from '../../container/StaffNotesContainer/StaffNotesContainer';
+import { useTaskStore } from '@/store/taskStore';
 
 const StaffNotes = () => {
   const { onSubmitNotes, isLoading } = useStaffNotesContainer();
+  // Get taskDescription from the store
+  const { taskDescription } = useTaskStore();
   
   const {
     control,
     handleSubmit,
+    setValue, // Added to update form if store changes
     formState: { errors },
   } = useForm({
     defaultValues: {
-      specialInstructions: '',
+      // Use description from store if it exists, otherwise empty string
+      specialInstructions: taskDescription || '',
     },
   });
+
+  // sync form if taskDescription arrives late or changes
+  useEffect(() => {
+    if (taskDescription) {
+      setValue('specialInstructions', taskDescription);
+    }
+  }, [taskDescription, setValue]);
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
         <View style={styles.container}>
-          {/* Main Title */}
           <AppText
             text="Add Instructions for Your Staff"
             fontSize={28}
@@ -35,7 +46,6 @@ const StaffNotes = () => {
             mt={20}
           />
 
-          {/* Subtitle / Description */}
           <AppText
             text="Add notes or special instructions for your staff related to this property or task. These notes will help them understand any specific requirements while completing their work."
             fontSize={14}
@@ -44,7 +54,6 @@ const StaffNotes = () => {
             mb={30}
           />
 
-          {/* Special Instructions Textarea */}
           <TextareaField
             name="specialInstructions"
             control={control}
@@ -57,7 +66,6 @@ const StaffNotes = () => {
           />
         </View>
 
-        {/* Footer Button */}
         <View style={styles.footer}>
           <AppButton
             title="Next"
@@ -74,25 +82,11 @@ const StaffNotes = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 25,
-    paddingTop: 10,
-  },
-  textAreaWrapper: {
-    marginTop: 10,
-  },
-  textArea: {
-    fontSize: 16,
-    color: Colors.BLACK,
-  },
-  footer: {
-    paddingHorizontal: 25,
-    paddingBottom: 30, // Adjusted for safe area
-  },
+  safeArea: { flex: 1 },
+  container: { flex: 1, paddingHorizontal: 25, paddingTop: 10 },
+  textAreaWrapper: { marginTop: 10 },
+  textArea: { fontSize: 16, color: Colors.BLACK },
+  footer: { paddingHorizontal: 25, paddingBottom: 30 },
 });
 
 export default StaffNotes;

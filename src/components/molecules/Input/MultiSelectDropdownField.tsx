@@ -1,12 +1,10 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import { MultiSelect } from 'react-native-element-dropdown';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import CheckboxChecked from '@/assets/icons/checkbox-primary-checked.svg';
-import CheckboxUnchecked from '@/assets/icons/checkbox-primary-unchecked.svg';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface DropdownItem {
@@ -36,18 +34,17 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
   placeholder = 'Select',
   disabled = false,
   rules,
-  dropdownPosition,
+  dropdownPosition = 'bottom',
   labelStyle,
 }) => {
   const error = errors[name]?.message as string;
 
   return (
     <View style={styles.wrapper}>
-      {/* <AppText text={label} style={styles.label} /> */}
       <AppText
         text={label}
         mb={8}
-        color={Colors.PINE_FOREST}
+        color={Colors.BLACK}
         fontSize={14}
         type="Medium"
         style={labelStyle}
@@ -59,7 +56,6 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
         render={({ field: { onChange, value } }) => {
           const renderDropdownItem = (item: DropdownItem) => {
             const isSelected = value?.includes(item.value);
-
             return (
               <View style={styles.itemContainer}>
                 {isSelected ? (
@@ -69,9 +65,9 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
                 )}
                 <AppText
                   text={item.label}
-                  fontSize={12}
-                  color={Colors.SUPER_GREY}
-                  type="SemiBold"
+                  fontSize={13}
+                  color={Colors.BLACK_35_PERCENT}
+                  type="Medium"
                 />
               </View>
             );
@@ -80,13 +76,12 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
           return (
             <MultiSelect
               dropdownPosition={dropdownPosition}
-              searchPlaceholder="Search..."
-              search
               style={[
                 styles.dropdown,
                 !!error && styles.errorBorder,
                 disabled && styles.disabled,
               ]}
+              containerStyle={styles.whiteContainer} 
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               data={data}
@@ -96,22 +91,20 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
               value={value || []}
               onChange={onChange}
               disable={disabled}
+              activeColor={Colors.ANTI_FLASH_WHITE} 
               renderRightIcon={() => (
                 <Svgicons path="ChevronDownIcon" width={15} height={15} />
               )}
               selectedStyle={styles.selectedStyle}
-              inputSearchStyle={styles.inputSearchStyle}
+              itemContainerStyle={styles.itemContainerStyle}
               renderItem={renderDropdownItem}
+              backgroundColor="transparent"
             />
           );
         }}
       />
       {error && (
-        <AppText
-          text={error}
-          color={Colors.INDIAN_RED}
-          style={styles.errorText}
-        />
+        <AppText text={error} color={Colors.INDIAN_RED} style={styles.errorText} />
       )}
     </View>
   );
@@ -121,56 +114,71 @@ const styles = StyleSheet.create({
   wrapper: {
     marginBottom: Metrics.verticalScale(18),
   },
-  label: {
-    color: Colors.PINE_FOREST,
-    marginBottom: 8,
-    fontSize: Metrics.generatedFontSize(14),
-  },
   dropdown: {
-    minHeight: Metrics.verticalScale(56),
-    backgroundColor: Colors.WHITE,
-    borderRadius: 12,
+    minHeight: Metrics.verticalScale(52),
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Glassy input background stays
+    borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: Metrics.verticalScale(8),
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.7)',
+  },
+  // NEW: Solid white container for the options list
+  whiteContainer: {
+    backgroundColor: Colors.WHITE, 
+    borderRadius: 16,
+    marginTop: 8,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
-  },
-  disabled: {
-    backgroundColor: Colors.ANTI_FLASH_WHITE,
-  },
-  errorBorder: {
-    borderColor: Colors.INDIAN_RED,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   placeholderStyle: {
-    fontSize: Metrics.generatedFontSize(12),
-    color: Colors.SUPER_GREY,
-    fontWeight: '500',
+    fontSize: 13,
+    color: 'rgba(0, 0, 0, 0.4)',
   },
   selectedTextStyle: {
     fontSize: 14,
     color: Colors.BLACK,
   },
-
-  errorText: {
-    marginTop: 5,
-    fontSize: 12,
-    color: Colors.INDIAN_RED,
-  },
-  inputSearchStyle: {
-    color: Colors.BLACK,
-  },
   selectedStyle: {
-    borderRadius: 12,
-    backgroundColor: Colors.ANTI_FLASH_WHITE,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginVertical: 4,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 1)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  itemContainerStyle: {
+    backgroundColor: Colors.WHITE, // Solid background for items
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: Metrics.scale(16),
-    gap: 8,
+    paddingVertical: Metrics.scale(12),
+    paddingHorizontal: 16,
+    gap: 12,
+    // borderBottomWidth: 1,
+    // borderBottomColor: Colors.ANTI_FLASH_WHITE,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  errorBorder: {
+    borderColor: Colors.INDIAN_RED,
+  },
+  errorText: {
+    marginTop: 5,
+    fontSize: 12,
   },
 });
 
