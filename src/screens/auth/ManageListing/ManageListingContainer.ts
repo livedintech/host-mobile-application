@@ -16,13 +16,14 @@ export default function useManageListingContainer() {
 
   const onSelect = (value: number | null) => {
     if (!value) return;
-
-    // Assuming 1 is the ID for the first option. Adjust according to your DB IDs.
     if (value === 1) {
       const payload = {
-        phone_number: params,
+        phone: params,
+        listing_count: localSelectedId,
+        pricing: plan?.price
       };
-      resendOtpPayload(payload);
+      navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {payload});
+
     } else {
       navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM);
     }

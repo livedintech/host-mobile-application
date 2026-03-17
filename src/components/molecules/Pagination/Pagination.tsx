@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: Metrics.scale(53), // Long pill shape for active
-    backgroundColor: Colors.BRUNSWICK_GREEN,
+    backgroundColor: '#21AA8F',
   },
   inactiveDot: {
     width: Metrics.scale(10), // Small dot for inactive

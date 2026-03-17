@@ -199,6 +199,7 @@ import baseprice from './base-price.svg';
 import bookingCode from './sms-code.svg';
 import aiChat from './ai-chat-new.svg';
 import overallRating from './overallRating.svg';
+import back from './back.svg';
 
 export const icons = {
   eyeSlash: EyeSlash,
@@ -402,5 +403,6 @@ export const icons = {
   baseprice,
   bookingCode,
   aiChat,
-  overallRating
+  overallRating,
+  back
 };

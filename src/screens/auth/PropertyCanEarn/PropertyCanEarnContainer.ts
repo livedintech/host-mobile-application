@@ -17,7 +17,7 @@ const homeSchema = yup.object().shape({
   district: yup.string().required('District is required'),
   bedrooms: yup.string().required('Number of bedrooms is required'),
 });
-
+// AuthTack.CONNECT_CALENDARS_INTRO
 export default function usePropertyCanEarnContainer() {
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

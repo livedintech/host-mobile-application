@@ -231,7 +231,6 @@ const bookHubSpotMeeting = async (
       phone: lead.phone,
       locale: 'en',
     };
-
     const res = await fetch(`${BASE_URL}/scheduler/v3/meetings/meeting-links/book`, {
       method: 'POST',
       headers: getHeaders(),
