@@ -40,6 +40,14 @@ const AppStack = () => {
           require('@/screens/appstack/Chat/ChatScreen').default
         }
       />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CREATE_TASK}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screens/CreateTask/CreateTaskScreen')
+            .default
+        }
+      />
       {/* TASK SCREEN OLD */}
       {/* <Stack.Screen
         options={{ header: () => <HeaderApp isLogo isLang /> }}
@@ -51,14 +59,7 @@ const AppStack = () => {
       />
 
 
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
-        name={NavigationRoutes.APP_STACK.CREATE_TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/CreateTask/CreateTaskScreen')
-            .default
-        }
-      />
+      
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.CREATE_CHECKLIST}

@@ -107,6 +107,7 @@ import mailIcon from './mailIcon.svg';
 import starRewardIcon from './starRewardIcon.svg';
 import chatBubbleIcon from './chatBubbleIcon.svg';
 import paymentCardIcon from './paymentCard.svg';
+import paymentIconNew from './payment_icon.svg';
 import reviewStarHalfIcon from './reviewStarHalfIcon.svg';
 import stc_pay_logo from './stc_pay_logo.svg';
 import mada_logo from './mada_logo.svg';
@@ -188,6 +189,16 @@ import location from './location.svg';
 import value from './value.svg';
 import reviewStartImg from './reviewStartImg.svg';
 import cleanWaterIcon from './cleanWaterIcon.svg';
+import guestDetailIcon from './guest_detail.svg';
+import assignTaskNew from './assign_task.svg';
+import guestEmail from './guest_email.svg';
+import guestContact from './guest_contact.svg';
+import guestRating from './guest_rating.svg';
+import livedinLogo from './livedin-new.svg';
+import baseprice from './base-price.svg';
+import bookingCode from './sms-code.svg';
+import aiChat from './ai-chat-new.svg';
+import overallRating from './overallRating.svg';
 
 export const icons = {
   eyeSlash: EyeSlash,
@@ -327,6 +338,7 @@ export const icons = {
   userManagementIconNew,
   reviewManagementIcon,
   paymentIcon,
+  paymentIconNew,
   transactionIcon,
   subscriptionIcon,
   noAccountTask,
@@ -379,6 +391,16 @@ export const icons = {
   communication,
   checkIn,
   reviewStartImg,
-  cleanWaterIcon
+  cleanWaterIcon,
 
+  guestDetailIcon,
+  assignTaskNew,
+  guestEmail,
+  guestContact,
+  guestRating,
+  livedinLogo,
+  baseprice,
+  bookingCode,
+  aiChat,
+  overallRating
 };
