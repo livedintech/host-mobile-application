@@ -27,11 +27,15 @@ import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import { useTaskStore } from '@/store/taskStore';
 
 const ViewChecklistAll = () => {
-  const {taskId: storeTaskId, taskStatus: storeTaskStatus} = useTaskStore();
-  console.log("storeTaskStatus",storeTaskStatus)
+  const {taskId, taskStatus: storeTaskStatus, taskType, taskStatus} = useTaskStore();
+  console.log("taskStatustaskStatusmkkk",storeTaskStatus)
+  console.log('testing:::',storeTaskStatus !== "completed")
   const insets = useSafeAreaInsets(); // Hook to get notch height
   const route = useRoute<any>();
-  const { taskId, fromEdit, taskType } = route.params || {};
+  // const { taskId, fromEdit, taskType } = route.params || {};
+  const { fromEdit } = route.params || {};
+
+  console.log("taskkbb,taskId",taskId,taskType)
 
   const { checklistData, isLoading, addSection, onRefresh } =
     useViewChecklistAllContainer({ taskId, taskType });
@@ -117,7 +121,7 @@ const ViewChecklistAll = () => {
         lineHeight={20}
         mb={30}
       />
-      {/* {!fromEdit && ( */}
+      {storeTaskStatus !== "completed" && (
       <View style={styles.addSectionContainer}>
         <ButtonView onPress={handleOpenPress}>
           <GlassCard width="auto" style={styles.addSectionBtn}>
@@ -125,7 +129,7 @@ const ViewChecklistAll = () => {
           </GlassCard>
         </ButtonView>
       </View>
-      {/* )} */}
+       )} 
     </View>
   );
 

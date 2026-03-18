@@ -36,7 +36,7 @@ const formatDate = (dateString: string) => {
 };
 
 const EditTask = ({ route }: any) => {
-  const { onDeleteTask, isDeleting,assigneeOptions } = EditTaskContainer();
+  const { onDeleteTask, isDeleting, assigneeOptions } = EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
 
   const {
@@ -49,20 +49,32 @@ const EditTask = ({ route }: any) => {
     enabled: !!taskId,
   });
 
-  console.log("task",task)
+  console.log('task-detail', task);
 
   const apiStatus = task?.status || 'todo';
-  console.log("apiStatus",apiStatus)
-  console.log("apiStatus",apiStatus)
+  console.log('apiStatus', apiStatus);
+  console.log('apiStatus', apiStatus);
   const isCompleted = apiStatus === 'completed';
-const isEditable = ['todo', 'inprogress', 'pending','template'].includes(apiStatus);
+  const isEditable = [
+    'todo',
+    'inprogress',
+    'pending',
+    'template',
+    'resume',
+  ].includes(apiStatus);
   const statusDisplay =
     {
       todo: 'To do',
       inprogress: 'In Progress',
+      pending: 'pending',
       completed: 'Completed',
       template: 'Template',
-    }[apiStatus as 'todo' | 'inprogress' | 'completed' | 'template'] || 'To do';
+      resume: 'resume',
+    }[
+      apiStatus as 'todo' | 'inprogress' | 'pending' | 'completed' | 'template'
+    ] ||
+    'To do' ||
+    'resume';
 
   const {
     control,
@@ -117,7 +129,9 @@ const isEditable = ['todo', 'inprogress', 'pending','template'].includes(apiStat
           <AppText
             text={`${task?.task_type_key
               ?.charAt(0)
-              .toUpperCase()}${task?.task_type_key?.slice(1)} Task`}
+              .toUpperCase()}${task?.task_type_key?.slice(1)} Task${
+              task?.status === 'template' ? ' Template' : ''
+            }`}
             fontSize={28}
             type="Bold"
             mb={30}
@@ -180,49 +194,51 @@ const isEditable = ['todo', 'inprogress', 'pending','template'].includes(apiStat
             </View>
           </GlassCard>
 
-          <GlassCard width="100%" style={styles.glassCard}>
-            <View style={styles.cardHeader}>
-              <AppText text="Task Timeline" fontSize={18} type="Medium" />
-              <Svgicons path="taskTimeline" size={24} />
-            </View>
-
-            <TimelineItem
-              icon="taskCalendar"
-              label="Task Date"
-              value={formatDate(task?.start_date)}
-            />
-            <TimelineItem
-              icon="taskStartDate"
-              label="Start Time"
-              value={task?.start_time || '--'}
-            />
-            <TimelineItem
-              icon="taskEndDate"
-              label="End Time"
-              value={task?.end_time || '--'}
-            />
-
-            <View style={styles.timelineRow}>
-              <View style={styles.iconCircle}>
-                <Svgicons path="taskStar" size={18} />
+          {task.status !== 'template' && (
+            <GlassCard width="100%" style={styles.glassCard}>
+              <View style={styles.cardHeader}>
+                <AppText text="Task Timeline" fontSize={18} type="Medium" />
+                <Svgicons path="taskTimeline" size={24} />
               </View>
-              <View>
-                <AppText text="Task Status:" fontSize={14} type="Medium" />
-                <AppText
-                  text={statusDisplay}
-                  fontSize={13}
-                  type="Bold"
-                  color={
-                    apiStatus === 'todo'
-                      ? Colors.ERROR_RED
-                      : apiStatus === 'inprogress'
-                      ? Colors.GOLDEN_AMBER
-                      : Colors.TEAL_PRIMARY_ALT
-                  }
-                />
+
+              <TimelineItem
+                icon="taskCalendar"
+                label="Task Date"
+                value={formatDate(task?.start_date)}
+              />
+              <TimelineItem
+                icon="taskStartDate"
+                label="Start Time"
+                value={task?.start_time || '--'}
+              />
+              <TimelineItem
+                icon="taskEndDate"
+                label="End Time"
+                value={task?.end_time || '--'}
+              />
+
+              <View style={styles.timelineRow}>
+                <View style={styles.iconCircle}>
+                  <Svgicons path="taskStar" size={18} />
+                </View>
+                <View>
+                  <AppText text="Task Status:" fontSize={14} type="Medium" />
+                  <AppText
+                    text={statusDisplay}
+                    fontSize={13}
+                    type="Bold"
+                    color={
+                      apiStatus === 'todo'
+                        ? Colors.ERROR_RED
+                        : apiStatus === 'inprogress'
+                        ? Colors.GOLDEN_AMBER
+                        : Colors.TEAL_PRIMARY_ALT
+                    }
+                  />
+                </View>
               </View>
-            </View>
-          </GlassCard>
+            </GlassCard>
+          )}
         </RefreshableScrollView>
 
         <View style={styles.footer}>
@@ -355,7 +371,7 @@ const styles = StyleSheet.create({
   outlineBtn: {
     backgroundColor: '#fff',
     borderRadius: 13,
-    borderWidth: 0, 
+    borderWidth: 0,
   },
 });
 

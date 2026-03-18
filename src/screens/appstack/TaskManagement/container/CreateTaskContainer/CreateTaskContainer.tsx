@@ -15,7 +15,7 @@ import { convertTo24Hour } from '@/utility/helpers';
 
 const CreateTaskContainer = () => {
   // Use the new setCreatedTask action
-  const { taskId, setCreatedTask } = useTaskStore();
+  const { taskId, setCreatedTask, setTaskInfo } = useTaskStore();
 
   const { data: getTaskListing = [], isLoading: isLoadingListing, isFetching: isFetchingListing, refetch: refetchListing } = useQuery({
     queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_LISTING],
@@ -36,7 +36,12 @@ const CreateTaskContainer = () => {
     mutationFn: taskManagementCreateTask,
     onSuccess: async res => {
       console.log("resssmm",res)
-      const { id, task_type } = res.data;
+
+      const { id, task_type, status, description } = res.data;
+
+      // 1. Save the primary Task Info (ID, Type, Status, Description) to the store
+      setTaskInfo(id, task_type, status , description );
+
       try {
         const checklistRes = await getTaskChecklist(id, task_type);
         // Save everything to store in one go

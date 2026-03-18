@@ -10,7 +10,7 @@ import {
 import { useTaskStore } from '@/store/taskStore';
 
 const AllTaskContainer = () => {
-  const { setTaskStatus } = useTaskStore();
+  const { setTaskInfo } = useTaskStore();
   const STATUS_MAP: Record<string, string> = {
     'To-do': 'todo',
     'In Progress': 'inprogress',
@@ -109,7 +109,7 @@ const AllTaskContainer = () => {
       fetchNextPage: handleLoadMore,
       refetch: refetch,
     },
-    setTaskStatus,
+    setTaskInfo,
     isLoading: isLoadingTasks,
     activeTab,
     handleTabChange,

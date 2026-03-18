@@ -9,8 +9,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTaskStore } from '@/store/taskStore';
 
 const NoTaskScreen = () => {
+    const { resetTaskStore } = useTaskStore();
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
@@ -69,6 +71,7 @@ const NoTaskScreen = () => {
                 fontSize={16}
                 style={styles.buttonReset}
                 onPress={() => {
+                   resetTaskStore();
                   navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
                 }}
               />
@@ -81,6 +84,7 @@ const NoTaskScreen = () => {
               color={Colors.WHITE}
               fontSize={16}
               onPress={() => {
+                 resetTaskStore();
                 navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
               }}
             />

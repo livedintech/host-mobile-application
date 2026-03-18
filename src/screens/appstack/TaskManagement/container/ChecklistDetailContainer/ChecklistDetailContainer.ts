@@ -16,10 +16,11 @@ const useChecklistDetailContainer = (
   propTaskId?: number,
 ) => {
   const queryClient = useQueryClient();
-  const { taskId: storeTaskId, taskType: storeTaskType } = useTaskStore();
+  const { taskId: storeTaskId, taskType: taskStatus } = useTaskStore();
 
   const effectiveTaskId = propTaskId || storeTaskId;
-  const effectiveTaskType = storeTaskType || 'maintenance';
+  const effectiveTaskType = taskStatus;
+  console.log('taskStatus', taskStatus);
 
   const [localItems, setLocalItems] = useState<any[]>([]);
 
@@ -69,15 +70,25 @@ const useChecklistDetailContainer = (
   // 4. Mutation: Update Item Name
   const updateItemMutation = useMutation({
     mutationFn: (payload: { id: number; checklist_name: string }) =>
-      updateSingleChecklistItem(payload.id, payload.checklist_name),
-    onSuccess: () => {
+      // Pass the payload as a SINGLE object
+      updateSingleChecklistItem(payload),
+
+    onSuccess: (res, variables) => {
+      // Update local state so UI reflects change immediately
+      setLocalItems(prev =>
+        prev.map(item =>
+          item.id === variables.id
+            ? { ...item, name: variables.checklist_name }
+            : item,
+        ),
+      );
+
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
       });
       Toast.show({ type: 'success', text1: 'Item updated successfully' });
     },
   });
-
   // 5. Mutation: Save Selection
   const filterMutation = useMutation({
     mutationFn: (selectedIds: number[]) =>
@@ -111,6 +122,15 @@ const useChecklistDetailContainer = (
     const selectedIds = localItems
       .filter(item => item.isChecked)
       .map(item => item.id);
+
+    if (selectedIds.length === 0) {
+      Toast.show({
+        type: 'error',
+        // text1: 'Selection Required',
+        text1: 'Please select at least one item before saving.',
+      });
+      return;
+    }
 
     return filterMutation.mutateAsync(selectedIds);
   };

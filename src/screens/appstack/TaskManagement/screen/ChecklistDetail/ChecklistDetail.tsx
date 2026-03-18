@@ -35,11 +35,12 @@ import { useTaskStore } from '@/store/taskStore';
 const { width, height } = Dimensions.get('window');
 
 const ChecklistDetail = ({ route }: any) => {
-  const { taskId: storeTaskId, taskStatus: storeTaskStatus } = useTaskStore();
-  console.log("storeTaskStatus",storeTaskStatus);
-  console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress')
-const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress';
-console.log("taskStatus",taskStatus)
+  const { taskId: storeTaskId, taskStatus } = useTaskStore();
+  // console.log("storeTaskStatus",storeTaskStatus);
+  // console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' )
+// const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' || storeTaskStatus === 'pending';
+
+// console.log("taskStatus",taskStatus)
   const { title, sectionId, taskId, fromEdit } = route.params;
   const insets = useSafeAreaInsets();
 
@@ -87,12 +88,14 @@ console.log("taskStatus",taskStatus)
     reset();
   };
 
-  const handleOpenEdit = (item: any) => {
-    if (item.images && item.images.length > 0) return;
-    setSelectedItem({ id: item.id, name: item.name });
-    setValue('itemName', item.name);
-    bottomSheetRef.current?.expand();
-  };
+const handleOpenEdit = useCallback((item: any) => {
+  if (taskStatus === 'completed' || (item.images && item.images.length > 0)) {
+    return;
+  }
+  setSelectedItem({ id: item.id, name: item.name });
+  setValue('itemName', item.name);
+  bottomSheetRef.current?.expand();
+}, [taskStatus, setValue]); // Add dependencies here
 
   const renderMedia = (mediaItems: any[]) => {
     if (!mediaItems || mediaItems.length === 0) return null;
@@ -172,7 +175,7 @@ console.log("taskStatus",taskStatus)
         </GlassCard>
       );
     },
-    [toggleItem],
+    [toggleItem,handleOpenEdit, taskStatus],
   );
 
   return (
@@ -200,7 +203,7 @@ console.log("taskStatus",taskStatus)
                 />
                 {
                 // storeTaskStatus == 'todo' || storeTaskStatus == 'template' || storeTaskStatus == 'inprogress' 
-                taskStatus
+                taskStatus !== 'completed'
                 && (
                     <View style={styles.addMoreContainer}>
                       <ButtonView
@@ -229,7 +232,7 @@ console.log("taskStatus",taskStatus)
             keyExtractor={item => item.id.toString()}
           />
 
-          {taskStatus && (
+          {taskStatus !== 'completed' && (
               <View style={styles.footer}>
                 <AppButton
                   title="Save"

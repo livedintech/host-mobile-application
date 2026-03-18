@@ -18,11 +18,17 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const { width, height } = Dimensions.get('window');
-const COLUMN_WIDTH = (width - 60) / 2;
+
+// Define constants for the grid layout
+const NUM_COLUMNS = 2;
+const GAP = 15; // Gap between columns and below items
+const TOTAL_HORIZONTAL_PADDING = 50; // paddingHorizontal: 25 * 2
+const COLUMN_WIDTH = (width - TOTAL_HORIZONTAL_PADDING - GAP) / NUM_COLUMNS;
 
 const PreActivity = ({ route }: any) => {
   const taskData = route?.params?.taskData || {};
   
+  // Use a fallback to ensure we always have an array
   const images = taskData?.images || [];
   const videos = taskData?.video || [];
   const allMedia = [...images, ...videos];
@@ -48,17 +54,13 @@ const PreActivity = ({ route }: any) => {
     }
   };
 
-  const renderMediaItem = ({ item, index }: { item: any, index: number }) => {
+  const renderMediaItem = ({ item }: { item: any }) => {
     const isVideo = item.type === 'video';
-    const isLarge = index === 0;
 
     return (
       <ButtonView 
         onPress={() => handleMediaPress(item)}
-        style={[
-          styles.mediaWrapper, 
-          isLarge ? styles.largeMedia : styles.smallMedia
-        ]}
+        style={styles.mediaWrapper}
       >
         {isVideo ? (
           <Video
@@ -79,7 +81,7 @@ const PreActivity = ({ route }: any) => {
         {isVideo && (
           <View style={styles.videoOverlay}>
             <View style={styles.playButtonCircle}>
-               <Svgicons path={'webcampIcon'} size={isLarge ? 30 : 22} />
+               <Svgicons path={'webcampIcon'} size={22} />
             </View>
           </View>
         )}
@@ -91,7 +93,6 @@ const PreActivity = ({ route }: any) => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <View style={styles.header}>
-       
           <AppText text="Pre-activity Preview" fontSize={28} type="Bold" mt={20} mb={10} />
           <AppText 
             text="View the uploaded photos to check the condition before the task begins." 
@@ -105,8 +106,9 @@ const PreActivity = ({ route }: any) => {
           data={allMedia}
           renderItem={renderMediaItem}
           keyExtractor={(item, index) => `${item.id}-${index}`}
-          numColumns={2}
+          numColumns={NUM_COLUMNS} // Correctly set to 2
           contentContainerStyle={styles.listContent}
+          columnWrapperStyle={styles.columnWrapper} // Use this for gap between items
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyState}>
@@ -157,8 +159,6 @@ const PreActivity = ({ route }: any) => {
             )}
           </View>
         </Modal>
-
-   
       </View>
     </BGImage>
   );
@@ -167,22 +167,27 @@ const PreActivity = ({ route }: any) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { paddingHorizontal: 25, paddingTop: 10, marginBottom: 20 },
-  backBtn: { width: 40, height: 40, justifyContent: 'center' },
   listContent: { paddingHorizontal: 25, paddingBottom: 150 },
+  
+  // Create gap between the two columns
+  columnWrapper: { justifyContent: 'space-between' },
+  
   mediaWrapper: { 
     borderRadius: 24, 
     overflow: 'hidden', 
     backgroundColor: '#E8E8E8', 
-    marginBottom: 15,
+    marginBottom: GAP, // Gap below the item
+    width: COLUMN_WIDTH, // Set to calculated width
+    height: COLUMN_WIDTH, // Make it square
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  largeMedia: { width: '100%', height: 220, marginRight: -width },
-  smallMedia: { width: COLUMN_WIDTH, height: COLUMN_WIDTH, marginRight: 15 },
+  
   mediaImage: { width: '100%', height: '100%' },
+  
   videoOverlay: { 
     ...StyleSheet.absoluteFillObject, 
     backgroundColor: 'rgba(0,0,0,0.15)', 
@@ -190,17 +195,12 @@ const styles = StyleSheet.create({
     alignItems: 'center' 
   },
   playButtonCircle: { 
-    width: 50, 
-    height: 50, 
-    borderRadius: 25, 
+    width: 44, 
+    height: 44, 
+    borderRadius: 22, 
     backgroundColor: 'rgba(255,255,255,0.9)', 
     justifyContent: 'center', 
     alignItems: 'center',
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 8
   },
   emptyState: { marginTop: 50, alignItems: 'center' },
   
