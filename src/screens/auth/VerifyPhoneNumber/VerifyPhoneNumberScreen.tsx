@@ -3,6 +3,7 @@ import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform } from 're
 import OTPTextInput from 'react-native-otp-textinput';
 import { Colors } from '@/theme/colors';
 import { s, vs } from 'react-native-size-matters';
+import { useRoute } from '@react-navigation/native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Controller } from 'react-hook-form';
 import useVerifyPhoneNumberContainer from './VerifyPhoneNumberContainer';
@@ -10,22 +11,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { maskPhoneNumber } from '@/utility/helpers';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import Metrics from '@/utility/Metrics';
 
 const FIGMA_TEAL = '#20957B';
 
 const VerifyPhoneNumberScreen = () => {
+  const route = useRoute();
+  // Catch the phone number passed from navigation
+  const phoneNumber = route.params as unknown as string;
+
   const {
     control,
-    otpCode,
     timer,
     isResendDisabled,
     identifier,
     handleResendOtp,
-    handleVerifyOtp,
+    handleVerifyOtp, // This expects (data: { otpCode: string })
     formatTimer,
     isLoading,
   } = useVerifyPhoneNumberContainer();
+
+  const displayIdentifier = phoneNumber || identifier;
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -40,24 +45,23 @@ const VerifyPhoneNumberScreen = () => {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.mainContent}>
-              {/* Title Section */}
               <View style={styles.textSection}>
-                <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40} textAlign="center">
                   Verify Your{' '}
                   <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
                     Phone Number
                   </AppText>
                 </AppText>
                 <AppText
-                  text={`We have sent you 5-digit verification code at\n${maskPhoneNumber(identifier)}`}
+                  text={`We have sent you 5-digit verification code at\n${maskPhoneNumber(displayIdentifier)}`}
                   type="Regular"
                   fontSize={16}
                   color={Colors.BLACK}
                   style={styles.subText}
+                  textAlign="center"
                 />
               </View>
 
-              {/* OTP Input Section */}
               <View style={styles.otpWrapper}>
                 <Controller
                   control={control}
@@ -68,21 +72,16 @@ const VerifyPhoneNumberScreen = () => {
                       textInputStyle={styles.otpInput}
                       containerStyle={styles.otpContainer}
                       tintColor={FIGMA_TEAL}
-                      offTintColor="#EAEAEA"
-                      inputCount={4}
+                      offTintColor="#C4C4C4"
+                      inputCount={5}
                       keyboardType="numeric"
                     />
                   )}
                 />
               </View>
 
-              {/* Footer Resend Link */}
               <View style={styles.footerSec}>
-                <AppText
-                  text="Didn’t receive the code? "
-                  fontSize={15}
-                  color={Colors.BLACK}
-                />
+                <AppText text="Didn’t receive the code? " fontSize={15} color={Colors.BLACK} />
                 <AppText
                   onPress={isResendDisabled ? undefined : handleResendOtp}
                   text={isResendDisabled ? `Resend in ${formatTimer(timer)}` : "Resend here"}
@@ -95,7 +94,7 @@ const VerifyPhoneNumberScreen = () => {
               <View style={styles.bottomSec}>
                 <AppButton
                   loading={isLoading}
-                  onPress={handleVerifyOtp}
+                  onPress={handleVerifyOtp} 
                   title="Next"
                   backgroundColor={FIGMA_TEAL}
                   color={Colors.WHITE}
@@ -118,51 +117,25 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     paddingHorizontal: s(24),
-    paddingTop: vs(60),
+    paddingTop: vs(80),
     alignItems: 'center',
   },
-  textSection: {
-    width: '100%',
-    marginBottom: vs(40),
-  },
-  subText: {
-    marginTop: vs(15),
-    lineHeight: 24,
-  },
-  otpWrapper: {
-    width: '100%',
-    marginBottom: vs(20),
-  },
-  otpContainer: {
-    width: '100%',
-    justifyContent: 'space-between',
-  },
+  textSection: { width: '100%', marginBottom: vs(50) },
+  subText: { marginTop: vs(15), lineHeight: 24, opacity: 0.8 },
+  otpWrapper: { width: '100%', marginBottom: vs(40) },
+  otpContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between' },
   otpInput: {
-    width: Metrics.scale(74),
-    height: Metrics.verticalScale(60),
+    width: s(54),
+    height: vs(64),
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 12,
     borderBottomWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', 
     color: Colors.BLACK,
     fontSize: 24,
-    borderColor: Colors.BLACK
   },
-  footerSec: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: vs(10),
-  },
-  bottomSec: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'flex-end',
-    paddingBottom: vs(30),
-    marginTop: vs(40),
-  },
-  fullWidthBtn: {
-    width: '100%',
-  }
+  footerSec: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%' },
+  bottomSec: { flex: 1, width: '100%', justifyContent: 'flex-end', paddingBottom: vs(40), marginTop: vs(40) },
 });
 
 export default VerifyPhoneNumberScreen;

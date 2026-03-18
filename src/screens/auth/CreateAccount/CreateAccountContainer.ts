@@ -21,15 +21,14 @@ const signUpSchema = yup.object().shape({
     .matches(/[a-zA-Z]/, 'Password must contain letters')
     .matches(/[0-9]/, 'Password must contain numbers')
     .required('Password is required'),
+    agreeToTerms: yup.boolean().oneOf([true], 'You must accept the terms'),
 });
 
 export default function useCreateAccountContainer() {
   const { params } = useRoute();
-  const phone = params?.phone;
-  const listing_count = params?.listing_count;
-    const pricing = params?.pricing;
-
-  
+  const phone = params?.payload?.phone;
+  const listing_count = params?.payload?.listing_count;
+  const pricing = params?.payload?.pricing;
 
   const {
     control,
@@ -40,6 +39,7 @@ export default function useCreateAccountContainer() {
     defaultValues: {
       fullName: '',
       password: '',
+      agreeToTerms: false,
     },
   });
 
@@ -64,6 +64,7 @@ export default function useCreateAccountContainer() {
       password: data?.password,
       phone_number: phone,
       listing_count: listing_count,
+      agreeToTerms: data?.agreeToTerms
     };
     createAccountPayload(payload);
     console.log('onSubmit', data);
