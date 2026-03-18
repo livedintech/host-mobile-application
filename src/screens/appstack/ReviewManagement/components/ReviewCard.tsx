@@ -12,6 +12,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 interface ReviewCardProps {
   item: ReviewItem;
+  onPress: () => void;
   onViewReview: () => void;
   onTalkToGuest: () => void;
   onRequestRating: () => void;
@@ -21,6 +22,7 @@ interface ReviewCardProps {
 
 const ReviewCard = ({
   item,
+  onPress,
   onViewReview,
   onTalkToGuest,
   onRateGuest,
@@ -53,6 +55,8 @@ const ReviewCard = ({
 
   return (
     <GlassCard width="100%" style={styles.card}>
+      <ButtonView onPress={onPress}>
+      <View>
       <AppText
         text={item.guest_name || 'Guest'}
         fontSize={18}
@@ -184,8 +188,8 @@ const ReviewCard = ({
           />
         </View>
         {
-        // hostRating !== null ? 
-        false ?
+        hostRating !== null ? 
+        // false ?
         (
           renderProgressBar(hostRating)
         ) : (
@@ -207,6 +211,8 @@ const ReviewCard = ({
           </GradientBorder>
         )}
       </View>
+      </View>
+      </ButtonView>
     </GlassCard>
   );
 };

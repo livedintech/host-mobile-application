@@ -189,6 +189,7 @@ import location from './location.svg';
 import value from './value.svg';
 import reviewStartImg from './reviewStartImg.svg';
 import cleanWaterIcon from './cleanWaterIcon.svg';
+import crossIcon from './crossIcon.svg';
 import guestDetailIcon from './guest_detail.svg';
 import assignTaskNew from './assign_task.svg';
 import guestEmail from './guest_email.svg';
@@ -424,6 +425,7 @@ export const icons = {
   checkIn,
   reviewStartImg,
   cleanWaterIcon,
+  crossIcon,
 
   guestDetailIcon,
   assignTaskNew,

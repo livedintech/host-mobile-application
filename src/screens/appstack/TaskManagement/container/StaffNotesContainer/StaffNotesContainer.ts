@@ -8,7 +8,7 @@ import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 
 const useStaffNotesContainer = () => {
-  const { taskId } = useTaskStore();
+  const { taskId , resetTaskStore} = useTaskStore();
 
   const updateStatusMutation = useMutation({
     mutationFn: (description: string) =>
@@ -19,6 +19,7 @@ const useStaffNotesContainer = () => {
       }),
     onSuccess: () => {
       // Navigate to the next screen (e.g., Task Success or Task List)
+      resetTaskStore();
           queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST],
       });

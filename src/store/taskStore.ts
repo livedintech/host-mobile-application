@@ -34,11 +34,15 @@ import { create } from 'zustand';
 interface TaskState {
   taskId: number | null;
   taskType: string | null;
-  checklistData: any[]; // Data for ViewChecklistAll
-  selectedSectionId: number | null; // For ChecklistDetail
-  
+  taskStatus: string | null;
+  taskDescription: string | null;
+  checklistData: any[];
+  selectedSectionId: number | null;
+
   // Actions
-  setTaskInfo: (id: number, type: string) => void;
+  setCreatedTask: (id: number, type: string, data: any[]) => void;
+  setTaskInfo: (id: number, type: string, status: string, description:string) => void;
+  // setTaskStatus: (id: number, status: string, description: string) => void; // Added
   setChecklistData: (data: any[]) => void;
   setSelectedSection: (id: number) => void;
   resetTaskStore: () => void;
@@ -47,16 +51,24 @@ interface TaskState {
 export const useTaskStore = create<TaskState>((set) => ({
   taskId: null,
   taskType: null,
+  taskStatus: null,
+  taskDescription:null,
   checklistData: [],
   selectedSectionId: null,
 
-  setTaskInfo: (id, type) => set({ taskId: id, taskType: type }),
+  setTaskInfo: (id, type, status,description) => set({ taskId: id, taskType: type,taskStatus: status, taskDescription : description }),
+  setCreatedTask: (id, type, data) => 
+    set({ taskId: id, taskType: type, checklistData: data }),
+  
+  // setTaskStatus: (id, status, description) => set({ taskId: id, taskStatus: status, taskDescription : description }),
   setChecklistData: (data) => set({ checklistData: data }),
   setSelectedSection: (id) => set({ selectedSectionId: id }),
-  resetTaskStore: () => set({ 
-    taskId: null, 
-    taskType: null, 
-    checklistData: [], 
-    selectedSectionId: null 
-  }),
+  resetTaskStore: () =>
+    set({
+      taskId: null,
+      taskType: null,
+      taskStatus: null,
+      checklistData: [],
+      selectedSectionId: null,
+    }),
 }));

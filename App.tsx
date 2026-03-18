@@ -17,12 +17,11 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 
-
 // Import MyFatoorah configuration
 import myFatoorahConfig, {
   validateConfig,
   getEnvironmentName,
-  isProduction
+  isProduction,
 } from '@/config/myfatoorah.config';
 import linking from '@/navigation/linkingConfig';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -32,11 +31,13 @@ const App = () => {
     const isDarkMode = useColorScheme() === 'dark';
 
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
-  const [initializationError, setInitializationError] = useState<string | null>(null);
+  const [initializationError, setInitializationError] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     initializeApp();
-    configureGoogleSignIn()
+    configureGoogleSignIn();
   }, []);
 
   const initializeApp = async () => {
@@ -60,7 +61,6 @@ const App = () => {
       console.log('✅ App initialized successfully');
       console.log(`📱 Environment: ${getEnvironmentName()}`);
       console.log(`🌍 Country: Saudi Arabia`);
-
     } catch (error: any) {
       console.error('❌ App initialization failed:', error);
       setInitializationError(error.message || 'Initialization failed');
@@ -74,14 +74,16 @@ const App = () => {
       const success = await MFSDK.init(
         myFatoorahConfig.apiKey,
         myFatoorahConfig.country,
-        myFatoorahConfig.environment
+        myFatoorahConfig.environment,
       );
 
       console.log('✅ MyFatoorah SDK initialized:', success);
 
       // Warn if using production in development
       if (isProduction() && __DEV__) {
-        console.warn('⚠️ WARNING: Using PRODUCTION environment in development mode!');
+        console.warn(
+          '⚠️ WARNING: Using PRODUCTION environment in development mode!',
+        );
       }
 
       return success;
@@ -97,7 +99,7 @@ const App = () => {
         myFatoorahConfig.actionBarTitle,
         processColor(myFatoorahConfig.actionBarTitleColor),
         processColor(myFatoorahConfig.actionBarBackgroundColor),
-        true // Show back button
+        true, // Show back button
       );
 
       console.log('✅ MyFatoorah ActionBar configured:', success);
@@ -128,13 +130,16 @@ const App = () => {
 
   // Show warning if initialization failed
   if (initializationError) {
-    console.warn('⚠️ Payment system may not work properly:', initializationError);
+    console.warn(
+      '⚠️ Payment system may not work properly:',
+      initializationError,
+    );
   }
   const MyTheme = {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      background: Colors.WHITE
+      background: Colors.WHITE,
     },
   };
   return (

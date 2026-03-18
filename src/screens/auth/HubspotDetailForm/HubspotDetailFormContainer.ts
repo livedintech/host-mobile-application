@@ -70,6 +70,10 @@ export default function useHubspotDetailFormContainer() {
       email: '',
       country: '',
       city: '',
+      countryCode: {
+        cca2: 'SA',     
+        callingCode: '966',
+      },
     },
   });
 
@@ -90,7 +94,6 @@ export default function useHubspotDetailFormContainer() {
   const onSubmit = (data: MeetingDetailsFormValues) => {
     // Pass all lead info to CalendarScreen
     navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR, { userInfo: data });
-    // 👆 Replace with your actual route name
   };
 
   return {

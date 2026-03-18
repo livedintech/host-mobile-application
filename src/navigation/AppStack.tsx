@@ -589,8 +589,18 @@ const AppStack = () => {
             .default
         }
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL}
+        getComponent={() =>
+          require('@/screens/appstack/TaskManagement/screen/viewChecklistAll/viewChecklistAll')
+            .default
+        }
+      /> */}
+      <Stack.Screen
+        options={{
+          headerShown: false, 
+        }}
         name={NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL}
         getComponent={() =>
           require('@/screens/appstack/TaskManagement/screen/viewChecklistAll/viewChecklistAll')
@@ -598,7 +608,9 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{
+          headerShown: false, 
+        }}
         name={NavigationRoutes.APP_STACK.CHECKLIST_DETAIL}
         getComponent={() =>
           require('@/screens/appstack/TaskManagement/screen/ChecklistDetail/ChecklistDetail')

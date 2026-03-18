@@ -9,13 +9,18 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import DropdownField from '@/components/molecules/Input/DropdownField';
-import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import CreateTaskContainer from '../../container/CreateTaskContainer/CreateTaskContainer';
 
 const RecurringTaskScreen = () => {
-  // isLoading comes from useQuery in your container
-  const { transformedListing, transformedVendor, onNextStep, isLoading } =
-    CreateTaskContainer();
+  const { 
+    transformedListing, 
+    transformedVendor, 
+    onNextStep, 
+    isLoading, 
+    isRefreshing, 
+    onRefresh 
+  } = CreateTaskContainer();
 
   const {
     control,
@@ -31,7 +36,11 @@ const RecurringTaskScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
-        <View style={styles.content}>
+        <RefreshableScrollView
+            contentContainerStyle={styles.scrollContent}
+            onRefresh={onRefresh}
+            refreshing={isRefreshing}
+        >
           <View style={styles.titleContainer}>
             <AppText
               text="Set up Recurring Cleaning Schedule"
@@ -106,7 +115,7 @@ const RecurringTaskScreen = () => {
               onPress={handleSubmit(onNextStep)}
             />
           </View>
-        </View>
+        </RefreshableScrollView>
       </View>
     </BGImage>
   );
@@ -114,10 +123,11 @@ const RecurringTaskScreen = () => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
-  content: {
-    flex: 1,
+  scrollContent: {
     paddingHorizontal: Metrics.scale(25),
     paddingTop: Metrics.verticalScale(50),
+    paddingBottom: Metrics.verticalScale(20),
+    flexGrow: 1, // Ensures content stretches to fill screen so pull-to-refresh works
   },
   titleContainer: { marginBottom: Metrics.verticalScale(10) },
   formContainer: { flex: 1 },
@@ -125,7 +135,7 @@ const styles = StyleSheet.create({
     marginTop: Metrics.verticalScale(-8),
     paddingRight: Metrics.scale(20),
   },
-  footer: { marginBottom: Metrics.verticalScale(30) },
+  footer: { marginTop: Metrics.verticalScale(20), marginBottom: Metrics.verticalScale(10) },
 });
 
 export default RecurringTaskScreen;

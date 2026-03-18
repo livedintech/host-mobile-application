@@ -1,5 +1,13 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { StyleSheet, View, Image, Modal, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Modal,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -20,11 +28,21 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import useChecklistDetailContainer from '../../container/ChecklistDetailContainer/ChecklistDetailContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Metrics from '@/utility/Metrics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import HeaderApp from '@/components/molecules/Header/HeaderApp';
+import { useTaskStore } from '@/store/taskStore';
 
 const { width, height } = Dimensions.get('window');
 
 const ChecklistDetail = ({ route }: any) => {
+  const { taskId: storeTaskId, taskStatus } = useTaskStore();
+  // console.log("storeTaskStatus",storeTaskStatus);
+  // console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' )
+// const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' || storeTaskStatus === 'pending';
+
+// console.log("taskStatus",taskStatus)
   const { title, sectionId, taskId, fromEdit } = route.params;
+  const insets = useSafeAreaInsets();
 
   const {
     localItems,
@@ -70,12 +88,14 @@ const ChecklistDetail = ({ route }: any) => {
     reset();
   };
 
-  const handleOpenEdit = (item: any) => {
-    if (item.images && item.images.length > 0) return;
-    setSelectedItem({ id: item.id, name: item.name });
-    setValue('itemName', item.name);
-    bottomSheetRef.current?.expand();
-  };
+const handleOpenEdit = useCallback((item: any) => {
+  if (taskStatus === 'completed' || (item.images && item.images.length > 0)) {
+    return;
+  }
+  setSelectedItem({ id: item.id, name: item.name });
+  setValue('itemName', item.name);
+  bottomSheetRef.current?.expand();
+}, [taskStatus, setValue]); // Add dependencies here
 
   const renderMedia = (mediaItems: any[]) => {
     if (!mediaItems || mediaItems.length === 0) return null;
@@ -155,145 +175,154 @@ const ChecklistDetail = ({ route }: any) => {
         </GlassCard>
       );
     },
-    [toggleItem],
+    [toggleItem,handleOpenEdit, taskStatus],
   );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <View style={styles.safeArea}>
-        <FlatListSimpleHandler
-          data={localItems}
-          renderItem={renderItem}
-          isLoading={isLoading}
-          onRefresh={onRefresh}
-          contentContainerStyle={styles.listContent}
-          HeaderComponent={
-            <View>
-              <AppText
-                text={`${title} Checklist`}
-                fontSize={28}
-                type="Bold"
-                mb={12}
-                mt={20}
-              />
-              {!hasExistingMedia && (
-                <View style={styles.addMoreContainer}>
-                  <ButtonView
-                    onPress={() => {
-                      setSelectedItem(null);
-                      reset();
-                      bottomSheetRef.current?.expand();
-                    }}
-                  >
-                    <GlassCard width="auto" style={styles.addMoreBtn}>
-                      {/* <View style={styles.addMoreInner}> */}
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={{ flex: 1 }}
+        >
+          <HeaderApp isGoBackAfterLogo />
+          <FlatListSimpleHandler
+            data={localItems}
+            renderItem={renderItem}
+            isLoading={isLoading}
+            onRefresh={onRefresh}
+            contentContainerStyle={styles.listContent}
+            HeaderComponent={
+              <View>
+                <AppText
+                  text={`${title} Checklist`}
+                  fontSize={28}
+                  type="Bold"
+                  mb={12}
+                  mt={20}
+                />
+                {
+                // storeTaskStatus == 'todo' || storeTaskStatus == 'template' || storeTaskStatus == 'inprogress' 
+                taskStatus !== 'completed'
+                && (
+                    <View style={styles.addMoreContainer}>
+                      <ButtonView
+                        onPress={() => {
+                          setSelectedItem(null);
+                          reset();
+                          bottomSheetRef.current?.expand();
+                        }}
+                      >
+                        <GlassCard width="auto" style={styles.addMoreBtn}>
+                          {/* <View style={styles.addMoreInner}> */}
 
-                      <AppText text="Add more" fontSize={12} type="Medium" />
-                      {/* </View> */}
-                    </GlassCard>
-                  </ButtonView>
-                </View>
+                          <AppText
+                            text="Add more"
+                            fontSize={12}
+                            type="Medium"
+                          />
+                          {/* </View> */}
+                        </GlassCard>
+                      </ButtonView>
+                    </View>
+                  )}
+              </View>
+            }
+            ListFooterComponent={<View style={{ height: 120 }} />}
+            keyExtractor={item => item.id.toString()}
+          />
+
+          {taskStatus !== 'completed' && (
+              <View style={styles.footer}>
+                <AppButton
+                  title="Save"
+                  backgroundColor={Colors.PRIMARY_TEAL}
+                  borderColor={Colors.PRIMARY_TEAL}
+                  color={Colors.WHITE}
+                  onPress={saveAndContinue}
+                  loading={isLoading}
+                />
+              </View>
+            )}
+
+          {/* Video Player Modal */}
+          <Modal
+            visible={!!selectedVideo}
+            transparent={false}
+            animationType="fade"
+          >
+            <View style={styles.videoModalContainer}>
+              <ButtonView
+                style={styles.closeBtn}
+                onPress={() => setSelectedVideo(null)}
+              >
+                <Svgicons path="closeIcon" size={30} color={Colors.WHITE} />
+              </ButtonView>
+              {selectedVideo && (
+                <Video
+                  source={{ uri: selectedVideo }}
+                  style={styles.fullScreenVideo}
+                  controls
+                  resizeMode="contain"
+                />
               )}
             </View>
-          }
-          ListFooterComponent={<View style={{ height: 120 }} />}
-          keyExtractor={item => item.id.toString()}
-        />
+          </Modal>
 
-        {!fromEdit && (
-          <View style={styles.footer}>
-            <AppButton
-              title="Save"
-              backgroundColor={Colors.PRIMARY_TEAL}
-              borderColor={Colors.PRIMARY_TEAL}
-              color={Colors.WHITE}
-              onPress={saveAndContinue}
-              loading={isLoading}
-            />
-          </View>
-        )}
+          {/* Image Viewer */}
+          <ImageView
+            images={currentImage}
+            visible={isImageViewerVisible}
+            onRequestClose={() => setIsImageViewerVisible(false)}
+          />
 
-        {/* Video Player Modal */}
-        <Modal
-          visible={!!selectedVideo}
-          transparent={false}
-          animationType="fade"
-        >
-          <View style={styles.videoModalContainer}>
-            <ButtonView
-              style={styles.closeBtn}
-              onPress={() => setSelectedVideo(null)}
-            >
-              <Svgicons path="closeIcon" size={30} color={Colors.WHITE} />
-            </ButtonView>
-            {selectedVideo && (
-              <Video
-                source={{ uri: selectedVideo }}
-                style={styles.fullScreenVideo}
-                controls
-                resizeMode="contain"
+          {/* Bottom Sheet for Add/Edit */}
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={-1}
+            snapPoints={snapPoints}
+            enablePanDownToClose
+            backdropComponent={props => (
+              <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                appearsOnIndex={0}
               />
             )}
-          </View>
-        </Modal>
-
-        {/* Image Viewer */}
-        <ImageView
-          images={currentImage}
-          visible={isImageViewerVisible}
-          onRequestClose={() => setIsImageViewerVisible(false)}
-        />
-
-        {/* Bottom Sheet for Add/Edit */}
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          backdropComponent={props => (
-            <BottomSheetBackdrop
-              {...props}
-              disappearsOnIndex={-1}
-              appearsOnIndex={0}
-            />
-          )}
-        >
-          <BottomSheetView style={styles.sheetContent}>
-            <AppText
-              text={selectedItem ? 'Edit Checklist' : 'Add New Checklist'}
-              fontSize={20}
-              type="Bold"
-              mb={25}
-            />
-            <AppText
-              text={'Add Item'}
-              fontSize={14}
-              type="Medium"
-              mb={15}
-            />
-            <InputField
-              name="itemName"
-              control={control}
-              errors={errors}
-              placeholder="e.g. Clean the windows"
-              rules={{ required: 'Required' }}
-            />
-            <AppButton
-              title={selectedItem ? 'Update' : 'Add'}
-              backgroundColor={Colors.PRIMARY_TEAL}
-              borderColor= {Colors.PRIMARY_TEAL}
-              color={Colors.WHITE}
-              mt={20}
-              onPress={handleSubmit(onFormSubmit)}
-            />
-          </BottomSheetView>
-        </BottomSheet>
+          >
+            <BottomSheetView style={styles.sheetContent}>
+              <AppText
+                text={selectedItem ? 'Edit Checklist' : 'Add New Checklist'}
+                fontSize={20}
+                type="Bold"
+                mb={25}
+              />
+              <AppText text={'Add Item'} fontSize={14} type="Medium" mb={15} />
+              <InputField
+                name="itemName"
+                control={control}
+                errors={errors}
+                placeholder="e.g. Clean the windows"
+                rules={{ required: 'Required' }}
+              />
+              <AppButton
+                title={selectedItem ? 'Update' : 'Add'}
+                backgroundColor={Colors.PRIMARY_TEAL}
+                borderColor={Colors.PRIMARY_TEAL}
+                color={Colors.WHITE}
+                mt={20}
+                onPress={handleSubmit(onFormSubmit)}
+              />
+            </BottomSheetView>
+          </BottomSheet>
+        </KeyboardAvoidingView>
       </View>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
   safeArea: { flex: 1 },
   listContent: {
     paddingHorizontal: 25,

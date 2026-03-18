@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-nati
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import CalendarListingCard from '../CalendarListingCard/CalendarListingCard';
+import { RawBookingData } from '@/types/api/bookingTypes';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -16,6 +18,7 @@ interface MultiChannelCalendarProps {
   markedDates: any;
   onDayPress: (day: any) => void;
   currentDate?: string;
+  bookings: RawBookingData[];
 }
 
 const CustomDay = ({ date, state, marking, onPress }: any) => {
@@ -62,17 +65,18 @@ const LegendItem = ({ config }: { config: { label: string, color: string } }) =>
   </View>
 );
 
-const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate }: MultiChannelCalendarProps) => {
-  return (
-    <View style={styles.card}>
-      {/* LEGEND HEADER */}
-      <View style={styles.legendHeader}>
-        <LegendItem config={OTAs.AIRBNB} />
-        <LegendItem config={OTAs.GATHERN} />
-        <LegendItem config={OTAs.LIVEDIN} />
-      </View>
 
-      <Calendar
+const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate, bookings }: MultiChannelCalendarProps) => {
+  return (
+    <View>
+      {bookings.map((item) => (
+        <CalendarListingCard 
+          key={item.id} 
+          item={item}
+        />
+      ))}
+
+      {/* <Calendar
         current={currentDate}
         markingType="custom"
         markedDates={markedDates}
@@ -109,7 +113,7 @@ const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate }: MultiCha
             }
           }
         } as any}
-      />
+      /> */}
     </View>
   );
 };
@@ -196,3 +200,4 @@ const styles = StyleSheet.create({
 });
 
 export default MultiChannelCalendar;
+
