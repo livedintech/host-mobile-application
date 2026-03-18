@@ -115,9 +115,9 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(18),
   },
   dropdown: {
-    minHeight: Metrics.verticalScale(52),
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Glassy input background stays
-    borderRadius: 16,
+    minHeight: Metrics.verticalScale(56),
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 12,
     paddingHorizontal: 16,
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.7)',
@@ -128,19 +128,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginTop: 8,
     borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 12 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    borderColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  disabled: {
+    backgroundColor: Colors.ANTI_FLASH_WHITE,
+      opacity: 0.5,
+  },
+  errorBorder: {
+    borderColor: Colors.INDIAN_RED,
   },
   placeholderStyle: {
     fontSize: 13,
@@ -170,12 +165,12 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: Colors.ANTI_FLASH_WHITE,
   },
-  disabled: {
-    opacity: 0.5,
-  },
-  errorBorder: {
-    borderColor: Colors.INDIAN_RED,
-  },
+  // disabled: {
+  //   opacity: 0.5,
+  // },
+  // errorBorder: {
+  //   borderColor: Colors.INDIAN_RED,
+  // },
   errorText: {
     marginTop: 5,
     fontSize: 12,

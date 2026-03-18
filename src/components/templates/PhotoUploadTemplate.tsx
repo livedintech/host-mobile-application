@@ -18,6 +18,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useMediaUpload, MediaItem } from './useMediaUpload';
 import CircularProgress from '../molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
+import BGImage from '../molecules/BGImage/BGImage';
 
 interface PhotoUploadTemplateProps {
   step?: string;
@@ -97,6 +98,7 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
   }
 
   return (
+     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
 
       <View style={styles.content}>
@@ -314,13 +316,14 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
         </View>
       </View>
     </View>
+    </BGImage>
   );
 };
 
 export default PhotoUploadTemplate;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1 },
   content: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
 
   subTitleRow: {

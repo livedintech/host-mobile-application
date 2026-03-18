@@ -201,8 +201,39 @@ import bookingCode from './sms-code.svg';
 import aiChat from './ai-chat-new.svg';
 import overallRating from './overallRating.svg';
 import back from './back.svg';
+import motionStar from './motionStar.svg'
+import envelope from './envelope.svg'
+import curvedChecked from './curvedChecked.svg'
+import envelopeSpark from './envelopeSpark.svg'
+import bookReading from './bookReading.svg'
+import checkList from './checkList.svg'
+import chartAnalysis from './chartAnalysis.svg'
+import businessCard from './businessCard.svg'
+import databaseRaidStorage from './databaseRaidStorage.svg'
+import multiCalendar from './multiCalendar.svg'
+import targetShopBullseye from './multiCalendar.svg'
+import paymentDollar from './paymentDollar.svg'
+import envelopeResend from './envelopeResend.svg'
+import cardBlack from './cardBlack.svg'
+import chatIcon from './chatIcon.svg'
+import sendWhite from './sendWhite.svg'
 
 export const icons = {
+  sendWhite,
+  chatIcon,
+  cardBlack,
+  targetShopBullseye,
+  paymentDollar,
+  envelopeResend,
+  multiCalendar,
+  envelope,
+  curvedChecked,
+  envelopeSpark,
+  bookReading,
+  checkList,
+  databaseRaidStorage,
+  businessCard,
+  chartAnalysis,
   eyeSlash: EyeSlash,
   eye: Eye,
   ChevronDownIcon: ChevronDownIcon,
@@ -406,5 +437,6 @@ export const icons = {
   bookingCode,
   aiChat,
   overallRating,
-  back
+  back,
+  motionStar
 };

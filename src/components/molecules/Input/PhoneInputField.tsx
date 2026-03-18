@@ -15,7 +15,8 @@ interface PhoneInputFieldProps {
     countryFieldName: string;
     phoneFieldName: string;
     activeColor?: string;
-    disabled?: boolean; // New prop for uneditable state
+    inactiveColor?: string;
+    disabled?: boolean;
 }
 
 const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
@@ -25,7 +26,8 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
     countryFieldName,
     phoneFieldName,
     activeColor = Colors.BRUNSWICK_GREEN,
-    disabled = false, // Default to enabled
+    inactiveColor = Colors.HYPER_SILVER, // Default to a light grey
+    disabled = false,
 }) => {
     const [pickerVisible, setPickerVisible] = React.useState(false);
     const animation = useRef(new Animated.Value(0)).current;
@@ -54,7 +56,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
 
     const animatedBackgroundColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [disabled ? '#F9F9F9' : Colors.WHITE, Colors.WHITE],
+        outputRange: [disabled ? '#F9F9F9' : 'rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.25)'],
     });
 
     return (
@@ -84,7 +86,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                                 withFlag
                                 withFilter
                                 withCallingCode
-                                countryCode={value.cca2 as CountryCode}
+                                countryCode={value?.cca2 as CountryCode}
                                 onSelect={(country: Country) => {
                                     onChange({
                                         cca2: country.cca2,
@@ -95,7 +97,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                                 onClose={() => setPickerVisible(false)}
                             />
                             <AppText 
-                                text={`+${value.callingCode}`} 
+                                text={`+${value?.callingCode || ''}`} 
                                 color={disabled ? Colors.SUPER_GREY : Colors.BLACK} 
                             />
                             {!disabled && <Svgicons path='ChevronDownIcon' size={10} pl={5}/>}
@@ -152,10 +154,10 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderRadius: 12,
         height: Metrics.verticalScale(57),
-        paddingHorizontal: 4,
+        paddingHorizontal: 8, // Increased slightly for better visual balance
     },
     pickerButton: {
         flexDirection: 'row',

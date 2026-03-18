@@ -6,61 +6,64 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const CreateListingStepOneScreen = () => {
   const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading, isChannelMissing } = useCreateListingStepOneContainer();
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        {/* Step Indicator & Icon */}
-        <View style={styles.stepHeader}>
-          <AppText text="Step 1 " fontSize={40} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-          <Svgicons path="property" size={40} />
-        </View>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          {/* Step Indicator & Icon */}
+          <View style={styles.stepHeader}>
+            <AppText text="Step 1 " fontSize={40} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+            <Svgicons path="property" size={40} />
+          </View>
 
-        <View style={styles.titleSection}>
-          <AppText
-            text="Select the type of place you own"
-            fontSize={22}
-            type="SemiBold"
-            color={Colors.BRUNSWICK_GREEN}
-            textAlign="center"
-          />
-        </View>
-
-        <View style={styles.form}>
-          <DropdownField
-            name="propertyType"
-            control={control}
-            errors={errors}
-            label=""
-            data={propertyOptions}
-            placeholder="Select.."
-          />
-
-          <View style={styles.footer}>
-            <AppButton
-              loading={isLoading}
-              title="Next"
-              onPress={handleSubmit(onNext)}
-              mt={20}
-              disabled={isChannelMissing}
+          <View style={styles.titleSection}>
+            <AppText
+              text="Select the type of place you own"
+              fontSize={22}
+              type="SemiBold"
+              color={Colors.BRUNSWICK_GREEN}
+              textAlign="center"
             />
-            <AppButton
-              title="Save & Exit"
-              onPress={onSaveExit}
-              mt={15}
-              disabled={isLoading || isChannelMissing}
+          </View>
+
+          <View style={styles.form}>
+            <DropdownField
+              name="propertyType"
+              control={control}
+              errors={errors}
+              label=""
+              data={propertyOptions}
+              placeholder="Select.."
             />
+
+            <View style={styles.footer}>
+              <AppButton
+                loading={isLoading}
+                title="Next"
+                onPress={handleSubmit(onNext)}
+                mt={20}
+                disabled={isChannelMissing}
+              />
+              <AppButton
+                title="Save & Exit"
+                onPress={onSaveExit}
+                mt={15}
+                disabled={isLoading || isChannelMissing}
+              />
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1 },
   bgCircle: {
     position: 'absolute',
     top: -50,

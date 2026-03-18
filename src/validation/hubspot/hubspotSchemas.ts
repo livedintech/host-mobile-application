@@ -2,10 +2,14 @@ import * as yup from 'yup';
 
 export interface MeetingDetailsFormValues {
   fullName: string;
-  phone?: string;
-  email?: string;
+  phone: string;
+  email: string;
   country: string;
   city: string;
+  countryCode: {
+    cca2: string;
+    callingCode: string;
+  };
 }
 
 export const meetingDetailsSchema = yup.object({
@@ -13,6 +17,11 @@ export const meetingDetailsSchema = yup.object({
     .string()
     .required('Full name is required')
     .min(3, 'Name must be at least 3 characters'),
+
+  countryCode: yup.object({
+      cca2: yup.string().required(),
+      callingCode: yup.string().required(),
+    }).required(),  
 
   phone: yup
     .string()

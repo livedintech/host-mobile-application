@@ -34,15 +34,14 @@ const MoreScreen = () => {
         >
           <GlassCard width="auto" style={styles.profileCard}>
             <View style={styles.profileInfo}>
-              <Image
-                source={
-                  user?.profile_picture
-                    ? { uri: user.profile_picture }
-                    : require('@/assets/img/profile.png')
-                }
-                style={styles.avatar}
-              />
-
+              {user?.profile_picture ? (
+                <Image
+                  source={{ uri: user.profile_picture }}
+                  style={styles.avatar}
+                />
+              ) : (
+                <Svgicons path="imageUploadIcon" size={25} />
+              )}
               <View>
                 <AppText
                   text={user?.name ?? 'User Name'}

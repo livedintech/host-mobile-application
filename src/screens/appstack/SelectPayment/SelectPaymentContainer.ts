@@ -5,11 +5,11 @@ import { navigate } from '@/services/navigationService';
 import { MFSDK, MFLanguage, MFCurrencyISO, MFInitiatePaymentRequest } from 'myfatoorah-reactnative';
 
 // Payment Method Types
-export type PaymentMethodType = 
-  | 'mada' 
-  | 'stc_pay' 
-  | 'visa_master' 
-  | 'apple_pay' 
+export type PaymentMethodType =
+  | 'mada'
+  | 'stc_pay'
+  | 'visa_master'
+  | 'apple_pay'
   | 'google_pay';
 
 interface PaymentMethod {
@@ -36,16 +36,16 @@ export default function useSelectPaymentContainer() {
         InvoiceAmount: 1,
         CurrencyIso: MFCurrencyISO.SAUDIARABIA_SAR, // ✅ Use enum
       };
-      
+
       const response = await MFSDK.initiatePayment(request, MFLanguage.ENGLISH);
-      
+
       console.log('=================================');
       console.log('📋 AVAILABLE PAYMENT METHODS');
       console.log('=================================');
-      
+
       // Response might be PaymentMethods array directly or nested
       const methods = response.PaymentMethods || response;
-      
+
       if (Array.isArray(methods)) {
         methods.forEach((method: any) => {
           console.log(`
@@ -57,11 +57,11 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
       } else {
         console.log('Full response:', response);
       }
-      
+
       console.log('=================================');
       console.log('✅ Copy IDs and update paymentMethods array below');
       console.log('=================================');
-      
+
     } catch (error) {
       console.error('❌ Error getting payment methods:', error);
     }
@@ -70,43 +70,35 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
   // Payment Methods Configuration
   // ⚠️ UPDATE apiIdentifier with actual IDs from console above
   const paymentMethods: PaymentMethod[] = [
-    { 
-      id: '1', 
-      type: 'mada',
-      name: 'Mada', 
-      icon: require('@/assets/img/mada_logo.png'),
-      apiIdentifier: 1, // ⚠️ UPDATE THIS
-      isCardMethod: true, // ⚠️ UPDATE THIS (true if IsDirectPayment = true)
-    },
-    { 
-      id: '2', 
+    {
+      id: '1',
       type: 'stc_pay',
-      name: 'STC Pay', 
-      icon: require('@/assets/img/stc_pay_logo.png'),
+      name: 'STC Pay',
+      icon: 'LogoStcCardIcon',
       apiIdentifier: 11, // ⚠️ UPDATE THIS
       isCardMethod: false, // ⚠️ UPDATE THIS
     },
-    { 
-      id: '3', 
+    {
+      id: '2',
       type: 'visa_master',
-      name: 'MasterCard/Visa', 
-      icon: require('@/assets/img/mastercard_visa.png'),
+      name: 'MasterCard/Visa',
+      icon: 'LogoVisaCardIcon',
       apiIdentifier: 2, // ⚠️ UPDATE THIS
       isCardMethod: true, // ⚠️ UPDATE THIS
     },
-    { 
-      id: '4', 
+    {
+      id: '4',
       type: 'apple_pay',
-      name: 'Apple Pay', 
-      icon: require('@/assets/img/apple_pay.png'),
+      name: 'Apple Pay',
+      icon: 'LogoAppleCardICon',
       apiIdentifier: 20, // ⚠️ UPDATE THIS
       isCardMethod: false, // ⚠️ UPDATE THIS
     },
-    { 
-      id: '5', 
+    {
+      id: '5',
       type: 'google_pay',
-      name: 'Google Pay', 
-      icon: require('@/assets/img/google_pay.png'),
+      name: 'Google Pay',
+      icon: 'LogoGooglePayCardIcon',
       apiIdentifier: 21, // ⚠️ UPDATE THIS
       isCardMethod: false, // ⚠️ UPDATE THIS
     },
@@ -115,7 +107,7 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
   const onSelect = (methodId: string) => {
     // Find selected payment method
     const selectedMethod = paymentMethods.find(m => m.id === methodId);
-    
+
     if (!selectedMethod) {
       console.error('Payment method not found');
       return;
@@ -134,10 +126,10 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
     });
   };
 
-  return { 
-    paymentMethods, 
-    onSelect, 
-    navigation 
+  return {
+    paymentMethods,
+    onSelect,
+    navigation
   };
 }
 
