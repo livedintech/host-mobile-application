@@ -132,10 +132,11 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 130,
     borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
+    borderColor: 'rgba(255, 255, 255, 0.5)', // Light rim border
     borderRadius: 12,
     padding: 14,
     textAlignVertical: 'top',
+     backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent fill
   },
 
   dropdown: {

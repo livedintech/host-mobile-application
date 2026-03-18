@@ -34,7 +34,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        // options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.CHAT}
         getComponent={() =>
           require('@/screens/appstack/Chat/ChatScreen').default

@@ -43,6 +43,9 @@ export default function useEnterPasswordContainer() {
 
   const { params } = useRoute();
 
+  console.log('params',params);
+  
+
   const {
     control,
     handleSubmit,
@@ -90,7 +93,7 @@ export default function useEnterPasswordContainer() {
       Toast.show({ type: 'success', text1: message });
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: true,
-        phone: params,
+        phone: params?.countryCallingCode + params?.phoneNo,
       });
     },
     onError: ({ message }) => {
@@ -121,7 +124,7 @@ export default function useEnterPasswordContainer() {
 
   const gotToVerifyOTP = () => {
     const payload = {
-      phone_number: params?.phoneNo + params?.countryCallingCode,
+      phone_number: params?.countryCallingCode + params?.phoneNo,
     };
     forgotPayload(payload);
   };

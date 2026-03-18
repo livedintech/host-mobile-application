@@ -49,12 +49,12 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
 
     const animatedBorderColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [disabled ? Colors.HYPER_SILVER : Colors.BRUNSWICK_GREEN, activeColor],
+        outputRange: [disabled ? Colors.HYPER_SILVER : Colors.WHITE_OPACITY_60, activeColor],
     });
 
     const animatedBackgroundColor = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [disabled ? '#F9F9F9' : Colors.WHITE, Colors.WHITE],
+        outputRange: [disabled ? '#F9F9F9' : 'rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.25)'],
     });
 
     return (
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderRadius: 12,
         height: Metrics.verticalScale(57),
         paddingHorizontal: 4,

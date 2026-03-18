@@ -117,7 +117,7 @@ import { usePhoneStore } from '@/store/usePhoneStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
 
 export default function useLoginWithPhoneContainer() {
-  const { cca2, callingCode, phoneNumber: storePhoneNo } = useRememberMeStore();
+  const { cca2, callingCode, phoneNumber: storePhoneNo,rememberMe,setRememberMe } = useRememberMeStore();
   const setPhoneData = usePhoneStore((state) => state.setPhoneData);
   const [phoneNumber, setphoneNumber] = useState('');
 
@@ -143,7 +143,11 @@ export default function useLoginWithPhoneContainer() {
     mutationFn: resendOtpApi,
     onSuccess: () => {
       // Navigate ONLY after the OTP has been successfully sent
-      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, phoneNumber);
+      
+      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
+        isLoginScreen: false,
+        phone: countryCallingCode + phoneNo,
+      });
     },
     onError: (error: any) => {
       Toast.show({
@@ -197,5 +201,7 @@ export default function useLoginWithPhoneContainer() {
     watch,
     handleSubmit,
     onSubmit,
+    rememberMe,
+    setRememberMe
   };
 }

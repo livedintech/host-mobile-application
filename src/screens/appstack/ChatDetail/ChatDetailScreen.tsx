@@ -31,6 +31,9 @@ import { useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import Metrics from '@/utility/Metrics';
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 
@@ -342,7 +345,7 @@ const ChatScreen = () => {
             text={replyTo.text.length > 80 ? replyTo.text.substring(0, 80) + '...' : replyTo.text}
             // text={replyTo.text.substring(0, 80)}
             fontSize={11}
-            color={Colors.GREY_SHADOW}
+            color={Colors.DRAVIT_GREY}
             numberOfLines={2}
           />
         {/* </View> */}
@@ -466,7 +469,7 @@ const ChatScreen = () => {
               <AppText
                 text={item.text}
                 fontSize={13}
-                color={isHost && !isAutomated ? Colors.WHITE : Colors.MIDNIGHT}
+                color={isHost && !isAutomated ? Colors.BLACK : Colors.MIDNIGHT}
               />
             )}
 
@@ -476,7 +479,7 @@ const ChatScreen = () => {
               fontSize={11}
               color={
                 isHost && !isAutomated
-                  ? 'rgba(255,255,255,0.7)'
+                  ? Colors.GREY_SHADOW
                   : Colors.GREY_SHADOW
               }
               mt={8}
@@ -503,6 +506,7 @@ const ChatScreen = () => {
   };
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={20}
@@ -820,29 +824,33 @@ const ChatScreen = () => {
               Keyboard.dismiss();
               setShowSavedReplies(!showSavedReplies);
             }}
-            style={[
-              styles.plusAction,
-              {
-                backgroundColor: showSavedReplies
-                  ? Colors.BRUNSWICK_GREEN
-                  : Colors.BRUNSWICK_GREEN,
-              },
-            ]}
+            // style={[
+            //   styles.plusAction,
+            //   {
+            //     backgroundColor: showSavedReplies
+            //       ? Colors.WHITE
+            //       : Colors.WHITE,
+            //   },
+            // ]}
           >
-            <Svgicons path="plusWhiteIcon" size={20} />
+             <GlassCard style={styles.plusAction}>
+            <Svgicons path="chatIcon" size={20} />
+            </GlassCard>
           </Pressable>
 
-          <View style={styles.combinedInputContainer}>
+          {/* <View style={styles.combinedInputContainer}> */}
+          <GlassCard style={styles.mainCardItem}>
             <TextInput
               value={inputText}
               onChangeText={setInputText}
-              placeholder="Send Message"
-              placeholderTextColor={Colors.GREY_SHADOW}
+              placeholder="Ask me any question"
+              placeholderTextColor={Colors.SECRET_CHOCOLATE}
               style={styles.input}
               multiline
               maxLength={500}
             />
-          </View>
+            </GlassCard>
+          {/* </View> */}
 
           <Pressable
             onPress={sendMessage}
@@ -852,7 +860,7 @@ const ChatScreen = () => {
               !inputText.trim() && styles.sendButtonDisabled,
             ]}
           >
-            <Svgicons path="sendIcon" size={18} color={Colors.WHITE} />
+            <Svgicons path={!inputText.trim() ?  "sendIcon" : "sendWhite"} size={18} color={Colors.WHITE} />
           </Pressable>
         </View>
 
@@ -936,13 +944,13 @@ const ChatScreen = () => {
         )}
       </View>
     </KeyboardAvoidingView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
   header: {
     flexDirection: 'row',
@@ -1021,24 +1029,26 @@ const styles = StyleSheet.create({
   },
   messageBubbleHighlighted: {
     backgroundColor: 'rgba(39, 174, 96, 0.15)',
-    shadowColor: Colors.BRUNSWICK_GREEN,
+    shadowColor: Colors.TEAL_20_OPACITY,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
   hostBubble: {
-    backgroundColor: Colors.BRUNSWICK_GREEN,
+    backgroundColor: Colors.TEAL_20_OPACITY,
     borderBottomRightRadius: 2,
   },
   guestBubble: {
-    backgroundColor: '#F2F2F2',
+    // backgroundColor: '#F2F2F2',
     borderBottomLeftRadius: 2,
+    borderWidth:1,
+    borderColor: Colors.WHITE
   },
   automatedBubble: {
     borderStyle: 'dotted',
     borderWidth: 1.5,
-    borderColor: Colors.BRUNSWICK_GREEN,
+    borderColor: Colors.TEAL_20_OPACITY,
     backgroundColor: '#F9FCFB',
   },
   automatedLabel: {
@@ -1185,9 +1195,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
     gap: 10,
-    backgroundColor: Colors.WHITE,
-    borderTopWidth: 1,
-    borderTopColor: '#EEE',
   },
   plusAction: {
     justifyContent: 'center',
@@ -1195,6 +1202,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+    marginBottom:0,
+        backgroundColor:Colors.TRANSPARENT
   },
   combinedInputContainer: {
     flex: 1,
@@ -1205,7 +1214,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: 15,
     minHeight: 50,
-    backgroundColor: Colors.WHITE,
   },
   input: {
     flex: 1,
@@ -1219,9 +1227,10 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: Colors.PINE_FOREST,
+    borderColor: Colors.EMERALD_TEAL,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:Colors.EMERALD_TEAL
   },
   sendButtonDisabled: {
     backgroundColor: Colors.SUPER_GREY,
@@ -1304,6 +1313,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 5,
   },
+   mainCardItem: {
+      flex: 1,
+      width: '100%',
+      borderRadius: 17,
+      paddingHorizontal: Metrics.scale(30),
+      flexDirection:'row',
+      alignItems:'center',
+      marginBottom:0,
+      backgroundColor:Colors.TRANSPARENT
+    },
 });
 
 export default ChatScreen;

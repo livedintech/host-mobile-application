@@ -114,11 +114,11 @@ const styles = StyleSheet.create({
   dropdown: {
     height: Metrics.verticalScale(54),
     // --- GLASS STYLING ---
-    backgroundColor: 'transparent',
+     backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent fill
     borderRadius: 10,             
     paddingHorizontal: 16,
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.6)', 
+    borderColor: Colors.WHITE_OPACITY_60, 
   },
   popupListContainer: {
     backgroundColor: '#FFFFFF',

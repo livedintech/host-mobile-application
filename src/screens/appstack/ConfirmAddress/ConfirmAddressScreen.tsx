@@ -10,6 +10,7 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const ConfirmAddressScreen = () => {
   const {
@@ -27,6 +28,7 @@ const ConfirmAddressScreen = () => {
   } = useConfirmAddressContainer();
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -138,11 +140,12 @@ const ConfirmAddressScreen = () => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1},
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
   titleContainer: {
     flexDirection: 'row',

@@ -10,10 +10,6 @@ import { resendOtpApi, verifyOtpApi } from '@/services/authApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
-/**
- * Validation Schema: Screenshot mein 5 digits hain,
- * isliye length(5) set ki gayi hai.
- */
 const otpVerifySchema = yup.object().shape({
   otpCode: yup
     .string()
@@ -27,14 +23,12 @@ export default function useVerifyPhoneNumberContainer() {
   const [timer, setTimer] = useState<number>(RESEND_TIME_LIMIT);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const { params } = useRoute();
-  const phone = typeof params === 'string' 
-    ? params 
-    : (params as any)?.phone || (params as any)?.phoneNumber;
-  const pricing = params?.pricing;
+  
+  const phone = (params as any)?.phone;
+  const isLoginScreen = (params as any)?.isLoginScreen;
 
-  const listing_count = params?.listing_count;
-
-  const isLoginScreen = params?.isLoginScreen;
+  console.log('params',params);
+  
 
   const {
     control,
@@ -67,8 +61,6 @@ export default function useVerifyPhoneNumberContainer() {
       else{
         navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
           phone: phone,
-          listing_count: listing_count,
-          pricing,
         });
       }
     },
@@ -128,14 +120,7 @@ export default function useVerifyPhoneNumberContainer() {
       phone_number: phone,
       otp: data.otpCode,
     };
-    otpVerifyPayload(payload, {
-      onSuccess: () => {
-        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phone);
-      },
-      onError: (error) => {
-        console.log("OTP Error:", error);
-      }
-    });
+    otpVerifyPayload(payload);
   };
 
   const formatTimer = (seconds: number) => {

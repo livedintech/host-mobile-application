@@ -11,87 +11,90 @@ import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDr
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const CreateSavedReplyScreen = () => {
     const { control, errors, handleSubmit, isLoading, isEditMode, transformedListing } = useSavedRepliesCreateEditContainer();
     return (
-        <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+            <View style={styles.container}>
+                <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
-                {/* Header Section */}
-                <View style={styles.header}>
-                    <View style={styles.titleWrapper}>
-                        <AppText text={isEditMode ? "Edit Saved Reply" : "Create Saved Replies"} fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                        <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
+                    {/* Header Section */}
+                    <View style={styles.header}>
+                        <View style={styles.titleWrapper}>
+                            <AppText text={isEditMode ? "Edit Saved Reply" : "Create Saved Replies"} fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                            <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
+                        </View>
                     </View>
-                </View>
 
-                {/* Form Fields Section */}
-                <View style={styles.form}>
-                    <InputField
-                        label="Message Name:"
-                        name="title"
-                        control={control}
-                        errors={errors}
-                        placeholder="Wifi Password"
-                    />
-
-                    <TextareaField
-                        label="Message Content"
-                        name="body"
-                        control={control}
-                        errors={errors}
-                        placeholder="Hi Sir, here are your Wi-Fi details..."
-                        multiline
-                    />
-
-                    <MultiSelectDropdownField
-                        label="Listing Selection"
-                        name="listing_ids"
-                        control={control}
-                        errors={errors}
-                        data={transformedListing || []}
-                        placeholder="Select Multiple Options"
-                    />
-
-                    {/* Integrated Custom Checkbox */}
-                    <View style={styles.autoCreateRow}>
-                        <Controller
+                    {/* Form Fields Section */}
+                    <View style={styles.form}>
+                        <InputField
+                            label="Message Name:"
+                            name="title"
                             control={control}
-                            name="auto_apply_new_listings"
-                            render={({ field: { onChange, value } }) => (
-                                <View style={styles.checkboxWrapper}>
-                                    <Checkbox
-                                        isChecked={value}
-                                        onPress={() => onChange(!value)}
-                                    />
-                                    <AppText
-                                        text="Auto-Create for New Listings"
-                                        ml={2}
-                                        color={Colors.PINE_FOREST}
-                                        fontSize={14}
-                                        type="Medium"
-                                    />
-                                </View>
-                            )}
+                            errors={errors}
+                            placeholder="Wifi Password"
                         />
+
+                        <TextareaField
+                            label="Message Content"
+                            name="body"
+                            control={control}
+                            errors={errors}
+                            placeholder="Hi Sir, here are your Wi-Fi details..."
+                            multiline
+                        />
+
+                        <MultiSelectDropdownField
+                            label="Listing Selection"
+                            name="listing_ids"
+                            control={control}
+                            errors={errors}
+                            data={transformedListing || []}
+                            placeholder="Select Multiple Options"
+                        />
+
+                        {/* Integrated Custom Checkbox */}
+                        <View style={styles.autoCreateRow}>
+                            <Controller
+                                control={control}
+                                name="auto_apply_new_listings"
+                                render={({ field: { onChange, value } }) => (
+                                    <View style={styles.checkboxWrapper}>
+                                        <Checkbox
+                                            isChecked={value}
+                                            onPress={() => onChange(!value)}
+                                        />
+                                        <AppText
+                                            text="Auto-Create for New Listings"
+                                            ml={2}
+                                            color={Colors.PINE_FOREST}
+                                            fontSize={14}
+                                            type="Medium"
+                                        />
+                                    </View>
+                                )}
+                            />
+                        </View>
                     </View>
-                </View>
 
-                {/* Action Button */}
-                <AppButton onPress={handleSubmit}
-                    loading={isLoading}
-                    title={ isEditMode ? "Update Now" : "Create Now"}
-                    mt={40}
-                />
+                    {/* Action Button */}
+                    <AppButton onPress={handleSubmit}
+                        loading={isLoading}
+                        title={isEditMode ? "Update Now" : "Create Now"}
+                        mt={40}
+                    />
 
-            </ScrollView>
-        </View>
+                </ScrollView>
+            </View>
+        </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
+    container: { flex: 1 },
     scrollContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(40) },
     header: {
         flexDirection: 'row',

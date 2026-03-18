@@ -8,6 +8,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const SavedRepliesScreen = () => {
     const { toggleSwitch, editReply, createNewReply, data, dataQuery, isFetching, isLoading, confirm, openRemoveConfirmSheet, removeSheetRef, isLoadingRemoved, Item, isLoadingStatus } = useSavedRepliesContainer();
@@ -32,6 +33,7 @@ const SavedRepliesScreen = () => {
     };
 
     return (
+         <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.titleWrapper}>
@@ -64,11 +66,12 @@ const SavedRepliesScreen = () => {
                 isLoading={isLoadingRemoved}
             />
         </View>
+       </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#FFF' },
+    container: { flex: 1 },
     header: {
         flexDirection: 'row',
         alignItems: 'center',

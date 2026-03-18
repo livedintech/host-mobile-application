@@ -9,6 +9,7 @@ import useManageListingContainer from './ManageListingContainer';
 import { ManageListingMapItem } from '@/types/api/createListingTypes';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const ManageListingScreen = () => {
   const {
@@ -103,45 +104,47 @@ const ManageListingScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <AppText
-        text="Manage Your Listings"
-        fontSize={30}
-        type="Bold"
-        color={Colors.BRUNSWICK_GREEN}
-        textAlign="center"
-        mb={30}
-      />
-      <FlatListSimpleHandler
-        data={data}
-        isLoading={isLoading}
-        renderItem={renderProperty}
-        listEmptyText="No listings found"
-        onRefresh={refetch}
-        keyExtractor={item => item.id}
-        contentContainerStyle={[styles.scrollContent, data.length === 0 && { flex: 1 }]}
-      />
-      <View style={styles.footer}>
-        <AppButton
-          title="Create New Listing"
-          onPress={onCreateNew}
-          mt={20}
-          disabled={isSupervisor}
-          style={StyleSheet.flatten([
-            isSupervisor ? styles.disabledAppButton : undefined,
-          ])}
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <AppText
+          text="Manage Your Listings"
+          fontSize={30}
+          type="Bold"
+          color={Colors.BRUNSWICK_GREEN}
+          textAlign="center"
+          mb={30}
         />
-        <AppButton
-          title="Add New Listing"
-          onPress={onCreateNewListing}
-          mt={15}
-          disabled={isSupervisor}
-          style={StyleSheet.flatten([
-            isSupervisor ? styles.disabledAppButton : undefined,
-          ])}
+        <FlatListSimpleHandler
+          data={data}
+          isLoading={isLoading}
+          renderItem={renderProperty}
+          listEmptyText="No listings found"
+          onRefresh={refetch}
+          keyExtractor={item => item.id}
+          contentContainerStyle={[styles.scrollContent, data.length === 0 && { flex: 1 }]}
         />
+        <View style={styles.footer}>
+          <AppButton
+            title="Create New Listing"
+            onPress={onCreateNew}
+            mt={20}
+            disabled={isSupervisor}
+            style={StyleSheet.flatten([
+              isSupervisor ? styles.disabledAppButton : undefined,
+            ])}
+          />
+          <AppButton
+            title="Add New Listing"
+            onPress={onCreateNewListing}
+            mt={15}
+            disabled={isSupervisor}
+            style={StyleSheet.flatten([
+              isSupervisor ? styles.disabledAppButton : undefined,
+            ])}
+          />
+        </View>
       </View>
-    </View>
+    </BGImage>
   );
 };
 
@@ -150,7 +153,6 @@ export default ManageListingScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
 
   scrollContent: {

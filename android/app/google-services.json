@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "111966524619",
+    "project_id": "livedin-host-app",
+    "storage_bucket": "livedin-host-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111966524619:android:124e099caf0592e5ba774e",
+        "android_client_info": {
+          "package_name": "com.livedin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "111966524619-ee448m4vu92sk5nbef88atd5qlm74nle.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.livedin",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "111966524619-ktnh1um72kq8qk55d28cc5hc8c32enhf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.livedin",
+            "certificate_hash": "b9802c41afec266cf945845f460fd195f234e36f"
+          }
+        },
+        {
+          "client_id": "111966524619-sco2bcssusilk7du74od8itl00hcmmor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFp28TOENiS43-e0z-gVI_8PFWtSlHqpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "111966524619-sco2bcssusilk7du74od8itl00hcmmor.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "111966524619-1i4aklgclvouap7et8a10hbii65n63ib.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.livedinapp",
+                "app_store_id": "6760611281"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111966524619:android:acf46db6e2a1fd3eba774e",
+        "android_client_info": {
+          "package_name": "com.livedinapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "111966524619-sco2bcssusilk7du74od8itl00hcmmor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFp28TOENiS43-e0z-gVI_8PFWtSlHqpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "111966524619-sco2bcssusilk7du74od8itl00hcmmor.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "111966524619-1i4aklgclvouap7et8a10hbii65n63ib.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.livedinapp",
+                "app_store_id": "6760611281"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

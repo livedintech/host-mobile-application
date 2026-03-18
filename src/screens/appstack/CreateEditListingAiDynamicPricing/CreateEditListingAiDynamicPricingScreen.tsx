@@ -11,6 +11,7 @@ import { goBack } from '@/services/navigationService';
 import useCreateEditListingAiDynamicPricingContainer from './CreateEditListingAiDynamicPricingContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const CreateEditListingAiDynamicPricingScreen = () => {
   const {
@@ -29,6 +30,7 @@ const CreateEditListingAiDynamicPricingScreen = () => {
   } = useCreateEditListingAiDynamicPricingContainer();
 
   return (
+     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
@@ -141,11 +143,12 @@ const CreateEditListingAiDynamicPricingScreen = () => {
 
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
   headerRow: {
     flexDirection: 'row',

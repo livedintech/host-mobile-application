@@ -9,6 +9,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import useCreateEditListingHouseGuidelinesContainer from './useCreateEditListingHouseGuidelinesContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const CreateEditListingHouseGuidelinesScreen = () => {
   const {
@@ -25,6 +26,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
   } = useCreateEditListingHouseGuidelinesContainer();
 
   return (
+     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
@@ -115,11 +117,12 @@ const CreateEditListingHouseGuidelinesScreen = () => {
 
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1},
   content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
   headerRow: {
     flexDirection: 'row',

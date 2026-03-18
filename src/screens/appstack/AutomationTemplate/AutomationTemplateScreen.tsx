@@ -10,15 +10,16 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const AutomationTemplatesScreen = () => {
-    const { toggleSwitch, editTemplate, createNewTemplate, confirm, openRemoveConfirmSheet, removeSheetRef, isLoadingRemoved, data, dataQuery, isFetching, isLoading, Item,isLoadingStatus } = useAutomationTemplateContainer();
+    const { toggleSwitch, editTemplate, createNewTemplate, confirm, openRemoveConfirmSheet, removeSheetRef, isLoadingRemoved, data, dataQuery, isFetching, isLoading, Item, isLoadingStatus } = useAutomationTemplateContainer();
 
     const renderItem = ({ item }: { item: any }) => (
         <View style={styles.card}>
             <View style={styles.topRow}>
                 <View style={styles.leftInfo}>
-                     <CustomSwitch onToggle={() => toggleSwitch(item)} value={item.is_active} disabled={isLoadingStatus} isLoading={item?.id === Item?.id ? isLoadingStatus : false} />
+                    <CustomSwitch onToggle={() => toggleSwitch(item)} value={item.is_active} disabled={isLoadingStatus} isLoading={item?.id === Item?.id ? isLoadingStatus : false} />
                     <AppText text={item.name} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={Metrics.scale(10)} />
                 </View>
 
@@ -36,50 +37,53 @@ const AutomationTemplatesScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <View style={styles.titleWrapper}>
-                    <AppText text="Automation Template" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                    <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
+        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+
+            <View style={styles.container}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <View style={styles.titleWrapper}>
+                        <AppText text="Automation Template" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
+                    </View>
                 </View>
-            </View>
 
-            {/* List */}
-            <FlatListHandler
-                isLoading={isLoading || isFetching}
-                data={data}
-                meta={dataQuery}
-                listEmptyText="No data found"
-                renderItem={renderItem}
-                keyExtractor={(item) => String(item.id)}
-                contentContainerStyle={styles.listContainer}
-                showsVerticalScrollIndicator={false}
-            />
+                {/* List */}
+                <FlatListHandler
+                    isLoading={isLoading || isFetching}
+                    data={data}
+                    meta={dataQuery}
+                    listEmptyText="No data found"
+                    renderItem={renderItem}
+                    keyExtractor={(item) => String(item.id)}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
+                />
 
-            {/* Create Button using AppButton */}
-            <View style={styles.footer}>
-                <AppButton
-                loading={isLoadingRemoved || isLoadingStatus}
-                    title="Create New Template"
-                    onPress={createNewTemplate}
+                {/* Create Button using AppButton */}
+                <View style={styles.footer}>
+                    <AppButton
+                        loading={isLoadingRemoved || isLoadingStatus}
+                        title="Create New Template"
+                        onPress={createNewTemplate}
+                    />
+                </View>
+                <ConfirmAction
+                    ref={removeSheetRef}
+                    title={`${Item?.name}`}
+                    content="Are you sure you want delete?"
+                    confirmText='Confirm'
+                    closeText='Cancel'
+                    onConfirm={confirm}
+                    isLoading={isLoadingRemoved}
                 />
             </View>
-            <ConfirmAction
-                ref={removeSheetRef}
-                title={`${Item?.name}`}
-                content="Are you sure you want delete?"
-                confirmText='Confirm'
-                closeText='Cancel'
-                onConfirm={confirm}
-                isLoading={isLoadingRemoved}
-            />
-        </View>
+        </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
+    container: { flex: 1 },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
