@@ -188,8 +188,8 @@ const ReviewCard = ({
           />
         </View>
         {
-        // hostRating !== null ? 
-        false ?
+        hostRating !== null ? 
+        // false ?
         (
           renderProgressBar(hostRating)
         ) : (
