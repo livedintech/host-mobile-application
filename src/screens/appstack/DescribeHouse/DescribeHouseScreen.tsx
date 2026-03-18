@@ -10,11 +10,13 @@ import TextareaField from '@/components/molecules/Input/TextareaField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const DescribeHouseScreen = () => {
     const { control, errors, handleSubmit, onNext, isLoading, descriptionLength, isEdit, onSaveExit } = useDescribeHouseContainer();
 
     return (
+         <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={styles.headerRow}>
@@ -113,11 +115,12 @@ const DescribeHouseScreen = () => {
                 </View>
             </ScrollView>
         </View>
+        </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
+    container: { flex: 1},
     content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
     subTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, gap: 8 },
     descriptionWrapper: { position: 'relative' },

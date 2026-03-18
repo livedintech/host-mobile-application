@@ -76,12 +76,15 @@ const PaymentScreen = () => {
                                 <Svgicons path='giftImg' />
                             </GlassCard>
                         </View>
-                        {base.map((e: { id: string; module_name: string }) => {
+                        {base.map((e: { id: string; module_name: string; code?: string }) => {
                             return (
                                 <View style={styles.itemStyle} key={e?.id}>
-                                    <GlassCard width={40} style={styles.iconCircle}>
-                                        <Svgicons path='giftImg' />
+                                    {e?.code && (
+                                        <GlassCard width={40} style={styles.iconCircle}>
+                                        <Svgicons path={e?.code} />
                                     </GlassCard>
+                                    )}
+                                    
                                     <AppText text={e?.module_name} ml={10} />
                                 </View>
                             )
@@ -94,12 +97,14 @@ const PaymentScreen = () => {
                                 <Svgicons path='giftImg' />
                             </GlassCard>
                         </View>
-                        {addons.map((e: { id: string; module_name: string }) => {
+                        {addons.map((e: { id: string; module_name: string; code?: string  }) => {
                             return (
                                 <View style={styles.itemStyle} key={e?.id}>
-                                    <GlassCard width={40} style={styles.iconCircle}>
-                                        <Svgicons path='giftImg' />
+                                    {e?.code && (
+                                        <GlassCard width={40} style={styles.iconCircle}>
+                                        <Svgicons path={e?.code} />
                                     </GlassCard>
+                                    )}
                                     <AppText text={e?.module_name} ml={10} />
                                 </View>
                             )
@@ -154,7 +159,7 @@ const styles = StyleSheet.create({
     addons: { marginTop: 5, flex: 1, width: '100%' },
     iconCircle: {
         height: 40,
-        borderRadius: 16,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 0,

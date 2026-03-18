@@ -82,12 +82,12 @@ const CustomInput = ({
   // Interpolate animated values
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.SMOOTH_GREY, Colors.BRUNSWICK_GREEN], // grey → coral
+    outputRange: [Colors.WHITE_OPACITY_60, Colors.BRUNSWICK_GREEN], // grey → coral
   });
 
   const animatedBackgroundColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.WHITE, Colors.WHITE], // cultured → white
+    outputRange: ['rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.25)'], // cultured → white
   });
 
   return (
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     height: Metrics.verticalScale(58),
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   input: {
     flex: 1,

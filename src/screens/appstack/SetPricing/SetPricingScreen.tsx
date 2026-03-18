@@ -10,6 +10,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import useSetPricingContainer from './SetPricingContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const SetPricingScreen = () => {
   const {
@@ -24,6 +25,7 @@ const SetPricingScreen = () => {
   } = useSetPricingContainer();
 
   return (
+     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
@@ -197,11 +199,12 @@ const SetPricingScreen = () => {
 
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1},
   content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
   headerRow: {
     flexDirection: 'row',

@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     height: Metrics.verticalScale(40),
     gap: 8,
     borderWidth:1,
-    borderColor: Colors.WHITE
+    borderColor: Colors.WHITE_OPACITY_90
   },
   searchInput: {
     flex: 1,

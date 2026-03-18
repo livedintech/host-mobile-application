@@ -11,6 +11,7 @@ import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDr
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const AboutThePlaceScreen = () => {
   const {
@@ -28,6 +29,7 @@ const AboutThePlaceScreen = () => {
   } = useAboutThePlaceContainer();
 
   return (
+     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
          <View style={styles.headerRow}>
@@ -138,11 +140,12 @@ const AboutThePlaceScreen = () => {
         </View>
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1 },
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
   stepTitleRow: { alignItems: 'center', marginTop: 10 },
   subTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 25 },

@@ -6,22 +6,25 @@ import { useCallback, useState } from 'react';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { deleteAccountApi } from '@/services/authApi';
 import Toast from 'react-native-toast-message';
-import { updateProfileApi } from '@/services/profileApi';
+import { getProfileCitiesApi, getProfileCountriesApi, removeProfilePictureApi, updateProfileApi, uploadProfilePictureApi } from '@/services/profileApi';
 import { ProfilePicture, UpdateProfilePayload } from '@/types/api/profileTypes';
+import STORAGE_CONST from '@/constants/storage';
 
 export default function useProfileContainer() {
   const navigation = useNavigation();
   const { user, logout, setUser } = useAuthStore();
 
-    // ✅ existing pic bhi state mein rakho
+  // ✅ existing pic bhi state mein rakho
   const [selectedImage, setSelectedImage] = useState<ProfilePicture | null>(null);
   const currentProfilePic = user?.profile_picture || null; // existing server image
 
-   const onImageSelect = (image: ProfilePicture) => {
-    setSelectedImage(image); // naya select hua
+  // ✅ Image select hone par turant upload
+  const onImageSelect = (image: ProfilePicture) => {
+    setSelectedImage(image);
+    uploadImage(image); // ✅ turant API hit
   };
 
   const getInitialPhoneData = () => {
@@ -45,13 +48,16 @@ export default function useProfileContainer() {
     defaultValues: {
       full_name: user?.name || '',
       gender: user?.gender || '',
-      country: user?.country || '',
-      city: user?.city || '',
+      country: user?.country_id ? Number(user.country_id) : undefined,
+      city: user?.city_id ? Number(user.city_id) : undefined,
       address: user?.permanent_address || '',
       phone_country: phoneData.phone_country,
       phone_number: phoneData.phone_number,
     },
   });
+
+  const selectedCountryId = watch('country');
+  const selectedCityId = watch('city');
 
   // ----------------- Update Profile -----------------
   const { mutate: updateProfile, isPending: isUpdating } = useMutation({
@@ -63,9 +69,9 @@ export default function useProfileContainer() {
       goBack()
     },
     onError: (error: any) => {
-  console.log('Profile update error:', JSON.stringify(error));
-  Toast.show({ type: 'error', text1: error?.message || 'Failed to update profile' });
-},
+      console.log('Profile update error:', JSON.stringify(error));
+      Toast.show({ type: 'error', text1: error?.message || 'Failed to update profile' });
+    },
   });
 
   const goToChangePassword = useCallback(() => {
@@ -85,8 +91,7 @@ export default function useProfileContainer() {
       city_id: Number(data.city),
       permanent_address: data.address,
       phone: rawPhone,
-      // ✅ naya ho toh naya, warna kuch mat bhejo
-      profile_picture: selectedImage || undefined,
+      // ✅ profile_picture bilkul nahi
     };
     updateProfile(payload);
   };
@@ -103,6 +108,53 @@ export default function useProfileContainer() {
     },
   });
 
+  const { data: countriesData = [], isLoading: isLoadingCountriesData } = useQuery({
+    queryKey: [STORAGE_CONST.PROFILE_COUNTRIES],
+    queryFn: getProfileCountriesApi,
+  });
+
+  const { data: citiesData = [], isLoading: isLoadingStatesData } = useQuery({
+    queryKey: [STORAGE_CONST.PROFILE_CITIES, selectedCountryId],
+    queryFn: () => getProfileCitiesApi({ country_id: Number(selectedCountryId) }),
+    enabled: Boolean(selectedCountryId),
+  });
+
+  // ✅ Image Upload Mutation
+  const { mutate: uploadImage, isPending: isUploading } = useMutation({
+    mutationFn: uploadProfilePictureApi,
+    onSuccess: (data) => {
+      if (data?.data) setUser(data.data); // ✅ store update — MoreScreen par bhi reflect hoga
+      setSelectedImage(null);
+      Toast.show({ type: 'success', text1: 'Photo updated!' });
+    },
+    onError: () => {
+      Toast.show({ type: 'error', text1: 'Failed to upload photo' });
+    },
+  });
+
+  // ✅ Image Remove Mutation
+  const { mutate: removeImage, isPending: isRemoving } = useMutation({
+    mutationFn: removeProfilePictureApi,
+    onSuccess: (data) => {
+      if (data?.data) setUser(data.data); // ✅ store update
+      Toast.show({ type: 'success', text1: 'Photo removed!' });
+    },
+    onError: () => {
+      Toast.show({ type: 'error', text1: 'Failed to remove photo' });
+    },
+  });
+
+  const countriesOptions = countriesData.map((item: any) => ({
+    label: item.name,
+    value: item.id,         // number — matches form value with ===
+  }));
+
+  const citiesOptions = citiesData.map((item: any) => ({
+    label: item.name,
+    value: item.id,
+  }));
+
+
   return {
     control,
     errors,
@@ -117,5 +169,12 @@ export default function useProfileContainer() {
     onImageSelect,
     selectedImage,
     currentProfilePic,
+    removeImage,
+    isUploading,
+    isRemoving,
+    countriesOptions,
+    citiesOptions,
+    isLoadingCountriesData,
+    isLoadingStatesData,
   };
 }

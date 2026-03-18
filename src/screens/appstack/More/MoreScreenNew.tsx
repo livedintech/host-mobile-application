@@ -39,10 +39,7 @@ const MoreScreen = () => {
                   style={styles.avatar}
                 />
               ) : (
-                <Image
-                  source={require('@/assets/img/profile.png')}
-                  style={styles.avatar}
-                />
+                <Svgicons path="imageUploadIcon" size={25} />
               )}
               <View>
                 <AppText

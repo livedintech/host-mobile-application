@@ -76,7 +76,7 @@ const DateTimeInputField = ({
 
   const animatedBackgroundColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.1)'],
+    outputRange: ['rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.1)'],
   });
 
   const formatDate = (date: Date): string => {

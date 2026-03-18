@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Pressable, Image, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable, Image, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -11,6 +11,9 @@ import useProfileContainer from './ProfileContainer';
 import Metrics from '@/utility/Metrics';
 import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import ImageCropPicker from 'react-native-image-crop-picker';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const ProfileScreen = () => {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -21,6 +24,10 @@ const ProfileScreen = () => {
     control, errors, handleSubmit, onSave,
     goToChangePassword, deleteAccount, isDeleting,
     isLoading, currentProfilePic, onImageSelect,
+    isRemoving, isUploading, navigation, removeImage, selectedImage, watch, countriesOptions,
+    citiesOptions,
+    isLoadingCountriesData,
+    isLoadingStatesData,
   } = useProfileContainer();
 
   const displayImage = localImage || currentProfilePic || null;
@@ -66,13 +73,16 @@ const ProfileScreen = () => {
   };
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <View style={styles.bgCircle} />
-
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
         {/* Avatar */}
-        <Pressable onPress={() => setImageModalVisible(true)} style={styles.avatarContainer}>
+        <Pressable
+          onPress={() => !isUploading && setImageModalVisible(true)}
+          style={styles.avatarContainer}
+        >
           <View style={styles.avatarInner}>
             {displayImage ? (
               <Image
@@ -84,19 +94,67 @@ const ProfileScreen = () => {
                 <Svgicons path="imageUploadIcon" size={40} />
               </View>
             )}
-            {/* Edit Badge */}
-            <View style={styles.editBadge}>
-              <Svgicons path="editIcon" size={12} />
-            </View>
+
+            {/* ✅ Upload hote waqt loader dikhao */}
+            {isUploading && (
+              <View style={styles.uploadingOverlay}>
+                <SpinnerLoader />
+                {/* <ActivityIndicator color={Colors.WHITE} /> */}
+              </View>
+            )}
+
+            {/* ✅ Edit badge */}
+            {!isUploading && (
+              <View style={styles.editBadge}>
+                <Svgicons path="editIcon" size={12} />
+              </View>
+            )}
           </View>
+
+          {/* ✅ Remove button — sirf tab dikhao jab image ho */}
+          {/* {displayImage && !isUploading && (
+            <Pressable
+              onPress={() => removeImage()}
+              style={styles.removeBtn}
+              hitSlop={10}
+            >
+              {isRemoving ? (
+                <ActivityIndicator size="small" color={Colors.WHITE} />
+              ) : (
+                <AppText text="✕" color={Colors.WHITE} fontSize={10} />
+              )}
+            </Pressable>
+          )} */}
         </Pressable>
 
         {/* Form */}
         <View style={styles.form}>
           <InputField name="full_name" label="Full Name" control={control} errors={errors} placeholder="Tooba J" />
           <DropdownField name="gender" control={control} errors={errors} label="Gender" data={[{ label: 'Female', value: 'Female' }, { label: 'Male', value: 'Male' }]} />
-          <DropdownField name="country" control={control} errors={errors} label="Country" data={[{ label: 'Saudi Arabia', value: 'Saudi Arabia' }]} />
-          <DropdownField name="city" control={control} errors={errors} label="City" data={[{ label: 'Medina', value: 'Medina' }, { label: 'Riyadh', value: 'Riyadh' }]} />
+          <DropdownField
+            name="country"
+            control={control}
+            errors={errors}
+            label="Country"
+            data={countriesOptions}
+            disabled={isLoadingCountriesData}
+            placeholder={isLoadingCountriesData ? 'Loading...' : 'Select Country'}
+          />
+          <DropdownField
+            name="city"
+            control={control}
+            errors={errors}
+            label="City"
+            data={citiesOptions}
+            disabled={isLoadingStatesData || !watch('country')}
+            placeholder={
+              !watch('country')
+                ? 'Select Country first'
+                : isLoadingStatesData
+                  ? 'Loading...'
+                  : 'Select City'
+            }
+          />
           <InputField name="address" label="Permanent Address" control={control} errors={errors} placeholder="XYZ" />
           <PhoneInputField label="Phone Number" control={control} errors={errors} countryFieldName="phone_country" phoneFieldName="phone_number" disabled />
 
@@ -110,38 +168,41 @@ const ProfileScreen = () => {
       </ScrollView>
 
       {/* ✅ Image Picker Bottom Sheet */}
-      <Modal
-        visible={isImageModalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setImageModalVisible(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setImageModalVisible(false)}
+      {isImageModalVisible && (
+        <Modal
+          visible={isImageModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setImageModalVisible(false)}
         >
-          <View style={styles.bottomSheet}>
-            <View style={styles.sheetHandle} />
+          <ButtonView
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setImageModalVisible(false)}
+          >
+            <View style={styles.bottomSheet}>
+              <View style={styles.sheetHandle} />
 
-            <AppText text="Upload Photo" type="SemiBold" fontSize={16} mb={20} />
-            {/* Gallery Button */}
-            <AppButton onPress={handleOpenGallery} title="Choose from Gallery" mb={10}/>
+              <AppText text="Upload Photo" type="SemiBold" fontSize={16} mb={20} />
+              {/* Gallery Button */}
+              <AppButton onPress={handleOpenGallery} title="Choose from Gallery" mb={10} />
 
-            {/* Camera Button */}
-            <AppButton onPress={handleOpenCamera} title="Take a Photo" mb={10}/>
+              {/* Camera Button */}
+              <AppButton onPress={handleOpenCamera} title="Take a Photo" mb={10} />
 
-            {/* Cancel */}
-            <AppButton
-              title="Cancel"
-              onPress={() => setImageModalVisible(false)}
-              mt={10}
-              backgroundColor={Colors.BRUNSWICK_GREEN}
-              color={Colors.WHITE}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
+              {/* Cancel */}
+              <AppButton
+                title="Cancel"
+                onPress={() => setImageModalVisible(false)}
+                mt={10}
+                backgroundColor={Colors.BRUNSWICK_GREEN}
+                color={Colors.WHITE}
+              />
+            </View>
+          </ButtonView>
+        </Modal>
+      )}
+
 
       <AccountDeleteModal
         isVisible={isDeleteModalVisible}
@@ -151,11 +212,12 @@ const ProfileScreen = () => {
         description="This action is permanent and cannot be undone."
       />
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1,},
   bgCircle: { position: 'absolute', top: -150, alignSelf: 'center', width: 500, height: 500, borderRadius: 250, borderWidth: 1, borderColor: '#F5F5F5', zIndex: -1 },
   scrollContent: { paddingHorizontal: 22, paddingBottom: 40 },
   avatarContainer: { alignSelf: 'center', marginTop: 20, marginBottom: 30 },
@@ -173,6 +235,28 @@ const styles = StyleSheet.create({
   optionBtn: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
   optionIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
   cancelBtn: { backgroundColor: '#F5F5F5' },
+  uploadingOverlay: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: 'red',
+    borderRadius: 20,
+    width: 22,
+    height: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.WHITE,
+  },
 });
 
 export default ProfileScreen;

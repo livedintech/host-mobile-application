@@ -15,9 +15,6 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 const FIGMA_TEAL = '#20957B';
 
 const VerifyPhoneNumberScreen = () => {
-  const route = useRoute();
-  // Catch the phone number passed from navigation
-  const phoneNumber = route.params as unknown as string;
 
   const {
     control,
@@ -30,7 +27,7 @@ const VerifyPhoneNumberScreen = () => {
     isLoading,
   } = useVerifyPhoneNumberContainer();
 
-  const displayIdentifier = phoneNumber || identifier;
+  const displayIdentifier =  identifier;
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>

@@ -9,6 +9,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import useCreateEditListingDocumentUploadContainer from './DocumentUploadContainerNew';
 import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const DocumentUploadScreen = () => {
   const {
@@ -71,6 +72,7 @@ const DocumentUploadScreen = () => {
   );
 
   return (
+     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
@@ -150,11 +152,12 @@ const DocumentUploadScreen = () => {
       </Modal>
 
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
   headerRow: {
     flexDirection: 'row',

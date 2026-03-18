@@ -128,12 +128,12 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     minHeight: Metrics.verticalScale(56),
-    backgroundColor: Colors.WHITE,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: Metrics.verticalScale(8),
     borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
+    borderColor: 'rgba(255, 255, 255, 0.9)',
   },
   disabled: {
     backgroundColor: Colors.ANTI_FLASH_WHITE,

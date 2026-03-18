@@ -1,7 +1,10 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
-import { UpdateProfilePayload } from "@/types/api/profileTypes";
+import { ProfilePicture, UpdateProfilePayload } from "@/types/api/profileTypes";
 import { useAuthStore } from "@/store/useAuthStore";
 import { BASE_URL_DEV } from "@env";
+import apiService from "./apiService";
+import Utils from "@/utility/Utils";
+import { CreateEditlistingStatePayloadType } from "@/types/api/bookingManagementTypes";
 
 export const updateProfileApi = async (payload: UpdateProfilePayload) => {
   // ✅ Store directly access karo — hook nahi
@@ -22,8 +25,8 @@ export const updateProfileApi = async (payload: UpdateProfilePayload) => {
   if (payload.country_id)         formData.append('country_id', String(payload.country_id));
   if (payload.city_id)            formData.append('city_id', String(payload.city_id));
   if (payload.permanent_address)  formData.append('permanent_address', payload.permanent_address);
-  if (payload.phone)              formData.append('phone', payload.phone);
-  if (payload.email)              formData.append('email', payload.email);
+  // if (payload.phone)              formData.append('phone', payload.phone);
+  // if (payload.email)              formData.append('email', payload.email);
 
   // ✅ fetch directly use karo — apisauce/axios bypass
   const response = await fetch(
@@ -45,5 +48,85 @@ export const updateProfileApi = async (payload: UpdateProfilePayload) => {
     return data;
   }
 
+  throw data;
+};
+
+
+export const getProfileCountriesApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.COUNTRIES
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
+
+//City
+export const getProfileCitiesApi = async (payload: CreateEditlistingStatePayloadType) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.PROFILE_CITIES,
+        { country_id: payload.country_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data?.data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+
+// ✅ Sirf image upload
+export const uploadProfilePictureApi = async (image: ProfilePicture) => {
+  const token = useAuthStore.getState().token;
+  
+  const formData = new FormData();
+  formData.append('profile_picture', {
+    uri: image.uri,
+    type: image.type || 'image/jpeg',
+    name: image.name || `profile_${Date.now()}.jpg`,
+  } as any);
+
+  const response = await fetch(
+    `${BASE_URL_DEV}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+      body: formData,
+    }
+  );
+
+  const data = await response.json();
+  if (response.ok) return data;
+  throw data;
+};
+
+// ✅ Image remove
+export const removeProfilePictureApi = async () => {
+  const token = useAuthStore.getState().token;
+
+  const formData = new FormData();
+  formData.append('profile_picture', ''); // empty string = remove
+
+  const response = await fetch(
+    `${BASE_URL_DEV}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+      body: formData,
+    }
+  );
+
+  const data = await response.json();
+  if (response.ok) return data;
   throw data;
 };

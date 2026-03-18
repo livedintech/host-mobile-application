@@ -31,9 +31,8 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 const FIGMA_TEAL = '#20957B';
 
 const LoginWithPhoneScreen = () => {
-  const { control, errors, handleSubmit, isLoading, onSubmit } = useLoginWithPhoneContainer();
+  const { control, errors, handleSubmit, isLoading, onSubmit,rememberMe,setRememberMe } = useLoginWithPhoneContainer();
   const { setToken, setUser } = useAuthStore();
-  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     configureGoogleSignIn();
