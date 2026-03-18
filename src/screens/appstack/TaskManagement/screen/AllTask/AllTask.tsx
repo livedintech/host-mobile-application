@@ -21,6 +21,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer';
 import NoTaskScreen from '../NoTaskScreen/NoTaskScreen';
+import { useTaskStore } from '@/store/taskStore';
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -44,7 +45,10 @@ const AllTask = () => {
     listingOptions,
     assigneeOptions,
     applyFilters,
+    setTaskInfo,
   } = AllTaskContainer();
+  console.log('taskList', taskList);
+  const { resetTaskStore } = useTaskStore();
 
   const filterSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['60%'], []);
@@ -57,8 +61,6 @@ const AllTask = () => {
   } = useForm({
     defaultValues: { listings: [], assignees: [] },
   });
-
- 
 
   const handleOpenFilter = () => filterSheetRef.current?.expand();
   const handleCloseFilter = () => filterSheetRef.current?.close();
@@ -85,77 +87,87 @@ const AllTask = () => {
     ),
     [],
   );
-  console.log("isAccountEmpty",isAccountEmpty);
-  console.log("isLoading",isLoading)
+  console.log('isAccountEmpty', isAccountEmpty);
+  console.log('isLoading', isLoading);
 
   // --- CONDITIONAL RENDERING ---
-  if ( !isAccountEmpty) {
+  if (!isAccountEmpty) {
     return <NoTaskScreen />;
   }
 
+  const renderTaskItem = ({ item }: { item: any }) => {
+    console.log('Task Itemmm:', item.status);
+    return (
+      <GlassCard width="100%" style={styles.taskCard}>
+        <View style={styles.cardHeader}>
+          <View style={{ flex: 1, marginBottom: 20 }}>
+            <AppText
+              text={
+                item.type
+                  ? item.type.charAt(0).toUpperCase() + item.type.slice(1)
+                  : 'Task'
+              }
+              fontSize={18}
+              type="Medium"
+              color={Colors.BLACK}
+              mb={16}
+            />
+            <AppText
+              text={item.listing_title || 'No Location Provided'}
+              fontSize={13}
+              color={Colors.BLACK}
+              mb={16}
+              lineHeight={16}
+            />
+          </View>
 
+          <ButtonView
+            onPress={() => {
+              setTaskInfo(
+                item.id,
+                item.task_type,
+                item.status,
+                item.description,
+              );
 
-  const renderTaskItem = ({ item }: { item: any }) => (
-    <GlassCard width="100%" style={styles.taskCard}>
-      <View style={styles.cardHeader}>
-        <View style={{ flex: 1, marginBottom: 20 }}>
-          <AppText
-            text={
-              item.type
-                ? item.type.charAt(0).toUpperCase() + item.type.slice(1)
-                : 'Task'
-            }
-            fontSize={18}
-            type="Medium"
-            color={Colors.BLACK}
-            mb={16}
-          />
-          <AppText
-            text={item.listing_title || 'No Location Provided'}
-            fontSize={13}
-            color={Colors.BLACK}
-            mb={16}
-            lineHeight={16}
-          />
+              navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
+                taskId: item.id,
+                taskType: item.type,
+              });
+            }}
+          >
+            {/* Using GlassCard for the edit icon button as requested */}
+            <GlassCard width={44} style={styles.editGlassIcon}>
+              <Svgicons path="edit_pencil_icon" size={24} />
+            </GlassCard>
+          </ButtonView>
         </View>
 
-        <ButtonView
-          onPress={() =>
-            navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
-              taskId: item.id,
-              taskType: item.type,
-            })
-          }
-        >
-          {/* Using GlassCard for the edit icon button as requested */}
-          <GlassCard width={44} style={styles.editGlassIcon}>
-            <Svgicons path="edit_pencil_icon" size={24} />
-          </GlassCard>
-        </ButtonView>
-      </View>
-
-      <View style={styles.infoContainer}>
-        <View style={styles.infoRow}>
-          <Svgicons path="assignTask" size={16} />
-          <AppText
-            text={`Assigned to ${item.assigned_user_name || 'Unassigned'}`}
-            fontSize={13}
-            ml={10}
-            color={Colors.DARK_CHARCOAL}
-          />
+        <View style={styles.infoContainer}>
+          <View style={styles.infoRow}>
+            <Svgicons path="assignTask" size={16} />
+            <AppText
+              text={`Assigned to ${item.assigned_user_name || 'Unassigned'}`}
+              fontSize={13}
+              ml={10}
+              color={Colors.DARK_CHARCOAL}
+            />
+          </View>
+          {item?.status !== 'template' && (
+            <View style={styles.infoRow}>
+              <Svgicons path="task_calendar" size={16} />
+              <AppText
+                text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
+                fontSize={13}
+                ml={10}
+                color={Colors.DARK_CHARCOAL}
+              />
+            </View>
+          )}
         </View>
-        <View style={styles.infoRow}>
-          <Svgicons path="task_calendar" size={16} />
-          <AppText
-            text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
-            fontSize={13}
-            ml={10}
-            color={Colors.DARK_CHARCOAL}
-          />
-        </View>
-      </View>
-    </GlassCard>
-  );
+      </GlassCard>
+    );
+  };
 
   const ListHeader = () => (
     <View style={styles.header}>
@@ -223,9 +235,10 @@ const AllTask = () => {
               title="Setup Cleaning Schedule"
               style={styles.outlineBtn}
               color={Colors.BLACK}
-              onPress={() =>
-                navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN)
-              }
+              onPress={() => {
+                resetTaskStore();
+                navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
+              }}
             />
           </GradientBorder>
 
@@ -234,9 +247,10 @@ const AllTask = () => {
             backgroundColor={Colors.PRIMARY_TEAL}
             borderColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}
-            onPress={() =>
-              navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING)
-            }
+            onPress={() => {
+              resetTaskStore();
+              navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
+            }}
           />
         </View>
 
@@ -247,16 +261,18 @@ const AllTask = () => {
           enablePanDownToClose
           backdropComponent={renderBackdrop}
           handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
+          backgroundStyle={{ backgroundColor: Colors.TRANSLUCENT_WHITE }}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
               <AppText text="Apply Filter" fontSize={24} type="Medium" />
               <ButtonView onPress={onResetFilter}>
-                <AppText
+                {/* <AppText
                   text="Reset"
-                  color={Colors.PRIMARY_TEAL}
+                  color={Colors.BLACK}
                   type="Medium"
-                />
+                /> */}
+                <Svgicons path="crossIcon" size={30} />
               </ButtonView>
             </View>
 
@@ -270,7 +286,7 @@ const AllTask = () => {
                 errors={errors}
               />
 
-              <View style={{ marginTop: 20 }}>
+              <View style={{ marginTop: 10 }}>
                 <MultiSelectDropdownField
                   name="assignees"
                   label="Select Task Assignee"
@@ -384,13 +400,13 @@ const styles = StyleSheet.create({
     right: 25,
   },
   gradientMargin: { marginBottom: 12 },
-  outlineBtn: { backgroundColor: '#fff', borderRadius: 13, borderWidth: 0 },
+  outlineBtn: { backgroundColor: '#fff', borderRadius: 14, borderWidth: 0 },
   sheetContent: { padding: 25 },
   sheetHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   formContent: { marginTop: 10 },
 });

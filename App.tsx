@@ -2,7 +2,14 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { processColor, StatusBar, ActivityIndicator, View, StyleSheet, Text } from 'react-native';
+import {
+  processColor,
+  StatusBar,
+  ActivityIndicator,
+  View,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -15,12 +22,11 @@ import { CustomErrorToast } from '@/components/molecules/CustomToast/CustomError
 import { MFSDK } from 'myfatoorah-reactnative';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
-
 // Import MyFatoorah configuration
 import myFatoorahConfig, {
   validateConfig,
   getEnvironmentName,
-  isProduction
+  isProduction,
 } from '@/config/myfatoorah.config';
 import linking from '@/navigation/linkingConfig';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -28,11 +34,13 @@ import { configureGoogleSignIn } from '@/services/googleConfig';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
-  const [initializationError, setInitializationError] = useState<string | null>(null);
+  const [initializationError, setInitializationError] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     initializeApp();
-    configureGoogleSignIn()
+    configureGoogleSignIn();
   }, []);
 
   const initializeApp = async () => {
@@ -56,7 +64,6 @@ const App = () => {
       console.log('✅ App initialized successfully');
       console.log(`📱 Environment: ${getEnvironmentName()}`);
       console.log(`🌍 Country: Saudi Arabia`);
-
     } catch (error: any) {
       console.error('❌ App initialization failed:', error);
       setInitializationError(error.message || 'Initialization failed');
@@ -70,14 +77,16 @@ const App = () => {
       const success = await MFSDK.init(
         myFatoorahConfig.apiKey,
         myFatoorahConfig.country,
-        myFatoorahConfig.environment
+        myFatoorahConfig.environment,
       );
 
       console.log('✅ MyFatoorah SDK initialized:', success);
 
       // Warn if using production in development
       if (isProduction() && __DEV__) {
-        console.warn('⚠️ WARNING: Using PRODUCTION environment in development mode!');
+        console.warn(
+          '⚠️ WARNING: Using PRODUCTION environment in development mode!',
+        );
       }
 
       return success;
@@ -93,7 +102,7 @@ const App = () => {
         myFatoorahConfig.actionBarTitle,
         processColor(myFatoorahConfig.actionBarTitleColor),
         processColor(myFatoorahConfig.actionBarBackgroundColor),
-        true // Show back button
+        true, // Show back button
       );
 
       console.log('✅ MyFatoorah ActionBar configured:', success);
@@ -124,35 +133,42 @@ const App = () => {
 
   // Show warning if initialization failed
   if (initializationError) {
-    console.warn('⚠️ Payment system may not work properly:', initializationError);
+    console.warn(
+      '⚠️ Payment system may not work properly:',
+      initializationError,
+    );
   }
   const MyTheme = {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      background: Colors.WHITE
+      background: Colors.WHITE,
     },
   };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <BottomSheetModalProvider>
-          <NavigationContainer ref={navigationRef} theme={MyTheme} linking={linking} >
-            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
-              <StatusBar
-                barStyle="dark-content"
-                backgroundColor={Colors.WHITE}
-              />
-              <MenuProvider skipInstanceCheck>
-                <StackNavigator />
-              </MenuProvider>
-              <Toast config={toastConfig} />
-            </SafeAreaView>
-          </NavigationContainer>
-          </BottomSheetModalProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
+      <BottomSheetModalProvider>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer
+              ref={navigationRef}
+              theme={MyTheme}
+              linking={linking}
+            >
+              <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
+                <StatusBar
+                  barStyle="dark-content"
+                  backgroundColor={Colors.WHITE}
+                />
+                <MenuProvider skipInstanceCheck>
+                  <StackNavigator />
+                </MenuProvider>
+                <Toast config={toastConfig} />
+              </SafeAreaView>
+            </NavigationContainer>
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 };

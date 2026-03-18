@@ -18,6 +18,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const MoreScreen = () => {
   const { user, logout } = useAuthStore();
+  console.log('userioin', user);
   return (
     <ImageBackground
       source={require('@/assets/img/background/moreScreenBG.png')}
@@ -83,7 +84,13 @@ const MoreScreen = () => {
                 navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
               },
             },
-            { title: 'Review Management', icon: 'reviewManagementIcon', onPress: () => { navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT) } },
+            {
+              title: 'Review Management',
+              icon: 'reviewManagementIcon',
+              onPress: () => {
+                navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT);
+              },
+            },
             {
               title: 'Smart Lock Management',
               icon: 'lockIcon',
@@ -125,12 +132,26 @@ const MoreScreen = () => {
           title="Billing"
           headerIcon="cardOutline"
           items={[
-            { title: 'Payment Methods', icon: 'paymentIcon', onPress: () => { navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST) } },
-            { title: 'Subscription', icon: 'subscriptionIcon', onPress: () => { navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY) } },
+            {
+              title: 'Payment Methods',
+              icon: 'paymentIcon',
+              onPress: () => {
+                navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST);
+              },
+            },
+            {
+              title: 'Subscription',
+              icon: 'subscriptionIcon',
+              onPress: () => {
+                navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY);
+              },
+            },
             {
               title: 'Transaction History',
               icon: 'transactionIcon',
-              onPress: () => { navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY) },
+              onPress: () => {
+                navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY);
+              },
             },
           ]}
         />

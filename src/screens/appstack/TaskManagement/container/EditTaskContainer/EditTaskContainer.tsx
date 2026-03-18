@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
 import { deleteTaskManagement, getTaskManagementVendor } from '@/services/TaskManagementApi';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage'; // Import your constants
 import { Alert } from 'react-native';
@@ -31,7 +31,8 @@ const EditTaskContainer = () => {
               });
 
               // 2. Navigate back
-              navigate(NavigationRoutes.APP_STACK.TASK);
+              // navigate(NavigationRoutes.APP_STACK.TASK);
+              goBack();
             } catch (error: any) {
               Alert.alert('Error', error.message || 'Failed to delete task');
             } finally {
