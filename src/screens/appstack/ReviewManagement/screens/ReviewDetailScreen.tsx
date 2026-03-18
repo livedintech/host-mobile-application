@@ -53,7 +53,7 @@ const ReviewDetailScreen = ({ route }: any) => {
     cancellation_policy
   } = bookingData;
 
-  if (isLoading) {
+  if (isLoading || !bookingData.property) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={FIGMA_TEAL} />
@@ -498,7 +498,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               mt={30}
               borderRadius={25}
               textStyle={{ color: Colors.PINE_FOREST }}
-              onPress={() => navigate(NavigationRoutes.APP_STACK.CREATE_TASK)}
+              onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)}
             />
           </View>
         </View>

@@ -13,23 +13,28 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 const ReviewManagementScreen = () => {
   const { allReviews, allReviewsLoading, refreshReviews } = useFetchReviews();
 
-  const renderItem = ({ item }: { item: ReviewItem }) => (
-    <ReviewCard
-      item={item}
-      // Pass the host rating if available in your API, otherwise simulate null for the design
-      hostRating={item.overall_score === 5 ? 5.0 : null} 
-      onViewReview={() =>
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN, { id: item.id })
-      }
-      onTalkToGuest={() =>
-        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: item.thread_id })
-      }
-      onRateGuest={() =>
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN, { id: item.id })
-      }
-      onRequestRating={() => console.log('Requesting Rating...')}
-    />
-  );
+const renderItem = ({ item }: { item: ReviewItem }) => (
+  <ReviewCard
+    item={item}
+    hostRating={item.overall_score === 5 ? 5.0 : null} 
+   onPress={() => 
+      navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { 
+        booking_id: item.booking_id, 
+        id: item.id 
+      })
+    }
+    onViewReview={() =>
+      navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN, { id: item.id })
+    }
+    onTalkToGuest={() =>
+      navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: item.thread_id })
+    }
+    onRateGuest={() =>
+      navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN, { id: item.id })
+    }
+    onRequestRating={() => console.log('Requesting Rating...')}
+  />
+);
 
   return (
      <BGImage source={require('@/assets/img/background/linearBG.png')}>
