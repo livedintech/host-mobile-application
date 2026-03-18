@@ -217,9 +217,23 @@ import envelopeResend from './envelopeResend.svg'
 import cardBlack from './cardBlack.svg'
 import chatIcon from './chatIcon.svg'
 import sendWhite from './sendWhite.svg'
+import reservationtitle from './reservations/reservationtitle.svg';
+import reservationaddress from './reservations/reservationaddress.svg';
+import reservationcheckin from './reservations/reservationcheckin.svg';
+import reservationguests from './reservations/reservationguests.svg';
+import reservationairbnb from './reservations/reservationairbnb.svg';
+import reservationlivedin from './reservations/reservationlivedin.svg';
+import reservationfilter from './reservations/reservationfilter.svg';
 
 export const icons = {
   sendWhite,
+  reservationtitle,
+  reservationaddress,
+  reservationcheckin,
+  reservationfilter,
+  reservationairbnb,
+  reservationlivedin,
+  reservationguests,
   chatIcon,
   cardBlack,
   targetShopBullseye,
