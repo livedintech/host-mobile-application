@@ -82,7 +82,6 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
 
   const rawData = calendarResponse?.bookings || [];
   const defaultDailyPrice = calendarResponse?.defaultDailyPrice || 0;
-
   const calendarDataMap = useMemo(() => {
     const marks: any = {};
     if (!Array.isArray(rawData)) return marks;
@@ -249,7 +248,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   };
 
   return {
-    control, errors, handleSubmit, setValue, selectedListingId, listingOptions,
+    control, errors, handleSubmit, setValue, selectedListingId, listingOptions, rawData,
     resLoading, filteredReservations, calendarDataMap, defaultDailyPrice,
     isFetchingDetails, searchQuery, setSearchQuery, activeFilter, setActiveFilter,
     bookingType, setBookingType, setAppliedListingIds, handleReservationPress, onCreateBooking,

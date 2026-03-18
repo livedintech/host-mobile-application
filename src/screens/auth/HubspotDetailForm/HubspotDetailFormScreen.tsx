@@ -15,6 +15,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { Colors } from '@/theme/colors';
 import useHubspotDetailFormContainer, { COUNTRIES, COUNTRY_FLAGS } from './HubspotDetailFormContainer';
+import PhoneInputField from '@/components/molecules/Input/PhoneInputField';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -66,13 +67,14 @@ const HubspotDetailFormScreen = () => {
               placeholder="Enter Legal Name"
             />
 
-            <InputField
-              name="phone"
+            <PhoneInputField
+              label="Phone Number *"
               control={control}
               errors={errors}
-              label="Phone Number *"
-              placeholder="+966 5XX XXX XXXX"
-              keyboardType="phone-pad"
+              countryFieldName="countryCode"
+              phoneFieldName="phone"     
+              activeColor={FIGMA_TEAL}
+              inactiveColor="#E0E0E0"
             />
 
             <InputField
