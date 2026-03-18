@@ -141,11 +141,7 @@ const ConnectCalendarsIntroScreen = () => {
   }, []);
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: 'transparent' }]} 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-      >
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
         <ScrollView 
           style={{ flex: 1, backgroundColor: 'transparent' }}
           contentContainerStyle={styles.scrollContent} 
@@ -214,9 +210,8 @@ const ConnectCalendarsIntroScreen = () => {
             type="Bold"
           />
         </ScrollView>
-
         <Pagination activeIndex={1} />
-      </KeyboardAvoidingView>
+      </View>
     </BGImage>
   );
 };

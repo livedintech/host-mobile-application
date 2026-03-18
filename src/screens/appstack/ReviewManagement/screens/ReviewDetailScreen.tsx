@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from 'react-native';
@@ -28,6 +27,7 @@ import { s, vs } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import useLoginWithPhoneContainer from '@/screens/auth/LoginWithPhone/LoginWithPhoneContainer';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 // The exact Figma shade you requested
 const FIGMA_TEAL = '#20957B';
@@ -36,7 +36,7 @@ const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit } = useLoginWithPhoneContainer();
   const { setToken, setUser } = useAuthStore();
   // const [isAppleLoading, setIsAppleLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false); 
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -81,7 +81,7 @@ const LoginWithPhoneScreen = () => {
   //       sub: userInfo.user,
   //       fcm_token: '',
   //     };
-      
+
   //     const result = await socialAuthApi(payload);
   //     setToken(result?.access_token);
   //     setUser(result?.user);
@@ -96,90 +96,87 @@ const LoginWithPhoneScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
+        <KeyboardAwareScrollView
           style={styles.keyboardAvoidingView}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.content}>
-              {/* Header Text Section */}
-              <View style={styles.headerSection}>
-                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                  Please enter your
-                </AppText>
-                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                  phone number to
-                </AppText>
-                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
-                  continue
-                </AppText>
-              </View>
+          <View style={styles.content}>
+            {/* Header Text Section */}
+            <View style={styles.headerSection}>
+              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                Please enter your
+              </AppText>
+              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                phone number to
+              </AppText>
+              <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
+                continue
+              </AppText>
+            </View>
 
-              {/* Input Section */}
-              <View style={styles.inputSection}>
-                <PhoneInputField
-                  label="Phone Number*"
-                  control={control}
-                  errors={errors}
-                  countryFieldName="country"
-                  phoneFieldName="phoneNumber"
+            {/* Input Section */}
+            <View style={styles.inputSection}>
+              <PhoneInputField
+                label="Phone Number*"
+                control={control}
+                errors={errors}
+                countryFieldName="country"
+                phoneFieldName="phoneNumber"
+              />
+            </View>
+
+            {/* Remember Me Row - Aligned Right */}
+            <View style={styles.rememberMeRow}>
+              <View style={styles.rememberMeContainer}>
+                <Checkbox
+                  isChecked={rememberMe}
+                  onPress={() => setRememberMe(!rememberMe)}
+                />
+                <AppText
+                  text="Remember me"
+                  color={Colors.PINE_FOREST}
+                  type="Medium"
+                  fontSize={14}
+                  ml={s(8)}
                 />
               </View>
+            </View>
 
-              {/* Remember Me Row - Aligned Right */}
-              <View style={styles.rememberMeRow}>
-                <View style={styles.rememberMeContainer}>
-                  <Checkbox
-                    isChecked={rememberMe}
-                    onPress={() => setRememberMe(!rememberMe)}
-                  />
-                  <AppText 
-                    text="Remember me" 
-                    color={Colors.PINE_FOREST} 
-                    type="Medium" 
-                    fontSize={14} 
-                    ml={s(8)} 
-                  />
-                </View>
-              </View>
+            {/* Main Action Button */}
+            <AppButton
+              title="Next"
+              onPress={handleSubmit(onSubmit)}
+              loading={isLoading}
+              backgroundColor={FIGMA_TEAL}
+              color={Colors.WHITE}
+              borderRadius={100}
+              mt={vs(10)}
+              fontSize={18}
+              type="Bold"
+            />
 
-              {/* Main Action Button */}
-              <AppButton
-                title="Next"
-                onPress={handleSubmit(onSubmit)}
-                loading={isLoading}
-                backgroundColor={FIGMA_TEAL}
-                color={Colors.WHITE}
-                borderRadius={100}
-                mt={vs(10)}
-                fontSize={18}
-                type="Bold"
-              />
+            {/* Or Separator */}
+            <View style={styles.separatorRow}>
+              <View style={styles.line} />
+              <AppText text="Or" fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
+              <View style={styles.line} />
+            </View>
 
-              {/* Or Separator */}
-              <View style={styles.separatorRow}>
-                <View style={styles.line} />
-                <AppText text="Or" fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
-                <View style={styles.line} />
-              </View>
+            {/* Social Logins */}
+            <View style={styles.socialWrapper}>
+              <TouchableOpacity
+                style={styles.socialButton}
+                onPress={handleGoogleSignIn}
+                activeOpacity={0.8}
+              >
+                <Svgicons path="google" size={20} />
+                <AppText text="Continue with Google" fontSize={16} ml={10} color={Colors.BLACK} />
+              </TouchableOpacity>
 
-              {/* Social Logins */}
-              <View style={styles.socialWrapper}>
-                <TouchableOpacity 
-                    style={styles.socialButton} 
-                    onPress={handleGoogleSignIn}
-                    activeOpacity={0.8}
-                >
-                  <Svgicons path="google" size={20} />
-                  <AppText text="Continue with Google" fontSize={16} ml={10} color={Colors.BLACK} />
-                </TouchableOpacity>
-
-                {/* Restored Apple Button Placeholder */}
-                {/* <TouchableOpacity 
+              {/* Restored Apple Button Placeholder */}
+              {/* <TouchableOpacity 
                     style={[styles.socialButton, { marginTop: 16 }]} 
                     onPress={handleOnAppleLogin}
                     activeOpacity={0.8}
@@ -187,10 +184,9 @@ const LoginWithPhoneScreen = () => {
                   <Svgicons path="apple" size={20} />
                   <AppText text="Continue with Apple" fontSize={16} ml={10} color={Colors.BLACK} />
                 </TouchableOpacity> */}
-              </View>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+          </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </BGImage>
   );
@@ -200,11 +196,11 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   keyboardAvoidingView: { flex: 1 },
   scrollContent: { flexGrow: 1 },
-  content: { 
-    flex: 1, 
-    paddingHorizontal: s(24), 
-    paddingTop: vs(60), 
-    paddingBottom: vs(20) 
+  content: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(60),
+    paddingBottom: vs(20)
   },
   headerSection: {
     marginBottom: vs(50),

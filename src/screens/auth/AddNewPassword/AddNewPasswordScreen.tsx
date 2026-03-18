@@ -15,6 +15,7 @@ import PasswordField from '@/components/molecules/Input/PasswordField';
 import { Colors } from '@/theme/colors';
 import useAddNewPasswordContainer from './AddNewPasswordContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -24,75 +25,70 @@ const AddNewPasswordScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.mainContent}>
-              {/* Title Section - Left Aligned Pattern */}
-              <View style={styles.headerSection}>
-                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                  Please enter your
+          <View style={styles.mainContent}>
+            {/* Title Section - Left Aligned Pattern */}
+            <View style={styles.headerSection}>
+              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                Please enter your
+              </AppText>
+              <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
+                new{' '}
+                <AppText type="Regular" fontSize={32} color={Colors.BLACK}>
+                  password
                 </AppText>
-                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
-                  new{' '}
-                  <AppText type="Regular" fontSize={32} color={Colors.BLACK}>
-                    password
-                  </AppText>
-                </AppText>
-              </View>
+              </AppText>
+            </View>
 
-              {/* Form Fields */}
-              <View style={styles.form}>
+            {/* Form Fields */}
+            <View style={styles.form}>
+              <PasswordField
+                label="New Password*"
+                name="password"
+                control={control}
+                errors={errors}
+                placeholder=""
+              />
+
+              <View style={{ marginTop: vs(20) }}>
                 <PasswordField
-                  label="New Password*"
-                  name="password"
+                  label="Confirm Password*"
+                  name="confirmPassword"
                   control={control}
                   errors={errors}
                   placeholder=""
                 />
-
-                <View style={{ marginTop: vs(20) }}>
-                  <PasswordField
-                    label="Confirm Password*"
-                    name="confirmPassword"
-                    control={control}
-                    errors={errors}
-                    placeholder=""
-                  />
-                </View>
-
-                {/* Password Strength Hint */}
-                <AppText
-                  text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
-                  fontSize={13}
-                  color="#707070"
-                  mt={vs(15)}
-                  lineHeight={20}
-                />
               </View>
 
-              {/* Action Button */}
-              <View style={styles.bottomSec}>
-                <AppButton
-                  loading={isLoading}
-                  onPress={handleSubmit}
-                  title="Continue"
-                  backgroundColor={FIGMA_TEAL}
-                  color={Colors.WHITE}
-                  borderRadius={100}
-                  type="Bold"
-                  fontSize={18}
-                />
-              </View>
+              {/* Password Strength Hint */}
+              <AppText
+                text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
+                fontSize={13}
+                color="#707070"
+                mt={vs(15)}
+                lineHeight={20}
+              />
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+
+            {/* Action Button */}
+            <View style={styles.bottomSec}>
+              <AppButton
+                loading={isLoading}
+                onPress={handleSubmit}
+                title="Continue"
+                backgroundColor={FIGMA_TEAL}
+                color={Colors.WHITE}
+                borderRadius={100}
+                type="Bold"
+                fontSize={18}
+              />
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </BGImage>
   );

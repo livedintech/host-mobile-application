@@ -133,6 +133,7 @@ import { Colors } from '@/theme/colors';
 import { s, vs } from 'react-native-size-matters';
 import useCreateAccountContainer from './CreateAccountContainer';
 import Checkbox from '@/components/molecules/Input/CheckBox';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -142,115 +143,111 @@ const CreateAccountScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.mainContent}>
-              {/* Title Section */}
-              <View style={styles.textSection}>
-                <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40} textAlign="center">
-                  Create Your Free{' '}
-                  <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                    Account
-                  </AppText>
+
+          <View style={styles.mainContent}>
+            {/* Title Section */}
+            <View style={styles.textSection}>
+              <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40} textAlign="center">
+                Create Your Free{' '}
+                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
+                  Account
                 </AppText>
-                <AppText
-                  text="Welcome to livedin. Let’s build a brighter hosting journey together."
-                  type="Regular"
-                  fontSize={16}
-                  color={Colors.BLACK}
-                  style={styles.subText}
-                  textAlign="center"
-                />
-              </View>
-
-              {/* Form Section */}
-              <View style={styles.form}>
-                <InputField
-                  label="Full Name *"
-                  name="fullName"
-                  control={control}
-                  errors={errors}
-                  placeholder=""
-                />
-                <PasswordField
-                  label="Password *"
-                  name="password"
-                  control={control}
-                  errors={errors}
-                  placeholder=""
-                />
-                <AppText
-                  text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
-                  fontSize={13}
-                  color={Colors.DARK_CHARCOAL}
-                  style={styles.passwordHint}
-                />
-              </View>
-
-              {/* Terms and Conditions Section */}
-              <View style={styles.termsWrapper}>
-                <Controller
-                    control={control}
-                    name="agreeToTerms"
-                    render={({ field: { onChange, value } }) => (
-                    <Checkbox
-                        isChecked={!!value} 
-                        onPress={() => onChange(!value)} 
-                    />
-                    )}
-                />
-                <AppText fontSize={13} color={Colors.BLACK} style={styles.termsText}>
-                    I confirm that I have read and accept the{' '}
-                    <AppText fontSize={13} color={Colors.BLACK} style={styles.underline}>terms and conditions</AppText>
-                    {' '}and{' '}
-                    <AppText fontSize={13} color={Colors.BLACK} style={styles.underline}>privacy policy</AppText>
-                </AppText>
-                </View>
-
-              {/* Action Button */}
-              <View style={styles.bottomSec}>
-                <AppButton
-                  loading={isLoading}
-                  onPress={handleSubmit}
-                  title="Next"
-                  backgroundColor={FIGMA_TEAL}
-                  color={Colors.WHITE}
-                  borderRadius={100}
-                  type="Bold"
-                  fontSize={18}
-                />
-              </View>
+              </AppText>
+              <AppText
+                text="Welcome to livedin. Let’s build a brighter hosting journey together."
+                type="Regular"
+                fontSize={16}
+                color={Colors.BLACK}
+                style={styles.subText}
+                textAlign="center"
+              />
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+
+            {/* Form Section */}
+            <View style={styles.form}>
+              <InputField
+                label="Full Name *"
+                name="fullName"
+                control={control}
+                errors={errors}
+                placeholder=""
+              />
+              <PasswordField
+                label="Password *"
+                name="password"
+                control={control}
+                errors={errors}
+                placeholder=""
+              />
+              <AppText
+                text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
+                fontSize={13}
+                color={Colors.DARK_CHARCOAL}
+                style={styles.passwordHint}
+              />
+            </View>
+
+            {/* Terms and Conditions Section */}
+            <View style={styles.termsWrapper}>
+              <Controller
+                control={control}
+                name="agreeToTerms"
+                render={({ field: { onChange, value } }) => (
+                  <Checkbox
+                    isChecked={!!value}
+                    onPress={() => onChange(!value)}
+                  />
+                )}
+              />
+              <AppText fontSize={13} color={Colors.BLACK} style={styles.termsText}>
+                I confirm that I have read and accept the{' '}
+                <AppText fontSize={13} color={Colors.BLACK} style={styles.underline}>terms and conditions</AppText>
+                {' '}and{' '}
+                <AppText fontSize={13} color={Colors.BLACK} style={styles.underline}>privacy policy</AppText>
+              </AppText>
+            </View>
+
+            {/* Action Button */}
+            <View style={styles.bottomSec}>
+              <AppButton
+                loading={isLoading}
+                onPress={handleSubmit}
+                title="Next"
+                backgroundColor={FIGMA_TEAL}
+                color={Colors.WHITE}
+                borderRadius={100}
+                type="Bold"
+                fontSize={18}
+              />
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1
   },
-  scrollContent: { 
+  scrollContent: {
     flexGrow: 1
   },
   mainContent: {
-    flex: 1, 
+    flex: 1,
     paddingHorizontal: s(24),
-    paddingTop: vs(20), 
+    paddingTop: vs(20),
     alignItems: 'center',
   },
   textSection: {
     width: '100%',
-    marginBottom: vs(30), 
+    marginBottom: vs(30),
   },
   subText: {
     marginTop: vs(10),
@@ -283,7 +280,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   bottomSec: {
-    flex: 1, 
+    flex: 1,
     width: '100%',
     justifyContent: 'flex-end',
     paddingBottom: vs(30),

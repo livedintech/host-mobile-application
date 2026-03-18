@@ -11,7 +11,6 @@
 		0FEADEE32F695B0500EEE44C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0FEADEE22F695B0500EEE44C /* GoogleService-Info.plist */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		19B7CE01B5BF43BB92552B92 /* RethinkSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D95C34EFAE07463C881645D6 /* RethinkSans-MediumItalic.ttf */; };
-		1C5378653EE50A0C1D32C104 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		1FF256E1A316466D948D8EE4 /* RethinkSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0279ADC9F43345B99596259D /* RethinkSans-ExtraBold.ttf */; };
 		50AD5C6515894112AA4BF4F4 /* RethinkSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC5B5C0667CA4C2994994F59 /* RethinkSans-SemiBoldItalic.ttf */; };
 		758E8C82F4AB4C978015904D /* RethinkSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 70FA7D113FF34B0791E3278F /* RethinkSans-Bold.ttf */; };
@@ -31,7 +30,6 @@
 		13B07F961A680F5B00A75B9A /* HostMobileApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HostMobileApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = HostMobileApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = HostMobileApp/Info.plist; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = HostMobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-HostMobileApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HostMobileApp.debug.xcconfig"; path = "Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-HostMobileApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HostMobileApp.release.xcconfig"; path = "Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-HostMobileApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HostMobileApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -68,7 +66,6 @@
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				0FEADEE22F695B0500EEE44C /* GoogleService-Info.plist */,
 			);
 			name = HostMobileApp;
@@ -201,7 +198,6 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				1C5378653EE50A0C1D32C104 /* PrivacyInfo.xcprivacy in Resources */,
 				A3EA5AAD169B40E8AE72FB4C /* RethinkSans-SemiBold.ttf in Resources */,
 				19B7CE01B5BF43BB92552B92 /* RethinkSans-MediumItalic.ttf in Resources */,
 				7F1CED45381645D1B7E46389 /* RethinkSans-ExtraBoldItalic.ttf in Resources */,
@@ -243,9 +239,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -282,9 +282,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

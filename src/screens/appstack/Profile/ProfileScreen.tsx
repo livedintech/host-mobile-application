@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Pressable, Image, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
-import AppText from '@/components/molecules/AppText/AppText';
+import { StyleSheet, View, Pressable, Image, Modal } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import InputField from '@/components/molecules/Input/InputField';
@@ -14,6 +14,7 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+
 
 const ProfileScreen = () => {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -76,7 +77,7 @@ const ProfileScreen = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <View style={styles.bgCircle} />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
         {/* Avatar */}
         <Pressable
@@ -165,8 +166,7 @@ const ProfileScreen = () => {
 
           <AppButton title="Save Changes" onPress={handleSubmit(onSave)} mt={20} loading={isLoading} />
         </View>
-      </ScrollView>
-
+      </KeyboardAwareScrollView>
       {/* ✅ Image Picker Bottom Sheet */}
       {isImageModalVisible && (
         <Modal
