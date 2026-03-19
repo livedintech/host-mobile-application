@@ -50,7 +50,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
         <AppText
           text={label}
           mb={8}
-          color={Colors.PINE_FOREST}
+          color={Colors.BLACK}
           fontSize={14}
           type="Medium"
         />

@@ -127,7 +127,7 @@ const useChecklistDetailContainer = (
       Toast.show({
         type: 'error',
         // text1: 'Selection Required',
-        text1: 'Please select at least one item before saving.',
+        text1: 'Please add at least one item before saving.',
       });
       return;
     }
