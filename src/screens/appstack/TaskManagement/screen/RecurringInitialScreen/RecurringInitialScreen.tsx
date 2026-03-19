@@ -8,13 +8,13 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import { navigate, goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useTaskStore } from '@/store/taskStore';
 
 const RecurringInitialScreen = () => {
+  const { resetTaskStore } = useTaskStore();
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
-
-
         <View style={styles.content}>
           {/* Illustration Section */}
           <View style={styles.illustrationContainer}>
@@ -38,13 +38,15 @@ const RecurringInitialScreen = () => {
               lineHeight={20}
             >
               You only need to{' '}
-              <AppText 
-                text="create it once" 
-                fontSize={16} 
-                color={Colors.PRIMARY_TEAL} 
-                type="Bold" 
+              <AppText
+                text="create it once"
+                fontSize={16}
+                color={Colors.PRIMARY_TEAL}
+                type="Bold"
               />
-              , every time there is a new booking, the cleaning task will automatically appear in your task management for the assigned team member.
+              , every time there is a new booking, the cleaning task will
+              automatically appear in your task management for the assigned team
+              member.
             </AppText>
           </View>
 
@@ -58,7 +60,8 @@ const RecurringInitialScreen = () => {
               fontSize={16}
               type="Regular"
               onPress={() => {
-                 navigate(NavigationRoutes.APP_STACK.RECURRING_TASK_SCREEN);
+                resetTaskStore();
+                navigate(NavigationRoutes.APP_STACK.RECURRING_TASK_SCREEN);
               }}
             />
           </View>
