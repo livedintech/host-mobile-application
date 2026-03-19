@@ -4,6 +4,7 @@ import { s, vs, ms } from 'react-native-size-matters';
 import { Search, Filter as FilterIcon } from 'lucide-react-native';
 import FilterChipBar from '@/components/molecules/FilterChipBar/FilterChipBar';
 import { FILTER_OPTIONS } from '@/constants/dropdownOptions';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface Props {
   searchQuery: string;
@@ -27,7 +28,7 @@ export const ReservationHeader = ({ searchQuery, setSearchQuery, onFilterPress, 
         <Search size={ms(18)} color="#A0A0A0" />
       </View>
       <TouchableOpacity style={styles.filterIconButton} onPress={onFilterPress}>
-        <FilterIcon size={ms(24)} color="#2D4A41" />
+        <Svgicons path="reservationfilter" size={ms(70)} />
       </TouchableOpacity>
     </View>
     <FilterChipBar options={FILTER_OPTIONS} selectedId={activeFilter} onSelect={setActiveFilter} />
