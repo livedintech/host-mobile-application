@@ -1,9 +1,7 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
-import { MapPin, Calendar as CalendarIcon, Clock, Smartphone } from 'lucide-react-native';
 import AppText from '@/components/molecules/AppText/AppText';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '../AppButton/ButtonView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
@@ -32,61 +30,136 @@ const ReservationCard = ({
   platformColor,
   onPress
 }: ReservationCardProps) => {
+
+  const getPlatformIcon = (platformName: string) => {
+    const normalized = platformName.toLowerCase();
+    if (normalized.includes('livedin')) return 'reservationlivedin';
+    if (normalized.includes('airbnb')) return 'reservationairbnb';
+    // if (normalized.includes('booking')) return 'bookingLogo'; // Example for future-proofing
+    return 'platform'; // Default fallback icon
+  };
+
+  const InfoRow = ({ icon, label, value, valueColor = "#4A4A4A" }: any) => (
+    <View style={styles.infoRowContainer}>
+      <View style={styles.iconBox}>
+        <Svgicons path={icon} size={ms(40)} />
+      </View>
+      <View style={styles.textContainer}>
+        <AppText text={label} color="#8E8E93" fontSize={13} type="Medium" />
+        <AppText text={value} color={valueColor} fontSize={15} type="SemiBold" numberOfLines={1} />
+      </View>
+    </View>
+  );
+
   return (
     <ButtonView 
-      activeOpacity={0.7} 
+      activeOpacity={0.8} 
       onPress={() => onPress?.(id)}
-      style={styles.cardWrapper}
+      style={styles.cardShadowWrapper}
     >
-      <GradientBorder style={styles.cardWrapper} borderRadius={ms(15)} borderWidth={1}>
-        <View style={styles.cardInner}>
-          <AppText text={guestName} type="Bold" fontSize={20} color="#1A332C" mb={vs(12)} />
-          
-          <View style={styles.infoRow}>
-            <Svgicons path="platform" size={18} />
-            <AppText text=" Booking Platform: " color="#1A332C" fontSize={14} ml={s(4)} />
-            <AppText text={platform} color={platformColor} type="Bold" fontSize={14} />
-          </View>
-
-          <View style={styles.infoRow}>
-            <Svgicons path="propertyIcon" size={18} />
-            <AppText text=" Property: " color="#1A332C" fontSize={14} ml={s(4)} />
-            <AppText text={property} color="#4A615C" fontSize={14} style={{ flex: 1 }} numberOfLines={1}/>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Svgicons path="calendar" size={18} />
-            <AppText text="Start Date: " color="#1A332C" fontSize={14} ml={s(4)} />
-            <AppText text={startDate} color="#4A615C" fontSize={14} />
-          </View>
-        <View style={styles.infoRow}>
-            <Svgicons path="calendar" size={18} />
-            <AppText text="End Date: " color="#1A332C" fontSize={14} ml={s(4)} />
-            <AppText text={endDate} color="#4A615C" fontSize={14} />
-          </View>
-
-          <View style={styles.infoRow}>
-            <Clock size={ms(14)} color="#1A332C" />
-            <AppText text=" Check-in Time: " color="#1A332C" fontSize={14} ml={s(4)} />
-            <AppText text={checkIn} color="#4A615C" fontSize={14} />
-          </View>
-
-          <View style={styles.infoRow}>
-            <Svgicons path="checkout" size={18} />
-            <AppText text=" Check-out Time: " color="#1A332C" fontSize={14} ml={s(4)} />
-            <AppText text={checkOut} color="#4A615C" fontSize={14} />
-          </View>
+      <View style={styles.glassContainer}>
+        
+        {/* Header Section */}
+        <View style={styles.headerRow}>
+          <AppText text={guestName} type="Bold" fontSize={20} color="#1A1A1A" />
+          <Svgicons path="reservationtitle" size={ms(70)} />
         </View>
-      </GradientBorder>
+
+        {/* Info Rows - Each in a separate row with its icon */}
+        <InfoRow 
+          icon={getPlatformIcon(platform)}
+          label="Booking Platform" 
+          value={platform} 
+          valueColor={platformColor} 
+        />
+        
+        <InfoRow 
+          icon="reservationaddress" 
+          label="Property Address" 
+          value={property} 
+        />
+
+        {/* <InfoRow 
+          icon="calendar" 
+          label="Start Date" 
+          value={startDate} 
+        />
+
+        <InfoRow 
+          icon="calendar" 
+          label="End Date" 
+          value={endDate} 
+        /> */}
+
+        <InfoRow 
+          icon="reservationcheckin" 
+          label="Check-in Time" 
+          value={checkIn} 
+        />
+
+        <InfoRow 
+          icon="reservationcheckin" 
+          label="Check-out Time" 
+          value={checkOut} 
+        />
+
+        <InfoRow 
+          icon="reservationguests" 
+          label="Number of Guests" 
+          value={checkOut} 
+        />
+
+      </View>
     </ButtonView>
-    
   );
 };
 
 const styles = StyleSheet.create({
-  cardWrapper: { marginBottom: vs(16), backgroundColor: '#FFF' },
-  cardInner: { padding: ms(16), backgroundColor: '#FFF' },
-  infoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: vs(6) },
+  cardShadowWrapper: {
+    marginBottom: vs(16),
+  },
+  glassContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.45)', 
+    borderRadius: ms(22),
+    padding: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(20),
+  },
+  topRightIcon: {
+    padding: ms(8),
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: ms(12),
+    // Subtle shadow for the ID icon box
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  infoRowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: vs(15),
+  },
+  iconBox: {
+    width: ms(38),
+    height: ms(38),
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: ms(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: s(12),
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
 });
 
 export default ReservationCard;
