@@ -16,6 +16,7 @@ import MenuSection from '@/components/molecules/MenuSection/MenuSection';
 import { useAuthStore } from '@/store/useAuthStore';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
+
 const MoreScreen = () => {
   const { user, logout } = useAuthStore();
   console.log('userioin', user);

@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
   Alert,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -28,6 +25,8 @@ import { s, vs } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import DeviceInfo from 'react-native-device-info';
+
 
 const FIGMA_TEAL = '#20957B';
 
@@ -139,6 +138,8 @@ const LoginWithPhoneScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+          <AppText textAlign='center' text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`} />
+
         </KeyboardAwareScrollView>
       </SafeAreaView>
     </BGImage>
