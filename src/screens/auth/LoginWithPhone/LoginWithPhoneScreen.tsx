@@ -3,7 +3,8 @@ import {
   View,
   StyleSheet,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -26,41 +27,20 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import DeviceInfo from 'react-native-device-info';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import Metrics from '@/utility/Metrics';
 
 
 const FIGMA_TEAL = '#20957B';
 
 const LoginWithPhoneScreen = () => {
-  const { control, errors, handleSubmit, isLoading, onSubmit, rememberMe, setRememberMe } = useLoginWithPhoneContainer();
+  const { control, errors, handleSubmit, isLoading, onSubmit, rememberMe, setRememberMe, handleAppleSignIn, handleGoogleSignIn } = useLoginWithPhoneContainer();
   const { setToken, setUser } = useAuthStore();
 
   useEffect(() => {
     configureGoogleSignIn();
   }, []);
 
-  const handleGoogleSignIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      await GoogleSignin.signOut();
-      const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        const { user } = response.data;
-        const result = await socialAuthApi({
-          sub: user.id,
-          name: user.name || '',
-          email: user.email,
-          fcm_token: '',
-        });
-        setToken(result?.access_token);
-        setUser(result?.user);
-        Toast.show({ type: 'success', text1: result?.message || 'Logged in successfully' });
-      }
-    } catch (error: any) {
-      if (error.code !== statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert('Google Sign-In error', error.message);
-      }
-    }
-  };
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -128,14 +108,24 @@ const LoginWithPhoneScreen = () => {
             </View>
 
             <View style={styles.socialWrapper}>
-              <TouchableOpacity
+              <ButtonView
                 style={styles.socialButton}
                 onPress={handleGoogleSignIn}
                 activeOpacity={0.8}
+                mb={15}
               >
-                <Svgicons path="google" size={20} />
-                <AppText text="Continue with Google" fontSize={16} ml={10} color={Colors.BLACK} />
-              </TouchableOpacity>
+                <Svgicons path="google" size={14} />
+                <AppText text="Continue with Google" fontSize={14} ml={10} color={Colors.BLACK} />
+              </ButtonView>
+              {Platform.OS === 'ios' && (
+                <ButtonView
+                  style={styles.socialButton}
+                  onPress={handleAppleSignIn}
+                  activeOpacity={0.8}>
+                  <Svgicons path="apple" size={14} />
+                  <AppText text="Continue with Apple" fontSize={14} ml={10} color={Colors.BLACK} />
+                </ButtonView>
+              )}
             </View>
           </View>
           <AppText textAlign='center' text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`} />
@@ -178,11 +168,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: vs(54),
+    height: Metrics.verticalScale(48),
     borderRadius: 100,
     borderWidth: 1,
     borderColor: '#EAEAEA',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
 });
 

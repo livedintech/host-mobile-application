@@ -199,6 +199,20 @@ export const socialAuthApi = async (payload: SocialAuthPayload) => {
     throw response;
 };
 
+// Social Authentication (Google)
+export const socialAppleAuthApi = async (payload: SocialAuthPayload) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.GOOGLE_LOGIN,
+        payload, 
+    );
+    
+    if (ok) {
+        return data;
+    }
+    
+    throw response;
+};
+
 // Update Password (First Time Login)
 export const updateFirstTimePasswordApi = async (payload: UpdatePasswordPayload) => {
   const { ok, response, data } = await apiService.post(
