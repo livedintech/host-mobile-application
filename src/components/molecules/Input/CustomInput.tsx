@@ -9,6 +9,7 @@ import {
   TextStyle,
   KeyboardTypeOptions,
   Animated,
+  Platform,
 } from 'react-native';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
@@ -56,50 +57,57 @@ const CustomInput = ({
   autoCapitalize = 'none',
   numberOfLines,
   verticalAlign,
-  maxLength
-
+  maxLength,
 }: Props) => {
-  // Animated value
+  // Animated value for border focus
   const animation = useRef(new Animated.Value(0)).current;
+
+  // Glass Constants from your GlassCard logic
+  const GLASS_BASE = 'rgba(217, 217, 217, 0.2)';
+  const GLASS_RIM = 'rgba(255, 255, 255, 0.7)';
+  const FOCUS_COLOR = Colors.BRUNSWICK_GREEN || '#00443d';
 
   const handleFocus = () => {
     Animated.timing(animation, {
       toValue: 1,
-      duration: 200,
-      useNativeDriver: false, // colors cannot use native driver
+      duration: 250,
+      useNativeDriver: false, // Colors need false
     }).start();
   };
 
   const handleBlur = () => {
     Animated.timing(animation, {
       toValue: 0,
-      duration: 200,
+      duration: 250,
       useNativeDriver: false,
     }).start();
     onBlur?.();
   };
 
-  // Interpolate animated values
+  // Interpolate border color from glass rim to focus color
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.WHITE_OPACITY_60, Colors.BRUNSWICK_GREEN], // grey → coral
-  });
-
-  const animatedBackgroundColor = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.25)'], // cultured → white
+    outputRange: [GLASS_RIM, FOCUS_COLOR],
   });
 
   return (
     <View style={styles.wrapper}>
-      {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium'/>}
+      {label && (
+        <AppText
+          text={label}
+          mb={8}
+          color={Colors.PINE_FOREST}
+          fontSize={14}
+          type="Medium"
+        />
+      )}
 
       <Animated.View
         style={[
-          styles.container,
+          styles.glassContainer,
           {
             borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
-            backgroundColor: animatedBackgroundColor,
+            backgroundColor: GLASS_BASE,
           },
           wrapperStyle,
         ]}
@@ -115,11 +123,10 @@ const CustomInput = ({
             style,
             multiline && verticalAlign
               ? { textAlignVertical: verticalAlign }
-              : { textAlignVertical: "center" }
+              : { textAlignVertical: 'center' },
           ]}
-
           placeholder={placeholder}
-          placeholderTextColor={Colors.SUPER_GREY}
+          placeholderTextColor={Colors.BLACK_35_PERCENT} 
           value={value}
           onChangeText={onChangeText}
           onFocus={handleFocus}
@@ -128,7 +135,6 @@ const CustomInput = ({
           editable={editable}
           autoCapitalize={autoCapitalize}
           numberOfLines={numberOfLines}
-          textAlignVertical={multiline ? verticalAlign : 'center'}
           maxLength={maxLength}
         />
 
@@ -150,30 +156,45 @@ const styles = StyleSheet.create({
   wrapper: {
     marginBottom: Metrics.verticalScale(18),
   },
-  container: {
+  glassContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 28, // High radius for glassy look
     paddingHorizontal: 16,
     height: Metrics.verticalScale(58),
-    borderWidth: 1.5,
+    // borderWidth: 1.5,
+
+    // Platform-specific logic from your GlassCard
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.05,
+        shadowRadius: 15,
+      },
+      android: {
+        // Simulating depth on Android
+        // borderBottomWidth: 2,
+        // borderRightWidth: 1.5,
+        // borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+      },
+    }),
   },
   input: {
     flex: 1,
-    color: Colors.BLACK,
+    color: Colors.BLACK, // Change to Colors.WHITE if your background is very dark
     fontSize: Metrics.generatedFontSize(14),
     paddingVertical: 0,
   },
   iconWrapper: {
     marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     color: Colors.INDIAN_RED,
     fontSize: 13,
     marginTop: 5,
-    marginLeft: 4,
-  },
-  errorBorder: {
-    borderColor: Colors.INDIAN_RED,
+    marginLeft: 12,
   },
 });
