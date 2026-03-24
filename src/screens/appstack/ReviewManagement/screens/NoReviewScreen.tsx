@@ -42,6 +42,7 @@ const NoReviewScreen = ({
       <AppButton
         title="Manage your listing"
         backgroundColor={Colors.PRIMARY_TEAL}
+        borderColor={Colors.PRIMARY_TEAL}
         color={Colors.WHITE}
         borderRadius={ms(25)}
         onPress={onManageListing}
