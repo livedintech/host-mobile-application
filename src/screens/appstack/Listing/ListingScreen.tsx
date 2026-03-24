@@ -106,8 +106,9 @@ const ListingScreen = () => {
         : dateData.bookings?.[0]?.booking_id;
 
       if (bookingCode) {
-        setSelectedBookingId(bookingCode);
-        setIsDetailsOpen(true);
+        // setSelectedBookingId(bookingCode);
+        // setIsDetailsOpen(true);
+        handleReservationPress(bookingCode);
       }
     } else {
       if (user?.role_key === 'supervisor') return;
@@ -115,6 +116,7 @@ const ListingScreen = () => {
       setIsBookingOpen(true);
     }
   };
+
 
   const onBookingSubmit = async (data: any) => {
     const success = await onCreateBooking(data);
