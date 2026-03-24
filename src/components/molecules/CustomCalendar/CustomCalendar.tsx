@@ -23,11 +23,18 @@ const getOTASource = (source?: string) => {
 const getSolidLightColor = (hex: string) => {
   const color = hex?.toUpperCase();
   switch (color) {
-    case '#FF5A5F': return 'rgba(255, 90, 95, 0.15)'; 
-    case '#A855F7': return 'rgba(168, 85, 247, 0.15)';
-    case '#003580': return 'rgba(0, 53, 128, 0.15)';
-    case '#3B82F6': return 'rgba(59, 130, 246, 0.15)';
-    default: return 'rgba(243, 244, 246, 0.15)'; 
+    case '#49A6E9': 
+      return '#E1F1FD'; 
+    case '#FF5A5F': 
+      return 'rgba(255, 90, 95, 0.15)'; 
+    case '#A855F7': 
+      return 'rgba(168, 85, 247, 0.15)';
+    case '#3B82F6': 
+      return 'rgba(59, 130, 246, 0.15)'; 
+    case '#003580': 
+      return 'rgba(0, 53, 128, 0.15)';
+    default: 
+      return 'rgba(243, 244, 246, 0.15)'; 
   }
 };
 
@@ -50,18 +57,19 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
   const otaIconData = getOTASource(ota);
   const solidLight = getSolidLightColor(themeColor);
 
+  const RADIUS = ms(12); 
+
   const truncateName = (name: string, limit: number) => {
     if (!name || typeof name !== 'string') return '';
     return name.length > limit ? `${name.substring(0, limit)}..` : name;
   };
 
-  const isSolidCircle = isStart || isEnd || isSingleDay;
-  const displayName = isSolidCircle ? truncateName(guest, 6) : truncateName(guest, 12);
+  const isSolidIndicator = isStart || isEnd || isSingleDay;
+  const displayName = isSolidIndicator ? truncateName(guest, 6) : truncateName(guest, 12);
   const iconColor = isMid ? themeColor : '#FFFFFF';
 
   return (
     <View style={styles.dayCell}>
-      {/* 1. PILL BACKGROUND */}
       {isActive && !isSingleDay && (
         <View
           pointerEvents="none"
@@ -69,36 +77,39 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
             styles.selectionBase,
             { 
               backgroundColor: solidLight,
-              width: COLUMN_WIDTH,
+              width: '100%',
               left: 0, 
-              borderTopLeftRadius: isStart ? SELECTION_HEIGHT / 2 : 0,
-              borderBottomLeftRadius: isStart ? SELECTION_HEIGHT / 2 : 0,
-              borderTopRightRadius: isEnd ? SELECTION_HEIGHT / 2 : 0,
-              borderBottomRightRadius: isEnd ? SELECTION_HEIGHT / 2 : 0,
+              borderTopLeftRadius: isStart ? RADIUS : 0,
+              borderBottomLeftRadius: isStart ? RADIUS : 0,
+              borderTopRightRadius: isEnd ? RADIUS : 0,
+              borderBottomRightRadius: isEnd ? RADIUS : 0,
               zIndex: 1,
             }
           ]}
         />
       )}
 
-      {/* 2. SOLID CIRCLE */}
-      {(isStart || isEnd || isSingleDay) && (
+      {isSolidIndicator && (
         <View
           pointerEvents="none"
           style={[
             styles.selectionBase,
             {
               backgroundColor: themeColor,
-              width: SELECTION_HEIGHT,
-              left: (COLUMN_WIDTH - SELECTION_HEIGHT) / 2,
-              borderRadius: SELECTION_HEIGHT / 2,
+              width: isSingleDay ? SELECTION_HEIGHT : '100%', // Fill width for start/end to connect
+              left: isSingleDay ? (COLUMN_WIDTH - SELECTION_HEIGHT) / 2 : 0,
+              borderRadius: RADIUS,
               zIndex: 2,
             }
           ]}
         />
       )}
 
-      <TouchableOpacity style={styles.dayContainer} onPress={() => onPress(date)} activeOpacity={0.8}>
+      <TouchableOpacity 
+        style={styles.dayContainer} 
+        onPress={() => onPress(date)} 
+        activeOpacity={0.8}
+      >
         <View style={styles.contentWrapper}>
           {showLabel && isActive && (
             <View style={styles.labelPositioner} pointerEvents="none">
@@ -114,7 +125,10 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
           )}
 
           <View style={[styles.textGroup, showLabel && isActive && { marginTop: vs(12) }]}>
-            <Text style={[styles.dayNumber, { color: isActive ? (isMid ? '#1A332C' : '#FFF') : '#1A332C' } as TextStyle]}>
+            <Text style={[
+              styles.dayNumber, 
+              { color: isActive ? (isMid ? '#1A332C' : '#FFF') : '#1A332C' } as TextStyle
+            ]}>
               {date.day}
             </Text>
             {!isActive && (
@@ -128,7 +142,6 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
     </View>
   );
 };
-
 const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: any) => {
   return (
     <View style={styles.glassCard}>
@@ -144,7 +157,6 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: 
         theme={{
           backgroundColor: 'transparent',
           calendarBackground: 'transparent',
-          // CRITICAL: Hollow out the internal library components
           'stylesheet.calendar.main': {
             container: {
               paddingLeft: 0,
@@ -246,3 +258,4 @@ const styles = StyleSheet.create({
 });
 
 export default CustomCalendar;
+

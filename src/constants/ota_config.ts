@@ -7,7 +7,7 @@ export const getOtaConfig = (source: string) => {
       return { key: 'GATHERN', label: 'Gathern', color: '#A855F7' };
     case 'booking.com':
     case 'booking':
-      return { key: 'BOOKING', label: 'Booking.com', color: '#003580' };
+      return { key: 'BOOKING', label: 'Booking.com', color: '#49A6E9' };
     default:
       // Covers 'livedin', 'direct', 'host_booking', etc.
       return { key: 'LIVEDIN', label: 'Livedin', color: '#3B82F6' };
