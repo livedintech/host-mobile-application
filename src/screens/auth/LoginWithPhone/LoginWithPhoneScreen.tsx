@@ -44,7 +44,7 @@ const LoginWithPhoneScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <KeyboardAwareScrollView
           style={styles.keyboardAvoidingView}
           contentContainerStyle={styles.scrollContent}
@@ -64,7 +64,7 @@ const LoginWithPhoneScreen = () => {
               </AppText>
             </View>
 
-            <View>
+            <View style={styles.inputWrapper}>
               <PhoneInputField
                 label="Phone Number*"
                 control={control}
@@ -85,6 +85,7 @@ const LoginWithPhoneScreen = () => {
                   color={Colors.PINE_FOREST}
                   type="Medium"
                   fontSize={14}
+                  ml={s(8)}
                 />
               </View>
             </View>
@@ -96,7 +97,7 @@ const LoginWithPhoneScreen = () => {
               backgroundColor={FIGMA_TEAL}
               color={Colors.WHITE}
               borderRadius={100}
-              mt={vs(10)}
+              mt={vs(5)}
               fontSize={18}
               type="Bold"
             />
@@ -112,7 +113,7 @@ const LoginWithPhoneScreen = () => {
                 style={styles.socialButton}
                 onPress={handleGoogleSignIn}
                 activeOpacity={0.8}
-                mb={15}
+                mb={vs(12)}
               >
                 <Svgicons path="google" size={14} />
                 <AppText text="Continue with Google" fontSize={14} ml={10} color={Colors.BLACK} />
@@ -128,7 +129,12 @@ const LoginWithPhoneScreen = () => {
               )}
             </View>
           </View>
-          <AppText textAlign='center' text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`} />
+          
+          <AppText 
+            textAlign='center' 
+            style={styles.versionText}
+            text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`} 
+          />
 
         </KeyboardAwareScrollView>
       </SafeAreaView>
@@ -143,14 +149,18 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: s(24),
-    paddingTop: vs(60),
-    paddingBottom: vs(20)
+    paddingBottom: vs(10)
   },
-  headerSection: { marginBottom: vs(50) },
+  headerSection: { 
+    marginBottom: vs(25)
+  },
+  inputWrapper: {
+    marginBottom: vs(5)
+  },
   rememberMeRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginBottom: vs(25),
+    marginBottom: vs(15),
   },
   rememberMeContainer: {
     flexDirection: 'row',
@@ -160,7 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: vs(25),
+    marginVertical: vs(15), // Reduced from 25
   },
   line: { flex: 1, height: 1, backgroundColor: '#EAEAEA' },
   socialWrapper: { width: '100%' },
@@ -168,11 +178,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: Metrics.verticalScale(48),
+    height: vs(48),
     borderRadius: 100,
     borderWidth: 1,
     borderColor: '#EAEAEA',
   },
+  versionText: {
+    marginBottom: vs(15),
+    opacity: 0.5,
+    fontSize: 12
+  }
 });
 
 export default LoginWithPhoneScreen;
