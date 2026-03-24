@@ -217,6 +217,7 @@ import envelopeResend from './envelopeResend.svg'
 import cardBlack from './cardBlack.svg'
 import chatIcon from './chatIcon.svg'
 import sendWhite from './sendWhite.svg'
+import noReview from './noReview.svg'
 import reservationtitle from './reservations/reservationtitle.svg';
 import reservationaddress from './reservations/reservationaddress.svg';
 import reservationcheckin from './reservations/reservationcheckin.svg';
@@ -452,5 +453,6 @@ export const icons = {
   aiChat,
   overallRating,
   back,
-  motionStar
+  motionStar,
+  noReview
 };
