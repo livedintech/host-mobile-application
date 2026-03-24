@@ -1,34 +1,42 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import OTPTextInput from 'react-native-otp-textinput';
 import { Colors } from '@/theme/colors';
 import { s, vs } from 'react-native-size-matters';
-import { useRoute } from '@react-navigation/native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Controller } from 'react-hook-form';
 import useVerifyPhoneNumberContainer from './VerifyPhoneNumberContainer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { maskPhoneNumber } from '@/utility/helpers';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const FIGMA_TEAL = '#20957B';
 
 const VerifyPhoneNumberScreen = () => {
-
   const {
     control,
     timer,
     isResendDisabled,
-    identifier,
+    code, 
+    actualPhone,
     handleResendOtp,
-    handleVerifyOtp, // This expects (data: { otpCode: string })
+    handleVerifyOtp,
     formatTimer,
     isLoading,
   } = useVerifyPhoneNumberContainer();
 
-  const displayIdentifier = identifier;
+  // 1. Logic to format the dynamic masked number
+  const cleanCode = code?.replace(/\D/g, '') || '';
+  const cleanPhone = actualPhone?.replace(/\D/g, '') || '';
+  const firstDigit = cleanPhone.charAt(0);
+  
+  // Use 10-digit mask for PK/US, 9-digit for KSA
+  const maskedLocal = cleanPhone.length > 9 
+    ? `${firstDigit}XX XXX XXXX` 
+    : `${firstDigit}XX XXX XXX`;
+
+  const formattedDisplayNumber = `(+${cleanCode}) ${maskedLocal}`;
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -46,14 +54,26 @@ const VerifyPhoneNumberScreen = () => {
                   Phone Number
                 </AppText>
               </AppText>
-              <AppText
-                text={`We have sent you 5-digit verification code at\n${maskPhoneNumber(displayIdentifier)}`}
-                type="Regular"
-                fontSize={16}
-                color={Colors.BLACK}
-                style={styles.subText}
-                textAlign="center"
-              />
+              
+              {/* 2. Updated Sub-text with the formatted number */}
+              <View style={styles.subTextWrap}>
+                <AppText
+                  text="We have sent you 5-digit verification code at"
+                  type="Regular"
+                  fontSize={16}
+                  color={Colors.BLACK}
+                  textAlign="center"
+                  style={{ opacity: 0.7 }}
+                />
+                <AppText
+                  text={formattedDisplayNumber}
+                  type="SemiBold"
+                  fontSize={18}
+                  color={Colors.BLACK}
+                  textAlign="center"
+                  mt={vs(5)}
+                />
+              </View>
             </View>
 
             <View style={styles.otpWrapper}>
@@ -110,11 +130,11 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     paddingHorizontal: s(24),
-    paddingTop: vs(80),
+    paddingTop: vs(60), // Slightly reduced to fit better
     alignItems: 'center',
   },
-  textSection: { width: '100%', marginBottom: vs(50) },
-  subText: { marginTop: vs(15), lineHeight: 24, opacity: 0.8 },
+  textSection: { width: '100%', marginBottom: vs(40) },
+  subTextWrap: { marginTop: vs(15) },
   otpWrapper: { width: '100%', marginBottom: vs(40) },
   otpContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between' },
   otpInput: {
