@@ -18,7 +18,7 @@ const FIGMA_TEAL = '#20957B';
 const DISABLED_GRAY = '#A0A0A0'; // Color for disabled state
 
 const CreateAccountScreen = () => {
-  const { control, errors, handleSubmit, isLoading } = useCreateAccountContainer();
+  const { control, errors, handleSubmit, isLoading,handleLanguage,isTermsAccepted,toggleTerms } = useCreateAccountContainer();
 
   // Watch the checkbox value to toggle button state
   const isAgreed = useWatch({
@@ -80,7 +80,7 @@ const CreateAccountScreen = () => {
 
             {/* Terms and Conditions Section */}
             <View style={styles.termsWrapper}>
-              <Controller
+              {/* <Controller
                 control={control}
                 name="agreeToTerms"
                 render={({ field: { onChange, value } }) => (
@@ -89,7 +89,11 @@ const CreateAccountScreen = () => {
                     onPress={() => onChange(!value)}
                   />
                 )}
-              />
+              /> */}
+              <Checkbox
+                    isChecked={isTermsAccepted}
+                    onPress={toggleTerms}
+                  />
               <AppText fontSize={13} color={Colors.BLACK} style={styles.termsText}>
                 I confirm that I have read and accept the{' '}
                 <AppText fontSize={13} color={Colors.BLACK} style={styles.underline}>terms and conditions</AppText>
@@ -110,6 +114,7 @@ const CreateAccountScreen = () => {
                 borderRadius={100}
                 type="Bold"
                 fontSize={18}
+                disabled={!isTermsAccepted}
               />
             </View>
           </View>

@@ -59,7 +59,7 @@ export default function useVerifyPhoneNumberContainer() {
         });
       }
       else{
-        navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
           phone: phone,
         });
       }

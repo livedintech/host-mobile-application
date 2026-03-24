@@ -5,4 +5,5 @@
 #define HAVE_FFI_PREP_RAW_CLOSURE 1
 #define HAVE_RAW_API 1
 #define HAVE_RB_GC_MARK_MOVABLE 1
+#define USE_FFI_ALLOC 1
 #endif
