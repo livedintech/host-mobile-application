@@ -26,7 +26,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isGetStarted isLang /> }}
         name={NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN}
         getComponent={() =>
           require('@/screens/auth/PropertyCanEarn/PropertyCanEarnScreen')

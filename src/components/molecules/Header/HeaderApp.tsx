@@ -15,10 +15,10 @@ interface HeaderApp {
   isGetStarted?: boolean;
   isLogo?: boolean;
   isLang?: boolean;
-  addIconAfterisGoBack?:string
+  addIconAfterisGoBack?: string
 }
 
-const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo,addIconAfterisGoBack }: HeaderApp) => {
+const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo, addIconAfterisGoBack }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
   }, []);
@@ -34,23 +34,31 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo,a
             color={Colors.BRUNSWICK_GREEN}
           />
         )}
-
+        {isGoBack && (
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
+        )}
         <View style={styles.headerRight}>
-          {/* {isLang && (
-            <View style={styles.langBtn}>
-              <AppText text="AR" fontSize={12} type="Medium" />
-            </View>
-          )} */}
-
-          {isGoBack && (
-            <ButtonView onPress={() => goBack()}>
-              <Svgicons path="back" size={40} />
-            </ButtonView>
+          {isLang && (
+            <GradientBorder
+              borderRadius={16}
+              borderWidth={1}
+              style={styles.langBtn}
+            >
+              <View style={styles.langBtn}>
+                <AppText text="AR" fontSize={12} type="Medium" />
+              </View>
+            </GradientBorder>
           )}
           {isGetStarted && (
-            <ButtonView style={styles.getStartedBtn} onPress={getStarted}>
-              <AppText text="Get Started" fontSize={12} type="Medium" />
-            </ButtonView>
+            <GradientBorder borderRadius={20}>
+            <Pressable 
+            style={styles.getStartedBtn}
+             onPress={getStarted}>
+              <AppText text="Get Started" fontSize={13} type="Medium" />
+            </Pressable>
+            </GradientBorder>
           )}
 
         </View>
@@ -63,10 +71,9 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo,a
             </Pressable>
           </GradientBorder>
           {addIconAfterisGoBack && (
-             <Svgicons path='mapIcon' size={35} />
+            <Svgicons path='mapIcon' size={35} />
           )}
         </View>
-
       )}
 
     </View>
@@ -91,22 +98,15 @@ const styles = StyleSheet.create({
     paddingTop: Metrics.verticalScale(15)
   },
   langBtn: {
-    width: Metrics.scale(40),
-    height: Metrics.scale(40),
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Metrics.scale(8),
+     width: Metrics.scale(40), height: Metrics.scale(40), borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center',marginRight: Metrics.scale(8),
   },
   getStartedBtn: {
     paddingHorizontal: Metrics.scale(33),
     paddingVertical: Metrics.scale(10),
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
     justifyContent: 'center',
+    backgroundColor: Colors.WHITE,
+    
   },
   arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
 

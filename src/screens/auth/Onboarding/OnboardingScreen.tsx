@@ -44,7 +44,7 @@
 //             </View>
 //         </View>
 //         </ImageBackground>
-        
+
 //     );
 
 //     return (
@@ -166,7 +166,7 @@
 // screens/Onboarding/OnboardingScreen.tsx
 
 import React from 'react';
-import { View, StyleSheet, FlatList, ImageBackground, StatusBar } from 'react-native';
+import { View, StyleSheet, FlatList, ImageBackground } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
@@ -190,7 +190,7 @@ const OnboardingScreen = () => {
         <ImageBackground style={styles.slide} source={item.bg} resizeMode='cover'>
             {/* Dark overlay for text legibility if needed */}
             <View style={styles.overlay} />
-            
+
             <View style={styles.contentContainer}>
                 <View style={styles.textSection}>
                     <AppText
@@ -215,7 +215,6 @@ const OnboardingScreen = () => {
 
     return (
         <View style={styles.container}>
-            <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
             <FlatList
                 ref={flatListRef}
                 data={onboardingData}
@@ -242,15 +241,15 @@ const OnboardingScreen = () => {
 
             {/* Action Buttons */}
             <View style={styles.footer}>
-                <ButtonView 
-                    style={styles.glassButton} 
+                <ButtonView
+                    style={styles.glassButton}
                     onPress={isLastSlide ? handleGetStarted : handleContinue}
                 >
                     <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.WHITE} type='Bold' fontSize={16} />
                 </ButtonView>
 
-                <ButtonView 
-                    style={styles.glassButtonSecondary} 
+                <ButtonView
+                    style={styles.glassButtonSecondary}
                     onPress={isLastSlide ? loginWithPhone : handleSkip}
                 >
                     <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.WHITE} type='Regular' fontSize={16} />
