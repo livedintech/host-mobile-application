@@ -6,7 +6,6 @@ import {
   Modal,
   Pressable,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from 'react-native';
@@ -18,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import { s, vs, ms } from 'react-native-size-matters';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 interface ModalComponentProps {
   isVisible: boolean;
@@ -52,46 +52,50 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
         />
       </TouchableWithoutFeedback>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.centeredView}
-      >
-        <Animated.View
-          // Fix: Checking if ScaleIn exists to prevent "undefined" error
-          entering={ScaleIn ? ScaleIn.duration(300).springify().damping(15) : undefined}
-          exiting={FadeOut ? FadeOut.duration(150) : undefined}
-          style={styles.modalContent}
+      <View style={styles.centeredView}>
+        <KeyboardAwareScrollView
+          style={styles.scrollArea}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.titleText}>{title}</Text>
-
-          <ScrollView
-            style={styles.scrollArea}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
+          <Animated.View
+            // Fix: Checking if ScaleIn exists to prevent "undefined" error
+            entering={ScaleIn ? ScaleIn.duration(300).springify().damping(15) : undefined}
+            exiting={FadeOut ? FadeOut.duration(150) : undefined}
+            style={styles.modalContent}
           >
-            {children}
-          </ScrollView>
+            <Text style={styles.titleText}>{title}</Text>
 
-          <View style={styles.buttonRow}>
-            <Pressable onPress={onReset} style={styles.flexBtn}>
-              <View style={styles.btnBorder}>
-                <LinearGradient colors={['#FFFFFF', '#F7F7F7']} style={styles.btnBody}>
-                  <Text style={styles.btnLabel}>Reset</Text>
-                </LinearGradient>
-              </View>
-            </Pressable>
+            <ScrollView
+              style={styles.scrollArea}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              {children}
+            </ScrollView>
 
-            <Pressable onPress={onApply} style={styles.flexBtn}>
-              <View style={styles.btnBorder}>
-                <LinearGradient colors={['#FFFFFF', '#F7F7F7']} style={styles.btnBody}>
-                  <Text style={styles.btnLabel}>Apply Filter</Text>
-                </LinearGradient>
-              </View>
-            </Pressable>
-          </View>
-        </Animated.View>
-      </KeyboardAvoidingView>
+            <View style={styles.buttonRow}>
+              <Pressable onPress={onReset} style={styles.flexBtn}>
+                <View style={styles.btnBorder}>
+                  <LinearGradient colors={['#FFFFFF', '#F7F7F7']} style={styles.btnBody}>
+                    <Text style={styles.btnLabel}>Reset</Text>
+                  </LinearGradient>
+                </View>
+              </Pressable>
+
+              <Pressable onPress={onApply} style={styles.flexBtn}>
+                <View style={styles.btnBorder}>
+                  <LinearGradient colors={['#FFFFFF', '#F7F7F7']} style={styles.btnBody}>
+                    <Text style={styles.btnLabel}>Apply Filter</Text>
+                  </LinearGradient>
+                </View>
+              </Pressable>
+            </View>
+          </Animated.View>
+        </KeyboardAwareScrollView>
+      </View>
     </Modal>
   );
 };

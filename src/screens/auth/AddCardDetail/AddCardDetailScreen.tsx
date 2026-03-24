@@ -46,11 +46,8 @@ const AddCardDetailScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
+     <View style={{ flex: 1 }}>
+
         <View style={styles.innerContainer}>
 
           {/* Header Section */}
@@ -154,7 +151,7 @@ const AddCardDetailScreen = () => {
           </View>
 
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };

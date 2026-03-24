@@ -2,14 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import {
-  processColor,
-  StatusBar,
-  ActivityIndicator,
-  View,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { processColor, StatusBar, ActivityIndicator, View, StyleSheet, Text, useColorScheme } from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -21,6 +14,8 @@ import { CustomSuccessToast } from '@/components/molecules/CustomToast/CustomSuc
 import { CustomErrorToast } from '@/components/molecules/CustomToast/CustomErrorToast';
 import { MFSDK } from 'myfatoorah-reactnative';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+
 
 // Import MyFatoorah configuration
 import myFatoorahConfig, {
@@ -33,6 +28,8 @@ import { MenuProvider } from 'react-native-popup-menu';
 import { configureGoogleSignIn } from '@/services/googleConfig';
 
 const App = () => {
+    const isDarkMode = useColorScheme() === 'dark';
+
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState<string | null>(
     null,
@@ -147,28 +144,26 @@ const App = () => {
   };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <SafeAreaProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer
-              ref={navigationRef}
-              theme={MyTheme}
-              linking={linking}
-            >
-              <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
-                <StatusBar
-                  barStyle="dark-content"
-                  backgroundColor={Colors.WHITE}
-                />
-                <MenuProvider skipInstanceCheck>
-                  <StackNavigator />
-                </MenuProvider>
-                <Toast config={toastConfig} />
-              </SafeAreaView>
-            </NavigationContainer>
-          </QueryClientProvider>
-        </SafeAreaProvider>
-      </BottomSheetModalProvider>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <KeyboardProvider>
+          <BottomSheetModalProvider>
+          <NavigationContainer ref={navigationRef} theme={MyTheme} linking={linking} >
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
+              <StatusBar
+                    barStyle={isDarkMode ? 'dark-content' : 'dark-content'}
+                    backgroundColor={isDarkMode ? Colors.BLACK : Colors.BLACK}
+                  />
+              <MenuProvider skipInstanceCheck>
+                <StackNavigator />
+              </MenuProvider>
+              <Toast config={toastConfig} />
+            </SafeAreaView>
+          </NavigationContainer>
+          </BottomSheetModalProvider>
+          </KeyboardProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 };

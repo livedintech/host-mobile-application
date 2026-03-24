@@ -10,6 +10,7 @@ import { Colors } from '@/theme/colors';
 import useEnterPasswordContainer from './EnterPasswordContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -19,63 +20,58 @@ const EnterPasswordScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <ScrollView 
-            contentContainerStyle={styles.scrollContent} 
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.mainContent}>
-              {/* Title Section - Left Aligned */}
-              <View style={styles.headerSection}>
-                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                  Please enter your
+          <View style={styles.mainContent}>
+            {/* Title Section - Left Aligned */}
+            <View style={styles.headerSection}>
+              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                Please enter your
+              </AppText>
+              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                password to{' '}
+                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
+                  continue
                 </AppText>
-                <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                  password to{' '}
-                  <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                    continue
-                  </AppText>
-                </AppText>
-              </View>
+              </AppText>
+            </View>
 
-              {/* Form Fields */}
-              <View style={styles.form}>
-                <PasswordField
-                  label="Password *"
-                  name="password"
-                  control={control}
-                  errors={errors}
-                  placeholder=""
-                />
+            {/* Form Fields */}
+            <View style={styles.form}>
+              <PasswordField
+                label="Password *"
+                name="password"
+                control={control}
+                errors={errors}
+                placeholder=""
+              />
 
-                {/* Forgot Password Link */}
-                <View style={styles.forgotRow}>
-                  <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
-                    <AppText text="Forgot password?" color={Colors.BLACK} fontSize={14} />
-                  </ButtonView>
-                </View>
-              </View>
-
-              {/* Bottom Action Button */}
-              <View style={styles.bottomSec}>
-                <AppButton
-                  loading={isLoading}
-                  onPress={handleSubmit}
-                  title="Continue"
-                  backgroundColor={FIGMA_TEAL}
-                  color={Colors.WHITE}
-                  borderRadius={100}
-                  type="Bold"
-                  fontSize={18}
-                />
+              {/* Forgot Password Link */}
+              <View style={styles.forgotRow}>
+                <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
+                  <AppText text="Forgot password?" color={Colors.BLACK} fontSize={14} />
+                </ButtonView>
               </View>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+
+            {/* Bottom Action Button */}
+            <View style={styles.bottomSec}>
+              <AppButton
+                loading={isLoading}
+                onPress={handleSubmit}
+                title="Continue"
+                backgroundColor={FIGMA_TEAL}
+                color={Colors.WHITE}
+                borderRadius={100}
+                type="Bold"
+                fontSize={18}
+              />
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </BGImage>
 

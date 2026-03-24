@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable, Platform } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import InputField from '@/components/molecules/Input/InputField';
@@ -11,6 +11,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const ConfirmAddressScreen = () => {
   const {
@@ -29,12 +30,8 @@ const ConfirmAddressScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-    >
-      <ScrollView
+      <KeyboardAwareScrollView
+        style={styles.container}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -138,14 +135,13 @@ const ConfirmAddressScreen = () => {
             )}
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1},
+  container: { flex: 1 },
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
   titleContainer: {
     flexDirection: 'row',

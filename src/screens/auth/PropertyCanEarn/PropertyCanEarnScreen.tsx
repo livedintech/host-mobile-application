@@ -38,7 +38,7 @@
 //               color="#1A332C"
 //               type="Medium"
 //             />
-            
+
 //             {/* FIX: Changed justifyContent to flex-start and removed negative margin if not needed */}
 //             <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
 //               <AppText 
@@ -54,7 +54,7 @@
 //                   type="Bold" 
 //               />
 //             </View>
-            
+
 //             <AppText
 //               text="Calculate your estimated monthly revenue with Livedin versus standard listings."
 //               textAlign="left"
@@ -246,24 +246,21 @@ import PropertyAreaChart from '../../../components/organisms/PropertyAreaChart/P
 import usePropertyCanEarnContainer from './PropertyCanEarnContainer';
 import Metrics from '@/utility/Metrics';
 import { bedroomOptions } from '@/constants/dropdownOptions';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const PropertyCanEarnScreen = () => {
-  const { 
-    control, errors, handleSubmit, showResults, isLoading, 
+  const {
+    control, errors, handleSubmit, showResults, isLoading,
     availableCityItems, availableDistrictItems, goToConnectAccountIntro,
-    selectedcity, chartPoints, roundedMax, yAxisLabels, xAxisLabels, chartData 
+    selectedcity, chartPoints, roundedMax, yAxisLabels, xAxisLabels, chartData
   } = usePropertyCanEarnContainer();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <KeyboardAvoidingView
-        style={styles.container} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
-      >
-        <ScrollView 
+      <View style={styles.container}>
+        <KeyboardAwareScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent} 
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -276,22 +273,22 @@ const PropertyCanEarnScreen = () => {
               color="#1A332C"
               type="Medium"
             />
-            
+
             <View style={styles.titleRow}>
-              <AppText 
-                  text="Property "
-                  fontSize={32} 
-                  color="#21AA8F" 
-                  type="Bold" 
+              <AppText
+                text="Property "
+                fontSize={32}
+                color="#21AA8F"
+                type="Bold"
               />
-              <AppText 
-                  text="can earn" 
-                  fontSize={32} 
-                  color="#1A332C" 
-                  type="Bold" 
+              <AppText
+                text="can earn"
+                fontSize={32}
+                color="#1A332C"
+                type="Bold"
               />
             </View>
-            
+
             <AppText
               text="Calculate your estimated monthly revenue with Livedin versus standard listings."
               textAlign="left"
@@ -371,7 +368,7 @@ const PropertyCanEarnScreen = () => {
                     <AppText text={`SAR ${chartData?.data?.monthly}`} type="Bold" color="#5A716A" />
                   </View>
                   <View style={styles.statBox}>
-                    <AppText text="Yearly Income" fontSize={12} color="#5A716A"/>
+                    <AppText text="Yearly Income" fontSize={12} color="#5A716A" />
                     <AppText text={`SAR ${chartData?.data?.yearly}`} type="Bold" color="#5A716A" />
                   </View>
                 </View>
@@ -393,42 +390,42 @@ const PropertyCanEarnScreen = () => {
               </View>
             )}
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         <Pagination activeIndex={0} />
-      </KeyboardAvoidingView>
+      </View>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     backgroundColor: 'transparent'
   },
   scrollView: {
     flex: 1,
   },
-  scrollContent: { 
-    paddingHorizontal: s(20), 
+  scrollContent: {
+    paddingHorizontal: s(20),
     paddingBottom: vs(20),
     paddingTop: vs(15), // Tightened from 40
   },
-  titleSection: { 
+  titleSection: {
     alignItems: 'flex-start',
     width: '100%',
   },
-  titleRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'flex-start', 
-    alignItems: 'center' 
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.12)', 
-    borderRadius: ms(24), 
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderRadius: ms(24),
     padding: s(20),
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.6)', 
+    borderColor: 'rgba(255, 255, 255, 0.6)',
     elevation: 0,
     shadowColor: 'transparent',
   },
@@ -445,7 +442,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0,
   },
-  resultContainer: { 
+  resultContainer: {
     width: '100%',
   },
   statsRow: {
@@ -455,11 +452,11 @@ const styles = StyleSheet.create({
     marginTop: vs(15),
     marginBottom: vs(10),
   },
-  statBox: { 
-    alignItems: 'center' 
+  statBox: {
+    alignItems: 'center'
   },
   unlockBtn: {
-    backgroundColor: '#21AA8F', 
+    backgroundColor: '#21AA8F',
     borderRadius: 100,
     width: s(220),
     marginTop: vs(15),

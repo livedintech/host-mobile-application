@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MFCardPaymentView, MFGooglePayButton, GooglePayButtonConstants } from 'myfatoorah-reactnative';
 
@@ -119,11 +119,7 @@ const AddNewPaymentMethodScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
+      <View style={{ flex: 1 }}>
         <View style={styles.innerContainer}>
 
           {/* Header Section */}
@@ -259,7 +255,7 @@ const AddNewPaymentMethodScreen = () => {
           </View>
 
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };

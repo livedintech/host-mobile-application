@@ -20,11 +20,12 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import CreateTaskContainer from '../../containers/CreateTask/CreateTaskContainer';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const CreateTaskScreen = () => {
   const route = useRoute<any>();
   // Extract the listing_id from the navigation params
-   console.log("tetstbbhjs",route.params)
+  console.log("tetstbbhjs", route.params)
   const preSelectedListingId = route.params?.listing_id;
 
   const {
@@ -40,129 +41,125 @@ const CreateTaskScreen = () => {
   } = CreateTaskContainer(preSelectedListingId, route.params);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAwareScrollView
       style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <AppText
-            text="Create New Task"
-            fontSize={24}
-            type="Bold"
-            color={Colors.PINE_FOREST}
-          />
-          <Svgicons path="File_Document" size={30} />
-        </View>
-
-        <InputField
-          name="title"
-          control={control}
-          errors={errors}
-          label="Task Name:"
-          placeholder="Enter task name"
-          rules={{
-            required: 'Task name is required', // This is your appropriate error message
-            minLength: {
-              value: 3,
-              message: 'Title must be at least 3 characters long',
-            },
-          }}
+      <View style={styles.header}>
+        <AppText
+          text="Create New Task"
+          fontSize={24}
+          type="Bold"
+          color={Colors.PINE_FOREST}
         />
+        <Svgicons path="File_Document" size={30} />
+      </View>
 
-        <TextareaField
-          name="description"
-          control={control}
-          errors={errors}
-          label="Task Description"
-          descriptionLength={wordCount}
-          wordLimit={250}
-          sparkleIcon
-          multiline
-          rules={{
-            required: 'Please provide a task description',
-            maxLength: {
-              value: 250,
-              message: 'Description cannot exceed 250 words',
-            },
-          }}
-        />
+      <InputField
+        name="title"
+        control={control}
+        errors={errors}
+        label="Task Name:"
+        placeholder="Enter task name"
+        rules={{
+          required: 'Task name is required', // This is your appropriate error message
+          minLength: {
+            value: 3,
+            message: 'Title must be at least 3 characters long',
+          },
+        }}
+      />
 
-        <DropdownField
-          name="task_type_id"
-          control={control}
-          errors={errors}
-          label="Category"
-          data={categoryOptions}
-          rules={{ required: 'Please select a task category' }}
-        />
+      <TextareaField
+        name="description"
+        control={control}
+        errors={errors}
+        label="Task Description"
+        descriptionLength={wordCount}
+        wordLimit={250}
+        sparkleIcon
+        multiline
+        rules={{
+          required: 'Please provide a task description',
+          maxLength: {
+            value: 250,
+            message: 'Description cannot exceed 250 words',
+          },
+        }}
+      />
 
-        {/* This Dropdown will now auto-fill because listing_id is set in the Container's useEffect */}
-        <DropdownField
-          name="listing_id"
-          control={control}
-          errors={errors}
-          label="Listing Selection"
-          data={listingOptions}
-          placeholder="Select Listing"
-          rules={{ required: 'Please select a listing' }}
-        />
+      <DropdownField
+        name="task_type_id"
+        control={control}
+        errors={errors}
+        label="Category"
+        data={categoryOptions}
+        rules={{ required: 'Please select a task category' }}
+      />
 
-        {!isCleaningCategory && (
-          <>
-            <DateTimeInputField
-              name="start_date"
-              control={control}
-              errors={errors}
-              label="Select Date"
-              placeholder="Select Date"
-              mode="date"
-              rules={{ required: 'Date is required' }}
-            />
-            <DateTimeInputField
-              name="start_time"
-              control={control}
-              errors={errors}
-              label="Select Start Time"
-              placeholder="Select Start Time"
-              mode="time"
-              rules={{ required: 'Start time is required' }}
-            />
-            <DateTimeInputField
-              name="end_time"
-              control={control}
-              errors={errors}
-              label="Select End Time"
-              placeholder="Select End Time"
-              mode="time"
-              rules={{ required: 'End time is required' }}
-            />
-          </>
-        )}
+      {/* This Dropdown will now auto-fill because listing_id is set in the Container's useEffect */}
+      <DropdownField
+        name="listing_id"
+        control={control}
+        errors={errors}
+        label="Listing Selection"
+        data={listingOptions}
+        placeholder="Select Listing"
+        rules={{ required: 'Please select a listing' }}
+      />
 
-        <View style={styles.dropdownSection}>
-          <DropdownField
-            name="vendor_id"
+      {!isCleaningCategory && (
+        <>
+          <DateTimeInputField
+            name="start_date"
             control={control}
             errors={errors}
-            label="Assign Task"
-            placeholder="Select User"
-            data={userOptions}
-            rules={{ required: 'Please assign this task to a vendor' }}
+            label="Select Date"
+            placeholder="Select Date"
+            mode="date"
+            rules={{ required: 'Date is required' }}
           />
-        </View>
+          <DateTimeInputField
+            name="start_time"
+            control={control}
+            errors={errors}
+            label="Select Start Time"
+            placeholder="Select Start Time"
+            mode="time"
+            rules={{ required: 'Start time is required' }}
+          />
+          <DateTimeInputField
+            name="end_time"
+            control={control}
+            errors={errors}
+            label="Select End Time"
+            placeholder="Select End Time"
+            mode="time"
+            rules={{ required: 'End time is required' }}
+          />
+        </>
+      )}
 
-        <AppButton
-          title="Next"
-          onPress={onSubmitForm}
-          loading={isPending}
-          disabled={isPending}
+      <View style={styles.dropdownSection}>
+        <DropdownField
+          name="vendor_id"
+          control={control}
+          errors={errors}
+          label="Assign Task"
+          placeholder="Select User"
+          data={userOptions}
+          rules={{ required: 'Please assign this task to a vendor' }}
         />
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+
+      <AppButton
+        title="Next"
+        onPress={onSubmitForm}
+        loading={isPending}
+        disabled={isPending}
+      />
+    </KeyboardAwareScrollView>
   );
 };
 

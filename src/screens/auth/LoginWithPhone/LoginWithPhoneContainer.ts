@@ -105,21 +105,29 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import {
   CheckUserExistPayload,
-  CheckUserExistResponse,
-  VerifyOtpPayload // Import your payload type
+  CheckUserExistResponse
 } from '@/types/api/authTypes';
-import { CheckUserApi, resendOtpApi } from '@/services/authApi'; // Import resendOtpApi
+import { CheckUserApi, resendOtpApi, socialAuthApi } from '@/services/authApi'; // Import resendOtpApi
 import Toast from 'react-native-toast-message';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useState } from 'react';
 import { usePhoneStore } from '@/store/usePhoneStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
+import { GoogleSignin, isSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
+import { Alert } from 'react-native';
+import { useAuthStore } from '@/store/useAuthStore';
+import appleAuth, {
+  AppleRequestOperation,
+  AppleRequestScope,
+  AppleCredentialState,
+} from '@invertase/react-native-apple-authentication';
 
 export default function useLoginWithPhoneContainer() {
-  const { cca2, callingCode, phoneNumber: storePhoneNo,rememberMe,setRememberMe } = useRememberMeStore();
+  const { cca2, callingCode, phoneNumber: storePhoneNo, rememberMe, setRememberMe } = useRememberMeStore();
   const setPhoneData = usePhoneStore((state) => state.setPhoneData);
   const [phoneNumber, setphoneNumber] = useState('');
+  const { setToken, setUser } = useAuthStore()
 
   const {
     control,
@@ -143,7 +151,7 @@ export default function useLoginWithPhoneContainer() {
     mutationFn: resendOtpApi,
     onSuccess: () => {
       // Navigate ONLY after the OTP has been successfully sent
-      
+
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: false,
         phone: countryCallingCode + phoneNo,
@@ -175,7 +183,7 @@ export default function useLoginWithPhoneContainer() {
     onError: error => {
       if (error?.message === 'User not found') {
         setPhoneData({ phoneNumber: phoneNumber });
-        
+
         // Trigger the OTP send here
         sendOtpForNewUser({ phone_number: phoneNumber });
       } else {
@@ -193,6 +201,78 @@ export default function useLoginWithPhoneContainer() {
     checkUserPayload({ phone_number: fullPhone });
   };
 
+  // ----------------- Google Sign In -----------------
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      await GoogleSignin.signOut();
+      const response = await GoogleSignin.signIn();
+
+      if (isSuccessResponse(response)) {
+        const { user } = response.data;
+        const result = await socialAuthApi({
+          sub: user.id,
+          name: user.name || '',
+          email: user.email,
+          fcm_token: '',
+        });
+        setToken(result?.access_token);
+        setUser(result?.user);
+        Toast.show({
+          type: 'success',
+          text1: result?.message || 'Logged in successfully',
+        });
+      }
+    } catch (error: any) {
+      if (error.code !== statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert('Google Sign-In error', error.message);
+      }
+    }
+  };
+
+  // ----------------- Apple Sign In -----------------
+const handleAppleSignIn = async () => {
+    try {
+      const appleAuthResponse = await appleAuth.performRequest({
+        requestedOperation: AppleRequestOperation.LOGIN,
+        requestedScopes: [
+          AppleRequestScope.FULL_NAME,
+          AppleRequestScope.EMAIL,
+        ],
+      });
+ 
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthResponse.user,
+      );
+ 
+      if (credentialState !== AppleCredentialState.AUTHORIZED) {
+        Alert.alert('Apple Sign-In', 'Authorization failed. Please try again.');
+        return;
+      }
+ 
+      const result = await socialAuthApi({
+        sub: appleAuthResponse.user,
+        name: appleAuthResponse.fullName
+          ? `${appleAuthResponse.fullName.givenName || ''} ${appleAuthResponse.fullName.familyName || ''}`.trim()
+          : '',
+        email: appleAuthResponse.email || '',
+        fcm_token: '',
+      });
+ 
+      setToken(result?.access_token);
+      setUser(result?.user);
+      Toast.show({
+        type: 'success',
+        text1: result?.message || 'Logged in successfully',
+      });
+    } catch (error: any) {
+      // 1000 = user cancelled Apple sign-in
+      if (error.code !== '1000') {
+        Alert.alert('Apple Sign-In error', error.message);
+      }
+    }
+  };
+
   return {
     // Combine loading states so the button shows spinner during both calls
     isLoading: (isPending && !isIdle) || isSendingOtp,
@@ -202,6 +282,8 @@ export default function useLoginWithPhoneContainer() {
     handleSubmit,
     onSubmit,
     rememberMe,
-    setRememberMe
+    setRememberMe,
+    handleGoogleSignIn,
+    handleAppleSignIn
   };
 }
