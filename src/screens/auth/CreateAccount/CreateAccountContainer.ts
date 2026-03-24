@@ -11,6 +11,7 @@ import { createAccountApi } from '@/services/authApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Toast from 'react-native-toast-message';
+import { useCallback, useState } from 'react';
 
 // SignUp Schema
 const signUpSchema = yup.object().shape({
@@ -21,7 +22,7 @@ const signUpSchema = yup.object().shape({
     .matches(/[a-zA-Z]/, 'Password must contain letters')
     .matches(/[0-9]/, 'Password must contain numbers')
     .required('Password is required'),
-    agreeToTerms: yup.boolean().oneOf([true], 'You must accept the terms'),
+  // agreeToTerms: yup.boolean().oneOf([true], 'You must accept the terms'),
 });
 
 export default function useCreateAccountContainer() {
@@ -29,6 +30,10 @@ export default function useCreateAccountContainer() {
   const phone = params?.payload?.phone;
   const listing_count = params?.payload?.listing_count;
   const pricing = params?.payload?.pricing;
+  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
+
+  const toggleTerms = useCallback(() => setIsTermsAccepted(prev => !prev), []);
+
 
   const {
     control,
@@ -39,7 +44,7 @@ export default function useCreateAccountContainer() {
     defaultValues: {
       fullName: '',
       password: '',
-      agreeToTerms: false,
+      // agreeToTerms: false,
     },
   });
 
@@ -51,7 +56,7 @@ export default function useCreateAccountContainer() {
     mutationFn: createAccountApi,
     onSuccess: ({ message }) => {
       Toast.show({ type: 'success', text1: message });
-      navigate(NavigationRoutes.AUTH_STACK.PAYMENT,{phone: phone, pricing});
+      navigate(NavigationRoutes.AUTH_STACK.PAYMENT, { phone: phone, pricing });
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message });
@@ -62,12 +67,12 @@ export default function useCreateAccountContainer() {
     const payload = {
       name: data?.fullName,
       password: data?.password,
-      phone_number: phone,
+      phone_number: String(phone?.phone),
       listing_count: listing_count,
-      agreeToTerms: data?.agreeToTerms
+      agreeToTerms: isTermsAccepted
     };
     createAccountPayload(payload);
-    console.log('onSubmit', data);
+    // console.log('onSubmit', payload);
   };
 
   return {
@@ -76,5 +81,7 @@ export default function useCreateAccountContainer() {
     errors,
     handleSubmit: handleSubmit(onSubmit),
     handleLanguage: () => console.log('AR Toggled'),
+    isTermsAccepted,
+    toggleTerms,
   };
 }

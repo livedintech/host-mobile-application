@@ -25,6 +25,8 @@ export default function useVerifyPhoneNumberContainer() {
   const { params } = useRoute();
   
   const phone = (params as any)?.phone;
+  const code = (params as any)?.code;
+  const actualPhone = (params as any)?.actualPhone;
   const isLoginScreen = (params as any)?.isLoginScreen;
 
   console.log('params',params);
@@ -59,7 +61,7 @@ export default function useVerifyPhoneNumberContainer() {
         });
       }
       else{
-        navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
           phone: phone,
         });
       }
@@ -140,6 +142,8 @@ export default function useVerifyPhoneNumberContainer() {
     timer,
     isResendDisabled,
     identifier: phone,
+    code, 
+    actualPhone,
     handleResendOtp,
     handleVerifyOtp: handleSubmit(handleVerifyOtp),
     formatTimer,
