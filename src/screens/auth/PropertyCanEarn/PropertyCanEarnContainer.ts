@@ -61,11 +61,20 @@ export default function usePropertyCanEarnContainer() {
   });
 
   // ✅ chartPoints memoized properly
-  const chartPoints = useMemo(() => {
-    const months = chartData?.data?.months;
-    if (!months || months.length === 0) return [];
-    return months.map((value: number, index: number) => ({ timestamp: index, value }));
-  }, [chartData]);
+  // const chartPoints = useMemo(() => {
+  //   const months = chartData?.data?.months;
+  //   if (!months || months.length === 0) return [];
+  //   return months.map((value: number, index: number) => ({ timestamp: index, value }));
+  // }, [chartData]);
+
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+
+  const chartPoints = chartData?.data?.months.map((value: number, index: number) => ({
+  timestamp: Date.now() + index * 1000, // ya koi bhi unique number
+  value,
+  month: MONTHS[index], // ← yeh add karo
+}));
 
   // ✅ maxValue and roundedMax inside useMemo to prevent recalc on every render
   const { roundedMax } = useMemo(() => {

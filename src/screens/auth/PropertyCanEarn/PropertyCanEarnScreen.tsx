@@ -247,6 +247,7 @@ import usePropertyCanEarnContainer from './PropertyCanEarnContainer';
 import Metrics from '@/utility/Metrics';
 import { bedroomOptions } from '@/constants/dropdownOptions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { Colors } from '@/theme/colors';
 
 const PropertyCanEarnScreen = () => {
   const {
@@ -270,29 +271,27 @@ const PropertyCanEarnScreen = () => {
               text="See what your"
               fontSize={32}
               textAlign="left"
-              color="#1A332C"
-              type="Medium"
+              color={Colors.BLACK}
             />
 
             <View style={styles.titleRow}>
               <AppText
                 text="Property "
                 fontSize={32}
-                color="#21AA8F"
+                color={Colors.PRIMARY_TEAL}
                 type="Bold"
               />
               <AppText
                 text="can earn"
                 fontSize={32}
-                color="#1A332C"
-                type="Bold"
+                color={Colors.BLACK}
               />
             </View>
 
             <AppText
               text="Calculate your estimated monthly revenue with Livedin versus standard listings."
               textAlign="left"
-              color="#5A716A"
+              color={Colors.BLACK}
               mt={vs(10)}
               mb={vs(25)} // Reduced from 40
               fontSize={15}
@@ -361,15 +360,15 @@ const PropertyCanEarnScreen = () => {
               </View>
             ) : (
               <View style={styles.resultContainer}>
-                <AppText text="Your Estimate Earnings" fontSize={20} textAlign="center" color="#1A332C" />
+                <AppText text="Your Estimate Earnings" fontSize={20} textAlign="center" color={Colors.BLACK} type='Medium'/>
                 <View style={styles.statsRow}>
                   <View style={styles.statBox}>
-                    <AppText text="Monthly Income" fontSize={12} color="#5A716A" />
-                    <AppText text={`SAR ${chartData?.data?.monthly}`} type="Bold" color="#5A716A" />
+                    <AppText text="Monthly Income" fontSize={12} color={Colors.BLACK} />
+                    <AppText text={`SAR ${chartData?.data?.monthly}`}  color={Colors.BLACK}/>
                   </View>
                   <View style={styles.statBox}>
-                    <AppText text="Yearly Income" fontSize={12} color="#5A716A" />
-                    <AppText text={`SAR ${chartData?.data?.yearly}`} type="Bold" color="#5A716A" />
+                    <AppText text="Yearly Income" fontSize={12} color={Colors.BLACK} />
+                    <AppText text={`SAR ${chartData?.data?.yearly}`} color={Colors.BLACK} />
                   </View>
                 </View>
 

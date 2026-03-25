@@ -20,13 +20,6 @@ const DISABLED_GRAY = '#A0A0A0'; // Color for disabled state
 const CreateAccountScreen = () => {
   const { control, errors, handleSubmit, isLoading,handleLanguage,isTermsAccepted,toggleTerms } = useCreateAccountContainer();
 
-  // Watch the checkbox value to toggle button state
-  const isAgreed = useWatch({
-    control,
-    name: 'agreeToTerms',
-    defaultValue: false,
-  });
-
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
@@ -108,8 +101,7 @@ const CreateAccountScreen = () => {
                 loading={isLoading}
                 onPress={handleSubmit}
                 title="Next"
-                disabled={!isAgreed || isLoading}
-                backgroundColor={isAgreed ? FIGMA_TEAL : DISABLED_GRAY}
+                // backgroundColor={isAgreed ? FIGMA_TEAL : DISABLED_GRAY}
                 color={Colors.WHITE}
                 borderRadius={100}
                 type="Bold"
