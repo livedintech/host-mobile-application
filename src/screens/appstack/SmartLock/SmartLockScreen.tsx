@@ -1,52 +1,84 @@
-import React, { useCallback } from 'react';
-import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import useSmartLockContainer from './SmartLockContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const SmartLockScreen = () => {
-  // const { handleConnectAccount } = useSmartLockContainer()
-  const handleConnectAccount = useCallback(() => {
-    navigate(NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS)
-  }, []);
+  const handleConnectAccount = () => {
+    navigate(NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS);
+  };
+
   return (
-    <View style={styles.container}>
-      <AppText text={'No Smart Lock Available'} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mb={40} />
-      <View style={styles.infoCard}>
-        <View style={styles.row}>
-          <View style={styles.activeDot} />
-          <View style={styles.avatarContainer}>
-            <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          {/* Main Illustration using the requested path */}
+          <View style={styles.svgContainer}>
+            <Svgicons path="noTTLockScreen" size={Metrics.scale(280)} />
           </View>
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <View style={styles.rowBetween}>
-              <AppText text="A.LI - Livedin" type="Bold" color={Colors.PINE_FOREST} />
-            </View>
-            <AppText text={'You haven’t connected a smart lock yet. Link your TT Smart Lock account to get started.'} color={Colors.PINE_FOREST} mt={5} lineHeight={20} />
-          </View>
+
+          {/* Title - Updated to Black per design */}
+          <AppText
+            text="No Smart Lock Found"
+            fontSize={32}
+            type="Bold"
+            color={Colors.BLACK}
+            textAlign="center"
+            mb={15}
+          />
+
+          {/* Subtitle - Grayish text with specific line height */}
+          <AppText
+            text="You haven’t connected a smart lock yet. Link your TT Smart Lock account to get started."
+            fontSize={16}
+            color={Colors.SUPER_GREY}
+            textAlign="center"
+            lineHeight={24}
+            style={styles.subtitle}
+          />
+        </View>
+
+        {/* Footer Button - Fixed at bottom */}
+        <View style={styles.footer}>
+          <AppButton
+            title="Connect TT Account"
+            onPress={handleConnectAccount}
+            backgroundColor={Colors.PRIMARY_TEAL}
+            color={Colors.WHITE}
+            borderRadius={25}
+          />
         </View>
       </View>
-      <AppButton
-        mt={40}
-        title='Connect TT Account'
-        onPress={handleConnectAccount}
-      />
-    </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1,justifyContent: 'center', backgroundColor: Colors.WHITE, },
-  infoCard: { padding: 20, borderRadius: 30, borderWidth: 1, borderColor: '#E0E0E0', backgroundColor: Colors.WHITE },
-  row: { flexDirection: 'row', alignItems: 'center' },
-  avatarContainer: { position: 'relative', backgroundColor: '#BDF0C5', borderRadius: 100, width: Metrics.scale(72), height: Metrics.scale(72), justifyContent: 'center', alignItems: 'center' },
-  avatar: { width: 46, height: 46, borderRadius: 40 },
-  activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#1A4D2E', marginRight: 8 },
-  rowBetween: { flexDirection: 'row', justifyContent: 'space-between' },
-  connectBtn: { marginTop: 40, height: 55, borderRadius: 30, borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' }
+  container: {
+    flex: 1,
+    paddingHorizontal: Metrics.scale(25),
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: Metrics.verticalScale(80), // Offset to keep illustration centered
+  },
+  svgContainer: {
+    marginBottom: Metrics.verticalScale(40),
+  },
+  subtitle: {
+    paddingHorizontal: Metrics.scale(20),
+  },
+  footer: {
+    marginBottom: Metrics.verticalScale(40),
+  },
 });
+
 export default SmartLockScreen;

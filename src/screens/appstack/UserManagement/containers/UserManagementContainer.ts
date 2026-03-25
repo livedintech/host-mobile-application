@@ -114,6 +114,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     if (mode === 'edit' && editUser) {
       const isAll = !!editUser.is_all_listing;
       console.log('Listing scope type:', editUser.listing_scope?.type);
+const serviceIds = editUser.services?.map((service: any) => service.id) || [];
 
       reset({
         name: editUser.name,
@@ -123,7 +124,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         country: { cca2: 'SA', callingCode: '966' },
         email: editUser.email,
         role: Number(editUser.role_id),
-        staffRoleType: editUser.staff_role_type || '',
+        staffRoleType: serviceIds ,
         listings: editUser.listing_scope?.listing_ids?.map(Number) || [],
         password: '',
         assignAllProperties: isAll,
@@ -184,7 +185,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
       surname: '.',
       password: data.password,
       is_all_listing: data.assignAllProperties,
-      staff_role_type: data.staffRoleType,
+      services: data.staffRoleType,
     };
 
     if (mode === 'create') {
@@ -202,6 +203,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   };
 
   const handleDeleteUser = (id: number) => {
+    console.log("deleteClick",id)
     Alert.alert('Delete User', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       {

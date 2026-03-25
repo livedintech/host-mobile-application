@@ -25,23 +25,23 @@ const GeneratePasscodeScreen = () => {
         >
           <View style={styles.titleWrapper}>
             {type === 'Timed' ? (
-              <AppText fontSize={30} type="Bold" color={Colors.BLACK}>
+              <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
                 Enter{' '}
                 <AppText
                   text="Passcode"
-                  fontSize={32}
-                  type="Bold"
+                  fontSize={30}
+                  type="Medium"
                   color={Colors.PRIMARY_TEAL}
                 />{' '}
                 Details
               </AppText>
             ) : (
-              <AppText fontSize={30} type="Bold" color={Colors.BLACK}>
+              <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
                 Enter your{' '}
                 <AppText
                   text="Code"
                   fontSize={30}
-                  type="Bold"
+                  type="Medium"
                   color={Colors.PRIMARY_TEAL}
                 />{' '}
                 Name

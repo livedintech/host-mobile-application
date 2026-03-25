@@ -219,6 +219,9 @@ import chatIcon from './chatIcon.svg'
 import sendWhite from './sendWhite.svg'
 import noReview from './noReview.svg'
 import noUserFound from './noUserFound.svg'
+import taskBottomIcon from './taskBottomIcon.svg'
+import noTTLockScreen from './noTTLockScreen.svg'
+import noListingOnTTLock from './noListingOnTTLock.svg'
 import reservationtitle from './reservations/reservationtitle.svg';
 import reservationaddress from './reservations/reservationaddress.svg';
 import reservationcheckin from './reservations/reservationcheckin.svg';
@@ -456,5 +459,8 @@ export const icons = {
   back,
   motionStar,
   noReview,
-  noUserFound
+  noUserFound,
+  taskBottomIcon,
+  noTTLockScreen,
+  noListingOnTTLock
 };

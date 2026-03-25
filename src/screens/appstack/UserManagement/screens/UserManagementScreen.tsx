@@ -40,7 +40,6 @@ const UserManagementScreen = () => {
     return names.length > 0 ? names.join(', ') : 'No Access';
   };
 
-
   // Handling the Empty State
   if (!isLoading && userManagement?.length === 0) {
     return <NoUserScreen onCreateUser={handleCreateUser} />;
