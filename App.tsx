@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { processColor, StatusBar, ActivityIndicator, View, StyleSheet, Text, useColorScheme } from 'react-native';
+import { processColor, StatusBar, View, StyleSheet } from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -15,9 +15,6 @@ import { CustomErrorToast } from '@/components/molecules/CustomToast/CustomError
 import { MFSDK } from 'myfatoorah-reactnative';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-
-
-// Import MyFatoorah configuration
 import myFatoorahConfig, {
   validateConfig,
   getEnvironmentName,
@@ -26,23 +23,45 @@ import myFatoorahConfig, {
 import linking from '@/navigation/linkingConfig';
 import { MenuProvider } from 'react-native-popup-menu';
 import { configureGoogleSignIn } from '@/services/googleConfig';
+import NavigationRoutes from './src/navigation/NavigationRoutes';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 const App = () => {
-    const isDarkMode = useColorScheme() === 'dark';
-
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
-  const [initializationError, setInitializationError] = useState<string | null>(
-    null,
-  );
+  const [initializationError, setInitializationError] = useState<string | null>(null);
+  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK); // Splash/Onboarding ke liye pehle BLACK
 
   useEffect(() => {
     initializeApp();
     configureGoogleSignIn();
   }, []);
 
+  const getActiveRouteName = (state: any): string => {
+  const route = state.routes[state.index];
+
+  if (route.state) {
+    return getActiveRouteName(route.state);
+  }
+
+  return route.name;
+};
+
+ const handleNavigationStateChange = (state: any) => {
+  try {
+    const currentRouteName = getActiveRouteName(state);
+
+    const onboardingRoute = NavigationRoutes.AUTH_STACK.ON_BOARDING;
+
+    if (currentRouteName === onboardingRoute) {
+      setSafeAreaBg(Colors.BLACK);
+    } else {
+      setSafeAreaBg(Colors.WHITE);
+    }
+  } catch (e) {}
+};
+
   const initializeApp = async () => {
     try {
-      // Validate configuration first
       const { isValid, errors } = validateConfig();
 
       if (!isValid) {
@@ -50,10 +69,7 @@ const App = () => {
         throw new Error(`Configuration Error: ${errors.join(', ')}`);
       }
 
-      // Initialize MyFatoorah SDK
       await configureMyFatoorah();
-
-      // Setup ActionBar (optional)
       await setUpActionBar();
 
       setIsSDKInitialized(true);
@@ -64,7 +80,6 @@ const App = () => {
     } catch (error: any) {
       console.error('❌ App initialization failed:', error);
       setInitializationError(error.message || 'Initialization failed');
-      // Allow app to load even if payment SDK fails
       setIsSDKInitialized(true);
     }
   };
@@ -79,11 +94,8 @@ const App = () => {
 
       console.log('✅ MyFatoorah SDK initialized:', success);
 
-      // Warn if using production in development
       if (isProduction() && __DEV__) {
-        console.warn(
-          '⚠️ WARNING: Using PRODUCTION environment in development mode!',
-        );
+        console.warn('⚠️ WARNING: Using PRODUCTION environment in development mode!');
       }
 
       return success;
@@ -99,14 +111,13 @@ const App = () => {
         myFatoorahConfig.actionBarTitle,
         processColor(myFatoorahConfig.actionBarTitleColor),
         processColor(myFatoorahConfig.actionBarBackgroundColor),
-        true, // Show back button
+        true,
       );
 
       console.log('✅ MyFatoorah ActionBar configured:', success);
       return success;
     } catch (error: any) {
       console.error('⚠️ ActionBar setup error:', error);
-      // ActionBar is optional, don't throw error
       return null;
     }
   };
@@ -116,25 +127,18 @@ const App = () => {
     error: (props: BaseToastProps) => <CustomErrorToast {...props} />,
   };
 
-  // Loading screen while initializing
   if (!isSDKInitialized) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator
-          size="large"
-          color={Colors.INDIAN_RED || '#FF0000'}
-        />
+        <SpinnerLoader size={'large'} />
       </View>
     );
   }
 
-  // Show warning if initialization failed
   if (initializationError) {
-    console.warn(
-      '⚠️ Payment system may not work properly:',
-      initializationError,
-    );
+    console.warn('⚠️ Payment system may not work properly:', initializationError);
   }
+
   const MyTheme = {
     ...DefaultTheme,
     colors: {
@@ -142,25 +146,33 @@ const App = () => {
       background: Colors.WHITE,
     },
   };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <KeyboardProvider>
-          <BottomSheetModalProvider>
-          <NavigationContainer ref={navigationRef} theme={MyTheme} linking={linking} >
-            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
-              <StatusBar
-                    barStyle={isDarkMode ? 'dark-content' : 'dark-content'}
-                    backgroundColor={isDarkMode ? Colors.BLACK : Colors.BLACK}
+            <BottomSheetModalProvider>
+              <NavigationContainer
+                ref={navigationRef}
+                theme={MyTheme}
+                linking={linking}
+                onStateChange={handleNavigationStateChange} // ✅ route change listener
+              >
+                <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
+                  {/* ✅ dynamic background */}
+                  <StatusBar
+                    barStyle={safeAreaBg === Colors.BLACK ? 'light-content' : 'dark-content'}
+                    backgroundColor={safeAreaBg} // ✅ Android ke liye
+                    translucent={safeAreaBg === Colors.BLACK} // ✅ Onboarding par translucent
                   />
-              <MenuProvider skipInstanceCheck>
-                <StackNavigator />
-              </MenuProvider>
-              <Toast config={toastConfig} />
-            </SafeAreaView>
-          </NavigationContainer>
-          </BottomSheetModalProvider>
+                  <MenuProvider skipInstanceCheck>
+                    <StackNavigator />
+                  </MenuProvider>
+                  <Toast config={toastConfig} />
+                </SafeAreaView>
+              </NavigationContainer>
+            </BottomSheetModalProvider>
           </KeyboardProvider>
         </QueryClientProvider>
       </SafeAreaProvider>

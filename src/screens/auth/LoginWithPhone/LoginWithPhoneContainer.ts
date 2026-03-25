@@ -24,6 +24,7 @@ import appleAuth, {
   AppleRequestScope,
   AppleCredentialState,
 } from '@invertase/react-native-apple-authentication';
+import { storage } from '@/storage/mmkv';
 
 export default function useLoginWithPhoneContainer() {
   const { cca2, callingCode, phoneNumber: storePhoneNo, rememberMe, setRememberMe } = useRememberMeStore();
@@ -135,33 +136,57 @@ export default function useLoginWithPhoneContainer() {
   };
 
   // ----------------- Apple Sign In -----------------
-const handleAppleSignIn = async () => {
+  const handleAppleSignIn = async () => {
     try {
       const appleAuthResponse = await appleAuth.performRequest({
-        requestedOperation: AppleRequestOperation.LOGIN,
-        requestedScopes: [
-          AppleRequestScope.FULL_NAME,
-          AppleRequestScope.EMAIL,
-        ],
+        requestedOperation: 0, // LOGIN
+        requestedScopes: [0, 1], // FULL_NAME, EMAIL
       });
  
       const credentialState = await appleAuth.getCredentialStateForUser(
         appleAuthResponse.user,
       );
  
-      if (credentialState !== AppleCredentialState.AUTHORIZED) {
+      if (credentialState !== 1) { // 1 = AUTHORIZED
         Alert.alert('Apple Sign-In', 'Authorization failed. Please try again.');
         return;
       }
  
+      const APPLE_USER_KEY = `apple_user_${appleAuthResponse.user}`;
+ 
+      let email = appleAuthResponse.email || '';
+      let name = appleAuthResponse.fullName
+        ? `${appleAuthResponse.fullName.givenName || ''} ${appleAuthResponse.fullName.familyName || ''}`.trim()
+        : '';
+ 
+      if (email) {
+        // Pehli baar — email mil gayi, store kar lo
+        storage.set(APPLE_USER_KEY, JSON.stringify({ email, name }));
+      } else {
+        // Doosri baar — stored data se lo
+        const stored = storage.getString(APPLE_USER_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          email = parsed.email || '';
+          name = name || parsed.name || '';
+        }
+      }
+ 
       const result = await socialAuthApi({
         sub: appleAuthResponse.user,
-        name: appleAuthResponse.fullName
-          ? `${appleAuthResponse.fullName.givenName || ''} ${appleAuthResponse.fullName.familyName || ''}`.trim()
-          : '',
-        email: appleAuthResponse.email || '',
+        name,
+        email,
         fcm_token: '',
       });
+
+      console.log('Apple Response:', {
+  user: appleAuthResponse.user,
+  email: appleAuthResponse.email,
+  fullName: appleAuthResponse.fullName,
+});
+
+console.log('Final email being sent:', email);
+console.log('Final name being sent:', name);
  
       setToken(result?.access_token);
       setUser(result?.user);
@@ -175,6 +200,7 @@ const handleAppleSignIn = async () => {
         Alert.alert('Apple Sign-In error', error.message);
       }
     }
+    
   };
 
   return {
