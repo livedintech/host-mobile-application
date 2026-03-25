@@ -113,7 +113,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           {/* Guest Email Row */}
           <View style={styles.guestInfoRow}>
             <View style={styles.rowIconContainer}>
-              <Svgicons path="guestEmail" size={30} />
+              <Svgicons path="guestEmail" size={50} />
             </View>
             <View style={styles.infoContent}>
               <AppText text="Guest Email" fontSize={13} color={Colors.BLACK} type="Medium" />
@@ -124,7 +124,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           {/* Guest Contact Row */}
           <View style={styles.guestInfoRow}>
             <View style={styles.rowIconContainer}>
-              <Svgicons path="guestContact" size={30} />
+              <Svgicons path="guestContact" size={50} />
             </View>
             <View style={styles.infoContent}>
               <AppText text="Guest Contact" fontSize={13} color={Colors.BLACK} type="Medium" />
@@ -136,7 +136,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           {property?.booking_platform !== 'host_booking' && (
             <View style={styles.guestInfoRow}>
               <View style={styles.rowIconContainer}>
-                <Svgicons path="guestRating" size={30} />
+                <Svgicons path="guestRating" size={50} />
               </View>
               <View style={styles.infoContent}>
                 <AppText text="Guest Rating" fontSize={13} color={Colors.BLACK} type="Medium" mb={2} />
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     borderRadius: ms(12),
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: s(12),
+    marginRight: s(5),
   },
   ratingContent: {
     marginTop: vs(5),
