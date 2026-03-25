@@ -72,36 +72,35 @@ const generateSlots = (
 
 // ───────────────── 2️⃣ FETCH SLOTS FOR DATE ─────────────────
 
-const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
+export const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
   try {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // 1. Get and Encode Timezone
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    const encodedTz = encodeURIComponent(timezone);
 
-    // Start & end of the selected day in local time
-    const startTimeLocal = new Date(`${date}T00:00:00`).getTime();
-    const endTimeLocal = new Date(`${date}T23:59:59`).getTime();
+    const [year, month, day] = date.split('-').map(Number);
+    
+    const startOfDay = Date.UTC(year, month - 1, day, 0, 0, 0);
+    const endOfDay = Date.UTC(year, month - 1, day, 23, 59, 59, 999);
 
-    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startTimeLocal}&endTime=${endTimeLocal}&timezone=${timezone}`;
+    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startOfDay}&endTime=${endOfDay}&start=${startOfDay}&end=${endOfDay}&timezone=${encodedTz}`;
 
     const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-    
-    if (!res.ok) {
-      console.error('[HubSpot] Slot fetch failed', await res.text());
-      return [];
-    }
+    if (!res.ok) return [];
 
     const data = await res.json();
-
-    // 1. Navigate to the nested availability data
-    // We look for '900000' (15 mins) as a default, or handle dynamic durations if needed
+    
     const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['900000']?.availabilities || [];
     
-    // 2. Map the API response to your expected HubSpotSlot format
-    const slots = availabilityData.map((slot: any) => ({
+    const filteredSlots = availabilityData.filter((slot: any) => {
+      const slotDate = new Date(slot.startMillisUtc).toISOString().split('T')[0];
+      return slotDate === date; 
+    });
+
+    return filteredSlots.map((slot: any) => ({
       startTime: slot.startMillisUtc,
       endTime: slot.endMillisUtc
     }));
-
-    return slots;
   } catch (error) {
     console.error('[HubSpot] Slot fetch error', error);
     return [];
