@@ -149,7 +149,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: s(24),
-    paddingBottom: vs(10)
+    paddingBottom: vs(10),
+    paddingTop: vs(40) // Added padding top for overall screen
   },
   headerSection: { 
     marginBottom: vs(25)
