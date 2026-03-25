@@ -59,19 +59,18 @@ const CustomInput = ({
   verticalAlign,
   maxLength,
 }: Props) => {
-  // Animated value for border focus
   const animation = useRef(new Animated.Value(0)).current;
 
-  // Glass Constants from your GlassCard logic
-  const GLASS_BASE = 'rgba(217, 217, 217, 0.2)';
-  const GLASS_RIM = 'rgba(255, 255, 255, 0.7)';
-  const FOCUS_COLOR = Colors.BRUNSWICK_GREEN || '#00443d';
+  // Matching your Dropdown styling exactly
+  const GLASS_BASE = 'rgba(255, 255, 255, 0.25)'; 
+  const GLASS_RIM = 'rgba(255, 255, 255, 0.6)';
+  const FOCUS_COLOR = Colors.PINE_FOREST || '#1A332C';
 
   const handleFocus = () => {
     Animated.timing(animation, {
       toValue: 1,
       duration: 250,
-      useNativeDriver: false, // Colors need false
+      useNativeDriver: false,
     }).start();
   };
 
@@ -84,7 +83,6 @@ const CustomInput = ({
     onBlur?.();
   };
 
-  // Interpolate border color from glass rim to focus color
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [GLASS_RIM, FOCUS_COLOR],
@@ -96,7 +94,7 @@ const CustomInput = ({
         <AppText
           text={label}
           mb={8}
-          color={Colors.PINE_FOREST}
+          color={Colors.BLACK} // Matches Dropdown label color
           fontSize={14}
           type="Medium"
         />
@@ -107,7 +105,7 @@ const CustomInput = ({
           styles.glassContainer,
           {
             borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
-            backgroundColor: GLASS_BASE,
+            backgroundColor: editable ? GLASS_BASE : 'rgba(255, 255, 255, 0.1)',
           },
           wrapperStyle,
         ]}
@@ -116,7 +114,7 @@ const CustomInput = ({
 
         <TextInput
           multiline={multiline}
-          selectionColor={Colors.SUPER_GREY}
+          selectionColor={FOCUS_COLOR}
           secureTextEntry={secureTextEntry}
           style={[
             styles.input,
@@ -126,7 +124,8 @@ const CustomInput = ({
               : { textAlignVertical: 'center' },
           ]}
           placeholder={placeholder}
-          placeholderTextColor={Colors.BLACK_35_PERCENT} 
+          // Matches your dropdown placeholder color
+          placeholderTextColor={'#7B8D88'} 
           value={value}
           onChangeText={onChangeText}
           onFocus={handleFocus}
@@ -150,8 +149,6 @@ const CustomInput = ({
   );
 };
 
-export default CustomInput;
-
 const styles = StyleSheet.create({
   wrapper: {
     marginBottom: Metrics.verticalScale(18),
@@ -159,31 +156,16 @@ const styles = StyleSheet.create({
   glassContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 28, // High radius for glassy look
+    borderRadius: 12, // Matches dropdown's slightly rounded aesthetic
     paddingHorizontal: 16,
-    height: Metrics.verticalScale(58),
-    // borderWidth: 1.5,
-
-    // Platform-specific logic from your GlassCard
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.05,
-        shadowRadius: 15,
-      },
-      android: {
-        // Simulating depth on Android
-        // borderBottomWidth: 2,
-        // borderRightWidth: 1.5,
-        // borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-      },
-    }),
+    height: Metrics.verticalScale(54), // Matches dropdown height
+    borderWidth: 1.5,
   },
   input: {
     flex: 1,
-    color: Colors.BLACK, // Change to Colors.WHITE if your background is very dark
+    color: '#1A332C', // Matches dropdown selectedTextStyle
     fontSize: Metrics.generatedFontSize(14),
+    fontWeight: '600',
     paddingVertical: 0,
   },
   iconWrapper: {
@@ -193,8 +175,10 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: Colors.INDIAN_RED,
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 5,
-    marginLeft: 12,
+    marginLeft: 4,
   },
 });
+
+export default CustomInput;

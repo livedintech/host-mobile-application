@@ -218,6 +218,7 @@ import cardBlack from './cardBlack.svg'
 import chatIcon from './chatIcon.svg'
 import sendWhite from './sendWhite.svg'
 import noReview from './noReview.svg'
+import noUserFound from './noUserFound.svg'
 import reservationtitle from './reservations/reservationtitle.svg';
 import reservationaddress from './reservations/reservationaddress.svg';
 import reservationcheckin from './reservations/reservationcheckin.svg';
@@ -454,5 +455,6 @@ export const icons = {
   overallRating,
   back,
   motionStar,
-  noReview
+  noReview,
+  noUserFound
 };

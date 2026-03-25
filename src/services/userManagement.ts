@@ -27,6 +27,17 @@ export const getUserManagementListingsApi = async () => {
 
     throw response.message;
 };
+export const getVendorServices = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_VENDOR_SERVICES
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
 
 //Get Listings 
 export const getUserManagementRoleApi = async () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { ButtonProps } from './ButtonProps';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
@@ -18,10 +18,14 @@ const AppButton = ({
     disabled = false,
     loading = false,
     style,
+    textStyle,
     m, mt, mb, ml, mr, mx, my,
     p, pt, pb, pl, pr, px, py,
     type ='Regular'
-}: ButtonProps) => {
+}: ButtonProps & {
+    style?: ViewStyle;
+    textStyle?: TextStyle; // ✅ added typing
+}) => {
     const spacingStyles = {
         margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
         marginTop: mt !== undefined ? Metrics.verticalScale(mt) : my !== undefined ? Metrics.verticalScale(my) : undefined,
@@ -51,7 +55,7 @@ const AppButton = ({
             {loading ? (
                 <ActivityIndicator color={color} />
             ) : (
-                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} type={type}/>
+                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} type={type}    style={[styles.text, textStyle]}/>
             )}
         </ButtonView>
     );
@@ -66,4 +70,6 @@ const styles = StyleSheet.create({
     disabledButton: {
         backgroundColor: Colors.SMOOTH_GREY,
     },
+      text: {
+    }
 });

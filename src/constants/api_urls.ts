@@ -49,6 +49,7 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_CHAT_INBOX_UNSNOOZE: `${authController}/chat/inbox/{conversation_id}/unsnooze`,
     CREATE_USER_MANAGEMENT: `${authController}/host/users`,
     GET_USER_MANAGEMENT_LISTING: `${authController}/host/users/listings`,
+    GET_VENDOR_SERVICES: `${api}/vendorservices`,
     GET_AMENITIES: `${authController}/amenities`,
     GET_USER_MANAGEMENT_ROLE: `${authController}/host/users/role`,
     GET_USER_MANAGEMENT: `${authController}/host/users`,
