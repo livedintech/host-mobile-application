@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -7,161 +7,219 @@ import Metrics from '@/utility/Metrics';
 import useActiveCodesContainer, { CodeTab } from './ActiveCodesContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack } from '@/services/navigationService';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ActiveCodesScreen = () => {
-    const { activeTab, setActiveTab, currentData, handleGenerateNew, handleViewLogs, isLoading,refetch } =
-        useActiveCodesContainer();
+  const {
+    activeTab,
+    setActiveTab,
+    currentData,
+    handleGenerateNew,
+    isLoading,
+    refetch,
+    handleViewLogs,
+  } = useActiveCodesContainer();
 
-          console.log("currentDatacurrentData",currentData)
-    const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
+  const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
 
-    const renderCodeCard = ({ item }: { item: any }) => {
-          console.log("itemmmccn",item)
-        return (
-        <View style={styles.card}>
-            <View style={styles.cardHeader}>
-                <Svgicons path="lockFrame" size={24} color={Colors.BRUNSWICK_GREEN} />
-                <AppText text={item.title} fontSize={20} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={10} />
-            </View>
-
-            <View style={styles.cardBody}>
-                <DetailRow label="Passcode" value={item.passcode} />
-                {activeTab === 'Timed' && (
-                    <>
-                        <DetailRow label="Date" value={item.date} />
-                        <DetailRow label="Start Time" value={item.startTime} />
-                        <DetailRow label="End Time" value={item.endTime} />
-                        <DetailRow label="Status" value={item.status} />
-                    </>
-                )}
-            </View>
-        </View>
-        )
-    };
-
+  const renderCodeCard = ({ item }: { item: any }) => {
     return (
-        <View style={styles.container}>
-
-            <View style={styles.header}>
-                <ButtonView style={styles.backBtn} onPress={() => goBack()}>
-                    <Svgicons path="arrowLeftIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
-                </ButtonView>
-
-                <ButtonView style={styles.logsBtn} onPress={handleViewLogs}>
-                    <AppText text="View Logs" fontSize={14} color={Colors.BRUNSWICK_GREEN} type="Medium" />
-                </ButtonView>
-            </View>
-
-            {/* Title Section */}
-            <View style={styles.titleContainer}>
-                <AppText text="Active Codes" fontSize={32} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                <Svgicons path="keyBinary" size={28} color={Colors.BRUNSWICK_GREEN} ml={10} />
-            </View>
-
-            {/* Tabs Section */}
-            <View style={styles.tabWrapper}>
-                {TABS.map((tab) => (
-                    <TouchableOpacity
-                        key={tab}
-                        onPress={() => setActiveTab(tab)}
-                        style={[styles.tabButton, activeTab === tab && styles.activeTabButton]}
-                    >
-                        <AppText
-                            text={tab}
-                            fontSize={14}
-                            color={activeTab === tab ? Colors.WHITE : Colors.BRUNSWICK_GREEN}
-                            type="Medium"
-                        />
-                    </TouchableOpacity>
-                ))}
-            </View>
-
-            {/* List Section */}
-            <FlatListSimpleHandler
-                data={currentData}
-                renderItem={renderCodeCard}
-                keyExtractor={item => item.id}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                isLoading={isLoading}
-                onRefresh={refetch}
-
-            />
-
-            {/* Footer Action */}
-            <View style={styles.footer}>
-                <AppButton
-                    title="Generate New Passcode"
-                    onPress={handleGenerateNew}
-                />
-            </View>
+      <GlassCard width="100%" style={styles.glassCard}>
+        <AppText
+          text={item.title}
+          fontSize={18}
+          type="Bold"
+          color={Colors.BLACK}
+          mb={4}
+        />
+        <View style={styles.detailRow}>
+          <AppText text="Passcode: " fontSize={14} color={Colors.BLACK} />
+          <AppText text={item.passcode} fontSize={14} color={Colors.BLACK} />
         </View>
+
+        {activeTab === 'Timed' && (
+          <View style={styles.timedDetails}>
+            <DetailRow label="Date" value={item.date} />
+            <DetailRow label="Start Time" value={item.startTime} />
+            <DetailRow label="End Time" value={item.endTime} />
+          </View>
+        )}
+      </GlassCard>
     );
+  };
+
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <View style={styles.headerTop}>
+          <ButtonView style={styles.backButton} onPress={() => goBack()}>
+            <Svgicons
+              path="arrowLeftIcon"
+              size={24}
+              color={Colors.BRUNSWICK_GREEN}
+            />
+          </ButtonView>
+
+          <ButtonView style={styles.viewLogsBtn} onPress={handleViewLogs}>
+            <AppText text="View Logs" fontSize={12} color={Colors.BLACK} />
+          </ButtonView>
+        </View>
+        {/* Title */}
+        <View style={styles.titleContainer}>
+          <AppText
+            text="Active Codes"
+            fontSize={32}
+            type="Bold"
+            color={Colors.BLACK}
+          />
+        </View>
+
+        {/* Tabs Section - Pill Style */}
+        <View style={styles.tabWrapper}>
+          {TABS.map(tab => {
+            const isActive = activeTab === tab;
+            return (
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setActiveTab(tab)}
+                style={[styles.tabButton, isActive && styles.activeTabButton]}
+              >
+                <AppText
+                  text={tab}
+                  fontSize={14}
+                  color={isActive ? Colors.WHITE : Colors.BLACK}
+                  type={isActive ? 'Bold' : 'Regular'}
+                />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* List Section */}
+        <FlatListSimpleHandler
+          data={currentData}
+          renderItem={renderCodeCard}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          isLoading={isLoading}
+          onRefresh={refetch}
+        />
+
+        {/* Footer Action */}
+        <View style={styles.footer}>
+          <AppButton
+            title="Generate New Passcode"
+            onPress={handleGenerateNew}
+            backgroundColor="#00A68A" // Teal color from design
+            color={Colors.WHITE}
+            borderRadius={25}
+          />
+        </View>
+      </View>
+    </BGImage>
+  );
 };
 
-const DetailRow = ({ label, value }: { label: string, value: string }) => (
-    <View style={styles.detailRow}>
-        <AppText text={`${label}: `} fontSize={14} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-        <AppText text={value} fontSize={14} color={Colors.BRUNSWICK_GREEN} />
-    </View>
+const DetailRow = ({ label, value }: { label: string; value: string }) => (
+  <View style={styles.detailRow}>
+    <AppText text={`${label}: `} fontSize={12} color={Colors.BLACK} />
+    <AppText text={value} fontSize={12} color={Colors.BLACK} />
+  </View>
 );
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: Metrics.scale(20),
-        paddingVertical: Metrics.verticalScale(15),
-    },
-    backBtn: {
-        width: 45, height: 45, borderRadius: 25,
-        borderWidth: 1, borderColor: Colors.SMOOTH_GREY,
-        justifyContent: 'center', alignItems: 'center'
-    },
-    titleContainer: {
-        flexDirection: 'row', alignItems: 'center',
-        justifyContent: 'center', marginBottom: 25
-    },
-    tabWrapper: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        paddingHorizontal: 20,
-        marginBottom: 20
-    },
-    tabButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        marginHorizontal: 5,
-        backgroundColor: Colors.WHITE
-    },
-    activeTabButton: {
-        backgroundColor: Colors.BRUNSWICK_GREEN,
-        borderColor: Colors.BRUNSWICK_GREEN
-    },
-    listContent: { paddingHorizontal: 25, paddingBottom: 20 },
-    card: {
-        borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        borderRadius: 20,
-        padding: 20,
-        marginBottom: 15,
-        backgroundColor: Colors.WHITE
-    },
-    cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-    cardBody: { marginLeft: 2 },
-    detailRow: { flexDirection: 'row', marginBottom: 6 },
-    footer: { padding: 25 },
-    logsBtn: {
-        paddingVertical: 8, paddingHorizontal: 15,
-        borderRadius: 20, borderWidth: 1, borderColor: Colors.SMOOTH_GREY
-    },
+  container: { flex: 1 },
+  header: {
+    paddingHorizontal: Metrics.scale(20),
+    paddingTop: Metrics.verticalScale(10),
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Metrics.scale(20),
+    paddingTop: Metrics.verticalScale(30),
+    paddingBottom: Metrics.verticalScale(10),
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  viewLogsBtn: {
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginTop: Metrics.verticalScale(20),
+    marginBottom: Metrics.verticalScale(30),
+  },
+  tabWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginBottom: Metrics.verticalScale(30),
+  },
+  tabButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    borderRadius: 15, // Pill shape
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    marginHorizontal: 6,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+  },
+  activeTabButton: {
+    backgroundColor: '#00A68A',
+    borderColor: '#00A68A',
+  },
+  listContent: {
+    paddingHorizontal: 25,
+    paddingBottom: 100,
+  },
+  glassCard: {
+    padding: 20,
+    marginBottom: 15,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timedDetails: {
+    marginTop: 8,
+    borderTopWidth: 0.5,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+    paddingTop: 8,
+  },
+  logsBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.SMOOTH_GREY,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 25,
+    paddingBottom: Metrics.verticalScale(40),
+  },
 });
 
 export default ActiveCodesScreen;
