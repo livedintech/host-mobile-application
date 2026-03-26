@@ -68,9 +68,9 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
             </ButtonView>
             
             {/* Filter Icon as seen in Activity Log.jpg */}
-            <ButtonView style={styles.filterIcon}>
+            {/* <ButtonView style={styles.filterIcon}>
                <Svgicons path="filterIcon" size={20} color={Colors.BLACK} />
-            </ButtonView>
+            </ButtonView> */}
           </View>
         </View>
 

@@ -222,6 +222,9 @@ import noUserFound from './noUserFound.svg'
 import taskBottomIcon from './taskBottomIcon.svg'
 import noTTLockScreen from './noTTLockScreen.svg'
 import noListingOnTTLock from './noListingOnTTLock.svg'
+import noSavedReplies from './noSavedReplies.svg'
+import aiAutoReplyIcon from './aiAutoReplyIcon.svg'
+import automationTemplateIcon from './automationTemplateIcon.svg'
 import reservationtitle from './reservations/reservationtitle.svg';
 import reservationaddress from './reservations/reservationaddress.svg';
 import reservationcheckin from './reservations/reservationcheckin.svg';
@@ -462,5 +465,8 @@ export const icons = {
   noUserFound,
   taskBottomIcon,
   noTTLockScreen,
-  noListingOnTTLock
+  noListingOnTTLock,
+  automationTemplateIcon,
+  noSavedReplies,
+  aiAutoReplyIcon
 };

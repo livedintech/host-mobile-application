@@ -54,8 +54,8 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
   }));
 
   const animatedContainerStyle = useAnimatedStyle(() => ({
-    backgroundColor: sharedValue ? Colors.BRUNSWICK_GREEN : Colors.DRAVIT_GREY,
-    borderColor: sharedValue ? Colors.BRUNSWICK_GREEN : Colors.DRAVIT_GREY,
+    backgroundColor: sharedValue ? Colors.TEAL_PRIMARY_ALT : Colors.DRAVIT_GREY,
+    borderColor: sharedValue ? Colors.TEAL_PRIMARY_ALT : Colors.DRAVIT_GREY,
   }));
 
   return (
@@ -67,7 +67,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
     >
       <Animated.View style={[styles.switch, animatedContainerStyle]}>
         <Animated.View style={[styles.circle, animatedCircleStyle]}>
-          {isLoading && <ActivityIndicator size={20} color={Colors.BRUNSWICK_GREEN} />}
+          {isLoading && <ActivityIndicator size={20} color={Colors.TEAL_PRIMARY_ALT} />}
         </Animated.View>
       </Animated.View>
     </ButtonView>

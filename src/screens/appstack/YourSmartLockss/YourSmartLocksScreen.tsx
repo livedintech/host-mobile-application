@@ -238,23 +238,16 @@
 // export default YourSmartLocksScreen;
 
 
-
-
 import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useYourSmartLockssContainer from './YourSmartLockssContainer';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import SmartLockScreen from '../SmartLock/SmartLockScreen';
-
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { navigate, goBack } from '@/services/navigationService';
 import NoListingScreen from '../NoListingFoundOnSmartLock/NoListingScreen';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
@@ -263,7 +256,6 @@ const YourSmartLocksScreen = () => {
   const {
     locksData,
     listingsData,
-    LISTING_OPTIONS,
     control,
     errors,
     getBatteryColor,
@@ -271,14 +263,13 @@ const YourSmartLocksScreen = () => {
     isLoading,
     refetch,
     goToScreen,
-    selectDropdown,
+    getOptionsForLock,
+    handleSelect,
   } = useYourSmartLockssContainer();
 
-  // Condition Checks
   const hasListings = listingsData && listingsData.length > 0;
   const hasLocks = locksData && locksData.length > 0;
 
-  // 1. Loading State
   if (isLoading) {
     return (
       <View style={styles.loaderContainer}>
@@ -287,19 +278,13 @@ const YourSmartLocksScreen = () => {
     );
   }
 
-  // 2. No Listings (Properties) - Show Property Fallback
-  if (hasListings) {
-    return <NoListingScreen />;
-  }
+  if (!hasListings) return <NoListingScreen />;
+  if (!hasLocks) return <SmartLockScreen />;
 
-  // 3. Has Listings but No Locks - Show Lock Fallback
-  if (!hasLocks) {
-    return <SmartLockScreen />;
-  }
-
-  // 4. Final State: Show List
   const renderLockCard = ({ item }: { item: any }) => {
     const batteryValue = Number(item.battery_percentage?.replace('%', ''));
+    const dynamicOptions = getOptionsForLock(item);
+
     return (
       <GlassCard width="100%" style={styles.glassCard}>
         <Pressable onPress={() => goToScreen(item?.lock_id)}>
@@ -307,7 +292,7 @@ const YourSmartLocksScreen = () => {
           <View style={styles.infoSection}>
             <View style={styles.rowSmall}>
               <AppText text="TT Account: " fontSize={14} color={Colors.BLACK} />
-              <AppText text="accountali@gmail.com" fontSize={14} color={Colors.BLACK} />
+              <AppText text={item.username} fontSize={14} color={Colors.BLACK} />
             </View>
             <View style={styles.rowSmall}>
               <AppText text="Lock Number: " fontSize={14} color={Colors.BLACK} />
@@ -324,9 +309,10 @@ const YourSmartLocksScreen = () => {
             name={`lock_${item.lock_id}_listing`}
             control={control}
             errors={errors}
-            data={LISTING_OPTIONS}
+            data={dynamicOptions}
             placeholder="Select Property"
-            onSelect={value => selectDropdown(value?.value, item.lock_id)}
+            // Pass the whole 'item' to handleSelect for internal checks
+            onSelect={value => handleSelect(value?.value, item)}
             label="Assign Listing"
           />
         </View>
@@ -337,11 +323,9 @@ const YourSmartLocksScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-
-
         <View style={{ flex: 1 }}>
           <View style={styles.titleContainer}>
-            <AppText text="Your Smart Locks" fontSize={32} type="Bold" color={Colors.BLACK} />
+            <AppText text="Your Smart Locks" fontSize={28} type="Bold" color={Colors.BLACK} />
           </View>
           <FlatListSimpleHandler
             data={locksData}
@@ -349,7 +333,7 @@ const YourSmartLocksScreen = () => {
             renderItem={renderLockCard}
             onRefresh={refetch}
             contentContainerStyle={styles.listContent}
-             isLoading={false}
+            isLoading={false}
           />
         </View>
 
@@ -369,24 +353,6 @@ const YourSmartLocksScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  headerTop: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    paddingHorizontal: Metrics.scale(20), 
-    paddingTop: Metrics.verticalScale(10) 
-  },
-  backButton: { 
-    width: 40, height: 40, borderRadius: 20, 
-    backgroundColor: 'rgba(255,255,255,0.5)', 
-    justifyContent: 'center', alignItems: 'center', 
-    borderWidth: 1, borderColor: '#E0E0E0' 
-  },
-  viewLogsBtn: { 
-    paddingHorizontal: 15, paddingVertical: 8, borderRadius: 20, 
-    backgroundColor: 'rgba(255,255,255,0.5)', 
-    borderWidth: 1, borderColor: '#E0E0E0' 
-  },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   titleContainer: { paddingHorizontal: Metrics.scale(25), paddingTop: Metrics.verticalScale(30), paddingBottom: Metrics.verticalScale(20) },
   listContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(120) },

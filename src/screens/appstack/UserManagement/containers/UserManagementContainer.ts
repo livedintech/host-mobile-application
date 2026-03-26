@@ -11,7 +11,7 @@ import {
   getUserManagementListingsApi,
   getUserManagementRoleApi,
   userManagementCraeteApi,
-  getVendorServices
+  getVendorServices,
 } from '@/services/userManagement';
 import STORAGE_CONST from '@/constants/storage';
 import * as yup from 'yup';
@@ -23,9 +23,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   const queryClient = useQueryClient();
   const { params } = useRoute<any>();
   const editUser = params?.editUser;
-  console.log("editUser",editUser);
-
-
+  console.log('editUser', editUser);
 
   // 1. Fetch Roles & Listings
   const { data: roles = [] } = useQuery({
@@ -41,7 +39,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     queryKey: ['GET_VENDOR_SERVICES'], // Ensure this key exists in your constants or use string
     queryFn: getVendorServices,
   });
-  console.log("vendorServices",vendorServices)
+  console.log('vendorServices', vendorServices);
 
   const {
     data: userManagement = [],
@@ -52,7 +50,6 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     queryFn: getUserManagementApi,
   });
 
-
   const staffRoleTypeOptions = vendorServices.map((service: any) => ({
     label: service.name || service.label, // Adjust based on your API response keys
     value: service.id || service.value,
@@ -61,30 +58,47 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   // 2. Validation Schema
   const userManagementSchema = yup.object({
     name: yup.string().required('Name is required'),
-    phoneNumber: yup.string().required('Phone number is required').min(7, 'Invalid phone number'),
+    phoneNumber: yup
+      .string()
+      .required('Phone number is required')
+      .min(7, 'Invalid phone number'),
     country: yup.object().required(),
-    email: yup.string().required('Email is required').email('Invalid email address'),
+    email: yup
+      .string()
+      .required('Email is required')
+      .email('Invalid email address'),
     role: yup.string().required('Role is required'),
- staffRoleType: yup.array().test('is-staff-req', 'Staff role type is required', function (value) {
-    const { role } = this.parent;
-    const selectedRole = roles?.find((r: any) => String(r.id) === String(role));
-    
-    if (selectedRole?.role_type === 'operator') {
-      return value && value.length > 0;
-    }
-    return true;
-  }),
+
+    // Conditional Validation for Staff Role Type
+    staffRoleType: yup.array().when('role', {
+      is: (val: any) => {
+        const selectedRole = roles?.find(
+          (r: any) => String(r.id) === String(val),
+        );
+        return selectedRole?.role_type === 'operator';
+      },
+      then: schema => schema.min(1, 'Staff role type is required').required(),
+      otherwise: schema => schema.optional().nullable(),
+    }),
+
     assignAllProperties: yup.boolean(),
     listings: yup.array().when('assignAllProperties', {
       is: false,
-      then: (schema) => schema.min(1, 'Please select at least one property').required(),
-      otherwise: (schema) => schema.optional(),
+      then: schema =>
+        schema.min(1, 'Please select at least one property').required(),
+      otherwise: schema => schema.optional(),
     }),
-    password: yup.string().test('is-password-req', 'Password is required', function (value) {
-      const { role } = this.parent;
-      const selectedRole = roles?.find((r: any) => String(r.id) === String(role));
-      if (selectedRole?.role_type === 'operator' && !value && mode === 'create') return false;
-      return true;
+
+    // Conditional Validation for Password
+    password: yup.string().when(['role'], {
+      is: (role: any) => {
+        const selectedRole = roles?.find(
+          (r: any) => String(r.id) === String(role),
+        );
+        return selectedRole?.role_type === 'operator' && mode === 'create';
+      },
+      then: schema => schema.required('Password is required'),
+      otherwise: schema => schema.optional().nullable(),
     }),
   });
 
@@ -114,7 +128,8 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     if (mode === 'edit' && editUser) {
       const isAll = !!editUser.is_all_listing;
       console.log('Listing scope type:', editUser.listing_scope?.type);
-const serviceIds = editUser.services?.map((service: any) => service.id) || [];
+      const serviceIds =
+        editUser.services?.map((service: any) => service.id) || [];
 
       reset({
         name: editUser.name,
@@ -124,7 +139,7 @@ const serviceIds = editUser.services?.map((service: any) => service.id) || [];
         country: { cca2: 'SA', callingCode: '966' },
         email: editUser.email,
         role: Number(editUser.role_id),
-        staffRoleType: serviceIds ,
+        staffRoleType: serviceIds,
         listings: editUser.listing_scope?.listing_ids?.map(Number) || [],
         password: '',
         assignAllProperties: isAll,
@@ -203,7 +218,7 @@ const serviceIds = editUser.services?.map((service: any) => service.id) || [];
   };
 
   const handleDeleteUser = (id: number) => {
-    console.log("deleteClick",id)
+    console.log('deleteClick', id);
     Alert.alert('Delete User', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -227,7 +242,8 @@ const serviceIds = editUser.services?.map((service: any) => service.id) || [];
     listingOptions: listings.map((i: any) => ({ label: i.name, value: i.id })),
     rolesOptions: roles.map((i: any) => ({ label: i.role_name, value: i.id })),
     staffRoleTypeOptions,
-    roles,listings,
+    roles,
+    listings,
     handleCreateUser: () =>
       navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, {
         mode: 'create',
