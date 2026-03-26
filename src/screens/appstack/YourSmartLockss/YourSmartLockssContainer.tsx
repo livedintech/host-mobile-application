@@ -161,9 +161,10 @@ export default function useYourSmartLockssContainer() {
 
   // 1. Fetch Listings (Properties) - First priority check
   const { data: listingsData = [], isLoading: isLoadingListings } = useQuery({
-    queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT_LISTING],
+    queryKey: [STORAGE_CONST.GET_SMARTLOCK_DROPDOWN_LIST],
     queryFn: getDropdownListingApi,
   });
+
 
   // 2. Fetch Smart Locks - Second priority check
   const { data: locksData = [], isLoading: isLoadingLocks, refetch } = useQuery({
@@ -175,6 +176,7 @@ export default function useYourSmartLockssContainer() {
     label: item.value,
     value: item.id.toString(),
   })) || [];
+  console.log("tetstst",LISTING_OPTIONS)
 
   useEffect(() => {
     if (locksData?.length) {

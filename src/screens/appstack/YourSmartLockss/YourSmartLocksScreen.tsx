@@ -274,6 +274,7 @@ const YourSmartLocksScreen = () => {
     selectDropdown,
   } = useYourSmartLockssContainer();
 
+  console.log("LISTING_OPTIONS",LISTING_OPTIONS)
   // Condition Checks
   const hasListings = listingsData && listingsData.length > 0;
   const hasLocks = locksData && locksData.length > 0;
@@ -288,7 +289,7 @@ const YourSmartLocksScreen = () => {
   }
 
   // 2. No Listings (Properties) - Show Property Fallback
-  if (hasListings) {
+  if (!hasListings) {
     return <NoListingScreen />;
   }
 

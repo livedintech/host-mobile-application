@@ -124,17 +124,17 @@ const styles = StyleSheet.create({
   glassButton: {
     height: 55,
     borderRadius: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+    borderColor: 'rgba(220, 217, 217, 0.8)',
     // Subtle shadow for depth
-    shadowColor: "#000",
+    shadowColor: "#ededed",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 5,
-    elevation: 2,
+    elevation: 1,
   }
 });
 
