@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -12,30 +12,55 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { goBack } from '@/services/navigationService';
 
 const CreateSavedReplyScreen = () => {
-    const { control, errors, handleSubmit, isLoading, isEditMode, transformedListing } = useSavedRepliesCreateEditContainer();
+    const { 
+        control, 
+        errors, 
+        handleSubmit, 
+        isLoading, 
+        isEditMode, 
+        transformedListing 
+    } = useSavedRepliesCreateEditContainer();
+
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-
-                    {/* Header Section */}
-                    <View style={styles.header}>
-                        <View style={styles.titleWrapper}>
-                            <AppText text={isEditMode ? "Edit Saved Reply" : "Create Saved Replies"} fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                            <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
-                        </View>
+            
+                <ScrollView 
+                    contentContainerStyle={styles.scrollContainer} 
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* ── Title & Description ── */}
+                    <View style={styles.topTextSection}>
+                        <AppText 
+                            text={isEditMode ? "Edit Saved Replies" : "Create Saved Replies"} 
+                            fontSize={28} 
+                            type="Bold" 
+                            color={Colors.BLACK} 
+                            mb={10} 
+                        />
+                        <AppText 
+                            text={isEditMode 
+                                ? "Update the name, message content, and assigned listings. Changes will apply wherever this saved reply is used." 
+                                : "Create a saved reply by adding a name and message content. Assign it to specific listings, or enable auto-create to make it available for all new listings."
+                            } 
+                            fontSize={14} 
+                            color={Colors.DARK_CHARCOAL_OPACITY} 
+                            lineHeight={20}
+                        />
                     </View>
 
-                    {/* Form Fields Section */}
+                    {/* ── Form Fields ── */}
                     <View style={styles.form}>
                         <InputField
-                            label="Message Name:"
+                            label="Message Name"
                             name="title"
                             control={control}
                             errors={errors}
                             placeholder="Wifi Password"
+                            // Adding specific styles to match glass design if your InputField supports it
                         />
 
                         <TextareaField
@@ -48,7 +73,7 @@ const CreateSavedReplyScreen = () => {
                         />
 
                         <MultiSelectDropdownField
-                            label="Listing Selection"
+                            label="Select Property"
                             name="listing_ids"
                             control={control}
                             errors={errors}
@@ -56,7 +81,7 @@ const CreateSavedReplyScreen = () => {
                             placeholder="Select Multiple Options"
                         />
 
-                        {/* Integrated Custom Checkbox */}
+                        {/* ── Auto-Create Checkbox ── */}
                         <View style={styles.autoCreateRow}>
                             <Controller
                                 control={control}
@@ -68,9 +93,9 @@ const CreateSavedReplyScreen = () => {
                                             onPress={() => onChange(!value)}
                                         />
                                         <AppText
-                                            text="Auto-Create for New Listings"
-                                            ml={2}
-                                            color={Colors.PINE_FOREST}
+                                            text="Auto-create for all new listings"
+                                            ml={10}
+                                            color={Colors.MIDNIGHT}
                                             fontSize={14}
                                             type="Medium"
                                         />
@@ -80,13 +105,16 @@ const CreateSavedReplyScreen = () => {
                         </View>
                     </View>
 
-                    {/* Action Button */}
-                    <AppButton onPress={handleSubmit}
-                        loading={isLoading}
-                        title={isEditMode ? "Update Now" : "Create Now"}
-                        mt={40}
-                    />
-
+                    {/* ── Action Button ── */}
+                    <View style={styles.footer}>
+                        <AppButton 
+                            onPress={handleSubmit}
+                            loading={isLoading}
+                            title={isEditMode ? "Save Changes" : "Create New Saved Reply"}
+                            backgroundColor={Colors.TEAL_PRIMARY_ALT}
+                            borderColor={Colors.TEAL_PRIMARY_ALT}
+                        />
+                    </View>
                 </ScrollView>
             </View>
         </BGImage>
@@ -94,34 +122,42 @@ const CreateSavedReplyScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    scrollContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(40) },
+    container: { flex: 1, paddingTop: Metrics.verticalScale(40) },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: Metrics.verticalScale(20),
-        justifyContent: 'center',
-        marginBottom: Metrics.verticalScale(10)
+        paddingHorizontal: Metrics.scale(22),
+        marginBottom: Metrics.verticalScale(10),
     },
-    titleWrapper: { flexDirection: 'row', alignItems: 'center' },
-    form: { marginTop: 10 },
+    backBtn: { 
+        width: 40, 
+        height: 40, 
+        borderRadius: 20, 
+        borderWidth: 1, 
+        borderColor: 'rgba(0,0,0,0.1)', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.3)'
+    },
+    topTextSection: {
+        paddingHorizontal: Metrics.scale(22),
+        marginBottom: Metrics.verticalScale(30),
+    },
+    scrollContainer: { 
+        paddingBottom: Metrics.verticalScale(40) 
+    },
+    form: { 
+        paddingHorizontal: Metrics.scale(22),
+        gap: 15 // Spacing between fields
+    },
     autoCreateRow: {
-        marginTop: Metrics.verticalScale(5),
-        marginLeft: Metrics.scale(-10)
+        marginTop: Metrics.verticalScale(10),
     },
     checkboxWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    mainBtn: {
-        marginTop: Metrics.verticalScale(40),
-        height: Metrics.verticalScale(56),
-        borderRadius: 30,
-        borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: Colors.WHITE
+    footer: {
+        paddingHorizontal: Metrics.scale(22),
+        marginTop: Metrics.verticalScale(60),
     }
 });
 

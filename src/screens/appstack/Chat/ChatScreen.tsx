@@ -1,8 +1,25 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, TextInput, Image, Pressable, ListRenderItemInfo, Modal } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  TextInput,
+  Image,
+  Pressable,
+  ListRenderItemInfo,
+  Modal,
+} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, { useAnimatedStyle, SharedValue } from 'react-native-reanimated';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import Reanimated, {
+  useAnimatedStyle,
+  SharedValue,
+} from 'react-native-reanimated';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -18,20 +35,35 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import NoChatScreen from '../NoChatScreen/NoChatScreen';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const ChatScreen = () => {
   const {
-    activeTab, setActiveTab, handleAction,
-    setFilterVisible, isFilterVisible,
-    filterAssigned, setFilterAssigned,
-    handleResetAll, control, errors,
-    data, isLoading, dataQuery, isFetching,
-    transformedCities, transformedListings,
-    transformedApartmentTypes, handlePopupMenu,
-    goToChatDetail, search, setSearch,
+    activeTab,
+    setActiveTab,
+    handleAction,
+    setFilterVisible,
+    isFilterVisible,
+    filterAssigned,
+    setFilterAssigned,
+    handleResetAll,
+    control,
+    errors,
+    data,
+    isLoading,
+    dataQuery,
+    isFetching,
+    transformedCities,
+    transformedListings,
+    transformedApartmentTypes,
+    handlePopupMenu,
+    goToChatDetail,
+    search,
+    setSearch,
+    MENU_OPTIONS,
   } = useChatContainer();
 
   const ACTION_WIDTH = Metrics.scale(80);
@@ -40,39 +72,68 @@ const ChatScreen = () => {
   const TABS: ChatStatus[] = ['All', 'Archived', 'Snoozed', 'Unread'];
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
-    const renderRightActions = (_prog: SharedValue<number>, drag: SharedValue<number>) => {
+    const renderRightActions = (
+      _prog: SharedValue<number>,
+      drag: SharedValue<number>,
+    ) => {
       const style = useAnimatedStyle(() => ({
-        transform: [{ translateX: drag.value + TOTAL_ACTION_WIDTH }]
+        transform: [{ translateX: drag.value + TOTAL_ACTION_WIDTH }],
       }));
 
       return (
-        <Reanimated.View style={[styles.swipeContainer, { width: TOTAL_ACTION_WIDTH }, style]}>
+        <Reanimated.View
+          style={[styles.swipeContainer, { width: TOTAL_ACTION_WIDTH }, style]}
+        >
           <ButtonView
             style={[styles.snoozeAction, { width: ACTION_WIDTH }]}
             onPress={() => handleAction(item, 'Snoozed')}
           >
             <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
-            <AppText text={item?.is_mute ? 'Unsnoozed' : 'Snooze'} color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
+            <AppText
+              text={item?.is_mute ? 'Unsnoozed' : 'Snooze'}
+              color={Colors.WHITE}
+              fontSize={12}
+              mt={5}
+              type="Medium"
+            />
           </ButtonView>
           <ButtonView
             style={[styles.archiveAction, { width: ACTION_WIDTH }]}
             onPress={() => handleAction(item, 'Archived')}
           >
             <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
-            <AppText text={item?.is_archived ? 'Unarchived' : 'Archive'} color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
+            <AppText
+              text={item?.is_archived ? 'Unarchived' : 'Archive'}
+              color={Colors.WHITE}
+              fontSize={12}
+              mt={5}
+              type="Medium"
+            />
           </ButtonView>
         </Reanimated.View>
       );
     };
 
     return (
-      <Swipeable friction={1.5} rightThreshold={40} overshootRight={false} renderRightActions={renderRightActions}>
+      <Swipeable
+        friction={1.5}
+        rightThreshold={40}
+        overshootRight={false}
+        renderRightActions={renderRightActions}
+      >
         <View style={styles.chatRow}>
           <Image
-            source={item.img ? { uri: item.img } : require('@/assets/img/dummy/livedin.png')}
+            source={
+              item.img
+                ? { uri: item.img }
+                : require('@/assets/img/dummy/livedin.png')
+            }
             style={styles.avatar}
           />
-          <Pressable style={styles.chatInfo} onPress={() => goToChatDetail(item)}>
+          <Pressable
+            style={styles.chatInfo}
+            onPress={() => goToChatDetail(item)}
+          >
             <View style={styles.infoTop}>
               <View style={{ flex: 1, marginRight: Metrics.scale(10) }}>
                 <AppText
@@ -84,7 +145,11 @@ const ChatScreen = () => {
                 />
               </View>
               <AppText
-                text={item.last_message_date ? dayjs.utc(item.created_at).local().format('MM/DD/YY') : 'N/A'}
+                text={
+                  item.last_message_date
+                    ? dayjs.utc(item.created_at).local().format('MM/DD/YY')
+                    : 'N/A'
+                }
                 fontSize={12}
                 color={Colors.GREY_SHADOW}
               />
@@ -99,10 +164,19 @@ const ChatScreen = () => {
               />
               {item.unread_count ? (
                 <View style={styles.unreadBadge}>
-                  <AppText text={item?.unread_count} color={Colors.WHITE} fontSize={11} type="Bold" />
+                  <AppText
+                    text={item?.unread_count}
+                    color={Colors.WHITE}
+                    fontSize={11}
+                    type="Bold"
+                  />
                 </View>
               ) : (
-                <Svgicons path="chevronRight" size={12} color={Colors.GREY_SHADOW} />
+                <Svgicons
+                  path="chevronRight"
+                  size={12}
+                  color={Colors.GREY_SHADOW}
+                />
               )}
             </View>
           </Pressable>
@@ -114,11 +188,15 @@ const ChatScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-
         {/* ── Header ── */}
         <View style={styles.header}>
           {/* <View style={styles.headerLeft} /> */}
-          <AppText text="Inbox" type="Bold" fontSize={28} color={Colors.MIDNIGHT} />
+          <AppText
+            text="Inbox"
+            type="Bold"
+            fontSize={28}
+            color={Colors.MIDNIGHT}
+          />
           <Menu>
             <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
               <View style={styles.hamburgerBtn}>
@@ -128,10 +206,18 @@ const ChatScreen = () => {
               </View>
             </MenuTrigger>
             <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-              {['Saved Replies', 'Automation Template'].map((opt) => (
-                <MenuOption key={opt} style={styles.menuItem} onSelect={() => handlePopupMenu(opt)}>
-                  <AppText text={opt} fontSize={14} color={Colors.MIDNIGHT} />
-                  <Svgicons path="expandIcon" size={18} />
+              {MENU_OPTIONS.map(item => (
+                <MenuOption
+                  key={item.label}
+                  style={styles.menuItem}
+                  onSelect={() => handlePopupMenu(item.label)}
+                >
+                  <AppText
+                    text={item.label}
+                    fontSize={14}
+                    color={Colors.MIDNIGHT}
+                  />
+                  <Svgicons path={item.icon} size={20} />
                 </MenuOption>
               ))}
             </MenuOptions>
@@ -152,8 +238,12 @@ const ChatScreen = () => {
           </View>
           {/* <ButtonView onPress={() => setFilterVisible(true)} style={styles.filterBtn}> */}
           <GlassCard width={40} style={styles.iconCircle}>
-            <Svgicons path="filterIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
-            </GlassCard>
+            <Svgicons
+              path="filterIcon"
+              size={20}
+              color={Colors.BRUNSWICK_GREEN}
+            />
+          </GlassCard>
           {/* </ButtonView> */}
         </View>
 
@@ -164,7 +254,7 @@ const ChatScreen = () => {
             showsHorizontalScrollIndicator={false}
             data={TABS}
             contentContainerStyle={styles.tabsList}
-            keyExtractor={(item) => item}
+            keyExtractor={item => item}
             renderItem={({ item }) => {
               const isActive = activeTab === item;
               return (
@@ -176,7 +266,9 @@ const ChatScreen = () => {
                     text={item}
                     fontSize={14}
                     type={isActive ? 'SemiBold' : 'Regular'}
-                    color={isActive ? Colors.WHITE : Colors.DARK_CHARCOAL_OPACITY_80}
+                    color={
+                      isActive ? Colors.WHITE : Colors.DARK_CHARCOAL_OPACITY_80
+                    }
                   />
                 </Pressable>
               );
@@ -189,9 +281,14 @@ const ChatScreen = () => {
           isLoading={false}
           data={data}
           meta={dataQuery}
-          listEmptyText="No Chat found"
+          // listEmptyText="No Chat found"
+          ListEmptyComponent={
+            <View style={{ flex: 1 }}>
+              <NoChatScreen />
+            </View>
+          }
           renderItem={renderItem}
-          keyExtractor={(item) => String(item.id)}
+          keyExtractor={item => String(item.id)}
           contentContainerStyle={{ flexGrow: 1 }}
         />
 
@@ -203,25 +300,59 @@ const ChatScreen = () => {
           onRequestClose={() => setFilterVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <Pressable style={{ flex: 1 }} onPress={() => setFilterVisible(false)} />
+            <Pressable
+              style={{ flex: 1 }}
+              onPress={() => setFilterVisible(false)}
+            />
             <View style={styles.modalContent}>
-              <AppText text="Apply Filter" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} mb={20} />
-              <Pressable style={styles.checkboxRow} onPress={() => setFilterAssigned(!filterAssigned)}>
-                {filterAssigned
-                  ? <Svgicons path='CheckboxCheckedIcon' size={30} />
-                  : <Svgicons path='CheckboxUncheckedIcon' size={30} />}
+              <AppText
+                text="Apply Filter"
+                fontSize={22}
+                type="Bold"
+                color={Colors.BRUNSWICK_GREEN}
+                mb={20}
+              />
+              <Pressable
+                style={styles.checkboxRow}
+                onPress={() => setFilterAssigned(!filterAssigned)}
+              >
+                {filterAssigned ? (
+                  <Svgicons path="CheckboxCheckedIcon" size={30} />
+                ) : (
+                  <Svgicons path="CheckboxUncheckedIcon" size={30} />
+                )}
                 <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
               </Pressable>
-              <DropdownField name="listings" control={control} errors={errors} label="Listings" data={transformedListings} />
-              <DropdownField name="apartmenttype" control={control} errors={errors} label="Apartment Type" data={transformedApartmentTypes} dropdownPosition='top' />
+              <DropdownField
+                name="listings"
+                control={control}
+                errors={errors}
+                label="Listings"
+                data={transformedListings}
+              />
+              <DropdownField
+                name="apartmenttype"
+                control={control}
+                errors={errors}
+                label="Apartment Type"
+                data={transformedApartmentTypes}
+                dropdownPosition="top"
+              />
               <View style={styles.modalFooter}>
-                <AppButton onPress={handleResetAll} title="Reset" style={styles.flex} />
-                <AppButton onPress={() => setFilterVisible(false)} title="Apply Filter" style={styles.flex} />
+                <AppButton
+                  onPress={handleResetAll}
+                  title="Reset"
+                  style={styles.flex}
+                />
+                <AppButton
+                  onPress={() => setFilterVisible(false)}
+                  title="Apply Filter"
+                  style={styles.flex}
+                />
               </View>
             </View>
           </View>
         </Modal>
-
       </View>
     </BGImage>
   );
@@ -230,9 +361,9 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Metrics.verticalScale(35)
+    paddingTop: Metrics.verticalScale(35),
   },
-   iconCircle: {
+  iconCircle: {
     height: 40,
     borderRadius: 100,
     alignItems: 'center',
@@ -284,14 +415,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.scale(16),
     height: Metrics.verticalScale(50),
     gap: 8,
-    borderWidth:1,
-    borderColor: Colors.WHITE_OPACITY_90
+    borderWidth: 1,
+    borderColor: Colors.WHITE_OPACITY_90,
   },
   searchInput: {
-  flex: 1,
+    flex: 1,
     fontSize: Metrics.generatedFontSize(14),
     color: Colors.MIDNIGHT,
-    paddingVertical: 0, 
+    paddingVertical: 0,
     textAlignVertical: 'center',
   },
   filterBtn: {
@@ -316,11 +447,11 @@ const styles = StyleSheet.create({
     borderRadius: Metrics.verticalScale(20),
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth:1,
-    borderColor: Colors.WHITE
+    borderWidth: 1,
+    borderColor: Colors.WHITE,
   },
   activeTab: {
-    backgroundColor: '#1A9E80', // teal green from image
+    backgroundColor: Colors.TEAL_PRIMARY_ALT,
   },
 
   /* Chat rows */
@@ -353,7 +484,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   unreadBadge: {
-    backgroundColor: '#1A3D32',
+    backgroundColor: Colors.TEAL_PRIMARY_ALT,
     width: Metrics.verticalScale(22),
     height: Metrics.verticalScale(22),
     borderRadius: Metrics.verticalScale(11),
@@ -364,12 +495,12 @@ const styles = StyleSheet.create({
   /* Swipe actions */
   swipeContainer: { flexDirection: 'row' },
   snoozeAction: {
-    backgroundColor: '#B0B5C1',
+    backgroundColor: '#C6C6CC',
     justifyContent: 'center',
     alignItems: 'center',
   },
   archiveAction: {
-    backgroundColor: '#1A3D32',
+    backgroundColor: Colors.TEAL_PRIMARY_ALT,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -385,8 +516,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: Metrics.verticalScale(12),
-    borderBottomWidth: Metrics.horizontalLineHeight,
-    borderBottomColor: '#EEE',
+    // borderBottomWidth: Metrics.horizontalLineHeight,
+    // borderBottomColor: '#EEE',
   },
 
   /* Filter Modal */
