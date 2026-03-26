@@ -117,7 +117,7 @@ const ChatScreen = () => {
 
         {/* ── Header ── */}
         <View style={styles.header}>
-          <View style={styles.headerLeft} />
+          {/* <View style={styles.headerLeft} /> */}
           <AppText text="Inbox" type="Bold" fontSize={28} color={Colors.MIDNIGHT} />
           <Menu>
             <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
@@ -282,15 +282,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Metrics.verticalScale(50),
     paddingHorizontal: Metrics.scale(16),
-    height: Metrics.verticalScale(40),
+    height: Metrics.verticalScale(50),
     gap: 8,
     borderWidth:1,
     borderColor: Colors.WHITE_OPACITY_90
   },
   searchInput: {
-    flex: 1,
+  flex: 1,
     fontSize: Metrics.generatedFontSize(14),
     color: Colors.MIDNIGHT,
+    paddingVertical: 0, 
+    textAlignVertical: 'center',
   },
   filterBtn: {
     width: Metrics.verticalScale(50),
