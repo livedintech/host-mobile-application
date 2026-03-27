@@ -332,7 +332,7 @@ const PropertyCanEarnScreen = () => {
                     control={control}
                     errors={errors}
                     data={availableDistrictItems}
-                    placeholder="Select District"
+                    placeholder="Select your District"
                     disabled={!selectedcity?.length}
                   />
                 </View>

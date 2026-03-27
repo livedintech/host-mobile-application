@@ -1,5 +1,16 @@
+
+
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { 
+  StyleSheet, 
+  View, 
+  ActivityIndicator, 
+  ScrollView, 
+  TouchableOpacity, 
+  Modal, 
+  Pressable,
+  Platform 
+} from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 
 import { Colors } from '@/theme/colors';
@@ -18,10 +29,10 @@ const FIGMA_TEAL = '#21AA8F';
 const ReviewDetailScreen = ({ route }: any) => {
   const initialBookingData = route?.params?.bookingData || {};
   const booking_id = route?.params?.booking_id;
-
   const [apiData, setApiData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
     if (Object.keys(initialBookingData).length === 0 && booking_id) {
@@ -60,14 +71,13 @@ const ReviewDetailScreen = ({ route }: any) => {
       </View>
     );
   }
-  console.log('****property***', property)
-
-  const cleanliness = Number(guest_property_ratings.cleanliness) || 0;
-  const accuracy = Number(guest_property_ratings.accuracy) || 0;
-  const communication = Number(guest_property_ratings.communication) || 0;
-  const location = Number(guest_property_ratings.location) || 0;
-  const checkin = Number(guest_property_ratings.checkin) || 0;
-  const value = Number(guest_property_ratings.value) || 0;
+  
+  const cleanliness = Number(guest_property_ratings?.cleanliness) || 0;
+  const accuracy = Number(guest_property_ratings?.accuracy) || 0;
+  const communication = Number(guest_property_ratings?.communication) || 0;
+  const location = Number(guest_property_ratings?.location) || 0;
+  const checkin = Number(guest_property_ratings?.checkin) || 0;
+  const value = Number(guest_property_ratings?.value) || 0;
 
   const ratingValues = [
     cleanliness,
@@ -76,14 +86,12 @@ const ReviewDetailScreen = ({ route }: any) => {
     location,
     checkin,
     value,
-  ].filter(val => val > 0); // Only average the ones that have actual values
+  ].filter(val => val > 0);
 
-  // 3. Calculate Overall
   const overallRating = ratingValues.length > 0 
     ? (ratingValues.reduce((a, b) => a + b, 0) / ratingValues.length).toFixed(1) 
     : '0.0';
 
-  // 4. Mapping for the UI loop
   const ratingItems = [
     { label: 'Overall Rating', value: overallRating, icon: 'overallRating' },
     { label: 'Cleanliness', value: cleanliness, icon: 'starIcon' },
@@ -93,24 +101,79 @@ const ReviewDetailScreen = ({ route }: any) => {
     { label: 'Check-in', value: checkin, icon: 'starIcon' },
     { label: 'Value', value: value, icon: 'starIcon' },
   ];
+
+  const isCheckedOut = property?.status === 'checkedout';
+
+  const handleCancelReservation = async () => {
+    setMenuVisible(false);
+    
+    // Add your actual cancel logic here
+    // Example:
+    // try {
+    //   const response = await cancelBookingApi(booking_id);
+    //   if(response.success) { 
+    //      Toast.show({ text1: 'Reservation Cancelled' });
+    //      goBack();
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
+    
+    console.log('Cancelling reservation for ID:', booking_id);
+  };
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      
+      {/* <TouchableOpacity 
+        style={styles.threeDotsContainer} 
+        onPress={() => setMenuVisible(true)}
+        activeOpacity={0.7}
+      >
+        <Svgicons path="threeDots" size={24} color={Colors.BLACK} />
+      </TouchableOpacity> */}
+
+      {/* Action Menu Modal */}
+      <Modal
+        transparent
+        visible={menuVisible}
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setMenuVisible(false)}>
+          <View style={styles.menuPopup}>
+            {/* <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => { setMenuVisible(false)}}
+            >
+              <AppText text="Change Reservation" fontSize={14} color={Colors.BLACK} />
+              <Svgicons path="editIcon" size={18} />
+            </TouchableOpacity>
+            
+            <View style={styles.menuDivider} /> */}
+
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={handleCancelReservation}
+            >
+              <AppText text="Cancel Reservation" fontSize={14} color={Colors.BLACK} />
+              <Svgicons path="closeIcon" size={18} />
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* Title Heading */}
         <AppText text={guest?.name || 'Guest Details'} type="Bold" fontSize={28} mb={vs(20)} color={Colors.BLACK} />
 
-        {/* 1. Guest Details Card */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText text="Guest Details" type="Bold" fontSize={18} color={Colors.BLACK} />
             <View style={styles.iconCircle}>
-              {/* Top right profile icon circle */}
               <Svgicons path="userIcon" size={24} />
             </View>
           </View>
           
-          {/* Guest Email Row */}
           <View style={styles.guestInfoRow}>
             <View style={styles.rowIconContainer}>
               <Svgicons path="guestEmail" size={50} />
@@ -121,7 +184,6 @@ const ReviewDetailScreen = ({ route }: any) => {
             </View>
           </View>
 
-          {/* Guest Contact Row */}
           <View style={styles.guestInfoRow}>
             <View style={styles.rowIconContainer}>
               <Svgicons path="guestContact" size={50} />
@@ -132,7 +194,6 @@ const ReviewDetailScreen = ({ route }: any) => {
             </View>
           </View>
 
-          {/* Guest Rating Row (Conditional) */}
           {property?.booking_platform !== 'host_booking' && (
             <View style={styles.guestInfoRow}>
               <View style={styles.rowIconContainer}>
@@ -156,9 +217,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             </View>
           )} 
         </View>
-        
 
-        {/* 2. Check-in/Out Grid Card */}
         <View style={styles.card}>
           <View style={styles.gridRow}>
             <View style={styles.gridItem}>
@@ -179,7 +238,6 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         </View>
 
-        {/* 3. Property Details Card */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <View style={{ flex: 1 }}>
@@ -193,7 +251,6 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         </View>
 
-        {/* 9. Booking Platform Card */}
         {property?.booking_platform !== 'host_booking' && (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
@@ -219,7 +276,6 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         )}
 
-        {/* 5. Booking Details Card */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText text="Booking Details" type="Bold" fontSize={18} color={Colors.BLACK} />
@@ -240,64 +296,40 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
 
           <View style={styles.bookingInfoContainer}>
-            {/* Date of Reservation */}
             <View style={styles.bookingRow}>
               <AppText text="Date Of Reservation" fontSize={14} color={Colors.BLACK} />
-              <AppText 
-                text={formatDateDisplay(property?.created_at)} 
-                fontSize={13} 
-                color={Colors.DARK_CHARCOAL} 
-                mt={2} 
-              />
+              <AppText text={formatDateDisplay(property?.created_at)} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
             </View>
-
-            {/* Booking Platform */}
             <View style={styles.bookingRow}>
               <AppText text="Booking Platform" fontSize={14} color={Colors.BLACK} />
               <AppText 
-                text={property?.booking_platform === 'host_booking' ? 'Livedin' : (property?.booking_platform || 'N/A')} 
+                text={
+                  property?.booking_platform === 'host_booking' 
+                    ? 'Livedin' 
+                    : property?.booking_platform 
+                      ? property.booking_platform.charAt(0).toUpperCase() + property.booking_platform.slice(1)
+                      : 'N/A'
+                } 
                 fontSize={13} 
                 color={Colors.DARK_CHARCOAL} 
                 mt={2} 
               />
             </View>
-
-            {/* Number of Nights */}
             <View style={styles.bookingRow}>
               <AppText text="Number Of Nights" fontSize={14} color={Colors.BLACK} />
-              <AppText 
-                text={property?.number_of_nights ? `${property.number_of_nights} Nights` : 'N/A'} 
-                fontSize={13} 
-                color={Colors.DARK_CHARCOAL} 
-                mt={2} 
-              />
+              <AppText text={property?.number_of_nights ? `${property.number_of_nights} Nights` : 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
             </View>
-
-            {/* Number of Guests */}
             <View style={styles.bookingRow}>
               <AppText text="Number Of Guests" fontSize={14} color={Colors.BLACK} />
-              <AppText 
-                text={property?.number_of_guests ? `${property.number_of_guests} Guests` : 'N/A'} 
-                fontSize={13} 
-                color={Colors.DARK_CHARCOAL} 
-                mt={2} 
-              />
+              <AppText text={property?.number_of_guests ? `${property.number_of_guests} Guests` : 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
             </View>
-
-            {/* Door Code */}
             <View style={styles.bookingRow}>
               <AppText text="Door Code" fontSize={14} color={Colors.BLACK} />
-              <AppText 
-                text={property?.door_code || 'N/A'} 
-                fontSize={13} 
-                color={Colors.DARK_CHARCOAL} 
-                mt={2} 
-              />
+              <AppText text={property?.door_code || 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
             </View>
           </View>
         </View>
 
-        {/* 10. AI Chat Summary */}
         {property?.booking_platform !== 'host_booking' && (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
@@ -306,10 +338,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                 <Svgicons path="aiChat" size={20} />
               </View>
             </View>
-            <AppText 
-              text={guest?.ai_chat_summary || 'No chat summary available.'} 
-              fontSize={13} color={Colors.BLACK} lineHeight={20} mt={10} opacity={0.7}
-            />
+            <AppText text={guest?.ai_chat_summary || 'No chat summary available.'} fontSize={13} color={Colors.BLACK} lineHeight={20} mt={10} opacity={0.7} />
             <TouchableOpacity 
               style={styles.continueChatBtn} 
               onPress={() => navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
@@ -322,7 +351,6 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         )}
 
-        {/* 8. Guest Property Ratings Card */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText text="Guest Property Ratings" type="Bold" fontSize={18} color={Colors.BLACK} />
@@ -330,7 +358,6 @@ const ReviewDetailScreen = ({ route }: any) => {
               <Svgicons path="identityCard" size={20} />
             </View>
           </View>
-
           <View style={styles.ratingContent}>
             <View style={styles.ratingRow}>
               <View style={styles.rowIconContainer}>
@@ -346,7 +373,6 @@ const ReviewDetailScreen = ({ route }: any) => {
                 </View>
               </View>
             </View>
-
             {showDetails && (
               <View style={{ marginTop: vs(10) }}>
                 {ratingItems.filter(item => item.label !== 'Overall Rating').map((item, index) => (
@@ -367,34 +393,31 @@ const ReviewDetailScreen = ({ route }: any) => {
                 ))}
               </View>
             )}
-
-            {/* Buttons Row */}
             <View style={styles.buttonRow}>
-              <TouchableOpacity 
-                style={[styles.halfBtn, styles.viewDetailsBtn]}
-                onPress={() => setShowDetails(!showDetails)} // Toggles the details
-              >
-                <AppText 
-                  text={showDetails ? "Hide Details" : "View Details"} 
-                  type="Medium" 
-                  fontSize={14} 
-                  color={Colors.BLACK} 
-                />
+              <TouchableOpacity style={[styles.halfBtn, styles.viewDetailsBtn]} onPress={() => setShowDetails(!showDetails)} disabled={!isCheckedOut}>
+                <AppText text={showDetails ? "Hide Details" : "View Details"} type="Medium" fontSize={14} color={Colors.BLACK} />
               </TouchableOpacity>
-
               <AppButton 
+                disabled={!isCheckedOut} 
                 title="Rate Your Guest" 
-                style={[styles.halfBtn, styles.rateGuestBtn]}
-                backgroundColor={Colors.PRIMARY_TEAL} 
+                style={[
+                  styles.halfBtn, 
+                  styles.rateGuestBtn,
+                  !isCheckedOut && { 
+                    backgroundColor: Colors.DIM_GREY, 
+                    borderColor: Colors.DIM_GREY,
+                    opacity: 0.6 
+                  }
+                ] as any}
+                // backgroundColor={Colors.PRIMARY_TEAL} 
                 color={Colors.WHITE} 
                 borderRadius={100} 
-                onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)}
+                onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} 
               />
             </View>
           </View>
         </View>
 
-        {/* 5. Base Price Card */}
         {property?.booking_platform === 'host_booking' && (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
@@ -407,7 +430,6 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         )}
 
-        {/* 7. Payment Breakdown (Restored ALL 6 keys from original code) */}
         {property?.booking_platform !== 'host_booking' && (
           <View style={[styles.card, { paddingBottom: vs(10) }]}>
             <View style={styles.cardHeader}>
@@ -434,7 +456,6 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         )}
 
-        {/* 8. Assigned Task Section */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText text="Assigned Task" type="Bold" fontSize={18} color={Colors.BLACK} />
@@ -442,100 +463,45 @@ const ReviewDetailScreen = ({ route }: any) => {
               <Svgicons path="assignTaskNew" size={80} />
             </View>
           </View>
-
           <View style={styles.taskContent}>
-            {/* Mapping through tasks array from API */}
             {tasks && tasks.length > 0 ? (
               tasks.map((item: any, index: number) => (
-                <View 
-                  key={item.id || index} 
-                  style={[
-                    styles.taskItemWrapper, 
-                    index !== 0 && { marginTop: vs(20), borderTopWidth: 1, borderTopColor: '#EEE', paddingTop: vs(15) }
-                  ]}
-                >
-                  {/* Task Title */}
+                <View key={item.id || index} style={[styles.taskItemWrapper, index !== 0 && { marginTop: vs(20), borderTopWidth: 1, borderTopColor: '#EEE', paddingTop: vs(15) }]}>
                   <AppText text={item.title || 'N/A'} type="Bold" fontSize={15} color={Colors.BLACK} mb={vs(8)} />
-                  
-                  {/* Task Address (Fallback to listing_title if address is null) */}
-                  <AppText 
-                    text={item.property_address || item.listing_title || 'N/A'} 
-                    fontSize={14} 
-                    color={Colors.DARK_CHARCOAL} 
-                    lineHeight={20}
-                    mb={vs(15)} 
-                  />
-
-                  {/* Assigned Person */}
+                  <AppText text={item.property_address || item.listing_title || 'N/A'} fontSize={14} color={Colors.DARK_CHARCOAL} lineHeight={20} mb={vs(15)} />
                   <View style={styles.taskMetaRow}>
                     <Svgicons path="userIcon" size={16} mr={s(8)} fill={Colors.DARK_CHARCOAL} />
-                    <AppText 
-                      text={`Assigned to ${item.assigned_user_name || 'Unassigned'}`} 
-                      fontSize={13} 
-                      color={Colors.DARK_CHARCOAL} 
-                    />
+                    <AppText text={`Assigned to ${item.assigned_user_name || 'Unassigned'}`} fontSize={13} color={Colors.DARK_CHARCOAL} />
                   </View>
-
-                  {/* Task Date (Using our date formatter) */}
                   <View style={styles.taskMetaRow}>
                     <Svgicons path="calendar" size={16} mr={s(8)} fill={Colors.DARK_CHARCOAL} />
-                    <AppText 
-                      text={`Date: ${formatDateDisplay(item.assign_datetime)}`} 
-                      fontSize={13} 
-                      color={Colors.DARK_CHARCOAL} 
-                    />
+                    <AppText text={`Date: ${formatDateDisplay(item.assign_datetime)}`} fontSize={13} color={Colors.DARK_CHARCOAL} />
                   </View>
                 </View>
               ))
             ) : (
               <AppText text="No tasks assigned" fontSize={14} color={Colors.DARK_CHARCOAL} textAlign="center" my={vs(10)} />
             )}
-
-            {/* Create New Task Button */}
-            <AppButton
-              title="Create New Task"
-              borderColor={Colors.SMOOTH_GREY}
-              mt={30}
-              borderRadius={25}
-              textStyle={{ color: Colors.PINE_FOREST }}
-              onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)}
-            />
+            <AppButton title="Create New Task" borderColor={Colors.SMOOTH_GREY} mt={30} borderRadius={25} textStyle={{ color: Colors.WHITE }} onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)} />
           </View>
         </View>
 
-      {property?.booking_platform !== 'host_booking' && (
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.headerTextContainer}>
-              <AppText text="Cancellation Policy" type="Bold" fontSize={18} color={Colors.BLACK} />
-              <AppText 
-                text={
-                  cancellation_policy 
-                    ? cancellation_policy.charAt(0).toUpperCase() + cancellation_policy.slice(1) 
-                    : 'N/A'
-                } 
-                fontSize={14} 
-                color={Colors.DARK_CHARCOAL} 
-              />
-            </View>
-            <View style={styles.iconCircle}>
-              <Svgicons path="infoIcon" size={20} />
+        {property?.booking_platform !== 'host_booking' && (
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.headerTextContainer}>
+                <AppText text="Cancellation Policy" type="Bold" fontSize={18} color={Colors.BLACK} />
+                <AppText text={cancellation_policy ? cancellation_policy.charAt(0).toUpperCase() + cancellation_policy.slice(1) : 'N/A'} fontSize={14} color={Colors.DARK_CHARCOAL} />
+              </View>
+              <View style={styles.iconCircle}>
+                <Svgicons path="infoIcon" size={20} />
+              </View>
             </View>
           </View>
-        </View>
-      )}
+        )}
 
-        
         {property?.booking_platform === 'host_booking' && (
-          <AppButton 
-            title="Rate Your Guest" 
-            backgroundColor={Colors.PRIMARY_TEAL} 
-            color={Colors.WHITE} 
-            borderRadius={100} 
-            mt={vs(10)} 
-            mb={vs(40)} 
-            onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)}
-          />
+          <AppButton title="Rate Your Guest" backgroundColor={Colors.PRIMARY_TEAL} color={Colors.WHITE} borderRadius={100} mt={vs(10)} mb={vs(40)} onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} />
         )}
       </ScrollView>
     </BGImage>
@@ -545,6 +511,45 @@ const ReviewDetailScreen = ({ route }: any) => {
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.WHITE },
   scrollContent: { paddingHorizontal: s(20), paddingTop: vs(20) },
+  // THREE DOTS STYLES
+  threeDotsContainer: {
+    position: 'absolute',
+    right: s(20),
+    top: Platform.OS === 'ios' ? vs(-34) : vs(-36), // Moves icon up into the Header area parallel to arrow
+    zIndex: 9999,
+    padding: ms(8),
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  menuPopup: {
+    position: 'absolute',
+    top: vs(60),
+    right: s(20),
+    backgroundColor: Colors.WHITE,
+    borderRadius: ms(12),
+    padding: ms(10),
+    width: s(180),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: vs(10),
+    paddingHorizontal: s(5),
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
+    marginVertical: vs(2),
+  },
+  // EXISTING STYLES
   card: {
     borderRadius: ms(24),
     padding: ms(20),
@@ -552,142 +557,35 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
-  cardHeader: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'flex-start', 
-    marginBottom: vs(12) 
-  },
-  iconCircle: {
-    width: ms(40),
-    height: ms(40),
-    borderRadius: ms(20),
-    backgroundColor: '#E8F3F1',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTextContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  infoRow: { flexDirection: 'row', alignItems: 'center' },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: vs(12) },
+  iconCircle: { width: ms(40), height: ms(40), borderRadius: ms(20), backgroundColor: '#E8F3F1', justifyContent: 'center', alignItems: 'center' },
+  headerTextContainer: { flex: 1, justifyContent: 'center' },
   infoContent: { flex: 1 },
   starRow: { flexDirection: 'row', alignItems: 'center' },
   gridRow: { flexDirection: 'row' },
   gridItem: { flex: 1 },
   vDivider: { width: 1, backgroundColor: '#E0E0E0', marginHorizontal: s(15) },
   hSpacer: { height: vs(15) },
-  continueChatBtn: {
-    marginTop: vs(20),
-    height: vs(48),
-    borderRadius: ms(24),
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.6)',
-  },
-  paymentGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  paymentItem: {
-    width: '48%',
-    marginBottom: vs(15),
-  },
-  bookingInfoContainer: {
-    marginTop: vs(5),
-  },
-  bookingRow: {
-    marginBottom: vs(15),
-  },
-  taskContent: {
-    marginTop: vs(5),
-  },
-  taskItemWrapper: {
-    width: '100%',
-  },
-  taskMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: vs(8),
-  },
-  createTaskBtn: {
-    marginTop: vs(20),
-    height: vs(48),
-    borderRadius: ms(24),
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-  },
-  guestInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: vs(15),
-  },
-  rowIconContainer: {
-    width: ms(45),
-    height: ms(45),
-    borderRadius: ms(12),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: s(5),
-  },
-  ratingContent: {
-    marginTop: vs(5),
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: vs(20),
-  },
-  progressContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  ratingTextRow: {
-    marginBottom: vs(5),
-  },
-  barWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBarBg: {
-    flex: 1,
-    height: vs(6),
-    backgroundColor: '#E0E0E0',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#21AA8F', // Figma Teal
-    borderRadius: 3,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: vs(10),
-  },
-  halfBtn: {
-    width: '48%',
-    height: vs(45),
-    borderRadius: ms(22.5),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  viewDetailsBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderColor: '#E0E0E0',
-  },
-  rateGuestBtn: {
-    backgroundColor: '#21AA8F', // Figma Teal
-    borderColor: '#21AA8F',
-  },
+  continueChatBtn: { marginTop: vs(20), height: vs(48), borderRadius: ms(24), borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.6)' },
+  paymentGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  paymentItem: { width: '48%', marginBottom: vs(15) },
+  bookingInfoContainer: { marginTop: vs(5) },
+  bookingRow: { marginBottom: vs(15) },
+  taskContent: { marginTop: vs(5) },
+  taskItemWrapper: { width: '100%' },
+  taskMetaRow: { flexDirection: 'row', alignItems: 'center', marginBottom: vs(8) },
+  guestInfoRow: { flexDirection: 'row', alignItems: 'center', marginTop: vs(15) },
+  rowIconContainer: { width: ms(45), height: ms(45), borderRadius: ms(12), justifyContent: 'center', alignItems: 'center', marginRight: s(5) },
+  ratingContent: { marginTop: vs(5) },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', marginBottom: vs(20) },
+  progressContainer: { flex: 1, justifyContent: 'center' },
+  barWrapper: { flexDirection: 'row', alignItems: 'center' },
+  progressBarBg: { flex: 1, height: vs(6), backgroundColor: '#E0E0E0', borderRadius: 3, overflow: 'hidden' },
+  progressBarFill: { height: '100%', backgroundColor: '#21AA8F', borderRadius: 3 },
+  buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: vs(10) },
+  halfBtn: { width: '48%', height: vs(45), borderRadius: ms(22.5), justifyContent: 'center', alignItems: 'center', borderWidth: 1 },
+  viewDetailsBtn: { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderColor: '#E0E0E0' },
+  rateGuestBtn: { backgroundColor: '#21AA8F', borderColor: '#21AA8F' },
 });
 
 export default ReviewDetailScreen;

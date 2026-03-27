@@ -12,7 +12,6 @@ import { BookingDetailsView } from '@/components/molecules/BookingDetailsView/Bo
 import { CalendarSection } from '@/components/molecules/CalendarSection/CalendarSection';
 import { ReservationHeader } from '@/components/molecules/ReservationHeader/ReservationHeader';
 import { FilterModalView } from '@/components/molecules/FilterModalView/FilterModalView';
-import { CreateBookingSheet } from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import { Colors } from '@/theme/colors';
 import { getOtaConfig } from '@/constants/ota_config';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -22,6 +21,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
 import NoListing from './NoListing';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 
 const ListingScreen = () => {
   const authStore = useAuthStore();
@@ -217,6 +217,7 @@ const ListingScreen = () => {
                         <ReservationCard
                           id={item.booking_id || item.id}
                           guestName={item.guest}
+                          guests={item?.number_of_guests}
                           platform={item.source_type === 'livedin' ? 'Livedin' : config.label}
                           property={item.listing_title || 'Property'}
                           endDate={item.end_date}

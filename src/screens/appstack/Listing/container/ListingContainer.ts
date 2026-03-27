@@ -41,8 +41,10 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     context: { bookingType },
     defaultValues: {
       listing_selection: listingIdFromParams ? String(listingIdFromParams) : '',
-      name: '', email: '', phone: '', booking_type: 'host',
-      end_date: '', start_date: '', rate: '', listing_id: ''
+      name: '', email: '', booking_type: 'host',
+      end_date: '', start_date: '', rate: '', listing_id: '',
+      country: { cca2: 'SA', callingCode: '966' }, 
+      phoneNumber: '',
     },
   });
 
@@ -190,7 +192,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
-      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data });
+      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data, booking_id: bookingId });
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Error', text2: 'Could not fetch booking info' });
     } finally { setIsFetchingDetails(false); }
@@ -200,6 +202,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     try {
       const finalId = formData.listing_id || selectedListingId;
       if (!finalId || finalId === "all") return;
+      
+      setisLoading(true);
 
       const formatDate = (date: string) => {
         if (!date || date.includes('-')) return date;
@@ -207,43 +211,56 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
         return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
       };
 
+      // 1. Combine Country Calling Code and Phone Number
+      const fullPhone = `${formData.country?.callingCode || ''}${formData.phoneNumber || ''}`;
+
+      // 2. Build the flat payload
       const payload = {
         ...formData,
         listing_id: finalId,
-        phone: (formData.phone ?? '').replace(/[^\d]/g, ''),
+        phone: fullPhone.replace(/[^\d]/g, ''),
         start_date: formatDate(formData.start_date || ''),
         end_date: formatDate(formData.end_date || ''),
+        booking_type: formData.booking_type || 'host',
       };
 
+      delete (payload as any).country;
+      delete (payload as any).phoneNumber;
+
       const res = bookingType === 'direct'
-        ? await createDirectBookingApi({ ...formData, ...payload, booking_type: formData.booking_type || 'host' })
+        ? await createDirectBookingApi(payload)
         : await updateCalendarPricingApi({ ...payload, price: formData.rate || '' });
-      setisLoading(true)
+
       if (res) {
-        Toast.show({ type: 'success', text1: bookingType === 'direct' ? 'Booking created' : 'Pricing updated' });
+        Toast.show({ 
+          type: 'success', 
+          text1: bookingType === 'direct' ? 'Booking created' : 'Pricing updated' 
+        });
         reset();
         queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
         queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
-        setIsBookingOpen(false)
+        setIsBookingOpen(false);
         return true;
       }
     } catch (error: any) {
-      setisLoading(false)
+      console.error('Booking Error:', error);
       const validationErrors = error?.data?.errors;
       if (validationErrors) {
         const firstField = Object.keys(validationErrors)[0];
         const errorMessage = validationErrors[firstField][0];
         Toast.show({ type: 'error', text1: errorMessage, visibilityTime: 4000 });
       } else {
-        Toast.show({ type: 'error', text1: error?.data?.message, visibilityTime: 4000 });
+        Toast.show({ 
+          type: 'error', 
+          text1: error?.data?.message || 'Something went wrong', 
+          visibilityTime: 4000 
+        });
       }
-    }
-    finally {
-      setisLoading(false)
+    } finally {
+      setisLoading(false);
     }
     return false;
   };
-
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {

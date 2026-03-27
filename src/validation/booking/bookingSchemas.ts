@@ -6,6 +6,31 @@ export const createBookingSchema = yup.object({
   listing_selection: yup.string().nullable().default(''),
   listing_id: yup.string().optional().default(''),
   // start_date: yup.string().required('Check-in date is required').default(''),
+  country: yup.object({
+    cca2: yup.string().default('SA'),
+    callingCode: yup.string().default('966'),
+  }).when('$bookingType', {
+    is: 'direct',
+    then: (s) => s.required(),
+    otherwise: (s) => s.nullable().notRequired(),
+  }),
+
+  phoneNumber: yup.string().when('$bookingType', {
+    is: 'direct',
+    then: (s) => s.required('Phone number is required').matches(/^\d{7,15}$/, 'Invalid phone number'),
+    otherwise: (s) => s.nullable().notRequired(),
+  }),
+
+  // phone: yup.string().when('$bookingType', {
+  //   is: 'direct',
+  //   then: (s) => 
+  //     s.required('Phone number is required')
+  //     .matches(
+  //       /^\+?\d{7,15}$/, 
+  //       'Phone number must be valid (7-15 digits, + optional)'
+  //     ),
+  //   otherwise: (s) => s.nullable().notRequired(),
+  // }),
   // 1. Start Date Validation
   start_date: yup.string().when('$bookingType', {
     is: 'direct',
@@ -63,16 +88,6 @@ export const createBookingSchema = yup.object({
   email: yup.string().when('$bookingType', {
     is: 'direct',
     then: (s) => s.required('Email address is required').matches(emailRegex, 'Invalid email format'),
-    otherwise: (s) => s.nullable().notRequired(),
-  }),
-  phone: yup.string().when('$bookingType', {
-    is: 'direct',
-    then: (s) => 
-      s.required('Phone number is required')
-      .matches(
-        /^\+?\d{7,15}$/, 
-        'Phone number must be valid (7-15 digits, + optional)'
-      ),
     otherwise: (s) => s.nullable().notRequired(),
   }),
 });
