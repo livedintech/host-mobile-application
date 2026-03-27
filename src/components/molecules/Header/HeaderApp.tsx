@@ -44,20 +44,19 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo, 
             <GradientBorder
               borderRadius={16}
               borderWidth={1}
-              style={styles.langBtn}
-            >
-              <View style={styles.langBtn}>
-                <AppText text="AR" fontSize={12} type="Medium" />
-              </View>
+              style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}>
+              <Pressable style={styles.langBtn}>
+                <AppText text="العربية" fontSize={12} type="Medium" />
+              </Pressable>
             </GradientBorder>
           )}
           {isGetStarted && (
-            <GradientBorder borderRadius={20}>
-            <Pressable 
-            style={styles.getStartedBtn}
-             onPress={getStarted}>
-              <AppText text="Get Started" fontSize={13} type="Medium" />
-            </Pressable>
+            <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
+              <Pressable
+                style={styles.getStartedBtn}
+                onPress={getStarted}>
+                <AppText text="Get Started" fontSize={12} type="Medium" />
+              </Pressable>
             </GradientBorder>
           )}
 
@@ -98,15 +97,21 @@ const styles = StyleSheet.create({
     paddingTop: Metrics.verticalScale(15)
   },
   langBtn: {
-     width: Metrics.scale(40), height: Metrics.scale(40), borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center',marginRight: Metrics.scale(8),
+    width: Metrics.scale(60),
+    height: Metrics.scale(36),
+    borderRadius: 16,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   getStartedBtn: {
-    paddingHorizontal: Metrics.scale(33),
-    paddingVertical: Metrics.scale(10),
-    borderRadius: 20,
-    justifyContent: 'center',
+    width: Metrics.scale(110),
+    height: Metrics.scale(36),
+    borderRadius: 16,
     backgroundColor: Colors.WHITE,
-    
+    justifyContent: 'center',
+    alignItems: 'center'
+
   },
   arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
 

@@ -313,7 +313,7 @@ const PropertyCanEarnScreen = () => {
                 />
 
                 <View style={styles.inputGap}>
-                  <AppText text="City" type="SemiBold" color="#5A716A" mb={8} fontSize={14} />
+                  <AppText text="City" type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
                   <DropdownField
                     name="city"
                     label=""
@@ -325,7 +325,7 @@ const PropertyCanEarnScreen = () => {
                 </View>
 
                 <View style={styles.inputGap}>
-                  <AppText text="District" type="SemiBold" color="#5A716A" mb={8} fontSize={14} />
+                  <AppText text="District" type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
                   <DropdownField
                     name="district"
                     label=""
@@ -338,7 +338,7 @@ const PropertyCanEarnScreen = () => {
                 </View>
 
                 <View style={styles.inputGap}>
-                  <AppText text="Number of Bedrooms" type="SemiBold" color="#5A716A" mb={8} fontSize={14} />
+                  <AppText text="Number of Bedrooms" type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
                   <DropdownField
                     name="bedrooms"
                     label=""

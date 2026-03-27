@@ -18,6 +18,7 @@ import Animated, {
 import LinearGradient from 'react-native-linear-gradient';
 import { s, vs, ms } from 'react-native-size-matters';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ModalComponentProps {
   isVisible: boolean;
@@ -36,13 +37,17 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
   title = "Apply Filter",
   children,
 }) => {
+    const insets = useSafeAreaInsets();
+
   return (
     <Modal
       transparent
       visible={isVisible}
       animationType="none" // We handle animations via Reanimated
       onRequestClose={onClose}
+      style={{ paddingTop: insets.top }}
     >
+      <SafeAreaView style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={onClose}>
         {/* Backdrop Fade */}
         <Animated.View
@@ -96,6 +101,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
           </Animated.View>
         </KeyboardAwareScrollView>
       </View>
+      </SafeAreaView>
     </Modal>
   );
 };
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: s(20)
+    paddingHorizontal: s(20),
   },
   modalContent: {
     width: '100%',

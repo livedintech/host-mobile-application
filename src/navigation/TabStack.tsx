@@ -10,7 +10,7 @@ const TabStack = () => {
   return (
     <Tab.Navigator tabBar={props => <BottomTab {...props} />}>
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ headerShown:false }}
         name={NavigationRoutes.APP_STACK.HOME}
         component={require('@/screens/appstack/Home/HomeScreen').default}
       />

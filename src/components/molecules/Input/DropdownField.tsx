@@ -11,6 +11,7 @@ import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import GlassCard from '../GlassCard/GlassCard';
 
 interface DropdownItem {
   label: string;
@@ -45,7 +46,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   const error = errors[name]?.message as string;
 
   return (
-    <View style={styles.wrapper}>
+    <GlassCard style={styles.wrapper}>
       {label && (
         <AppText
           text={label}
@@ -101,7 +102,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           style={styles.errorText}
         />
       )}
-    </View>
+    </GlassCard>
   );
 };
 
@@ -110,6 +111,10 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(18),
     zIndex: 9999,
     overflow: 'visible',
+    flex:1,
+    width:'100%',
+    padding:0,
+    borderRadius: 16
   },
   dropdown: {
     height: Metrics.verticalScale(54),
@@ -139,7 +144,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: '#7B8D88', // Matches calendar price color
+    color: '#1C1C1C', // Matches calendar price color
     fontWeight: '500',
   },
   selectedTextStyle: {
