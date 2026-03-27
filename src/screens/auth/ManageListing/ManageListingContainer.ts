@@ -35,10 +35,12 @@ export default function useManageListingContainer() {
   });
 
   const listingData =
-    data?.map((item: { name: string; id: string }) => ({
+  data
+    ?.map((item: { name: string; id: string }) => ({
       label: item.name,
       value: item.id,
-    })) || [];
+    }))
+    .reverse() || [];
 
   const plan = data.find(item => item.id === 1);
 
