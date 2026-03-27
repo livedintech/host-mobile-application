@@ -102,6 +102,8 @@ const ReviewDetailScreen = ({ route }: any) => {
     { label: 'Value', value: value, icon: 'starIcon' },
   ];
 
+  const isCheckedOut = property?.status === 'checkedout';
+
   const handleCancelReservation = async () => {
     setMenuVisible(false);
     
@@ -392,10 +394,26 @@ const ReviewDetailScreen = ({ route }: any) => {
               </View>
             )}
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={[styles.halfBtn, styles.viewDetailsBtn]} onPress={() => setShowDetails(!showDetails)}>
+              <TouchableOpacity style={[styles.halfBtn, styles.viewDetailsBtn]} onPress={() => setShowDetails(!showDetails)} disabled={!isCheckedOut}>
                 <AppText text={showDetails ? "Hide Details" : "View Details"} type="Medium" fontSize={14} color={Colors.BLACK} />
               </TouchableOpacity>
-              <AppButton title="Rate Your Guest" style={[styles.halfBtn, styles.rateGuestBtn]} backgroundColor={Colors.PRIMARY_TEAL} color={Colors.WHITE} borderRadius={100} onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} />
+              <AppButton 
+                disabled={!isCheckedOut} 
+                title="Rate Your Guest" 
+                style={[
+                  styles.halfBtn, 
+                  styles.rateGuestBtn,
+                  !isCheckedOut && { 
+                    backgroundColor: Colors.DIM_GREY, 
+                    borderColor: Colors.DIM_GREY,
+                    opacity: 0.6 
+                  }
+                ] as any}
+                // backgroundColor={Colors.PRIMARY_TEAL} 
+                color={Colors.WHITE} 
+                borderRadius={100} 
+                onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} 
+              />
             </View>
           </View>
         </View>
