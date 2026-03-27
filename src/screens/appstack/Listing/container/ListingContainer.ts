@@ -190,7 +190,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
-      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data });
+      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data, booking_id: bookingId });
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Error', text2: 'Could not fetch booking info' });
     } finally { setIsFetchingDetails(false); }

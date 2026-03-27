@@ -232,6 +232,7 @@ import reservationguests from './reservations/reservationguests.svg';
 import reservationairbnb from './reservations/reservationairbnb.svg';
 import reservationlivedin from './reservations/reservationlivedin.svg';
 import reservationfilter from './reservations/reservationfilter.svg';
+import threeDots from './threeDots.svg';
 
 export const icons = {
   sendWhite,
@@ -256,6 +257,7 @@ export const icons = {
   databaseRaidStorage,
   businessCard,
   chartAnalysis,
+  threeDots,
   eyeSlash: EyeSlash,
   eye: Eye,
   ChevronDownIcon: ChevronDownIcon,
