@@ -464,7 +464,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             ) : (
               <AppText text="No tasks assigned" fontSize={14} color={Colors.DARK_CHARCOAL} textAlign="center" my={vs(10)} />
             )}
-            <AppButton title="Create New Task" borderColor={Colors.SMOOTH_GREY} mt={30} borderRadius={25} textStyle={{ color: Colors.PINE_FOREST }} onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)} />
+            <AppButton title="Create New Task" borderColor={Colors.SMOOTH_GREY} mt={30} borderRadius={25} textStyle={{ color: Colors.WHITE }} onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)} />
           </View>
         </View>
 
