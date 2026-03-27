@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useWatch } from 'react-hook-form';
 import BottomSheetComponent from '@/components/molecules/BottomSheetComponent/BottomSheetComponent';
@@ -11,6 +11,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import AppButton from '../AppButton/AppButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import PhoneInputField from '../Input/PhoneInputField';
 
 interface Props {
   isLoading?: boolean;
@@ -51,6 +52,17 @@ export const CreateBookingSheet = ({
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
+        <View style={styles.headerRow}>
+          <AppText 
+            text={bookingType === 'direct' ? "Create Direct Booking" : "Manage Pricing"} 
+            type="Bold" 
+            fontSize={22} 
+            color={Colors.BLACK} 
+          />
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Svgicons path="closeIcon" size={20} />
+          </TouchableOpacity>
+        </View>
         {/* Type Selector */}
         <View style={styles.radioRow}>
           {['direct', 'pricing'].map((type) => (
@@ -86,7 +98,15 @@ export const CreateBookingSheet = ({
             />
             <InputField name="name" control={control} errors={errors} label="Guest Name" placeholder="Enter guest name" />
             <InputField name="email" control={control} errors={errors} label="Email" placeholder="guest@example.com" keyboardType="email-address" />
-            <InputField name="phone" control={control} errors={errors} label="Phone" placeholder="+966..." keyboardType="phone-pad" />
+            <View style={{ marginBottom: vs(10) }}>
+              <PhoneInputField
+                label="Phone Number*"
+                control={control}
+                errors={errors}
+                countryFieldName="country"
+                phoneFieldName="phoneNumber"
+              />
+             </View>
           </View>
         ) : (
           <InputField name="rate" control={control} errors={errors} label="Pricing (SAR)" placeholder="e.g. 500" keyboardType="numeric" />
@@ -176,7 +196,22 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: vs(20),
     marginBottom: vs(10)
-  }
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(20),
+    paddingTop: vs(10),
+  },
+  closeButton: {
+    width: ms(36),
+    height: ms(36),
+    borderRadius: ms(18),
+    backgroundColor: '#E0E0E0', 
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default CreateBookingSheet;
