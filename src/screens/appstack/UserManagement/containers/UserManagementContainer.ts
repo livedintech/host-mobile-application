@@ -210,7 +210,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         id: Number(editUser?.id),
         ...payload,
         listing_scope: {
-          type: data.assignAllProperties ? 'all' : 'specific',
+          type: data.assignAllProperties ? 'specific' : 'specific',
           listing_ids: finalListingIds,
         },
       });

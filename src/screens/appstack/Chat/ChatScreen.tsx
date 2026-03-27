@@ -36,6 +36,8 @@ import timezone from 'dayjs/plugin/timezone';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NoChatScreen from '../NoChatScreen/NoChatScreen';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../NoListingScreen/NoListingScreen';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -66,6 +68,11 @@ const ChatScreen = () => {
     MENU_OPTIONS,
   } = useChatContainer();
 
+  const { user } = useAuthStore();
+  console.log('usermnn', user?.has_listing);
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
   const ACTION_WIDTH = Metrics.scale(80);
   const TOTAL_ACTION_WIDTH = ACTION_WIDTH * 2;
 
@@ -236,15 +243,18 @@ const ChatScreen = () => {
               onChangeText={setSearch}
             />
           </View>
-          {/* <ButtonView onPress={() => setFilterVisible(true)} style={styles.filterBtn}> */}
-          <GlassCard width={40} style={styles.iconCircle}>
-            <Svgicons
-              path="filterIcon"
-              size={20}
-              color={Colors.BRUNSWICK_GREEN}
-            />
-          </GlassCard>
-          {/* </ButtonView> */}
+          <ButtonView
+            onPress={() => setFilterVisible(true)}
+            style={styles.filterBtn}
+          >
+            <GlassCard width={40} style={styles.iconCircle}>
+              <Svgicons
+                path="filterIcon"
+                size={20}
+                color={Colors.BRUNSWICK_GREEN}
+              />
+            </GlassCard>
+          </ButtonView>
         </View>
 
         {/* ── Tabs ── */}

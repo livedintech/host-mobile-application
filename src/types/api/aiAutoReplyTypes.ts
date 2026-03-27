@@ -17,7 +17,7 @@ export interface aiAutoReplyTypesApiPayload {
     name?: string;
     match_keywords: string;
     template: string;
-    listing_id?: string[];
+    listing_ids?: string[];
     auto_send: boolean;
     is_enabled: boolean;
     priority?:string

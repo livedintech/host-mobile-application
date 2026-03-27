@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -9,16 +9,16 @@ import useCreateEditAIRuleContainer from './CreateEditAIRuleContainer';
 import InputField from '@/components/molecules/Input/InputField';
 import TextareaField from '@/components/molecules/Input/TextareaField';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useRoute } from '@react-navigation/native';
-
-
+import { goBack } from '@/services/navigationService';
 
 const CreateEditAIRuleScreen = () => {
-    const { params } = useRoute() as any
+    const { params } = useRoute() as any;
     const editData = params?.editData;
+    
     const {
         control,
         errors,
@@ -29,111 +29,131 @@ const CreateEditAIRuleScreen = () => {
     } = useCreateEditAIRuleContainer(editData);
 
     return (
-        <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+            <View style={styles.container}>
+             
 
-                {/* Header Section */}
-                <View style={styles.header}>
-                    <View style={styles.titleWrapper}>
+                <ScrollView 
+                    contentContainerStyle={styles.scrollContainer} 
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* Title Section */}
+                    <View style={styles.topTextSection}>
                         <AppText
                             text={isEditMode ? "Edit AI Auto Reply" : "Create AI Auto Reply"}
-                            fontSize={22}
+                            fontSize={28}
                             type="Bold"
-                            color={Colors.BRUNSWICK_GREEN}
+                            color={Colors.BLACK}
+                            mb={10}
                         />
-                        <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
+                        <AppText
+                            text={isEditMode 
+                                ? "Update triggers, tone, and assigned listings. Changes apply to future replies." 
+                                : "Create an AI auto reply by defining triggers, tone, and applicable listings."}
+                            fontSize={14}
+                            color={Colors.DARK_CHARCOAL_OPACITY}
+                            lineHeight={20}
+                        />
                     </View>
-                </View>
 
-                {/* Form Fields Section */}
-                <View style={styles.form}>
-                    <InputField
-                        label="Rule Name:"
-                        name="name"
-                        control={control}
-                        errors={errors}
-                        placeholder="Check-in Reminder"
-                    />
-                    <TextareaField
-                        label="Define Rule Instructions"
-                        name="template"
-                        control={control}
-                        errors={errors}
-                        placeholder="Send a polite check-in reminder with guest name, listing info, date/time, Wi-Fi details, and door code."
-                        multiline
-                    />
-                    <MultiSelectDropdownField
-                        label="Listing Selection"
-                        name="listing_id"
-                        control={control}
-                        errors={errors}
-                        data={transformedListing || []}
-                        placeholder="Select Listing"
-                    />
-                    {/* Auto-Create for New Listings */}
-                    <Controller
-                        control={control}
-                        name="auto_send"
-                        render={({ field: { onChange, value } }) => (
-                            <ButtonView
-                                style={styles.autoCreateRow}
-                                onPress={() => onChange(!value)}
-                            >
-                                <Checkbox isChecked={value} onPress={() => onChange(!value)} />
-                                <AppText
-                                    text="Auto Send Reply"
-                                    ml={Metrics.scale(2)}
-                                    color={Colors.PINE_FOREST}
-                                    fontSize={14}
-                                    type="Medium"
-                                />
-                            </ButtonView>
-                        )}
-                    />
-                </View>
+                    {/* Form Fields Section */}
+                    <View style={styles.form}>
+                        <InputField
+                            label="Rule Name"
+                            name="name"
+                            control={control}
+                            errors={errors}
+                            placeholder="Wifi Password"
+                        />
+                        
+                        <TextareaField
+                            label="Define Rule Instructions"
+                            name="template"
+                            control={control}
+                            errors={errors}
+                            placeholder="When a guest has an upcoming check-in, send a friendly reminder including..."
+                            multiline
+                        />
 
-                {/* Shared Submit Button */}
-                <AppButton
-                    title={isEditMode ? "Save Changes" : "Create Now"}
-                    onPress={handleSubmit}
-                    loading={isLoading}
-                    mt={Metrics.verticalScale(40)}
-                    backgroundColor={Colors.WHITE}
-                    color={Colors.BRUNSWICK_GREEN}
-                    borderColor={Colors.SMOOTH_GREY}
-                    type="SemiBold"
-                    fontSize={16}
-                />
+                        <MultiSelectDropdownField
+                            label="Select Property"
+                            name="listing_ids"
+                            control={control}
+                            errors={errors}
+                            data={transformedListing || []}
+                            placeholder="Select Multiple Options"
+                        />
 
-            </ScrollView>
-        </View>
+                        {/* Auto-Create Toggle */}
+                        <Controller
+                            control={control}
+                            name="auto_send"
+                            render={({ field: { onChange, value } }) => (
+                                <Pressable
+                                    style={styles.autoCreateRow}
+                                    onPress={() => onChange(!value)}
+                                >
+                                    <Checkbox isChecked={value} onPress={() => onChange(!value)} />
+                                    <AppText
+                                        text="Auto-create for all new listings"
+                                        ml={Metrics.scale(10)}
+                                        color={Colors.BLACK}
+                                        fontSize={14}
+                                    />
+                                </Pressable>
+                            )}
+                        />
+                    </View>
+
+                    {/* Submit Button - Styled as Teal Primary */}
+                    <AppButton
+                        title={isEditMode ? "Save Changes" : "Create Now"}
+                        onPress={handleSubmit}
+                        loading={isLoading}
+                        mt={Metrics.verticalScale(40)}
+                        backgroundColor={Colors.TEAL_PRIMARY_ALT}
+                        borderColor={Colors.TEAL_PRIMARY_ALT}
+                        color={Colors.WHITE}
+                    />
+                </ScrollView>
+            </View>
+        </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    scrollContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(40) },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: Metrics.verticalScale(20),
-        justifyContent: 'center',
+    container: { 
+        flex: 1, 
+        paddingTop: Metrics.verticalScale(40) 
+    },
+    header: { 
+        paddingHorizontal: Metrics.scale(22), 
+        marginBottom: Metrics.verticalScale(10) 
     },
     backBtn: {
-        position: 'absolute',
-        left: 0,
-        padding: Metrics.scale(8),
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        borderRadius: 100
+        borderColor: 'rgba(0,0,0,0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.3)',
     },
-    titleWrapper: { flexDirection: 'row', alignItems: 'center' },
-    form: { marginTop: Metrics.verticalScale(10) },
+    scrollContainer: { 
+        paddingHorizontal: Metrics.scale(22), 
+        paddingBottom: Metrics.verticalScale(40) 
+    },
+    topTextSection: { 
+        marginBottom: Metrics.verticalScale(30) 
+    },
+    form: { 
+        gap: Metrics.verticalScale(15) 
+    },
     autoCreateRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: Metrics.verticalScale(5),
-        marginLeft: Metrics.scale(-10)
+        marginTop: Metrics.verticalScale(10),
     },
 });
 

@@ -16,6 +16,7 @@ import { s, vs, ms } from 'react-native-size-matters';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import useHubspotCalendarContainer from './HubspotCalendarContainer';
 
@@ -23,7 +24,6 @@ const FIGMA_TEAL = '#20957B';
 
 const CalendarScreen = ({ route }: any) => {
   const userInfo = route?.params?.userInfo!;
-  // This value controls the slide-up/down
   const panY = useRef(new Animated.Value(vs(500))).current; 
 
   const {
@@ -33,7 +33,6 @@ const CalendarScreen = ({ route }: any) => {
     loadingSlots,
     selectedSlot,
     isBooking,
-    selectedDateLabel,
     setSelectedSlot,
     handleDateSelect,
     handleMonthChange,
@@ -42,7 +41,6 @@ const CalendarScreen = ({ route }: any) => {
     formatTime,
   } = useHubspotCalendarContainer(userInfo);
 
-  // Trigger Slide Up when a date is selected
   useEffect(() => {
     if (selectedDate !== '') {
       Animated.spring(panY, {
@@ -88,7 +86,8 @@ const CalendarScreen = ({ route }: any) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.headerSection}>
           <AppText type="Bold" fontSize={28} color={Colors.BLACK} lineHeight={34}>
-            Please select a <AppText type="Bold" fontSize={28} color={FIGMA_TEAL}>date</AppText>
+            Please select a <AppText type="Bold" fontSize={28} color={FIGMA_TEAL}>date</AppText> so our agent can
+            schedule a meeting with you
           </AppText>
         </View>
 
@@ -133,10 +132,27 @@ const CalendarScreen = ({ route }: any) => {
                 <View style={styles.sheetHandle} />
               </View>
 
-              <View style={styles.innerContent}>
-                <AppText text={selectedDateLabel} type="Bold" fontSize={16} color={FIGMA_TEAL} mb={4} />
-                <AppText text="Select Available Time Slot" type="Bold" fontSize={14} color="#333" mb={12} />
+              {/* Header Row with Clock and Close Button */}
+              <View style={styles.sheetHeaderRow}>
+                <View style={styles.headerLeft}>
+                  <View style={styles.clockCircle}>
+                    <Svgicons path="Clock" size={20} color={Colors.BLACK} />
+                  </View>
+                  <AppText 
+                    text="Select Any One Available Time Slot" 
+                    type="Bold" 
+                    fontSize={14} 
+                    color="#333" 
+                    ml={10} 
+                  />
+                </View>
+                
+                <TouchableOpacity onPress={closeSheet} style={styles.closeCircle}>
+                  <Svgicons path="closeIcon" size={14} color={Colors.BLACK} />
+                </TouchableOpacity>
+              </View>
 
+              <View style={styles.innerContent}>
                 {loadingSlots ? (
                   <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color={FIGMA_TEAL} />
@@ -160,8 +176,7 @@ const CalendarScreen = ({ route }: any) => {
                         />
                       </TouchableOpacity>
                     ))}
-                    {/* Padding so last row isn't hidden by the footer */}
-                    <View style={{ height: vs(100) }} />
+                    <View style={{ height: vs(40) }} />
                   </ScrollView>
                 )}
               </View>
@@ -175,6 +190,7 @@ const CalendarScreen = ({ route }: any) => {
                   backgroundColor={selectedSlot ? FIGMA_TEAL : '#A0D1C5'}
                   style={styles.confirmBtn}
                   color='#FFFFFF'
+                  borderRadius={100}
                 />
               </View>
             </Animated.View>
@@ -196,26 +212,60 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderTopLeftRadius: ms(30),
     borderTopRightRadius: ms(30),
-    height: vs(450),
+    height: vs(480),
     width: '100%',
   },
-  handleWrapper: { alignItems: 'center', paddingVertical: vs(15) },
+  handleWrapper: { alignItems: 'center', paddingVertical: vs(12) },
   sheetHandle: { width: s(45), height: vs(5), backgroundColor: '#E5E5E5', borderRadius: 5 },
-  innerContent: { flex: 1, paddingHorizontal: s(24) },
+  sheetHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: s(24),
+    marginBottom: vs(15),
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  clockCircle: {
+    width: ms(34),
+    height: ms(34),
+    borderRadius: ms(17),
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeCircle: {
+    width: ms(30),
+    height: ms(30),
+    borderRadius: ms(15),
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  innerContent: { flex: 1, paddingHorizontal: s(20) },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   slotsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   slotBtn: {
     width: '23%', 
     margin: '1%',
-    height: vs(35),
-    borderRadius: ms(8),
-    backgroundColor: '#F8F8F8',
+    height: vs(42),
+    borderRadius: ms(10),
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#EEE',
+    borderColor: '#F0F0F0',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  slotBtnSelected: { backgroundColor: FIGMA_TEAL, borderColor: FIGMA_TEAL },
+  slotBtnSelected: { backgroundColor: FIGMA_TEAL, borderColor: FIGMA_TEAL, elevation: 0 },
   sheetFooter: {
     paddingHorizontal: s(24),
     paddingBottom: vs(30),
@@ -227,10 +277,8 @@ const styles = StyleSheet.create({
   confirmBtn: {
     height: vs(54),
     width: '100%',
-    borderRadius: ms(27),
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row', 
   },
 });
 

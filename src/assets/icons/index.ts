@@ -224,7 +224,12 @@ import noTTLockScreen from './noTTLockScreen.svg'
 import noListingOnTTLock from './noListingOnTTLock.svg'
 import noSavedReplies from './noSavedReplies.svg'
 import aiAutoReplyIcon from './aiAutoReplyIcon.svg'
+import noAutomationScreen from './noAutomationScreen.svg'
+import noAiAutoReplyIcon from './noAiAutoReplyIcon.svg'
 import automationTemplateIcon from './automationTemplateIcon.svg'
+import reservationDetailIcon from './reservationDetailIcon.svg'
+import viewCalendarIcon from './viewCalendarIcon.svg'
+import chatIconWhite from './chatIconWhite.svg'
 import reservationtitle from './reservations/reservationtitle.svg';
 import reservationaddress from './reservations/reservationaddress.svg';
 import reservationcheckin from './reservations/reservationcheckin.svg';
@@ -476,5 +481,10 @@ export const icons = {
   noListingOnTTLock,
   automationTemplateIcon,
   noSavedReplies,
-  aiAutoReplyIcon
+  aiAutoReplyIcon,
+  noAutomationScreen,
+  noAiAutoReplyIcon,
+  reservationDetailIcon,
+  viewCalendarIcon,
+  chatIconWhite
 };
