@@ -227,28 +227,27 @@
 // });
 
 // export default AssignChatScreen;
-
 import React, { useMemo } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, Platform } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import useAssignChatContainer from './AssignChatContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useRoute } from '@react-navigation/native';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const AssignChatScreen = () => {
   const route = useRoute<any>();
   const params = route?.params;
   const assignedIds = params?.assigned_to_ids || [];
   const listing_id = params?.listing_id;
-  
-  console.log("assinflisting_id", listing_id);
+  const guestName = params?.guestName || 'Oasis Tower, Al Riyadh';
 
   const {
     userManagement,
@@ -262,19 +261,13 @@ const AssignChatScreen = () => {
     user,
   } = useAssignChatContainer();
 
-  // FILTER LOGIC: Filter users whose listing_scope includes the listing_id from params
   const filteredUserManagement = useMemo(() => {
-    if (!listing_id) return userManagement; 
-    
+    if (!listing_id) return userManagement;
     return userManagement.filter((u: any) => {
-      // Access the listing_ids array inside listing_scope
       const userListingIds = u?.listing_scope?.listing_ids || [];
-      // Match the ID (using Number to ensure type safety)
       return userListingIds.some((id: any) => Number(id) === Number(listing_id));
     });
   }, [userManagement, listing_id]);
-
-  console.log("filteredUserManagement", filteredUserManagement);
 
   const isSelectedUserAssigned =
     selectedUser &&
@@ -286,150 +279,151 @@ const AssignChatScreen = () => {
     );
     const isSupervisor = user?.role_key === 'supervisor';
 
-    const metallicColors = ['#808080', '#FFFFFF', '#808080'];
-    const metallicLocations = [0, 0.49, 1];
-    const assignedColors = [Colors.BRUNSWICK_GREEN, '#5D8A82'];
-    const assignedLocations = [0, 1];
-
     return (
-      <GradientBorder
-        borderRadius={14}
-        borderWidth={1}
-        colors={isAssigned ? assignedColors : metallicColors}
-        locations={isAssigned ? assignedLocations : metallicLocations}
-        style={styles.cardWrapper}
+      <Pressable 
+        disabled={isSupervisor} 
+        onPress={() => handleAssignUser(item)}
       >
-        <ButtonView
-          style={[styles.userCard, isAssigned && styles.highlightedCard]}
-          disabled={isSupervisor}
-          onPress={() => handleAssignUser(item)}
+        <GlassCard 
+          width="100%" 
+          style={[
+            styles.glassCardOverride,
+            isAssigned && styles.assignedGlassCard
+          ]}
         >
-          <View style={styles.cardInner}>
-            <AppText
-              text={item.name}
-              fontSize={18}
-              type="Bold"
-              color={isAssigned ? Colors.WHITE : Colors.BRUNSWICK_GREEN}
-            />
-            <AppText
-              text={item.role_namwe}
-              fontSize={14}
-              color={isAssigned ? Colors.WHITE : Colors.BRUNSWICK_GREEN}
-            />
+          <View style={styles.cardContent}>
+            <View>
+              <AppText
+                text={item.name}
+                fontSize={18}
+                type="Bold"
+                color={isAssigned ? Colors.BLACK : Colors.BLACK}
+              />
+              <AppText
+                text={item.role_namwe || item.role} 
+                fontSize={14}
+                color={isAssigned ? Colors.BLACK : Colors.BLACK}
+              />
+            </View>
+            {isAssigned && (
+              <Svgicons
+                path="CheckboxCheckedIcon"
+                size={22}
+                color={Colors.WHITE}
+              />
+            )}
           </View>
-          {isAssigned && (
-            <Svgicons
-              path="CheckboxCheckedIcon"
-              size={20}
-              color={Colors.WHITE}
-            />
-          )}
-        </ButtonView>
-      </GradientBorder>
+        </GlassCard>
+      </Pressable>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-          <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-            <Svgicons path="arrowLeftIcon" size={26} />
-          </Pressable>
-        </GradientBorder>
-        <AppText
-          text={params?.guestName || 'Assign Chat'}
-          fontSize={18}
-          type="Bold"
-          color={Colors.MIDNIGHT}
-        />
-        <View style={{ width: 32 }} />
-      </View>
-
-      <View style={styles.titleSection}>
-        <View style={styles.titleWrapper}>
-          <AppText
-            text={user?.role_key === 'supervisor' ? 'Assigned Chat Users' : 'Assign Chat To User'}
-            fontSize={22}
-            type="Bold"
-            color={Colors.BRUNSWICK_GREEN}
-          />
-          <Svgicons path="expandIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path="arrowLeftIcon" size={26} />
+            </Pressable>
+          </GradientBorder>
+          <View style={styles.menuIconPlaceholder}>
+             <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
+          </View>
         </View>
+
+        {/* Title Section */}
+        <View style={styles.titleContainer}>
+          <AppText
+            text="Assign chat to users"
+            fontSize={28}
+            type="Bold"
+            color={Colors.BLACK}
+          />
+          <AppText
+            text={guestName}
+            fontSize={16}
+            color={Colors.BLACK}
+            mt={4}
+          />
+        </View>
+
+        <FlatListSimpleHandler
+          data={filteredUserManagement}
+          renderItem={renderUserItem}
+          keyExtractor={item => String(item.id)}
+          contentContainerStyle={styles.listContainer}
+          isLoading={isLoading}
+          onRefresh={refetch}
+          listEmptyText="No users found for this listing"
+        />
+
+        <ConfirmAction
+          ref={removeSheetRef}
+          content={
+            isSelectedUserAssigned
+              ? `Do you want to unassigned ${selectedUser?.name} from this chat?`
+              : `Do you want to assigned this chat to ${selectedUser?.name}?`
+          }
+          confirmText={isSelectedUserAssigned ? 'Unassigned' : 'Assigned'}
+          closeText="Cancel"
+          onConfirm={confirm}
+          isLoading={isLoadingRemoved}
+        />
       </View>
-
-      <FlatListSimpleHandler
-        data={filteredUserManagement} 
-        renderItem={renderUserItem}
-        keyExtractor={item => String(item.id)}
-        contentContainerStyle={styles.listContainer}
-        isLoading={isLoading}
-        onRefresh={refetch}
-      />
-
-      <ConfirmAction
-        ref={removeSheetRef}
-        // title={selectedUser?.name}
-        content={
-          isSelectedUserAssigned
-            ? `Do you want to unassigned ${selectedUser?.name} from this chat?`
-            : `Do you want to assigned this chat to ${selectedUser?.name}?`
-        }
-        confirmText={isSelectedUserAssigned ? 'Unassigned' : 'Assigned'}
-        closeText="Cancel"
-        onConfirm={confirm}
-        isLoading={isLoadingRemoved}
-      />
-    </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { 
+    flex: 1, 
+    paddingTop: Platform.OS === 'ios' ? 50 : 20 
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   arrowCircleInner: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 35,
+    height: 35,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.WHITE,
+    backgroundColor:Colors.WHITE
   },
-  titleSection: {
+  menuIconPlaceholder: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: Metrics.verticalScale(25),
   },
-  titleWrapper: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  titleContainer: {
+    paddingHorizontal: 25,
+    marginBottom: 30,
+  },
   listContainer: {
-    paddingHorizontal: Metrics.scale(25),
-    paddingBottom: Metrics.verticalScale(20),
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
-  cardWrapper: { marginBottom: Metrics.verticalScale(12) },
-  userCard: {
-    flex: 1,
+  glassCardOverride: {
+    marginBottom: 12,
+    borderRadius: 24, // Matches the rounded look in design
+    padding: 20,
+  },
+  assignedGlassCard: {
+    // backgroundColor: Colors.TEAL_PRIMARY_ALT,
+    // borderColor: Colors.TEAL_PRIMARY_ALT,
+  },
+  cardContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 15,
-    paddingHorizontal: Metrics.scale(20),
-    paddingVertical: Metrics.verticalScale(20),
-    backgroundColor: Colors.WHITE,
   },
-  cardInner: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  highlightedCard: { backgroundColor: Colors.BRUNSWICK_GREEN },
 });
 
 export default AssignChatScreen;

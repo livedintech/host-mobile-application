@@ -8,6 +8,7 @@ import {
   TextInput,
   Platform,
   Animated,
+  KeyboardAvoidingView
 } from 'react-native';
 import {
   Menu,
@@ -33,7 +34,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
-import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import {  KeyboardStickyView } from 'react-native-keyboard-controller';
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 
@@ -160,7 +161,7 @@ const ChatScreen = () => {
     | undefined;
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
-  console.log("listing_idchatdetail", listing_id)
+  console.log('listing_idchatdetail', listing_id);
 
   const {
     messages,
@@ -206,7 +207,10 @@ const ChatScreen = () => {
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  console.log("conversationDataconversationDatamm", conversationData?.listing_id)
+  console.log(
+    'conversationDataconversationDatamm',
+    conversationData?.listing_id,
+  );
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
@@ -342,7 +346,11 @@ const ChatScreen = () => {
             color={Colors.BRUNSWICK_GREEN}
           /> */}
         <AppText
-          text={replyTo.text.length > 80 ? replyTo.text.substring(0, 80) + '...' : replyTo.text}
+          text={
+            replyTo.text.length > 80
+              ? replyTo.text.substring(0, 80) + '...'
+              : replyTo.text
+          }
           // text={replyTo.text.substring(0, 80)}
           fontSize={11}
           color={Colors.DRAVIT_GREY}
@@ -358,7 +366,6 @@ const ChatScreen = () => {
     const isAutomated = item.user._id === 3;
     const isSelected = selectedMessageId === item._id;
     const isHighlighted = highlightedMessageId === item._id;
-
 
     return (
       <View>
@@ -478,9 +485,7 @@ const ChatScreen = () => {
               text={dayjs(item.createdAt).local().format('h:mm A')}
               fontSize={11}
               color={
-                isHost && !isAutomated
-                  ? Colors.GREY_SHADOW
-                  : Colors.GREY_SHADOW
+                isHost && !isAutomated ? Colors.GREY_SHADOW : Colors.GREY_SHADOW
               }
               mt={8}
             />
@@ -507,441 +512,467 @@ const ChatScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <View style={styles.container}>
-        <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
-          <View style={[styles.inputArea, { paddingBottom: 12 }]}>
-            {/* Header */}
-            <View style={styles.header}>
-              <GradientBorder
-                borderRadius={16}
-                borderWidth={1}
-                style={styles.arrowCircleInner}
-              >
-                <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-                  <Svgicons path="arrowLeftIcon" size={26} />
-                </Pressable>
-              </GradientBorder>
+      {/* <View style={styles.container}> */}
+        {/* <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
+          <View style={[styles.inputArea, { paddingBottom: 12 }]}> */}
+        {/* <View style={styles.screenContent}> */}
 
-              {/* ✅ Dynamic conversation name from API */}
-              <AppText
-                text={conversationData?.name || 'Chat'}
-                fontSize={18}
-                type="Bold"
-                color={Colors.MIDNIGHT}
-              />
+         <KeyboardAvoidingView
+      // style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      style={{ flex: 1 }}
+    >
+        {/* Header */}
+        <View style={styles.header}>
+          <GradientBorder
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path="arrowLeftIcon" size={26} />
+            </Pressable>
+          </GradientBorder>
 
-              <Menu>
-                <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
-                  <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
-                </MenuTrigger>
-                <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-                  <MenuOption
-                    style={styles.menuItem}
-                    onSelect={() => {
-                      navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
-                        screen: NavigationRoutes.APP_STACK.LISTING,
-                        params: {
-                          listing_id: conversationData?.listing_id || listing_id,
-                        },
-                      });
-                    }}
-                  >
-                    <AppText
-                      text="View Listing Calendar"
-                      fontSize={14}
-                      color={Colors.CHARCOAL}
-                    />
-                    <Svgicons path="listingCalendar" size={24} />
-                  </MenuOption>
-                  <MenuOption
-                    style={styles.menuItem}
-                    onSelect={() =>
-                      // navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN)
-                      navigate(
-                        NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
-                        {
-                          booking_id: conversationData?.booking_id,
-                        },
-                      )
-                    }
-                  >
-                    <AppText
-                      text="Reservation Details"
-                      fontSize={14}
-                      color={Colors.CHARCOAL}
-                    />
-                    <Svgicons path="reservationDetail" size={24} />
-                  </MenuOption>
-                  {user?.role_key !== 'supervisor' && (
-                    <MenuOption
-                      style={styles.menuItem}
-                      onSelect={() => {
-                        navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, {
-                          conversation_id: conversation_id,
-                          guestName: conversationData?.name,
-                          assigned_to_ids: assigned_to_ids,
-                          listing_id: conversationData?.listing_id || listing_id
-                        });
-                      }}
-                    >
-                      <AppText
-                        text={'Assign Chat To User'}
-                        fontSize={14}
-                        color={Colors.CHARCOAL}
-                      />
-                      <Svgicons path="expandIcon" size={24} />
-                    </MenuOption>
-                  )}
-                  {/* <MenuOption style={[styles.menuItem, { borderBottomWidth: 0 }]}>
+          {/* ✅ Dynamic conversation name from API */}
+          <AppText
+            text={conversationData?.name || 'Chat'}
+            fontSize={18}
+            type="Bold"
+            color={Colors.MIDNIGHT}
+          />
+
+          <Menu>
+            <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
+              <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
+            </MenuTrigger>
+            <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
+              {/* <MenuOption style={[styles.menuItem, { borderBottomWidth: 0 }]}>
                 <AppText
                   text="Add Internal Notes"
                   fontSize={14}
-                  color={Colors.CHARCOAL}
+                  color={Colors.BLACK}
                 />
                 <Svgicons path="note" size={24} />
               </MenuOption> */}
-                </MenuOptions>
-              </Menu>
-            </View>
 
-            {/* Messages List */}
-            <FlatListSimpleHandler
-              ref={flatListRef}
-              data={messagesWithTimeLabels}
-              isLoading={isLoading}
-              renderItem={renderMessage}
-              listEmptyText="No Messages Found"
-              keyExtractor={item => item._id.toString()}
-              maintainVisibleContentPosition={{
-                minIndexForVisible: 0,
-              }}
-              contentContainerStyle={styles.messagesList}
-              scrollEnabled={messagesWithTimeLabels.length > 5}
-              keyboardShouldPersistTaps="handled"
-              onScrollToIndexFailed={handleScrollToIndexFailed}
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-              inverted
-            />
-
-            {/* ✅ Scroll to Bottom Button (WhatsApp style) */}
-            {!isAtBottom && (
-              <Animated.View
-                style={[
-                  styles.scrollToBottomButton,
-                  { opacity: scrollButtonOpacity },
-                ]}
+              <MenuOption
+                style={styles.menuItem}
+                onSelect={() =>
+                  // navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN)
+                  navigate(
+                    NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
+                    {
+                      booking_id: conversationData?.booking_id,
+                    },
+                  )
+                }
               >
-                <Pressable
-                  onPress={scrollToBottom}
-                  style={styles.scrollButtonInner}
-                >
-                  <Svgicons path="ChevronDownIcon" size={20} color={Colors.WHITE} />
-                  {unreadCount > 0 && (
-                    <View style={styles.unreadBadge}>
-                      <AppText
-                        text={unreadCount > 99 ? '99+' : unreadCount.toString()}
-                        fontSize={10}
-                        type="Bold"
-                        color={Colors.WHITE}
-                      />
-                    </View>
-                  )}
-                </Pressable>
-              </Animated.View>
-            )}
+                <AppText
+                  text="Reservation Details"
+                  fontSize={14}
+                  color={Colors.BLACK}
+                />
+                <Svgicons path="reservationDetailIcon" size={24} />
+              </MenuOption>
 
-            {/* Context Menu */}
-            {selectedMessageId && selectedMessageData && (
+              <MenuOption
+                style={styles.menuItem}
+                onSelect={() => {
+                  navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+                    screen: NavigationRoutes.APP_STACK.LISTING,
+                    params: {
+                      listing_id: conversationData?.listing_id || listing_id,
+                    },
+                  });
+                }}
+              >
+                <AppText
+                  text="View Calendar"
+                  fontSize={14}
+                  color={Colors.BLACK}
+                />
+                <Svgicons path="viewCalendarIcon" size={24} />
+              </MenuOption>
+
+              {user?.role_key !== 'supervisor' && (
+                <MenuOption
+                  style={styles.menuItem}
+                  onSelect={() => {
+                    navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT, {
+                      conversation_id: conversation_id,
+                      guestName: conversationData?.name,
+                      assigned_to_ids: assigned_to_ids,
+                      listing_id: conversationData?.listing_id || listing_id,
+                    });
+                  }}
+                >
+                  <AppText
+                    text={'Assign Chat To User'}
+                    fontSize={14}
+                    color={Colors.BLACK}
+                  />
+                  <Svgicons path="expandIcon" size={22} />
+                </MenuOption>
+              )}
+            </MenuOptions>
+          </Menu>
+        </View>
+
+        {/* Messages List */}
+        <FlatListSimpleHandler
+          ref={flatListRef}
+          data={messagesWithTimeLabels}
+          isLoading={isLoading}
+          renderItem={renderMessage}
+          listEmptyText="No Messages Found"
+          keyExtractor={item => item._id.toString()}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+          }}
+          contentContainerStyle={styles.messagesList}
+          scrollEnabled={messagesWithTimeLabels.length > 5}
+          keyboardShouldPersistTaps="handled"
+          onScrollToIndexFailed={handleScrollToIndexFailed}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          inverted
+        />
+
+        {/* ✅ Scroll to Bottom Button (WhatsApp style) */}
+        {!isAtBottom && (
+          <Animated.View
+            style={[
+              styles.scrollToBottomButton,
+              { opacity: scrollButtonOpacity },
+            ]}
+          >
+            <Pressable
+              onPress={scrollToBottom}
+              style={styles.scrollButtonInner}
+            >
+              <Svgicons path="ChevronDownIcon" size={20} color={Colors.WHITE} />
+              {unreadCount > 0 && (
+                <View style={styles.unreadBadge}>
+                  <AppText
+                    text={unreadCount > 99 ? '99+' : unreadCount.toString()}
+                    fontSize={10}
+                    type="Bold"
+                    color={Colors.WHITE}
+                  />
+                </View>
+              )}
+            </Pressable>
+          </Animated.View>
+        )}
+
+        {/* Context Menu */}
+        {selectedMessageId && selectedMessageData && (
+          <Pressable
+            style={styles.menuBackdrop}
+            onPress={() => {
+              setSelectedMessageId(null);
+              setSelectedMessageData(null);
+            }}
+          >
+            <View
+              style={[
+                styles.contextMenu,
+                menuPosition.isHost
+                  ? styles.contextMenuRight
+                  : styles.contextMenuLeft,
+              ]}
+              onStartShouldSetResponder={() => true}
+              onTouchEnd={e => e.stopPropagation()}
+            >
               <Pressable
-                style={styles.menuBackdrop}
+                style={styles.menuOption}
                 onPress={() => {
+                  if (selectedMessageData.text) {
+                    handleCopyText(selectedMessageData.text);
+                  }
                   setSelectedMessageId(null);
                   setSelectedMessageData(null);
                 }}
               >
-                <View
-                  style={[
-                    styles.contextMenu,
-                    menuPosition.isHost
-                      ? styles.contextMenuRight
-                      : styles.contextMenuLeft,
-                  ]}
-                  onStartShouldSetResponder={() => true}
-                  onTouchEnd={e => e.stopPropagation()}
-                >
-                  <Pressable
-                    style={styles.menuOption}
-                    onPress={() => {
-                      if (selectedMessageData.text) {
-                        handleCopyText(selectedMessageData.text);
-                      }
-                      setSelectedMessageId(null);
-                      setSelectedMessageData(null);
-                    }}
-                  >
-                    <View style={styles.menuTextContainer}>
-                      <AppText text="Copy" fontSize={13} />
-                    </View>
-                    <Svgicons path="docIcon" size={16} />
-                  </Pressable>
-
-                  <Pressable
-                    style={styles.menuOption}
-                    onPress={() => {
-                      if (selectedMessageData.text) {
-                        handleTaskCreation(selectedMessageData.text);
-                      }
-                      setSelectedMessageId(null);
-                      setSelectedMessageData(null);
-                      navigate(NavigationRoutes.APP_STACK.CREATE_TASK, {
-                        listing_id: conversationData?.listing_id,
-                        fromChat: true,
-                        conversation_id: conversationData?.id,
-                      });
-                    }}
-                  >
-                    <View style={styles.menuTextContainer}>
-                      <AppText text="Create Task" fontSize={13} />
-                    </View>
-                    <Svgicons path="taskIcon" size={16} />
-                  </Pressable>
-
-                  {/* ✅ Only show delete for logged-in user's messages */}
-                  {Number(selectedMessageData.user._id) === Number(user?.id) && (
-                    <Pressable
-                      style={[styles.menuOption, { borderBottomWidth: 0 }]}
-                      onPress={() => {
-                        handleDeleteMessage(selectedMessageData._id);
-                        setSelectedMessageId(null);
-                        setSelectedMessageData(null);
-                      }}
-                    >
-                      <View style={styles.menuTextContainer}>
-                        <AppText
-                          text="Delete"
-                          fontSize={13}
-                          color={Colors.INDIAN_RED}
-                        />
-                      </View>
-                      <Svgicons path="deleteIcon" size={16} />
-                    </Pressable>
-                  )}
+                <View style={styles.menuTextContainer}>
+                  <AppText text="Copy" fontSize={13} />
                 </View>
+                <Svgicons path="docIcon" size={16} />
               </Pressable>
-            )}
 
-            {/* AI Suggestion */}
-            {
-              // showAiSuggestion
-              false && (
-                <View style={styles.aiWrapper}>
-                  <AppText
-                    text="A.I Suggestions"
-                    fontSize={11}
-                    color={Colors.GREY_SHADOW}
-                    mb={8}
-                  />
-                  <View style={styles.aiBubble}>
-                    <Pressable
-                      onPress={() => setShowAiSuggestion(false)}
-                      style={styles.aiClose}
-                    >
-                      <Svgicons path="closeIcon" size={12} />
-                    </Pressable>
-                    <AppText
-                      text="Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival."
-                      fontSize={13}
-                      color={Colors.BRUNSWICK_GREEN}
-                      mb={10}
-                    />
-                    <View style={styles.aiFooter}>
-                      <Pressable
-                        onPress={() => {
-                          setShowAiSuggestion(false);
-                          setInputText(
-                            'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.',
-                          );
-                        }}
-                      >
-                        <AppText
-                          text="Edit"
-                          fontSize={12}
-                          type="Bold"
-                          color={Colors.PINE_FOREST}
-                        />
-                      </Pressable>
-                      <Pressable onPress={sendAiSuggestion}>
-                        <AppText
-                          text="Send Now"
-                          fontSize={12}
-                          type="Bold"
-                          ml={15}
-                          color={Colors.PINE_FOREST}
-                        />
-                      </Pressable>
-                    </View>
-                  </View>
-                </View>
-              )
-            }
-
-            {/* Reply Indicator in Input Area */}
-            {replyingToMessage && (
-              <View style={styles.replyingIndicatorContainer}>
-                <View style={styles.replyingIndicatorContent}>
-                  <AppText
-                    text={`Replying to ${replyingToMessage.user.name}`}
-                    fontSize={12}
-                    type="Bold"
-                    color={Colors.BRUNSWICK_GREEN}
-                  />
-                  <AppText
-                    text={replyingToMessage.text || 'Media message'}
-                    fontSize={11}
-                    color={Colors.GREY_SHADOW}
-                    numberOfLines={1}
-                  />
-                </View>
-                <Pressable onPress={cancelReply}>
-                  <Svgicons path="closeIcon" size={18} color={Colors.GREY_SHADOW} />
-                </Pressable>
-              </View>
-            )}
-
-            {/* Input Area */}
-            <View
-              style={[
-                styles.inputArea,
-                { paddingBottom: keyboardHeight > 0 ? 15 : 12 },
-              ]}
-            >
               <Pressable
+                style={styles.menuOption}
                 onPress={() => {
-                  Keyboard.dismiss();
-                  setShowSavedReplies(!showSavedReplies);
+                  if (selectedMessageData.text) {
+                    handleTaskCreation(selectedMessageData.text);
+                  }
+                  setSelectedMessageId(null);
+                  setSelectedMessageData(null);
+                  navigate(NavigationRoutes.APP_STACK.CREATE_TASK, {
+                    listing_id: conversationData?.listing_id,
+                    fromChat: true,
+                    conversation_id: conversationData?.id,
+                  });
                 }}
-              // style={[
-              //   styles.plusAction,
-              //   {
-              //     backgroundColor: showSavedReplies
-              //       ? Colors.WHITE
-              //       : Colors.WHITE,
-              //   },
-              // ]}
               >
-                <GlassCard style={styles.plusAction}>
-                  <Svgicons path="chatIcon" size={20} />
-                </GlassCard>
+                <View style={styles.menuTextContainer}>
+                  <AppText text="Create Task" fontSize={13} />
+                </View>
+                <Svgicons path="taskIcon" size={16} />
               </Pressable>
 
-              {/* <View style={styles.combinedInputContainer}> */}
-              <GlassCard style={styles.mainCardItem}>
-                <TextInput
-                  value={inputText}
-                  onChangeText={setInputText}
-                  placeholder="Ask me any question"
-                  placeholderTextColor={Colors.SECRET_CHOCOLATE}
-                  style={styles.input}
-                  multiline
-                  maxLength={500}
-                />
-              </GlassCard>
-              {/* </View> */}
-
-              <Pressable
-                onPress={sendMessage}
-                disabled={!inputText.trim()}
-                style={[
-                  styles.sendButton,
-                  !inputText.trim() && styles.sendButtonDisabled,
-                ]}
-              >
-                <Svgicons path={!inputText.trim() ? "sendIcon" : "sendWhite"} size={18} color={Colors.WHITE} />
-              </Pressable>
+              {/* ✅ Only show delete for logged-in user's messages */}
+              {Number(selectedMessageData.user._id) === Number(user?.id) && (
+                <Pressable
+                  style={[styles.menuOption, { borderBottomWidth: 0 }]}
+                  onPress={() => {
+                    handleDeleteMessage(selectedMessageData._id);
+                    setSelectedMessageId(null);
+                    setSelectedMessageData(null);
+                  }}
+                >
+                  <View style={styles.menuTextContainer}>
+                    <AppText
+                      text="Delete"
+                      fontSize={13}
+                      color={Colors.INDIAN_RED}
+                    />
+                  </View>
+                  <Svgicons path="deleteIcon" size={16} />
+                </Pressable>
+              )}
             </View>
+          </Pressable>
+        )}
 
-            {/* Saved Replies */}
-            {showSavedReplies && (
-              <View style={styles.savedRepliesWrapper}>
+        {/* AI Suggestion */}
+        {
+          // showAiSuggestion
+          false && (
+            <View style={styles.aiWrapper}>
+              <AppText
+                text="A.I Suggestions"
+                fontSize={11}
+                color={Colors.GREY_SHADOW}
+                mb={8}
+              />
+              <View style={styles.aiBubble}>
+                <Pressable
+                  onPress={() => setShowAiSuggestion(false)}
+                  style={styles.aiClose}
+                >
+                  <Svgicons path="closeIcon" size={12} />
+                </Pressable>
                 <AppText
-                  text="Saved Replies"
-                  type="Bold"
-                  mb={12}
-                  color={Colors.PINE_FOREST}
-                  fontSize={16}
+                  text="Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival."
+                  fontSize={13}
+                  color={Colors.BRUNSWICK_GREEN}
+                  mb={10}
                 />
-                <View style={styles.repliesGrid}>
-                  {SAVED_REPLIES.map(
-                    (reply: { id: number; body: string; title: string }) => (
-                      <Pressable
-                        key={reply?.id}
-                        style={styles.replyChip}
-                        onPress={() => {
-                          setInputText(reply?.body);
-                          setShowSavedReplies(false);
-                        }}
-                      >
-                        <AppText
-                          text={reply?.title}
-                          fontSize={13}
-                          color={Colors.BRUNSWICK_GREEN}
-                        />
-                      </Pressable>
-                    ),
-                  )}
+                <View style={styles.aiFooter}>
+                  <Pressable
+                    onPress={() => {
+                      setShowAiSuggestion(false);
+                      setInputText(
+                        'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.',
+                      );
+                    }}
+                  >
+                    <AppText
+                      text="Edit"
+                      fontSize={12}
+                      type="Bold"
+                      color={Colors.PINE_FOREST}
+                    />
+                  </Pressable>
+                  <Pressable onPress={sendAiSuggestion}>
+                    <AppText
+                      text="Send Now"
+                      fontSize={12}
+                      type="Bold"
+                      ml={15}
+                      color={Colors.PINE_FOREST}
+                    />
+                  </Pressable>
                 </View>
               </View>
-            )}
+            </View>
+          )
+        }
 
-            {/* Attachment Menu */}
-            {showAttachmentMenu && (
-              <View style={styles.attachmentMenu}>
-                <Pressable style={styles.attachmentOption} onPress={handleCamera}>
-                  <View style={styles.attachmentIconWrapper}>
-                    <Svgicons path="cameraIcon" size={20} />
-                  </View>
-                  <AppText text="Camera" fontSize={13} />
-                </Pressable>
-
-                <Pressable style={styles.attachmentOption} onPress={handleVideo}>
-                  <View style={styles.attachmentIconWrapper}>
-                    <Svgicons path="videoIcon" size={20} />
-                  </View>
-                  <AppText text="Video" fontSize={13} />
-                </Pressable>
-
-                <Pressable style={styles.attachmentOption} onPress={handleGallery}>
-                  <View style={styles.attachmentIconWrapper}>
-                    <Svgicons path="imageIcon" size={20} />
-                  </View>
-                  <AppText text="Gallery" fontSize={13} />
-                </Pressable>
-
-                <Pressable
-                  style={[styles.attachmentOption, { borderBottomWidth: 0 }]}
-                  onPress={handleDocument}
-                >
-                  <View style={styles.attachmentIconWrapper}>
-                    <Svgicons path="docIcon" size={20} />
-                  </View>
-                  <AppText text="Document" fontSize={13} />
-                </Pressable>
-              </View>
-            )}
-
-            {/* Image Viewer Modal */}
-            {previewImageUri && (
-              <ImageViewing
-                images={[{ uri: previewImageUri }]}
-                imageIndex={0}
-                visible={isImageViewerVisible}
-                onRequestClose={() => setIsImageViewerVisible(false)}
+        {/* Reply Indicator in Input Area */}
+        {replyingToMessage && (
+          <View style={styles.replyingIndicatorContainer}>
+            <View style={styles.replyingIndicatorContent}>
+              <AppText
+                text={`Replying to ${replyingToMessage.user.name}`}
+                fontSize={12}
+                type="Bold"
+                color={Colors.BRUNSWICK_GREEN}
               />
-            )}
+              <AppText
+                text={replyingToMessage.text || 'Media message'}
+                fontSize={11}
+                color={Colors.GREY_SHADOW}
+                numberOfLines={1}
+              />
+            </View>
+            <Pressable onPress={cancelReply}>
+              <Svgicons path="closeIcon" size={18} color={Colors.GREY_SHADOW} />
+            </Pressable>
           </View>
-        </KeyboardStickyView>
-      </View>
+        )}
+
+        {/* Input Area */}
+        <View
+          style={[
+            styles.inputArea,
+            { paddingBottom: keyboardHeight > 0 ? 15 : 12 },
+          ]}
+        >
+          <Pressable
+            onPress={() => {
+              Keyboard.dismiss();
+              setShowSavedReplies(!showSavedReplies);
+            }}
+            style={[
+              styles.plusAction,
+              {
+                backgroundColor: showSavedReplies
+                  ? Colors.TEAL_PRIMARY_ALT
+                  : Colors.TRANSPARENT,
+              },
+            ]}
+          >
+            <GlassCard style={styles.plusAction}>
+              <Svgicons
+                path={showSavedReplies ? 'chatIconWhite' : 'chatIcon'}
+                size={20}
+              />{' '}
+            </GlassCard>
+          </Pressable>
+
+          {/* <View style={styles.combinedInputContainer}> */}
+          <GlassCard style={styles.mainCardItem}>
+            <TextInput
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Ask me any question"
+              placeholderTextColor={Colors.SECRET_CHOCOLATE}
+              style={styles.input}
+              multiline
+              maxLength={500}
+            />
+          </GlassCard>
+          {/* </View> */}
+
+          <Pressable
+            onPress={sendMessage}
+            disabled={!inputText.trim()}
+            style={[
+              styles.sendButton,
+              !inputText.trim() && styles.sendButtonDisabled,
+            ]}
+          >
+            <Svgicons
+              path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
+              size={18}
+              color={Colors.WHITE}
+            />
+          </Pressable>
+        </View>
+
+        {/* Saved Replies */}
+        {showSavedReplies && (
+          <View style={styles.savedRepliesWrapper}>
+            <AppText
+              text="Saved Replies"
+              type="Bold"
+              mb={16}
+              color={Colors.BLACK}
+              fontSize={18}
+            />
+            <View style={styles.repliesGrid}>
+              {SAVED_REPLIES.map(
+                (reply: { id: number; body: string; title: string }) => (
+                  <GlassCard
+                    key={reply?.id}
+                    width="31%"
+                    style={styles.replyGlassCard}
+                  >
+                    <Pressable
+                      onPress={() => {
+                        setInputText(reply?.body);
+                        setShowSavedReplies(false);
+                      }}
+                      style={styles.replyPressable}
+                    >
+                      <AppText
+                        text={reply?.title}
+                        fontSize={12}
+                        color={Colors.BLACK}
+                        style={{ textAlign: 'center' }}
+                        numberOfLines={1}
+                      />
+                    </Pressable>
+                  </GlassCard>
+                ),
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* Attachment Menu */}
+        {showAttachmentMenu && (
+          <View style={styles.attachmentMenu}>
+            <Pressable style={styles.attachmentOption} onPress={handleCamera}>
+              <View style={styles.attachmentIconWrapper}>
+                <Svgicons path="cameraIcon" size={20} />
+              </View>
+              <AppText text="Camera" fontSize={13} />
+            </Pressable>
+
+            <Pressable style={styles.attachmentOption} onPress={handleVideo}>
+              <View style={styles.attachmentIconWrapper}>
+                <Svgicons path="videoIcon" size={20} />
+              </View>
+              <AppText text="Video" fontSize={13} />
+            </Pressable>
+
+            <Pressable style={styles.attachmentOption} onPress={handleGallery}>
+              <View style={styles.attachmentIconWrapper}>
+                <Svgicons path="imageIcon" size={20} />
+              </View>
+              <AppText text="Gallery" fontSize={13} />
+            </Pressable>
+
+            <Pressable
+              style={[styles.attachmentOption, { borderBottomWidth: 0 }]}
+              onPress={handleDocument}
+            >
+              <View style={styles.attachmentIconWrapper}>
+                <Svgicons path="docIcon" size={20} />
+              </View>
+              <AppText text="Document" fontSize={13} />
+            </Pressable>
+          </View>
+        )}
+
+        {/* Image Viewer Modal */}
+        {previewImageUri && (
+          <ImageViewing
+            images={[{ uri: previewImageUri }]}
+            imageIndex={0}
+            visible={isImageViewerVisible}
+            onRequestClose={() => setIsImageViewerVisible(false)}
+          />
+        )}
+        {/* </View>
+        </KeyboardStickyView> */}
+        </KeyboardAvoidingView>
+      {/* </View> */}
     </BGImage>
   );
 };
@@ -972,12 +1003,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 10,
+    width: 250,
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 12,
     paddingVertical: 12,
   },
   messagesList: {
@@ -1019,11 +1051,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   messageBubbleSelected: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 5,
   },
   messageBubbleHighlighted: {
     backgroundColor: 'rgba(39, 174, 96, 0.15)',
@@ -1041,7 +1073,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#F2F2F2',
     borderBottomLeftRadius: 2,
     borderWidth: 1,
-    borderColor: Colors.WHITE
+    borderColor: Colors.WHITE,
   },
   automatedBubble: {
     borderStyle: 'dotted',
@@ -1139,16 +1171,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   savedRepliesWrapper: {
-    padding: 15,
-    backgroundColor: '#FFF',
-    borderTopWidth: 1,
-    borderTopColor: '#EEE',
-    maxHeight: 250,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 20,
+    width: '100%',
   },
   repliesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    justifyContent: 'flex-start',
+    gap: 8,
+  },
+  replyGlassCard: {
+    marginBottom: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 45,
+  },
+  replyPressable: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   replyChip: {
     borderWidth: 1,
@@ -1201,7 +1247,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginBottom: 0,
-    backgroundColor: Colors.TRANSPARENT
+    backgroundColor: Colors.TRANSPARENT,
   },
   combinedInputContainer: {
     flex: 1,
@@ -1228,7 +1274,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.EMERALD_TEAL,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.EMERALD_TEAL
+    backgroundColor: Colors.EMERALD_TEAL,
   },
   sendButtonDisabled: {
     backgroundColor: Colors.SUPER_GREY,
@@ -1319,8 +1365,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 0,
-    backgroundColor: Colors.TRANSPARENT
+    backgroundColor: Colors.TRANSPARENT,
   },
+  //   screenContent: {
+  //   flex: 1,
+  //   flexDirection: 'column',
+  // },
 });
 
 export default ChatScreen;

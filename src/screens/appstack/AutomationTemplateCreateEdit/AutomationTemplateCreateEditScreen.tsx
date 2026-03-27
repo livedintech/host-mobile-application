@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Controller } from 'react-hook-form';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -9,43 +8,62 @@ import useAutomationTemplateCreateEditContainer from './AutomationTemplateCreate
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import InputField from '@/components/molecules/Input/InputField';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import Checkbox from '@/components/molecules/Input/CheckBox';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import MentionTextarea from '@/components/molecules/Input/MentionTextarea';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-
-const TRIGGER_DATA = [
-    { label: 'Check-in', value: 'checkin' },
-    { label: 'Check-out', value: 'checkout' },
-];
+import Checkbox from '@/components/molecules/Input/CheckBox';
+import { Controller } from 'react-hook-form';
+import { goBack } from '@/services/navigationService';
 
 const CreateAutomationTemplateScreen = () => {
-    const { control, errors, handleSubmit, isLoading, isEditMode, transformedListing, transformedMessageVariables, transformedEvents } = useAutomationTemplateCreateEditContainer();
+    const { 
+        control, 
+        errors, 
+        handleSubmit, 
+        isLoading, 
+        isEditMode, 
+        transformedListing, 
+        transformedMessageVariables, 
+        transformedEvents 
+    } = useAutomationTemplateCreateEditContainer();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                    <View style={styles.header}>
-                        <View style={styles.titleWrapper}>
-                            <AppText
-                                text={isEditMode ? "Edit Automation Template" : "Create Automation Template"}
-                                fontSize={20}
-                                type="Bold"
-                                color={Colors.BRUNSWICK_GREEN}
-                            />
-                            <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
-                        </View>
+                <ScrollView 
+                    contentContainerStyle={styles.scrollContainer} 
+                    showsVerticalScrollIndicator={false}
+                >
+               
+
+                    {/* Title & Description */}
+                    <View style={styles.topTextSection}>
+                        <AppText
+                            text={isEditMode ? "Edit Automation Template" : "Create Automation Template"}
+                            fontSize={28}
+                            type="Bold"
+                            color={Colors.BLACK}
+                            mb={10}
+                        />
+                        <AppText
+                            text={isEditMode 
+                                ? "Update the trigger, message content, timing, and assigned listings. Changes apply to all future automated messages."
+                                : "Set up an automation by defining the trigger, message content, timing, and applicable listings."
+                            }
+                            fontSize={14}
+                            color={Colors.DARK_CHARCOAL_OPACITY}
+                            lineHeight={20}
+                        />
                     </View>
 
                     <View style={styles.form}>
                         <InputField
-                            label="Message Name:"
+                            label="Message Name"
                             name="name"
                             control={control}
                             errors={errors}
-                            placeholder="Check-in Reminder"
+                            placeholder="Wifi Password"
+                            // labelStyle={styles.labelStyle}
                         />
 
                         <MentionTextarea
@@ -54,7 +72,8 @@ const CreateAutomationTemplateScreen = () => {
                             control={control}
                             errors={errors}
                             variables={transformedMessageVariables}
-                            placeholder="Hi {guest_first_name}"
+                            placeholder="Hi Sir, here are your Wi-Fi details..."
+                            // labelStyle={styles.labelStyle}
                         />
 
                         <DropdownField
@@ -63,49 +82,51 @@ const CreateAutomationTemplateScreen = () => {
                             control={control}
                             errors={errors}
                             data={transformedEvents}
-                            placeholder="Select Trigger"
+                            placeholder="Check-in"
+                            // labelStyle={styles.labelStyle}
                         />
 
                         <MultiSelectDropdownField
-                            label="Listing Selection"
+                            label="Select Property"
                             name="listing_ids"
                             control={control}
                             errors={errors}
                             data={transformedListing || []}
                             placeholder="Select Multiple Options"
+                            labelStyle={styles.labelStyle}
                         />
 
                         <Controller
                             control={control}
                             name="is_active"
                             render={({ field: { onChange, value } }) => (
-                                <ButtonView
+                                <Pressable
                                     style={styles.autoCreateRow}
                                     onPress={() => onChange(!value)}
                                 >
                                     <Checkbox isChecked={value} onPress={() => onChange(!value)} />
                                     <AppText
-                                        text="Auto-Create for New Listings"
-                                        ml={Metrics.scale(2)}
-                                        color={Colors.PINE_FOREST}
+                                        text="Auto-create for all new listings"
+                                        ml={10}
+                                        color={Colors.MIDNIGHT}
                                         fontSize={14}
                                         type="Medium"
                                     />
-                                </ButtonView>
+                                </Pressable>
                             )}
                         />
                     </View>
 
                     {/* Submit Button */}
                     <AppButton
-                        title={isEditMode ? "Update Now" : "Create Now"}
+                        title={isEditMode ? "Save Changes" : "Create New Saved Reply"}
                         onPress={handleSubmit}
                         loading={isLoading}
                         mt={40}
-                        mb={20}
-                        type="SemiBold"
+                        mb={40}
+                        backgroundColor={Colors.TEAL_PRIMARY_ALT}
+                        borderColor={Colors.TEAL_PRIMARY_ALT}
                     />
-
                 </ScrollView>
             </View>
         </BGImage>
@@ -114,28 +135,39 @@ const CreateAutomationTemplateScreen = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    scrollContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(20) },
+    scrollContainer: { 
+        paddingHorizontal: Metrics.scale(22), 
+        paddingTop: Metrics.verticalScale(40) 
+    },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: Metrics.verticalScale(20),
-        justifyContent: 'center',
+        marginBottom: Metrics.verticalScale(25),
     },
     backBtn: {
-        position: 'absolute',
-        left: 0,
-        padding: Metrics.scale(8),
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        borderRadius: 100
+        borderColor: 'rgba(0,0,0,0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.3)',
     },
-    titleWrapper: { flexDirection: 'row', alignItems: 'center' },
-    form: { marginTop: Metrics.verticalScale(10) },
+    topTextSection: {
+        marginBottom: Metrics.verticalScale(30),
+    },
+    form: { 
+        gap: Metrics.verticalScale(20) 
+    },
+    labelStyle: {
+        fontSize: 16,
+        // type: 'Bold',
+        color: Colors.MIDNIGHT,
+        marginBottom: 8,
+    },
     autoCreateRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: Metrics.verticalScale(5),
-        marginLeft: Metrics.scale(-10)
+        marginTop: Metrics.verticalScale(10),
     },
 });
 

@@ -14,12 +14,12 @@ const NoListingScreen = () => {
   
   const handleAddListing = () => {
     // Navigate to your Add Listing flow
-    // navigate(NavigationRoutes.APP_STACK.ADD_LISTING); 
+    navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING); 
   };
 
   const handleCreateListing = () => {
     // Navigate to your Create Listing flow
-    // navigate(NavigationRoutes.APP_STACK.CREATE_LISTING);
+    navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
   };
 
   return (
