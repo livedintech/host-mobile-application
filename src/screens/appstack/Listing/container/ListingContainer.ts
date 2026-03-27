@@ -190,7 +190,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
-      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data });
+      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data, booking_id: bookingId });
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Error', text2: 'Could not fetch booking info' });
     } finally { setIsFetchingDetails(false); }
@@ -229,8 +229,14 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
       }
     } catch (error: any) {
       setisLoading(false)
-      const serverMessage = error?.data?.message || error?.response?.data?.message || "Something went wrong";
-      Toast.show({ type: 'error', text1: serverMessage, visibilityTime: 4000 });
+      const validationErrors = error?.data?.errors;
+      if (validationErrors) {
+        const firstField = Object.keys(validationErrors)[0];
+        const errorMessage = validationErrors[firstField][0];
+        Toast.show({ type: 'error', text1: errorMessage, visibilityTime: 4000 });
+      } else {
+        Toast.show({ type: 'error', text1: error?.data?.message, visibilityTime: 4000 });
+      }
     }
     finally {
       setisLoading(false)

@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { goBack, navigate } from '@/services/navigationService';
@@ -10,6 +11,7 @@ import {
   getUserManagementListingsApi,
   getUserManagementRoleApi,
   userManagementCraeteApi,
+  getVendorServices,
 } from '@/services/userManagement';
 import STORAGE_CONST from '@/constants/storage';
 import * as yup from 'yup';
@@ -21,76 +23,137 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   const queryClient = useQueryClient();
   const { params } = useRoute<any>();
   const editUser = params?.editUser;
+  console.log('editUser', editUser);
 
-  // 1. Get Roles first so we can use them in validation if needed
+  // 1. Fetch Roles & Listings
   const { data: roles = [] } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT_ROLES],
     queryFn: getUserManagementRoleApi,
-  });
-
-  // 2. Define Schema
-  const userManagementSchema = yup.object({
-    name: yup.string().required('Name is required'),
-    phoneNumber: yup.string().required('Phone number is required').min(7, 'Invalid phone number'),
-    country: yup.object().required(), 
-    email: yup.string().required('Email is required').email('Invalid email address'),
-    role: yup.string().required('Role is required'),
-    // listings: yup.array().of(yup.string()).optional(),
-    listings: yup.array()
-        .of(yup.mixed())
-        .min(1, 'Please select at least one listing')
-        .required('Listing selection is required'),
-    password: yup.string().test('is-password-req', 'Password is required', function(value) {
-      const { role } = this.parent;
-      const selectedRole = roles?.find((r: any) => String(r.id) === String(role));
-      if (selectedRole?.role_type === 'operator' && !value) {
-        return false;
-      }
-      return true;
-    }),
-  });
-
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<any>({
-    resolver: yupResolver(userManagementSchema),
-    defaultValues: { 
-      name: '', 
-      phoneNumber: '', 
-      country: { cca2: 'SA', callingCode: '966' }, 
-      email: '', 
-      role: '', 
-      listings: [], 
-      password: '' 
-    },
-  });
-
-  useEffect(() => {
-    if (mode === 'edit' && editUser) {
-      reset({
-        name: editUser.name,
-        phoneNumber: editUser.phone ? String(editUser.phone).replace('966', '') : '',
-        country: { cca2: 'SA', callingCode: '966' },
-        email: editUser.email,
-        role: Number(editUser.role_id),
-        listings: editUser.listing_scope?.listing_ids?.map(Number) || [],
-        password: '',
-      });
-    }
-  }, [mode, editUser, reset]);
-
-  // --- Other Queries ---
-  const { data: userManagement = [], isLoading: isListLoading, refetch } = useQuery({
-    queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT],
-    queryFn: getUserManagementApi,
   });
 
   const { data: listings = [] } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT_LISTING],
     queryFn: getUserManagementListingsApi,
   });
+  const { data: vendorServices = [] } = useQuery({
+    queryKey: ['GET_VENDOR_SERVICES'], // Ensure this key exists in your constants or use string
+    queryFn: getVendorServices,
+  });
+  console.log('vendorServices', vendorServices);
 
-  const invalidateMainList = () => {
-    queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT] });
-  };
+  const {
+    data: userManagement = [],
+    isLoading: isListLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT],
+    queryFn: getUserManagementApi,
+  });
+
+  const staffRoleTypeOptions = vendorServices.map((service: any) => ({
+    label: service.name || service.label, // Adjust based on your API response keys
+    value: service.id || service.value,
+  }));
+
+  // 2. Validation Schema
+  const userManagementSchema = yup.object({
+    name: yup.string().required('Name is required'),
+    phoneNumber: yup
+      .string()
+      .required('Phone number is required')
+      .min(7, 'Invalid phone number'),
+    country: yup.object().required(),
+    email: yup
+      .string()
+      .required('Email is required')
+      .email('Invalid email address'),
+    role: yup.string().required('Role is required'),
+
+    // Conditional Validation for Staff Role Type
+    staffRoleType: yup.array().when('role', {
+      is: (val: any) => {
+        const selectedRole = roles?.find(
+          (r: any) => String(r.id) === String(val),
+        );
+        return selectedRole?.role_type === 'operator';
+      },
+      then: schema => schema.min(1, 'Staff role type is required').required(),
+      otherwise: schema => schema.optional().nullable(),
+    }),
+
+    assignAllProperties: yup.boolean(),
+    listings: yup.array().when('assignAllProperties', {
+      is: false,
+      then: schema =>
+        schema.min(1, 'Please select at least one property').required(),
+      otherwise: schema => schema.optional(),
+    }),
+
+    // Conditional Validation for Password
+    password: yup.string().when(['role'], {
+      is: (role: any) => {
+        const selectedRole = roles?.find(
+          (r: any) => String(r.id) === String(role),
+        );
+        return selectedRole?.role_type === 'operator' && mode === 'create';
+      },
+      then: schema => schema.required('Password is required'),
+      otherwise: schema => schema.optional().nullable(),
+    }),
+  });
+
+  const {
+    control,
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<any>({
+    resolver: yupResolver(userManagementSchema),
+    defaultValues: {
+      name: '',
+      phoneNumber: '',
+      country: { cca2: 'SA', callingCode: '966' },
+      email: '',
+      role: '',
+      staffRoleType: [],
+      listings: [],
+      password: '',
+      assignAllProperties: false,
+    },
+  });
+
+  // 3. Sync Edit Data
+  useEffect(() => {
+    if (mode === 'edit' && editUser) {
+      const isAll = !!editUser.is_all_listing;
+      console.log('Listing scope type:', editUser.listing_scope?.type);
+      const serviceIds =
+        editUser.services?.map((service: any) => service.id) || [];
+
+      reset({
+        name: editUser.name,
+        phoneNumber: editUser.phone
+          ? String(editUser.phone).replace('966', '')
+          : '',
+        country: { cca2: 'SA', callingCode: '966' },
+        email: editUser.email,
+        role: Number(editUser.role_id),
+        staffRoleType: serviceIds,
+        listings: editUser.listing_scope?.listing_ids?.map(Number) || [],
+        password: '',
+        assignAllProperties: isAll,
+      });
+
+      setValue('assignAllProperties', isAll);
+    }
+  }, [mode, editUser, reset, setValue]);
+
+  // 4. Mutations
+  const invalidateMainList = () =>
+    queryClient.invalidateQueries({
+      queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT],
+    });
 
   const { mutate: createMutation, isPending: isCreating } = useMutation({
     mutationFn: userManagementCraeteApi,
@@ -121,38 +184,75 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     onError: (err: any) => Toast.show({ type: 'error', text1: err.message }),
   });
 
+  // 5. Submit Logic
   const onFormSubmit = (data: any) => {
-    const combinedPhoneNumber = `${data.country.callingCode}${data.phoneNumber}`;
-    const commonData = {
+    const combinedPhone = `${data.country.callingCode}${data.phoneNumber}`;
+    const allIds = listings.map((l: any) => Number(l.id));
+    const selectedIds = data.listings?.map((id: any) => Number(id)) || [];
+
+    const finalListingIds = data.assignAllProperties ? allIds : selectedIds;
+
+    const payload = {
       name: data.name,
       email: data.email,
-      phone: combinedPhoneNumber, 
+      phone: combinedPhone,
       role_id: data.role,
       surname: '.',
       password: data.password,
+      is_all_listing: data.assignAllProperties,
+      services: data.staffRoleType,
     };
-    const listingIds = data.listings?.filter((id: any) => !!id) || [];
 
     if (mode === 'create') {
-      createMutation({ ...commonData, listing_ids: listingIds });
+      createMutation({ ...payload, listing_ids: finalListingIds });
     } else {
       editMutation({
         id: Number(editUser?.id),
-        ...commonData,
-        listing_scope: { type: 'specific', listing_ids: listingIds },
+        ...payload,
+        listing_scope: {
+          type: data.assignAllProperties ? 'all' : 'specific',
+          listing_ids: finalListingIds,
+        },
       });
     }
   };
 
+  const handleDeleteUser = (id: number) => {
+    console.log('deleteClick', id);
+    Alert.alert('Delete User', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => deleteMutation({ id }),
+      },
+    ]);
+  };
+
   return {
-    control, errors, handleSubmit, onFormSubmit,
-    userManagement, refetch, isLoading: isListLoading,
+    control,
+    errors,
+    handleSubmit,
+    onFormSubmit,
+    setValue,
+    userManagement,
+    refetch,
+    isLoading: isListLoading,
     isSubmitting: isCreating || isEditing || isDeleting,
     listingOptions: listings.map((i: any) => ({ label: i.name, value: i.id })),
     rolesOptions: roles.map((i: any) => ({ label: i.role_name, value: i.id })),
+    staffRoleTypeOptions,
     roles,
-    handleCreateUser: () => navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, { mode: 'create' }),
-    handleEditUser: (item: any) => navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, { mode: 'edit', editUser: item }),
-    handleDeleteUser: (id: number) => deleteMutation({ id }),
+    listings,
+    handleCreateUser: () =>
+      navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, {
+        mode: 'create',
+      }),
+    handleEditUser: (item: any) =>
+      navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM, {
+        mode: 'edit',
+        editUser: item,
+      }),
+    handleDeleteUser,
   };
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -8,134 +8,168 @@ import useGeneratePasscodeContainer from './GeneratePasscodeContainer';
 import InputField from '@/components/molecules/Input/InputField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
+import { goBack } from '@/services/navigationService';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const GeneratePasscodeScreen = () => {
-    const { type, control, errors, handleSubmit, instructionText, isLoading } = useGeneratePasscodeContainer();
+  const { type, control, errors, handleSubmit, instructionText, isLoading } =
+    useGeneratePasscodeContainer();
 
-    const timedFields = [
-        { label: 'Select Start Date', name: 'startDate', icon: 'calendarIcon', placeholder: 'mm/dd/yy' },
-        { label: 'Select Start Time', name: 'startTime', icon: 'clockIcon', placeholder: '-- : --' },
-        { label: 'Select End Date', name: 'endDate', icon: 'calendarIcon', placeholder: 'mm/dd/yy' },
-        { label: 'Select End Time', name: 'endTime', icon: 'clockIcon', placeholder: '-- : --' },
-    ];
-
-    return (
-        <View style={styles.container}>
-            <ScrollView keyboardShouldPersistTaps="handled" showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-                {/* Dynamic Title based on images */}
-                <View style={styles.titleWrapper}>
-                    <AppText
-                        text={type === 'Timed' ? "Enter Passcode Details" : "Enter your Code Name"}
-                        fontSize={32}
-                        type="Bold"
-                        color={Colors.BRUNSWICK_GREEN}
-                        textAlign="center"
-                    />
-                </View>
-
-                <View style={styles.form}>
-                    <InputField
-                        label="Name*"
-                        name="name"
-                        control={control}
-                        errors={errors}
-                        placeholder={type === 'Timed' ? "" : "Check-in Reminder"}
-                    />
-
-                    {/* Conditional Rendering for Timed Type */}
-                    {/* {type === 'Timed' && timedFields.map((field) => (
-                        <InputField
-                            key={field.name}
-                            label={field.label}
-                            name={field.name}
-                            control={control}
-                            errors={errors}
-                            placeholder={field.placeholder}
-                            renderRightIcon={() => <Svgicons path={field.icon} size={20} color={Colors.BRUNSWICK_GREEN} />}
-                        />
-                    ))} */}
-                    {type === 'Timed' && (
-                        <>
-                            <DateTimeInputField
-                                name="startDate"
-                                control={control}
-                                errors={errors}
-                                label="Select Start Date"
-                                placeholder="mm/dd/yy"
-                                mode="date"
-                                rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
-                            />
-
-                            <DateTimeInputField
-                                name="startTime"
-                                control={control}
-                                errors={errors}
-                                label="Select Start Time"
-                                placeholder="-- : --"
-                                mode="time"
-                                rightIcon={<Svgicons path="Clock" size={20} color={Colors.BRUNSWICK_GREEN} />}
-                            />
-
-                            <DateTimeInputField
-                                name="endDate"
-                                control={control}
-                                errors={errors}
-                                label="Select End Date"
-                                placeholder="mm/dd/yy"
-                                mode="date"
-                                rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
-                            />
-
-                            <DateTimeInputField
-                                name="endTime"
-                                control={control}
-                                errors={errors}
-                                label="Select End Time"
-                                placeholder="-- : --"
-                                mode="time"
-                                rightIcon={<Svgicons path="Clock" size={20} color={Colors.BRUNSWICK_GREEN} />}
-                            />
-                        </>
-                    )}
-
-                </View>
-
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.titleWrapper}>
+            {type === 'Timed' ? (
+              <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
+                Enter{' '}
                 <AppText
-                    text={instructionText}
-                    fontSize={13}
-                    color={Colors.SUPER_GREY}
-                    textAlign="center"
-                    style={styles.instruction}
+                  text="Passcode"
+                  fontSize={30}
+                  type="Medium"
+                  color={Colors.PRIMARY_TEAL}
+                />{' '}
+                Details
+              </AppText>
+            ) : (
+              <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
+                Enter your{' '}
+                <AppText
+                  text="Code"
+                  fontSize={30}
+                  type="Medium"
+                  color={Colors.PRIMARY_TEAL}
+                />{' '}
+                Name
+              </AppText>
+            )}
+          </View>
+          <View style={styles.form}>
+            <InputField
+              label="Name*"
+              name="name"
+              control={control}
+              errors={errors}
+              placeholder="Cleaner Code"
+              // If your InputField supports glassy style, you can pass it here
+            />
+
+            {type === 'Timed' && (
+              <>
+                <DateTimeInputField
+                  name="startDate"
+                  control={control}
+                  errors={errors}
+                  label="Select Start Date*"
+                  placeholder="mm/dd/yyyy"
+                  mode="date"
+                  rightIcon={
+                    <Svgicons path="calendar" size={20} color={Colors.BLACK} />
+                  }
                 />
-                <AppButton
-                    title="Generate Passcode"
-                    onPress={handleSubmit}
-                    mt={Metrics.verticalScale(40)}
-                    loading={isLoading}
+
+                <DateTimeInputField
+                  name="startTime"
+                  control={control}
+                  errors={errors}
+                  label="Select Start time*"
+                  placeholder="-- : --"
+                  mode="time"
+                  rightIcon={
+                    <Svgicons path="Clock" size={20} color={Colors.BLACK} />
+                  }
                 />
-            </ScrollView>
-        </View>
-    );
+
+                <DateTimeInputField
+                  name="endDate"
+                  control={control}
+                  errors={errors}
+                  label="Select End Date*"
+                  placeholder="mm/dd/yyyy"
+                  mode="date"
+                  rightIcon={
+                    <Svgicons path="calendar" size={20} color={Colors.BLACK} />
+                  }
+                />
+
+                <DateTimeInputField
+                  name="endTime"
+                  control={control}
+                  errors={errors}
+                  label="Select End Time*"
+                  placeholder="-- : --"
+                  mode="time"
+                  rightIcon={
+                    <Svgicons path="Clock" size={20} color={Colors.BLACK} />
+                  }
+                />
+              </>
+            )}
+          </View>
+
+          <AppText
+            text={instructionText}
+            fontSize={13}
+            color={Colors.BLACK_53_PERCENT}
+            style={styles.instruction}
+          />
+
+          <View style={styles.footer}>
+            <AppButton
+              title="Generate Passcode"
+              onPress={handleSubmit}
+              backgroundColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              loading={isLoading}
+              borderRadius={25}
+            />
+          </View>
+        </ScrollView>
+      </View>
+    </BGImage>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.WHITE,
-        paddingHorizontal: Metrics.baseMargin
-    },
-    backBtn: {
-        width: 45, height: 45, borderRadius: 25,
-        borderWidth: 1, borderColor: Colors.SMOOTH_GREY,
-        justifyContent: 'center', alignItems: 'center'
-    },
-    titleWrapper: { marginTop: 60, marginBottom: 50 },
-    form: { width: '100%' },
-    instruction: {
-        marginTop: 20,
-        lineHeight: 18,
-        paddingHorizontal: 10
-    }
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: Metrics.scale(20),
+    paddingTop: Metrics.verticalScale(10),
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  scrollContent: {
+    paddingHorizontal: Metrics.scale(25),
+    paddingBottom: Metrics.verticalScale(40),
+  },
+  titleWrapper: {
+    marginTop: Metrics.verticalScale(40),
+    marginBottom: Metrics.verticalScale(30),
+  },
+  form: {
+    width: '100%',
+  },
+  instruction: {
+    marginTop: Metrics.verticalScale(25),
+    lineHeight: 18,
+  },
+  footer: {
+    marginTop: Metrics.verticalScale(40),
+  },
 });
 
 export default GeneratePasscodeScreen;

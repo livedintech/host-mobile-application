@@ -26,8 +26,8 @@ export const onboardingData = [
         id: '3',
         title: 'Total Control. Zero\nHeavy Lifting.',
         subtitle: 'Agent ALI does the work. You stay in charge.',
-        primaryBtn: 'Get Started',
-        secondaryBtn: 'Login with Phone Number',
+        primaryBtn: 'Explore First',
+        secondaryBtn: 'Get Started',
         bg: require('@/assets/img/control.png'),
     },
 ];

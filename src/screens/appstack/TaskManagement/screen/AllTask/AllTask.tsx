@@ -1,5 +1,11 @@
 import React, { useRef, useMemo, useCallback } from 'react';
-import { StyleSheet, View, Platform, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Platform,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -89,6 +95,17 @@ const AllTask = () => {
   );
   console.log('isAccountEmpty', isAccountEmpty);
   console.log('isLoading', isLoading);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator
+          size="large"
+          color={Colors.TEAL_GREEN || '#FF0000'}
+        />
+      </View>
+    );
+  }
 
   // --- CONDITIONAL RENDERING ---
   if (!isAccountEmpty) {

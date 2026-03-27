@@ -217,6 +217,14 @@ import envelopeResend from './envelopeResend.svg'
 import cardBlack from './cardBlack.svg'
 import chatIcon from './chatIcon.svg'
 import sendWhite from './sendWhite.svg'
+import noReview from './noReview.svg'
+import noUserFound from './noUserFound.svg'
+import taskBottomIcon from './taskBottomIcon.svg'
+import noTTLockScreen from './noTTLockScreen.svg'
+import noListingOnTTLock from './noListingOnTTLock.svg'
+import noSavedReplies from './noSavedReplies.svg'
+import aiAutoReplyIcon from './aiAutoReplyIcon.svg'
+import automationTemplateIcon from './automationTemplateIcon.svg'
 import reservationtitle from './reservations/reservationtitle.svg';
 import reservationaddress from './reservations/reservationaddress.svg';
 import reservationcheckin from './reservations/reservationcheckin.svg';
@@ -224,6 +232,7 @@ import reservationguests from './reservations/reservationguests.svg';
 import reservationairbnb from './reservations/reservationairbnb.svg';
 import reservationlivedin from './reservations/reservationlivedin.svg';
 import reservationfilter from './reservations/reservationfilter.svg';
+import threeDots from './threeDots.svg';
 
 export const icons = {
   sendWhite,
@@ -248,6 +257,7 @@ export const icons = {
   databaseRaidStorage,
   businessCard,
   chartAnalysis,
+  threeDots,
   eyeSlash: EyeSlash,
   eye: Eye,
   ChevronDownIcon: ChevronDownIcon,
@@ -452,5 +462,13 @@ export const icons = {
   aiChat,
   overallRating,
   back,
-  motionStar
+  motionStar,
+  noReview,
+  noUserFound,
+  taskBottomIcon,
+  noTTLockScreen,
+  noListingOnTTLock,
+  automationTemplateIcon,
+  noSavedReplies,
+  aiAutoReplyIcon
 };

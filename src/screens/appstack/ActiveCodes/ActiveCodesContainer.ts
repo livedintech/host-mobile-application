@@ -22,6 +22,7 @@ export default function useActiveCodesContainer() {
   const route = useRoute();
   const params = route?.params as { lock_id?: number };
   const lock_id = params?.lock_id;
+  console.log("lock_id",lock_id)
 
   // ======================
   // API CALL
@@ -79,8 +80,8 @@ export default function useActiveCodesContainer() {
 
   const handleViewLogs = () => {
     navigate(NavigationRoutes.APP_STACK.SMART_LOCK_ACTIVITY_LOG,{lock_id})
-
   }
+
   return {
     activeTab,
     setActiveTab,

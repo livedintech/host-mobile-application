@@ -110,7 +110,7 @@ const AllTaskContainer = () => {
       refetch: refetch,
     },
     setTaskInfo,
-    isLoading: isLoadingTasks,
+    isLoading: isLoadingGlobal || isLoadingTasks,
     activeTab,
     handleTabChange,
     listingOptions,

@@ -126,6 +126,7 @@ export default function useAutomationTemplateCreateEditContainer() {
         queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_MESSAGE_VARIABLES],
         queryFn: getAutomationTemplateVariablesApi,
     });
+    console.log("messageVariables",messageVariables)
 
     const transformedMessageVariables = messageVariables
         ? Object.keys(messageVariables).map(key => ({

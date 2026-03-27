@@ -267,6 +267,24 @@ export const useChatContainer = () => {
     { label: 'Apartment', value: 'apartment' },
   ];
 
+  // MENU OPTIONS
+  const MENU_OPTIONS = [
+  {
+    label: 'Saved Replies',
+    icon: 'expandIcon',
+  },
+  {
+    label: 'Automation Template',
+    icon: 'automationTemplateIcon',
+  },
+  {
+    label: 'AI Auto Reply',
+    icon: 'aiAutoReplyIcon',
+  },
+];
+
+
+
   /* -------------------------------- RETURN -------------------------------- */
 
   const handlePopupMenu = (selected: string) => { if (selected === 'Saved Replies') { navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES) } else if (selected === 'Automation Template') { navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE) } else if (selected === 'AI Auto Reply') { navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY) } }
@@ -293,6 +311,7 @@ export const useChatContainer = () => {
     goToChatDetail,
     search,
     setSearch,
+    MENU_OPTIONS
   };
 
 };

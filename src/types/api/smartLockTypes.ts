@@ -14,7 +14,12 @@ export interface smartLockConnectPayloadType {
 
 export interface smartLockMappingAssignPayloadType {
   lock_id: number,
-  listing_id:string
+  listing_id:string,
+  account_id:number
+}
+export interface smartLockMappingUnAssignPayloadType {
+  lock_id: number,
+
 }
 
 export interface smartLockActiveCodesPayloadType {

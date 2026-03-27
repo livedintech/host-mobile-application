@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
-import { smartLockActiveCodesPayloadType, smartLockConnectPayloadType, smartLockGeneratePasscodePayloadType, smartLockMappingAssignPayloadType } from "@/types/api/smartLockTypes";
+import { smartLockActiveCodesPayloadType, smartLockConnectPayloadType, smartLockGeneratePasscodePayloadType, smartLockMappingAssignPayloadType, smartLockMappingUnAssignPayloadType } from "@/types/api/smartLockTypes";
 import Utils from "@/utility/Utils";
 
 export const getDropdownListingApi = async () => {
@@ -87,4 +87,26 @@ export const SmartLockMappingsAssignApi = async (payload: smartLockMappingAssign
         return data;
     }
     throw response;
+};
+export const SmartLockMappingsUnAssignApi = async (payload: smartLockMappingUnAssignPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CONNECT_SMART_LOCK_MAPPINGS_UNASSIGN,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const getListings = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_USER_MANAGEMENT_LISTING
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
 };

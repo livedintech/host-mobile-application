@@ -217,6 +217,7 @@ const ListingScreen = () => {
                         <ReservationCard
                           id={item.booking_id || item.id}
                           guestName={item.guest}
+                          guests={item?.number_of_guests}
                           platform={item.source_type === 'livedin' ? 'Livedin' : config.label}
                           property={item.listing_title || 'Property'}
                           endDate={item.end_date}
