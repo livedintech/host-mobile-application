@@ -1,9 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import { goBack } from '@/services/navigationService';
 
 const KNOWLEDGE_DATA = [
     {
@@ -29,7 +32,6 @@ const KNOWLEDGE_DATA = [
             'Bathroom number and type',
             'Bedrooms: number, beds, and type',
             'House rules',
-            'Key pickup instructions',
             'Maximum children/pets allowed',
             'Person capacity',
             'Room type',
@@ -53,89 +55,101 @@ const KNOWLEDGE_DATA = [
 
 const WhatAIKnowsScreen = () => {
     return (
-        <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <View style={styles.titleWrapper}>
-                    <AppText text="What AI Already Knows" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                    <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
-                </View>
-            </View>
+        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+            <View style={styles.container}>
+             
 
-            <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                {KNOWLEDGE_DATA.map((section, index) => (
-                    <View key={index} style={styles.sectionWrapper}>
-                        {/* Section Title */}
-                        <AppText
-                            text={section.title}
-                            fontSize={18}
-                            type="SemiBold"
-                            color={Colors.MIDNIGHT}
-                            mb={Metrics.verticalScale(12)}
+                <ScrollView 
+                    contentContainerStyle={styles.scrollContainer} 
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.titleSection}>
+                        <AppText 
+                            text="What AI Already Knows" 
+                            fontSize={28} 
+                            type="Bold" 
+                            color={Colors.BLACK} 
                         />
-
-                        {/* Bullet Items */}
-                        {section.items.map((item, itemIndex) => (
-                            <View key={itemIndex} style={styles.bulletRow}>
-                                <View style={styles.bulletPoint} />
-                                <AppText
-                                    text={item}
-                                    fontSize={14}
-                                    color={Colors.SUPER_GREY}
-                                    style={styles.bulletText}
-                                />
-                            </View>
-                        ))}
                     </View>
-                ))}
-            </ScrollView>
-        </View>
+
+                    {KNOWLEDGE_DATA.map((section, index) => (
+                        <GlassCard key={index} width="100%" style={styles.glassCardOverride}>
+                            <View style={styles.cardPadding}>
+                                {/* Section Title */}
+                                <AppText
+                                    text={section.title}
+                                    fontSize={18}
+                                    type="Bold"
+                                    color={Colors.BLACK}
+                                    mb={Metrics.verticalScale(15)}
+                                />
+
+                                {/* Bullet Items */}
+                                {section.items.map((item, itemIndex) => (
+                                    <View key={itemIndex} style={styles.bulletRow}>
+                                        <View style={styles.bulletPoint} />
+                                        <AppText
+                                            text={item}
+                                            fontSize={14}
+                                            color={Colors.BLACK}
+                                            style={styles.bulletText}
+                                        />
+                                    </View>
+                                ))}
+                            </View>
+                        </GlassCard>
+                    ))}
+                </ScrollView>
+            </View>
+        </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.WHITE
+        paddingTop: Metrics.verticalScale(40),
     },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: Metrics.verticalScale(20),
-        justifyContent: 'center',
+        paddingHorizontal: Metrics.scale(22),
+        marginBottom: Metrics.verticalScale(10),
     },
     backBtn: {
-        position: 'absolute',
-        left: Metrics.scale(20),
-        padding: Metrics.scale(8),
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        borderRadius: 100
+        borderColor: 'rgba(0,0,0,0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.3)',
     },
-    titleWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center'
+    titleSection: {
+        marginBottom: Metrics.verticalScale(25),
     },
     scrollContainer: {
-        paddingHorizontal: Metrics.scale(25),
-        paddingBottom: Metrics.verticalScale(40)
+        paddingHorizontal: Metrics.scale(22),
+        paddingBottom: Metrics.verticalScale(40),
     },
-    sectionWrapper: {
-        marginTop: Metrics.verticalScale(25),
+    glassCardOverride: {
+        marginBottom: Metrics.verticalScale(20),
+        borderRadius: 22,
+    },
+    cardPadding: {
+        padding: Metrics.scale(20),
     },
     bulletRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginBottom: Metrics.verticalScale(8),
-        paddingLeft: Metrics.scale(5),
+        marginBottom: Metrics.verticalScale(5),
     },
     bulletPoint: {
-        width: 5,
-        height: 5,
-        borderRadius: 3,
-        backgroundColor: Colors.SUPER_GREY,
+        width: 4,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: Colors.BLACK,
         marginTop: Metrics.verticalScale(8),
-        marginRight: Metrics.scale(10),
+        marginRight: Metrics.scale(12),
     },
     bulletText: {
         flex: 1,

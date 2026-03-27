@@ -1,112 +1,223 @@
 import React from 'react';
-import { StyleSheet, View, Switch } from 'react-native';
+import { StyleSheet, View, Pressable, Platform } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
 import useAutomationTemplateContainer from './AutomationTemplateContainer';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import { goBack } from '@/services/navigationService';
+import NoAutomationScreen from '../NoAutomationScreen/NoAutomationScreen';
 
 const AutomationTemplatesScreen = () => {
-    const { toggleSwitch, editTemplate, createNewTemplate, confirm, openRemoveConfirmSheet, removeSheetRef, isLoadingRemoved, data, dataQuery, isFetching, isLoading, Item, isLoadingStatus } = useAutomationTemplateContainer();
+  const {
+    toggleSwitch,
+    editTemplate,
+    createNewTemplate,
+    confirm,
+    openRemoveConfirmSheet,
+    removeSheetRef,
+    isLoadingRemoved,
+    data,
+    dataQuery,
+    isFetching,
+    isLoading,
+    Item,
+    isLoadingStatus,
+  } = useAutomationTemplateContainer();
 
-    const renderItem = ({ item }: { item: any }) => (
-        <View style={styles.card}>
-            <View style={styles.topRow}>
-                <View style={styles.leftInfo}>
-                    <CustomSwitch onToggle={() => toggleSwitch(item)} value={item.is_active} disabled={isLoadingStatus} isLoading={item?.id === Item?.id ? isLoadingStatus : false} />
-                    <AppText text={item.name} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} ml={Metrics.scale(10)} />
-                </View>
-
-                <View style={styles.actions}>
-                    <ButtonView onPress={() => openRemoveConfirmSheet(item)} px={5}>
-                        <Svgicons path="TrashFull" size={20} color={Colors.BRUNSWICK_GREEN} />
-                    </ButtonView>
-                    <ButtonView onPress={() => editTemplate(item)} px={5} ml={Metrics.scale(5)}>
-                        <Svgicons path="editIconUserManagement" size={20} color={Colors.BRUNSWICK_GREEN} />
-                    </ButtonView>
-                </View>
-            </View>
-
-        </View>
-    );
-
+  const renderItem = ({ item }: { item: any }) => {
     return (
-        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <GlassCard width="100%" style={styles.glassCardOverride}>
+        <View style={styles.cardContent}>
+          {/* Top Row: Title and Glass Action Icons */}
+          <View style={styles.cardHeader}>
+            <AppText
+              text={item.name}
+              fontSize={18}
+              type="Bold"
+              color={Colors.BLACK}
+              style={{ flex: 1 }}
+            />
+            <View style={styles.actionIcons}>
+              <GlassCard width={40} style={styles.iconGlassCard}>
+                <Pressable
+                  onPress={() => openRemoveConfirmSheet(item)}
+                  style={styles.iconBtn}
+                >
+                  <Svgicons path="TrashFull" size={20} color={Colors.BLACK} />
+                </Pressable>
+              </GlassCard>
 
-            <View style={styles.container}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <View style={styles.titleWrapper}>
-                        <AppText text="Automation Template" fontSize={22} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                        <Svgicons path="expandIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
-                    </View>
-                </View>
-
-                {/* List */}
-                <FlatListHandler
-                    isLoading={isLoading || isFetching}
-                    data={data}
-                    meta={dataQuery}
-                    listEmptyText="No data found"
-                    renderItem={renderItem}
-                    keyExtractor={(item) => String(item.id)}
-                    contentContainerStyle={styles.listContainer}
-                    showsVerticalScrollIndicator={false}
-                />
-
-                {/* Create Button using AppButton */}
-                <View style={styles.footer}>
-                    <AppButton
-                        loading={isLoadingRemoved || isLoadingStatus}
-                        title="Create New Template"
-                        onPress={createNewTemplate}
-                    />
-                </View>
-                <ConfirmAction
-                    ref={removeSheetRef}
-                    title={`${Item?.name}`}
-                    content="Are you sure you want delete?"
-                    confirmText='Confirm'
-                    closeText='Cancel'
-                    onConfirm={confirm}
-                    isLoading={isLoadingRemoved}
-                />
+              <GlassCard width={40} style={styles.iconGlassCard}>
+                <Pressable
+                  onPress={() => editTemplate(item)}
+                  style={styles.iconBtn}
+                >
+                  <Svgicons
+                    path="editIconUserManagement"
+                    size={20}
+                    color={Colors.BLACK}
+                  />
+                </Pressable>
+              </GlassCard>
             </View>
-        </BGImage>
+          </View>
+
+          {/* Bottom Row: Listing Info and Toggle */}
+          <View style={styles.cardFooter}>
+            <View style={{ flex: 1 }}>
+              <AppText
+                text="Listing Access"
+                fontSize={14}
+                type="Bold"
+                color={Colors.BLACK}
+              />
+              <AppText
+                text={item.listing_label || 'All Listings'}
+                fontSize={13}
+                color={Colors.GREY_SHADOW}
+                mt={2}
+              />
+            </View>
+            <CustomSwitch
+              onToggle={() => toggleSwitch(item)}
+              value={item.is_active}
+              disabled={isLoadingStatus}
+              isLoading={item?.id === Item?.id ? isLoadingStatus : false}
+            />
+          </View>
+        </View>
+      </GlassCard>
     );
+  };
+
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+     
+        {!!data?.length && (
+          <View style={styles.topTextSection}>
+            <AppText
+              text="Automation Template"
+              fontSize={28}
+              type="Bold"
+              color={Colors.BLACK}
+              mb={12}
+            />
+            <AppText
+              text="Create automation templates to send messages automatically. Define the trigger, message content, and applicable listings."
+              fontSize={14}
+              color={Colors.GREY_SHADOW}
+              lineHeight={20}
+            />
+          </View>
+        )}
+
+        <FlatListHandler
+          isLoading={isLoading || isFetching}
+          data={data}
+          meta={dataQuery}
+          ListEmptyComponent={
+            <NoAutomationScreen onCreatePress={createNewTemplate} />
+          }
+          renderItem={renderItem}
+          keyExtractor={item => String(item.id)}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+
+        <View style={styles.footer}>
+          <AppButton
+            loading={isLoadingRemoved || isLoadingStatus}
+            title="Create New Template"
+            onPress={createNewTemplate}
+            backgroundColor={Colors.TEAL_PRIMARY_ALT}
+            borderColor={Colors.TEAL_PRIMARY_ALT}
+          />
+        </View>
+
+        <ConfirmAction
+          ref={removeSheetRef}
+          title={`${Item?.name}`}
+          content="Are you sure you want to delete this template?"
+          confirmText="Confirm"
+          closeText="Cancel"
+          onConfirm={confirm}
+          isLoading={isLoadingRemoved}
+        />
+      </View>
+    </BGImage>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: Metrics.verticalScale(20),
-        justifyContent: 'center'
-    },
-    backBtn: { position: 'absolute', left: Metrics.scale(20), padding: 8, borderWidth: 1, borderColor: Colors.SMOOTH_GREY, borderRadius: 100 },
-    titleWrapper: { flexDirection: 'row', alignItems: 'center' },
-    listContainer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(20) },
-    card: {
-        borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-        borderRadius: 15,
-        padding: Metrics.scale(15),
-        marginBottom: Metrics.verticalScale(15),
-        backgroundColor: Colors.WHITE
-    },
-    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    leftInfo: { flexDirection: 'row', alignItems: 'center' },
-    actions: { flexDirection: 'row', alignItems: 'center' },
-    bottomRow: { paddingLeft: Metrics.scale(5) },
-    switchStyle: { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] },
-    footer: { paddingHorizontal: Metrics.scale(20), paddingBottom: Metrics.verticalScale(30) }
+  container: { flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 20 },
+  headerNav: { paddingHorizontal: 22, marginBottom: 15 },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
+  topTextSection: {
+    paddingHorizontal: 22,
+    marginBottom: 25,
+  },
+  listContainer: {
+    paddingHorizontal: 22,
+    paddingBottom: 140,
+  },
+  glassCardOverride: {
+    marginBottom: 16,
+    borderRadius: 28,
+  },
+  cardContent: { padding: 6 },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  actionIcons: { 
+    flexDirection: 'row',
+    gap: 8 
+  },
+  iconGlassCard: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    padding: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+  },
+  iconBtn: { 
+    width: '100%', 
+    height: '100%', 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 40,
+    left: 22,
+    right: 22,
+  },
 });
 
 export default AutomationTemplatesScreen;
