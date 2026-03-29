@@ -77,7 +77,11 @@ export default function useHubspotCalendarContainer(
       if (dateStr < today) {
         marked[dateStr] = { disabled: true, disableTouchEvent: true };
       } else if (availableDates[dateStr]) {
-        marked[dateStr] = { marked: true, dotColor: '#1B4D3E' };
+        marked[dateStr] = { 
+          marked: false, 
+          disabled: false, 
+          disableTouchEvent: false 
+        };
       } else {
         marked[dateStr] = { disabled: true, disableTouchEvent: true };
       }
@@ -85,16 +89,16 @@ export default function useHubspotCalendarContainer(
 
     if (selectedDate) {
       marked[selectedDate] = {
+        ...marked[selectedDate],
         selected: true,
-        selectedColor: '#1B4D3E',
+        selectedColor: '#20957B',
         selectedTextColor: '#fff',
-        marked: true,
-        dotColor: '#fff',
+        marked: false,
       };
     }
 
     return marked;
-  };
+};
 
   // ─── Book meeting + create lead ───────────────────────────────────────────
   const { mutate: confirmBooking, isPending: isBooking } = useMutation({
