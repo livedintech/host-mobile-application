@@ -5,40 +5,41 @@ import moment from 'moment';
 import { RawBookingData } from '@/types/api/bookingTypes';
 
 const FIGMA_TEAL = '#20957B';
-const DOT_EMPTY = '#A0A0A0'; 
+const DOT_EMPTY = '#E0E0E0';
 const TEXT_MAIN = '#1A332C';
 const TEXT_SUB = '#7B8D88';
 
 interface CalendarListingCardProps {
   item: RawBookingData;
 }
+
 const PLACEHOLDER_IMAGE = require('@/assets/img/property_placeholder.png');
+
 const CalendarListingCard = ({ item }: CalendarListingCardProps) => {
   
   const renderMonthGrid = () => {
-    // 1. If dates are null, anchor to TODAY's month. Otherwise, anchor to booking month.
-    const referenceDate = (item.start_date && item.calendar_end_date) 
-      ? moment(item.start_date) 
-      : moment();
-
-    const bookingStart = item.start_date ? moment(item.start_date).startOf('day') : null;
-    const bookingEnd = item.calendar_end_date ? moment(item.calendar_end_date).startOf('day') : null;
-
-    // 2. Get total days in that specific month (28, 30, or 31)
+    // Anchor to the current month (today) to show real-time availability
+    const referenceDate = moment(); 
     const daysInMonth = referenceDate.daysInMonth();
     const startOfMonth = moment(referenceDate).startOf('month');
 
     return Array.from({ length: daysInMonth }).map((_, i) => {
-      const currentDotDate = moment(startOfMonth).add(i, 'days');
-      
-      // 3. Highlight logic (Only if both dates exist and current dot falls in between)
-      const isHighlighted = bookingStart && bookingEnd && 
-                            currentDotDate.isSameOrAfter(bookingStart) && 
-                            currentDotDate.isSameOrBefore(bookingEnd);
+      const currentDotDate = moment(startOfMonth).add(i, 'days').startOf('day');
+      const uniqueKey = `${item.id}-${currentDotDate.format('YYYY-MM-DD')}`;
+      // Check if this specific day overlaps with ANY of the bookings for this property
+      const isHighlighted = item.bookings?.some(booking => {
+        // Use the actual keys from your API response: start_date and calendar_end_date
+        if (!booking.start_date || !booking.calendar_end_date) return false;
+        
+        const start = moment(booking.start_date).startOf('day');
+        const end = moment(booking.calendar_end_date).startOf('day');
+        
+        return currentDotDate.isSameOrAfter(start) && currentDotDate.isSameOrBefore(end);
+      });
 
       return (
         <View 
-          key={i} 
+          key={uniqueKey}
           style={[
             styles.miniDot, 
             { backgroundColor: isHighlighted ? FIGMA_TEAL : DOT_EMPTY }
@@ -51,7 +52,6 @@ const CalendarListingCard = ({ item }: CalendarListingCardProps) => {
   return (
     <View style={styles.cardContainer}>
       {/* Property Image */}
-
       <Image 
         source={item?.listing_image ? { uri: item.listing_image } : PLACEHOLDER_IMAGE} 
         style={styles.propertyImage} 
@@ -64,7 +64,7 @@ const CalendarListingCard = ({ item }: CalendarListingCardProps) => {
           {item.listing_title || "Untitled Property"}
         </Text>
         <Text style={styles.propertyDescription} numberOfLines={2}>
-          {item?.listing_desc && item?.listing_desc}
+          {item?.listing_desc || ""}
         </Text>
       </View>
 
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: vs(12),
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Added slight bg for glass effect
   },
   propertyImage: {
     width: ms(60),
