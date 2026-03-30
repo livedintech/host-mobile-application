@@ -10,63 +10,94 @@ import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+interface PendingActionCardProps {
+  iconPath: string;
+  text: string;
+  onPress: () => void;
+  showDot?: boolean; // Agar kisi card pe red dot na dikhana ho toh isay false kar dein
+}
 
 const HomeScreen = () => {
   const { user } = useAuthStore();
-  const { onConnect, UserPermission } = useHomeContainer();
+  const {
+    onConnect,
+    UserPermission,
+    cardsData,
+    getCardContent,
+    iconMap,
+    isLoading,
+    refetch,
+    goToPropertyDetail,
+    in_completed_listings,
+    unexported_listings
+  } = useHomeContainer();
+
   const [showBanner, setShowBanner] = useState(true);
 
   const isSupervisor = UserPermission?.role_key === 'supervisor';
 
-  const cardsData = [
-    { id: 'Airbnb', title: 'Connect Airbnb', desc: 'Import listings from Airbnb', icon: 'airbnb' },
-    { id: 'Gathern', title: 'Connect Gathern', desc: 'Import listings from Gathern', icon: 'gathern' },
-    { id: 'Booking', title: 'Connect Booking.com', desc: 'Import listings from Booking.com', icon: 'bookingCom' },
-    { id: 'Manual', title: 'Create Listing', desc: 'Add a new listing manually', icon: 'direct' },
-  ];
+  const PendingActionCard = ({ iconPath, text, onPress, showDot = true }: PendingActionCardProps) => {
+    return (
+      <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+        <GlassCard width="100%" style={styles.glassWrapper}>
+
+          {/* Left Icon Box */}
+          <View style={styles.iconContainerView}>
+            <Svgicons path={iconPath} />
+          </View>
+
+          {/* Center Text */}
+          <View style={styles.messageWrapper}>
+            <AppText text={text} fontSize={14} type="Medium" color={Colors.BLACK} />
+          </View>
+
+          {/* Right Red Notification Dot */}
+          {showDot && <View style={styles.notificationIndicator} />}
+
+        </GlassCard>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
-      <View style={styles.container} >
-        {/* Top Trial Banner */}
+      <View style={styles.container}>
+
+        {/* Banner */}
         {showBanner && (
           <View style={styles.banner}>
             <Text style={styles.bannerText}>
-              Trial ends in <Text style={styles.bannerBold}>8 days</Text> <Text style={styles.bannerLink}>subscribe now</Text>
+              Trial ends in <Text style={styles.bannerBold}>8 days</Text>{' '}
+              <Text style={styles.bannerLink}>subscribe now</Text>
             </Text>
+
             <ButtonView style={styles.closeIcon} onPress={() => setShowBanner(false)}>
               <Svgicons path="cross" stroke={Colors.BLACK} width={7} height={7} />
             </ButtonView>
           </View>
         )}
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <RefreshableScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} onRefresh={refetch} isLoading={isLoading}>
 
-          {/* Header Section */}
+          {/* Header */}
           <View style={styles.header}>
-
-            {/* Profile Pill using GlassCard */}
-            <GlassCard width="auto" style={styles.profilePill} >
+            <GlassCard width="auto" style={styles.profilePill}>
               {user?.profile_picture ? (
-                <Image
-                  source={{ uri: user.profile_picture }}
-                  style={styles.profileImage}
-                />
+                <Image source={{ uri: user.profile_picture }} style={styles.profileImage} />
               ) : (
                 <View style={styles.placeholderIcon}>
                   <Svgicons path="imageUploadIcon" size={25} />
                 </View>
               )}
+
               <View>
                 <AppText text={`Hello ${user?.name || 'Tooba'}!`} fontSize={12} color={Colors.PINE_FOREST} />
                 <AppText text="Good Morning" fontSize={14} type="SemiBold" color={Colors.BLACK} />
               </View>
             </GlassCard>
 
-            {/* Right Actions */}
             <View style={styles.headerRight}>
-
-              {/* Language Button using GlassCard */}
               <ButtonView>
                 <GlassCard width="auto" style={styles.langBtn}>
                   <AppText text="العربية" fontSize={12} color={Colors.BLACK} />
@@ -79,40 +110,65 @@ const HomeScreen = () => {
             </View>
           </View>
 
-          {/* Greeting Text */}
+          {/* Greeting */}
           <View style={styles.greetingContainer}>
             <Text style={styles.greetingText}>
-              Hi <Text style={styles.greetingName}>{user?.name || 'Tooba'},</Text> let’s begin setting up everything you need!
+              Hi <Text style={styles.greetingName}>{user?.name},</Text>{' '}
+              let’s begin setting up everything you need!
             </Text>
           </View>
 
-          {/* Cards Grid */}
+          {/* Cards */}
           <View style={styles.gridContainer}>
-            {cardsData.map((card) => (
-              <GlassCard key={card.id} width="49%" style={styles.cardStyle}>
-                <TouchableOpacity
-                  style={{ flex: 1 }}
-                  onPress={() => onConnect(card.id)}
-                  disabled={isSupervisor}
-                >
-                  <View style={styles.cardHeader}>
-                    <GlassCard style={styles.iconBox}>
-                      <Svgicons path={card.icon} />
-                    </GlassCard>
-                    <AppText ml={6} text={card.title} fontSize={10} type="Medium" color={Colors.BLACK} />
-                  </View>
-                  <View style={styles.cardFooter}>
-                    <AppText text={card.desc} fontSize={11} type='Medium' color={Colors.BLACK} style={{ flex: 1, marginRight: 10 }} />
-                    <GlassCard style={styles.arrowBtn}>
-                      <Svgicons path="arrowRightIcon" stroke={Colors.BLACK} width={14} height={14} />
-                    </GlassCard>
-                  </View>
-                </TouchableOpacity>
-              </GlassCard>
-            ))}
-          </View>
+            {cardsData.map(({ key }) => {
+              const content = getCardContent(key);
 
-        </ScrollView>
+              return (
+                <GlassCard key={key} width="49%" style={styles.cardStyle}>
+                  <ButtonView
+                    style={{ flex: 1 }}
+                    onPress={() => onConnect(key)}
+                    disabled={isSupervisor}
+                  >
+                    <View style={styles.cardHeader}>
+                      <GlassCard style={styles.iconBox}>
+                        <Svgicons path={iconMap[key]} />
+                      </GlassCard>
+
+                      <AppText
+                        ml={6}
+                        text={content.title}
+                        fontSize={10}
+                        type="Medium"
+                        color={Colors.BLACK}
+                      />
+                    </View>
+
+                    <View style={styles.cardFooter}>
+                      <AppText
+                        text={content.desc}
+                        fontSize={11}
+                        type="Medium"
+                        color={Colors.BLACK}
+                        style={{ flex: 1, marginRight: 10 }}
+                      />
+
+                      <GlassCard style={styles.arrowBtn}>
+                        <Svgicons path="arrowRightIcon" stroke={Colors.BLACK} width={14} height={14} />
+                      </GlassCard>
+                    </View>
+                  </ButtonView>
+                </GlassCard>
+              );
+            })}
+          </View>
+          {in_completed_listings && (
+            <PendingActionCard iconPath='airbnb' onPress={() => goToPropertyDetail({ id: in_completed_listings?.listing_id, name: in_completed_listings?.title })} text='Complete your pending listing form' />
+          )}
+          {unexported_listings && (
+            <PendingActionCard iconPath='airbnb' onPress={() => goToPropertyDetail({ id: unexported_listings?.listing_id, name: unexported_listings?.title })} text='Export your pending listing' />
+          )}
+        </RefreshableScrollView>
       </View>
     </BGImage>
   );
@@ -219,7 +275,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 0
-  }
+  },
+  glassWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginBottom: 16,
+    position: 'relative',
+  },
+  iconContainerView: {
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.9)',
+    marginRight: 15,
+  },
+  messageWrapper: {
+    flex: 1,
+  },
+  notificationIndicator: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#FF3B30',
+    borderRadius: 4,
+    position: 'absolute',
+    top: 14,
+    right: 14,
+  },
 });
 
 export default HomeScreen;

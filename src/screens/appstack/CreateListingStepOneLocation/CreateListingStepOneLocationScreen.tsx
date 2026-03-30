@@ -12,6 +12,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import useCreateListingStepOneLocationContainer from './CreateListingStepOneLocationContainer';
+import Metrics from '@/utility/Metrics';
 
 const CreateListingStepOneLocationScreen = () => {
   const {
@@ -76,7 +77,7 @@ const CreateListingStepOneLocationScreen = () => {
               description: styles.description,
             }}
             renderLeftButton={() => (
-              <Svgicons path="pinLocationIcon" size={18} style={styles.searchIcon} />
+              <Svgicons path="pinLocationIcon" size={24} style={styles.searchIcon} />
             )}
           />
         </View>
@@ -89,50 +90,29 @@ const CreateListingStepOneLocationScreen = () => {
             style={[styles.locateMeBtn, isLocating && styles.btnDisabled]}
             onPress={handleLocateMe}
             disabled={isLocating}
+            mb={25}
           >
             {isLocating
               ? <ActivityIndicator size="small" color={Colors.BRUNSWICK_GREEN} />
               : <Svgicons path="locateMeIcon" size={32} color={Colors.BRUNSWICK_GREEN} />
             }
           </ButtonView>
+          <View style={styles.footerBtn}>
+            <AppButton
+              variant='secondary'
+              disabled={isGeocoding || isLocating}
+              title="Enter Manually"
+              onPress={handleConfirm}
+              mb={12}
+            />
 
-          {/* Address Banner — just above the buttons */}
-          {/* <View style={styles.addressBanner}>
-            {isGeocoding ? (
-              <ActivityIndicator size="small" color={Colors.BRUNSWICK_GREEN} />
-            ) : (
-              <>
-                <Svgicons path="pinLocationFillIcon" size={16} color={Colors.BRUNSWICK_GREEN} />
-                <Text style={styles.addressText} numberOfLines={2}>
-                  {currentAddress || 'Move the map to select a location'}
-                </Text>
-              </>
-            )}
-          </View> */}
-
-          {/*
-           * CONFIRM
-           * Saves lat/lng to store → navigates to ConfirmAddress
-           * API call (createListingDetailsApi) happens on ConfirmAddress screen
-           */}
-          <AppButton
-            disabled={isGeocoding || isLocating}
-            title="Confirm"
-            onPress={handleConfirm}
-            mb={9}
-          />
-
-          {/*
-           * SET MANUALLY
-           * Navigates directly to ConfirmAddress screen
-           * User fills address form fields manually there
-           * API call (createListingDetailsApi) happens on ConfirmAddress screen
-           */}
-          <AppButton
-            disabled={isLocating}
-            title="Set Manually"
-            onPress={handleSetManually}
-          />
+            <AppButton
+              disabled={isLocating}
+              title="Save & Exit"
+              onPress={handleSetManually}
+              mb={18}
+            />
+          </View>
         </View>
       </View>
     </View>
@@ -169,7 +149,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.WHITE_OPACITY_60,
     borderRadius: 28,
     paddingHorizontal: 14,
     height: 52,
@@ -203,24 +183,26 @@ const styles = StyleSheet.create({
 
   // ── Footer ─────────────────────────────────────────────────────────────────
   footer: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
+    // paddingHorizontal: 20,
+    // bottom: Metrics.verticalScale(150),
+    // right: 0,
+    // position:'absolute',
   },
 
   // Locate Me FAB — bottom right
   locateMeBtn: {
     width: 48,
     height: 48,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.PRIMARY_TEAL,
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    marginBottom: 12,
     elevation: 4,
     shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 6,
+    marginRight: 20,
   },
   btnDisabled: { opacity: 0.5 },
 
@@ -272,6 +254,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 15,
   },
+  footerBtn: {
+    backgroundColor: '#e2e5e5',
+    paddingHorizontal: Metrics.scale(20),
+    paddingTop: Metrics.verticalScale(36)
+  }
 });
 
 export default CreateListingStepOneLocationScreen;

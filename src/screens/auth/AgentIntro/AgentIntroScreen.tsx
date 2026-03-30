@@ -26,13 +26,13 @@ const AgentIntroScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           {/* --- ADDED BACK BUTTON --- */}
-          <View style={styles.headerRow}>
+          {/* <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
               <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </Pressable>
             </GradientBorder>
-          </View>
+          </View> */}
           {/* ------------------------ */}
 
           {/* Title Section */}

@@ -233,6 +233,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.PROPERTY_STEP_ONE_WELCOME}
+        getComponent={() =>
+          require('@/screens/appstack/PropertyStep1Welcome/PropertyStep1Welcome')
+            .default
+        }
+      />
+      <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE_SET_LOCATION}
         getComponent={() =>

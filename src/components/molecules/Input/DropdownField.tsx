@@ -46,7 +46,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   const error = errors[name]?.message as string;
 
   return (
-    <GlassCard style={styles.wrapper}>
+    <View>
       {label && (
         <AppText
           text={label}
@@ -56,6 +56,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           type="Medium"
         />
       )}
+    <GlassCard style={styles.wrapper}>
       <Controller
         control={control}
         name={name}
@@ -95,6 +96,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           />
         )}
       />
+    </GlassCard>
+
       {error && (
         <AppText
           text={error}
@@ -102,7 +105,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           style={styles.errorText}
         />
       )}
-    </GlassCard>
+    </View>
   );
 };
 

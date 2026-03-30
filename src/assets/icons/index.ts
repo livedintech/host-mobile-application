@@ -241,8 +241,10 @@ import threeDots from './threeDots.svg';
 import bookingCom from './bookingCom.svg'
 import cross from './cross.svg'
 import bell from './bell.svg'
+import houseIllustration from './houseIllustration.svg'
 
 export const icons = {
+  houseIllustration,
   bell,
   cross,
   bookingCom,

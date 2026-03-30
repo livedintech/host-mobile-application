@@ -117,6 +117,7 @@ const ConfirmAddressScreen = () => {
                   title="Next"
                   onPress={handleSubmit(onNext)}
                   loading={isLoading}
+                  variant='secondary'
                 />
                 <AppButton
                   title="Save & Exit"
