@@ -20,7 +20,7 @@ const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate, bookings }
     <View>
       {bookings.map((item) => (
         <CalendarListingCard 
-          key={item.id} 
+          key={item.listing_id} 
           item={item}
         />
       ))}
