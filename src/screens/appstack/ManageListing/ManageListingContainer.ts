@@ -11,7 +11,7 @@ import { getUser } from '@/services/UserPermission';
 
 export default function useManageListingContainer() {
   const { user } = useAuthStore();
-  const { updateListing, setListingId, setChannelId,channel_id } = useCreateListingStore();
+  const { updateListing, setListingId, setChannelId, channel_id } = useCreateListingStore();
 
   const { data, refetch, isLoading } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
@@ -22,7 +22,7 @@ export default function useManageListingContainer() {
     enabled: Boolean(user?.id),
   });
   const onCreateNew = useCallback(() => {
-    navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE)
+    navigate(NavigationRoutes.APP_STACK.PROPERTY_STEP_ONE_WELCOME)
   }, []);
 
   const goToPropertyDetail = ({ id, name }: ManageListingItem) => {
@@ -44,10 +44,10 @@ export default function useManageListingContainer() {
   const {
     data: UserPermission = [],
     isLoading: isUserLoading,
-    refetch : refetchRolesPermission,
+    refetch: refetchRolesPermission,
   } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER],
     queryFn: getUser,
   });
-  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail, refetch, isLoading ,UserPermission};
+  return { listings: data, onCreateNew, onCreateNewListing, goToPropertyDetail, refetch, isLoading, UserPermission };
 }

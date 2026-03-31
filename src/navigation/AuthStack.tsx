@@ -34,7 +34,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted/> }}
         name={NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO}
         getComponent={() =>
           require('@/screens/auth/ConnectCalendarsIntro/ConnectCalendarsIntroScreen')
@@ -42,7 +42,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted/> }}
         name={NavigationRoutes.AUTH_STACK.AGENT_INTRO}
         getComponent={() =>
           require('@/screens/auth/AgentIntro/AgentIntroScreen')

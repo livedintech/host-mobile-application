@@ -241,8 +241,44 @@ import threeDots from './threeDots.svg';
 import bookingCom from './bookingCom.svg'
 import cross from './cross.svg'
 import bell from './bell.svg'
+import houseIllustration from './houseIllustration.svg'
+import heart from './heart.svg'
+import wavingHand from './waving-hand.svg'
+import alarmLight from './alarm-light.svg'
+import clipboardCheck from './clipboard-check.svg'
+import calendarDate from './calendar-jump-to-date.svg'
+import closeCircle from './dangerous.svg'
+import deviceDatabaseEncryption from './device-database-encryption.svg'
+import cctvCamera from './cctv-camera.svg'
+import fileDoc from './file-doc.svg'
+import menuVerticalDotsIcon from './menuVerticalDotsIcon.svg'
+import houseRoofShelterWhite from './house-roof-shelter-white.svg'
+import discountPercentCoupon from './discount-percent-coupon.svg'
+import rocket from './rocket.svg'
+import chatBubble from './chat-bubble.svg'
+import database_check from './database_check.svg'
+import houseRoofShelterBlack from './houseRoofShelterBlack.svg'
+import adWhite from './adrWhite.svg'
 
 export const icons = {
+  adWhite,
+  houseRoofShelterBlack,
+  database_check,
+  chatBubble,
+  rocket,
+  discountPercentCoupon,
+  houseRoofShelterWhite,
+  menuVerticalDotsIcon,
+  fileDoc,
+  cctvCamera,
+  deviceDatabaseEncryption,
+  closeCircle,
+  calendarDate,
+  clipboardCheck,
+  alarmLight,
+  wavingHand,
+  heart,
+  houseIllustration,
   bell,
   cross,
   bookingCom,

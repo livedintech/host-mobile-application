@@ -23,6 +23,16 @@ const AgentIntroScreen = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* --- ADDED BACK BUTTON --- */}
+          {/* <View style={styles.headerRow}>
+            <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+                <Svgicons path='arrowLeftIcon' size={24} />
+              </Pressable>
+            </GradientBorder>
+          </View> */}
+          {/* ------------------------ */}
+
           {/* Title Section */}
           <View style={[styles.introSection, { alignItems: 'flex-start' }]}>
             <View style={styles.titleRow}>

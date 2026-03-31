@@ -10,6 +10,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useRoute } from '@react-navigation/native';
+import { queryClient } from '@/services/api';
+import STORAGE_CONST from '@/constants/storage';
 
 export default function usePropertyDisclosureContainer() {
     const { user } = useAuthStore();
@@ -25,23 +27,22 @@ export default function usePropertyDisclosureContainer() {
     } = useForm<DisclosureFormValues>({
         resolver: yupResolver(disclosureSchema),
         defaultValues: {
-  securityCameras: isEdit
-    ? (routeListing?.exterior_security_camera === 1 ? 'Yes' : 'No')
-    : '',
-  noiseMonitor: isEdit
-    ? (routeListing?.noise_decibel_monitor === 1 ? 'Yes' : 'No')
-    : '',
-  weaponsOnProperty: isEdit
-    ? (routeListing?.weapon_on_property === 1 ? 'Yes' : 'No')
-    : '',
-},
+            securityCameras: isEdit
+                ? (routeListing?.exterior_security_camera === 1 ? 'Yes' : 'No')
+                : '',
+            noiseMonitor: isEdit
+                ? (routeListing?.noise_decibel_monitor === 1 ? 'Yes' : 'No')
+                : '',
+            weaponsOnProperty: isEdit
+                ? (routeListing?.weapon_on_property === 1 ? 'Yes' : 'No')
+                : '',
+        },
     });
 
 
     const {
         mutate: createListingDetailsPayload,
         isPending,
-        isIdle,
     } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
         mutationFn: createListingDetailsApi,
         onSuccess: ({ message }) => {
@@ -65,6 +66,9 @@ export default function usePropertyDisclosureContainer() {
     } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
         mutationFn: editListingApi,
         onSuccess: ({ message }) => {
+            queryClient.refetchQueries({
+                queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+            });
             Toast.show({
                 type: 'success',
                 text1: message || 'Updated successfully',

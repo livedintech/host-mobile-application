@@ -140,18 +140,18 @@ export default function usePropertyDetailContainer() {
   });
 
   const listing = data?.data?.listing;
-  const rawDescription = data?.data?.listing?.listing_descriptions?.[0];
+  const rawDescription = listing?.listing_descriptions?.[0];
 
-  const listing_descriptionParsed =
-    typeof rawDescription === 'string'
-      ? (() => {
-        try {
-          return JSON.parse(rawDescription);
-        } catch {
-          return [];
-        }
-      })()
-      : rawDescription; // If it's already parsed or just a string
+ let extractedDescription = '';
+  if (typeof rawDescription === 'string') {
+    try {
+      const parsed = JSON.parse(rawDescription);
+      extractedDescription = parsed.description || rawDescription;
+    } catch {
+      // Agar JSON nahi hai toh direct string use kar lo
+      extractedDescription = rawDescription;
+    }
+  }
 
   const propertyData = {
     discounts: listing?.discounts ? `${listing.discounts}%` : '',
@@ -184,10 +184,7 @@ export default function usePropertyDetailContainer() {
     },
 
     houseDetails: {
-      description:
-        typeof listing_descriptionParsed === 'string'
-          ? listing_descriptionParsed
-          : listing_descriptionParsed?.description || '',
+      description: extractedDescription || 'No description provided',
       wifiUsername: listing?.wifi_network || '',
       wifiPassword: listing?.wifi_password || '',
       doorLockCode: listing?.door_lock_code,
@@ -336,7 +333,7 @@ export default function usePropertyDetailContainer() {
               style: 'destructive',
               onPress: () =>
                 deletePropertyPayload({
-                  listing_id: listing_id,
+                  listing_id: String(listing_id),
                   reason: 'Listing temporarily closed',
                   user_id: user?.id,
                 }),
@@ -363,11 +360,18 @@ export default function usePropertyDetailContainer() {
     }
   };
 
-  const handleEditPhotosVideos = (category: string) => {
-    navigate(NavigationRoutes.APP_STACK.OTHER_VIDEOS, {
+  // const handleEditPhotosVideos = (category: string) => {
+  //   navigate(NavigationRoutes.APP_STACK.PROPERTY_TOUR, {
+  //     isEdit: true,
+  //     existingPhotos: data?.data?.listing?.photos?.[category] || [],
+  //     category: category,
+  //   });
+  // };
+  const handleEditPhotosVideos = () => {
+    // Yahan hum propertyData.photos bhej rahe hain jismein sari categories hain
+    navigate(NavigationRoutes.APP_STACK.PROPERTY_TOUR, {
       isEdit: true,
-      existingPhotos: data?.data?.listing?.photos?.[category] || [],
-      category: category,
+      existingPhotos: propertyData.photos || {}, // Pura object ja raha hai
     });
   };
 
@@ -382,6 +386,8 @@ export default function usePropertyDetailContainer() {
     queryKey: [STORAGE_CONST.GET_USER],
     queryFn: getUser,
   });
+
+  const firstCategoryImages = Object.values(propertyData.photos || {}).flat();
 
   return {
     propertyData,
@@ -402,6 +408,7 @@ export default function usePropertyDetailContainer() {
     setBottomSheetVisible,
     bottomSheetVisible,
     handleExport,
-    isPendingExporting
+    isPendingExporting,
+    firstCategoryImages,
   };
 }

@@ -1,17 +1,17 @@
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, Image } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import useManageListingContainer from './ManageListingContainer';
-import { ManageListingMapItem } from '@/types/api/createListingTypes';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
-const ManageListingScreen = () => {
+const ManageListingScreen = ({ navigation }: any) => {
   const {
     listings,
     onCreateNew,
@@ -22,125 +22,149 @@ const ManageListingScreen = () => {
     UserPermission,
   } = useManageListingContainer();
 
+  const getCompletionPercentage = (step: any) => {
+    switch (step) {
+      case 'step_1': return '20%';
+      case 'step_2': return '40%';
+      case 'step_3': return '60%';
+      case 'step_4': return '80%';
+      case 'completed': return '100%';
+      default: return '0%';
+    }
+  };
+
   const data = listings?.data ?? [];
   const isSupervisor = UserPermission?.role_key === 'supervisor';
 
-  const renderProperty = ({ item }: ManageListingMapItem) => {
-    const hasFullAddress =
-      item?.country?.name &&
-      item?.state?.name &&
-      item?.city?.name &&
-      item?.district?.name;
+  const renderProperty = ({ item }: any) => {
+    const fullAddress = [
+      item?.country?.name,
+      item?.state?.name,
+      item?.city?.name,
+      item?.district?.name,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    const img = item?.images?.[0]
+
     return (
-      <GradientBorder borderRadius={16} style={styles.cardWrapper}>
-        <View style={styles.cardInner}>
-          <View style={styles.cardInfo}>
-            {item?.name && (
-              <View style={styles.infoRow}>
-                <AppText color={Colors.PINE_FOREST} fontSize={14} mb={2}>
-                  <AppText text="Property Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={14} />
-                  {item?.name}
-                </AppText>
-              </View>
-            )}
-            <View style={styles.infoRow}>
+      <GlassCard width="100%" style={styles.cardWrapper}>
+        <View style={styles.imageContainer}>
+          {img ? (
+            <Image
+              source={{ uri: img }}
+              style={styles.propertyImg}
+            />
+          ) : (
+            <View style={styles.noImg}>
+              <AppText text='No Image Found' textAlign='center' type='Bold' />
+            </View>
+          )}
+
+
+          {item?.is_local === 0 && (
+            <View style={styles.badge}>
+              <View style={styles.badgeDot} />
+              <AppText text="Listed" fontSize={12} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
+            </View>
+          )}
+          {/* Percentage Badge */}
+          {item?.listing_steps !== 'completed' && (
+            <GlassCard style={styles.percentageBadge}>
               <AppText
-                text="Property ID: "
+                text={`${getCompletionPercentage(item?.listing_steps)} Completed`}
+                fontSize={10}
                 type="Bold"
                 color={Colors.BRUNSWICK_GREEN}
-                fontSize={14}
               />
-              <View style={{ flex: 1 }}>
+            </GlassCard>
+          )}
+        </View>
+
+        <GlassCard width={'100%'} style={styles.detailsContainer}>
+          <Pressable
+            onPress={() => goToPropertyDetail(item)}
+          >
+            <View style={styles.titleRow}>
+              {item?.name && (
                 <AppText
-                  text={item?.id?.toString()}
-                  color={Colors.PINE_FOREST}
-                  fontSize={14}
+                  text={item?.name}
+                  type="SemiBold"
+                  color={Colors.BLACK}
+                  fontSize={16}
+                  style={styles.titleText}
+                  numberOfLines={1}
                 />
-              </View>
+              )}
+              <Svgicons path="editIconUserManagement" size={18} stroke={Colors.BLACK} />
             </View>
-            {hasFullAddress && (
-              <View style={styles.infoRow}>
+
+
+            {fullAddress && (
+              <View style={styles.addressRow}>
+                <Svgicons path="pinLocationIcon" size={14} style={{
+                }} />
                 <AppText
-                  text="Address:"
-                  type="Bold"
-                  color={Colors.BRUNSWICK_GREEN}
-                  fontSize={14}
+                  text={fullAddress}
+                  color={Colors.DARK_CHARCOAL}
+                  fontSize={12}
+                  style={styles.addressText}
+                  numberOfLines={2}
                 />
-                <View style={{ flex: 1 }}>
-                  <AppText
-                    text={[
-                      item?.country?.name,
-                      item?.state?.name,
-                      item?.city?.name,
-                      item?.district?.name,
-                    ]
-                      .filter(Boolean)
-                      .join(', ')}
-                    color={Colors.PINE_FOREST}
-                    fontSize={14}
-                    numberOfLines={1}
-                  />
-                </View>
               </View>
             )}
-          </View>
-
-          {/* Arrow */}
-          <GradientBorder
-            borderRadius={20}
-            borderWidth={1}
-            style={styles.arrowCircle}
-          >
-            <Pressable
-              style={styles.arrowCircle}
-              onPress={() => goToPropertyDetail(item)}
-            >
-              <Svgicons path="arrowRightIcon" size={22} />
-            </Pressable>
-          </GradientBorder>
-        </View>
-      </GradientBorder>
+          </Pressable>
+        </GlassCard>
+      </GlassCard>
     );
   };
 
   return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+    <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
       <View style={styles.container}>
-        <AppText
-          text="Manage Your Listings"
-          fontSize={30}
-          type="Bold"
-          color={Colors.BRUNSWICK_GREEN}
-          textAlign="center"
-          mb={30}
-        />
+
+        <View style={styles.header}>
+          <AppText
+            text="Your Listings"
+            fontSize={32}
+            type="Bold"
+            color={Colors.BLACK}
+            mt={20}
+          />
+          <AppText
+            text="Import a listing from your OTA platform, or create a new one manually if it's not listed elsewhere."
+            fontSize={14}
+            color="#6B6B6B"
+            mt={10}
+            lineHeight={22}
+          />
+        </View>
+
         <FlatListSimpleHandler
           data={data}
           isLoading={isLoading}
           renderItem={renderProperty}
           listEmptyText="No listings found"
           onRefresh={refetch}
-          keyExtractor={item => item.id}
+          keyExtractor={(item: any) => item.id?.toString()}
           contentContainerStyle={[styles.scrollContent, data.length === 0 && { flex: 1 }]}
         />
+
         <View style={styles.footer}>
-          <AppButton
-            title="Create New Listing"
-            onPress={onCreateNew}
-            mt={20}
-            disabled={isSupervisor}
-            style={StyleSheet.flatten([
-              isSupervisor ? styles.disabledAppButton : undefined,
-            ])}
-          />
           <AppButton
             title="Add New Listing"
             onPress={onCreateNewListing}
-            mt={15}
             disabled={isSupervisor}
-            style={StyleSheet.flatten([
-              isSupervisor ? styles.disabledAppButton : undefined,
-            ])}
+            fontSize={16}
+            mb={15}
+            variant='secondary'
+          />
+          <AppButton
+            title="Create New Listing"
+            onPress={onCreateNew}
+            disabled={isSupervisor}
+            fontSize={16}
           />
         </View>
       </View>
@@ -151,62 +175,118 @@ const ManageListingScreen = () => {
 export default ManageListingScreen;
 
 const styles = StyleSheet.create({
+  bgContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
-
-  scrollContent: {
-    paddingHorizontal: Metrics.baseMargin,
-    paddingBottom: 40,
-  },
-
-  cardWrapper: {
+  header: {
+    paddingHorizontal: 20,
+    marginTop: 20,
     marginBottom: 20,
   },
-
-  cardInner: {
-    flexDirection: 'row',
-    padding: 15,
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  cardWrapper: {
+    padding: 12,
+    borderRadius: 24,
+    marginBottom: 20,
+    backgroundColor: Colors.TRANSPARENT
+  },
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 200,
     borderRadius: 16,
-    backgroundColor: Colors.WHITE,
-    alignItems: 'center',
+    overflow: 'hidden',
+    marginBottom: Metrics.verticalScale(20),
   },
-
   propertyImg: {
-    width: 90,
-    height: 90,
-    borderRadius: 12,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
-
-  cardInfo: {
-    flex: 1,
-    marginLeft: 15,
-    justifyContent: 'center',
-  },
-
-  infoRow: {
+  badge: {
+    position: 'absolute',
+    bottom: Metrics.scale(20),
+    right: Metrics.scale(20),
     flexDirection: 'row',
-    marginBottom: 2,
+    alignItems: 'center',
+    backgroundColor: '#B3AEA6',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: Colors.WHITE,
   },
-
-  arrowCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: Colors.WHITE,
+  badgeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.BRUNSWICK_GREEN,
+    marginRight: 6,
+  },
+  detailsContainer: {
+    backgroundColor: Colors.TRANSPARENT,
+    borderRadius: 16,
+    paddingHorizontal: Metrics.scale(20),
+    paddingVertical: Metrics.verticalScale(18)
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  titleText: {
+    flex: 1,
+    marginRight: 10,
+  },
+  addressRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  addressText: {
+    flex: 1,
+    marginLeft: 6,
+    lineHeight: 18,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    paddingTop: 10,
+  },
+  percentageBadge: {
+    backgroundColor: '#B3AEA6', // Image wala greyish shade
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    top: Metrics.scale(20),
+    right: Metrics.scale(20),
+    width: Metrics.scale(120),
+    height: Metrics.verticalScale(28),
+    padding: 0
   },
-
-  footer: {
-    marginTop: Metrics.verticalScale(10),
-    paddingBottom: Metrics.verticalScale(20),
-    paddingHorizontal: Metrics.baseMargin,
-  },
-  disabledAppButton: {
-    backgroundColor: Colors.DISABLED_BG,
-    opacity: 0.8,
-    borderColor: '#E8E8E8',
-
-  },
+  noImg: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.WHITE,
+  }
 });

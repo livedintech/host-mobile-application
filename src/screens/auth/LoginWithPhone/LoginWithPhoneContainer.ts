@@ -49,6 +49,9 @@ export default function useLoginWithPhoneContainer() {
   const countryCallingCode = watch('country')?.callingCode;
   const phoneNo = watch('phoneNumber');
 
+  console.log('phoneNo',phoneNo);
+  
+
   // --- 1. Mutation to Send OTP (to be called if user is not found) ---
   const { mutate: sendOtpForNewUser, isPending: isSendingOtp } = useMutation({
     mutationFn: resendOtpApi,

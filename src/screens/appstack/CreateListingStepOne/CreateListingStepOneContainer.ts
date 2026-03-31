@@ -1,28 +1,28 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigation } from '@react-navigation/native';
 import { StepOneFormValues, stepOneSchema } from '@/validation/auth/createListingSchemas';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { CreateListingPayload, CreateListingResponse, getChannelIDResponse, ManageListingsResponse } from '@/types/api/createListingTypes';
+import { CreateListingPayload, CreateListingResponse, getChannelIDResponse } from '@/types/api/createListingTypes';
 import Toast from 'react-native-toast-message';
-import { createListingApi, createNewListingApi, getManageYourListings } from '@/services/ createListingService';
+import { createListingApi, createNewListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { goBack, navigate } from '@/services/navigationService';
+import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 
 export default function useCreateListingStepOneContainer() {
-  const { user } = useAuthStore()
-  const { updateListing, setListingId, setChannelId } = useCreateListingStore()
+  const { user } = useAuthStore();
+  const { updateListing, setListingId, setChannelId } = useCreateListingStore();
 
   const propertyOptions = [
-    { label: 'Apartment', value: 'apartment' },
+    { label: 'Flat/Apartment', value: 'apartment', icon: 'property' },
   ];
 
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<StepOneFormValues>({
     resolver: yupResolver(stepOneSchema),
@@ -31,8 +31,10 @@ export default function useCreateListingStepOneContainer() {
     },
   });
 
-  // Get Channel ID
-  const { data, refetch, isLoading } = useQuery<getChannelIDResponse>({
+  const selectedPropertyType = watch('propertyType');
+  const isPropertySelected = !!selectedPropertyType && selectedPropertyType !== '';
+
+  const { data, isLoading } = useQuery<getChannelIDResponse>({
     queryKey: [STORAGE_CONST.CREATE_LISTING],
     queryFn: () =>
       createNewListingApi({
@@ -43,7 +45,6 @@ export default function useCreateListingStepOneContainer() {
   const {
     mutate: createListingPayload,
     isPending,
-    isIdle,
   } = useMutation<CreateListingResponse, Error, CreateListingPayload>({
     mutationFn: createListingApi,
     retry: false,
@@ -62,19 +63,20 @@ export default function useCreateListingStepOneContainer() {
       });
     },
   });
+
   const channelID = data?.data?.[0]?.ch_channel_id;
   const isChannelMissing = !channelID;
 
-
   const onNext = (data: StepOneFormValues) => {
-
     updateListing({
       property_type_category: data?.propertyType,
-      name: ''
+      name: '',
     });
-    channelID && setChannelId(channelID)
+    
+    channelID && setChannelId(channelID);
+    
     const payload = {
-      channel_id:channelID,
+      channel_id: channelID,
       user_id: Number(user?.id),
       payload: {
         listing: {
@@ -87,7 +89,6 @@ export default function useCreateListingStepOneContainer() {
     createListingPayload(payload);
   };
 
-
   const onSaveExit = handleSubmit((data: StepOneFormValues) => {
     updateListing({
       property_type_category: data?.propertyType,
@@ -95,6 +96,7 @@ export default function useCreateListingStepOneContainer() {
     });
 
     channelID && setChannelId(channelID);
+    
     const payload = {
       channel_id: channelID,
       user_id: Number(user?.id),
@@ -115,16 +117,20 @@ export default function useCreateListingStepOneContainer() {
 
         setListingId(data?.listing_id);
 
-        navigate(
-          NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS
-        );
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
       },
     });
   });
 
-
   return {
-    control, errors, propertyOptions, handleSubmit, onNext, onSaveExit, isLoading: isPending || isLoading,
-  isChannelMissing
+    control,
+    errors,
+    propertyOptions,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isLoading: isPending || isLoading,
+    isChannelMissing,
+    isPropertySelected,
   };
 }

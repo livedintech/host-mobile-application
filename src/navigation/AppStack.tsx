@@ -161,7 +161,7 @@ const AppStack = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <HeaderApp isGoBackAfterLogo addIconAfterisGoBack="mapIcon" />
+            <HeaderApp isGoBackAfterLogo  />
           ),
         }}
         name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
@@ -171,7 +171,11 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{
+          header: () => (
+            <HeaderApp isGoBack  />
+          ),
+        }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
           require('@/screens/appstack/AirbnbImport/AirbnbImportScreen').default
@@ -186,7 +190,11 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{
+          header: () => (
+            <HeaderApp isGoBack  />
+          ),
+        }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
         getComponent={() =>
           require('@/screens/appstack/GathernImport/GathernImportScreen')
@@ -229,6 +237,14 @@ const AppStack = () => {
         name={NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE}
         getComponent={() =>
           require('@/screens/appstack/CreateListingStepOne/CreateListingStepOneScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.PROPERTY_STEP_ONE_WELCOME}
+        getComponent={() =>
+          require('@/screens/appstack/PropertyStep1Welcome/PropertyStep1Welcome')
             .default
         }
       />
@@ -319,10 +335,18 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.PROPERTY_DETAIL}
         getComponent={() =>
           require('@/screens/appstack/PropertyDetail/PropertyDetailScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+         options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.PROPERTY_TOUR}
+        getComponent={() =>
+          require('@/screens/appstack/PropertyTour/PropertyTourScreen')
             .default
         }
       />
