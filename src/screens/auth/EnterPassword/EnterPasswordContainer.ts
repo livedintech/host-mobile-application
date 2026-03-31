@@ -43,9 +43,6 @@ export default function useEnterPasswordContainer() {
 
   const { params } = useRoute();
 
-  console.log('params',params);
-  
-
   const {
     control,
     handleSubmit,
@@ -94,7 +91,13 @@ export default function useEnterPasswordContainer() {
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: true,
         phone: params?.countryCallingCode + params?.phoneNo,
+        code: params?.countryCallingCode,
+        actualPhone: params?.phoneNo
       });
+      // navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
+      //   isLoginScreen: true,
+      //   phone: params?.countryCallingCode + params?.phoneNo,
+      // });
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message || 'Login failed' });

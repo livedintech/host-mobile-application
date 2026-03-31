@@ -62,7 +62,7 @@ export interface User {
   has_import_listing: boolean;
   channels: UserChannels;
   unexported_listings: UnexportedListing[];
-  in_completed_listings: any[];
+  incomplete_listings: any[];
 }
 
 export interface LoginPayload {

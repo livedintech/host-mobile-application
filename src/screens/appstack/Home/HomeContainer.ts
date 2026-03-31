@@ -16,11 +16,10 @@ export default function useHomeContainer() {
   });
 
   const channels = UserPermission?.channels || {};
-  const unexported_listings = UserPermission?.unexported_listings?.[0];
-  const in_completed_listings = UserPermission?.in_completed_listings?.[0];
+  const unexported_listings = UserPermission?.unexported_listings || [];
+  const incomplete_listings = UserPermission?.incomplete_listings || [];
 
-  console.log('unexported_listings:', unexported_listings);
-  console.log('in_completed_listings:', in_completed_listings);
+  const isNewLayout = UserPermission?.unexported_listings.length === 0;
 
   // ✅ Navigation Fix (bug resolved)
   const onConnect = useCallback((platform: string) => {
@@ -69,7 +68,7 @@ export default function useHomeContainer() {
       if (count > 0) {
         return {
           title: `${platform} Connected`,
-          desc: 'Import listings from Airbnb',
+          desc: `Import listings from ${platform}`,
         };
       }
 
@@ -89,6 +88,25 @@ export default function useHomeContainer() {
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
   };
 
+  const handleListingNavigation = (listings: any[], type: 'incomplete' | 'unexported') => {
+    if (!listings || listings.length === 0) return;
+
+    if (listings.length > 1) {
+      navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+    } else {
+      const item = listings[0];
+
+      updateListing({
+        name: item?.title,
+      });
+
+      setListingId(item?.listing_id?.toString());
+
+      navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+    }
+  };
+
+
   return {
     onConnect,
     UserPermission,
@@ -98,7 +116,9 @@ export default function useHomeContainer() {
     isLoading,
     refetch,
     goToPropertyDetail,
-    in_completed_listings,
-    unexported_listings
+    incomplete_listings,
+    unexported_listings,
+    isNewLayout,
+    handleListingNavigation
   };
 }

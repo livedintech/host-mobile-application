@@ -1,214 +1,325 @@
-import React from 'react';
-import { StyleSheet, View, Image, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Pressable, ActivityIndicator, FlatList } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useManageBookingContainer from './ManageBookingContainer';
-import Metrics from '@/utility/Metrics';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import ManageBookingSkeleton from '@/components/Skeletons/ManageBookingSkeleton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import Metrics from '@/utility/Metrics';
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const TABS = ['Airbnb', 'Gathern', 'Booking.com'] as const;
+type TabType = (typeof TABS)[number];
+
+const TAB_ICON_MAP: Record<TabType, string> = {
+    Airbnb: 'airbnb',
+    Gathern: 'gathern',
+    'Booking.com': 'bookingCom',
+};
+
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+interface ConnectedAccountCardProps {
+    account: any;
+    selectedTab: TabType;
+    userName: string;
+    onExport: (account: any) => void;
+}
+
+const ConnectedAccountCard: React.FC<ConnectedAccountCardProps> = ({
+    account,
+    selectedTab,
+    userName,
+    onExport,
+}) => (
+    <GlassCard width="100%" style={styles.connectedCard}>
+        <View style={styles.cardHeader}>
+            <AppText
+                text={`${userName}'s ${selectedTab}`}
+                type="Bold"
+                color={Colors.BLACK}
+                fontSize={18}
+            />
+        </View>
+
+        <InfoRow
+            icon={TAB_ICON_MAP[selectedTab]}
+            label={`${selectedTab} ID`}
+            value={account?.id?.toString() ?? 'N/A'}
+            valueColor={Colors.BLACK}
+        />
+        <InfoRow
+            icon="database_check"
+            label="Connection Status"
+            value="Active"
+            valueColor={Colors.TEAL_PRIMARY_ALT}
+        />
+
+        <View style={styles.exportBtnContainer}>
+            <AppButton
+                title="Exports"
+                onPress={() => onExport(account)}
+                borderColor="rgba(255, 255, 255, 0.9)"
+                fontSize={14}
+                style={styles.exportBtn}
+                variant="secondary"
+            />
+        </View>
+    </GlassCard>
+);
+
+interface InfoRowProps {
+    icon: string;
+    label: string;
+    value: string;
+    valueColor: string;
+}
+
+const InfoRow: React.FC<InfoRowProps> = ({ icon, label, value, valueColor }) => (
+    <View style={styles.cardRow}>
+        <View style={styles.iconCircle}>
+            <Svgicons path={icon} size={20} />
+        </View>
+        <View>
+            <AppText text={label} type="Regular" color={Colors.BLACK} fontSize={14} />
+            <AppText text={value} type="Medium" color={valueColor} fontSize={14} mt={2} />
+        </View>
+    </View>
+);
+
+interface EmptyStateProps {
+    selectedTab: TabType;
+}
+
+const EmptyState: React.FC<EmptyStateProps> = ({ selectedTab }) => (
+    <View style={styles.emptyStateContainer}>
+        <View style={styles.circleBg} />
+        <AppText
+            text={`This property isn't\nlisted on ${selectedTab}.`}
+            fontSize={24}
+            type="Bold"
+            color={Colors.BLACK}
+            textAlign="center"
+            lineHeight={32}
+        />
+        <AppText
+            text={`Only properties connected and\nactive on ${selectedTab} will appear here.`}
+            fontSize={14}
+            color={Colors.DARK_CHARCOAL_OPACITY}
+            textAlign="center"
+            mt={15}
+            lineHeight={22}
+        />
+    </View>
+);
+
+// ─── Main Screen ─────────────────────────────────────────────────────────────
 
 const ManageBookingScreen = () => {
     const {
+        user,
         handleConnect,
-        isPending,
         isLoading,
+        isPending,
         refetch,
-        response,
         goToListing,
-        isOtaConnected,
-        connectedAccounts
+        connectedAccounts,
     } = useManageBookingContainer();
 
-    const isAirbnbConnected = connectedAccounts?.some(
-        (acc: any) => acc.connection_type === 'Airbnb'
-    );
-    const isGathernConnected = connectedAccounts?.some(
-        (acc: any) => acc.connection_type === 'Gathern'
-    );
-    const isBookingConnected = connectedAccounts?.some(
-        (acc: any) => acc.connection_type === 'Booking.com'
-    );
+    const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
 
-    const PlatformCard = ({ type, id, status, onPress }: any) => {
-        const pfType = type ? type : 'Airbnb'
-        return (
-            <View>
-                <GradientBorder borderRadius={24} style={styles.cardWrapper}>
-                    <View style={styles.cardInner}>
-                        <View style={styles.rowContent}>
-                            <AppText text={`${pfType} ID: `} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
-                            <AppText text={id} color={Colors.PINE_FOREST} type="Medium" />
-                        </View>
+    // All accounts matching the currently selected tab (supports multiple)
+    const currentTabAccounts: any[] = connectedAccounts?.filter(
+        (acc: any) => acc.connection_type === selectedTab
+    ) ?? [];
 
-                        <View style={styles.rowContent}>
-                            <AppText text="Platform Name: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                            <AppText text={pfType} color={Colors.PINE_FOREST} type="Medium" />
-                        </View>
-
-                        <View style={styles.statusRow}>
-                            <AppText text="Connection Status: " type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                            <AppText
-                                text={status}
-                                color={status === 'Active' ? Colors.MEDIUM_SEA_GREEN : Colors.INDIAN_RED}
-                            />
-
-                            {/* Arrow Button */}
-                            <GradientBorder borderRadius={16} style={styles.arrowWrapper}>
-                                <Pressable style={styles.arrowInner} onPress={onPress}>
-                                    <Svgicons path="arrowRightIcon" size={12} color={Colors.SUPER_GREY} />
-                                </Pressable>
-                            </GradientBorder>
-                        </View>
-                    </View>
-                </GradientBorder>
-            </View>
-        )
-    };
+    const hasAccounts = currentTabAccounts.length > 0;
 
     return (
-        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <BGImage
+            source={require('@/assets/img/background/linearBG.png')}
+            style={styles.bgContainer}
+        >
             <View style={styles.container}>
+
+                {/* ── Header ── */}
+                <View style={styles.header}>
+                    <AppText
+                        text="Channel Manager"
+                        fontSize={28}
+                        type="Bold"
+                        color={Colors.BLACK}
+                        mt={20}
+                    />
+                </View>
+
+                {/* ── Tabs ── */}
+                <View style={styles.tabsContainer}>
+                    {TABS.map((tab) => {
+                        const isSelected = selectedTab === tab;
+                        return (
+                            <AppButton borderRadius={20} key={tab} title={tab} onPress={() => setSelectedTab(tab)} color={isSelected ? Colors.WHITE : Colors.DARK_CHARCOAL} style={[styles.tabBtn, isSelected && styles.activeTabBtn]} variant='secondary' fontSize={12}/>
+                        );
+                    })}
+                </View>
+
+                {/* ── Content ── */}
                 <RefreshableScrollView
                     isLoading={isLoading}
                     onRefresh={refetch}
-                    style={styles.scrollContent}
-                    skeletonComponent={<ManageBookingSkeleton />}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
                 >
-                    {/* Header Title Switch */}
-                    <View style={styles.headerSection}>
-                        <AppText
-                            text={isOtaConnected ? 'Connected Booking Platform' : 'No Account Found'}
-                            fontSize={32}
-                            type="Bold"
-                            color={Colors.BRUNSWICK_GREEN}
-                            textAlign="left"
+                    {isLoading ? (
+                        <ActivityIndicator
+                            size="large"
+                            color={Colors.TEAL_PRIMARY_ALT}
+                            style={styles.loader}
                         />
-                    </View>
-
-                    {isOtaConnected ? (
-                        /* UI When Data Exists */
-                        <View style={styles.listContainer}>
-                            {response?.data?.map((acc: any) => (
-                                <PlatformCard
-                                    key={acc?.id}
-                                    type={acc?.connection_type}
-                                    id={acc?.id}
-                                    name="Dummy"
-                                    count="0"
-                                    status="Active"
-                                    onPress={() => goToListing(acc)}
+                    ) : hasAccounts ? (
+                        currentTabAccounts.map((account, index) => (
+                            <View
+                                key={account?.id ?? index}
+                                style={index > 0 && styles.cardSpacing}
+                            >
+                                <ConnectedAccountCard
+                                    account={account}
+                                    selectedTab={selectedTab}
+                                    userName={user?.name ?? 'User'}
+                                    onExport={goToListing}
                                 />
-                            ))}
-                        </View>
-                    ) : (
-                        /* UI When No Data */
-                        <GradientBorder borderRadius={35} style={styles.infoCardWrapper}>
-                            <View style={styles.infoCardInner}>
-                                <View style={styles.row}>
-                                    <View style={styles.activeDot} />
-                                    <View style={styles.avatarContainer}>
-                                        <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
-                                    </View>
-                                    <View style={{ flex: 1, marginLeft: 15 }}>
-                                        <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} />
-                                        <AppText
-                                            text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
-                                            color={Colors.NIGHT_OPACITY}
-                                            mt={5}
-                                            lineHeight={20}
-                                        />
-                                    </View>
-                                </View>
                             </View>
-                        </GradientBorder>
+                        ))
+                    ) : (
+                        <EmptyState selectedTab={selectedTab} />
                     )}
                 </RefreshableScrollView>
-                {/* Bottom Connect Buttons */}
-                <View style={styles.btnFooter}>
+
+                {/* ── Footer: always fixed at bottom, title changes based on state ── */}
+                <View style={styles.footer}>
                     <AppButton
-                        title={isAirbnbConnected ? 'Airbnb Connected ✓' : 'Connect Airbnb'}
-                        onPress={() => handleConnect('Airbnb')}
-                        mb={15}
+                        title={
+                            hasAccounts
+                                ? `+ Add Another ${selectedTab} Account`
+                                : `Connect ${selectedTab} Account`
+                        }
+                        onPress={() => handleConnect(selectedTab)}
                         loading={isPending}
-                    />
-                    <AppButton
-                        title={isGathernConnected ? 'Gathern Connected ✓' : 'Connect Gathern'}
-                        onPress={() => handleConnect('Gathern')}
-                        mb={15}
-                        disabled={isPending}
-                    />
-                    <AppButton
-                        title={isBookingConnected ? 'Booking.com Connected ✓' : 'Connect Booking.com'}
-                        onPress={() => handleConnect('Booking.com')}
-                        disabled={isPending}
+                        backgroundColor={Colors.TEAL_PRIMARY_ALT}
+                        borderColor="transparent"
+                        color={Colors.WHITE}
+                        fontSize={16}
                     />
                 </View>
+
             </View>
         </BGImage>
     );
 };
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    scrollContent: { paddingHorizontal: Metrics.scale(22), paddingBottom: Metrics.verticalScale(40) },
-    headerSection: { marginTop: 50, marginBottom: 40 },
-    listContainer: { marginBottom: 20 },
-    connectedCard: {
-        borderWidth: 1,
-        borderColor: '#EBEBEB',
-        borderRadius: 24,
-        padding: 20,
-        marginBottom: 20,
-        backgroundColor: Colors.WHITE,
-    },
-    cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    rowContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: Metrics.verticalScale(8),
-        gap: 5
-    },
-    deleteBtn: { padding: 5 },
-    statusRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
-    btnFooter: { marginTop: 10, paddingHorizontal: Metrics.scale(22) },
-    infoCardWrapper: { marginBottom: 33 },
-    infoCardInner: { padding: 25, borderRadius: 35, backgroundColor: Colors.WHITE },
-    avatarContainer: { backgroundColor: Colors.ADRIANA, borderRadius: 100, width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
-    avatar: { width: 46, height: 54 },
-    row: { flexDirection: 'row', alignItems: 'center', },
-    activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.BRUNSWICK_GREEN, marginRight: 8 },
-    cardWrapper: {
-        marginBottom: 20,
-    },
-
-    cardInner: {
-        padding: 20,
-        borderRadius: 24,
-        backgroundColor: Colors.WHITE,
-    },
-    arrowWrapper: {
-        marginLeft: 'auto',
-        width: 32,
-        height: 32,
-    },
-
-    arrowInner: {
+    bgContainer: {
         flex: 1,
-        borderRadius: 16,
-        backgroundColor: Colors.WHITE,
+    },
+    container: {
+        flex: 1,
+    },
+    header: {
+        paddingHorizontal: 20,
+        marginTop: 20,
+        marginBottom: 25,
+    },
+    tabsContainer: {
+        flexDirection: 'row',
+        paddingHorizontal:  Metrics.baseMargin,
+        marginBottom: Metrics.verticalScale(30),
+        gap: Metrics.scale(10),
+        justifyContent:'space-between'
+    },
+    tabBtn: {
+        paddingVertical: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        width: Metrics.scale(125)
+    },
+    activeTabBtn: {
+        backgroundColor: Colors.TEAL_PRIMARY_ALT,
+        borderColor: Colors.TEAL_PRIMARY_ALT,
+    },
+    scrollContent: {
+        paddingHorizontal: 20,
+        paddingBottom: 40,
+        flexGrow: 1,
+    },
+    loader: {
+        marginTop: 50,
+    },
+    connectedCard: {
+        padding: 24,
+        borderRadius: 24,
+    },
+    cardHeader: {
+        marginBottom: 25,
+    },
+    cardRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    iconCircle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
+        marginRight: 15,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.9)',
     },
-
-
+    exportBtnContainer: {
+        alignItems: 'flex-end',
+        marginTop: 10,
+    },
+    exportBtn: {
+        paddingHorizontal: 30,
+        height: 38,
+        minWidth: 120,
+        paddingVertical: 0,
+    },
+    cardSpacing: {
+        marginTop: 16,
+    },
+    emptyStateContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 60,
+        position: 'relative',
+    },
+    circleBg: {
+        position: 'absolute',
+        width: 250,
+        height: 250,
+        borderRadius: 125,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        top: '50%',
+        left: '50%',
+        transform: [{ translateX: -125 }, { translateY: -125 }],
+        zIndex: -1,
+    },
+    footer: {
+        paddingHorizontal: 20,
+        paddingBottom: 30,
+        paddingTop: 10,
+        backgroundColor: 'transparent',
+    },
 });
 
 export default ManageBookingScreen;
