@@ -5,12 +5,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import { navigate, goBack } from '@/services/navigationService';
+import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { s, vs } from 'react-native-size-matters';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder'; 
 
 const AgentIntroScreen = () => {
     

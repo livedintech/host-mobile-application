@@ -10,7 +10,7 @@ export const getCalendarBookingManagementListingsApi = async (listingId?: string
   // in the apiService interceptor.
   const baseUrl = (listingId && listingId !== "")
     ? SERVICE_CONFIG_URLS.APP.GET_CALENDAR_DATA.replace('{listing_id}', listingId)
-    : SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
+    : SERVICE_CONFIG_URLS.APP.BOOKING_MULTI_CALENDAR;
   const url = `${baseUrl}?t=${Date.now()}`;
 
 

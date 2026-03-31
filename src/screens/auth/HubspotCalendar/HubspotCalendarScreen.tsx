@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -25,6 +25,9 @@ const FIGMA_TEAL = '#20957B';
 const CalendarScreen = ({ route }: any) => {
   const userInfo = route?.params?.userInfo!;
   const panY = useRef(new Animated.Value(vs(500))).current; 
+  
+  // Local state to control Modal visibility independently of selection
+  const [isSheetVisible, setIsSheetVisible] = useState(false);
 
   const {
     currentMonth,
@@ -41,15 +44,15 @@ const CalendarScreen = ({ route }: any) => {
     formatTime,
   } = useHubspotCalendarContainer(userInfo);
 
-  useEffect(() => {
-    if (selectedDate !== '') {
-      Animated.spring(panY, {
-        toValue: 0,
-        useNativeDriver: true,
-        friction: 8,
-      }).start();
-    }
-  }, [selectedDate]);
+  const openSheet = () => {
+    if (!selectedDate) return;
+    setIsSheetVisible(true);
+    Animated.spring(panY, {
+      toValue: 0,
+      useNativeDriver: true,
+      friction: 8,
+    }).start();
+  };
 
   const closeSheet = () => {
     Animated.timing(panY, {
@@ -57,6 +60,7 @@ const CalendarScreen = ({ route }: any) => {
       duration: 250,
       useNativeDriver: true,
     }).start(() => {
+      setIsSheetVisible(false);
       handleMonthChange(currentMonth);
     });
   };
@@ -84,35 +88,82 @@ const CalendarScreen = ({ route }: any) => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        <View style={styles.headerSection}>
-          <AppText type="Bold" fontSize={28} color={Colors.BLACK} lineHeight={34}>
-            Please select a <AppText type="Bold" fontSize={28} color={FIGMA_TEAL}>date</AppText> so our agent can
-            schedule a meeting with you
-          </AppText>
+        <View style={styles.contentWrapper}>
+          <View style={styles.headerSection}>
+            <AppText type="Bold" fontSize={28} color={Colors.BLACK} lineHeight={34}>
+              Please select a <AppText type="Bold" fontSize={28} color={FIGMA_TEAL}>date</AppText> so our agent can
+              schedule a meeting with you
+            </AppText>
+          </View>
+
+          <View style={styles.calendarWrapper}>
+            <Calendar
+              current={`${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-01`}
+              markedDates={buildMarkedDates()}
+              onDayPress={(day: { dateString: string }) => handleDateSelect(day.dateString)}
+              onMonthChange={handleMonthChange}
+              minDate={new Date().toISOString().split('T')[0]}
+              renderArrow={(direction: 'left' | 'right') => (
+                <View style={styles.arrowContainer}>
+                  <Svgicons 
+                    path={direction === 'left' ? "arrowLeftIcon" : "arrowRightIcon"} 
+                    size={14} 
+                    color={Colors.BLACK} 
+                  />
+                </View>
+              )}
+              theme={{
+                calendarBackground: 'transparent',
+                selectedDayBackgroundColor: FIGMA_TEAL,
+                dotColor: 'transparent', 
+                selectedDotColor: 'transparent',
+                todayTextColor: FIGMA_TEAL,
+                arrowColor: FIGMA_TEAL,
+                ...({
+                  'stylesheet.day.basic': {
+                    base: {
+                      width: ms(32),
+                      height: ms(32),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: ms(8), 
+                    },
+                    selected: {
+                      backgroundColor: FIGMA_TEAL,
+                      borderRadius: ms(8),
+                    },
+                    today: {
+                      backgroundColor: 'transparent',
+                      borderRadius: ms(8),
+                    },
+                    text: {
+                      marginTop: 0,
+                    }
+                  },
+                } as any),
+              }}
+              style={styles.calendar}
+            />
+          </View>
         </View>
 
-        <View style={styles.calendarWrapper}>
-          <Calendar
-            current={`${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-01`}
-            markedDates={buildMarkedDates()}
-            onDayPress={(day: { dateString: string }) => handleDateSelect(day.dateString)}
-            onMonthChange={handleMonthChange}
-            minDate={new Date().toISOString().split('T')[0]}
-            theme={{
-              calendarBackground: 'transparent',
-              selectedDayBackgroundColor: FIGMA_TEAL,
-              todayTextColor: FIGMA_TEAL,
-              dotColor: FIGMA_TEAL,
-              arrowColor: FIGMA_TEAL,
-            }}
-            style={styles.calendar}
+        {/* Persistent Next Button at the bottom of the main screen */}
+        <View style={styles.mainFooter}>
+          <AppButton
+            title="Next"
+            onPress={openSheet}
+            disabled={!selectedDate}
+            backgroundColor={selectedDate ? FIGMA_TEAL : '#A0D1C5'}
+            color={Colors.WHITE}
+            borderRadius={100}
+            style={styles.nextBtn}
           />
         </View>
 
         <Modal
           animationType="none" 
           transparent={true}
-          visible={selectedDate !== ''}
+          visible={isSheetVisible}
           onRequestClose={closeSheet}
         >
           <View style={styles.modalRoot}>
@@ -132,7 +183,6 @@ const CalendarScreen = ({ route }: any) => {
                 <View style={styles.sheetHandle} />
               </View>
 
-              {/* Header Row with Clock and Close Button */}
               <View style={styles.sheetHeaderRow}>
                 <View style={styles.headerLeft}>
                   <View style={styles.clockCircle}>
@@ -203,9 +253,28 @@ const CalendarScreen = ({ route }: any) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  contentWrapper: { flex: 1 },
   headerSection: { paddingHorizontal: s(24), marginTop: vs(15), marginBottom: vs(10) },
   calendarWrapper: { paddingHorizontal: s(10) },
   calendar: { backgroundColor: 'transparent' },
+  mainFooter: {
+    paddingHorizontal: s(24),
+    paddingBottom: vs(30),
+  },
+  arrowContainer: {
+    width: ms(30),
+    height: ms(30),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: ms(8),
+  },
+  nextBtn: {
+    height: vs(50),
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
   modalRoot: { flex: 1, justifyContent: 'flex-end' },
   modalOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.3)' },
   sheetContent: {
@@ -275,7 +344,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   confirmBtn: {
-    height: vs(54),
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

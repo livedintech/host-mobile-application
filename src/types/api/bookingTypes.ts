@@ -24,6 +24,7 @@ export interface RawBookingData {
   listing_image?: string;
   
   // Scenario B: Range Data (Directly at root)
+  listing_id: number | string;
   id?: number | string;
   start_date?: string;
   end_date?: string;
