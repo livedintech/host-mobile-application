@@ -30,12 +30,12 @@ export default function useVerifyPhoneNumberContainer() {
   const isLoginScreen = (params as any)?.isLoginScreen;
 
   console.log('params',params);
-  
 
   const {
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<{ otpCode: string }>({
     defaultValues: { otpCode: '' },
@@ -144,6 +144,7 @@ export default function useVerifyPhoneNumberContainer() {
     identifier: phone,
     code, 
     actualPhone,
+    setValue,
     handleResendOtp,
     handleVerifyOtp: handleSubmit(handleVerifyOtp),
     formatTimer,
