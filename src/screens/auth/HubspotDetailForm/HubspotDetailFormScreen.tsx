@@ -30,10 +30,9 @@ const HubspotDetailFormScreen = () => {
     onCountrySelect,
     onCitySelect,
   } = useHubspotDetailFormContainer();
-
+  
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [showCityPicker, setShowCityPicker] = useState(false);
-
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
@@ -74,7 +73,6 @@ const HubspotDetailFormScreen = () => {
               countryFieldName="countryCode"
               phoneFieldName="phone"     
               activeColor={FIGMA_TEAL}
-              inactiveColor="#E0E0E0"
             />
 
             <InputField

@@ -17,7 +17,11 @@ const addNewPasswordSchema = yup.object().shape({
   password: yup
     .string()
     .required('Password is required')
-    .min(8, 'Password must be at least 8 characters'),
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/[a-z]/, 'Include at least one lowercase letter')
+    .matches(/[A-Z]/, 'Include at least one uppercase letter')
+    .matches(/[0-9]/, 'Include at least one number')
+    .matches(/[@$!%*?&#]/, 'Include at least one symbol (@$!%*?&#)'),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password')], 'Passwords must match')
@@ -61,7 +65,7 @@ export default function useAddNewPasswordContainer() {
       phone_number: phone,
       otp: otp,
       password: data?.password,
-      password_confirmation: data?.password,
+      password_confirmation: data?.confirmPassword,
     };
     resetPasswordPayload(payload);
   };
