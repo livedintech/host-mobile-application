@@ -8,6 +8,7 @@ import {
 } from '@/validation/hubspot/hubspotSchemas';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useRoute } from '@react-navigation/native';
 
 export const COUNTRIES = [
   'Saudi Arabia', 'UAE', 'Kuwait', 'Qatar', 'Bahrain', 'Oman',
@@ -56,6 +57,10 @@ export const COUNTRY_FLAGS: Record<string, string> = {
 };
 
 export default function useHubspotDetailFormContainer() {
+  const route = useRoute<any>();
+  const payload = route.params?.payload || {};
+  const incomingPhone = payload?.phone?.actualPhone || '';
+
   const {
     control,
     handleSubmit,
@@ -66,7 +71,8 @@ export default function useHubspotDetailFormContainer() {
     resolver: yupResolver(meetingDetailsSchema),
     defaultValues: {
       fullName: '',
-      phone: '',
+      // Auto-populating the phone number from params
+      phone: incomingPhone, 
       email: '',
       country: '',
       city: '',
@@ -92,8 +98,13 @@ export default function useHubspotDetailFormContainer() {
   };
 
   const onSubmit = (data: MeetingDetailsFormValues) => {
-    // Pass all lead info to CalendarScreen
-    navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR, { userInfo: data });
+    // Pass all lead info + existing payload data (pricing/listing_count) to CalendarScreen
+    navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR, { 
+      userInfo: {
+        ...data,
+        ...payload // preserving listing_count, pricing, etc.
+      } 
+    });
   };
 
   return {

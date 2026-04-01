@@ -12,20 +12,17 @@ export default function useManageListingContainer() {
   const [localSelectedId, setLocalSelectedId] = useState<number | null>(null);
   const { params } = useRoute();
 
-
-
   const onSelect = (value: number | null) => {
     if (!value) return;
-    if (value === 1) {
       const payload = {
         phone: params,
         listing_count: localSelectedId,
-        pricing: plan?.price
+        pricing: plan?.price,
       };
+    if (value === 1) {
       navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {payload});
-
     } else {
-      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM);
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {payload});
     }
   };
 
