@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import OTPTextInput from 'react-native-otp-textinput';
 import { Colors } from '@/theme/colors';
@@ -14,6 +14,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 const FIGMA_TEAL = '#20957B';
 
 const VerifyPhoneNumberScreen = () => {
+  // 1. Create a ref for the OTP Input
+  const otpRef = useRef<any>(null);
+
   const {
     control,
     timer,
@@ -24,19 +27,28 @@ const VerifyPhoneNumberScreen = () => {
     handleVerifyOtp,
     formatTimer,
     isLoading,
+    setValue,
   } = useVerifyPhoneNumberContainer();
 
-  // 1. Logic to format the dynamic masked number
+  // Logic to format the dynamic masked number
   const cleanCode = code?.replace(/\D/g, '') || '';
   const cleanPhone = actualPhone?.replace(/\D/g, '') || '';
   const firstDigit = cleanPhone.charAt(0);
   
-  // Use 10-digit mask for PK/US, 9-digit for KSA
   const maskedLocal = cleanPhone.length > 9 
     ? `${firstDigit}XX XXX XXXX` 
     : `${firstDigit}XX XXX XXX`;
 
   const formattedDisplayNumber = `(+${cleanCode}) ${maskedLocal}`;
+
+  // 3. New wrapper to clear fields and resend
+  const onResendPress = useCallback(() => {
+    if (!isResendDisabled) {
+      otpRef.current?.setValue('');
+      setValue('otpCode', '');  
+      handleResendOtp();   
+    }
+  }, [isResendDisabled, handleResendOtp, setValue]);
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -55,7 +67,6 @@ const VerifyPhoneNumberScreen = () => {
                 </AppText>
               </AppText>
               
-              {/* 2. Updated Sub-text with the formatted number */}
               <View style={styles.subTextWrap}>
                 <AppText
                   text="We have sent you 5-digit verification code at"
@@ -82,6 +93,7 @@ const VerifyPhoneNumberScreen = () => {
                 name="otpCode"
                 render={({ field: { onChange } }) => (
                   <OTPTextInput
+                    ref={otpRef} // 4. Attach the ref here
                     handleTextChange={onChange}
                     textInputStyle={styles.otpInput}
                     containerStyle={styles.otpContainer}
@@ -97,7 +109,7 @@ const VerifyPhoneNumberScreen = () => {
             <View style={styles.footerSec}>
               <AppText text="Didn’t receive the code? " fontSize={15} color={Colors.BLACK} />
               <AppText
-                onPress={isResendDisabled ? undefined : handleResendOtp}
+                onPress={isResendDisabled ? undefined : onResendPress}
                 text={isResendDisabled ? `Resend in ${formatTimer(timer)}` : "Resend here"}
                 fontSize={15}
                 type="Bold"
@@ -130,7 +142,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     paddingHorizontal: s(24),
-    paddingTop: vs(60), // Slightly reduced to fit better
+    paddingTop: vs(60),
     alignItems: 'center',
   },
   textSection: { width: '100%', marginBottom: vs(40) },
