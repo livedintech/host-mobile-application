@@ -190,7 +190,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             </View>
             <View style={styles.infoContent}>
               <AppText text="Guest Contact" fontSize={13} color={Colors.BLACK} type="Medium" />
-              <AppText text={guest?.contact || 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} />
+              <AppText text={guest?.contact ? `+${guest.contact}` : 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} />
             </View>
           </View>
 
@@ -319,10 +319,12 @@ const ReviewDetailScreen = ({ route }: any) => {
               <AppText text="Number Of Nights" fontSize={14} color={Colors.BLACK} />
               <AppText text={property?.number_of_nights ? `${property.number_of_nights} Nights` : 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
             </View>
-            <View style={styles.bookingRow}>
-              <AppText text="Number Of Guests" fontSize={14} color={Colors.BLACK} />
-              <AppText text={property?.number_of_guests ? `${property.number_of_guests} Guests` : 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
-            </View>
+            {property?.booking_platform !== 'host_booking' && (
+              <View style={styles.bookingRow}>
+                <AppText text="Number Of Guests" fontSize={14} color={Colors.BLACK} />
+                <AppText text={property?.number_of_guests ? `${property.number_of_guests} Guests` : 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
+              </View>
+            )}
             <View style={styles.bookingRow}>
               <AppText text="Door Code" fontSize={14} color={Colors.BLACK} />
               <AppText text={property?.door_code || 'N/A'} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />
@@ -351,72 +353,74 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         )}
 
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <AppText text="Guest Property Ratings" type="Bold" fontSize={18} color={Colors.BLACK} />
-            <View style={styles.iconCircle}>
-              <Svgicons path="identityCard" size={20} />
-            </View>
-          </View>
-          <View style={styles.ratingContent}>
-            <View style={styles.ratingRow}>
-              <View style={styles.rowIconContainer}>
-                <Svgicons path="overallRating" size={30} />
+        {property?.booking_platform !== 'host_booking' && (
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <AppText text="Guest Property Ratings" type="Bold" fontSize={18} color={Colors.BLACK} />
+              <View style={styles.iconCircle}>
+                <Svgicons path="identityCard" size={20} />
               </View>
-              <View style={styles.progressContainer}>
-                <AppText text="Overall Rating" fontSize={14} color={Colors.BLACK} type="Medium" mb={vs(5)} />
-                <View style={styles.barWrapper}>
-                  <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, { width: `${(Number(overallRating) / 5) * 100}%` }]} />
+            </View>
+            <View style={styles.ratingContent}>
+              <View style={styles.ratingRow}>
+                <View style={styles.rowIconContainer}>
+                  <Svgicons path="overallRating" size={30} />
+                </View>
+                <View style={styles.progressContainer}>
+                  <AppText text="Overall Rating" fontSize={14} color={Colors.BLACK} type="Medium" mb={vs(5)} />
+                  <View style={styles.barWrapper}>
+                    <View style={styles.progressBarBg}>
+                      <View style={[styles.progressBarFill, { width: `${(Number(overallRating) / 5) * 100}%` }]} />
+                    </View>
+                    <AppText text={overallRating} fontSize={14} type="Bold" color={Colors.BLACK} ml={s(10)} />
                   </View>
-                  <AppText text={overallRating} fontSize={14} type="Bold" color={Colors.BLACK} ml={s(10)} />
                 </View>
               </View>
-            </View>
-            {showDetails && (
-              <View style={{ marginTop: vs(10) }}>
-                {ratingItems.filter(item => item.label !== 'Overall Rating').map((item, index) => (
-                  <View key={index} style={[styles.ratingRow, { marginTop: vs(12) }]}>
-                    <View style={styles.rowIconContainer}>
-                      <Svgicons path={item.icon as any} size={18} />
-                    </View>
-                    <View style={styles.progressContainer}>
-                      <AppText text={item.label} fontSize={14} color={Colors.BLACK} type="Medium" mb={vs(5)} />
-                      <View style={styles.barWrapper}>
-                        <View style={styles.progressBarBg}>
-                          <View style={[styles.progressBarFill, { width: `${(Number(item.value) / 5) * 100}%` }]} />
+              {showDetails && (
+                <View style={{ marginTop: vs(10) }}>
+                  {ratingItems.filter(item => item.label !== 'Overall Rating').map((item, index) => (
+                    <View key={index} style={[styles.ratingRow, { marginTop: vs(12) }]}>
+                      <View style={styles.rowIconContainer}>
+                        <Svgicons path={item.icon as any} size={18} />
+                      </View>
+                      <View style={styles.progressContainer}>
+                        <AppText text={item.label} fontSize={14} color={Colors.BLACK} type="Medium" mb={vs(5)} />
+                        <View style={styles.barWrapper}>
+                          <View style={styles.progressBarBg}>
+                            <View style={[styles.progressBarFill, { width: `${(Number(item.value) / 5) * 100}%` }]} />
+                          </View>
+                          <AppText text={item.value.toString()} fontSize={14} type="Bold" color={Colors.BLACK} ml={s(10)} />
                         </View>
-                        <AppText text={item.value.toString()} fontSize={14} type="Bold" color={Colors.BLACK} ml={s(10)} />
                       </View>
                     </View>
-                  </View>
-                ))}
+                  ))}
+                </View>
+              )}
+              <View style={styles.buttonRow}>
+                <TouchableOpacity style={[styles.halfBtn, styles.viewDetailsBtn]} onPress={() => setShowDetails(!showDetails)} disabled={!isCheckedOut}>
+                  <AppText text={showDetails ? "Hide Details" : "View Details"} type="Medium" fontSize={14} color={Colors.BLACK} />
+                </TouchableOpacity>
+                <AppButton 
+                  disabled={!isCheckedOut} 
+                  title="Rate Your Guest" 
+                  style={[
+                    styles.halfBtn, 
+                    styles.rateGuestBtn,
+                    !isCheckedOut && { 
+                      backgroundColor: Colors.DIM_GREY, 
+                      borderColor: Colors.DIM_GREY,
+                      opacity: 0.6 
+                    }
+                  ] as any}
+                  // backgroundColor={Colors.PRIMARY_TEAL} 
+                  color={Colors.WHITE} 
+                  borderRadius={100} 
+                  onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} 
+                />
               </View>
-            )}
-            <View style={styles.buttonRow}>
-              <TouchableOpacity style={[styles.halfBtn, styles.viewDetailsBtn]} onPress={() => setShowDetails(!showDetails)} disabled={!isCheckedOut}>
-                <AppText text={showDetails ? "Hide Details" : "View Details"} type="Medium" fontSize={14} color={Colors.BLACK} />
-              </TouchableOpacity>
-              <AppButton 
-                disabled={!isCheckedOut} 
-                title="Rate Your Guest" 
-                style={[
-                  styles.halfBtn, 
-                  styles.rateGuestBtn,
-                  !isCheckedOut && { 
-                    backgroundColor: Colors.DIM_GREY, 
-                    borderColor: Colors.DIM_GREY,
-                    opacity: 0.6 
-                  }
-                ] as any}
-                // backgroundColor={Colors.PRIMARY_TEAL} 
-                color={Colors.WHITE} 
-                borderRadius={100} 
-                onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} 
-              />
             </View>
           </View>
-        </View>
+        )}
 
         {property?.booking_platform === 'host_booking' && (
           <View style={styles.card}>
@@ -482,7 +486,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             ) : (
               <AppText text="No tasks assigned" fontSize={14} color={Colors.DARK_CHARCOAL} textAlign="center" my={vs(10)} />
             )}
-            <AppButton title="Create New Task" borderColor={Colors.SMOOTH_GREY} mt={30} borderRadius={25} textStyle={{ color: Colors.WHITE }} onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)} />
+            <AppButton title="Create New Task" backgroundColor="transparent" variant="secondary" borderColor={Colors.SMOOTH_GREY} mt={30} borderRadius={25} textStyle={{ color: Colors.BLACK }} onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)} />
           </View>
         </View>
 
@@ -500,7 +504,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
         )}
 
-        {property?.booking_platform === 'host_booking' && (
+        {property?.booking_platform !== 'host_booking' && (
           <AppButton title="Rate Your Guest" backgroundColor={Colors.PRIMARY_TEAL} color={Colors.WHITE} borderRadius={100} mt={vs(10)} mb={vs(40)} onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN)} />
         )}
       </ScrollView>
