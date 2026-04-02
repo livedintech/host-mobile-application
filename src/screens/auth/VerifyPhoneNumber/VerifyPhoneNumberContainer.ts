@@ -29,13 +29,11 @@ export default function useVerifyPhoneNumberContainer() {
   const actualPhone = (params as any)?.actualPhone;
   const isLoginScreen = (params as any)?.isLoginScreen;
 
-  console.log('params',params);
-  
-
   const {
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<{ otpCode: string }>({
     defaultValues: { otpCode: '' },
@@ -63,6 +61,7 @@ export default function useVerifyPhoneNumberContainer() {
       else{
         navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
           phone: phone,
+          actualPhone: actualPhone
         });
       }
     },
@@ -121,6 +120,7 @@ export default function useVerifyPhoneNumberContainer() {
     const payload = {
       phone_number: phone,
       otp: data.otpCode,
+      actualPhone: actualPhone
     };
     otpVerifyPayload(payload);
   };
@@ -144,6 +144,7 @@ export default function useVerifyPhoneNumberContainer() {
     identifier: phone,
     code, 
     actualPhone,
+    setValue,
     handleResendOtp,
     handleVerifyOtp: handleSubmit(handleVerifyOtp),
     formatTimer,
