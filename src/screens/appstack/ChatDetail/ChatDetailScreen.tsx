@@ -34,7 +34,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
-import {  KeyboardStickyView } from 'react-native-keyboard-controller';
+import { KeyboardStickyView } from 'react-native-keyboard-controller';
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 
@@ -205,27 +205,6 @@ const ChatScreen = () => {
     assigned_to_ids,
   } = useChatContainer();
 
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-  console.log(
-    'conversationDataconversationDatamm',
-    conversationData?.listing_id,
-  );
-
-  useEffect(() => {
-    const showSub = Keyboard.addListener('keyboardDidShow', e => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-
-    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardHeight(0);
-    });
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
 
   // State for highlighting scrolled message
   const [highlightedMessageId, setHighlightedMessageId] = useState<
@@ -512,17 +491,13 @@ const ChatScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      {/* <View style={styles.container}> */}
+      <View style={{ flex: 1 }}>
+        {/* <View style={styles.container}> */}
         {/* <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
           <View style={[styles.inputArea, { paddingBottom: 12 }]}> */}
         {/* <View style={styles.screenContent}> */}
 
-         <KeyboardAvoidingView
-      // style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={{ flex: 1 }}
-    >
+
         {/* Header */}
         <View style={styles.header}>
           <GradientBorder
@@ -826,63 +801,60 @@ const ChatScreen = () => {
         )}
 
         {/* Input Area */}
-        <View
-          style={[
-            styles.inputArea,
-            { paddingBottom: keyboardHeight > 0 ? 15 : 12 },
-          ]}
-        >
-          <Pressable
-            onPress={() => {
-              Keyboard.dismiss();
-              setShowSavedReplies(!showSavedReplies);
-            }}
-            style={[
-              styles.plusAction,
-              {
-                backgroundColor: showSavedReplies
-                  ? Colors.TEAL_PRIMARY_ALT
-                  : Colors.TRANSPARENT,
-              },
-            ]}
-          >
-            <GlassCard style={styles.plusAction}>
-              <Svgicons
-                path={showSavedReplies ? 'chatIconWhite' : 'chatIcon'}
-                size={20}
-              />{' '}
+        <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
+          <View style={styles.inputArea}>
+            <Pressable
+              onPress={() => {
+                Keyboard.dismiss();
+                setShowSavedReplies(!showSavedReplies);
+              }}
+              style={[
+                styles.plusAction,
+                {
+                  backgroundColor: showSavedReplies
+                    ? Colors.TEAL_PRIMARY_ALT
+                    : Colors.TRANSPARENT,
+                },
+              ]}
+            >
+              <GlassCard style={styles.plusAction}>
+                <Svgicons
+                  path={showSavedReplies ? 'chatIconWhite' : 'chatIcon'}
+                  size={20}
+                />
+              </GlassCard>
+            </Pressable>
+
+            {/* <View style={styles.combinedInputContainer}> */}
+            <GlassCard style={styles.mainCardItem}>
+              <TextInput
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder="Ask me any question"
+                placeholderTextColor={Colors.SECRET_CHOCOLATE}
+                style={styles.input}
+                multiline
+                maxLength={500}
+              />
             </GlassCard>
-          </Pressable>
+            {/* </View> */}
 
-          {/* <View style={styles.combinedInputContainer}> */}
-          <GlassCard style={styles.mainCardItem}>
-            <TextInput
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder="Ask me any question"
-              placeholderTextColor={Colors.SECRET_CHOCOLATE}
-              style={styles.input}
-              multiline
-              maxLength={500}
-            />
-          </GlassCard>
-          {/* </View> */}
-
-          <Pressable
-            onPress={sendMessage}
-            disabled={!inputText.trim()}
-            style={[
-              styles.sendButton,
-              !inputText.trim() && styles.sendButtonDisabled,
-            ]}
-          >
-            <Svgicons
-              path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
-              size={18}
-              color={Colors.WHITE}
-            />
-          </Pressable>
-        </View>
+            <Pressable
+              onPress={sendMessage}
+              disabled={!inputText.trim()}
+              style={[
+                styles.sendButton,
+                !inputText.trim() && styles.sendButtonDisabled,
+              ]}
+            >
+              <Svgicons
+                path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
+                size={18}
+                color={Colors.WHITE}
+              />
+            </Pressable>
+          </View>
+        </KeyboardStickyView>
 
         {/* Saved Replies */}
         {showSavedReplies && (
@@ -971,8 +943,7 @@ const ChatScreen = () => {
         )}
         {/* </View>
         </KeyboardStickyView> */}
-        </KeyboardAvoidingView>
-      {/* </View> */}
+      </View>
     </BGImage>
   );
 };
