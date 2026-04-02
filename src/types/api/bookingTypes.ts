@@ -22,6 +22,7 @@ export interface RawBookingData {
   rate?: number;
   bookings?: BookingDetail[];
   listing_image?: string;
+  address?: string;
   
   // Scenario B: Range Data (Directly at root)
   listing_id: number | string;

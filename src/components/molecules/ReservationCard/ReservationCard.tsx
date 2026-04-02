@@ -24,8 +24,6 @@ const ReservationCard = ({
   guestName,
   platform,
   property,
-  endDate,
-  startDate,
   checkIn,
   checkOut,
   platformColor,
@@ -37,18 +35,17 @@ const ReservationCard = ({
     const normalized = platformName.toLowerCase();
     if (normalized.includes('livedin')) return 'reservationlivedin';
     if (normalized.includes('airbnb')) return 'reservationairbnb';
-    // if (normalized.includes('booking')) return 'bookingLogo'; // Example for future-proofing
-    return 'platform'; // Default fallback icon
+    return 'platform'; 
   };
 
   const InfoRow = ({ icon, label, value, valueColor = "#4A4A4A" }: any) => (
     <View style={styles.infoRowContainer}>
       <View style={styles.iconBox}>
-        <Svgicons path={icon} size={ms(40)} />
+        <Svgicons path={icon} size={ms(32)} /> 
       </View>
       <View style={styles.textContainer}>
-        <AppText text={label} color="#8E8E93" fontSize={13} type="Medium" />
-        <AppText text={value} color={valueColor} fontSize={15} type="SemiBold" numberOfLines={1} />
+        <AppText text={label} color="#8E8E93" fontSize={11} type="Medium" />
+        <AppText text={value} color={valueColor} fontSize={14} type="SemiBold" numberOfLines={1} />
       </View>
     </View>
   );
@@ -61,13 +58,13 @@ const ReservationCard = ({
     >
       <View style={styles.glassContainer}>
         
-        {/* Header Section */}
+        {/* Header Section - Reduced Margin */}
         <View style={styles.headerRow}>
-          <AppText text={guestName} type="Bold" fontSize={20} color="#1A1A1A" />
-          <Svgicons path="reservationtitle" size={ms(70)} />
+          <AppText text={guestName} type="Bold" fontSize={18} color="#1A1A1A" />
+          <Svgicons path="reservationtitle" size={ms(55)} />
         </View>
 
-        {/* Info Rows - Each in a separate row with its icon */}
+        {/* Compact Info Rows */}
         <InfoRow 
           icon={getPlatformIcon(platform)}
           label="Booking Platform" 
@@ -80,18 +77,6 @@ const ReservationCard = ({
           label="Property Address" 
           value={property} 
         />
-
-        {/* <InfoRow 
-          icon="calendar" 
-          label="Start Date" 
-          value={startDate} 
-        />
-
-        <InfoRow 
-          icon="calendar" 
-          label="End Date" 
-          value={endDate} 
-        /> */}
 
         <InfoRow 
           icon="reservationcheckin" 
@@ -118,12 +103,13 @@ const ReservationCard = ({
 
 const styles = StyleSheet.create({
   cardShadowWrapper: {
-    marginBottom: vs(16),
+    marginBottom: vs(12), 
   },
   glassContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.45)', 
-    borderRadius: ms(22),
-    padding: ms(20),
+    borderRadius: ms(18),
+    paddingHorizontal: ms(16),
+    paddingVertical: ms(12),
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.8)',
   },
@@ -131,32 +117,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: vs(20),
-  },
-  topRightIcon: {
-    padding: ms(8),
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: ms(12),
-    // Subtle shadow for the ID icon box
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    marginBottom: vs(10),
   },
   infoRowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: vs(15),
+    marginBottom: vs(8), 
   },
   iconBox: {
-    width: ms(38),
-    height: ms(38),
+    width: ms(34),
+    height: ms(34), 
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: ms(10),
+    borderRadius: ms(8),
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: s(12),
+    marginRight: s(10),
   },
   textContainer: {
     flex: 1,

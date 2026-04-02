@@ -11,17 +11,17 @@ interface MultiChannelCalendarProps {
   onDayPress: (day: any) => void;
   currentDate?: string;
   bookings: RawBookingData[];
+  onListingPress?: (id: string | number) => void;
 }
 
-
-
-const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate, bookings }: MultiChannelCalendarProps) => {
+const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate, bookings, onListingPress }: MultiChannelCalendarProps) => {
   return (
     <View>
       {bookings.map((item) => (
         <CalendarListingCard 
           key={item.listing_id} 
           item={item}
+          onPress={onListingPress}
         />
       ))}
     </View>

@@ -123,6 +123,10 @@ const ListingScreen = () => {
     if (success) setIsBookingOpen(false);
   };
 
+  const handleListingRowPress = (id: string | number) => {
+    setValue('listing_selection', String(id));
+  };
+
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.transparentContainer} edges={['top']}>
@@ -147,7 +151,6 @@ const ListingScreen = () => {
           <>
             <View style={styles.headerFixed}>
               <View style={styles.headerRow}>
-                {/* Fixed AppText props to match your component definition */}
                 <AppText 
                   text="Guest Bookings" 
                   fontSize={22} 
@@ -191,6 +194,7 @@ const ListingScreen = () => {
                 defaultPrice={defaultDailyPrice}
                 isLoading={isRefreshing}
                 onRefresh={handleRefresh}
+                onListingPress={handleListingRowPress}
               />
             ) : (
               <View style={{ flex: 1 }}>

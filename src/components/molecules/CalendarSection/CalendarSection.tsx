@@ -18,15 +18,16 @@ interface Props {
   onRefresh?: () => Promise<any> | void;
   isLoading: boolean;
   bookings: RawBookingData[];
+  onListingPress?: (id: string | number) => void;
 }
-export const CalendarSection = ({ control, errors, listingOptions, bookings, selectedListingId, markedDates, onDayPress, defaultPrice, isLoading,onRefresh  }: Props) => (
+export const CalendarSection = ({ onListingPress, control, errors, listingOptions, bookings, selectedListingId, markedDates, onDayPress, defaultPrice, isLoading,onRefresh  }: Props) => (
   <RefreshableScrollView isLoading={isLoading} onRefresh={onRefresh} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}>
     <DropdownField name="listing_selection" control={control} errors={errors} label="Select Listing" data={listingOptions} placeholder="All Listings" />
     <View style={{ marginTop: vs(20) }}>
       {selectedListingId ? (
         <CustomCalendar markedDates={markedDates} onDayPress={onDayPress} defaultPrice={defaultPrice} />
       ) : (
-        <MultiChannelCalendar markedDates={markedDates} onDayPress={onDayPress} bookings={bookings} />
+        <MultiChannelCalendar markedDates={markedDates} onDayPress={onDayPress} bookings={bookings} onListingPress={onListingPress} />
       )}
     </View>
   </RefreshableScrollView>

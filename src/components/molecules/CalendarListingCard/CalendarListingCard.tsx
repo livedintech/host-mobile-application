@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import moment from 'moment';
 import { RawBookingData } from '@/types/api/bookingTypes';
@@ -11,70 +11,101 @@ const TEXT_SUB = '#7B8D88';
 
 interface CalendarListingCardProps {
   item: RawBookingData;
+  onPress?: (id: string | number) => void;
 }
 
 const PLACEHOLDER_IMAGE = require('@/assets/img/property_placeholder.png');
 
-const CalendarListingCard = ({ item }: CalendarListingCardProps) => {
+const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
   
   const renderMonthGrid = () => {
-    // Anchor to the current month (today) to show real-time availability
-    const referenceDate = moment(); 
+    const referenceDate = moment();
     const daysInMonth = referenceDate.daysInMonth();
     const startOfMonth = moment(referenceDate).startOf('month');
 
-    return Array.from({ length: daysInMonth }).map((_, i) => {
+    const daysData = Array.from({ length: daysInMonth }).map((_, i) => {
       const currentDotDate = moment(startOfMonth).add(i, 'days').startOf('day');
-      const uniqueKey = `${item.id}-${currentDotDate.format('YYYY-MM-DD')}`;
-      // Check if this specific day overlaps with ANY of the bookings for this property
-      const isHighlighted = item.bookings?.some(booking => {
-        // Use the actual keys from your API response: start_date and calendar_end_date
-        if (!booking.start_date || !booking.calendar_end_date) return false;
-        
+      const isBooked = item.bookings?.some(booking => {
         const start = moment(booking.start_date).startOf('day');
         const end = moment(booking.calendar_end_date).startOf('day');
-        
         return currentDotDate.isSameOrAfter(start) && currentDotDate.isSameOrBefore(end);
       });
-
-      return (
-        <View 
-          key={uniqueKey}
-          style={[
-            styles.miniDot, 
-            { backgroundColor: isHighlighted ? FIGMA_TEAL : DOT_EMPTY }
-          ]} 
-        />
-      );
+      return { date: currentDotDate, isBooked };
     });
+
+    const elements = [];
+    let i = 0;
+
+    while (i < daysData.length) {
+      if (daysData[i].isBooked) {
+        let count = 0;
+        let startIdx = i;
+        while (i < daysData.length && daysData[i].isBooked) {
+          count++;
+          i++;
+        }
+        
+        elements.push(
+          <View 
+            key={`bar-${startIdx}`} 
+            style={[
+              count > 1 ? styles.miniBar : styles.miniDot, 
+              { 
+                backgroundColor: FIGMA_TEAL, 
+                width: count > 1 ? ms(6 * count + 3 * (count - 1)) : ms(6) 
+              }
+            ]} 
+          />
+        );
+      } else {
+        elements.push(
+          <View key={`empty-${i}`} style={[styles.miniDot, { backgroundColor: DOT_EMPTY }]} />
+        );
+        i++;
+      }
+    }
+
+    return elements;
   };
 
   return (
-    <View style={styles.cardContainer}>
-      {/* Property Image */}
-      <Image 
-        source={item?.listing_image ? { uri: item.listing_image } : PLACEHOLDER_IMAGE} 
-        style={styles.propertyImage} 
-        resizeMode="cover"
-      />
-      
-      {/* Listing Info */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.propertyTitle} numberOfLines={1}>
-          {item.listing_title || "Untitled Property"}
-        </Text>
-        <Text style={styles.propertyDescription} numberOfLines={2}>
-          {item?.listing_desc || ""}
-        </Text>
-      </View>
+    <TouchableOpacity 
+      activeOpacity={0.8} 
+      onPress={() => onPress?.(item.listing_id)}
+    >
+      <View style={styles.cardContainer}>
+        {/* Property Image */}
+        <Image 
+          source={item?.listing_image ? { uri: item.listing_image } : PLACEHOLDER_IMAGE} 
+          style={styles.propertyImage} 
+          resizeMode="cover"
+        />
+        
+        {/* Listing Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.propertyTitle} numberOfLines={1}>
+            {item.listing_title || "Untitled Property"}
+          </Text>
+          
+          {item.address ? (
+            <Text style={styles.propertyAddress} numberOfLines={2}>
+              {item.address}
+            </Text>
+          ) : null}
 
-      {/* Dynamic Calendar Column */}
-      <View style={styles.calendarColumn}>
-        <View style={styles.dotsGrid}>
-          {renderMonthGrid()}
+          <Text style={styles.propertyDescription} numberOfLines={1}>
+            {item?.listing_desc || ""}
+          </Text>
+        </View>
+
+        {/* Dynamic Calendar Column */}
+        <View style={styles.calendarColumn}>
+          <View style={styles.dotsGrid}>
+            {renderMonthGrid()}
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -82,47 +113,60 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: ms(10),
-    padding: s(10),
+    borderRadius: ms(20), // Increased for premium rounded look
+    padding: s(12),
     marginBottom: vs(12),
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.7)',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Added slight bg for glass effect
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   propertyImage: {
-    width: ms(60),
-    height: ms(60),
+    width: ms(70), // Slightly larger to match SS
+    height: ms(70),
     backgroundColor: '#F5F5F5',
-    borderRadius: 10
+    borderRadius: ms(15)
   },
   infoContainer: {
     flex: 1,
     paddingHorizontal: s(12),
+    justifyContent: 'center',
   },
   propertyTitle: {
-    fontSize: ms(14),
+    fontSize: ms(15),
     fontWeight: '700',
     color: TEXT_MAIN,
+    marginBottom: vs(2),
+  },
+  propertyAddress: {
+    fontSize: ms(12),
+    color: '#4A5D58', // Slightly darker than sub-text for readability
+    fontWeight: '500',
+    marginBottom: vs(2),
   },
   propertyDescription: {
-    fontSize: ms(11),
+    fontSize: ms(10),
     color: TEXT_SUB,
-    marginTop: vs(2),
+    marginTop: vs(1),
   },
   calendarColumn: {
-    width: ms(75),
-    alignItems: 'center',
+    width: ms(85),
+    alignItems: 'flex-end',
     justifyContent: 'center',
   },
   dotsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: ms(70), 
+    width: ms(80),
     gap: ms(3),
+    alignItems: 'center',
     justifyContent: 'flex-start',
   },
   miniDot: {
     width: ms(6),
+    height: ms(6),
+    borderRadius: ms(3),
+  },
+  miniBar: {
     height: ms(6),
     borderRadius: ms(3),
   },
