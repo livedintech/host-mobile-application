@@ -39,7 +39,7 @@ export default function useEnterPasswordContainer() {
     setPassword,
   } = useRememberMeStore();
   const { setToken, setUser } = useAuthStore();
-  const {clearPhoneData} = usePhoneStore()
+  const { clearPhoneData } = usePhoneStore()
 
   const { params } = useRoute();
 
@@ -70,8 +70,17 @@ export default function useEnterPasswordContainer() {
         return;
       }
       clearPhoneData()
-      setToken(data?.access_token);
-      setUser(data?.user);
+      if (data?.user?.signup_step === 'step_1') {
+        navigate(NavigationRoutes.AUTH_STACK.PAYMENT)
+      }
+      else if (data?.user?.signup_step === 'step_2') {
+        setToken(data?.access_token);
+        setUser(data?.user);
+      }
+      else {
+        setToken(data?.access_token);
+        setUser(data?.user);
+      }
       Toast.show({ type: 'success', text1: message });
     },
     onError: ({ message }) => {
@@ -94,10 +103,7 @@ export default function useEnterPasswordContainer() {
         code: params?.countryCallingCode,
         actualPhone: params?.phoneNo
       });
-      // navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
-      //   isLoginScreen: true,
-      //   phone: params?.countryCallingCode + params?.phoneNo,
-      // });
+
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message || 'Login failed' });
