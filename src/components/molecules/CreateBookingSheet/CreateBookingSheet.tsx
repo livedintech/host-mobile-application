@@ -94,7 +94,7 @@ export const CreateBookingSheet = ({
               errors={errors}
               label="Stay Type"
               placeholder="Select stay type"
-              data={[{ label: 'Host', value: 'host' }, { label: 'Livedin', value: 'livedin' }]}
+              data={[{ label: 'Guest Stay', value: 'guest_stay' }, { label: 'Self Stay', value: 'self_stay' }]}
             />
             <InputField name="name" control={control} errors={errors} label="Guest Name" placeholder="Enter guest name" />
             <InputField name="email" control={control} errors={errors} label="Email" placeholder="guest@example.com" keyboardType="email-address" />

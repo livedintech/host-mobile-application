@@ -23,6 +23,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
 import { formatTimeWithPeriod } from '@/utility/formatTime';
 import { formatDateDisplay } from '@/utility/formatDate';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const FIGMA_TEAL = '#21AA8F';
 

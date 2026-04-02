@@ -8,7 +8,7 @@ export const FILTER_OPTIONS = [
   { id: 'today', label: 'Today' },
   { id: 'pending_request', label: 'Pending Request' },
   { id: 'pending_reviews', label: 'Pending Reviews' },
-  { id: 'check_in', label: 'Check-in' },
-  { id: 'check_out', label: 'Check-out' },
+  // { id: 'check_in', label: 'Check-in' },
+  { id: 'check_out', label: 'Checked-out' },
   { id: 'upcoming', label: 'Upcoming' },
 ];
