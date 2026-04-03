@@ -81,7 +81,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     queryFn: () => getCalendarBookingManagementListingsApi(selectedListingId || ''),
     enabled: !!user?.id,
   });
-
+  const cleaningFee = calendarResponse?.cleaningFee;
+  const discount = calendarResponse?.discount;
   const rawData = calendarResponse?.bookings || [];
   const defaultDailyPrice = calendarResponse?.defaultDailyPrice || 0;
   const calendarDataMap = useMemo(() => {
@@ -287,6 +288,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     handleRefresh,
     isBookingOpen,
     setIsBookingOpen,
-    isLoading
+    isLoading,
+    cleaningFee,
+    discount
   };
 }
