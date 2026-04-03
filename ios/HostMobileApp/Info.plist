@@ -57,7 +57,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take property photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Used to provide relevant location-based features and notifications.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to your microphone for recording videos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
