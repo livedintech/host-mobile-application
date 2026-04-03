@@ -109,7 +109,7 @@ export const CreateBookingSheet = ({
              </View>
           </View>
         ) : (
-          <InputField name="rate" control={control} errors={errors} label="Pricing (SAR)" placeholder="e.g. 500" keyboardType="numeric" />
+          <InputField name="rate" control={control} errors={errors} label="Base Price" placeholder="SAR 500" keyboardType="numeric" />
         )}
 
         <DateTimeInputField
