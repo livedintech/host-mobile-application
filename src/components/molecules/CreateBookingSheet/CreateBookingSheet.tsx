@@ -24,6 +24,8 @@ interface Props {
   listingOptions: any[];
   selectedListingId: string;
   onSubmit: () => void;
+  cleaningFee: number;
+  discount: number
 }
 
 export const CreateBookingSheet = ({
@@ -36,12 +38,35 @@ export const CreateBookingSheet = ({
   listingOptions,
   selectedListingId,
   onSubmit,
-  isLoading
+  isLoading,
+  cleaningFee,
+  discount
 }: Props) => {
   const today = new Date();
+  // Watch fields for real-time calculation
   const startDateValue = useWatch({ control, name: 'start_date' });
+  const endDateValue = useWatch({ control, name: 'end_date' });
+  const rateValue = useWatch({ 
+    control, 
+    name: 'rate',
+    defaultValue: "0" 
+  });
+
   const minStartDate = today;
   const minEndDate = startDateValue ? new Date(startDateValue) : today;
+
+  // Calculate Total Logic
+    const getGuestTotal = () => {
+    const cleanedRate = typeof rateValue === 'string' 
+      ? rateValue.replace(/[^0-9.]/g, '') 
+    : rateValue;
+    
+    const rate = parseFloat(cleanedRate) || 0;
+    const total = (rate + cleaningFee) - discount;
+    return Math.max(0, total);
+  };
+
+  const guestTotal = getGuestTotal();
 
   return (
     <BottomSheetComponent isVisible={isVisible} onClose={onClose}>
@@ -63,6 +88,7 @@ export const CreateBookingSheet = ({
             <Svgicons path="closeIcon" size={20} />
           </TouchableOpacity>
         </View>
+
         {/* Type Selector */}
         <View style={styles.radioRow}>
           {['direct', 'pricing'].map((type) => (
@@ -109,7 +135,31 @@ export const CreateBookingSheet = ({
              </View>
           </View>
         ) : (
-          <InputField name="rate" control={control} errors={errors} label="Pricing (SAR)" placeholder="e.g. 500" keyboardType="numeric" />
+          <View>
+            <InputField 
+              name="rate" 
+              control={control} 
+              errors={errors} 
+              label="Base Price" 
+              placeholder="SAR 500" 
+              keyboardType="numeric" 
+            />
+            <View style={styles.pricingInfoContainer}>
+              <AppText 
+                text="SR499 - SR500 depending on promotions" 
+                fontSize={13} 
+                color={Colors.DRAVIT_GREY} 
+              />
+              <TouchableOpacity activeOpacity={0.7}>
+                <AppText 
+                  text="Similar listings SR86 - SR129" 
+                  fontSize={13} 
+                  color={Colors.DRAVIT_GREY} 
+                  style={styles.underline}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
 
         <DateTimeInputField
@@ -135,6 +185,20 @@ export const CreateBookingSheet = ({
           rules={{ required: 'Check-out date is required' }}
           rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
         />
+
+        {/* Guest Total Display - Matches SS */}
+        {/* {guestTotal > 0 && ( */}
+          <View style={styles.totalContainer}>
+            <TouchableOpacity activeOpacity={0.7}>
+              <AppText 
+                text={`Guest total SAR ${guestTotal}`} 
+                fontSize={14} 
+                color={Colors.DRAVIT_GREY} 
+                style={styles.underline}
+              />
+            </TouchableOpacity>
+          </View>
+        {/* )} */}
 
         <View style={styles.buttonContainer}>
           <AppButton
@@ -208,9 +272,20 @@ const styles = StyleSheet.create({
     width: ms(36),
     height: ms(36),
     borderRadius: ms(18),
-    backgroundColor: '#E0E0E0', 
+    backgroundColor: '#F0F0F0', 
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  pricingInfoContainer: {
+    marginBottom: vs(15),
+    gap: vs(2),
+  },
+  totalContainer: {
+    marginTop: vs(10),
+    paddingLeft: s(2),
+  },
+  underline: {
+    textDecorationLine: 'underline',
   },
 });
 

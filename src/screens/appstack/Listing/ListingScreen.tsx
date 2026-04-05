@@ -62,7 +62,9 @@ const ListingScreen = () => {
     isRefreshing,
     isBookingOpen,
     setIsBookingOpen,
-    isLoading
+    isLoading,
+    cleaningFee, 
+    discount
   } = useListingContainer(route.params?.listing_id, selectedTab);
 
   const toggleTab = () => {
@@ -268,6 +270,8 @@ const ListingScreen = () => {
             setBookingType={setBookingType}
             control={control}
             errors={errors}
+            cleaningFee={cleaningFee}
+            discount={discount}
             listingOptions={listingOptions}
             selectedListingId={selectedListingId || ''}
             onSubmit={handleSubmit(onBookingSubmit)}

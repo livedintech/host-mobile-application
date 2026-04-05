@@ -7,42 +7,41 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '../AppText/AppText';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-// Match original padding and column math
 const CALENDAR_PADDING = s(32);
 const COLUMN_WIDTH = (SCREEN_WIDTH - CALENDAR_PADDING) / 7;
 const SELECTION_HEIGHT = vs(46); 
 
-const getOTASource = (source?: string) => {
-  const name = source?.toLowerCase() || '';
-  if (name.includes('airbnb')) return { icon: 'airbnb' };
-  if (name.includes('booking')) return { icon: 'booking' };
-  if (name.includes('gathern')) return { icon: 'gathern' };
-  return { icon: 'livedin' };
+// Brand Colors
+const COLORS = {
+  LIVEDIN_DARK: '#479682',
+  LIVEDIN_LIGHT: '#C6E2D9',
+  AIRBNB_DARK: '#FF5A5F',
+  AIRBNB_LIGHT: 'rgba(255, 90, 95, 0.12)',
+  BOOKING_DARK: '#003580',
+  BOOKING_LIGHT: 'rgba(0, 53, 128, 0.1)',
+  GATHERN_DARK: '#BE91E9', // Vibrant Purple from your image
+  GATHERN_LIGHT: '#E4D1F5', // Light Purple Wash from your image
+  DEFAULT_BLUE: '#49A6E9',
+  DEFAULT_LIGHT: '#E1F1FD'
 };
 
-const getSolidLightColor = (hex: string) => {
-  const color = hex?.toUpperCase();
-  switch (color) {
-    case '#49A6E9': 
-      return '#E1F1FD'; 
-    case '#FF5A5F': 
-      return 'rgba(255, 90, 95, 0.15)'; 
-    case '#A855F7': 
-      return 'rgba(168, 85, 247, 0.15)';
-    case '#3B82F6': 
-      return 'rgba(59, 130, 246, 0.15)'; 
-    case '#003580': 
-      return 'rgba(0, 53, 128, 0.15)';
-    default: 
-      return 'rgba(243, 244, 246, 0.15)'; 
-  }
+const getOTASource = (source?: string) => {
+  const name = source?.toLowerCase() || '';
+  if (name.includes('airbnb')) return { icon: 'airbnb', color: COLORS.AIRBNB_DARK, light: COLORS.AIRBNB_LIGHT };
+  if (name.includes('booking')) return { icon: 'booking', color: COLORS.BOOKING_DARK, light: COLORS.BOOKING_LIGHT };
+  if (name.includes('gathern')) return { icon: 'gathern', color: COLORS.GATHERN_DARK, light: COLORS.GATHERN_LIGHT };
+  // Default to Livedin
+  return { icon: 'livedin', color: COLORS.LIVEDIN_DARK, light: COLORS.LIVEDIN_LIGHT };
 };
 
 const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
-  const { type, color, guest, price, rate, showLabel, ota, bookingData } = marking || {};
+  const { type, guest, price, rate, showLabel, ota, bookingData, color: markingColor } = marking || {};
   const isActive = !!type && type !== 'none';
-  const themeColor = color || '#3B82F6';
   
+  const brand = getOTASource(ota);
+  const themeColor = brand.color || markingColor || COLORS.DEFAULT_BLUE;
+  const solidLight = brand.light || COLORS.DEFAULT_LIGHT;
+
   const dateString = date.dateString;
   const arrival = bookingData?.arrival_date;
   const departure = bookingData?.departure_date;
@@ -53,9 +52,6 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
   const isStart = isActive && isArrival && !isDeparture;
   const isEnd = isActive && isDeparture && !isArrival;
   const isMid = isActive && !isArrival && !isDeparture;
-
-  const otaIconData = getOTASource(ota);
-  const solidLight = getSolidLightColor(themeColor);
 
   const RADIUS = ms(12); 
 
@@ -96,7 +92,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
             styles.selectionBase,
             {
               backgroundColor: themeColor,
-              width: isSingleDay ? SELECTION_HEIGHT : '100%', // Fill width for start/end to connect
+              width: isSingleDay ? SELECTION_HEIGHT : '100%',
               left: isSingleDay ? (COLUMN_WIDTH - SELECTION_HEIGHT) / 2 : 0,
               borderRadius: RADIUS,
               zIndex: 2,
@@ -114,7 +110,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
           {showLabel && isActive && (
             <View style={styles.labelPositioner} pointerEvents="none">
               <View style={[styles.labelRow, isSingleDay && { maxWidth: SELECTION_HEIGHT * 0.9 }]}>
-                <Svgicons path={otaIconData.icon as any} size={ms(9)} color={iconColor} />
+                <Svgicons path={brand.icon as any} size={ms(9)} color={iconColor} />
                 <AppText 
                   text={displayName} 
                   style={[styles.guestTextInside, { color: isMid ? themeColor : '#FFF' } as TextStyle]} 
@@ -142,6 +138,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
     </View>
   );
 };
+
 const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: any) => {
   return (
     <View style={styles.glassCard}>
@@ -158,28 +155,12 @@ const CustomCalendar = ({ markedDates, onDayPress, currentDate, defaultPrice }: 
           backgroundColor: 'transparent',
           calendarBackground: 'transparent',
           'stylesheet.calendar.main': {
-            container: {
-              paddingLeft: 0,
-              paddingRight: 0,
-              backgroundColor: 'transparent',
-            },
-            monthView: {
-              backgroundColor: 'transparent',
-            }
+            container: { paddingLeft: 0, paddingRight: 0, backgroundColor: 'transparent' },
+            monthView: { backgroundColor: 'transparent' }
           },
           'stylesheet.calendar.header': {
-            header: {
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: 'transparent',
-            },
-            week: {
-              marginTop: 7,
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              backgroundColor: 'transparent',
-            }
+            header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'transparent' },
+            week: { marginTop: 7, flexDirection: 'row', justifyContent: 'space-around', backgroundColor: 'transparent' }
           },
           monthTextColor: '#1A332C',
           textMonthFontWeight: '700',
@@ -258,4 +239,3 @@ const styles = StyleSheet.create({
 });
 
 export default CustomCalendar;
-

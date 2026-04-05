@@ -81,7 +81,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     queryFn: () => getCalendarBookingManagementListingsApi(selectedListingId || ''),
     enabled: !!user?.id,
   });
-
+  const cleaningFee = calendarResponse?.cleaningFee;
+  const discount = calendarResponse?.discount;
   const rawData = calendarResponse?.bookings || [];
   const defaultDailyPrice = calendarResponse?.defaultDailyPrice || 0;
   const calendarDataMap = useMemo(() => {
@@ -213,7 +214,14 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
 
       // 1. Combine Country Calling Code and Phone Number
       const fullPhone = `${formData.country?.callingCode || ''}${formData.phoneNumber || ''}`;
-
+      const rateValue = Number(formData?.rate || 0);
+      console.log('@@@@@formData@@@', formData)
+      if (rateValue < 38) {
+        Toast.show({ 
+          type: 'error', 
+          text1: 'The minimum price allowed is 38'
+        });
+      }
       // 2. Build the flat payload
       const payload = {
         ...formData,
@@ -230,7 +238,6 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
       const res = bookingType === 'direct'
         ? await createDirectBookingApi(payload)
         : await updateCalendarPricingApi({ ...payload, price: formData.rate || '' });
-
       if (res) {
         Toast.show({ 
           type: 'success', 
@@ -243,7 +250,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
         return true;
       }
     } catch (error: any) {
-      console.error('Booking Error:', error);
+      console.error('Booking Error:****', error);
       const validationErrors = error?.data?.errors;
       if (validationErrors) {
         const firstField = Object.keys(validationErrors)[0];
@@ -261,6 +268,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     }
     return false;
   };
+  
+  
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -279,6 +288,8 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     handleRefresh,
     isBookingOpen,
     setIsBookingOpen,
-    isLoading
+    isLoading,
+    cleaningFee,
+    discount
   };
 }
