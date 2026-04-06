@@ -15,7 +15,6 @@ import InputField from '@/components/molecules/Input/InputField';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { Colors } from '@/theme/colors';
 import useHubspotDetailFormContainer, { COUNTRIES, COUNTRY_FLAGS } from './HubspotDetailFormContainer';
-import PhoneInputField from '@/components/molecules/Input/PhoneInputField';
 
 const FIGMA_TEAL = '#20957B';
 
@@ -66,15 +65,6 @@ const HubspotDetailFormScreen = () => {
               placeholder="Enter Legal Name"
             />
 
-            <PhoneInputField
-              label="Phone Number *"
-              control={control}
-              errors={errors}
-              countryFieldName="countryCode"
-              phoneFieldName="phone"     
-              activeColor={FIGMA_TEAL}
-            />
-
             <InputField
               name="email"
               control={control}
@@ -82,6 +72,11 @@ const HubspotDetailFormScreen = () => {
               label="Email *"
               placeholder="example@email.com"
               keyboardType="email-address"
+              rules={{
+                onChange: (e) => {
+                  e.target.value = e.target.value.toLowerCase();
+                },
+              }}
             />
 
             {/* Country Picker Trigger */}

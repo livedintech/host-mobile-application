@@ -86,11 +86,12 @@ export const fetchSlotsForDate = async (slug: string, date: string): Promise<Hub
     const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startOfDay}&endTime=${endOfDay}&start=${startOfDay}&end=${endOfDay}&timezone=${encodedTz}`;
 
     const res = await fetch(url, { method: 'GET', headers: getHeaders() });
+    console.log('OH NO....', res)
     if (!res.ok) return [];
 
     const data = await res.json();
     
-    const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['900000']?.availabilities || [];
+    const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['90000']?.availabilities || [];
     
     const filteredSlots = availabilityData.filter((slot: any) => {
       const slotDate = new Date(slot.startMillisUtc).toISOString().split('T')[0];
@@ -256,16 +257,18 @@ export const submitLeadAndBookMeeting = async (
   agent: Agent
 ): Promise<{ success: boolean; error?: string }> => {
   const contactId = await createHubSpotContact(lead, agent.ownerId);
+  if (!contactId) return { success: false, error: 'Failed to create contact' };
 
-  const success = await bookHubSpotMeeting(
-    lead,
-    slot,
-    agent.meetingSlug
-  );
+  // Stop calendar invite for the time being.
+  // const success = await bookHubSpotMeeting(
+  //   lead,
+  //   slot,
+  //   agent.meetingSlug
+  // );
 
-  if (!success) {
-    return { success: false, error: 'Meeting booking failed' };
-  }
+  // if (!success) {
+  //   return { success: false, error: 'Meeting booking failed' };
+  // }
 
   return { success: true };
 };
