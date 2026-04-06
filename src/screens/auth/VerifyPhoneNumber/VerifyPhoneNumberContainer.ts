@@ -22,6 +22,8 @@ const RESEND_TIME_LIMIT = 60; // 60 seconds timer
 export default function useVerifyPhoneNumberContainer() {
   const [timer, setTimer] = useState<number>(RESEND_TIME_LIMIT);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
+  const [resetKey, setResetKey] = useState(0); // Screen ke liye
+
   const { params } = useRoute();
   
   const phone = (params as any)?.phone;
@@ -148,5 +150,11 @@ export default function useVerifyPhoneNumberContainer() {
     handleResendOtp,
     handleVerifyOtp: handleSubmit(handleVerifyOtp),
     formatTimer,
+    setResetKey,
+    resetKey,
+    setIsResendDisabled,
+    setTimer,
+    RESEND_TIME_LIMIT,
+    resetKey
   };
 }

@@ -56,7 +56,7 @@ export default function useCreateAccountContainer() {
     mutationFn: createAccountApi,
     onSuccess: ({ message }) => {
       Toast.show({ type: 'success', text1: message });
-      navigate(NavigationRoutes.AUTH_STACK.PAYMENT, { phone: phone, pricing });
+      navigate(NavigationRoutes.AUTH_STACK.PAYMENT, { phone: phone, pricing:pricing });
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message });
