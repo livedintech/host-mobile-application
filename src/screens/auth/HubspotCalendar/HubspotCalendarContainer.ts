@@ -41,6 +41,7 @@ export default function useHubspotCalendarContainer(
     setLoadingDates(true);
     // Checks all 4 agents in parallel via HubSpot (which reads Google Calendar)
     const dates = await fetchAllAgentsAvailableDates(year, month);
+    console.log('Dates received by Container:', dates); // Check your debugger!
     setAvailableDates(dates);
     setLoadingDates(false);
   };
@@ -54,6 +55,7 @@ export default function useHubspotCalendarContainer(
     setLoadingSlots(true);
     // Auto-picks first available agent (round-robin: 1 → 2 → 3 → 4)
     const result = await fetchFirstAvailableAgentForDate(dateStr);
+    console.log('Result from API', dateStr, result)
     setAgentWithSlots(result);
     setLoadingSlots(false);
   };
@@ -72,17 +74,32 @@ export default function useHubspotCalendarContainer(
     const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
 
     for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(currentMonth.year, currentMonth.month - 1, d);
       const dateStr = `${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      
+      // Get day of week: 0 = Sunday, 5 = Friday, 6 = Saturday
+      const dayOfWeek = date.getDay();
+      const isSaudiWeekend = dayOfWeek === 5 || dayOfWeek === 6;
 
+      // Logic for marking dates
       if (dateStr < today) {
+        // Past dates: Disabled
         marked[dateStr] = { disabled: true, disableTouchEvent: true };
+      } else if (isSaudiWeekend) {
+        // Saudi Weekends (Fri/Sat): Disabled and Faded
+        marked[dateStr] = { 
+          disabled: true, 
+          disableTouchEvent: true,
+        };
       } else if (availableDates[dateStr]) {
+        // Available Weekdays: Active
         marked[dateStr] = { 
           marked: false, 
           disabled: false, 
           disableTouchEvent: false 
         };
       } else {
+        // Weekdays with no HubSpot slots: Disabled
         marked[dateStr] = { disabled: true, disableTouchEvent: true };
       }
     }
@@ -98,7 +115,7 @@ export default function useHubspotCalendarContainer(
     }
 
     return marked;
-};
+  };
 
   // ─── Book meeting + create lead ───────────────────────────────────────────
   const { mutate: confirmBooking, isPending: isBooking } = useMutation({
@@ -106,7 +123,7 @@ export default function useHubspotCalendarContainer(
       submitLeadAndBookMeeting(
         {
           fullName: userInfo.fullName,
-          phone: userInfo.phone || '',
+          phone: userInfo?.phone?.phone || '',
           email: userInfo.email || '',
           country: userInfo.country,
           city: userInfo.city,
