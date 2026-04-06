@@ -91,7 +91,7 @@ export const fetchSlotsForDate = async (slug: string, date: string): Promise<Hub
 
     const data = await res.json();
     
-    const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['90000']?.availabilities || [];
+    const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['900000']?.availabilities || [];
     
     const filteredSlots = availabilityData.filter((slot: any) => {
       const slotDate = new Date(slot.startMillisUtc).toISOString().split('T')[0];
