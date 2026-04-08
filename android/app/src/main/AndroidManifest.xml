@@ -61,6 +61,14 @@
       android:scheme="livedin"
       android:host="airbnb-callback" />
   </intent-filter>
+  <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="livedinapp"
+                    android:host="signup" />
+            </intent-filter>
 
         </activity>
 

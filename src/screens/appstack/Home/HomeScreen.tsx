@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   cardStyle: {
     minHeight: Metrics.verticalScale(140),
     justifyContent: 'space-between',
-    padding: 16
+    padding: 16,
   },
   cardHeader: { alignItems: 'center', flexDirection: 'row' },
   iconBox: {

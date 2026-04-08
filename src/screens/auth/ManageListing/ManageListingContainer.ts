@@ -14,15 +14,17 @@ export default function useManageListingContainer() {
 
   const onSelect = (value: number | null) => {
     if (!value) return;
-      const payload = {
-        phone: params,
-        listing_count: localSelectedId,
-        pricing: plan?.price,
-      };
+    const payload = {
+      country_code: params?.country_code,
+      phone_number: params?.phone_number,
+      phone_with_code: params?.phone_with_code,
+      listing_count: localSelectedId,
+      pricing: plan?.price,
+    };
     if (value === 1) {
-      navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {payload});
+      navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, { payload });
     } else {
-      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {payload});
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, { payload });
     }
   };
 
@@ -32,38 +34,18 @@ export default function useManageListingContainer() {
   });
 
   const listingData =
-  data
-    ?.map((item: { name: string; id: string }) => ({
-      label: item.name,
-      value: item.id,
-    }))
-    .reverse() || [];
+    data
+      ?.map((item: { name: string; id: string }) => ({
+        label: item.name,
+        value: item.id,
+      }))
+      .reverse() || [];
 
   const plan = data.find(item => item.id === 1);
 
 
-  const {
-    mutate: resendOtpPayload,
-    isPending: isPendingResendOtp,
-    isIdle: isIdleResendOtp,
-  } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
-    mutationFn: resendOtpApi,
-    onSuccess: () => {
-      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
-        isLoginScreen: false,
-        phone: params,
-        listing_count: localSelectedId,
-        pricing: plan?.price
-      });
-    },
-    onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
-    },
-  });
-
-
   return {
-    isLoading: isPendingResendOtp && !isIdleResendOtp || isLoading,
+    isLoading: isLoading,
     localSelectedId,
     setLocalSelectedId,
     onSelect,

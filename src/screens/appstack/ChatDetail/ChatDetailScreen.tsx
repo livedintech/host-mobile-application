@@ -8,7 +8,8 @@ import {
   TextInput,
   Platform,
   Animated,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback
 } from 'react-native';
 import {
   Menu,
@@ -377,8 +378,8 @@ const ChatScreen = () => {
           />
 
           <Pressable
-            onPress={() => handleMessageSelect(item)}
-            onLongPress={() => handleReplyToMessage(item)}
+            onLongPress={() => handleMessageSelect(item)}
+            // onLongPress={() => handleReplyToMessage(item)}
             style={[
               styles.messageBubble,
               isHost ? styles.hostBubble : styles.guestBubble,
@@ -491,6 +492,7 @@ const ChatScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{ flex: 1 }}>
         {/* <View style={styles.container}> */}
         {/* <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
@@ -661,6 +663,19 @@ const ChatScreen = () => {
               onStartShouldSetResponder={() => true}
               onTouchEnd={e => e.stopPropagation()}
             >
+              <Pressable
+                style={styles.menuOption}
+                onPress={() => {
+                  handleReplyToMessage(selectedMessageData);
+                  setSelectedMessageId(null);
+                  setSelectedMessageData(null);
+                }}
+              >
+                <View style={styles.menuTextContainer}>
+                  <AppText text="Reply" fontSize={13} />
+                </View>
+                <Svgicons path="chatIcon" size={16} />
+              </Pressable>
               <Pressable
                 style={styles.menuOption}
                 onPress={() => {
@@ -944,6 +959,7 @@ const ChatScreen = () => {
         {/* </View>
         </KeyboardStickyView> */}
       </View>
+      </TouchableWithoutFeedback>
     </BGImage>
   );
 };
@@ -1210,6 +1226,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
     gap: 10,
+    backgroundColor: Colors.WHITE
   },
   plusAction: {
     justifyContent: 'center',

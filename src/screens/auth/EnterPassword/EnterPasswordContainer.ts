@@ -42,6 +42,7 @@ export default function useEnterPasswordContainer() {
   const { clearPhoneData } = usePhoneStore()
 
   const { params } = useRoute();
+  const { phone_number, phone_with_code, country_code } = params;
 
   const {
     control,
@@ -70,8 +71,13 @@ export default function useEnterPasswordContainer() {
         return;
       }
       clearPhoneData()
-      if (data?.user?.signup_step === 'step_1') {
-        navigate(NavigationRoutes.AUTH_STACK.PAYMENT)
+      if (data?.user?.signup_step === 'step_1') { 
+        navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
+          phone_number: data?.user?.phone,
+          phone_with_code: data?.user?.phone_with_code,
+          country_code:data?.user?.country_code,
+          pricing: data?.user?.subscription?.price
+        });
       }
       else if (data?.user?.signup_step === 'step_2') {
         setToken(data?.access_token);
@@ -99,9 +105,9 @@ export default function useEnterPasswordContainer() {
       Toast.show({ type: 'success', text1: message });
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: true,
-        phone: params?.countryCallingCode + params?.phoneNo,
-        code: params?.countryCallingCode,
-        actualPhone: params?.phoneNo
+        phone_number: phone_number,
+        phone_with_code: phone_with_code,
+        country_code: country_code,
       });
 
     },
@@ -112,17 +118,15 @@ export default function useEnterPasswordContainer() {
 
   const onSubmit = (data: any) => {
     const payload = {
-      phone_number: params?.countryCallingCode + params?.phoneNo,
+      country_code: country_code,        // previous screen se aya
+      phone_number: phone_number,        // previous screen se aya
+      phone_with_code: phone_with_code,  // previous screen se aya
       password: data?.password,
     };
     // Remember Me logic
     if (data.rememberMe) {
       setRememberMe(true);
-      setPhoneData(
-        params?.phoneNo,
-        params?.countryCca2,
-        params?.countryCallingCode,
-      );
+      setPhoneData(phone_number, country_code, phone_with_code);
       setPassword(data.password);
     } else {
       setRememberMe(false);
@@ -133,7 +137,9 @@ export default function useEnterPasswordContainer() {
 
   const gotToVerifyOTP = () => {
     const payload = {
-      phone_number: params?.countryCallingCode + params?.phoneNo,
+      country_code: country_code,
+      phone_number: phone_number,
+      phone_with_code: phone_with_code,
     };
     forgotPayload(payload);
   };

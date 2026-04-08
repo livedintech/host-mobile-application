@@ -83,6 +83,9 @@ export interface ForgotPasswordPayload {
 }
 
 export interface VerifyOtpPayload {
+  country_code?: string;
+  phone_number?: string;
+  phone_with_code?: string;
 
 }
 
@@ -101,7 +104,7 @@ export interface LoginResponse {
     user: User;
     is_first_login: number;
   },
-  
+
 }
 
 export interface CheckUserExistResponse {

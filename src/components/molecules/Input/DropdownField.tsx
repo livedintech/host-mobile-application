@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(18),
     zIndex: 9999,
     overflow: 'visible',
-    flex:1,
+    // flex:1,
     width:'100%',
     padding:0,
     borderRadius: 16

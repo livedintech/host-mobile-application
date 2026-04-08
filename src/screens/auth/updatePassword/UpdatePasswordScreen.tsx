@@ -7,6 +7,7 @@ import PasswordField from '@/components/molecules/Input/PasswordField';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import UpdatePasswordContainer from './UpdatePasswordContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const UpdatePasswordScreen = () => {
   const { control, errors, handleSubmit, isLoading, watch } = UpdatePasswordContainer();
@@ -15,6 +16,8 @@ const UpdatePasswordScreen = () => {
   const password = watch("password");
 
   return (
+        <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
+
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={styles.titleSection}>
@@ -55,13 +58,13 @@ const UpdatePasswordScreen = () => {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: Colors.WHITE 
   },
   scrollContainer: { 
     flexGrow: 1, 
@@ -78,7 +81,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     paddingBottom: Metrics.verticalScale(30)
-  }
+  },
+  bgContainer: {
+    flex: 1,
+  },
 });
 
 export default UpdatePasswordScreen;

@@ -27,10 +27,15 @@ const signUpSchema = yup.object().shape({
 
 export default function useCreateAccountContainer() {
   const { params } = useRoute();
-  const phone = params?.payload?.phone;
+  const country_code = params?.payload?.country_code;
+  const phone_number = params?.payload?.phone_number;
+  const phone_with_code = params?.payload?.phone_with_code;
   const listing_count = params?.payload?.listing_count;
   const pricing = params?.payload?.pricing;
   const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
+
+  console.log('paramsss',params);
+  
 
   const toggleTerms = useCallback(() => setIsTermsAccepted(prev => !prev), []);
 
@@ -56,7 +61,12 @@ export default function useCreateAccountContainer() {
     mutationFn: createAccountApi,
     onSuccess: ({ message }) => {
       Toast.show({ type: 'success', text1: message });
-      navigate(NavigationRoutes.AUTH_STACK.PAYMENT, { phone: phone, pricing });
+      navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
+        country_code,
+        phone_number,
+        phone_with_code,
+        pricing,
+      });
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message });
@@ -65,10 +75,12 @@ export default function useCreateAccountContainer() {
 
   const onSubmit = (data: any) => {
     const payload = {
-      name: data?.fullName,
-      password: data?.password,
-      phone_number: String(phone?.phone),
-      listing_count: listing_count,
+      name: data.fullName,
+      password: data.password,
+      country_code,
+      phone_number: String(phone_number),
+      phone_with_code,
+      listing_count,
       agreeToTerms: isTermsAccepted
     };
     createAccountPayload(payload);

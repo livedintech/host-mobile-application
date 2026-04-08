@@ -16,6 +16,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
   const {
     control, errors, handleSubmit, onFormSubmit, isSubmitting,
     listingOptions, rolesOptions, staffRoleTypeOptions, roles,
+    permissionToEditPhoneNumber
   } = useUserManagementContainer(mode);
 
   const isEdit = mode === 'edit';
@@ -43,6 +44,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
               errors={errors}
               countryFieldName="country"
               phoneFieldName="phoneNumber"
+              disabled={permissionToEditPhoneNumber}
             />
 
             <InputField name="email" label="Email" control={control} errors={errors} placeholder="ahmed@example.com" editable={!isEdit} />

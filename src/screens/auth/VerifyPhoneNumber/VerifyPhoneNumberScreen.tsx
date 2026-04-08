@@ -10,11 +10,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useFocusEffect } from '@react-navigation/native';
 
 const FIGMA_TEAL = '#20957B';
 
 const VerifyPhoneNumberScreen = () => {
-  // 1. Create a ref for the OTP Input
   const otpRef = useRef<any>(null);
 
   const {
@@ -28,7 +28,23 @@ const VerifyPhoneNumberScreen = () => {
     formatTimer,
     isLoading,
     setValue,
+    setResetKey,
+    setTimer,
+    setIsResendDisabled,
+    RESEND_TIME_LIMIT,
+    resetKey
   } = useVerifyPhoneNumberContainer();
+
+  useFocusEffect(
+  useCallback(() => {
+    // Har baar screen focus ho, sab reset karo
+    setValue('otpCode', '');
+    setTimer(RESEND_TIME_LIMIT);
+    setIsResendDisabled(true);
+    setResetKey(prev => prev + 1); // OTP input forcefully re-render karega
+  }, [setValue])
+);
+
 
   // Logic to format the dynamic masked number
   const cleanCode = code?.replace(/\D/g, '') || '';
@@ -93,6 +109,7 @@ const VerifyPhoneNumberScreen = () => {
                 name="otpCode"
                 render={({ field: { onChange } }) => (
                   <OTPTextInput
+                  key={resetKey}
                     ref={otpRef} // 4. Attach the ref here
                     handleTextChange={onChange}
                     textInputStyle={styles.otpInput}

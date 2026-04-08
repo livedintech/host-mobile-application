@@ -9,8 +9,10 @@ import Toast from 'react-native-toast-message';
 
 export default function usePaymentContainer() {
   const { params } = useRoute();
-  const phone = params?.phone;
-    const pricing = params?.pricing;
+  const country_code = params?.country_code;
+const phone_number = params?.phone_number;
+const phone_with_code = params?.phone_with_code;
+const pricing = params?.pricing;
 
   const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('monthly');
 
@@ -21,7 +23,12 @@ export default function usePaymentContainer() {
   const handleStartTrial = () => {
     const days = selectedPlan === 'annual' ? 14 : 14;
     console.log(`Starting ${days}-day free trial`);
-    navigate(NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD, { plan: selectedPlan, phone: phone })
+    navigate(NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD, { 
+  plan: selectedPlan, 
+  country_code, 
+  phone_number, 
+  phone_with_code 
+})
   };
 
   const handleSkipThis = () => {

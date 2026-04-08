@@ -87,6 +87,10 @@ interface PaymentResult {
 
 export default function useAddNewPaymentMethodContainer() {
   const { params } = useRoute<any>();
+
+  const country_code = params?.country_code;
+  const phone_number = params?.phone_number;
+  const phone_with_code = params?.phone_with_code;
   const navigation = useNavigation();
   const plan = (params as RouteParams)?.plan;
   const paymentMethodType = (params as RouteParams)?.paymentMethodType;
@@ -107,11 +111,11 @@ export default function useAddNewPaymentMethodContainer() {
 
   const customerName = isAuthFlow ? 'Customer' : user?.name && user?.surname ? `${user.name} ${user.surname}` : user?.name || 'Customer';
   const customerPhone = isAuthFlow ? authPhoneNumber || '' : user?.phone || '';
-const customerId = isAuthFlow ? authPhoneNumber : user?.phone || user?.id?.toString() || `user_${Date.now()}`;
+  const customerId = isAuthFlow ? authPhoneNumber : user?.phone || user?.id?.toString() || `user_${Date.now()}`;
 
 
-  console.log('customerPhone::',customerPhone);
-  
+  console.log('customerPhone::', customerPhone);
+
 
 
   const { mutate: saveIdentifier, isPending: isSaving } = useMutation({
@@ -122,7 +126,7 @@ const customerId = isAuthFlow ? authPhoneNumber : user?.phone || user?.id?.toStr
         text1: 'Payment Successful',
         text2: 'Your payment has been processed successfully',
       });
-        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.SAVED_CARDS] });
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.SAVED_CARDS] });
       if (isAuthFlow) {
         reset(NavigationRoutes.AUTH_STACK.TRIAL_SUCCESS, { plan });
       } else {

@@ -19,7 +19,7 @@ const NoAiAutoReplyScreen = ({ onCreatePress }: NoAiAutoReplyScreenProps) => {
 
                 {/* Center Content */}
                 <View style={styles.content}>
-                    <Svgicons path="noAiAutoReplyIcon" size={Metrics.scale(200)} />
+                    <Svgicons path="noAiAutoReplyIcon" size={Metrics.scale(320)} />
                     
                     <AppText 
                         text="No AI Auto Reply Found" 
