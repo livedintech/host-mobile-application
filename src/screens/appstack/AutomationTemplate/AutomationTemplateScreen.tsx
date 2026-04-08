@@ -14,6 +14,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 import NoAutomationScreen from '../NoAutomationScreen/NoAutomationScreen';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 const AutomationTemplatesScreen = () => {
   const {
@@ -31,6 +32,17 @@ const AutomationTemplatesScreen = () => {
     Item,
     isLoadingStatus,
   } = useAutomationTemplateContainer();
+
+
+  if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <SpinnerLoader size={'large'} />
+        </View>
+      </BGImage>
+    );
+  }
 
 
   const renderItem = ({ item }: { item: any }) => {

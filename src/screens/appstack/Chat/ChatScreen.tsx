@@ -43,6 +43,7 @@ import NoChatScreen from '../NoChatScreen/NoChatScreen';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -72,10 +73,8 @@ const ChatScreen = () => {
     setSearch,
     MENU_OPTIONS,
   } = useChatContainer();
-  // const data = []
 
   const { user } = useAuthStore();
-  console.log('usermnn', user?.has_listing);
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
@@ -83,6 +82,18 @@ const ChatScreen = () => {
   const TOTAL_ACTION_WIDTH = ACTION_WIDTH * 2;
 
   const TABS: ChatStatus[] = ['All', 'Archived', 'Snoozed', 'Unread'];
+
+
+  if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <SpinnerLoader size={'large'} />
+        </View>
+      </BGImage>
+    );
+  }
+
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
     const renderRightActions = (
@@ -126,6 +137,7 @@ const ChatScreen = () => {
         </Reanimated.View>
       );
     };
+
 
     return (
       <Swipeable
@@ -350,7 +362,7 @@ const ChatScreen = () => {
                       <Svgicons onPress={() => setFilterVisible(false)} path="iconRoundedCross" size={30} />
                     </View>
                     <MultiSelectDropdownField
-                    dropdownPosition='top'
+                      dropdownPosition='top'
                       name="listings"
                       control={control}
                       errors={errors}
@@ -569,9 +581,9 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   flex: { flex: 1 },
-  modalHeader:{
-    flexDirection:'row',
-    justifyContent:'space-between'
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   }
 });
 
