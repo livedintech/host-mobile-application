@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
 import { MFSDK, MFLanguage, MFCurrencyISO, MFInitiatePaymentRequest } from 'myfatoorah-reactnative';
@@ -23,6 +23,11 @@ interface PaymentMethod {
 
 export default function useSelectPaymentContainer() {
   const navigation = useNavigation();
+
+  const { params } = useRoute();
+  const country_code = params?.country_code;
+  const phone_number = params?.phone_number;
+  const phone_with_code = params?.phone_with_code;
 
   // 🔧 GET PAYMENT METHOD IDs - Run once to see IDs in console
   useEffect(() => {
@@ -118,12 +123,15 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
     console.log('🔑 API Identifier:', selectedMethod.apiIdentifier);
 
     // Navigate to payment screen with method details
-    navigate(NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD, {
-      paymentMethodType: selectedMethod.type,
-      paymentMethodId: selectedMethod.apiIdentifier,
-      paymentMethodName: selectedMethod.name,
-      isCardMethod: selectedMethod.isCardMethod,
-    });
+   navigate(NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD, {
+  paymentMethodType: selectedMethod.type,
+  paymentMethodId: selectedMethod.apiIdentifier,
+  paymentMethodName: selectedMethod.name,
+  isCardMethod: selectedMethod.isCardMethod,
+  country_code,
+  phone_number,
+  phone_with_code,
+});
   };
 
   return {

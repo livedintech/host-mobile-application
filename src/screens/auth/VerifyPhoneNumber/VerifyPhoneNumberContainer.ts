@@ -25,10 +25,12 @@ export default function useVerifyPhoneNumberContainer() {
   const [resetKey, setResetKey] = useState(0); // Screen ke liye
 
   const { params } = useRoute();
-  
-  const phone = (params as any)?.phone;
-  const code = (params as any)?.code;
-  const actualPhone = (params as any)?.actualPhone;
+  console.log('params', params);
+
+
+  const actualPhone = (params as any)?.phone_number; // instead of params?.actualPhone
+  const code = (params as any)?.phone_with_code;     // instead of params?.code
+  const country_code = (params as any)?.country_code;
   const isLoginScreen = (params as any)?.isLoginScreen;
 
   const {
@@ -52,24 +54,25 @@ export default function useVerifyPhoneNumberContainer() {
     isIdle,
   } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
     mutationFn: verifyOtpApi,
-    onSuccess: ({ message }) => {
-      Toast.show({ type: 'success', text1: message });
-      if (isLoginScreen) {
-        navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, {
-          phone: phone,
-          otp: otpCode,
-        });
-      }
-      else{
-        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
-          phone: phone,
-          actualPhone: actualPhone
-        });
-      }
-    },
-    onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
-    },
+   onSuccess: ({ message }) => {
+    Toast.show({ type: 'success', text1: message });
+
+    const navParams = {
+      country_code,      // e.g., 'SA'
+      phone_number: actualPhone, // e.g., '123456789111'
+      phone_with_code: code,     // e.g., '966'
+      otp: otpCode,       // Only if login screen needs it
+    };
+
+    if (isLoginScreen) {
+      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, navParams);
+    } else {
+      navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, navParams);
+    }
+  },
+  onError: ({ message }) => {
+    Toast.show({ type: 'error', text1: message || 'Login failed' });
+  },
   });
 
   // Resend OTP
@@ -110,21 +113,21 @@ export default function useVerifyPhoneNumberContainer() {
 
   const handleResendOtp = useCallback(() => {
     if (!isResendDisabled) {
-      const payload = {
-        phone_number: phone,
-      };
-
-      resendOtpPayload(payload);
+      resendOtpPayload({
+        country_code,
+        phone_number: actualPhone,
+        phone_with_code: code,
+      });
     }
-  }, [isResendDisabled, params]);
+  }, [isResendDisabled, actualPhone, code, country_code]);
 
   const handleVerifyOtp = (data: { otpCode: string }) => {
-    const payload = {
-      phone_number: phone,
+    otpVerifyPayload({
+      country_code,
+      phone_number: actualPhone,
+      phone_with_code: code,
       otp: data.otpCode,
-      actualPhone: actualPhone
-    };
-    otpVerifyPayload(payload);
+    });
   };
 
   const formatTimer = (seconds: number) => {
@@ -143,8 +146,8 @@ export default function useVerifyPhoneNumberContainer() {
     otpCode,
     timer,
     isResendDisabled,
-    identifier: phone,
-    code, 
+    identifier: actualPhone,
+    code,
     actualPhone,
     setValue,
     handleResendOtp,
@@ -155,6 +158,5 @@ export default function useVerifyPhoneNumberContainer() {
     setIsResendDisabled,
     setTimer,
     RESEND_TIME_LIMIT,
-    resetKey
   };
 }

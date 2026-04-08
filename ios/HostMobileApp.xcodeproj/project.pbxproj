@@ -12,7 +12,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		19B7CE01B5BF43BB92552B92 /* RethinkSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D95C34EFAE07463C881645D6 /* RethinkSans-MediumItalic.ttf */; };
 		1FF256E1A316466D948D8EE4 /* RethinkSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0279ADC9F43345B99596259D /* RethinkSans-ExtraBold.ttf */; };
-		3433A2C2796E2964886240A0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DA65D8BA67899387794E2A68 /* PrivacyInfo.xcprivacy */; };
 		50AD5C6515894112AA4BF4F4 /* RethinkSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC5B5C0667CA4C2994994F59 /* RethinkSans-SemiBoldItalic.ttf */; };
 		758E8C82F4AB4C978015904D /* RethinkSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 70FA7D113FF34B0791E3278F /* RethinkSans-Bold.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
@@ -43,7 +42,6 @@
 		CCEE7D73F7504B9FA791CCF6 /* RethinkSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/RethinkSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		D3377B888F634282B22DA45C /* RethinkSans-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-Medium.ttf"; path = "../src/assets/fonts/RethinkSans-Medium.ttf"; sourceTree = "<group>"; };
 		D95C34EFAE07463C881645D6 /* RethinkSans-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-MediumItalic.ttf"; path = "../src/assets/fonts/RethinkSans-MediumItalic.ttf"; sourceTree = "<group>"; };
-		DA65D8BA67899387794E2A68 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = HostMobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E1F563740F494877AF27F102 /* RethinkSans-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-Italic.ttf"; path = "../src/assets/fonts/RethinkSans-Italic.ttf"; sourceTree = "<group>"; };
 		E5A857155F3741FE93B1B706 /* RethinkSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-Regular.ttf"; path = "../src/assets/fonts/RethinkSans-Regular.ttf"; sourceTree = "<group>"; };
 		EC5B5C0667CA4C2994994F59 /* RethinkSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-SemiBoldItalic.ttf"; path = "../src/assets/fonts/RethinkSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
@@ -71,7 +69,6 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				0FEADEE22F695B0500EEE44C /* GoogleService-Info.plist */,
-				DA65D8BA67899387794E2A68 /* PrivacyInfo.xcprivacy */,
 			);
 			name = HostMobileApp;
 			sourceTree = "<group>";
@@ -214,7 +211,6 @@
 				BE984DF513D44CF4AF88B7B1 /* RethinkSans-BoldItalic.ttf in Resources */,
 				1FF256E1A316466D948D8EE4 /* RethinkSans-ExtraBold.ttf in Resources */,
 				0FEADEE32F695B0500EEE44C /* GoogleService-Info.plist in Resources */,
-				3433A2C2796E2964886240A0 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,9 +241,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -284,9 +284,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -314,7 +318,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = HostMobileApp/HostMobileApp.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = B2Q2KJ8428;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = HostMobileApp/Info.plist;
@@ -324,7 +328,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -345,7 +349,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = HostMobileApp/HostMobileApp.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = B2Q2KJ8428;
 				INFOPLIST_FILE = HostMobileApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Livedin App";
@@ -354,7 +358,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

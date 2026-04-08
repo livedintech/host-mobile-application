@@ -15,7 +15,6 @@ import { useFocusEffect } from '@react-navigation/native';
 const FIGMA_TEAL = '#20957B';
 
 const VerifyPhoneNumberScreen = () => {
-  // 1. Create a ref for the OTP Input
   const otpRef = useRef<any>(null);
 
   const {

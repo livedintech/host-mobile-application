@@ -8,6 +8,10 @@ import {
   Pressable,
   ListRenderItemInfo,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
@@ -133,7 +137,7 @@ const ChatScreen = () => {
             source={
               item.img
                 ? { uri: item.img }
-                : require('@/assets/img/dummy/livedin.png')
+                : require('@/assets/img/dummy/airbnb.png')
             }
             style={styles.avatar}
           />
@@ -194,6 +198,11 @@ const ChatScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
         {/* ── Header ── */}
         <View style={styles.header}>
@@ -364,6 +373,8 @@ const ChatScreen = () => {
           </View>
         </Modal>
       </View>
+      </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </BGImage>
   );
 };

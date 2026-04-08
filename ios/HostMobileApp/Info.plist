@@ -36,7 +36,16 @@
 				<string>com.googleusercontent.apps.111966524619-1i4aklgclvouap7et8a10hbii65n63ib</string>
 			</array>
 		</dict>
-		<dict/>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.livedinapp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>livedinapp</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -56,6 +65,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take property photos.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We use your location to show nearby properties and improve your experience in the Livedin app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to provide relevant location-based features and notifications.</string>
 	<key>NSMicrophoneUsageDescription</key>
