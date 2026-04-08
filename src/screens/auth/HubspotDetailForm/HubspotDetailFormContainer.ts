@@ -13,27 +13,26 @@ import { useRoute } from '@react-navigation/native';
 export const COUNTRIES = [
   'Saudi Arabia', 'UAE', 'Kuwait', 'Qatar', 'Bahrain', 'Oman',
   'Pakistan', 'India', 'Egypt', 'Jordan', 'Lebanon', 'Turkey',
-  'United Kingdom', 'United States', 'Canada', 'Australia', 'Other',
+  'United Kingdom', 'United States', 'Canada', 'Australia',
 ];
 
 export const CITIES_BY_COUNTRY: Record<string, string[]> = {
-  'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Khobar', 'Other'],
-  'UAE':          ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah', 'Other'],
-  'Kuwait':       ['Kuwait City', 'Hawalli', 'Salmiya', 'Ahmadi', 'Other'],
-  'Qatar':        ['Doha', 'Al Wakrah', 'Al Khor', 'Other'],
-  'Bahrain':      ['Manama', 'Muharraq', 'Riffa', 'Other'],
-  'Oman':         ['Muscat', 'Salalah', 'Sohar', 'Other'],
-  'Pakistan':     ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Other'],
-  'India':        ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata', 'Other'],
-  'Egypt':        ['Cairo', 'Alexandria', 'Giza', 'Other'],
-  'Jordan':       ['Amman', 'Zarqa', 'Irbid', 'Other'],
-  'Lebanon':      ['Beirut', 'Tripoli', 'Sidon', 'Other'],
-  'Turkey':       ['Istanbul', 'Ankara', 'Izmir', 'Other'],
-  'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Leeds', 'Other'],
-  'United States':  ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Other'],
-  'Canada':       ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Other'],
-  'Australia':    ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Other'],
-  'Other':        ['Other'],
+  'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Khobar'],
+  'UAE':          ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
+  'Kuwait':       ['Kuwait City', 'Hawalli', 'Salmiya', 'Ahmadi'],
+  'Qatar':        ['Doha', 'Al Wakrah', 'Al Khor'],
+  'Bahrain':      ['Manama', 'Muharraq', 'Riffa'],
+  'Oman':         ['Muscat', 'Salalah', 'Sohar'],
+  'Pakistan':     ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan'],
+  'India':        ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata'],
+  'Egypt':        ['Cairo', 'Alexandria', 'Giza'],
+  'Jordan':       ['Amman', 'Zarqa', 'Irbid'],
+  'Lebanon':      ['Beirut', 'Tripoli', 'Sidon'],
+  'Turkey':       ['Istanbul', 'Ankara', 'Izmir'],
+  'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Leeds'],
+  'United States':  ['New York', 'Los Angeles', 'Chicago', 'Houston'],
+  'Canada':       ['Toronto', 'Vancouver', 'Montreal', 'Calgary'],
+  'Australia':    ['Sydney', 'Melbourne', 'Brisbane', 'Perth'],
 };
 
 export const COUNTRY_FLAGS: Record<string, string> = {
@@ -53,7 +52,6 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   'United States': '🇺🇸',
   'Canada': '🇨🇦',
   'Australia': '🇦🇺',
-  'Other': '🌍',
 };
 
 export default function useHubspotDetailFormContainer() {
@@ -71,8 +69,10 @@ export default function useHubspotDetailFormContainer() {
     resolver: yupResolver(meetingDetailsSchema),
     defaultValues: {
       fullName: '',
-      // Auto-populating the phone number from params
-      phone: incomingPhone, 
+      phone: { 
+        phone: incomingPhone || '',
+        actualPhone: '',
+      },
       email: '',
       country: '',
       city: '',
@@ -98,12 +98,17 @@ export default function useHubspotDetailFormContainer() {
   };
 
   const onSubmit = (data: MeetingDetailsFormValues) => {
-    // Pass all lead info + existing payload data (pricing/listing_count) to CalendarScreen
+    // 1. Flatten the phone AND merge the payload
+    const formattedUserInfo = {
+      ...data,
+      ...payload, // Preserves listing_count, pricing, etc.
+      phone: data.phone.phone, // Specifically overrides the phone object with the string
+      email: data.email.toLowerCase(), // Good practice to lowercase here too
+    };
+
+    // 2. Navigate with the combined clean object
     navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR, { 
-      userInfo: {
-        ...data,
-        ...payload // preserving listing_count, pricing, etc.
-      } 
+      userInfo: formattedUserInfo 
     });
   };
 

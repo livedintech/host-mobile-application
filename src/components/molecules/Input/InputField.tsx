@@ -1,4 +1,4 @@
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { Controller, Control, FieldErrors, RegisterOptions } from 'react-hook-form';
 import CustomInput from './CustomInput';
 import { KeyboardTypeOptions } from 'react-native';
 
@@ -7,12 +7,13 @@ type Props = {
     control: Control<any>;
     errors: FieldErrors<any>;
     placeholder: string;
-    rules?: object;
+    rules?: RegisterOptions;
     leftIcon?: React.ReactNode;
     label?: string;
     keyboardType?: KeyboardTypeOptions;
     editable?: boolean;
-    maxLength?: number
+    maxLength?: number;
+
 };
 
 const InputField = ({
@@ -25,7 +26,7 @@ const InputField = ({
     label,
     keyboardType,
     editable,
-    maxLength
+    maxLength,
 }: Props) => {
 
     return (
@@ -37,7 +38,10 @@ const InputField = ({
                 <CustomInput
                     label={label}
                     value={value}
-                    onChangeText={onChange}
+                    onChangeText={(text) => {
+                        const finalValue = name === 'email' ? text.toLowerCase() : text;
+                        onChange(finalValue);
+                    }}
                     placeholder={placeholder}
                     error={errors?.[name]?.message as string}
                     leftIcon={leftIcon}

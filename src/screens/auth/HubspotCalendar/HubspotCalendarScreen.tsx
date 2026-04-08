@@ -138,7 +138,7 @@ const CalendarScreen = ({ route }: any) => {
                     },
                     text: {
                       marginTop: 0,
-                    }
+                    },
                   },
                 } as any),
               }}
@@ -255,7 +255,12 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   contentWrapper: { flex: 1 },
   headerSection: { paddingHorizontal: s(24), marginTop: vs(15), marginBottom: vs(10) },
-  calendarWrapper: { paddingHorizontal: s(10) },
+  calendarWrapper: { 
+    paddingHorizontal: s(10),
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Adds a soft "glass" layer to pop the text
+    borderRadius: ms(16),
+    paddingVertical: vs(10),
+  },
   calendar: { backgroundColor: 'transparent' },
   mainFooter: {
     paddingHorizontal: s(24),
