@@ -36,46 +36,45 @@ const App = () => {
     configureGoogleSignIn();
   }, []);
 
-  useEffect(() => {
-    // App BAND tha, link se khula
-    Linking.getInitialURL().then((url) => {
-      if (url) handleDeepLink(url);
-    });
+  // useEffect(() => {
+  //   // App BAND tha, link se khula
+  //   Linking.getInitialURL().then((url) => {
+  //     if (url) handleDeepLink(url);
+  //   });
 
-    // App BACKGROUND mein tha
-    const sub = Linking.addEventListener('url', ({ url }) => {
-      handleDeepLink(url);
-    });
+  //   // App BACKGROUND mein tha
+  //   const sub = Linking.addEventListener('url', ({ url }) => {
+  //     handleDeepLink(url);
+  //   });
 
-    return () => sub.remove();
-  }, []);
+  //   return () => sub.remove();
+  // }, []);
 
-  // ✅ NAYA — URL parse karke navigate karo
-  const handleDeepLink = (url: string) => {
-    try {
-      const clean = url.replace('livedinapp://', 'https://x.com/');
-      const parsed = new URL(clean);
+  // const handleDeepLink = (url: string) => {
+  //   try {
+  //     const clean = url.replace('livedinapp://', 'https://x.com/');
+  //     const parsed = new URL(clean);
 
-      if (parsed.pathname.includes('signup')) {
-        const params = {
-          ref:   parsed.searchParams.get('ref')   || '',
-          name:  parsed.searchParams.get('name')  || '',
-          email: parsed.searchParams.get('email') || '',
-          phone: parsed.searchParams.get('phone') || '',
-        };
+  //     if (parsed.pathname.includes('signup')) {
+  //       const params = {
+  //         ref:   parsed.searchParams.get('ref')   || '',
+  //         name:  parsed.searchParams.get('name')  || '',
+  //         email: parsed.searchParams.get('email') || '',
+  //         phone: parsed.searchParams.get('phone') || '',
+  //       };
 
-        // Thodi delay — navigation ready hone do
-        setTimeout(() => {
-          navigationRef.current?.navigate(
-            NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT as never,
-            params as never,
-          );
-        }, 500);
-      }
-    } catch (e) {
-      console.log('Deep link error:', e);
-    }
-  };
+  //       // Thodi delay — navigation ready hone do
+  //       setTimeout(() => {
+  //         navigationRef.current?.navigate(
+  //           NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT as never,
+  //           params as never,
+  //         );
+  //       }, 500);
+  //     }
+  //   } catch (e) {
+  //     console.log('Deep link error:', e);
+  //   }
+  // };
 
   const getActiveRouteName = (state: any): string => {
   const route = state.routes[state.index];
