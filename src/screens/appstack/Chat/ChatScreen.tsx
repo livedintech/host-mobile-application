@@ -42,6 +42,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NoChatScreen from '../NoChatScreen/NoChatScreen';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -348,7 +349,8 @@ const ChatScreen = () => {
                       />
                       <Svgicons onPress={() => setFilterVisible(false)} path="iconRoundedCross" size={30} />
                     </View>
-                    <DropdownField
+                    <MultiSelectDropdownField
+                    dropdownPosition='top'
                       name="listings"
                       control={control}
                       errors={errors}
