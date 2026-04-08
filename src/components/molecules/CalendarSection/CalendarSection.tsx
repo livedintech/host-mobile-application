@@ -23,7 +23,7 @@ interface Props {
 export const CalendarSection = ({ onListingPress, control, errors, listingOptions, bookings, selectedListingId, markedDates, onDayPress, defaultPrice, isLoading,onRefresh  }: Props) => (
   <RefreshableScrollView isLoading={isLoading} onRefresh={onRefresh} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}>
     <DropdownField name="listing_selection" control={control} errors={errors} label="Select Listing" data={listingOptions} placeholder="All Listings" />
-    <View style={{ marginTop: vs(20) }}>
+    <View>
       {selectedListingId ? (
         <CustomCalendar markedDates={markedDates} onDayPress={onDayPress} defaultPrice={defaultPrice} />
       ) : (

@@ -14,15 +14,16 @@ interface MultiChannelCalendarProps {
   onListingPress?: (id: string | number) => void;
 }
 
-const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate, bookings, onListingPress }: MultiChannelCalendarProps) => {
+const MultiChannelCalendar = ({ bookings, onListingPress }: MultiChannelCalendarProps) => {
   return (
-    <View>
+    <View style={styles.mainWrapper}>
       {bookings.map((item) => (
-        <CalendarListingCard 
-          key={item.listing_id} 
-          item={item}
-          onPress={onListingPress}
-        />
+        <View key={item.listing_id} style={styles.overflowShield}>
+          <CalendarListingCard 
+            item={item}
+            onPress={onListingPress}
+          />
+        </View>
       ))}
     </View>
   );
@@ -30,15 +31,21 @@ const MultiChannelCalendar = ({ markedDates, onDayPress, currentDate, bookings, 
 
 const styles = StyleSheet.create({
   card: {
-    // --- GLASS STYLE ---
     backgroundColor: 'rgba(255, 255, 255, 0.15)', 
     borderRadius: ms(24), 
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.6)', 
-    // ------------------
     padding: s(12),
     width: '100%',
     alignSelf: 'center',
+  },
+  mainWrapper: {
+    width: '100%',
+  },
+  overflowShield: {
+    borderRadius: ms(24),
+    overflow: 'hidden',  
+    marginBottom: vs(12),
   },
   legendHeader: {
     flexDirection: 'row',
@@ -48,7 +55,7 @@ const styles = StyleSheet.create({
     marginBottom: vs(12),
     paddingBottom: vs(12),
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)', // Softened divider
+    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
   },
   legendItem: {
     flexDirection: 'row',
@@ -66,7 +73,7 @@ const styles = StyleSheet.create({
   },
   dayContainer: { 
     height: vs(50),
-    width: (SCREEN_WIDTH - s(80)) / 7, 
+    width: (SCREEN_WIDTH - s(56)) / 7,
     alignItems: 'center', 
     justifyContent: 'center',
   },
@@ -78,7 +85,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   selectedDayText: { 
-    color: '#21AA8F', // Highlight selected text with Teal
+    color: '#21AA8F',
     fontWeight: '800' 
   },
   disabledText: { 

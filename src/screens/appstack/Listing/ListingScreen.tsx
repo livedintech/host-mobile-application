@@ -270,11 +270,13 @@ const ListingScreen = () => {
             setBookingType={setBookingType}
             control={control}
             errors={errors}
+            handleSubmit={handleSubmit}
             cleaningFee={cleaningFee}
             discount={discount}
             listingOptions={listingOptions}
             selectedListingId={selectedListingId || ''}
-            onSubmit={handleSubmit(onBookingSubmit)}
+            onSubmit={onBookingSubmit}
+            // onSubmit={handleSubmit(onBookingSubmit)}
             isLoading={isLoading}
           />
         )} 
@@ -289,7 +291,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: s(16),
     backgroundColor: 'transparent', 
     zIndex: 10,
-    paddingTop: vs(10),
   },
   headerRow: {
     flexDirection: 'row',
