@@ -397,7 +397,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE}
         getComponent={() =>
           require('@/screens/appstack/AutomationTemplate/AutomationTemplateScreen')

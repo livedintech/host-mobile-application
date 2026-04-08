@@ -13,7 +13,11 @@ import { useAuthStore } from '@/store/useAuthStore';
 
 const aiRuleSchema = yup.object().shape({
     name: yup.string().required('Rule name is required'),
-    listing_ids: yup.array().optional(),
+    // listing_ids: yup.array().optional(),
+     listing_ids: yup
+        .array()
+        .min(1, 'Please select at least one property')
+        .required('Property is required'),
     template: yup.string().required('Template is required'),
     auto_send: yup.boolean().default(false),
     is_enabled: yup.boolean().default(true),

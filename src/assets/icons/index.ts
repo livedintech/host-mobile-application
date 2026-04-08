@@ -259,8 +259,10 @@ import chatBubble from './chat-bubble.svg'
 import database_check from './database_check.svg'
 import houseRoofShelterBlack from './houseRoofShelterBlack.svg'
 import adWhite from './adrWhite.svg'
+import iconRoundedCross from './iconRoundedCross.svg'
 
 export const icons = {
+  iconRoundedCross,
   adWhite,
   houseRoofShelterBlack,
   database_check,
