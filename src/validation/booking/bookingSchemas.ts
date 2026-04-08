@@ -51,26 +51,33 @@ export const createBookingSchema = yup.object({
     otherwise: (s) => s.nullable().notRequired(),
   }),
 
-  end_date: yup.string().when('$bookingType', {
-    is: 'direct',
-    then: (s) => s.required('End date is required').test(
-      'is-after-start',
-      'End date cannot be before start date',
-      function (value) {
-        const { start_date } = this.parent;
-        if (!start_date || !value) return true;
-        
-        // Now both are YYYY-MM-DD, so comparison is perfect
-        return new Date(value) >= new Date(start_date);
-      }
-    ),
-    otherwise: (s) => s.nullable().notRequired(),
-  }),
+ end_date: yup.string()
+  .required('End date is required') // Now required for everyone
+  .test(
+    'is-after-start',
+    'End date cannot be before start date',
+    function (value) {
+      const { start_date } = this.parent;
+      if (!start_date || !value) return true;
+      
+      // Standardize comparison
+      const start = new Date(start_date).setHours(0,0,0,0);
+      const end = new Date(value).setHours(0,0,0,0);
+      
+      return end >= start;
+    }
+  ),
 
   // --- PRICING FIELDS (Only required if NOT direct booking) ---
   rate: yup.string().when('$bookingType', {
     is: 'pricing',
-    then: (s) => s.required('Price is required'),
+    then: (s) => 
+      s.required('Price is required')
+      .test('max-limit', 'Price cannot exceed SAR 375,000', (value) => {
+          if (!value) return true;
+          const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
+          return numericValue <= 375000;
+      }),
     otherwise: (s) => s.nullable().notRequired(),
   }),
 

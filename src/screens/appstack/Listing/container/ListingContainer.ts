@@ -215,8 +215,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
       // 1. Combine Country Calling Code and Phone Number
       const fullPhone = `${formData.country?.callingCode || ''}${formData.phoneNumber || ''}`;
       const rateValue = Number(formData?.rate || 0);
-      console.log('@@@@@formData@@@', formData)
-      if (rateValue < 38) {
+      if (rateValue < 38 && bookingType !== 'direct') {
         Toast.show({ 
           type: 'error', 
           text1: 'The minimum price allowed is 38'

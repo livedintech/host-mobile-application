@@ -21,11 +21,12 @@ interface Props {
   setBookingType: (type: string) => void;
   control: any;
   errors: any;
+  handleSubmit: any; // <--- ADD THIS LINE
   listingOptions: any[];
   selectedListingId: string;
-  onSubmit: () => void;
+  onSubmit: (data: any) => void; // <--- Ensure this accepts 'data'
   cleaningFee: number;
-  discount: number
+  discount: number;
 }
 
 export const CreateBookingSheet = ({
@@ -38,6 +39,7 @@ export const CreateBookingSheet = ({
   listingOptions,
   selectedListingId,
   onSubmit,
+  handleSubmit,
   isLoading,
   cleaningFee,
   discount
@@ -67,7 +69,6 @@ export const CreateBookingSheet = ({
   };
 
   const guestTotal = getGuestTotal();
-
   return (
     <BottomSheetComponent isVisible={isVisible} onClose={onClose}>
       <View style={styles.grabZone} pointerEvents="box-none" />
@@ -186,24 +187,25 @@ export const CreateBookingSheet = ({
           rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
         />
 
-        {/* Guest Total Display - Matches SS */}
         {/* {guestTotal > 0 && ( */}
-          <View style={styles.totalContainer}>
-            <TouchableOpacity activeOpacity={0.7}>
-              <AppText 
-                text={`Guest total SAR ${guestTotal}`} 
-                fontSize={14} 
-                color={Colors.DRAVIT_GREY} 
-                style={styles.underline}
-              />
-            </TouchableOpacity>
-          </View>
+          {bookingType === 'pricing' && (
+            <View style={styles.totalContainer}>
+              <TouchableOpacity activeOpacity={0.7}>
+                <AppText 
+                  text={`Guest total SAR ${guestTotal}`} 
+                  fontSize={14} 
+                  color={Colors.DRAVIT_GREY} 
+                  style={styles.underline}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
         {/* )} */}
 
         <View style={styles.buttonContainer}>
           <AppButton
             title={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"}
-            onPress={onSubmit}
+            onPress={handleSubmit(onSubmit)}
             loading={isLoading}
           />
         </View>

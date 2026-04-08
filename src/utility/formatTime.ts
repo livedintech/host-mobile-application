@@ -16,3 +16,23 @@ export const formatTimeWithPeriod = (timeString: any) => {
 
   return `${hour}:${minuteStr} ${period}`;
 };
+
+export const formatDate = (dateString: any) => {
+  if (!dateString || typeof dateString !== 'string') return 'N/A';
+
+  const date = new Date(dateString);
+  
+  if (isNaN(date.getTime())) return 'N/A';
+
+  const day = date.getDate();
+  const year = date.getFullYear();
+  
+  // Get full month name
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const month = monthNames[date.getMonth()];
+
+  return `${day} ${month} ${year}`;
+};
