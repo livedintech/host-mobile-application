@@ -337,45 +337,24 @@ const ChatScreen = () => {
                 onRequestClose={() => setFilterVisible(false)}
               >
                 <View style={styles.modalOverlay}>
-                  {/* <Pressable
-                    style={{ flex: 1 }}
-                    onPress={() => setFilterVisible(false)}
-                  /> */}
-                  <Svgicons path="iconRoundedCross"/> 
                   <View style={styles.modalContent}>
-                    <AppText
-                      text="Apply Filter"
-                      fontSize={20}
-                      type="Medium"
-                      color={Colors.BLACK}
-                      mb={43}
-                    />
-                    {/* <Pressable
-                      style={styles.checkboxRow}
-                      onPress={() => setFilterAssigned(!filterAssigned)}
-                    >
-                      {filterAssigned ? (
-                        <Svgicons path="CheckboxCheckedIcon" size={30} />
-                      ) : (
-                        <Svgicons path="CheckboxUncheckedIcon" size={30} />
-                      )}
-                      <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
-                    </Pressable> */}
+                    <View style={styles.modalHeader}>
+                      <AppText
+                        text="Apply"
+                        fontSize={20}
+                        type="Medium"
+                        color={Colors.BLACK}
+                        mb={43}
+                      />
+                      <Svgicons onPress={() => setFilterVisible(false)} path="iconRoundedCross" size={30} />
+                    </View>
                     <DropdownField
                       name="listings"
                       control={control}
                       errors={errors}
-                      label="Listings"
+                      label="Select Property"
                       data={transformedListings}
                     />
-                    {/* <DropdownField
-                      name="apartmenttype"
-                      control={control}
-                      errors={errors}
-                      label="Apartment Type"
-                      data={transformedApartmentTypes}
-                      dropdownPosition="top"
-                    /> */}
                     <View style={styles.modalFooter}>
                       <AppButton
                         onPress={handleResetAll}
@@ -569,11 +548,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.WHITE,
+    backgroundColor: Colors.WHITE_OPACITY_90,
     borderTopLeftRadius: Metrics.verticalScale(30),
     borderTopRightRadius: Metrics.verticalScale(30),
     padding: Metrics.scale(25),
-    height: Metrics.screenHeight / 2.8,
+    height: Metrics.screenHeight / 3,
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -588,6 +567,10 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   flex: { flex: 1 },
+  modalHeader:{
+    flexDirection:'row',
+    justifyContent:'space-between'
+  }
 });
 
 export default ChatScreen;
