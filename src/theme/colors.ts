@@ -57,4 +57,6 @@ export const Colors = {
   WHITE_OPACITY_60:'rgba(255, 255, 255, 0.6)',
   WHITE_OPACITY_90:'rgba(255, 255, 255, 0.9)',
   TRANSPARENT: 'transparent',
+    TRANSLUCENT_WHITE_C9: '#FDFDFDC9',
+
 };

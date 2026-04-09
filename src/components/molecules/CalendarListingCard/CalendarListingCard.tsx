@@ -30,11 +30,16 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
         const end = moment(booking.calendar_end_date).startOf('day');
         return currentDotDate.isSameOrAfter(start) && currentDotDate.isSameOrBefore(end);
       });
-      return { date: currentDotDate, isBooked };
+      return { isBooked };
     });
 
     const elements = [];
     let i = 0;
+
+    // Fixed dimensions to ensure mathematical alignment
+    const DOT_SIZE = ms(6);
+    const GAP_SIZE = ms(3);
+    const MAX_GRID_WIDTH = ms(87); 
 
     while (i < daysData.length) {
       if (daysData[i].isBooked) {
@@ -45,14 +50,18 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
           i++;
         }
         
+        // Calculate exact width based on dots + gaps
+        const calculatedWidth = (DOT_SIZE * count) + (GAP_SIZE * (count - 1));
+
         elements.push(
           <View 
             key={`bar-${startIdx}`} 
             style={[
-              count > 1 ? styles.miniBar : styles.miniDot, 
+              styles.miniBar, 
               { 
                 backgroundColor: FIGMA_TEAL, 
-                width: count > 1 ? ms(6 * count + 3 * (count - 1)) : ms(6) 
+                width: calculatedWidth,
+                maxWidth: MAX_GRID_WIDTH, // CRITICAL: Prevent overflow
               }
             ]} 
           />
@@ -88,7 +97,7 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
           </Text>
           
           {item.address ? (
-            <Text style={styles.propertyAddress} numberOfLines={2}>
+            <Text style={styles.propertyAddress} numberOfLines={1}>
               {item.address}
             </Text>
           ) : null}
@@ -113,7 +122,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: ms(20), // Increased for premium rounded look
+    borderRadius: ms(20),
     padding: s(12),
     marginBottom: vs(12),
     borderWidth: 1.5,
@@ -121,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   propertyImage: {
-    width: ms(70), // Slightly larger to match SS
+    width: ms(70),
     height: ms(70),
     backgroundColor: '#F5F5F5',
     borderRadius: ms(15)
@@ -139,7 +148,7 @@ const styles = StyleSheet.create({
   },
   propertyAddress: {
     fontSize: ms(12),
-    color: '#4A5D58', // Slightly darker than sub-text for readability
+    color: '#4A5D58',
     fontWeight: '500',
     marginBottom: vs(2),
   },
@@ -149,14 +158,15 @@ const styles = StyleSheet.create({
     marginTop: vs(1),
   },
   calendarColumn: {
-    width: ms(85),
+    width: ms(95),
     alignItems: 'flex-end',
     justifyContent: 'center',
+    overflow: 'hidden', // Contain any potential bleed
   },
   dotsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: ms(80),
+    width: ms(87), // Exactly matches 10 dots + 9 gaps
     gap: ms(3),
     alignItems: 'center',
     justifyContent: 'flex-start',

@@ -22,8 +22,8 @@ const Checkbox = ({ isChecked, onPress, disabled = false }: CheckboxProps) => (
     activeOpacity={disabled ? 1 : 1} 
   >
     <Svgicons
-      path={isChecked ? 'CheckboxCheckedIcon' : 'CheckboxUncheckedIcon'}
-      size={38}
+      path={isChecked ? 'checkboxTick' : 'checkboxWithoutTick'}
+      size={20}
       color={disabled ? '#A0A0A0' : undefined} 
     />
   </TouchableOpacity>

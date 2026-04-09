@@ -6,6 +6,7 @@ import {
   getTaskManagementListing,
   getTaskManagementVendor,
   taskManagementCreateTask,
+  getTaskManagementListingCleaning
 } from '@/services/TaskManagementApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -20,6 +21,10 @@ const CreateTaskContainer = () => {
   const { data: getTaskListing = [], isLoading: isLoadingListing, isFetching: isFetchingListing, refetch: refetchListing } = useQuery({
     queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_LISTING],
     queryFn: getTaskManagementListing,
+  });
+  const { data: getTaskListingCleaning = [], isLoading: isLoadingListingCleaning, isFetching: isFetchingListingCleaning, refetch: refetchListingCleaning } = useQuery({
+    queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_LISTING_CLEANING],
+    queryFn: getTaskManagementListingCleaning,
   });
 
   const { data: getTaskVendor = [], isLoading: isLoadingVendor, isFetching: isFetchingVendor, refetch: refetchVendor } = useQuery({
@@ -83,10 +88,13 @@ const CreateTaskContainer = () => {
 
   return {
     transformedListing: getTaskListing?.map((item: any) => ({ label: item.value, value: item.id.toString() })) || [],
+    transformedListingCleaning: getTaskListingCleaning?.map((item: any) => ({ label: item.value, value: item.id.toString() })) || [],
     transformedVendor: getTaskVendor?.map((item: any) => ({ label: item.name, value: item.id.toString() })) || [],
     transformedCategory: getTaskCategory?.map((item: any) => ({ label: item.value, value: item.id.toString() })) || [],
     isLoading: isLoadingListing || isLoadingVendor || createTaskMutation.isPending,
+    isLoadingCleaning: isLoadingListingCleaning || isLoadingVendor || createTaskMutation.isPending,
     isRefreshing: isFetchingListing || isFetchingVendor,
+    isRefreshingCleaning: isFetchingListingCleaning || isFetchingVendor,
     onRefresh,
     onNextStep,
   };

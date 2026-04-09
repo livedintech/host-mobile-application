@@ -57,8 +57,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
 export default function useHubspotDetailFormContainer() {
   const route = useRoute<any>();
   const payload = route.params?.payload || {};
-  const incomingPhone = payload?.phone?.actualPhone || '';
-
+  const incomingPhone = payload?.phone?.actualPhone || payload?.phone?.phone || '';
   const {
     control,
     handleSubmit,
@@ -66,12 +65,12 @@ export default function useHubspotDetailFormContainer() {
     setValue,
     formState: { errors },
   } = useForm<MeetingDetailsFormValues>({
-    resolver: yupResolver(meetingDetailsSchema),
+    resolver: yupResolver(meetingDetailsSchema) as any,
     defaultValues: {
       fullName: '',
       phone: { 
-        phone: incomingPhone || '',
-        actualPhone: '',
+        phone: incomingPhone,
+        actualPhone: incomingPhone,
       },
       email: '',
       country: '',
@@ -101,11 +100,10 @@ export default function useHubspotDetailFormContainer() {
     // 1. Flatten the phone AND merge the payload
     const formattedUserInfo = {
       ...data,
-      ...payload, // Preserves listing_count, pricing, etc.
-      phone: data.phone.phone, // Specifically overrides the phone object with the string
-      email: data.email.toLowerCase(), // Good practice to lowercase here too
+      ...payload, 
+      phone: data.phone.phone,
+      email: data.email.toLowerCase(),
     };
-
     // 2. Navigate with the combined clean object
     navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR, { 
       userInfo: formattedUserInfo 

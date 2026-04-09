@@ -14,11 +14,11 @@ import CreateTaskContainer from '../../container/CreateTaskContainer/CreateTaskC
 
 const RecurringTaskScreen = () => {
   const { 
-    transformedListing, 
+    transformedListingCleaning, 
     transformedVendor, 
     onNextStep, 
-    isLoading, 
-    isRefreshing, 
+    isLoadingCleaning, 
+    isRefreshingCleaning, 
     onRefresh 
   } = CreateTaskContainer();
 
@@ -39,7 +39,7 @@ const RecurringTaskScreen = () => {
         <RefreshableScrollView
             contentContainerStyle={styles.scrollContent}
             onRefresh={onRefresh}
-            refreshing={isRefreshing}
+            refreshing={isRefreshingCleaning}
         >
           <View style={styles.titleContainer}>
             <AppText
@@ -65,7 +65,7 @@ const RecurringTaskScreen = () => {
               control={control}
               errors={errors}
               label="Listing Selection"
-              data={transformedListing}
+              data={transformedListingCleaning}
               placeholder="Select Listing"
               rules={{ required: 'Please select a listing' }}
             />
@@ -78,7 +78,7 @@ const RecurringTaskScreen = () => {
               data={transformedVendor}
               placeholder="Select User"
               rules={{ required: 'Assigning a user is required' }}
-              disabled={isLoading}
+              disabled={isLoadingCleaning}
             />
 
             <View style={styles.infoContainer}>
@@ -106,7 +106,7 @@ const RecurringTaskScreen = () => {
           <View style={styles.footer}>
             <AppButton
               title="Next"
-              loading={isLoading}
+              loading={isLoadingCleaning}
               backgroundColor={Colors.PRIMARY_TEAL}
               borderColor={Colors.PRIMARY_TEAL}
               color={Colors.WHITE}

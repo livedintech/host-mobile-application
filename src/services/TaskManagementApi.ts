@@ -33,6 +33,17 @@ export const getTaskManagementListing = async () => {
 
   throw response.message;
 };
+export const getTaskManagementListingCleaning = async () => {
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_LISTING_TASK_MANAGEMENT_CLEANING,
+  );
+
+  if (ok) {
+    return data.data;
+  }
+
+  throw response.message;
+};
 
 //Get Vendor
 export const getTaskManagementVendor = async () => {

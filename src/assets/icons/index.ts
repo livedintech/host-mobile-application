@@ -260,6 +260,8 @@ import database_check from './database_check.svg'
 import houseRoofShelterBlack from './houseRoofShelterBlack.svg'
 import adWhite from './adrWhite.svg'
 import iconRoundedCross from './iconRoundedCross.svg'
+import checkboxTick from './checkboxTick.svg';
+import checkboxWithoutTick from './checkboxWithoutTick.svg';
 
 export const icons = {
   iconRoundedCross,
@@ -524,5 +526,7 @@ export const icons = {
   noAiAutoReplyIcon,
   reservationDetailIcon,
   viewCalendarIcon,
-  chatIconWhite
+  chatIconWhite,
+  checkboxTick,
+  checkboxWithoutTick
 };

@@ -39,36 +39,8 @@ PODS:
     - hermes-engine/Pre-built (= 0.82.1)
   - hermes-engine/Pre-built (0.82.1)
   - IQKeyboardManagerSwift (6.5.16)
-  - LiquidGlass (0.7.1):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - MMKVCore (2.2.4)
-  - MyFatoorah (2.0.161)
+  - MyFatoorah (2.0.163)
   - myfatoorah-reactnative (1.3.2):
     - MyFatoorah (~> 2.0.155)
     - React
@@ -1908,34 +1880,6 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - SocketRocket
-  - react-native-blur (4.4.1):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - react-native-document-picker (12.0.1):
     - boost
     - DoubleConversion
@@ -1992,7 +1936,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-keyboard-controller (1.21.3):
+  - react-native-keyboard-controller (1.21.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2010,7 +1954,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-keyboard-controller/common (= 1.21.3)
+    - react-native-keyboard-controller/common (= 1.21.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2021,7 +1965,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-keyboard-controller/common (1.21.3):
+  - react-native-keyboard-controller/common (1.21.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3090,7 +3034,7 @@ PODS:
     - Yoga
   - RNInAppBrowser (3.7.1):
     - React-Core
-  - RNReanimated (4.3.0):
+  - RNReanimated (4.2.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3117,12 +3061,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/apple (= 4.3.0)
-    - RNReanimated/common (= 4.3.0)
+    - RNReanimated/reanimated (= 4.2.2)
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/apple (4.3.0):
+  - RNReanimated/reanimated (4.2.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3149,10 +3092,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated/apple (= 4.2.2)
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/common (4.3.0):
+  - RNReanimated/reanimated/apple (4.2.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3241,7 +3185,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNSVG (15.15.4):
+  - RNSVG (15.15.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3267,10 +3211,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.15.4)
+    - RNSVG/common (= 15.15.3)
     - SocketRocket
     - Yoga
-  - RNSVG/common (15.15.4):
+  - RNSVG/common (15.15.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3298,38 +3242,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets (0.8.1):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - RNWorklets/apple (= 0.8.1)
-    - RNWorklets/common (= 0.8.1)
-    - SocketRocket
-    - Yoga
-  - RNWorklets/apple (0.8.1):
+  - RNWorklets (0.7.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -3356,9 +3269,40 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
+    - RNWorklets/worklets (= 0.7.4)
     - SocketRocket
     - Yoga
-  - RNWorklets/common (0.8.1):
+  - RNWorklets/worklets (0.7.4):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNWorklets/worklets/apple (= 0.7.4)
+    - SocketRocket
+    - Yoga
+  - RNWorklets/worklets/apple (0.7.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -3400,7 +3344,6 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - "LiquidGlass (from `../node_modules/@callstack/liquid-glass`)"
   - myfatoorah-reactnative (from `../node_modules/myfatoorah-reactnative`)
   - NitroMmkv (from `../node_modules/react-native-mmkv`)
   - NitroModules (from `../node_modules/react-native-nitro-modules`)
@@ -3438,7 +3381,6 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
-  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - "react-native-document-picker (from `../node_modules/@react-native-documents/picker`)"
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-keyboard-controller (from `../node_modules/react-native-keyboard-controller`)
@@ -3530,8 +3472,6 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-09-01-RNv0.82.0-265ef62ff3eb7289d17e366664ac0da82303e101
-  LiquidGlass:
-    :path: "../node_modules/@callstack/liquid-glass"
   myfatoorah-reactnative:
     :path: "../node_modules/myfatoorah-reactnative"
   NitroMmkv:
@@ -3604,8 +3544,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
-  react-native-blur:
-    :path: "../node_modules/@react-native-community/blur"
   react-native-document-picker:
     :path: "../node_modules/@react-native-documents/picker"
   react-native-geolocation:
@@ -3735,9 +3673,8 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   hermes-engine: 273e30e7fb618279934b0b95ffab60ecedb7acf5
   IQKeyboardManagerSwift: 12d89768845bb77b55cc092ecc2b1f9370f06b76
-  LiquidGlass: 53b86e828d33deee834ecd91d3ecbafee5c03821
   MMKVCore: f2dd4c9befea04277a55e84e7812f930537993df
-  MyFatoorah: 3e8f229fe02ef0ea91420972e949375ebb454b16
+  MyFatoorah: 82370d3e69c60f7c86da5d603782cb22c65985f2
   myfatoorah-reactnative: 536a1c6a2c72fd5cb9a2cdd8b275fa5133f06666
   NitroMmkv: 1b125f00aa79f5b73e5afe0340a6d058923e1269
   NitroModules: 22837572f1ecf8f1560f5aac7c9f687825754901
@@ -3775,10 +3712,9 @@ SPEC CHECKSUMS:
   React-logger: fceaaedb9c715923a1900af68a7534e9b3a601a1
   React-Mapbuffer: 7e7ca4c53288117e7e0406e9eaa804bf259b4b30
   React-microtasksnativemodule: 885bebe5c5f25035e1fd0920776078840a0e3a76
-  react-native-blur: ba0e9ad6274783c8d45f42da82acae02e25784ad
   react-native-document-picker: 063f6391c62fafd49f97490a3ebb1255e4e30781
   react-native-geolocation: c43df081568b7568b4d68240a03263037b2eb90f
-  react-native-keyboard-controller: c431d7b4cbdfc621c4530fc21016eb3b52bcfd8f
+  react-native-keyboard-controller: 74069b8a1829a135eaa13093fd77a608fdf5ee00
   react-native-maps: 00f50855f1a061186f2923be0709b3f09708ddf7
   react-native-safe-area-context: 0f4986a88ec555aff660503b483d6e4bd6980a9a
   react-native-video: f96a08ee6b99f74e2c000d529ac16e98cd785bba
@@ -3827,14 +3763,14 @@ SPEC CHECKSUMS:
   RNGoogleSignin: fa028e2f7f3560a657c298fe367ab9511df2fcb0
   RNImageCropPicker: c456a5d12cfc902ec8865c79af97f6df137250ba
   RNInAppBrowser: b53e6f6072c931115bc22ac9dc9510ac2cbea62d
-  RNReanimated: 160175fd769387d38efec11e7e569793c3ad725b
+  RNReanimated: 03b886a575aaba0fd363ace6ea1e5b654e526e99
   RNScreens: 7179cc1ba31b4e18ed29f10abf20c24a7961cf4c
-  RNSVG: 963192f99dc2014b9aef2aa4f0ae621cb92fbe5e
-  RNWorklets: 129a1d32d6e0ffc76d0d37df90ff73c0f87e8955
+  RNSVG: 2008bfa99f51efe1edd86dec50de20d5ac16429a
+  RNWorklets: d0114f9d0c47b1678c93ae8ed32e5c4948e5cca7
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   TOCropViewController: 797deaf39c90e6e9ddd848d88817f6b9a8a09888
   Yoga: 689c8e04277f3ad631e60fe2a08e41d411daf8eb
 
 PODFILE CHECKSUM: cc7b26682b10cf68fce407fca5b50b8ffdfbffb6
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2
