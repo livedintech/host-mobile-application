@@ -28,7 +28,6 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   console.log('user?.role_key::',user?.role_key);
   
 
-  const permissionToEditPhoneNumber = user?.role_key === 'super_owner'
   
 
   // 1. Fetch Roles & Listings
@@ -267,6 +266,6 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         editUser: item,
       }),
     handleDeleteUser,
-    permissionToEditPhoneNumber
+    permissionToEditPhoneNumber:editUser
   };
 }
