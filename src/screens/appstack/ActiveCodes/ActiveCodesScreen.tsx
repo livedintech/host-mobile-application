@@ -22,31 +22,58 @@ const ActiveCodesScreen = () => {
     refetch,
     handleViewLogs,
   } = useActiveCodesContainer();
+  console.log('currentData', currentData);
 
   const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
 
   const renderCodeCard = ({ item }: { item: any }) => {
+    console.log('ietmmmncbc', item);
+    // 1. Dynamic Color Logic
+    const statusLower = item.status?.toLowerCase();
+    const isInvalidOrExpired =
+      statusLower === 'expired' || statusLower === 'invalid';
+
+    const statusColor = isInvalidOrExpired
+      ? Colors.PRIMARY_RED
+      : Colors.TEAL_PRIMARY_ALT;
+
     return (
       <GlassCard width="100%" style={styles.glassCard}>
-        <AppText
-          text={item.title}
-          fontSize={18}
-          type="Bold"
-          color={Colors.BLACK}
-          mb={4}
-        />
+        {item.title && (
+          <AppText
+            text={item.title}
+            fontSize={18}
+            type="Bold"
+            color={Colors.BLACK}
+            mb={4}
+          />
+        )}
+
         <View style={styles.detailRow}>
           <AppText text="Passcode: " fontSize={14} color={Colors.BLACK} />
           <AppText text={item.passcode} fontSize={14} color={Colors.BLACK} />
         </View>
 
-        {activeTab === 'Timed' && (
-          <View style={styles.timedDetails}>
-            <DetailRow label="Date" value={item.date} />
-            <DetailRow label="Start Time" value={item.startTime} />
-            <DetailRow label="End Time" value={item.endTime} />
+        {/* Show Validity Period for Timed or One-time tabs */}
+        {(activeTab === 'Timed' || activeTab === 'One-time') && (
+          <View style={styles.validityContainer}>
+            <AppText
+              text={`Validity Period: ${item.validityPeriod}`}
+              fontSize={14}
+              color={Colors.BLACK}
+            />
           </View>
         )}
+
+        <View style={styles.detailRow}>
+          <AppText text="Code Status: " fontSize={14} color={Colors.BLACK} />
+          <AppText
+            text={item.status}
+            fontSize={14}
+            type="Bold"
+            color={statusColor}
+          />
+        </View>
       </GlassCard>
     );
   };
@@ -82,7 +109,7 @@ const ActiveCodesScreen = () => {
           {TABS.map(tab => {
             const isActive = activeTab === tab;
             return (
-              <TouchableOpacity
+              <ButtonView
                 key={tab}
                 onPress={() => setActiveTab(tab)}
                 style={[styles.tabButton, isActive && styles.activeTabButton]}
@@ -93,7 +120,7 @@ const ActiveCodesScreen = () => {
                   color={isActive ? Colors.WHITE : Colors.BLACK}
                   type={isActive ? 'Bold' : 'Regular'}
                 />
-              </TouchableOpacity>
+              </ButtonView>
             );
           })}
         </View>
@@ -198,6 +225,12 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginVertical: 2, // Slight spacing between lines
+  },
+  validityContainer: {
+    marginVertical: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Ensures text wraps if the date string is long
   },
   timedDetails: {
     marginTop: 8,

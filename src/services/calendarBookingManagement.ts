@@ -69,7 +69,7 @@ export const getCalendarBookingsByListingIdApi = async (listingIds: string | str
  * 4. FETCH RESERVATIONS (For the Reservation Tab)
  */
 
-export const getReservationsApi = async (listingIds?: string, activeFilter?: string) => {
+export const getReservationsApi = async (listingIds?: string, activeFilter?: string, filterType?: string) => {
   const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
   const params = new URLSearchParams();
 
@@ -79,9 +79,14 @@ export const getReservationsApi = async (listingIds?: string, activeFilter?: str
     const day = String(today.getDate()).padStart(2, '0');
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
-    params.append('created_at', `${day}-${month}-${year}`);
+    // params.append('created_at', `${day}-${month}-${year}-`);
+    params.append('status', activeFilter);
   } else if (activeFilter && activeFilter !== 'all') {
     params.append('status', activeFilter);
+  }
+
+  if (filterType) {
+    params.append('filter_type', filterType); 
   }
 
   // Listing ID
@@ -128,7 +133,7 @@ export const createDirectBookingApi = async (payload: any) => {
 
   // If the request failed (like your 409 error), throw it!
   // This forces the 'catch' block in ListingScreen to trigger.
-  throw response; 
+throw response.data || response;
 };
 
 /**

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import moment from 'moment';
 import { RawBookingData } from '@/types/api/bookingTypes';
+import ButtonView from '../AppButton/ButtonView';
 
 const FIGMA_TEAL = '#20957B';
 const DOT_EMPTY = '#E0E0E0';
@@ -17,85 +18,105 @@ interface CalendarListingCardProps {
 const PLACEHOLDER_IMAGE = require('@/assets/img/property_placeholder.png');
 
 const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
-  
   const renderMonthGrid = () => {
     const referenceDate = moment();
     const daysInMonth = referenceDate.daysInMonth();
     const startOfMonth = moment(referenceDate).startOf('month');
 
-    const daysData = Array.from({ length: daysInMonth }).map((_, i) => {
-      const currentDotDate = moment(startOfMonth).add(i, 'days').startOf('day');
-      const isBooked = item.bookings?.some(booking => {
-        const start = moment(booking.start_date).startOf('day');
-        const end = moment(booking.calendar_end_date).startOf('day');
-        return currentDotDate.isSameOrAfter(start) && currentDotDate.isSameOrBefore(end);
-      });
-      return { isBooked };
-    });
-
-    const elements = [];
-    let i = 0;
-
-    // Fixed dimensions to ensure mathematical alignment
     const DOT_SIZE = ms(6);
     const GAP_SIZE = ms(3);
-    const MAX_GRID_WIDTH = ms(87); 
+    const DOTS_PER_ROW = 10;
 
-    while (i < daysData.length) {
-      if (daysData[i].isBooked) {
-        let count = 0;
-        let startIdx = i;
-        while (i < daysData.length && daysData[i].isBooked) {
-          count++;
-          i++;
-        }
-        
-        // Calculate exact width based on dots + gaps
-        const calculatedWidth = (DOT_SIZE * count) + (GAP_SIZE * (count - 1));
+    // ✅ Track WHICH booking index each day belongs to (-1 = not booked)
+    const daysData: { isBooked: boolean; bookingIndex: number }[] = Array.from({
+      length: daysInMonth,
+    }).map((_, i) => {
+      const currentDotDate = moment(startOfMonth).add(i, 'days').startOf('day');
+      const bookingIndex =
+        item.bookings?.findIndex(booking => {
+          const start = moment(booking.start_date).startOf('day');
+          const end = moment(booking.calendar_end_date).startOf('day');
+          return (
+            currentDotDate.isSameOrAfter(start) &&
+            currentDotDate.isSameOrBefore(end)
+          );
+        }) ?? -1;
+      return { isBooked: bookingIndex !== -1, bookingIndex };
+    });
 
-        elements.push(
-          <View 
-            key={`bar-${startIdx}`} 
-            style={[
-              styles.miniBar, 
-              { 
-                backgroundColor: FIGMA_TEAL, 
-                width: calculatedWidth,
-                maxWidth: MAX_GRID_WIDTH, // CRITICAL: Prevent overflow
-              }
-            ]} 
-          />
-        );
-      } else {
-        elements.push(
-          <View key={`empty-${i}`} style={[styles.miniDot, { backgroundColor: DOT_EMPTY }]} />
-        );
-        i++;
-      }
+    const rows: { isBooked: boolean; bookingIndex: number }[][] = [];
+    for (let i = 0; i < daysData.length; i += DOTS_PER_ROW) {
+      rows.push(daysData.slice(i, i + DOTS_PER_ROW));
     }
 
-    return elements;
-  };
+    return rows.map((row, rowIndex) => {
+      const rowElements: React.ReactElement[] = [];
+      let i = 0;
 
+      while (i < row.length) {
+        if (row[i].isBooked) {
+          let count = 0;
+          const startIdx = i;
+          const currentBookingIndex = row[i].bookingIndex;
+
+          // ✅ Break bar when booking index changes (different booking = new bar)
+          while (
+            i < row.length &&
+            row[i].isBooked &&
+            row[i].bookingIndex === currentBookingIndex
+          ) {
+            count++;
+            i++;
+          }
+
+          const barWidth = DOT_SIZE * count + GAP_SIZE * (count - 1);
+          rowElements.push(
+            <View
+              key={`bar-${rowIndex}-${startIdx}`}
+              style={[
+                styles.miniBar,
+                { backgroundColor: FIGMA_TEAL, width: barWidth },
+              ]}
+            />,
+          );
+        } else {
+          rowElements.push(
+            <View
+              key={`dot-${rowIndex}-${i}`}
+              style={[styles.miniDot, { backgroundColor: DOT_EMPTY }]}
+            />,
+          );
+          i++;
+        }
+      }
+
+      return (
+        <View key={`row-${rowIndex}`} style={styles.dotsRow}>
+          {rowElements}
+        </View>
+      );
+    });
+  };
   return (
-    <TouchableOpacity 
-      activeOpacity={0.8} 
-      onPress={() => onPress?.(item.listing_id)}
-    >
+    <ButtonView activeOpacity={0.8} onPress={() => onPress?.(item.listing_id)}>
       <View style={styles.cardContainer}>
         {/* Property Image */}
-        <Image 
-          source={item?.listing_image ? { uri: item.listing_image } : PLACEHOLDER_IMAGE} 
-          style={styles.propertyImage} 
+        <Image
+          source={
+            item?.listing_image
+              ? { uri: item.listing_image }
+              : PLACEHOLDER_IMAGE
+          }
+          style={styles.propertyImage}
           resizeMode="cover"
         />
-        
+
         {/* Listing Info */}
         <View style={styles.infoContainer}>
           <Text style={styles.propertyTitle} numberOfLines={1}>
-            {item.listing_title || "Untitled Property"}
+            {item.listing_title || 'Untitled Property'}
           </Text>
-          
+
           {item.address ? (
             <Text style={styles.propertyAddress} numberOfLines={1}>
               {item.address}
@@ -103,18 +124,16 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
           ) : null}
 
           <Text style={styles.propertyDescription} numberOfLines={1}>
-            {item?.listing_desc || ""}
+            {item?.listing_desc || ''}
           </Text>
         </View>
 
         {/* Dynamic Calendar Column */}
         <View style={styles.calendarColumn}>
-          <View style={styles.dotsGrid}>
-            {renderMonthGrid()}
-          </View>
+          <View style={styles.dotsGrid}>{renderMonthGrid()}</View>
         </View>
       </View>
-    </TouchableOpacity>
+    </ButtonView>
   );
 };
 
@@ -133,7 +152,7 @@ const styles = StyleSheet.create({
     width: ms(70),
     height: ms(70),
     backgroundColor: '#F5F5F5',
-    borderRadius: ms(15)
+    borderRadius: ms(15),
   },
   infoContainer: {
     flex: 1,
@@ -161,15 +180,18 @@ const styles = StyleSheet.create({
     width: ms(95),
     alignItems: 'flex-end',
     justifyContent: 'center',
-    overflow: 'hidden', // Contain any potential bleed
+    // overflow: 'hidden',
   },
   dotsGrid: {
+    flexDirection: 'column',
+    gap: ms(3),
+    width: ms(87),
+    alignItems: 'flex-start',
+  },
+  dotsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    width: ms(87), // Exactly matches 10 dots + 9 gaps
     gap: ms(3),
     alignItems: 'center',
-    justifyContent: 'flex-start',
   },
   miniDot: {
     width: ms(6),

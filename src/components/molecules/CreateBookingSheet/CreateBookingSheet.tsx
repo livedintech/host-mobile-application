@@ -12,6 +12,7 @@ import { Colors } from '@/theme/colors';
 import AppButton from '../AppButton/AppButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import PhoneInputField from '../Input/PhoneInputField';
+import ButtonView from '../AppButton/ButtonView';
 
 interface Props {
   isLoading?: boolean;
@@ -42,29 +43,39 @@ export const CreateBookingSheet = ({
   handleSubmit,
   isLoading,
   cleaningFee,
-  discount
+  discount,
 }: Props) => {
   const today = new Date();
   // Watch fields for real-time calculation
   const startDateValue = useWatch({ control, name: 'start_date' });
   const endDateValue = useWatch({ control, name: 'end_date' });
-  const rateValue = useWatch({ 
-    control, 
+  const rateValue = useWatch({
+    control,
     name: 'rate',
-    defaultValue: "0" 
+    defaultValue: '0',
   });
 
   const minStartDate = today;
   const minEndDate = startDateValue ? new Date(startDateValue) : today;
 
   // Calculate Total Logic
-    const getGuestTotal = () => {
-    const cleanedRate = typeof rateValue === 'string' 
-      ? rateValue.replace(/[^0-9.]/g, '') 
-    : rateValue;
-    
-    const rate = parseFloat(cleanedRate) || 0;
-    const total = (rate + cleaningFee) - discount;
+  const safeNumber = (value: any): number => {
+    if (value === null || value === undefined) return 0;
+
+    const cleaned =
+      typeof value === 'string' ? value.replace(/[^0-9.]/g, '') : String(value);
+
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+  };
+
+  const getGuestTotal = () => {
+    const rate = safeNumber(rateValue);
+    const cleaning = safeNumber(cleaningFee);
+    const discountValue = safeNumber(discount);
+
+    const total = rate + cleaning - discountValue;
+
     return Math.max(0, total);
   };
 
@@ -79,11 +90,15 @@ export const CreateBookingSheet = ({
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.headerRow}>
-          <AppText 
-            text={bookingType === 'direct' ? "Create Direct Booking" : "Manage Pricing"} 
-            type="Bold" 
-            fontSize={22} 
-            color={Colors.BLACK} 
+          <AppText
+            text={
+              bookingType === 'direct'
+                ? 'Create Direct Booking'
+                : 'Manage Pricing'
+            }
+            type="Bold"
+            fontSize={22}
+            color={Colors.BLACK}
           />
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Svgicons path="closeIcon" size={20} />
@@ -92,24 +107,39 @@ export const CreateBookingSheet = ({
 
         {/* Type Selector */}
         <View style={styles.radioRow}>
-          {['direct', 'pricing'].map((type) => (
-            <Pressable disabled={isLoading} key={type} style={styles.radioItem} onPress={() => setBookingType(type)}>
-              <View style={[styles.radioOuter, bookingType === type && styles.radioActive]}>
+          {['direct', 'pricing'].map(type => (
+            <Pressable
+              disabled={isLoading}
+              key={type}
+              style={styles.radioItem}
+              onPress={() => setBookingType(type)}
+            >
+              <View
+                style={[
+                  styles.radioOuter,
+                  bookingType === type && styles.radioActive,
+                ]}
+              >
                 {bookingType === type && <View style={styles.radioInner} />}
               </View>
-              <AppText text={type === 'direct' ? "Direct Booking" : "Pricing"} />
+              <AppText
+                text={type === 'direct' ? 'Direct Booking' : 'Pricing'}
+              />
             </Pressable>
           ))}
         </View>
 
-        {(!selectedListingId || selectedListingId === "all") && (
+        {(!selectedListingId || selectedListingId === 'all') && (
           <DropdownField
             name="listing_id"
             control={control}
             errors={errors}
             label="Property Listing"
             placeholder="Select a property"
-            data={listingOptions.filter((o: any) => o.value !== "" && !o.label.toLowerCase().includes('all'))}
+            data={listingOptions.filter(
+              (o: any) =>
+                o.value !== '' && !o.label.toLowerCase().includes('all'),
+            )}
           />
         )}
 
@@ -121,10 +151,27 @@ export const CreateBookingSheet = ({
               errors={errors}
               label="Stay Type"
               placeholder="Select stay type"
-              data={[{ label: 'Guest Stay', value: 'guest_stay' }, { label: 'Self Stay', value: 'self_stay' }]}
+              data={[
+                { label: 'Guest Stay', value: 'guest_stay' },
+                { label: 'Self Stay', value: 'self_stay' },
+              ]}
             />
-            <InputField name="name" control={control} errors={errors} label="Guest Name" placeholder="Enter guest name" />
-            <InputField name="email" control={control} errors={errors} label="Email" placeholder="guest@example.com" keyboardType="email-address" />
+            <InputField
+              name="name"
+              control={control}
+              errors={errors}
+              label="Guest Name"
+              placeholder="Enter guest name"
+            />
+            {/* <InputField name="per_night_price" control={control} errors={errors} label="Per Night Pricing" placeholder="" /> */}
+            <InputField
+              name="email"
+              control={control}
+              errors={errors}
+              label="Email"
+              placeholder="guest@example.com"
+              keyboardType="email-address"
+            />
             <View style={{ marginBottom: vs(10) }}>
               <PhoneInputField
                 label="Phone Number*"
@@ -133,29 +180,29 @@ export const CreateBookingSheet = ({
                 countryFieldName="country"
                 phoneFieldName="phoneNumber"
               />
-             </View>
+            </View>
           </View>
         ) : (
           <View>
-            <InputField 
-              name="rate" 
-              control={control} 
-              errors={errors} 
-              label="Base Price" 
-              placeholder="SAR 500" 
-              keyboardType="numeric" 
+            <InputField
+              name="rate"
+              control={control}
+              errors={errors}
+              label="Base Price"
+              placeholder="SAR 500"
+              keyboardType="numeric"
             />
             <View style={styles.pricingInfoContainer}>
-              <AppText 
-                text="SR499 - SR500 depending on promotions" 
-                fontSize={13} 
-                color={Colors.DRAVIT_GREY} 
+              <AppText
+                text="SR499 - SR500 depending on promotions"
+                fontSize={13}
+                color={Colors.DRAVIT_GREY}
               />
               <TouchableOpacity activeOpacity={0.7}>
-                <AppText 
-                  text="Similar listings SR86 - SR129" 
-                  fontSize={13} 
-                  color={Colors.DRAVIT_GREY} 
+                <AppText
+                  text="Similar listings SR86 - SR129"
+                  fontSize={13}
+                  color={Colors.DRAVIT_GREY}
                   style={styles.underline}
                 />
               </TouchableOpacity>
@@ -169,10 +216,16 @@ export const CreateBookingSheet = ({
           errors={errors}
           label="Start Date"
           placeholder="MM/DD/YY"
-          mode='date'
+          mode="date"
           minimumDate={minStartDate}
           rules={{ required: 'Check-in date is required' }}
-          rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
+          rightIcon={
+            <Svgicons
+              path="Calendar_Days"
+              size={20}
+              color={Colors.BRUNSWICK_GREEN}
+            />
+          }
         />
 
         <DateTimeInputField
@@ -181,30 +234,38 @@ export const CreateBookingSheet = ({
           errors={errors}
           label="End Date"
           placeholder="MM/DD/YY"
-          mode='date'
+          mode="date"
           minimumDate={minEndDate}
           rules={{ required: 'Check-out date is required' }}
-          rightIcon={<Svgicons path="Calendar_Days" size={20} color={Colors.BRUNSWICK_GREEN} />}
+          rightIcon={
+            <Svgicons
+              path="Calendar_Days"
+              size={20}
+              color={Colors.BRUNSWICK_GREEN}
+            />
+          }
         />
 
         {/* {guestTotal > 0 && ( */}
-          {bookingType === 'pricing' && (
-            <View style={styles.totalContainer}>
-              <TouchableOpacity activeOpacity={0.7}>
-                <AppText 
-                  text={`Guest total SAR ${guestTotal}`} 
-                  fontSize={14} 
-                  color={Colors.DRAVIT_GREY} 
-                  style={styles.underline}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
+        {bookingType === 'pricing' && (
+          <View style={styles.totalContainer}>
+            <ButtonView activeOpacity={0.7}>
+              <AppText
+                text={`Guest total SAR ${guestTotal}`}
+                fontSize={14}
+                color={Colors.DRAVIT_GREY}
+                style={styles.underline}
+              />
+            </ButtonView>
+          </View>
+        )}
         {/* )} */}
 
         <View style={styles.buttonContainer}>
           <AppButton
-            title={bookingType === 'direct' ? "Create Direct Booking" : "Set Pricing"}
+            title={
+              bookingType === 'direct' ? 'Create Direct Booking' : 'Set Pricing'
+            }
             onPress={handleSubmit(onSubmit)}
             loading={isLoading}
           />
@@ -234,12 +295,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: s(30),
-    marginVertical: vs(15)
+    marginVertical: vs(15),
   },
   radioItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: s(8)
+    gap: s(8),
   },
   radioOuter: {
     width: ms(18),
@@ -248,20 +309,20 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#2D4A41',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   radioInner: {
     width: ms(9),
     height: ms(9),
     borderRadius: 5,
-    backgroundColor: '#2D4A41'
+    backgroundColor: '#2D4A41',
   },
   radioActive: {
-    borderColor: '#2D4A41'
+    borderColor: '#2D4A41',
   },
   buttonContainer: {
     marginTop: vs(20),
-    marginBottom: vs(10)
+    marginBottom: vs(10),
   },
   headerRow: {
     flexDirection: 'row',
@@ -274,7 +335,7 @@ const styles = StyleSheet.create({
     width: ms(36),
     height: ms(36),
     borderRadius: ms(18),
-    backgroundColor: '#F0F0F0', 
+    backgroundColor: '#F0F0F0',
     justifyContent: 'center',
     alignItems: 'center',
   },

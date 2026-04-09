@@ -24,6 +24,7 @@ interface DropdownFieldProps {
   label: string;
   data: DropdownItem[];
   placeholder?: string;
+  placeholderColor?: string;
   disabled?: boolean;
   rules?: RegisterOptions;
   dropdownPosition?: 'auto' | 'top' | 'bottom';
@@ -38,6 +39,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   label,
   data,
   placeholder = 'Select',
+  placeholderColor,
   disabled = false,
   rules,
   dropdownPosition,
@@ -46,9 +48,11 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   const error = errors[name]?.message as string;
 
   return (
-    <View style={{
-      marginBottom: Metrics.verticalScale(18)
-    }}>
+    <View
+      style={{
+        marginBottom: Metrics.verticalScale(18),
+      }}
+    >
       {label && (
         <AppText
           text={label}
@@ -75,7 +79,10 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
               ]}
               // This styles the actual popup menu
               containerStyle={styles.popupListContainer}
-              placeholderStyle={styles.placeholderStyle}
+              placeholderStyle={[
+                styles.placeholderStyle,
+                placeholderColor ? { color: placeholderColor } : {},
+              ]}
               selectedTextStyle={styles.selectedTextStyle}
               itemTextStyle={styles.itemTextStyle}
               data={data}
@@ -91,7 +98,12 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
               }}
               disable={disabled}
               renderRightIcon={() => (
-                <Svgicons path="ChevronDownIcon" width={15} height={15} color="#2D3142" />
+                <Svgicons
+                  path="ChevronDownIcon"
+                  width={15}
+                  height={15}
+                  color="#2D3142"
+                />
               )}
               autoScroll={false}
               searchPlaceholder="Search..."
@@ -100,7 +112,13 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
         />
       </GlassCard>
       {error && (
-        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
+        <AppText
+          text={error}
+          color={Colors.INDIAN_RED}
+          fontSize={12}
+          mt={5}
+          ml={4}
+        />
       )}
     </View>
   );
@@ -114,7 +132,7 @@ const styles = StyleSheet.create({
     // flex:1,
     width: '100%',
     padding: 0,
-    borderRadius: 12
+    borderRadius: 12,
   },
   dropdown: {
     height: Metrics.verticalScale(54),

@@ -1,6 +1,11 @@
-
 import React, { useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, StatusBar, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
@@ -22,19 +27,25 @@ import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
 import NoListing from './NoListing';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ListingScreen = () => {
   const authStore = useAuthStore();
-  const user = authStore?.user; 
+  const user = authStore?.user;
 
   const route = useRoute<any>();
-  const [selectedTab, setSelectedTab] = useState(0); 
+  const [selectedTab, setSelectedTab] = useState(0);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [selectedPropertyValues, setSelectedPropertyValues] = useState<
+    string[]
+  >([]);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
+    null,
+  );
 
-  const { isOtaConnected, isLoading: isLoadingOta } = useManageBookingContainer();
+  const { isOtaConnected, isLoading: isLoadingOta } =
+    useManageBookingContainer();
 
   const {
     control,
@@ -63,8 +74,9 @@ const ListingScreen = () => {
     isBookingOpen,
     setIsBookingOpen,
     isLoading,
-    cleaningFee, 
-    discount
+    cleaningFee,
+    discount,
+    setCheckInFilter,
   } = useListingContainer(route.params?.listing_id, selectedTab);
 
   const toggleTab = () => {
@@ -80,7 +92,11 @@ const ListingScreen = () => {
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <SafeAreaView style={styles.centerContainer} edges={['top']}>
           <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-          <AppText text="Checking OTA connection..." mt={10} color={Colors.BRUNSWICK_GREEN} />
+          <AppText
+            text="Checking OTA connection..."
+            mt={10}
+            color={Colors.BRUNSWICK_GREEN}
+          />
         </SafeAreaView>
       </BGImage>
     );
@@ -103,8 +119,8 @@ const ListingScreen = () => {
       : (dateData?.channels?.length ?? 0) > 0;
 
     if (isBooked) {
-      const bookingCode = selectedListingId 
-        ? dateData.bookingData?.booking_id 
+      const bookingCode = selectedListingId
+        ? dateData.bookingData?.booking_id
         : dateData.bookings?.[0]?.booking_id;
 
       if (bookingCode) {
@@ -118,7 +134,6 @@ const ListingScreen = () => {
       setIsBookingOpen(true);
     }
   };
-
 
   const onBookingSubmit = async (data: any) => {
     const success = await onCreateBooking(data);
@@ -153,24 +168,24 @@ const ListingScreen = () => {
           <>
             <View style={styles.headerFixed}>
               <View style={styles.headerRow}>
-                <AppText 
-                  text="Guest Bookings" 
-                  fontSize={22} 
-                  type="Bold" 
-                  color={Colors.BLACK} 
+                <AppText
+                  text="Guest Bookings"
+                  fontSize={22}
+                  type="Bold"
+                  color={Colors.BLACK}
                 />
-                <TouchableOpacity 
-                  style={styles.toggleButton} 
+                <ButtonView
+                  style={styles.toggleButton}
                   onPress={toggleTab}
                   activeOpacity={0.8}
                 >
-                  <AppText 
-                    text={selectedTab === 0 ? 'Reservations' : 'Calendar'} 
-                    color={Colors.WHITE} 
-                    fontSize={13} 
-                    type="SemiBold" 
+                  <AppText
+                    text={selectedTab === 0 ? 'Reservations' : 'Calendar'}
+                    color={Colors.WHITE}
+                    fontSize={13}
+                    type="SemiBold"
                   />
-                </TouchableOpacity>
+                </ButtonView>
               </View>
 
               {selectedTab === 1 && (
@@ -202,7 +217,10 @@ const ListingScreen = () => {
               <View style={{ flex: 1 }}>
                 {resLoading ? (
                   <View style={styles.centerContainer}>
-                    <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+                    <ActivityIndicator
+                      size="large"
+                      color={Colors.BRUNSWICK_GREEN}
+                    />
                   </View>
                 ) : (
                   <FlatListSimpleHandler
@@ -224,12 +242,17 @@ const ListingScreen = () => {
                           id={item.booking_id || item.id}
                           guestName={item.guest}
                           guests={item?.number_of_guests}
-                          platform={item.source_type === 'livedin' ? 'Livedin' : config.label}
+                          platform={
+                            item.source_type === 'livedin'
+                              ? 'Livedin'
+                              : config.label
+                          }
                           property={item.listing_title || 'Property'}
                           endDate={item.end_date}
                           startDate={item.start_date}
                           checkIn={item?.checkIn || '04:00 PM'}
                           checkOut={item?.checkOut || '12:00 AM'}
+                          checkedoutDate={item?.end_date || ''}
                           platformColor={config.color}
                           onPress={handleReservationPress}
                         />
@@ -246,14 +269,24 @@ const ListingScreen = () => {
           isVisible={isModalVisible}
           onClose={() => setModalVisible(false)}
           initialSelectedValues={selectedPropertyValues}
-          onApply={f => {
+          // Updated: Handle both the listing array (f) and the check-in value (type)
+          onApply={(f, type) => {
             setSelectedPropertyValues(f);
             setAppliedListingIds(f.join(','));
+
+            // Pass the dropdown value to your state
+            if (type) {
+              setCheckInFilter(type);
+            } else {
+              setCheckInFilter(''); // Reset if nothing selected
+            }
+
             setModalVisible(false);
           }}
           onReset={() => {
             setSelectedPropertyValues([]);
             setAppliedListingIds('');
+            setCheckInFilter(''); // Clear this on reset too
           }}
           actualProperties={(listingOptions || []).filter(
             (opt: any) =>
@@ -261,7 +294,7 @@ const ListingScreen = () => {
               !(opt.label || '').toLowerCase().includes('all listing'),
           )}
         />
-        
+
         {isBookingOpen && (
           <CreateBookingSheet
             isVisible={isBookingOpen}
@@ -279,7 +312,7 @@ const ListingScreen = () => {
             // onSubmit={handleSubmit(onBookingSubmit)}
             isLoading={isLoading}
           />
-        )} 
+        )}
       </SafeAreaView>
     </BGImage>
   );
@@ -289,8 +322,8 @@ const styles = StyleSheet.create({
   transparentContainer: { flex: 1, backgroundColor: 'transparent' },
   headerFixed: {
     paddingHorizontal: s(16),
-    backgroundColor: 'transparent', 
-    zIndex: 10,
+    // backgroundColor: 'transparent',
+    // zIndex: 10,
   },
   headerRow: {
     flexDirection: 'row',
