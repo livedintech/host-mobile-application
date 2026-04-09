@@ -12,13 +12,13 @@ import Metrics from '@/utility/Metrics';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const TABS = ['Airbnb', 'Gathern', 'Booking.com'] as const;
+const TABS = ['Airbnb', 'Gathern', 'Bookings.com'] as const;
 type TabType = (typeof TABS)[number];
 
 const TAB_ICON_MAP: Record<TabType, string> = {
     Airbnb: 'airbnb',
     Gathern: 'gathern',
-    'Booking.com': 'bookingCom',
+    'Bookings.com': 'bookingCom',
 };
 
 

@@ -124,7 +124,6 @@ const CustomInput = ({
               : { textAlignVertical: 'center' },
           ]}
           placeholder={placeholder}
-          // Matches your dropdown placeholder color
           placeholderTextColor={'#7B8D88'} 
           value={value}
           onChangeText={onChangeText}
@@ -144,7 +143,9 @@ const CustomInput = ({
         )}
       </Animated.View>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+       {error && (
+        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4}/>
+      )}
     </View>
   );
 };

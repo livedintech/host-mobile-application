@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  Animated,
 } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '../AppText/AppText';
@@ -17,9 +18,8 @@ interface Props {
   errors: any;
   label?: string;
   variables: { key: string; label: string }[];
-  placeholder?: string; 
+  placeholder?: string;
 }
-
 
 export default function MentionTextarea({
   name,
@@ -27,15 +27,42 @@ export default function MentionTextarea({
   errors,
   label,
   variables,
-  placeholder
+  placeholder,
 }: Props) {
   const inputRef = useRef<TextInput>(null);
+  const animation = useRef(new Animated.Value(0)).current;
 
   const [showList, setShowList] = useState(false);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [cursorPos, setCursorPos] = useState(0);
 
   const error = errors[name]?.message;
+
+  // same colors as CustomInput
+  const GLASS_BASE = 'rgba(255,255,255,0.25)';
+  const GLASS_RIM = 'rgba(255,255,255,0.6)';
+  const FOCUS_COLOR = Colors.PINE_FOREST || '#1A332C';
+
+  const handleFocus = () => {
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handleBlur = () => {
+    Animated.timing(animation, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animatedBorderColor = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [GLASS_RIM, FOCUS_COLOR],
+  });
 
   const handleChange = (text: string, onChange: any) => {
     onChange(text);
@@ -56,11 +83,7 @@ export default function MentionTextarea({
     }
   };
 
-  const insertVariable = (
-    item: any,
-    value: string,
-    onChange: any,
-  ) => {
+  const insertVariable = (item: any, value: string, onChange: any) => {
     const lastAt = value.lastIndexOf('@', cursorPos);
 
     const newText =
@@ -77,27 +100,50 @@ export default function MentionTextarea({
   };
 
   return (
-    <View style={{ marginBottom: 16 }}>
-      {label && <AppText text={label} />}
+    <View style={styles.wrapper}>
+      {label && (
+        <AppText
+          text={label}
+          mb={8}
+          color={Colors.BLACK}
+          fontSize={14}
+          type="Medium"
+        />
+      )}
 
       <Controller
         control={control}
         name={name}
         render={({ field: { value, onChange } }) => (
           <>
-            <TextInput
-              ref={inputRef}
-              style={styles.input}
-              multiline
-              value={value}
-              onSelectionChange={e =>
-                setCursorPos(e.nativeEvent.selection.start)
-              }
-              onChangeText={text =>
-                handleChange(text, onChange)
-              }
-               placeholder={placeholder}
-            />
+            <Animated.View
+              style={[
+                styles.glassContainer,
+                {
+                  borderColor: error
+                    ? Colors.INDIAN_RED
+                    : animatedBorderColor,
+                  backgroundColor: GLASS_BASE,
+                },
+              ]}
+            >
+              <TextInput
+                ref={inputRef}
+                multiline
+                value={value}
+                style={styles.input}
+                placeholder={placeholder}
+                placeholderTextColor={'#7B8D88'}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                onSelectionChange={e =>
+                  setCursorPos(e.nativeEvent.selection.start)
+                }
+                onChangeText={text =>
+                  handleChange(text, onChange)
+                }
+              />
+            </Animated.View>
 
             {showList && (
               <View style={styles.dropdown}>
@@ -110,7 +156,8 @@ export default function MentionTextarea({
                       style={styles.item}
                       onPress={() =>
                         insertVariable(item, value, onChange)
-                      }>
+                      }
+                    >
                       <AppText text={item.key} />
                     </TouchableOpacity>
                   )}
@@ -122,33 +169,42 @@ export default function MentionTextarea({
       />
 
       {error && (
-        <AppText text={error} color={Colors.INDIAN_RED} />
+        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  input: {
-    minHeight: 130,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)', // Light rim border
+  wrapper: {
+    marginBottom: Metrics.verticalScale(18),
+  },
+
+  glassContainer: {
+    borderWidth: 1.5,
     borderRadius: 12,
-    padding: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    minHeight: 130,
+  },
+
+  input: {
+    color: '#1A332C',
+    fontSize: Metrics.generatedFontSize(14),
+    fontWeight: '600',
     textAlignVertical: 'top',
-     backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent fill
   },
 
   dropdown: {
     position: 'absolute',
-    top: 80,
+    top: 85,
     width: '100%',
     backgroundColor: Colors.WHITE,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
     maxHeight: 180,
-    zIndex: 99999,
+    zIndex: 999,
   },
 
   item: {

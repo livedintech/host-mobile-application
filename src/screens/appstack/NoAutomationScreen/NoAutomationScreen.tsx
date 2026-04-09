@@ -23,12 +23,12 @@ const NoAutomationScreen = ({ onCreatePress }: NoAutomationProps) => {
             size={280}
             mb={Metrics.verticalScale(30)}
           />
-
+          <View style={styles.textContent}>
           {/* Title - Increased size for Bold Fallback style */}
           <AppText
             text="No Automation Template Found"
             fontSize={28}
-            type="Bold"
+            type="SemiBold"
             textAlign="center"
             color={Colors.BLACK}
             mb={15}
@@ -37,12 +37,11 @@ const NoAutomationScreen = ({ onCreatePress }: NoAutomationProps) => {
           {/* Description */}
           <AppText
             text="Create a template to start automating messages"
-            fontSize={16}
+            fontSize={12}
             textAlign="center"
             color={Colors.DARK_CHARCOAL_OPACITY}
-            px={50}
-            lineHeight={22}
           />
+          </View>
         </View>
 
         {/* Footer Fixed Action Button */}
@@ -87,6 +86,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.scale(22),
     paddingBottom: Metrics.verticalScale(40),
   },
+  textContent:{
+    paddingHorizontal: Metrics.scale(40)
+  }
 });
 
 export default NoAutomationScreen;

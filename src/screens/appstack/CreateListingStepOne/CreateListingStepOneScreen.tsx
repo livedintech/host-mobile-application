@@ -110,6 +110,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
             mb={15}
             loading={isLoading}
             disabled={isChannelMissing || !isPropertySelected}
+            variant='secondary'
           />
 
           <AppButton
