@@ -83,7 +83,7 @@ const CreateTaskScreen = () => {
         rules={{
           required: 'Please provide a task description',
           maxLength: {
-            value: 250,
+            value: 500,
             message: 'Description cannot exceed 250 words',
           },
         }}

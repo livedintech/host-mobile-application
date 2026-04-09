@@ -111,9 +111,9 @@ const AssignChatScreen = () => {
               <Svgicons path="arrowLeftIcon" size={26} />
             </Pressable>
           </GradientBorder>
-          <View style={styles.menuIconPlaceholder}>
+          {/* <View style={styles.menuIconPlaceholder}>
             <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
-          </View>
+          </View> */}
         </View>
 
         {/* Title Section */}

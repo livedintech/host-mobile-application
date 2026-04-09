@@ -16,26 +16,24 @@ import { Controller } from 'react-hook-form';
 import { goBack } from '@/services/navigationService';
 
 const CreateAutomationTemplateScreen = () => {
-    const { 
-        control, 
-        errors, 
-        handleSubmit, 
-        isLoading, 
-        isEditMode, 
-        transformedListing, 
-        transformedMessageVariables, 
-        transformedEvents 
+    const {
+        control,
+        errors,
+        handleSubmit,
+        isLoading,
+        isEditMode,
+        transformedListing,
+        transformedMessageVariables,
+        transformedEvents
     } = useAutomationTemplateCreateEditContainer();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView 
-                    contentContainerStyle={styles.scrollContainer} 
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
                     showsVerticalScrollIndicator={false}
                 >
-               
-
                     {/* Title & Description */}
                     <View style={styles.topTextSection}>
                         <AppText
@@ -46,7 +44,7 @@ const CreateAutomationTemplateScreen = () => {
                             mb={10}
                         />
                         <AppText
-                            text={isEditMode 
+                            text={isEditMode
                                 ? "Update the trigger, message content, timing, and assigned listings. Changes apply to all future automated messages."
                                 : "Set up an automation by defining the trigger, message content, timing, and applicable listings."
                             }
@@ -63,7 +61,7 @@ const CreateAutomationTemplateScreen = () => {
                             control={control}
                             errors={errors}
                             placeholder="Wifi Password"
-                            // labelStyle={styles.labelStyle}
+                        // labelStyle={styles.labelStyle}
                         />
 
                         <MentionTextarea
@@ -73,7 +71,7 @@ const CreateAutomationTemplateScreen = () => {
                             errors={errors}
                             variables={transformedMessageVariables}
                             placeholder="Hi Sir, here are your Wi-Fi details..."
-                            // labelStyle={styles.labelStyle}
+                        // labelStyle={styles.labelStyle}
                         />
 
                         <DropdownField
@@ -83,7 +81,7 @@ const CreateAutomationTemplateScreen = () => {
                             errors={errors}
                             data={transformedEvents}
                             placeholder="Check-in"
-                            // labelStyle={styles.labelStyle}
+                        // labelStyle={styles.labelStyle}
                         />
 
                         <MultiSelectDropdownField
@@ -135,9 +133,9 @@ const CreateAutomationTemplateScreen = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    scrollContainer: { 
-        paddingHorizontal: Metrics.scale(22), 
-        paddingTop: Metrics.verticalScale(40) 
+    scrollContainer: {
+        paddingHorizontal: Metrics.scale(22),
+        paddingTop: Metrics.verticalScale(40)
     },
     header: {
         marginBottom: Metrics.verticalScale(25),
@@ -155,8 +153,8 @@ const styles = StyleSheet.create({
     topTextSection: {
         marginBottom: Metrics.verticalScale(30),
     },
-    form: { 
-        gap: Metrics.verticalScale(20) 
+    form: {
+        gap: Metrics.verticalScale(20)
     },
     labelStyle: {
         fontSize: 16,

@@ -46,7 +46,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   const error = errors[name]?.message as string;
 
   return (
-    <View>
+    <View style={{
+      marginBottom: Metrics.verticalScale(18)
+    }}>
       {label && (
         <AppText
           text={label}
@@ -56,54 +58,49 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           type="Medium"
         />
       )}
-    <GlassCard style={styles.wrapper}>
-      <Controller
-        control={control}
-        name={name}
-        rules={rules}
-        render={({ field: { onChange, value } }) => (
-          <Dropdown
-            dropdownPosition={dropdownPosition}
-            inputSearchStyle={styles.inputSearchStyle}
-            search
-            style={[
-              styles.dropdown,
-              !!error && styles.errorBorder,
-              disabled && styles.disabled,
-            ]}
-            // This styles the actual popup menu
-            containerStyle={styles.popupListContainer}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            itemTextStyle={styles.itemTextStyle}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder={placeholder}
-            value={value}
-            onChange={item => {
-              onChange(item.value);
-              if (onSelect) {
-                onSelect(item);
-              }
-            }}
-            disable={disabled}
-            renderRightIcon={() => (
-              <Svgicons path="ChevronDownIcon" width={15} height={15} color="#2D3142" />
-            )}
-            autoScroll={false}
-            searchPlaceholder="Search..."
-          />
-        )}
-      />
-    </GlassCard>
-
-      {error && (
-        <AppText
-          text={error}
-          color={Colors.INDIAN_RED}
-          style={styles.errorText}
+      <GlassCard style={styles.wrapper}>
+        <Controller
+          control={control}
+          name={name}
+          rules={rules}
+          render={({ field: { onChange, value } }) => (
+            <Dropdown
+              dropdownPosition={dropdownPosition}
+              inputSearchStyle={styles.inputSearchStyle}
+              search
+              style={[
+                styles.dropdown,
+                !!error && styles.errorBorder,
+                disabled && styles.disabled,
+              ]}
+              // This styles the actual popup menu
+              containerStyle={styles.popupListContainer}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              itemTextStyle={styles.itemTextStyle}
+              data={data}
+              labelField="label"
+              valueField="value"
+              placeholder={placeholder}
+              value={value}
+              onChange={item => {
+                onChange(item.value);
+                if (onSelect) {
+                  onSelect(item);
+                }
+              }}
+              disable={disabled}
+              renderRightIcon={() => (
+                <Svgicons path="ChevronDownIcon" width={15} height={15} color="#2D3142" />
+              )}
+              autoScroll={false}
+              searchPlaceholder="Search..."
+            />
+          )}
         />
+      </GlassCard>
+      {error && (
+        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
       )}
     </View>
   );
@@ -111,22 +108,22 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: Metrics.verticalScale(18),
+    marginBottom: Metrics.verticalScale(0),
     zIndex: 9999,
     overflow: 'visible',
     // flex:1,
-    width:'100%',
-    padding:0,
-    borderRadius: 16
+    width: '100%',
+    padding: 0,
+    borderRadius: 12
   },
   dropdown: {
     height: Metrics.verticalScale(54),
     // --- GLASS STYLING ---
-     backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent fill
-    borderRadius: 10,             
+    backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent fill
+    borderRadius: 10,
     paddingHorizontal: 16,
     borderWidth: 1.5,
-    borderColor: Colors.WHITE_OPACITY_60, 
+    borderColor: Colors.WHITE_OPACITY_60,
   },
   popupListContainer: {
     backgroundColor: '#FFFFFF',
@@ -147,8 +144,8 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: '#1C1C1C', // Matches calendar price color
-    fontWeight: '500',
+    color: '#7B8D88', // Matches calendar price color
+    fontWeight: '600',
   },
   selectedTextStyle: {
     fontSize: Metrics.generatedFontSize(14),

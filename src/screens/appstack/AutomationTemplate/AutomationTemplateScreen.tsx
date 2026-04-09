@@ -13,6 +13,8 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 import NoAutomationScreen from '../NoAutomationScreen/NoAutomationScreen';
+import HeaderApp from '@/components/molecules/Header/HeaderApp';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 const AutomationTemplatesScreen = () => {
   const {
@@ -30,6 +32,18 @@ const AutomationTemplatesScreen = () => {
     Item,
     isLoadingStatus,
   } = useAutomationTemplateContainer();
+
+
+  if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <SpinnerLoader size={'large'} />
+        </View>
+      </BGImage>
+    );
+  }
+
 
   const renderItem = ({ item }: { item: any }) => {
     return (
@@ -99,6 +113,7 @@ const AutomationTemplatesScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <HeaderApp isGoBackAfterLogo /> 
       <View style={styles.container}>
      
         {!!data?.length && (
@@ -157,7 +172,7 @@ const AutomationTemplatesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 20 },
+  container: { flex: 1},
   headerNav: { paddingHorizontal: 22, marginBottom: 15 },
   backBtn: {
     width: 40,

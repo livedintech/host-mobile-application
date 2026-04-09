@@ -42,6 +42,8 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NoChatScreen from '../NoChatScreen/NoChatScreen';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -73,7 +75,6 @@ const ChatScreen = () => {
   } = useChatContainer();
 
   const { user } = useAuthStore();
-  console.log('usermnn', user?.has_listing);
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
@@ -81,6 +82,18 @@ const ChatScreen = () => {
   const TOTAL_ACTION_WIDTH = ACTION_WIDTH * 2;
 
   const TABS: ChatStatus[] = ['All', 'Archived', 'Snoozed', 'Unread'];
+
+
+  if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <SpinnerLoader size={'large'} />
+        </View>
+      </BGImage>
+    );
+  }
+
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
     const renderRightActions = (
@@ -124,6 +137,7 @@ const ChatScreen = () => {
         </Reanimated.View>
       );
     };
+
 
     return (
       <Swipeable
@@ -199,181 +213,181 @@ const ChatScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        {/* ── Header ── */}
-        <View style={styles.header}>
-          {/* <View style={styles.headerLeft} /> */}
-          <AppText
-            text="Inbox"
-            type="Bold"
-            fontSize={28}
-            color={Colors.MIDNIGHT}
-          />
-          <Menu>
-            <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
-              <View style={styles.hamburgerBtn}>
-                <View style={styles.hamburgerLine} />
-                <View style={styles.hamburgerLine} />
-                <View style={styles.hamburgerLine} />
-              </View>
-            </MenuTrigger>
-            <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-              {MENU_OPTIONS.map(item => (
-                <MenuOption
-                  key={item.label}
-                  style={styles.menuItem}
-                  onSelect={() => handlePopupMenu(item.label)}
-                >
-                  <AppText
-                    text={item.label}
-                    fontSize={14}
-                    color={Colors.MIDNIGHT}
-                  />
-                  <Svgicons path={item.icon} size={20} />
-                </MenuOption>
-              ))}
-            </MenuOptions>
-          </Menu>
-        </View>
-
-        {/* ── Search Row ── */}
-        <View style={styles.searchRow}>
-          <View style={styles.searchBox}>
-            <Svgicons path="searchIcon" size={18} color={Colors.GREY_SHADOW} />
-            <TextInput
-              placeholder="Search Guest"
-              style={styles.searchInput}
-              placeholderTextColor={Colors.GREY_SHADOW}
-              value={search}
-              onChangeText={setSearch}
-            />
-          </View>
-          <ButtonView
-            onPress={() => setFilterVisible(true)}
-            style={styles.filterBtn}
-          >
-            <GlassCard width={40} style={styles.iconCircle}>
-              <Svgicons
-                path="filterIcon"
-                size={20}
-                color={Colors.BRUNSWICK_GREEN}
-              />
-            </GlassCard>
-          </ButtonView>
-        </View>
-
-        {/* ── Tabs ── */}
-        <View style={styles.tabsWrapper}>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={TABS}
-            contentContainerStyle={styles.tabsList}
-            keyExtractor={item => item}
-            renderItem={({ item }) => {
-              const isActive = activeTab === item;
-              return (
-                <Pressable
-                  style={[styles.tab, isActive && styles.activeTab]}
-                  onPress={() => setActiveTab(item)}
-                >
-                  <AppText
-                    text={item}
-                    fontSize={14}
-                    type={isActive ? 'SemiBold' : 'Regular'}
-                    color={
-                      isActive ? Colors.WHITE : Colors.DARK_CHARCOAL_OPACITY_80
-                    }
-                  />
-                </Pressable>
-              );
-            }}
-          />
-        </View>
-
-        {/* ── Chat List ── */}
-        <FlatListHandler
-          isLoading={false}
-          data={data}
-          meta={dataQuery}
-          // listEmptyText="No Chat found"
-          ListEmptyComponent={
-            <View style={{ flex: 1 }}>
-              <NoChatScreen />
-            </View>
-          }
-          renderItem={renderItem}
-          keyExtractor={item => String(item.id)}
-          contentContainerStyle={{ flexGrow: 1 }}
-        />
-
-        {/* ── Filter Modal ── */}
-        <Modal
-          visible={isFilterVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={() => setFilterVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <Pressable
-              style={{ flex: 1 }}
-              onPress={() => setFilterVisible(false)}
-            />
-            <View style={styles.modalContent}>
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.container}>
+            {/* ── Header ── */}
+            <View style={styles.header}>
+              {/* <View style={styles.headerLeft} /> */}
               <AppText
-                text="Apply Filter"
-                fontSize={22}
+                text="Inbox"
                 type="Bold"
-                color={Colors.BRUNSWICK_GREEN}
-                mb={20}
+                fontSize={28}
+                color={Colors.MIDNIGHT}
               />
-              <Pressable
-                style={styles.checkboxRow}
-                onPress={() => setFilterAssigned(!filterAssigned)}
-              >
-                {filterAssigned ? (
-                  <Svgicons path="CheckboxCheckedIcon" size={30} />
-                ) : (
-                  <Svgicons path="CheckboxUncheckedIcon" size={30} />
-                )}
-                <AppText text="Assigned to me" fontSize={14} type="SemiBold" />
-              </Pressable>
-              <DropdownField
-                name="listings"
-                control={control}
-                errors={errors}
-                label="Listings"
-                data={transformedListings}
-              />
-              <DropdownField
-                name="apartmenttype"
-                control={control}
-                errors={errors}
-                label="Apartment Type"
-                data={transformedApartmentTypes}
-                dropdownPosition="top"
-              />
-              <View style={styles.modalFooter}>
-                <AppButton
-                  onPress={handleResetAll}
-                  title="Reset"
-                  style={styles.flex}
-                />
-                <AppButton
-                  onPress={() => setFilterVisible(false)}
-                  title="Apply Filter"
-                  style={styles.flex}
+              <Menu>
+                <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
+                  <View style={styles.hamburgerBtn}>
+                    <View style={styles.hamburgerLine} />
+                    <View style={styles.hamburgerLine} />
+                    <View style={styles.hamburgerLine} />
+                  </View>
+                </MenuTrigger>
+                <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
+                  {MENU_OPTIONS.map(item => (
+                    <MenuOption
+                      key={item.label}
+                      style={styles.menuItem}
+                      onSelect={() => handlePopupMenu(item.label)}
+                    >
+                      <AppText
+                        text={item.label}
+                        fontSize={14}
+                        color={Colors.MIDNIGHT}
+                      />
+                      <Svgicons path={item.icon} size={20} />
+                    </MenuOption>
+                  ))}
+                </MenuOptions>
+              </Menu>
+            </View>
+
+            {/* ── Search Row ── */}
+            <View style={styles.searchRow}>
+              <View style={styles.searchBox}>
+                <Svgicons path="searchIcon" size={18} color={Colors.GREY_SHADOW} />
+                <TextInput
+                  placeholder="Search Guest"
+                  style={styles.searchInput}
+                  placeholderTextColor={Colors.GREY_SHADOW}
+                  value={search}
+                  onChangeText={setSearch}
                 />
               </View>
+              <ButtonView
+                onPress={() => setFilterVisible(true)}
+                style={styles.filterBtn}
+              >
+                <GlassCard width={40} style={styles.iconCircle}>
+                  <Svgicons
+                    path="filterIcon"
+                    size={20}
+                    color={Colors.BRUNSWICK_GREEN}
+                  />
+                </GlassCard>
+              </ButtonView>
             </View>
+
+            {/* ── Tabs ── */}
+            <View style={styles.tabsWrapper}>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={TABS}
+                contentContainerStyle={styles.tabsList}
+                keyExtractor={item => item}
+                renderItem={({ item }) => {
+                  const isActive = activeTab === item;
+                  return (
+                    <Pressable
+                      style={[styles.tab, isActive && styles.activeTab]}
+                      onPress={() => setActiveTab(item)}
+                    >
+                      <AppText
+                        text={item}
+                        fontSize={14}
+                        type={isActive ? 'SemiBold' : 'Regular'}
+                        color={
+                          isActive ? Colors.WHITE : Colors.DARK_CHARCOAL_OPACITY_80
+                        }
+                      />
+                    </Pressable>
+                  );
+                }}
+              />
+            </View>
+
+            {/* ── Chat List ── */}
+            <FlatListHandler
+              isLoading={false}
+              data={data}
+              meta={dataQuery}
+              ListEmptyComponent={
+                <View style={{ flex: 1 }}>
+                  <NoChatScreen
+                    headingText={
+                      activeTab === 'Archived'
+                        ? 'No Archived Chats'
+                        : activeTab === 'Snoozed'
+                          ? 'No Snoozed Chats'
+                          : activeTab === 'Unread'
+                            ? 'No Unread Chats'
+                            : 'No Messages Found'
+                    }
+                    descriptionText={
+                      activeTab === 'Archived' || activeTab === 'Snoozed' || activeTab === 'Unread'
+                        ? 'No conversations yet.'
+                        : 'Create a new listing or import one from your OTA platform to get started.'
+                    }
+                    showFirstButton={activeTab === 'All'}
+                    showSecondButton={activeTab === 'All'}
+                  />
+                </View>
+              }
+              renderItem={renderItem}
+              keyExtractor={item => String(item.id)}
+              contentContainerStyle={{ flexGrow: 1 }}
+            />
+
+            {/* ── Filter Modal ── */}
+            {isFilterVisible && (
+              <Modal
+                visible={isFilterVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setFilterVisible(false)}
+              >
+                <View style={styles.modalOverlay}>
+                  <View style={styles.modalContent}>
+                    <View style={styles.modalHeader}>
+                      <AppText
+                        text="Apply"
+                        fontSize={20}
+                        type="Medium"
+                        color={Colors.BLACK}
+                        mb={43}
+                      />
+                      <Svgicons onPress={() => setFilterVisible(false)} path="iconRoundedCross" size={30} />
+                    </View>
+                    <MultiSelectDropdownField
+                      dropdownPosition='top'
+                      name="listings"
+                      control={control}
+                      errors={errors}
+                      label="Select Property"
+                      data={transformedListings}
+                    />
+                    <View style={styles.modalFooter}>
+                      <AppButton
+                        onPress={handleResetAll}
+                        title="Reset"
+                        style={styles.flex}
+                      />
+                      <AppButton
+                        onPress={() => setFilterVisible(false)}
+                        title="Apply Filter"
+                        style={styles.flex}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </Modal>
+            )}
+
           </View>
-        </Modal>
-      </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </BGImage>
   );
@@ -548,11 +562,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.WHITE,
+    backgroundColor: Colors.WHITE_OPACITY_90,
     borderTopLeftRadius: Metrics.verticalScale(30),
     borderTopRightRadius: Metrics.verticalScale(30),
     padding: Metrics.scale(25),
-    height: '75%',
+    height: Metrics.screenHeight / 3,
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -567,6 +581,10 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   flex: { flex: 1 },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
 });
 
 export default ChatScreen;

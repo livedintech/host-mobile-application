@@ -6,6 +6,7 @@ import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import GlassCard from '../GlassCard/GlassCard';
 
 interface DropdownItem {
   label: string;
@@ -40,7 +41,9 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
   const error = errors[name]?.message as string;
 
   return (
-    <View style={styles.wrapper}>
+    <View style={{
+      marginBottom: Metrics.verticalScale(18)
+    }}>
       <AppText
         text={label}
         mb={8}
@@ -49,62 +52,64 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
         type="Medium"
         style={labelStyle}
       />
-      <Controller
-        control={control}
-        name={name}
-        rules={rules}
-        render={({ field: { onChange, value } }) => {
-          const renderDropdownItem = (item: DropdownItem) => {
-            const isSelected = value?.includes(item.value);
-            return (
-              <View style={styles.itemContainer}>
-                {isSelected ? (
-                  <Svgicons path="CheckboxCheckedIcon" />
-                ) : (
-                  <Svgicons path="CheckboxUncheckedIcon" />
-                )}
-                <AppText
-                  text={item.label}
-                  fontSize={13}
-                  color={Colors.BLACK_35_PERCENT}
-                  type="Medium"
-                />
-              </View>
-            );
-          };
+      <GlassCard style={styles.wrapper}>
+        <Controller
+          control={control}
+          name={name}
+          rules={rules}
+          render={({ field: { onChange, value } }) => {
+            const renderDropdownItem = (item: DropdownItem) => {
+              const isSelected = value?.includes(item.value);
+              return (
+                <View style={styles.itemContainer}>
+                  {isSelected ? (
+                    <Svgicons path="CheckboxCheckedIcon" />
+                  ) : (
+                    <Svgicons path="CheckboxUncheckedIcon" />
+                  )}
+                  <AppText
+                    text={item.label}
+                    fontSize={13}
+                    color={Colors.BLACK_35_PERCENT}
+                    type="Medium"
+                  />
+                </View>
+              );
+            };
 
-          return (
-            <MultiSelect
-              dropdownPosition={dropdownPosition}
-              style={[
-                styles.dropdown,
-                !!error && styles.errorBorder,
-                disabled && styles.disabled,
-              ]}
-              containerStyle={styles.whiteContainer} 
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder={placeholder}
-              value={value || []}
-              onChange={onChange}
-              disable={disabled}
-              activeColor={Colors.ANTI_FLASH_WHITE} 
-              renderRightIcon={() => (
-                <Svgicons path="ChevronDownIcon" width={15} height={15} />
-              )}
-              selectedStyle={styles.selectedStyle}
-              itemContainerStyle={styles.itemContainerStyle}
-              renderItem={renderDropdownItem}
-              backgroundColor="transparent"
-            />
-          );
-        }}
-      />
+            return (
+              <MultiSelect
+                dropdownPosition={dropdownPosition}
+                style={[
+                  styles.dropdown,
+                  !!error && styles.errorBorder,
+                  disabled && styles.disabled,
+                ]}
+                containerStyle={styles.whiteContainer}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                data={data}
+                labelField="label"
+                valueField="value"
+                placeholder={placeholder}
+                value={value || []}
+                onChange={onChange}
+                disable={disabled}
+                activeColor={Colors.ANTI_FLASH_WHITE}
+                renderRightIcon={() => (
+                  <Svgicons path="ChevronDownIcon" width={15} height={15} />
+                )}
+                selectedStyle={styles.selectedStyle}
+                itemContainerStyle={styles.itemContainerStyle}
+                renderItem={renderDropdownItem}
+                backgroundColor="transparent"
+              />
+            );
+          }}
+        />
+      </GlassCard>
       {error && (
-        <AppText text={error} color={Colors.INDIAN_RED} style={styles.errorText} />
+        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
       )}
     </View>
   );
@@ -112,7 +117,14 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: Metrics.verticalScale(18),
+    // marginBottom: Metrics.verticalScale(18),
+    marginBottom: Metrics.verticalScale(0),
+    zIndex: 9999,
+    overflow: 'visible',
+    // flex:1,
+    width: '100%',
+    padding: 0,
+    borderRadius: 12
   },
   dropdown: {
     minHeight: Metrics.verticalScale(56),
@@ -124,7 +136,7 @@ const styles = StyleSheet.create({
   },
   // NEW: Solid white container for the options list
   whiteContainer: {
-    backgroundColor: Colors.WHITE, 
+    backgroundColor: Colors.WHITE,
     borderRadius: 16,
     marginTop: 8,
     borderWidth: 1,
@@ -132,14 +144,15 @@ const styles = StyleSheet.create({
   },
   disabled: {
     backgroundColor: Colors.ANTI_FLASH_WHITE,
-      opacity: 0.5,
+    opacity: 0.5,
   },
   errorBorder: {
     borderColor: Colors.INDIAN_RED,
   },
   placeholderStyle: {
-    fontSize: 13,
-    color: 'rgba(0, 0, 0, 0.4)',
+    fontSize: Metrics.generatedFontSize(14),
+    color: '#7B8D88', // Matches calendar price color
+    fontWeight: '600',
   },
   selectedTextStyle: {
     fontSize: 14,
