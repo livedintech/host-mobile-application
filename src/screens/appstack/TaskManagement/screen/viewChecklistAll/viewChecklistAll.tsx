@@ -1,5 +1,11 @@
 import React, { useRef, useMemo, useCallback } from 'react';
-import { StyleSheet, View, Platform, KeyboardAvoidingView, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Platform,
+  KeyboardAvoidingView,
+  Pressable,
+} from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -27,15 +33,20 @@ import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import { useTaskStore } from '@/store/taskStore';
 
 const ViewChecklistAll = () => {
-  const {taskId, taskStatus: storeTaskStatus, taskType, taskStatus} = useTaskStore();
-  console.log("taskStatustaskStatusmkkk",storeTaskStatus)
-  console.log('testing:::',storeTaskStatus !== "completed")
+  const {
+    taskId,
+    taskStatus: storeTaskStatus,
+    taskType,
+    taskStatus,
+  } = useTaskStore();
+  console.log('taskStatustaskStatusmkkk', storeTaskStatus);
+  console.log('testing:::', storeTaskStatus !== 'completed');
   const insets = useSafeAreaInsets(); // Hook to get notch height
   const route = useRoute<any>();
   // const { taskId, fromEdit, taskType } = route.params || {};
   const { fromEdit } = route.params || {};
 
-  console.log("taskkbb,taskId",taskId,taskType)
+  console.log('taskkbb,taskId', taskId, taskType);
 
   const { checklistData, isLoading, addSection, onRefresh } =
     useViewChecklistAllContainer({ taskId, taskType });
@@ -121,15 +132,15 @@ const ViewChecklistAll = () => {
         lineHeight={20}
         mb={30}
       />
-      {storeTaskStatus !== "completed" && (
-      <View style={styles.addSectionContainer}>
-        <ButtonView onPress={handleOpenPress}>
-          <GlassCard width="auto" style={styles.addSectionBtn}>
-            <AppText text="Add Section" fontSize={14} type="Medium" />
-          </GlassCard>
-        </ButtonView>
-      </View>
-       )} 
+      {storeTaskStatus !== 'completed' && (
+        <View style={styles.addSectionContainer}>
+          <ButtonView onPress={handleOpenPress}>
+            <GlassCard width="auto" style={styles.addSectionBtn}>
+              <AppText text="Add Section" fontSize={14} type="Medium" />
+            </GlassCard>
+          </ButtonView>
+        </View>
+      )}
     </View>
   );
 
@@ -138,10 +149,10 @@ const ViewChecklistAll = () => {
       {/* Replace SafeAreaView with a standard View + Top Padding */}
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : "height"}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
         >
-           <HeaderApp isGoBackAfterLogo />
+          <HeaderApp isGoBackAfterLogo />
           <FlatListSimpleHandler
             data={checklistData}
             renderItem={renderItem}
@@ -154,17 +165,15 @@ const ViewChecklistAll = () => {
           />
 
           {/* {storeTaskStatus === "todo" || storeTaskStatus === "inprogress" && ( */}
-            <View
-              style={[styles.footer, { marginBottom: insets.bottom || 20 }]}
-            >
-              <AppButton
-                title="Next"
-                backgroundColor={Colors.PRIMARY_TEAL}
-                color={Colors.WHITE}
-                borderColor={Colors.PRIMARY_TEAL}
-                onPress={() => navigate(NavigationRoutes.APP_STACK.STAFF_NOTES)}
-              />
-            </View>
+          <View style={[styles.footer, { marginBottom: insets.bottom || 20 }]}>
+            <AppButton
+              title="Next"
+              backgroundColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              borderColor={Colors.PRIMARY_TEAL}
+              onPress={() => navigate(NavigationRoutes.APP_STACK.STAFF_NOTES)}
+            />
+          </View>
           {/* )} */}
 
           <BottomSheet
@@ -173,27 +182,37 @@ const ViewChecklistAll = () => {
             snapPoints={snapPoints}
             enablePanDownToClose
             backdropComponent={renderBackdrop}
-            handleIndicatorStyle={{ backgroundColor: Colors.TRANSLUCENT_WHITE_C9 }}
+            // This makes the actual sheet container transparent/glassy
+            backgroundStyle={styles.sheetBackground}
+            handleIndicatorStyle={styles.sheetIndicator}
           >
             <BottomSheetView style={styles.sheetContent}>
               <View style={styles.sheetHeader}>
-                <AppText text="Add Section" fontSize={24} type="Bold" />
-                <ButtonView onPress={handleClosePress}>
+                <AppText text="Add Section" fontSize={24} type="Medium" />
+                <ButtonView
+                  onPress={handleClosePress}
+                  style={styles.closeButton}
+                >
+                  {/* If your Svgicons supports custom paths, ensure 'closeIcon' matches the X style */}
                   <Svgicons
-                    path="closeIcon"
-                    size={24}
-                    color={Colors.PRIMARY_TEAL}
+                    path="crossIconTask"
+                    size={14}
+                    color={Colors.BLACK}
                   />
                 </ButtonView>
               </View>
-              <InputField
-                name="sectionName"
-                label="Section Name"
-                control={control}
-                errors={errors}
-                placeholder="e.g. Kitchen"
-                rules={{ required: 'Required' }}
-              />
+
+              <View style={styles.inputWrapper}>
+                <InputField
+                  name="sectionName"
+                  label="Section Name"
+                  control={control}
+                  errors={errors}
+                  placeholder="Kitchen"
+                  rules={{ required: 'Required' }}
+                />
+              </View>
+
               <AppButton
                 title="Add"
                 mt={25}
@@ -201,6 +220,7 @@ const ViewChecklistAll = () => {
                 borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
                 onPress={handleSubmit(onAddSectionSubmit)}
+                borderRadius={30} // Matches the pill shape in Figma
               />
             </BottomSheetView>
           </BottomSheet>
@@ -230,7 +250,6 @@ const styles = StyleSheet.create({
   addSectionContainer: {
     alignItems: 'flex-end',
     marginBottom: 20,
-    
   },
   addSectionBtn: {
     paddingVertical: 10,
@@ -253,18 +272,65 @@ const styles = StyleSheet.create({
     left: 25,
     right: 25,
   },
+  // sheetContent: {
+  //   padding: 25,
+  //   backgroundColor: Colors.TRANSLUCENT_WHITE_C9,
+  // },
+  // sheetHeader: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'center',
+  //   marginBottom: 20,
+  // },
+  arrowCircleInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    zIndex: -999999999,
+    position: 'relative',
+  },
+
+
+  // 
+
+
+  sheetBackground: {
+    // This creates the translucent white "Glass" look
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', 
+    borderRadius: 40,
+    // marginHorizontal: 10, 
+  },
+  sheetIndicator: {
+    backgroundColor: '#ccc',
+    width: 60,
+  },
   sheetContent: {
-    padding: 25,
-    backgroundColor: Colors.TRANSLUCENT_WHITE_C9
+    paddingHorizontal: 25,
+    paddingBottom: 40,
+    paddingTop: 10,
   },
   sheetHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 25,
+    marginTop: 10,
   },
-    arrowCircleInner: { width: 32, height: 32, borderRadius: 16,zIndex: -999999999,position:'relative' },
-
+  closeButton: {
+    backgroundColor:'#BFBFBF', 
+    width: 30,
+    height: 30,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputWrapper: {
+    // If your InputField doesn't have a white background, add it here
+    // backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    // borderRadius: 15,
+    // borderWidth: 1,
+    // borderColor: '#FFF',
+  },
 });
 
 export default ViewChecklistAll;

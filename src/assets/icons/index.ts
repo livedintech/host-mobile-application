@@ -261,6 +261,7 @@ import houseRoofShelterBlack from './houseRoofShelterBlack.svg'
 import adWhite from './adrWhite.svg';
 import checkboxTick from './checkboxTick.svg';
 import checkboxWithoutTick from './checkboxWithoutTick.svg';
+import crossIconTask from './crossIconTask.svg';
 
 export const icons = {
   adWhite,
@@ -526,5 +527,6 @@ export const icons = {
   viewCalendarIcon,
   chatIconWhite,
   checkboxTick,
-  checkboxWithoutTick
+  checkboxWithoutTick,
+  crossIconTask
 };

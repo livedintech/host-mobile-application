@@ -11,49 +11,50 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTaskStore } from '@/store/taskStore';
 
-const NoTaskScreen = () => {
-    const { resetTaskStore } = useTaskStore();
+const NoTaskScreen = ({ activeTab }: { activeTab?: string }) => {
+  const emptyText =
+    activeTab === 'Complete' ? 'No Task Completed' : 'No Task Available';
+  const { resetTaskStore } = useTaskStore();
   return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <View style={styles.safeArea}>
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
+    // <BGImage source={require('@/assets/img/background/linearBG.png')}>
+    <View style={styles.safeArea}>
+      <View style={styles.content}>
+        {/* Header */}
+        {/* <View style={styles.header}>
             <AppText
               text="Task Management"
               fontSize={24}
               type="Medium"
               color={Colors.BLACK}
             />
+          </View> */}
+
+        {/* Center Illustration and Message */}
+        <View style={styles.centerContent}>
+          <View style={styles.iconContainer}>
+            <Svgicons path="noAccountTask" size={Metrics.scale(250)} />
           </View>
 
-          {/* Center Illustration and Message */}
-          <View style={styles.centerContent}>
-            <View style={styles.iconContainer}>
-              <Svgicons path="noAccountTask" size={Metrics.scale(250)} />
-            </View>
+          <AppText
+            text={emptyText}
+            fontSize={28}
+            type="Bold"
+            textAlign="center"
+            mb={12}
+          />
 
-            <AppText
-              text="No Task Available"
-              fontSize={28}
-              type="Bold"
-              textAlign="center"
-              mb={12}
-            />
+          <AppText
+            text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+            fontSize={16}
+            textAlign="center"
+            color={Colors.DARK_CHARCOAL_OPACITY}
+            px={40}
+            lineHeight={20}
+          />
+        </View>
 
-            <AppText
-              text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
-              fontSize={16}
-              textAlign="center"
-              color={Colors.DARK_CHARCOAL_OPACITY}
-              px={40}
-              lineHeight={20}
-            />
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.footer}>
-            {/* Gradient Border Wrapper */}
+        {/* Action Buttons */}
+        {/* <View style={styles.footer}>
             <LinearGradient
               colors={[
                 'rgba(128, 128, 128, 0.66)',
@@ -88,10 +89,10 @@ const NoTaskScreen = () => {
                 navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
               }}
             />
-          </View>
-        </View>
+          </View> */}
       </View>
-    </BGImage>
+    </View>
+    // </BGImage>
   );
 };
 

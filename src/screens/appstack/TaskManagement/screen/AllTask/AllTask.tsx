@@ -108,9 +108,9 @@ const AllTask = () => {
   }
 
   // --- CONDITIONAL RENDERING ---
-  if (!isAccountEmpty) {
-    return <NoTaskScreen />;
-  }
+  // if (!isAccountEmpty) {
+  //   return <NoTaskScreen />;
+  // }
 
   const renderTaskItem = ({ item }: { item: any }) => {
     console.log('Task Itemmm:', item.status);
@@ -234,6 +234,7 @@ const AllTask = () => {
           renderItem={renderTaskItem}
           ListHeaderComponent={<ListHeader />}
           contentContainerStyle={styles.listContent}
+          ListEmptyComponent={<NoTaskScreen activeTab={activeTab}/>}
         />
 
         <View style={styles.actionFooter}>

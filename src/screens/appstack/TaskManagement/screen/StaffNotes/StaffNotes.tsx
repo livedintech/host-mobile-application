@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View,Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -35,6 +35,8 @@ const StaffNotes = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
       <View style={styles.safeArea}>
         <View style={styles.container}>
           <AppText
@@ -77,6 +79,8 @@ const StaffNotes = () => {
           />
         </View>
       </View>
+    </TouchableWithoutFeedback>
+
     </BGImage>
   );
 };
