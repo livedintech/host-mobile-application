@@ -67,6 +67,7 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
                       startDate={item?.data?.property?.booking_dates?.from || ''}
                       checkIn={item?.data?.property?.check_in_time || "04:00 PM"}
                       checkOut={item?.data?.property?.check_out_time || "12:00 PM"}
+                      checkedoutDate={item?.data?.property?.end_date || ""}
                       platformColor={otaConfig.color}
                       onPress={() => {
                         onClose();

@@ -38,9 +38,9 @@ const ChecklistDetail = ({ route }: any) => {
   const { taskId: storeTaskId, taskStatus } = useTaskStore();
   // console.log("storeTaskStatus",storeTaskStatus);
   // console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' )
-// const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' || storeTaskStatus === 'pending';
+  // const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' || storeTaskStatus === 'pending';
 
-// console.log("taskStatus",taskStatus)
+  // console.log("taskStatus",taskStatus)
   const { title, sectionId, taskId, fromEdit } = route.params;
   const insets = useSafeAreaInsets();
 
@@ -88,14 +88,20 @@ const ChecklistDetail = ({ route }: any) => {
     reset();
   };
 
-const handleOpenEdit = useCallback((item: any) => {
-  if (taskStatus === 'completed' || (item.images && item.images.length > 0)) {
-    return;
-  }
-  setSelectedItem({ id: item.id, name: item.name });
-  setValue('itemName', item.name);
-  bottomSheetRef.current?.expand();
-}, [taskStatus, setValue]); // Add dependencies here
+  const handleOpenEdit = useCallback(
+    (item: any) => {
+      if (
+        taskStatus === 'completed' ||
+        (item.images && item.images.length > 0)
+      ) {
+        return;
+      }
+      setSelectedItem({ id: item.id, name: item.name });
+      setValue('itemName', item.name);
+      bottomSheetRef.current?.expand();
+    },
+    [taskStatus, setValue],
+  ); // Add dependencies here
 
   const renderMedia = (mediaItems: any[]) => {
     if (!mediaItems || mediaItems.length === 0) return null;
@@ -153,10 +159,7 @@ const handleOpenEdit = useCallback((item: any) => {
       return (
         <GlassCard width="100%" style={styles.taskCard}>
           <View style={styles.taskRow}>
-         <GlassCard 
-              width={46} 
-              style={styles.checkboxGlassWrapper}
-            >
+            <GlassCard width={46} style={styles.checkboxGlassWrapper}>
               <Checkbox
                 isChecked={item.isChecked}
                 onPress={() => toggleItem(item.id)}
@@ -180,14 +183,14 @@ const handleOpenEdit = useCallback((item: any) => {
         </GlassCard>
       );
     },
-    [toggleItem,handleOpenEdit, taskStatus],
+    [toggleItem, handleOpenEdit, taskStatus],
   );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : "height"}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
         >
           <HeaderApp isGoBackAfterLogo />
@@ -207,9 +210,8 @@ const handleOpenEdit = useCallback((item: any) => {
                   mt={20}
                 />
                 {
-                // storeTaskStatus == 'todo' || storeTaskStatus == 'template' || storeTaskStatus == 'inprogress' 
-                taskStatus !== 'completed'
-                && (
+                  // storeTaskStatus == 'todo' || storeTaskStatus == 'template' || storeTaskStatus == 'inprogress'
+                  taskStatus !== 'completed' && (
                     <View style={styles.addMoreContainer}>
                       <ButtonView
                         onPress={() => {
@@ -230,7 +232,8 @@ const handleOpenEdit = useCallback((item: any) => {
                         </GlassCard>
                       </ButtonView>
                     </View>
-                  )}
+                  )
+                }
               </View>
             }
             ListFooterComponent={<View style={{ height: 120 }} />}
@@ -238,17 +241,17 @@ const handleOpenEdit = useCallback((item: any) => {
           />
 
           {taskStatus !== 'completed' && (
-              <View style={styles.footer}>
-                <AppButton
-                  title="Save"
-                  backgroundColor={Colors.PRIMARY_TEAL}
-                  borderColor={Colors.PRIMARY_TEAL}
-                  color={Colors.WHITE}
-                  onPress={saveAndContinue}
-                  loading={isLoading}
-                />
-              </View>
-            )}
+            <View style={styles.footer}>
+              <AppButton
+                title="Save"
+                backgroundColor={Colors.PRIMARY_TEAL}
+                borderColor={Colors.PRIMARY_TEAL}
+                color={Colors.WHITE}
+                onPress={saveAndContinue}
+                loading={isLoading}
+              />
+            </View>
+          )}
 
           {/* Video Player Modal */}
           <Modal
@@ -292,30 +295,50 @@ const handleOpenEdit = useCallback((item: any) => {
                 {...props}
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
+                opacity={0.5}
               />
             )}
+            backgroundStyle={styles.sheetBackground} 
+            handleIndicatorStyle={styles.sheetIndicator}
           >
             <BottomSheetView style={styles.sheetContent}>
-              <AppText
-                text={selectedItem ? 'Edit Checklist' : 'Add New Checklist'}
-                fontSize={20}
-                type="Bold"
-                mb={25}
-              />
-              <AppText text={'Add Item'} fontSize={14} type="Medium" mb={15} />
-              <InputField
-                name="itemName"
-                control={control}
-                errors={errors}
-                placeholder="e.g. Clean the windows"
-                rules={{ required: 'Required' }}
-              />
+              {/* Header with Close Button */}
+              <View style={styles.sheetHeader}>
+                <AppText
+                  text={selectedItem ? 'Edit Checklist' : 'Add New Checklist'}
+                  fontSize={24}
+                  type="Medium"
+                />
+                <ButtonView
+                  onPress={() => bottomSheetRef.current?.close()}
+                  style={styles.closeButton}
+                >
+                  <Svgicons
+                    path="crossIconTask"
+                    size={14}
+                    color={Colors.BLACK}
+                  />
+                </ButtonView>
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <InputField
+                  name="itemName"
+                  label="Add Item"
+                  control={control}
+                  errors={errors}
+                  placeholder="e.g. Clean the windows"
+                  rules={{ required: 'Required' }}
+                />
+              </View>
+
               <AppButton
                 title={selectedItem ? 'Update' : 'Add'}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
-                mt={20}
+                mt={25}
+                borderRadius={30}
                 onPress={handleSubmit(onFormSubmit)}
               />
             </BottomSheetView>
@@ -338,9 +361,9 @@ const styles = StyleSheet.create({
   checkboxGlassWrapper: {
     width: 40,
     height: 40,
-    padding: 0,           // Remove internal padding to center the checkbox
-    marginBottom: 0,      // Override GlassCard default margin
-    borderRadius: 12,     // Matches the slightly rounded corners in your image
+    padding: 0, // Remove internal padding to center the checkbox
+    marginBottom: 0, // Override GlassCard default margin
+    borderRadius: 12, // Matches the slightly rounded corners in your image
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -386,7 +409,43 @@ const styles = StyleSheet.create({
   },
   fullScreenVideo: { width: width, height: height * 0.8 },
   closeBtn: { position: 'absolute', top: 50, right: 25, zIndex: 10 },
-  sheetContent: { padding: 25 },
+
+  //
+
+  sheetBackground: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 40,
+    // marginHorizontal: 10,
+  },
+  sheetIndicator: {
+    backgroundColor: '#ccc',
+    width: 60,
+  },
+  sheetContent: {
+    paddingHorizontal: 25,
+    paddingBottom: 40,
+    paddingTop: 10,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 25,
+    marginTop: 10,
+  },
+  closeButton: {
+    backgroundColor: '#BFBFBF',
+    width: 30,
+    height: 30,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputWrapper: {
+    // Optional: consistent background for the input area
+    // backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    // borderRadius: 15,
+  },
 });
 
 export default ChecklistDetail;

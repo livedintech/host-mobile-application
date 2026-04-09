@@ -14,16 +14,21 @@ import {
   updateCalendarPricingApi,
   getCalendarBookingManagementListingsApi,
 } from '@/services/calendarBookingManagement';
-import { createBookingFormValues, createBookingSchema } from '@/validation/booking/bookingSchemas';
+import {
+  createBookingFormValues,
+  createBookingSchema,
+} from '@/validation/booking/bookingSchemas';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { getOtaConfig } from '@/constants/ota_config';
 
-export default function useListingContainer(listingIdFromParams: any, selectedTab: number) {
+export default function useListingContainer(
+  listingIdFromParams: any,
+  selectedTab: number,
+) {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const navigation = useNavigation<any>();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-
 
   // UI State
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,9 +36,9 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   const [bookingType, setBookingType] = useState('direct');
   const [appliedListingIds, setAppliedListingIds] = useState<string>('');
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const [checkInFilter, setCheckInFilter] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setisLoading] = useState(false)
-
+  const [isLoading, setisLoading] = useState(false);
 
   // Form Initialization (Preserving context and default values exactly)
   const formMethods = useForm<createBookingFormValues>({
@@ -41,26 +46,42 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     context: { bookingType },
     defaultValues: {
       listing_selection: listingIdFromParams ? String(listingIdFromParams) : '',
-      name: '', email: '', booking_type: 'host',
-      end_date: '', start_date: '', rate: '', listing_id: '',
-      country: { cca2: 'SA', callingCode: '966' }, 
+      name: '',
+      email: '',
+      booking_type: 'host',
+      end_date: '',
+      start_date: '',
+      rate: '',
+      listing_id: '',
+      country: { cca2: 'SA', callingCode: '966' },
       phoneNumber: '',
     },
   });
 
-  const { control, watch, setValue, reset, clearErrors, handleSubmit, formState: { errors } } = formMethods;
+  const {
+    control,
+    watch,
+    setValue,
+    reset,
+    clearErrors,
+    handleSubmit,
+    formState: { errors },
+  } = formMethods;
   const selectedListingId = watch('listing_selection');
 
   // Logic: Pre-fill listing selection from params
   useEffect(() => {
     if (listingIdFromParams) {
       const targetId = String(listingIdFromParams);
-      if (selectedListingId !== targetId) setValue('listing_selection', targetId);
+      if (selectedListingId !== targetId)
+        setValue('listing_selection', targetId);
     }
   }, [listingIdFromParams, setValue, selectedListingId]);
 
   // Logic: Clear validation errors when switching booking type
-  useEffect(() => { clearErrors(); }, [bookingType, clearErrors]);
+  useEffect(() => {
+    clearErrors();
+  }, [bookingType, clearErrors]);
 
   // Query: Listings
   const { data: listingOptions = [] } = useQuery({
@@ -69,16 +90,21 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   });
 
   // Query: Reservations
-  const { data: reservationRawData = [], isLoading: resLoading, refetch: refetchReservations } = useQuery({
-    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter],
-    queryFn: () => getReservationsApi(appliedListingIds, activeFilter),
+  const {
+    data: reservationRawData = [],
+    isLoading: resLoading,
+    refetch: refetchReservations,
+  } = useQuery({
+    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter,checkInFilter],
+    queryFn: () => getReservationsApi(appliedListingIds, activeFilter,checkInFilter),
     enabled: selectedTab === 1,
   });
 
   // Query: Calendar Data
   const { data: calendarResponse, refetch: refetchCalendar } = useQuery({
     queryKey: ['CALENDAR_DATA', selectedListingId],
-    queryFn: () => getCalendarBookingManagementListingsApi(selectedListingId || ''),
+    queryFn: () =>
+      getCalendarBookingManagementListingsApi(selectedListingId || ''),
     enabled: !!user?.id,
   });
   const cleaningFee = calendarResponse?.cleaningFee;
@@ -97,9 +123,9 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
       listing_title: item.listing_title || 'Property',
       start_date: item.start_date || item.arrival_date,
       end_date: item.end_date || item.departure_date,
-      checkIn: item.checkIn || "04:00 PM",
-      checkOut: item.checkOut || "12:00 AM",
-      ...item
+      checkIn: item.checkIn || '04:00 PM',
+      checkOut: item.checkOut || '12:00 AM',
+      ...item,
     });
 
     rawData.forEach((item: any) => {
@@ -108,7 +134,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
         const dateKey = item.calender_date;
         marks[dateKey] = {
           ...marks[dateKey],
-          price: item.rate || marks[dateKey]?.price || defaultDailyPrice
+          price: item.rate || marks[dateKey]?.price || defaultDailyPrice,
         };
 
         if (item.bookings && item.bookings.length > 0) {
@@ -127,7 +153,7 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
             color: config.color,
             guest: booking.guest,
             showLabel: type === 'starting' || type === 'single',
-            bookingData: booking
+            bookingData: booking,
           };
         }
       }
@@ -135,12 +161,20 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
       // --- PART 2: Handle Date Range Bookings ---
       else if (item.start_date && item.end_date) {
         const normalizedItem = normalizeBooking(item);
-        const config = getOtaConfig(normalizedItem.source_type === 'livedin' ? 'direct' : normalizedItem.source);
+        const config = getOtaConfig(
+          normalizedItem.source_type === 'livedin'
+            ? 'direct'
+            : normalizedItem.source,
+        );
 
-        const isMultiCalendar = !selectedListingId || selectedListingId === 'all' || selectedListingId === '';
-        const rangeEndDate = (isMultiCalendar && item.calendar_end_date) 
-          ? item.calendar_end_date 
-          : normalizedItem.end_date;
+        const isMultiCalendar =
+          !selectedListingId ||
+          selectedListingId === 'all' ||
+          selectedListingId === '';
+        const rangeEndDate =
+          isMultiCalendar && item.calendar_end_date
+            ? item.calendar_end_date
+            : normalizedItem.end_date;
         // --- NEW LOGIC END ---
 
         let current = new Date(normalizedItem.start_date);
@@ -164,12 +198,15 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
               showLabel: dateType === 'starting' || dateType === 'single',
               bookingData: normalizedItem,
               channels: [config.key.toLowerCase()],
-              bookings: [normalizedItem]
+              bookings: [normalizedItem],
             };
           } else {
             const existingChannels = marks[dKey].channels || [];
             if (!existingChannels.includes(config.key.toLowerCase())) {
-              marks[dKey].channels = [...existingChannels, config.key.toLowerCase()];
+              marks[dKey].channels = [
+                ...existingChannels,
+                config.key.toLowerCase(),
+              ];
             }
             if (marks[dKey].bookings) {
               marks[dKey].bookings.push(normalizedItem);
@@ -182,10 +219,12 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
 
     return marks;
   }, [rawData, defaultDailyPrice, selectedListingId]);
-  
+
   const filteredReservations = useMemo(() => {
     return (reservationRawData || []).filter((item: any) =>
-      (item.guest || item.name || '').toLowerCase().includes(searchQuery.toLowerCase())
+      (item.guest || item.name || '')
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()),
     );
   }, [reservationRawData, searchQuery]);
 
@@ -193,17 +232,27 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
     try {
       setIsFetchingDetails(true);
       const response = await getBookingDetailsApi(bookingId);
-      if (response?.data) navigation.navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { bookingData: response.data, booking_id: bookingId });
+      if (response?.data)
+        navigation.navigate(
+          NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
+          { bookingData: response.data, booking_id: bookingId },
+        );
     } catch (error) {
-      Toast.show({ type: 'error', text1: 'Error', text2: 'Could not fetch booking info' });
-    } finally { setIsFetchingDetails(false); }
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Could not fetch booking info',
+      });
+    } finally {
+      setIsFetchingDetails(false);
+    }
   };
 
   const onCreateBooking = async (formData: createBookingFormValues) => {
     try {
       const finalId = formData.listing_id || selectedListingId;
-      if (!finalId || finalId === "all") return;
-      
+      if (!finalId || finalId === 'all') return;
+
       setisLoading(true);
 
       const formatDate = (date: string) => {
@@ -212,17 +261,32 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
         return `20${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
       };
 
-      // 1. Combine Country Calling Code and Phone Number
-      const fullPhone = `${formData.country?.callingCode || ''}${formData.phoneNumber || ''}`;
+      // Combine phone
+      const fullPhone = `${formData.country?.callingCode || ''}${
+        formData.phoneNumber || ''
+      }`;
+
       const rateValue = Number(formData?.rate || 0);
+
+      // ✅ FRONTEND VALIDATION (optional safety)
       if (rateValue < 38 && bookingType !== 'direct') {
-        Toast.show({ 
-          type: 'error', 
-          text1: 'The minimum price allowed is 38'
+        Toast.show({
+          type: 'error',
+          text1: 'The minimum price allowed is SAR 38',
         });
+        return;
       }
-      // 2. Build the flat payload
-      const payload = {
+
+      if (rateValue > 375000) {
+        Toast.show({
+          type: 'error',
+          text1: 'Maximum price allowed is SAR 375000',
+        });
+        return;
+      }
+
+      // Build payload
+      const payload: any = {
         ...formData,
         listing_id: finalId,
         phone: fullPhone.replace(/[^\d]/g, ''),
@@ -231,44 +295,69 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
         booking_type: formData.booking_type || 'host',
       };
 
-      delete (payload as any).country;
-      delete (payload as any).phoneNumber;
+      delete payload.country;
+      delete payload.phoneNumber;
 
-      const res = bookingType === 'direct'
-        ? await createDirectBookingApi(payload)
-        : await updateCalendarPricingApi({ ...payload, price: formData.rate || '' });
+      const res =
+        bookingType === 'direct'
+          ? await createDirectBookingApi(payload)
+          : await updateCalendarPricingApi({
+              ...payload,
+              price: formData.rate || '',
+            });
+
       if (res) {
-        Toast.show({ 
-          type: 'success', 
-          text1: bookingType === 'direct' ? 'Booking created' : 'Pricing updated' 
+        Toast.show({
+          type: 'success',
+          text1:
+            bookingType === 'direct' ? 'Booking created' : 'Pricing updated',
         });
+
         reset();
         queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
         queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
         setIsBookingOpen(false);
+
         return true;
       }
     } catch (error: any) {
-      console.error('Booking Error:****', error);
+      console.error('Booking Error:', error);
+
+      // ✅ Extract backend message safely
+      const backendMessage =
+        error?.message || error?.data?.message || error?.error?.message;
+
       const validationErrors = error?.data?.errors;
+
       if (validationErrors) {
         const firstField = Object.keys(validationErrors)[0];
         const errorMessage = validationErrors[firstField][0];
-        Toast.show({ type: 'error', text1: errorMessage, visibilityTime: 4000 });
+
+        Toast.show({
+          type: 'error',
+          text1: errorMessage,
+          visibilityTime: 4000,
+        });
+      } else if (backendMessage) {
+        Toast.show({
+          type: 'error',
+          text1: backendMessage,
+          visibilityTime: 4000,
+        });
       } else {
-        Toast.show({ 
-          type: 'error', 
-          text1: error?.data?.message || 'Something went wrong', 
-          visibilityTime: 4000 
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong',
+          visibilityTime: 4000,
         });
       }
     } finally {
       setisLoading(false);
     }
+
     return false;
   };
-  
-  
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -279,16 +368,34 @@ export default function useListingContainer(listingIdFromParams: any, selectedTa
   };
 
   return {
-    control, errors, handleSubmit, setValue, selectedListingId, listingOptions, rawData,
-    resLoading, filteredReservations, calendarDataMap, defaultDailyPrice,
-    isFetchingDetails, searchQuery, setSearchQuery, activeFilter, setActiveFilter,
-    bookingType, setBookingType, setAppliedListingIds, handleReservationPress, onCreateBooking,
+    control,
+    errors,
+    handleSubmit,
+    setValue,
+    selectedListingId,
+    listingOptions,
+    rawData,
+    resLoading,
+    filteredReservations,
+    calendarDataMap,
+    defaultDailyPrice,
+    isFetchingDetails,
+    searchQuery,
+    setSearchQuery,
+    activeFilter,
+    setCheckInFilter,
+    setActiveFilter,
+    bookingType,
+    setBookingType,
+    setAppliedListingIds,
+    handleReservationPress,
+    onCreateBooking,
     isRefreshing,
     handleRefresh,
     isBookingOpen,
     setIsBookingOpen,
     isLoading,
     cleaningFee,
-    discount
+    discount,
   };
 }

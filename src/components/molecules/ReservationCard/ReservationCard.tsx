@@ -14,6 +14,7 @@ interface ReservationCardProps {
   endDate: string;
   checkIn: string;
   checkOut: string;
+  checkedoutDate: string;
   platformColor: string;
   guests?: number;
   onPress?: (id: string | number) => void;
@@ -26,6 +27,7 @@ const ReservationCard = ({
   property,
   checkIn,
   checkOut,
+  checkedoutDate,
   platformColor,
   guests,
   onPress
@@ -88,6 +90,11 @@ const ReservationCard = ({
           icon="reservationcheckin" 
           label="Check-out Time" 
           value={checkOut} 
+        />
+        <InfoRow 
+          icon="reservationcheckin" 
+          label="Checked-out Date" 
+          value={checkedoutDate} 
         />
 
         <InfoRow 
