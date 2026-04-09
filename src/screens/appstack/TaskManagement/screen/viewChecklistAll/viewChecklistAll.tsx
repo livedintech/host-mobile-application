@@ -138,7 +138,7 @@ const ViewChecklistAll = () => {
       {/* Replace SafeAreaView with a standard View + Top Padding */}
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : "height"}
           style={{ flex: 1 }}
         >
            <HeaderApp isGoBackAfterLogo />
@@ -173,7 +173,7 @@ const ViewChecklistAll = () => {
             snapPoints={snapPoints}
             enablePanDownToClose
             backdropComponent={renderBackdrop}
-            handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
+            handleIndicatorStyle={{ backgroundColor: Colors.TRANSLUCENT_WHITE_C9 }}
           >
             <BottomSheetView style={styles.sheetContent}>
               <View style={styles.sheetHeader}>
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
   addSectionContainer: {
     alignItems: 'flex-end',
     marginBottom: 20,
+    
   },
   addSectionBtn: {
     paddingVertical: 10,
@@ -254,6 +255,7 @@ const styles = StyleSheet.create({
   },
   sheetContent: {
     padding: 25,
+    backgroundColor: Colors.TRANSLUCENT_WHITE_C9
   },
   sheetHeader: {
     flexDirection: 'row',

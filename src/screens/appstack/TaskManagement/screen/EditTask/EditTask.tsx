@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
+import { Alert } from 'react-native';
 
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -36,7 +37,7 @@ const formatDate = (dateString: string) => {
 };
 
 const EditTask = ({ route }: any) => {
-  const { onDeleteTask, isDeleting, assigneeOptions } = EditTaskContainer();
+  const { onDeleteTask, isDeleting, assigneeOptions, onUpdateAssignee } = EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
 
   const {
@@ -78,11 +79,22 @@ const EditTask = ({ route }: any) => {
 
   const {
     control,
+    getValues,
     setValue,
     formState: { errors },
   } = useForm({
     defaultValues: { assignee: '' },
   });
+
+  // Handle the button press
+  const handleSave = () => {
+    const selectedVendorId = getValues('assignee');
+    if (selectedVendorId) {
+      onUpdateAssignee(taskId, selectedVendorId);
+    } else {
+      Alert.alert('Selection Required', 'Please select a vendor from the list.');
+    }
+  };
 
   useEffect(() => {
     if (task?.assigned_user?.id) {
@@ -298,7 +310,8 @@ const EditTask = ({ route }: any) => {
                 title="Save Changes"
                 backgroundColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
-                onPress={() => goBack()}
+                // onPress={() => goBack()}
+                onPress={handleSave}
               />
             </>
           )}
