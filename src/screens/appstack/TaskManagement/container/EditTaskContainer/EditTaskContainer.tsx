@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
-import { deleteTaskManagement, getTaskManagementVendor } from '@/services/TaskManagementApi';
+import { deleteTaskManagement, getTaskManagementVendor, vendorUpdate } from '@/services/TaskManagementApi';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage'; // Import your constants
@@ -8,6 +8,7 @@ import { Alert } from 'react-native';
 
 const EditTaskContainer = () => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const queryClient = useQueryClient();
 
   const onDeleteTask = async (taskId: number | string) => {
@@ -45,6 +46,32 @@ const EditTaskContainer = () => {
   };
 
 
+  const onUpdateAssignee = async (taskId: number | string, vendorId: string) => {
+    try {
+      setIsSaving(true);
+      await vendorUpdate({
+        taskId,
+        vendor_id: Number(vendorId),
+      });
+
+      // Refresh the specific task detail in the cache
+      await queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_TASK_DETAIL, taskId],
+      });
+       await queryClient.invalidateQueries({
+                queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST],
+              });
+
+      Alert.alert('Success', 'Assignee updated successfully');
+      goBack();
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to update vendor');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+
     // 3. Fetch Vendor Options for Filter
   const { data: rawVendors = [] } = useQuery({
     queryKey: [STORAGE_CONST.GET_TASK_MANAGEMENT_VENDOR],
@@ -61,6 +88,7 @@ const EditTaskContainer = () => {
 
   return {
     onDeleteTask,
+    onUpdateAssignee,
     isDeleting,
     assigneeOptions
   };

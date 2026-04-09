@@ -153,11 +153,16 @@ const handleOpenEdit = useCallback((item: any) => {
       return (
         <GlassCard width="100%" style={styles.taskCard}>
           <View style={styles.taskRow}>
-            <Checkbox
-              isChecked={item.isChecked}
-              onPress={() => toggleItem(item.id)}
-              disabled={isLocked}
-            />
+         <GlassCard 
+              width={46} 
+              style={styles.checkboxGlassWrapper}
+            >
+              <Checkbox
+                isChecked={item.isChecked}
+                onPress={() => toggleItem(item.id)}
+                disabled={isLocked}
+              />
+            </GlassCard>
             <ButtonView
               style={{ flex: 1, marginLeft: 10 }}
               onPress={() => handleOpenEdit(item)}
@@ -182,7 +187,7 @@ const handleOpenEdit = useCallback((item: any) => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : "height"}
           style={{ flex: 1 }}
         >
           <HeaderApp isGoBackAfterLogo />
@@ -330,6 +335,15 @@ const styles = StyleSheet.create({
   },
   taskCard: { padding: 16, marginBottom: 15, borderRadius: 20 },
   taskRow: { flexDirection: 'row', alignItems: 'center' },
+  checkboxGlassWrapper: {
+    width: 40,
+    height: 40,
+    padding: 0,           // Remove internal padding to center the checkbox
+    marginBottom: 0,      // Override GlassCard default margin
+    borderRadius: 12,     // Matches the slightly rounded corners in your image
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   addMoreContainer: { alignItems: 'flex-end', marginBottom: 12 },
   addMoreBtn: { paddingVertical: 10, paddingHorizontal: 18, borderRadius: 12 },
   addMoreInner: { flexDirection: 'row', alignItems: 'center' },
