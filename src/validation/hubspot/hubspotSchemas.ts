@@ -19,20 +19,23 @@ export const meetingDetailsSchema = yup.object({
   fullName: yup
     .string()
     .required('Full name is required')
-    .min(3, 'Name must be at least 3 characters'),
+    .min(3, 'Name must be at least 3 characters'),  
 
   countryCode: yup.object({
-      cca2: yup.string().required(),
-      callingCode: yup.string().required(),
-    }).required(),  
+    cca2: yup.string().notRequired().nullable(),
+    callingCode: yup.string().notRequired().nullable(),
+  }).notRequired(),  
 
-  // ─── ENSURE THIS NESTING ───
   phone: yup.object({
     phone: yup.string()
-      .required('Phone number is required')
-      .min(7, 'Enter a valid phone number'),
-    actualPhone: yup.string().ensure(), // MUST be inside this object
-  }).required(),
+      .ensure()
+      .notRequired() // 👈 Change this
+      .nullable(),   // 👈 And this
+    actualPhone: yup.string()
+      .ensure()
+      .notRequired()
+      .nullable(),
+  }).notRequired(),
 
   email: yup.string().required('Email is required').email('Enter a valid email address'),
   country: yup.string().required('Please select a country'),
