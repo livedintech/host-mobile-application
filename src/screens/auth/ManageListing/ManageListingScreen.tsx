@@ -96,8 +96,6 @@ const ManageListingScreen = () => {
               <AppButton
                 title="Next"
                 disabled={localSelectedId === null || isLoading}
-                backgroundColor={localSelectedId !== null ? Colors.MEDIUM_JUNGLE_GREEN : 'rgba(32, 149, 123, 0.5)'}
-                color={Colors.WHITE}
                 borderRadius={100}
                 fontSize={16}
                 onPress={handleNextPress}
@@ -196,8 +194,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.WHITE,
   },
   listItemActive: {
-    borderColor: FIGMA_TEAL,
+    borderColor: Colors.WHITE,
     borderWidth: 1.5,
+    backgroundColor: Colors.WHITE
   },
   itemIconWrapper: {
     width: s(32),

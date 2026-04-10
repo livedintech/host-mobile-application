@@ -10,6 +10,8 @@ import {
   Animated,
   TouchableOpacity,
   Platform,
+  Modal,
+  SafeAreaView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
@@ -48,7 +50,7 @@ const DateTimeInputField = ({
   minimumDate,
 }: Props) => {
   const [showPicker, setShowPicker] = useState(false);
-  const [selectedDateTime, setSelectedDateTime] = useState(new Date());
+  const [tempDate, setTempDate] = useState(new Date());
   const animation = useRef(new Animated.Value(0)).current;
   const error = errors[name]?.message as string;
 
@@ -68,7 +70,6 @@ const DateTimeInputField = ({
     }).start();
   };
 
-  // --- GLASS ANIMATION LOGIC ---
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
     outputRange: ['rgba(255, 255, 255, 0.6)', Colors.BRUNSWICK_GREEN],
@@ -80,10 +81,10 @@ const DateTimeInputField = ({
   });
 
   const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
   };
 
   const formatTime = (date: Date): string => {
@@ -93,37 +94,22 @@ const DateTimeInputField = ({
     return `${hours}:${minutes} ${period}`;
   };
 
-  const handleDateTimeChange = (
-    event: any,
-    date: Date | undefined,
-    onChange: (value: string) => void
-  ) => {
-    if (Platform.OS === 'android') {
-      setShowPicker(false);
-      handleBlur();
-    }
-
-    if (date) {
-      setSelectedDateTime(date);
-      const formatted = mode === 'date' ? formatDate(date) : formatTime(date);
-      onChange(formatted);
-    }
-  };
-
-  const handleOpenPicker = (onFocus: () => void, currentValue: string) => {
-    onFocus();
+  const handleOpenPicker = (currentValue: string) => {
+    handleFocus();
     if (currentValue) {
-      const parsedDate = new Date(currentValue);
-      if (!isNaN(parsedDate.getTime())) {
-        setSelectedDateTime(parsedDate);
+      const parsed = new Date(currentValue);
+      if (!isNaN(parsed.getTime())) {
+        setTempDate(parsed);
       }
     } else if (minimumDate && minimumDate > new Date()) {
-      setSelectedDateTime(minimumDate);
+      setTempDate(minimumDate);
+    } else {
+      setTempDate(new Date());
     }
     setShowPicker(true);
   };
 
-  const handleClosePicker = () => {
+  const handleCancel = () => {
     handleBlur();
     setShowPicker(false);
   };
@@ -147,7 +133,7 @@ const DateTimeInputField = ({
 
           <TouchableOpacity
             activeOpacity={0.9}
-            onPress={() => handleOpenPicker(handleFocus, value)}
+            onPress={() => handleOpenPicker(value)}
           >
             <Animated.View
               style={[
@@ -159,52 +145,92 @@ const DateTimeInputField = ({
                 wrapperStyle,
               ]}
             >
-              {leftIcon && <View style={styles.leftIconWrapper}>{leftIcon}</View>}
-
+              {leftIcon && (
+                <View style={styles.leftIconWrapper}>{leftIcon}</View>
+              )}
               <TextInput
                 style={[styles.input, style]}
                 placeholder={placeholder}
-                placeholderTextColor="#7B8D88" // Matches your dropdown placeholder
+                placeholderTextColor="#7B8D88"
                 value={value}
                 editable={false}
                 pointerEvents="none"
               />
-
               {rightIcon && (
-                <View style={styles.rightIconWrapper}>
-                  {rightIcon}
-                </View>
+                <View style={styles.rightIconWrapper}>{rightIcon}</View>
               )}
             </Animated.View>
           </TouchableOpacity>
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
-          {showPicker && (
-            <View style={styles.pickerWrapper}>
-              <DateTimePicker
-                value={selectedDateTime}
-                mode={mode}
-                minimumDate={minimumDate}
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={(event, date) =>
-                  handleDateTimeChange(event, date, onChange)
-                }
+          {/* ─── iOS: Modal bottom sheet ─── */}
+          {Platform.OS === 'ios' && (
+            <Modal
+              visible={showPicker}
+              transparent
+              animationType="slide"
+              onRequestClose={handleCancel}
+            >
+              <TouchableOpacity
+                style={styles.modalBackdrop}
+                activeOpacity={1}
+                onPress={handleCancel}
               />
+              <SafeAreaView style={styles.modalSheet}>
+                <View style={styles.modalHandle} />
 
-              {Platform.OS === 'ios' && (
-                <View style={styles.pickerButtonContainer}>
-                  <TouchableOpacity onPress={handleClosePicker}>
-                    <AppText
-                      text="Done"
-                      fontSize={16}
-                      color={Colors.BRUNSWICK_GREEN}
-                      type="Medium"
-                    />
+                <View style={styles.modalHeader}>
+                  <TouchableOpacity onPress={handleCancel} hitSlop={styles.hitSlop}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const formatted =
+                        mode === 'date'
+                          ? formatDate(tempDate)
+                          : formatTime(tempDate);
+                      onChange(formatted);
+                      handleBlur();
+                      setShowPicker(false);
+                    }}
+                    hitSlop={styles.hitSlop}
+                  >
+                    <Text style={styles.confirmText}>Confirm</Text>
                   </TouchableOpacity>
                 </View>
-              )}
-            </View>
+
+                <DateTimePicker
+                  value={tempDate}
+                  mode={mode}
+                  display="spinner"
+                  minimumDate={minimumDate}
+                  onChange={(_, date) => {
+                    if (date) setTempDate(date);
+                  }}
+                  style={styles.iosPicker}
+                />
+              </SafeAreaView>
+            </Modal>
+          )}
+
+          {/* ─── Android: native dialog ─── */}
+          {Platform.OS === 'android' && showPicker && (
+            <DateTimePicker
+              value={tempDate}
+              mode={mode}
+              display="default"
+              minimumDate={minimumDate}
+              onChange={(event, date) => {
+                setShowPicker(false);
+                handleBlur();
+                if (event.type === 'set' && date) {
+                  const formatted =
+                    mode === 'date' ? formatDate(date) : formatTime(date);
+                  onChange(formatted);
+                }
+              }}
+            />
           )}
         </View>
       )}
@@ -219,49 +245,73 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    // --- MATCHED GLASS STYLING FROM DROPDOWN ---
-    height: Metrics.verticalScale(54), 
+    height: Metrics.verticalScale(54),
     borderRadius: 24,
     paddingHorizontal: 16,
     borderWidth: 1.5,
   },
   input: {
     flex: 1,
-    // --- MATCHED TEXT STYLING ---
-    color: '#1A332C', 
+    color: '#1A332C',
     fontSize: Metrics.generatedFontSize(14),
     fontWeight: '600',
     paddingVertical: 0,
   },
-  leftIconWrapper: {
-    marginRight: 10,
-  },
-  rightIconWrapper: {
-    marginLeft: 10,
-  },
+  leftIconWrapper: { marginRight: 10 },
+  rightIconWrapper: { marginLeft: 10 },
   errorText: {
     color: Colors.INDIAN_RED,
     fontSize: 12,
     marginTop: 5,
     marginLeft: 4,
   },
-  pickerWrapper: {
+
+  // ─── iOS Modal ───
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+  modalSheet: {
     backgroundColor: Colors.WHITE,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: Metrics.scale(16),
-    paddingVertical: Metrics.verticalScale(16),
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: Colors.SMOOTH_GREY,
+    paddingBottom: 8,
   },
-  pickerButtonContainer: {
+  modalHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#D1D5DB',
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  modalHeader: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingVertical: Metrics.verticalScale(12),
-    borderTopWidth: 1,
-    borderTopColor: Colors.SMOOTH_GREY,
-    marginTop: Metrics.verticalScale(12),
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E5E7EB',
+  },
+  cancelText: {
+    fontSize: 15,
+    color: Colors.DARK_CHARCOAL_OPACITY ?? '#6B7280',
+  },
+  confirmText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: Colors.BRUNSWICK_GREEN,
+  },
+  iosPicker: {
+    height: 200,
+  },
+  hitSlop: {
+    top: 12,
+    bottom: 12,
+    left: 12,
+    right: 12,
   },
 });
 

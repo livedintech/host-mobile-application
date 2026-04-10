@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, Animated } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -11,94 +11,145 @@ import InputField from '@/components/molecules/Input/InputField';
 
 interface Props {
     visible: boolean;
-    onClose: () => void;
+    onClose?: () => void;
     inquiryId: string;
+    name?: string;
+    description?:string
 }
 
-const InquiryModal = ({ visible, onClose, inquiryId }: Props) => {
+const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props) => {
     const {
         viewState,
         control,
         errors,
         isApproving,
         isSendingOffer,
-        handlePreApprove,
         handleSpecialOfferClick,
+        handlePreApproveClick,
         handleBackToActions,
-        handleSubmitOffer,
+        handleSubmitForm,
+
     } = useInquiryModalContainer({ onClose, inquiryId });
 
-    if (!visible) return null;
+
+
+    // --- Smooth Animation Logic ---
+    const [shouldRender, setShouldRender] = useState(visible);
+    const animationValue = useRef(new Animated.Value(visible ? 1 : 0)).current;
+
+    useEffect(() => {
+        if (visible) {
+            setShouldRender(true);
+            Animated.timing(animationValue, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        } else {
+            Animated.timing(animationValue, {
+                toValue: 0,
+                duration: 250,
+                useNativeDriver: true,
+            }).start(() => setShouldRender(false));
+        }
+    }, [visible]);
+
+    if (!shouldRender) return null;
+
+    const translateY = animationValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [-20, 0], // Halka sa upar se neeche slide hoga
+    });
+
+    const isLoading = isApproving || isSendingOffer;
 
     return (
-        <View style={styles.absoluteCard}>
-            {/* ------ CONDITIONAL RENDERING BASED ON VIEW STATE ------ */}
-            
-            {viewState === 'actions' ? (
-                // --- State 1: Buttons View ---
+        <Animated.View style={[styles.absoluteCard, { opacity: animationValue, transform: [{ translateY }] }]}>
+
+            {/* ---------------- STATE 1: BUTTONS VIEW ---------------- */}
+            {viewState === 'actions' && (
                 <>
                     <View style={styles.headerRow}>
-                        <AppText text="Inquiry - Oasis Tower" fontSize={18} type="Bold" color={Colors.BLACK} />
-                        <ButtonView onPress={() => console.log('View Details')}>
+                        <View style={{
+                            flex: 1
+                        }}>
+                            {name && (
+                                <AppText text={name} fontSize={18} type="Medium" color={Colors.BLACK} textAlign='center' />
+                            )}
+                        </View>
+                        {/* <ButtonView onPress={() => console.log('View Details')}>
                             <AppText text="View Details" fontSize={14} type="SemiBold" color={Colors.BLACK} style={{ textDecorationLine: 'underline' }} />
-                        </ButtonView>
+                        </ButtonView> */}
                     </View>
-                    
-                    <AppText text="21st - 23rd January, 3 guests" fontSize={15} color={Colors.SUPER_GREY} mt={8} mb={20} />
+
+                    <AppText text={description} fontSize={14} color={Colors.DARK_CHARCOAL} mt={8} mb={20} textAlign='center' />
 
                     <View style={styles.buttonRow}>
-                        {/* Special Offer Button */}
-                        <AppButton 
+                        <AppButton
                             title="Special Offer"
                             onPress={handleSpecialOfferClick}
-                            disabled={isApproving}
                             backgroundColor={Colors.WHITE}
-                            color={Colors.INDIAN_RED} 
+                            color={Colors.INDIAN_RED}
                             borderColor={Colors.INDIAN_RED}
                             style={styles.flexBtn}
+                            variant='secondary'
+                            borderRadius={9}
+                            fontSize={11}
                         />
-                        
                         <View style={{ width: 10 }} />
-
-                        {/* Pre-Approve Button */}
-                        <AppButton 
+                        <AppButton
                             title="Pre-approve"
-                            onPress={handlePreApprove}
-                            loading={isApproving}
-                            disabled={isApproving}
-                            backgroundColor={Colors.BRUNSWICK_GREEN}
+                            onPress={handlePreApproveClick}
+                            backgroundColor={Colors.TEAL_PRIMARY_ALT}
                             color={Colors.WHITE}
                             borderColor={Colors.BRUNSWICK_GREEN}
                             style={styles.flexBtn}
+                            borderRadius={9}
+                            fontSize={11}
                         />
                     </View>
                 </>
-            ) : (
-                // --- State 2: Special Offer Form View ---
+            )}
+
+            {/* ---------------- STATE 2: SPECIAL OFFER FORM ---------------- */}
+            {viewState === 'specialOffer' && (
                 <>
                     <View style={styles.headerRowForm}>
                         <ButtonView onPress={handleBackToActions} style={styles.backBtn}>
-                            <Svgicons path="back" size={20} color={Colors.BLACK} />
+                            <Svgicons path="back" size={30} color={Colors.BLACK} />
                         </ButtonView>
-                        <AppText text="Make Offer" fontSize={18} type="Bold" color={Colors.BLACK} />
-                        <View style={{ width: 20 }} /> {/* For center alignment */}
+                        <AppText text="Make Special Offer" fontSize={18} type="Bold" color={Colors.BLACK} />
+                        <View style={{ width: 20 }} />
                     </View>
 
                     <View style={styles.formContent}>
                         <InputField
-                            label="Offer Amount ($)"
+                            label="Offer Amount (SAR)"
                             name="offerAmount"
                             control={control}
                             errors={errors}
                             placeholder="Enter amount"
                             keyboardType="numeric"
+                            containerStyle={{
+                                borderColor: Colors.CHARCOAL
+                            }}
                         />
-
-                        <AppButton 
+                        <InputField
+                            label="Message"
+                            name="message"
+                            control={control}
+                            errors={errors}
+                            placeholder="Type your message..."
+                            containerStyle={{
+                                borderColor: Colors.CHARCOAL
+                            }}
+                        />
+                        <AppButton
+                            fontSize={14}
                             title="Send Offer"
-                            onPress={handleSubmitOffer}
-                            loading={isSendingOffer}
-                            disabled={isSendingOffer}
+                            onPress={handleSubmitForm}
+                            loading={isLoading}
+                            disabled={isLoading}
                             backgroundColor={Colors.BRUNSWICK_GREEN}
                             color={Colors.WHITE}
                             borderColor={Colors.BRUNSWICK_GREEN}
@@ -107,30 +158,73 @@ const InquiryModal = ({ visible, onClose, inquiryId }: Props) => {
                     </View>
                 </>
             )}
-        </View>
+
+            {/* ---------------- STATE 3: PRE-APPROVE FORM ---------------- */}
+            {viewState === 'preApprove' && (
+                <>
+                    <View style={styles.headerRowForm}>
+                        <ButtonView onPress={handleBackToActions} style={styles.backBtn}>
+                            <Svgicons path="back" size={30} color={Colors.BLACK} />
+                        </ButtonView>
+                        <AppText text="Pre-Approve Inquiry" fontSize={18} type="Bold" color={Colors.BLACK} />
+                        <View style={{ width: 20 }} />
+                    </View>
+
+                    <View style={styles.formContent}>
+                        <InputField
+                            label="Message"
+                            name="message"
+                            control={control}
+                            errors={errors}
+                            placeholder="Type your pre-approval message..."
+                            containerStyle={{
+                                borderColor: Colors.CHARCOAL
+                            }}
+                        />
+                        <AppButton
+                            title="Send Approval"
+                            onPress={handleSubmitForm}
+                            loading={isLoading}
+                            disabled={isLoading}
+                            backgroundColor={Colors.BRUNSWICK_GREEN}
+                            color={Colors.WHITE}
+                            borderColor={Colors.BRUNSWICK_GREEN}
+                            mt={20}
+                        />
+                    </View>
+                </>
+            )}
+
+        </Animated.View>
     );
 };
 
 const styles = StyleSheet.create({
     absoluteCard: {
         position: 'absolute',
-        top: Metrics.verticalScale(90), // Is value ko apne header ki height ke mutabiq adjust kar lein (e.g. 80, 90, 100)
-        left: Metrics.scale(20), // Left se spacing
-        right: Metrics.scale(20), // Right se spacing
-        zIndex: 100, // Chat list ke upar rakhne ke liye
+        top: Metrics.verticalScale(80),
+        left: Metrics.scale(20),
+        right: Metrics.scale(20),
+        zIndex: 100,
         backgroundColor: Colors.WHITE,
-        borderRadius: 20,
-        padding: Metrics.scale(20),
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
+        borderRadius: 24,
+        borderWidth: 1,
+        borderColor: Colors.WHITE,
+        padding: Metrics.scale(29),
+        shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 4
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 27.8,
+        elevation: 10,
     },
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        textAlign: 'center'
     },
     buttonRow: {
         flexDirection: 'row',
@@ -138,7 +232,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     flexBtn: {
-        flex: 1,
+        width: Metrics.scale(150)
     },
     headerRowForm: {
         flexDirection: 'row',
@@ -147,7 +241,8 @@ const styles = StyleSheet.create({
         marginBottom: Metrics.verticalScale(20),
     },
     backBtn: {
-        padding: 5,
+        padding: Metrics.scale(5),
+        marginLeft: Metrics.scale(-5),
     },
     formContent: {
         width: '100%',

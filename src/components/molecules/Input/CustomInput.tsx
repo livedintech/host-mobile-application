@@ -36,6 +36,7 @@ type Props = {
   numberOfLines?: number;
   verticalAlign?: "auto" | "top" | "bottom" | "center";
   maxLength?: number;
+  placeholderTextColor?: string
 };
 
 const CustomInput = ({
@@ -58,11 +59,12 @@ const CustomInput = ({
   numberOfLines,
   verticalAlign,
   maxLength,
+  placeholderTextColor = '#7B8D88'
 }: Props) => {
   const animation = useRef(new Animated.Value(0)).current;
 
   // Matching your Dropdown styling exactly
-  const GLASS_BASE = 'rgba(255, 255, 255, 0.25)'; 
+  const GLASS_BASE = 'rgba(255, 255, 255, 0.25)';
   const GLASS_RIM = 'rgba(255, 255, 255, 0.6)';
   const FOCUS_COLOR = Colors.PINE_FOREST || '#1A332C';
 
@@ -124,7 +126,7 @@ const CustomInput = ({
               : { textAlignVertical: 'center' },
           ]}
           placeholder={placeholder}
-          placeholderTextColor={'#7B8D88'} 
+          placeholderTextColor={placeholderTextColor}
           value={value}
           onChangeText={onChangeText}
           onFocus={handleFocus}
@@ -143,8 +145,8 @@ const CustomInput = ({
         )}
       </Animated.View>
 
-       {error && (
-        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4}/>
+      {error && (
+        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
       )}
     </View>
   );

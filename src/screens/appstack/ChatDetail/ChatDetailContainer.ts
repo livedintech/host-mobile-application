@@ -724,6 +724,7 @@ export const useChatContainer = () => {
     refetch,
 
     //ASSIGN CHAT IDS
-    assigned_to_ids
+    assigned_to_ids,
+    data
   };
 };

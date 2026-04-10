@@ -23,13 +23,19 @@ export interface createChatSnoozeByConversationIdResponseType {
 
   };
 }
+
+export interface inquiryPayloadType {
+  thread_id?: string | number;
+  amount?: string | number;
+  message?:string;
+}
+
 export interface sendMessagePayloadType {
   conversation_id?: string,
   body?: string,
   type?: string,
   provenance?:string;
   reply_to?:string
-
 }
 export interface assignUserToChatPayloadType {
   conversation_id?: string | number,

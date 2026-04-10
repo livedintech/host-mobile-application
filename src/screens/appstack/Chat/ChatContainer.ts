@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import { useForm } from 'react-hook-form';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
@@ -26,12 +26,14 @@ import { getUserListingsByUserIDApi } from '@/services/bookingManagementApi';
 import { useAuthStore } from '@/store/useAuthStore';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
-
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['40%', '60%'], []);
   const [activeTab, setActiveTab] = useState<ChatStatus>('All');
-  const [isFilterVisible, setFilterVisible] = useState(false);
+
   const [filterAssigned, setFilterAssigned] = useState(false);
   const [search, setSearch] = useState('');
 
@@ -120,7 +122,7 @@ export const useChatContainer = () => {
   const { data: rawData, isLoading, isFetching } = dataQuery;
   const data = useInfiniteListData(rawData?.pages);
 
-  console.log("chatList",data)
+  console.log("chatList", data)
 
   /* --------------------------------- MUTATIONS --------------------------------- */
 
@@ -217,7 +219,7 @@ export const useChatContainer = () => {
     listing_id: string;
     assigned_to_ids: number[];
   }) => {
-    console.log("otemm",item)
+    console.log("otemm", item)
     if (item?.latest_message?.id) {
       markRead({
         conversation_id: item.id,
@@ -228,7 +230,7 @@ export const useChatContainer = () => {
     navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
       conversation_id: item.id,
       listing_id: item.listing_id,
-       assigned_to_ids: item.assigned_to_ids, 
+      assigned_to_ids: item.assigned_to_ids,
     });
   };
 
@@ -248,7 +250,7 @@ export const useChatContainer = () => {
     enabled: !!user?.id,
   });
 
-  console.log("chatlistings",listings)
+  console.log("chatlistings", listings)
 
   const transformedCities = citiesData.map(
     (item: { name: string; id: string }) => ({
@@ -269,19 +271,27 @@ export const useChatContainer = () => {
 
   // MENU OPTIONS
   const MENU_OPTIONS = [
-  {
-    label: 'Saved Replies',
-    icon: 'expandIcon',
-  },
-  {
-    label: 'Automation Template',
-    icon: 'automationTemplateIcon',
-  },
-  {
-    label: 'AI Auto Reply',
-    icon: 'aiAutoReplyIcon',
-  },
-];
+    {
+      label: 'Saved Replies',
+      icon: 'expandIcon',
+    },
+    {
+      label: 'Automation Template',
+      icon: 'automationTemplateIcon',
+    },
+    {
+      label: 'AI Auto Reply',
+      icon: 'aiAutoReplyIcon',
+    },
+  ];
+
+  const handleOpenFilter = () => {
+    bottomSheetRef.current?.present();
+  };
+
+  const handleCloseFilter = () => {
+    bottomSheetRef.current?.close();
+  };
 
 
 
@@ -291,15 +301,13 @@ export const useChatContainer = () => {
 
   return {
     data,
-    isLoading,
+    isLoading:false,
     isFetching,
     dataQuery,
     activeTab,
     setActiveTab,
     handleAction,
     handlePopupMenu, // 👈 ye add karo
-    isFilterVisible,
-    setFilterVisible,
     filterAssigned,
     setFilterAssigned,
     handleResetAll,
@@ -311,7 +319,12 @@ export const useChatContainer = () => {
     goToChatDetail,
     search,
     setSearch,
-    MENU_OPTIONS
+    MENU_OPTIONS,
+    handleCloseFilter,
+    handleOpenFilter,
+    bottomSheetRef,
+    snapPoints
   };
+
 
 };

@@ -36,17 +36,34 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
 import InquiryModal from './InquiryModal';
+
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+
+dayjs.extend(advancedFormat);
+
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 
 dayjs.extend(utc);
+
+const formatDateRange = (arrival: string, departure: string) => {
+  const start = dayjs(arrival);
+  const end = dayjs(departure);
+
+  if (start.format('MMMM') === end.format('MMMM')) {
+    return `${start.format('Do')} - ${end.format('Do')} ${start.format('MMMM')}`;
+  }
+
+  return `${start.format('Do MMMM')} - ${end.format('Do MMMM')}`;
+};
 interface MessageWithTimeLabel extends ChatMessage {
   showTimeLabel?: boolean;
   timeLabel?: string;
 }
 
 const getTimeLabel = (date: string | Date): string => {
-  const messageDate = dayjs(date);
+  // Convert to local time for display comparison
+  const messageDate = dayjs(date).local();
   const today = dayjs();
   const yesterday = today.subtract(1, 'day');
 
@@ -59,7 +76,7 @@ const getTimeLabel = (date: string | Date): string => {
   }
 
   if (messageDate.isAfter(today.subtract(7, 'day'))) {
-    return messageDate.format('dddd, MMM D, YYYY'); // e.g. "Tuesday, Apr 8, 2026"
+    return messageDate.format('dddd, MMM D'); // e.g. "Tuesday, Apr 8"
   }
 
   return messageDate.format('ddd, MMM D, YYYY'); // e.g. "Mon, Apr 7, 2026"
@@ -71,11 +88,18 @@ const processMessagesWithTimeLabels = (
   if (messages.length === 0) return [];
 
   return messages.map((message, index) => {
-    const nextMessage = index < messages.length - 1 ? messages[index + 1] : null;
-    const showLabel =
-      !nextMessage ||
-      dayjs(message.createdAt).utc().format('YYYY-MM-DD') !==
-      dayjs(nextMessage.createdAt).utc().format('YYYY-MM-DD');
+    // In newest-first array + inverted FlatList:
+    // index + 1 is the OLDER message (rendered ABOVE current)
+    // We show the label ABOVE a group = on the oldest message of that day
+    // So compare with the NEXT item (which is older)
+    const olderMessage = index < messages.length - 1 ? messages[index + 1] : null;
+
+    // Show label if there's no older message (last/oldest in list)
+    // OR if older message is from a different day
+   const showLabel =
+  !olderMessage ||
+  dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
+    dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
 
     return {
       ...message,
@@ -139,6 +163,7 @@ const ChatScreen = () => {
     conversationData,
     sendAiSuggestion,
     assigned_to_ids,
+    data
   } = useChatContainer();
 
 
@@ -202,6 +227,8 @@ const ChatScreen = () => {
       setPrevMessageCount(messagesWithTimeLabels.length);
     }
   }, [messagesWithTimeLabels.length, isAtBottom, prevMessageCount]);
+
+
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -455,8 +482,8 @@ const ChatScreen = () => {
                   <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
                 </MenuTrigger>
                 <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-
-                  <MenuOption
+              {data?.conversation?.thread_type !== "inquiry" && (
+                <MenuOption
                     style={styles.menuItem}
                     onSelect={() =>
                       navigate(
@@ -474,6 +501,8 @@ const ChatScreen = () => {
                     />
                     <Svgicons path="reservationDetailIcon" size={24} />
                   </MenuOption>
+              )}
+                  
 
                   <MenuOption
                     style={styles.menuItem}
@@ -878,9 +907,13 @@ const ChatScreen = () => {
             {/* </View>
         </KeyboardStickyView> */}
             <InquiryModal
-              visible={true}
-              // onClose={() => setIsModalVisible(false)}
-              inquiryId={"INQ-98765"}
+              visible={data?.conversation?.thread_type === "inquiry"}
+              inquiryId={data?.conversation?.id}
+              description={`${formatDateRange(
+                data?.conversation?.arrival_date,
+                data?.conversation?.departure_date
+              )}, ${data?.conversation?.number_of_guests} guests`}
+              name={data?.conversation?.name}
             />
           </View>
         </TouchableWithoutFeedback>

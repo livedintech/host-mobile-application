@@ -138,6 +138,8 @@ export const SERVICE_CONFIG_URLS = {
     BOOING_COM_CONNECTION:`${authController}/bookingcom/connection`,
     UPDATE_PROFILE: `${authController}/user/update`,
     PROFILE_CITIES: `${authController}/cities?country_id={country_id}`,
+    INQUIRY_SPECIAL_OFFER: `${authController}/bookings/inquiry/special-offer`,
+    INQUIRY_PRE_APPROVE: `${authController}/bookings/inquiry/accept`,
 
   },
 };

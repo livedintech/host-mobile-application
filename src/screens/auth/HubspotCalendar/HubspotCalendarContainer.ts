@@ -69,53 +69,36 @@ export default function useHubspotCalendarContainer(
   };
 
   // ─── Calendar marked dates ────────────────────────────────────────────────
-  const buildMarkedDates = () => {
-    const marked: Record<string, any> = {};
-    const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
+ const buildMarkedDates = () => {
+  const marked: Record<string, any> = {};
+  const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
 
-    for (let d = 1; d <= daysInMonth; d++) {
-      const date = new Date(currentMonth.year, currentMonth.month - 1, d);
-      const dateStr = `${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      
-      // Get day of week: 0 = Sunday, 5 = Friday, 6 = Saturday
-      const dayOfWeek = date.getDay();
-      const isSaudiWeekend = dayOfWeek === 5 || dayOfWeek === 6;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
-      // Logic for marking dates
-      if (dateStr < today) {
-        // Past dates: Disabled
-        marked[dateStr] = { disabled: true, disableTouchEvent: true };
-      } else if (isSaudiWeekend) {
-        // Saudi Weekends (Fri/Sat): Disabled and Faded
-        marked[dateStr] = { 
-          disabled: true, 
-          disableTouchEvent: true,
-        };
-      } else if (availableDates[dateStr]) {
-        // Available Weekdays: Active
-        marked[dateStr] = { 
-          marked: false, 
-          disabled: false, 
-          disableTouchEvent: false 
-        };
-      } else {
-        // Weekdays with no HubSpot slots: Disabled
-        marked[dateStr] = { disabled: true, disableTouchEvent: true };
-      }
+    if (dateStr < today) {
+      // Past dates: disable
+      marked[dateStr] = { disabled: true, disableTouchEvent: true };
+    } else if (availableDates[dateStr]) {
+      // HubSpot ne available bola: enable
+      marked[dateStr] = { disabled: false, disableTouchEvent: false };
+    } else {
+      // HubSpot ne available nahi bola: disable
+      marked[dateStr] = { disabled: true, disableTouchEvent: true };
     }
+  }
 
-    if (selectedDate) {
-      marked[selectedDate] = {
-        ...marked[selectedDate],
-        selected: true,
-        selectedColor: '#20957B',
-        selectedTextColor: '#fff',
-        marked: false,
-      };
-    }
+  if (selectedDate) {
+    marked[selectedDate] = {
+      ...marked[selectedDate],
+      selected: true,
+      selectedColor: '#20957B',
+      selectedTextColor: '#fff',
+    };
+  }
 
-    return marked;
-  };
+  return marked;
+};
 
   // ─── Book meeting + create lead ───────────────────────────────────────────
   const { mutate: confirmBooking, isPending: isBooking } = useMutation({
@@ -173,6 +156,10 @@ export default function useHubspotCalendarContainer(
       })
     : '';
 
+    const refreshDates = () => {
+  loadMonthDates(currentMonth.year, currentMonth.month);
+};
+
   return {
     today,
     currentMonth,
@@ -189,5 +176,6 @@ export default function useHubspotCalendarContainer(
     handleConfirmBooking,
     buildMarkedDates,
     formatTime,
+    refreshDates
   };
 }

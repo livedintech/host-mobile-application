@@ -1,6 +1,6 @@
 import { Controller, Control, FieldErrors, RegisterOptions } from 'react-hook-form';
 import CustomInput from './CustomInput';
-import { KeyboardTypeOptions } from 'react-native';
+import { KeyboardTypeOptions, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 type Props = {
     name: string;
@@ -13,7 +13,9 @@ type Props = {
     keyboardType?: KeyboardTypeOptions;
     editable?: boolean;
     maxLength?: number;
-
+    containerStyle?: StyleProp<ViewStyle>;
+    inputStyle?: StyleProp<TextStyle>;
+    placeholderTextColor?:string
 };
 
 const InputField = ({
@@ -27,6 +29,9 @@ const InputField = ({
     keyboardType,
     editable,
     maxLength,
+    containerStyle,
+    inputStyle,
+    placeholderTextColor
 }: Props) => {
 
     return (
@@ -48,6 +53,9 @@ const InputField = ({
                     keyboardType={keyboardType}
                     editable={editable}
                     maxLength={maxLength}
+                    wrapperStyle={containerStyle}
+                    style={inputStyle}
+                    placeholderTextColor={placeholderTextColor}
                 />
             )}
         />
