@@ -376,38 +376,34 @@ export default function useListingContainer(
   }
 };
 
-const handleBookingRequestAction = async (
-  threadId: string | number,
-  actionType: 'accept_request' | 'decline_request'
+const handleBookingAction = async (
+  bookingId: string | number,
+  action: 'accept_request' | 'decline_request'
 ) => {
   try {
     setisLoading(true);
+    
+    const payload = {
+      thread_id: bookingId,
+      action_type: action,
+    };
 
-    await submitBookingRequestApi({
-      thread_id: threadId,
-      action_type: actionType,
-      reason: null, 
-    });
+    await submitBookingRequestApi(payload);
 
     Toast.show({
       type: 'success',
-      text1:
-        actionType === 'accept_request'
-          ? 'Booking request accepted'
-          : 'Booking request rejected',
+      text1: action === 'accept_request' ? 'Booking Accepted' : 'Booking Rejected',
     });
 
-    // 🔥 refresh list
-    queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
+    // Refresh the data to remove the item from the request list
+    await handleRefresh(); 
+    
   } catch (error: any) {
-    console.log('Booking Request Error:', error);
-
+    const message = error?.data?.message || 'Failed to process request';
     Toast.show({
       type: 'error',
-      text1:
-        error?.message ||
-        error?.data?.message ||
-        'Something went wrong',
+      text1: 'Action Failed',
+      text2: message,
     });
   } finally {
     setisLoading(false);
@@ -446,6 +442,6 @@ const handleBookingRequestAction = async (
     isLoading,
     cleaningFee,
     discount,
-    handleBookingRequestAction
+    handleBookingAction
   };
 }

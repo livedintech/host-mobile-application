@@ -19,6 +19,7 @@ interface BookingRequestCardProps {
   onAccept?: (id: string | number) => void;
   onReject?: (id: string | number) => void;
   onPress?: (id: string | number) => void;
+  isLoading?: boolean;
 }
 
 const BookingRequestCard = ({
@@ -34,6 +35,7 @@ const BookingRequestCard = ({
   onAccept,
   onReject,
   onPress,
+  isLoading,
 }: BookingRequestCardProps) => {
   const getPlatformIcon = (platformName: string) => {
     const normalized = platformName.toLowerCase();
@@ -64,7 +66,7 @@ const BookingRequestCard = ({
     return `${startDay} ${monthName} - ${endDay} ${endMonth}`;
   };
 
-  const InfoRow = ({ icon, label, value, valueColor = '#4A4A4A',  }: any) => (
+  const InfoRow = ({ icon, label, value, valueColor = '#4A4A4A' }: any) => (
     <View style={styles.infoRowContainer}>
       <View style={styles.iconBox}>
         <Svgicons path={icon} size={ms(32)} />
@@ -85,7 +87,7 @@ const BookingRequestCard = ({
   return (
     <ButtonView
       activeOpacity={0.8}
-      onPress={() => onPress?.(id)}
+    //   onPress={() => !isLoading && onPress?.(id)}
       style={styles.cardShadowWrapper}
     >
       <View style={styles.glassContainer}>
@@ -120,7 +122,7 @@ const BookingRequestCard = ({
         />
 
         <InfoRow
-          icon="dollarCoin"
+          icon="reservationcheckin"
           label="Per-Night Rate"
           value={
             perNightRate !== undefined ? `${currency} ${perNightRate}` : '—'
@@ -132,14 +134,14 @@ const BookingRequestCard = ({
           <GlassCard width="48%" style={styles.rejectGlass}>
             <ButtonView
               style={styles.actionButton}
-              onPress={() => onReject?.(id)}
-              activeOpacity={0.75}
+              onPress={() => !isLoading && onReject?.(id)} // Disable press
+              activeOpacity={isLoading ? 1 : 0.75}
             >
               <AppText
-                text="Reject"
+                text="Decline"
                 fontSize={14}
                 type="SemiBold"
-                color="#E05C5C"
+                color={isLoading ? '#A0A0A0' : '#E05C5C'} // Change color if loading
               />
             </ButtonView>
           </GlassCard>
@@ -147,14 +149,14 @@ const BookingRequestCard = ({
           <GlassCard width="48%" style={styles.acceptGlass}>
             <ButtonView
               style={styles.actionButton}
-              onPress={() => onAccept?.(id)}
-              activeOpacity={0.75}
+              onPress={() => !isLoading && onAccept?.(id)} 
+              activeOpacity={isLoading ? 1 : 0.75}
             >
               <AppText
                 text="Accept"
                 fontSize={14}
                 type="SemiBold"
-                color="#21AA8F"
+                color={isLoading ? '#A0A0A0' : '#21AA8F'} 
               />
             </ButtonView>
           </GlassCard>
