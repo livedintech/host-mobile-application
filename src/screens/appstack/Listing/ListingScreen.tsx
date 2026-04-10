@@ -72,6 +72,7 @@ const ListingScreen = () => {
     cleaningFee,
     discount,
     setCheckInFilter,
+    handleBookingAction
   } = useListingContainer(route.params?.listing_id, selectedTab);
   console.log('activeFilter', activeFilter);
 
@@ -240,7 +241,8 @@ const ListingScreen = () => {
                       if (isBookingRequest) {
                         return (
                           <BookingRequestCard
-                            id={item.booking_id || item.id}
+                          key={item.id}
+                            id={item.id}
                             guestName={item.guest}
                             platform={
                               item.source_type === 'livedin'
@@ -253,13 +255,13 @@ const ListingScreen = () => {
                             endDate={item.end_date}
                             perNightRate={item.amount} // add this field from your API if available
                             currency="SAR" // or derive from listing currency
-                            onPress={handleReservationPress}
-                            onAccept={id => {
-                              // call your accept booking handler
-                            }}
-                            onReject={id => {
-                              // call your reject booking handler
-                            }}
+                            // onPress={handleReservationPress}
+                            onAccept={id =>
+                              handleBookingAction(id, 'accept_request')
+                            }
+                            onReject={id =>
+                              handleBookingAction(id, 'decline_request')
+                            }
                           />
                         );
                       }
