@@ -118,6 +118,7 @@ export const SERVICE_CONFIG_URLS = {
     GET_CALENDAR_DATA: `${authController}/calendar/{listing_id}`,
     SET_CALENDAR_PRICING: `${authController}/calendar/pricing`,
     GET_BOOKINGS_DETAILS: `${authController}/bookings/details/{booking_id}`,
+    BOOKING_REQUEST_SUBMIT: `${authController}/booking-request-submit`,
     RATE_YOUR_GUEST: `${authController}/guest/reviews`,
     SUBSCRIPTION_SAVED_CARDS: `${authController}/subscription/saved-cards`,
     SUBSCRIPTION_CUSTOMER_IDENTIFIER: `${authController}/subscription/customer-identifier`,

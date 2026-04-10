@@ -108,9 +108,9 @@ const AllTask = () => {
   }
 
   // --- CONDITIONAL RENDERING ---
-  if (!isAccountEmpty) {
-    return <NoTaskScreen />;
-  }
+  // if (!isAccountEmpty) {
+  //   return <NoTaskScreen />;
+  // }
 
   const renderTaskItem = ({ item }: { item: any }) => {
     console.log('Task Itemmm:', item.status);
@@ -164,7 +164,11 @@ const AllTask = () => {
           <View style={styles.infoRow}>
             <Svgicons path="assignTask" size={16} />
             <AppText
-              text={`Assigned to ${item.assigned_user_name || 'Unassigned'}`}
+              text={
+                item.assigned_user_name
+                  ? `Assigned to ${item.assigned_user_name}`
+                  : 'Unassigned'
+              }
               fontSize={13}
               ml={10}
               color={Colors.DARK_CHARCOAL}
@@ -234,6 +238,12 @@ const AllTask = () => {
           renderItem={renderTaskItem}
           ListHeaderComponent={<ListHeader />}
           contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <NoTaskScreen
+              activeTab={activeTab}
+              hasListings={listingOptions.length > 0}
+            />
+          }
         />
 
         <View style={styles.actionFooter}>

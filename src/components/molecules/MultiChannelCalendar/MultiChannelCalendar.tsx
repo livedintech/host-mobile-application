@@ -15,6 +15,7 @@ interface MultiChannelCalendarProps {
 }
 
 const MultiChannelCalendar = ({ bookings, onListingPress }: MultiChannelCalendarProps) => {
+  console.log("bookingTestt",bookings)
   return (
     <View style={styles.mainWrapper}>
       {bookings.map((item) => (

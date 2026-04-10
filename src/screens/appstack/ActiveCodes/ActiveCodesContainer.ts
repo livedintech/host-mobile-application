@@ -22,15 +22,14 @@ export default function useActiveCodesContainer() {
   const route = useRoute();
   const params = route?.params as { lock_id?: number };
   const lock_id = params?.lock_id;
-  console.log("lock_id",lock_id)
+  console.log('lock_id', lock_id);
 
   // ======================
   // API CALL
   // ======================
-  const { data, isLoading , refetch} = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_ACTIVE_CODES, lock_id],
-    queryFn: () =>
-      getSmartLockActiveCodesApi({ lockId: lock_id! }),
+    queryFn: () => getSmartLockActiveCodesApi({ lockId: lock_id! }),
     enabled: !!lock_id,
   });
 
@@ -44,10 +43,30 @@ export default function useActiveCodesContainer() {
   // ======================
   const apiTabs = data?.data?.tabs;
 
+  const formatDateTime = (dateStr: string | null) => {
+    if (!dateStr) return null;
+    try {
+      const [date, time] = dateStr.split(' ');
+      const [y, m, d] = date.split('-');
+      return `${d}/${m}/${y} ${time}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
   const mapItem = (item: ApiPasscodeItem) => ({
     id: String(item.keyboard_pwd_id),
     title: item.name || item.nick_name || 'Passcode',
     passcode: item.passcode,
+    start_at: formatDateTime(item.start_at),
+    end_at: formatDateTime(item.end_at), // this stays the same
+    // Fix: build validity string here so you can debug it clearly
+    validityPeriod:
+      item.start_at && item.end_at
+        ? `${formatDateTime(item.start_at)} - ${formatDateTime(item.end_at)}`
+        : item.start_at
+        ? `${formatDateTime(item.start_at)}`
+        : '-',
     date:
       item.start_at && item.end_at
         ? `${item.start_at.split(' ')[0]} - ${item.end_at.split(' ')[0]}`
@@ -55,7 +74,6 @@ export default function useActiveCodesContainer() {
     startTime: item.start_at?.split(' ')[1] || '-',
     endTime: item.end_at?.split(' ')[1] || '-',
     status: item.status || '-',
-
   });
 
   const codesData: Record<CodeTab, any[]> = {
@@ -70,7 +88,7 @@ export default function useActiveCodesContainer() {
   const handleGenerateNew = () => {
     navigate(NavigationRoutes.APP_STACK.GENERATE_PASSCODE, {
       type: activeTab,
-      lock_id
+      lock_id,
     });
   };
 
@@ -79,8 +97,8 @@ export default function useActiveCodesContainer() {
   // ======================
 
   const handleViewLogs = () => {
-    navigate(NavigationRoutes.APP_STACK.SMART_LOCK_ACTIVITY_LOG,{lock_id})
-  }
+    navigate(NavigationRoutes.APP_STACK.SMART_LOCK_ACTIVITY_LOG, { lock_id });
+  };
 
   return {
     activeTab,
@@ -89,6 +107,6 @@ export default function useActiveCodesContainer() {
     handleGenerateNew,
     isLoading,
     handleViewLogs,
-    refetch
+    refetch,
   };
 }
