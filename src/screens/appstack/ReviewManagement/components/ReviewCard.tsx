@@ -30,6 +30,7 @@ const ReviewCard = ({
   hostRating = null,
 }: ReviewCardProps) => {
   const guestRating = item.overall_score || 0;
+  console.log("hostRating",hostRating)
 
  
   const borderColors = [
@@ -250,14 +251,14 @@ const styles = StyleSheet.create({
   },
   flex1: { flex: 1 },
   gradientBtnInner: {
-    height: 40,
+    height: 48,
     backgroundColor: Colors.WHITE, 
     justifyContent: 'center',
     alignItems: 'center',
   },
   primaryBtn: {
     flex: 1,
-    height: 42,
+    height: 48,
     backgroundColor: '#4DB6AC',
     borderRadius: 25,
     marginLeft: 10,

@@ -199,10 +199,9 @@ export const FilterModalView = ({
               placeholder="Select Multiple Options"
               placeholderColor="#00000059"
               data={[
-                { label: 'Today', value: 'today' },
-                { label: 'Checked Out', value: 'checkedout' },
-                { label: 'Cancelled', value: 'cancelled' },
-                { label: 'Upcoming', value: 'upcoming' },
+                { label: 'Checked-in', value: 'today' },
+                { label: 'Checked-out', value: 'checkedout' },
+               
               ]}
             />
           </View>

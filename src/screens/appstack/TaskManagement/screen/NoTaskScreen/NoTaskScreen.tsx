@@ -11,7 +11,12 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTaskStore } from '@/store/taskStore';
 
-const NoTaskScreen = ({ activeTab }: { activeTab?: string }) => {
+interface NoTaskProps {
+  activeTab?: string;
+  hasListings: boolean;
+}
+
+const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
   const emptyText =
     activeTab === 'Complete' ? 'No Task Completed' : 'No Task Available';
   const { resetTaskStore } = useTaskStore();
@@ -43,14 +48,16 @@ const NoTaskScreen = ({ activeTab }: { activeTab?: string }) => {
             mb={12}
           />
 
-          <AppText
-            text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
-            fontSize={16}
-            textAlign="center"
-            color={Colors.DARK_CHARCOAL_OPACITY}
-            px={40}
-            lineHeight={20}
-          />
+          {!hasListings && (
+            <AppText
+              text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+              fontSize={16}
+              textAlign="center"
+              color={Colors.DARK_CHARCOAL_OPACITY}
+              px={40}
+              lineHeight={20}
+            />
+          )}
         </View>
 
         {/* Action Buttons */}

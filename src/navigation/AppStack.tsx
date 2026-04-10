@@ -649,14 +649,14 @@ const AppStack = () => {
             .default
         }
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.TASK}
         getComponent={() =>
           require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask')
             .default
         }
-      />
+      /> */}
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.EDIT_TASK}

@@ -8,7 +8,7 @@ import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 
 const useStaffNotesContainer = () => {
-  const { taskId , resetTaskStore} = useTaskStore();
+  const { taskId, resetTaskStore } = useTaskStore();
 
   const updateStatusMutation = useMutation({
     mutationFn: (description: string) =>
@@ -20,13 +20,15 @@ const useStaffNotesContainer = () => {
     onSuccess: () => {
       // Navigate to the next screen (e.g., Task Success or Task List)
       resetTaskStore();
-          queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST],
       });
-      
-      navigate(NavigationRoutes.APP_STACK.TASK); 
+
+      // navigate(NavigationRoutes.APP_STACK.TASK);
+      navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+        screen: NavigationRoutes.APP_STACK.TASK,
+      });
       Toast.show({ type: 'success', text1: 'Task created successfully!' });
-     
     },
     onError: (error: any) => {
       Toast.show({

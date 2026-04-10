@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, ActivityIndicator, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
@@ -28,6 +22,7 @@ import NoListing from './NoListing';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import BookingRequestCard from '@/components/molecules/BookingRequestCard/BookingRequestCard';
 
 const ListingScreen = () => {
   const authStore = useAuthStore();
@@ -78,6 +73,7 @@ const ListingScreen = () => {
     discount,
     setCheckInFilter,
   } = useListingContainer(route.params?.listing_id, selectedTab);
+  console.log('activeFilter', activeFilter);
 
   const toggleTab = () => {
     setSelectedTab(prev => (prev === 0 ? 1 : 0));
@@ -237,6 +233,37 @@ const ListingScreen = () => {
                     }
                     renderItem={({ item }) => {
                       const config = getOtaConfig(item.source);
+                      const isBookingRequest =
+                        activeFilter?.trim() === 'booking_request';
+                      console.log('isBookingRequest', isBookingRequest);
+
+                      if (isBookingRequest) {
+                        return (
+                          <BookingRequestCard
+                            id={item.booking_id || item.id}
+                            guestName={item.guest}
+                            platform={
+                              item.source_type === 'livedin'
+                                ? 'Livedin'
+                                : config.label
+                            }
+                            platformColor={config.color}
+                            guests={item?.number_of_guests}
+                            startDate={item.start_date}
+                            endDate={item.end_date}
+                            perNightRate={item.amount} // add this field from your API if available
+                            currency="SAR" // or derive from listing currency
+                            onPress={handleReservationPress}
+                            onAccept={id => {
+                              // call your accept booking handler
+                            }}
+                            onReject={id => {
+                              // call your reject booking handler
+                            }}
+                          />
+                        );
+                      }
+
                       return (
                         <ReservationCard
                           id={item.booking_id || item.id}
@@ -269,16 +296,15 @@ const ListingScreen = () => {
           isVisible={isModalVisible}
           onClose={() => setModalVisible(false)}
           initialSelectedValues={selectedPropertyValues}
-          // Updated: Handle both the listing array (f) and the check-in value (type)
-          onApply={(f, type) => {
-            setSelectedPropertyValues(f);
-            setAppliedListingIds(f.join(','));
+          onApply={(selectedIds, type) => {
+            const idsString = selectedIds.join(',');
+            setSelectedPropertyValues(selectedIds);
+            setAppliedListingIds(idsString);
 
-            // Pass the dropdown value to your state
             if (type) {
+              // Synchronize the top tab with the modal selection
+              setActiveFilter(type);
               setCheckInFilter(type);
-            } else {
-              setCheckInFilter(''); // Reset if nothing selected
             }
 
             setModalVisible(false);
@@ -286,13 +312,10 @@ const ListingScreen = () => {
           onReset={() => {
             setSelectedPropertyValues([]);
             setAppliedListingIds('');
-            setCheckInFilter(''); // Clear this on reset too
+            setActiveFilter('today'); // Reset to default tab
+            setCheckInFilter('');
           }}
-          actualProperties={(listingOptions || []).filter(
-            (opt: any) =>
-              opt.value !== '' &&
-              !(opt.label || '').toLowerCase().includes('all listing'),
-          )}
+          actualProperties={listingOptions.filter(opt => opt.value !== '')}
         />
 
         {isBookingOpen && (
