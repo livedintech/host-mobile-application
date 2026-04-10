@@ -69,27 +69,15 @@ export const getCalendarBookingsByListingIdApi = async (listingIds: string | str
  * 4. FETCH RESERVATIONS (For the Reservation Tab)
  */
 
-export const getReservationsApi = async (listingIds?: string, activeFilter?: string, filterType?: string) => {
+export const getReservationsApi = async (listingIds?: string, status?: string) => {
   const baseUrl = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
   const params = new URLSearchParams();
 
-  // Status filter
-  if (activeFilter === 'today') {
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const year = today.getFullYear();
-    // params.append('created_at', `${day}-${month}-${year}-`);
-    params.append('status', activeFilter);
-  } else if (activeFilter && activeFilter !== 'all') {
-    params.append('status', activeFilter);
+  // Just take the single status passed from the container
+  if (status && status !== 'all') {
+    params.append('status', status);
   }
 
-  if (filterType) {
-    params.append('filter_type', filterType); 
-  }
-
-  // Listing ID
   if (listingIds) {
     params.append('apartment_id', listingIds);
   }
@@ -98,11 +86,8 @@ export const getReservationsApi = async (listingIds?: string, activeFilter?: str
   const url = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
 
   const { ok, data } = await apiService.get(url);
-
-  if (ok) return data?.data || [];
-  return [];
+  return ok ? data?.data || [] : [];
 };
-
 /**
  * HELPER: Format Date
  */
@@ -171,4 +156,25 @@ export const getBookingDetailsApi = async (bookingId: string | number) => {
   }
 
   throw response;
+};
+
+
+/**
+ * 8. SUBMIT BOOKING REQUEST (Accept / Decline)
+ */
+export const submitBookingRequestApi = async (payload: {
+  thread_id: string | number;
+  action_type: 'accept_request' | 'decline_request';
+  reason?: string;
+}) => {
+  const url = SERVICE_CONFIG_URLS.APP.BOOKING_REQUEST_SUBMIT;
+
+  const { ok, data, response } = await apiService.post(url, payload);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  // throw error so caller can handle (like toast / UI)
+  throw response || data || response;
 };

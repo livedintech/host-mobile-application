@@ -13,6 +13,7 @@ import {
   createDirectBookingApi,
   updateCalendarPricingApi,
   getCalendarBookingManagementListingsApi,
+  submitBookingRequestApi
 } from '@/services/calendarBookingManagement';
 import {
   createBookingFormValues,
@@ -95,8 +96,8 @@ export default function useListingContainer(
     isLoading: resLoading,
     refetch: refetchReservations,
   } = useQuery({
-    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter,checkInFilter],
-    queryFn: () => getReservationsApi(appliedListingIds, activeFilter,checkInFilter),
+    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter],
+    queryFn: () => getReservationsApi(appliedListingIds, activeFilter),
     enabled: selectedTab === 1,
   });
 
@@ -367,6 +368,52 @@ export default function useListingContainer(
     }
   };
 
+  const handleFilterApply = (listingIds: string, status?: string) => {
+  setAppliedListingIds(listingIds);
+  if (status) {
+    setActiveFilter(status); // This updates the Top Tab AND triggers the API
+    setCheckInFilter(status); // Keeps the modal state in sync
+  }
+};
+
+const handleBookingRequestAction = async (
+  threadId: string | number,
+  actionType: 'accept_request' | 'decline_request'
+) => {
+  try {
+    setisLoading(true);
+
+    await submitBookingRequestApi({
+      thread_id: threadId,
+      action_type: actionType,
+      reason: null, 
+    });
+
+    Toast.show({
+      type: 'success',
+      text1:
+        actionType === 'accept_request'
+          ? 'Booking request accepted'
+          : 'Booking request rejected',
+    });
+
+    // 🔥 refresh list
+    queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
+  } catch (error: any) {
+    console.log('Booking Request Error:', error);
+
+    Toast.show({
+      type: 'error',
+      text1:
+        error?.message ||
+        error?.data?.message ||
+        'Something went wrong',
+    });
+  } finally {
+    setisLoading(false);
+  }
+};
+
   return {
     control,
     errors,
@@ -383,7 +430,9 @@ export default function useListingContainer(
     searchQuery,
     setSearchQuery,
     activeFilter,
+    checkInFilter,
     setCheckInFilter,
+    handleFilterApply,
     setActiveFilter,
     bookingType,
     setBookingType,
@@ -397,5 +446,6 @@ export default function useListingContainer(
     isLoading,
     cleaningFee,
     discount,
+    handleBookingRequestAction
   };
 }
