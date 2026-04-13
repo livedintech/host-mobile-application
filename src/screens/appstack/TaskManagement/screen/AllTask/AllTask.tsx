@@ -114,7 +114,23 @@ const AllTask = () => {
 
   const renderTaskItem = ({ item }: { item: any }) => {
     console.log('Task Itemmm:', item.status);
+    const isCompleted = item.status?.toLowerCase() === 'completed';
+    const handlePress = () => {
+      // Navigate on every status
+      setTaskInfo(
+        item.id,
+        item.task_type,
+        item.status,
+        item.description,
+      );
+
+      navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
+        taskId: item.id,
+        taskType: item.type,
+      });
+    };
     return (
+      <ButtonView onPress={handlePress}>
       <GlassCard width="100%" style={styles.taskCard}>
         <View style={styles.cardHeader}>
           <View style={{ flex: 1, marginBottom: 20 }}>
@@ -138,26 +154,27 @@ const AllTask = () => {
             />
           </View>
 
-          <ButtonView
-            onPress={() => {
-              setTaskInfo(
-                item.id,
-                item.task_type,
-                item.status,
-                item.description,
-              );
+          {!isCompleted && (
+            <ButtonView
+              onPress={() => {
+                setTaskInfo(
+                  item.id,
+                  item.task_type,
+                  item.status,
+                  item.description,
+                );
 
-              navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
-                taskId: item.id,
-                taskType: item.type,
-              });
-            }}
-          >
-            {/* Using GlassCard for the edit icon button as requested */}
-            <GlassCard width={44} style={styles.editGlassIcon}>
-              <Svgicons path="edit_pencil_icon" size={24} />
-            </GlassCard>
-          </ButtonView>
+                navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
+                  taskId: item.id,
+                  taskType: item.type,
+                });
+              }}
+            >
+              <GlassCard width={44} style={styles.editGlassIcon}>
+                <Svgicons path="edit_pencil_icon" size={24} />
+              </GlassCard>
+            </ButtonView>
+          )}
         </View>
 
         <View style={styles.infoContainer}>
@@ -187,6 +204,7 @@ const AllTask = () => {
           )}
         </View>
       </GlassCard>
+      </ButtonView>
     );
   };
 
