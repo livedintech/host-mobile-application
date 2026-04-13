@@ -366,6 +366,8 @@ const ChatScreen = () => {
               snapPoints={snapPoints}
               enablePanDownToClose
               backdropComponent={renderBackdrop}
+                backgroundStyle={styles.bottomSheetBackground}
+
             >
               <BottomSheetView style={styles.sheetContent}>
 
@@ -624,6 +626,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Metrics.verticalScale(20),
   },
+  bottomSheetBackground: {
+  borderTopLeftRadius: 40,
+  borderTopRightRadius: 40,
+  overflow: 'hidden',
+},
 });
 
 export default ChatScreen;

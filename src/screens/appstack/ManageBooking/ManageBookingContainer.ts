@@ -13,6 +13,7 @@ import Toast from 'react-native-toast-message';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
+  
 
   // ✅ GET channel response handling
   const { data: response, isLoading, refetch } = useQuery({
@@ -44,6 +45,9 @@ export default function useManageBookingContainer() {
   });
 
   const handleConnect = (platform: string) => {
+    console.log('testinf');
+    
+    
     if (platform === 'Airbnb') {
       const isAirbnbConnected = connectedAccounts.some(
         (acc: any) => acc.connection_type === 'Airbnb'
@@ -79,21 +83,21 @@ export default function useManageBookingContainer() {
     }
 
     if (platform === 'Booking.com') {
-      const isBookingConnected = connectedAccounts.some(
-        (acc: any) => acc.connection_type === 'Booking.com'
-      );
+  const isBookingConnected = connectedAccounts.some(
+    (acc: any) => acc.connection_type === 'Bookings.com'
+  );
 
-      if (isBookingConnected) {
-        Toast.show({
-          type: 'info',
-          text1: 'Booking.com Already Connected',
-          text2: 'Your Booking.com account is already connected.',
-        });
-        return;
-      }
+  if (isBookingConnected) {
+    Toast.show({
+      type: 'info',
+      text1: 'Booking.com Already Connected',
+      text2: 'Your Booking.com account is already connected.',
+    });
+    return;
+  }
 
-      navigate(NavigationRoutes.APP_STACK.BOOKING_COM_PMSID);
-    }
+  navigate(NavigationRoutes.APP_STACK.BOOKING_COM_PMSID);
+}
   };
 
   const goToListing = (item: { connection_type: string, ch_channel_id: string }) => {

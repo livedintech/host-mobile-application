@@ -147,7 +147,7 @@ const ViewChecklistAll = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       {/* Replace SafeAreaView with a standard View + Top Padding */}
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container]}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}

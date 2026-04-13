@@ -12,13 +12,13 @@ import Metrics from '@/utility/Metrics';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const TABS = ['Airbnb', 'Gathern', 'Bookings.com'] as const;
+const TABS = ['Airbnb', 'Gathern', 'Booking.com']
 type TabType = (typeof TABS)[number];
 
 const TAB_ICON_MAP: Record<TabType, string> = {
     Airbnb: 'airbnb',
     Gathern: 'gathern',
-    'Bookings.com': 'bookingCom',
+    'Booking.com': 'bookingCom',
 };
 
 
@@ -61,14 +61,16 @@ const ConnectedAccountCard: React.FC<ConnectedAccountCardProps> = ({
         />
 
         <View style={styles.exportBtnContainer}>
-            <AppButton
-                title="Exports"
-                onPress={() => onExport(account)}
-                borderColor="rgba(255, 255, 255, 0.9)"
-                fontSize={14}
-                style={styles.exportBtn}
-                variant="secondary"
-            />
+            {selectedTab !== 'Bookings.com' && (
+                <AppButton
+                    title="Exports"
+                    onPress={() => onExport(account)}
+                    borderColor="rgba(255, 255, 255, 0.9)"
+                    fontSize={14}
+                    style={styles.exportBtn}
+                    variant="secondary"
+                />
+            )}
         </View>
     </GlassCard>
 );
@@ -134,9 +136,12 @@ const ManageBookingScreen = () => {
     const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
 
     // All accounts matching the currently selected tab (supports multiple)
-    const currentTabAccounts: any[] = connectedAccounts?.filter(
-        (acc: any) => acc.connection_type === selectedTab
-    ) ?? [];
+   const currentTabAccounts: any[] = connectedAccounts?.filter(
+  (acc: any) =>
+    selectedTab === 'Booking.com'
+      ? acc.connection_type === 'Bookings.com'
+      : acc.connection_type === selectedTab
+) ?? [];
 
     const hasAccounts = currentTabAccounts.length > 0;
 
@@ -163,7 +168,7 @@ const ManageBookingScreen = () => {
                     {TABS.map((tab) => {
                         const isSelected = selectedTab === tab;
                         return (
-                            <AppButton borderRadius={20} key={tab} title={tab} onPress={() => setSelectedTab(tab)} color={isSelected ? Colors.WHITE : Colors.DARK_CHARCOAL} style={[styles.tabBtn, isSelected && styles.activeTabBtn]} variant='secondary' fontSize={12}/>
+                            <AppButton borderRadius={20} key={tab} title={tab} onPress={() => setSelectedTab(tab)} color={isSelected ? Colors.WHITE : Colors.DARK_CHARCOAL} style={[styles.tabBtn, isSelected && styles.activeTabBtn]} variant='secondary' fontSize={12} />
                         );
                     })}
                 </View>
@@ -238,10 +243,10 @@ const styles = StyleSheet.create({
     },
     tabsContainer: {
         flexDirection: 'row',
-        paddingHorizontal:  Metrics.baseMargin,
+        paddingHorizontal: Metrics.baseMargin,
         marginBottom: Metrics.verticalScale(30),
         gap: Metrics.scale(10),
-        justifyContent:'space-between'
+        justifyContent: 'space-between'
     },
     tabBtn: {
         paddingVertical: 12,

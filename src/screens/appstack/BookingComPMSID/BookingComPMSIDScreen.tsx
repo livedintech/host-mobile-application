@@ -18,9 +18,9 @@ const BookingComPMSIDScreen = () => {
         handleTestConnection,
         isSubmitting,
         isTesting,
-        apartments,
         isTestSuccess,
-        listingOptions
+        listingOptions,
+        hasApartment
     } = useBookingComContainer()
 
     return (
@@ -60,6 +60,17 @@ const BookingComPMSIDScreen = () => {
                             data={listingOptions}
                         />
                     </View>
+                    {!hasApartment ? (
+                        <View style={styles.halfCol}>
+                            <InputField
+                                label="Rate"
+                                name="rate"
+                                control={control}
+                                errors={errors}
+                                placeholder="Enter Rate"
+                            />
+                        </View>
+                    ) : null}
 
                     {/* Row 2: Hotel ID — half width */}
                     <View style={styles.halfCol}>

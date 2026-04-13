@@ -42,9 +42,6 @@ export default function useGathernImportContainer() {
     enabled: Boolean(channelId),
   });
 
-  const airbnbListings = airbnbData?.data ?? [];
-
-
   // Fetch user listings (for dropdown options)
   const { data: apiResponse, isLoading: isLoadingDropdown, isFetching: isFetchingDropdown } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
@@ -56,10 +53,10 @@ export default function useGathernImportContainer() {
   });
 
   // Prepare dropdown options (values must be strings)
-  const listingOptions = apiResponse?.data?.map((item: any) => ({
-    label: item.name,
-    value: String(item.listing_id), // internal Livedin ID for dropdown
-  })) ?? [];
+const listingOptions = apiResponse?.data?.map((item: any) => ({
+  label: item.name,
+  value: String(item.id), // ✅ FIX HERE (was listing_id)
+})) ?? [];
 
 
   // Initialize form
@@ -69,6 +66,7 @@ export default function useGathernImportContainer() {
     formState: { errors },
     watch,
     reset,
+    setValue
   } = useForm<FormValues>({
     defaultValues: {}, // initially empty
   });
@@ -140,28 +138,43 @@ export default function useGathernImportContainer() {
 
     },
   });
+  const userListings = apiResponse?.data ?? [];
 
   // Handle individual import (dropdown selection)
-  const handleIndividualImport = (fieldName: string, propertyTitle: string) => {
+ const handleIndividualImport = (
+  fieldName: string,
+  propertyTitle: string,
+  rate?: number,
+  availability?: number,
+) => {
+  const selectedValue = watch(fieldName);
 
-    const selectedValue = watch(fieldName);
-    const airbnbListingId = Number(fieldName);
 
-    createListingImportPayload({
-      // channel_id: channelId,
-      // listing_id: airbnbListingId
-      mapping_type:'gathern',
-      parent_listing_id: selectedValue,
-      pms_uuid: channelId,
-      property_id: airbnbListingId.toString(),
-      property_title: propertyTitle
-    })
+const parentListingId = Number(selectedValue);
+  const airbnbListingId = Number(fieldName);
 
-    console.log('Mapping Airbnb listing:', {
-      airbnb_listing_id: airbnbListingId,
-      livedin_listing_id: selectedValue,
-    });
+  const basePayload = {
+    mapping_type: 'gathern',
+    pms_uuid: channelId,
+    property_id: airbnbListingId.toString(),
+    property_title: propertyTitle,
   };
+
+  const hasMapping = !!selectedValue;
+
+  const payload = hasMapping
+    ? {
+        ...basePayload,
+        parent_listing_id: parentListingId, // ✅ FIXED
+      }
+    : {
+        ...basePayload,
+        rate,
+        availability: 1,
+      };
+
+  createListingImportPayload(payload);
+};
 
   // Final submit
   const onNext = (data: FormValues) => {
@@ -188,5 +201,6 @@ export default function useGathernImportContainer() {
     handleIndividualImport,
     refetch,
     watch,
+    setValue
   };
 }

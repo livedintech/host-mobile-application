@@ -31,18 +31,16 @@ export default function useGathrenCreateAccountContainer() {
     const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
         defaultValues: {
             gender: '',
-              firstname: '',
-              lastname: '',
-              username: '',
+            firstname: '',
+            lastname: '',
+            username: '',
             email: '',
+            platform_user_id: '',
             country: {
                 cca2: 'SA',
                 callingCode: '966',
             },
             mobile: '',
-            // platform_user_id: '',
-            // check_in_hour: '',
-            // check_out_hour: '',
         }
     });
 
@@ -68,7 +66,7 @@ export default function useGathrenCreateAccountContainer() {
     });
 
     const onNext = (data: FormValues) => {
-        const payload = {
+        const payload: CreateGathernUserPayloadType = {
             gender: data.gender,
             firstname: data.firstname,
             lastname: data.lastname,
@@ -76,15 +74,10 @@ export default function useGathrenCreateAccountContainer() {
             email: data.email,
             country_code: `+${data.country.callingCode}`,
             mobile: data.mobile,
-            // platform_user_id: data.platform_user_id,
-            platform_user_id: `gathern-user-${user?.id}`,
-            // check_in_hour: data.check_in_hour,
-            // check_out_hour: data.check_out_hour,
+           platform_user_id: data.platform_user_id,
         };
-        console.log('payload', payload);
 
         createGathernCreateChannelPayload(payload);
-
     };
 
     const onCreateAccount = () => {

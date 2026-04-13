@@ -19,25 +19,28 @@ export default function useBookingComContainer() {
 
     const [isTestSuccess, setIsTestSuccess] = useState(false)
 
-    const apartments = [
-        { label: 'Apartment 1', value: '1' },
-        { label: 'Apartment 2', value: '2' },
-        { label: 'Apartment 3', value: '3' },
-    ]
-
     const {
         control,
         handleSubmit,
         getValues,
+        watch,
         formState: { errors },
     } = useForm<BookingComFormValues>({
         resolver: yupResolver(bookingComSchema),
         defaultValues: {
             roomId: '',
             hotelId: '',
-            apartmentId: '',
-        },
+            apartmentId: null,
+            rate: '',
+        }
     })
+
+const selectedApartment = watch('apartmentId')
+
+const hasApartment =
+    selectedApartment !== null &&
+    selectedApartment !== undefined &&
+    selectedApartment !== ''
 
     // ----------------- Test Connection -----------------
 
@@ -118,24 +121,36 @@ export default function useBookingComContainer() {
     }
 
     const onSubmit = (data: BookingComFormValues) => {
-        const payload: bookingcomConnectionPayloadType = {
-            title: data.roomId,
-            listing_id: data.apartmentId,
-            hotel_id: data.hotelId,
+        let payload;
+
+        if (data.apartmentId) {
+            payload = {
+                title: data.roomId,
+                listing_id: Number(data.apartmentId),
+                hotel_id: data.hotelId,
+            }
+        } else {
+            payload = {
+                title: data.roomId,
+                hotel_id: data.hotelId,
+                rate: Number(data.rate || 0),
+                availability: 1,
+            }
         }
-        submitPMS(payload) // ✅ typed payload
+
+        submitPMS(payload)
     }
 
 
     return {
-        control,
-        errors,
-        handleSubmit: handleSubmit(onSubmit),
-        handleTestConnection,
-        isTesting,
-        isSubmitting,
-        isTestSuccess, // ✅ Return karo
-        apartments,
-        listingOptions
-    }
+    control,
+    errors,
+    handleSubmit: handleSubmit(onSubmit),
+    hasApartment,
+    handleTestConnection,
+    isTesting,
+    isSubmitting,
+    isTestSuccess,
+    listingOptions,
+}
 }
