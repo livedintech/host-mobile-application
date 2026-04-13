@@ -271,7 +271,7 @@ const ChatScreen = () => {
 
             {/* ── Search Row ── */}
             <View style={styles.searchRow}>
-              <View style={styles.searchBox}>
+              <GlassCard style={styles.searchBox}>
                 <Svgicons path="searchIcon" size={18} color={Colors.GREY_SHADOW} />
                 <TextInput
                   placeholder="Search Guest"
@@ -280,7 +280,7 @@ const ChatScreen = () => {
                   value={search}
                   onChangeText={setSearch}
                 />
-              </View>
+              </GlassCard>
               <ButtonView
                 onPress={handleOpenFilter}
                 style={styles.filterBtn}
@@ -475,6 +475,7 @@ const styles = StyleSheet.create({
     gap: 8,
     borderWidth: 1,
     borderColor: Colors.WHITE_OPACITY_90,
+    marginBottom: 0,
   },
   searchInput: {
     flex: 1,
