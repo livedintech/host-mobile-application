@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import Utils from "@/utility/Utils";
 import apiService from "./apiService";
-import {  assignUserToChatPayloadType, chatDetailSavedRepliesPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, markReadChatPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
+import {  assignUserToChatPayloadType, chatDetailSavedRepliesPayloadType, createChatArchiveByConversationIdPayloadType, createChatSnoozeByConversationIdPayloadType, inquiryPayloadType, markReadChatPayloadType, sendMessagePayloadType } from "@/types/api/chatTypes";
 type ChatListParams = {
   page?: number;
   limit?: number;
@@ -220,4 +220,28 @@ export const deleteChatMessageApi = async (payload: deleteChatMessagePayloadType
     }
 
     throw new Error(response?.message || 'Failed to delete message');
+};
+
+// Inquiry Special Offer
+export const inquirySpecialOfferApi = async (payload: inquiryPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.INQUIRY_SPECIAL_OFFER,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+// Inquiry Pre Approve
+export const inquiryPreApproveApi = async (payload: inquiryPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.INQUIRY_PRE_APPROVE,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
 };

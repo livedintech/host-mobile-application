@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
 
@@ -87,14 +86,8 @@ const ListingScreen = () => {
   if (isLoadingOta) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <SafeAreaView style={styles.centerContainer} edges={['top']}>
           <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-          <AppText
-            text="Checking OTA connection..."
-            mt={10}
-            color={Colors.BRUNSWICK_GREEN}
-          />
-        </SafeAreaView>
+          <AppText text="Checking OTA connection..." mt={10} color={Colors.BRUNSWICK_GREEN} />
       </BGImage>
     );
   }
@@ -102,9 +95,7 @@ const ListingScreen = () => {
   if (!isOtaConnected) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <SafeAreaView style={styles.transparentContainer} edges={['top']}>
           <NoListing onConnect={handleConnectAccount} />
-        </SafeAreaView>
       </BGImage>
     );
   }
@@ -143,8 +134,6 @@ const ListingScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <SafeAreaView style={styles.transparentContainer} edges={['top']}>
-        <StatusBar barStyle="dark-content" />
         <BookingDetailsView
           isVisible={isDetailsOpen}
           onClose={() => {
@@ -337,8 +326,7 @@ const ListingScreen = () => {
             // onSubmit={handleSubmit(onBookingSubmit)}
             isLoading={isLoading}
           />
-        )}
-      </SafeAreaView>
+        )} 
     </BGImage>
   );
 };

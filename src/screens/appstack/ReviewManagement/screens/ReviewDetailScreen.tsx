@@ -542,6 +542,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               opacity={0.7}
             />
             <TouchableOpacity
+            disabled={guest?.conversation_id}
               style={styles.continueChatBtn}
               onPress={() =>
                 navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {

@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   rememberMeRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     marginBottom: vs(15),
   },
   rememberMeContainer: {

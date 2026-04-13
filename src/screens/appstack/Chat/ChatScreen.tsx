@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -44,17 +44,17 @@ import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 
 const ChatScreen = () => {
   const {
     activeTab,
     setActiveTab,
     handleAction,
-    setFilterVisible,
-    isFilterVisible,
     filterAssigned,
     setFilterAssigned,
     handleResetAll,
@@ -72,9 +72,27 @@ const ChatScreen = () => {
     search,
     setSearch,
     MENU_OPTIONS,
+    handleCloseFilter,
+    handleOpenFilter,
+    bottomSheetRef,
+    snapPoints
   } = useChatContainer();
 
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+      />
+    ),
+    []
+  );
+
   const { user } = useAuthStore();
+  console.log('!user?.has_listing:',user?.has_listing);
+  
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
@@ -267,7 +285,7 @@ const ChatScreen = () => {
                 />
               </View>
               <ButtonView
-                onPress={() => setFilterVisible(true)}
+                onPress={handleOpenFilter}
                 style={styles.filterBtn}
               >
                 <GlassCard width={40} style={styles.iconCircle}>
@@ -342,49 +360,58 @@ const ChatScreen = () => {
             />
 
             {/* ── Filter Modal ── */}
-            {isFilterVisible && (
-              <Modal
-                visible={isFilterVisible}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setFilterVisible(false)}
-              >
-                <View style={styles.modalOverlay}>
-                  <View style={styles.modalContent}>
-                    <View style={styles.modalHeader}>
-                      <AppText
-                        text="Apply"
-                        fontSize={20}
-                        type="Medium"
-                        color={Colors.BLACK}
-                        mb={43}
-                      />
-                      <Svgicons onPress={() => setFilterVisible(false)} path="iconRoundedCross" size={30} />
-                    </View>
-                    <MultiSelectDropdownField
-                      dropdownPosition='top'
-                      name="listings"
-                      control={control}
-                      errors={errors}
-                      label="Select Property"
-                      data={transformedListings}
-                    />
-                    <View style={styles.modalFooter}>
-                      <AppButton
-                        onPress={handleResetAll}
-                        title="Reset"
-                        style={styles.flex}
-                      />
-                      <AppButton
-                        onPress={() => setFilterVisible(false)}
-                        title="Apply Filter"
-                        style={styles.flex}
-                      />
-                    </View>
-                  </View>
+            <BottomSheetModal
+              ref={bottomSheetRef}
+              index={0}
+              snapPoints={snapPoints}
+              enablePanDownToClose
+              backdropComponent={renderBackdrop}
+                backgroundStyle={styles.bottomSheetBackground}
+
+            >
+              <BottomSheetView style={styles.sheetContent}>
+
+                {/* Header */}
+                <View style={styles.sheetHeader}>
+                  <AppText
+                    text="Apply Filters"
+                    fontSize={20}
+                    type="Medium"
+                    color={Colors.BLACK}
+                  />
+
+                  <Svgicons
+                    path="iconRoundedCross"
+                    size={30}
+                    onPress={handleCloseFilter}
+                  />
                 </View>
-              </Modal>
-            )}
+
+                {/* Filter Field */}
+                <MultiSelectDropdownField
+                  dropdownPosition="bottom"
+                  name="listings"
+                  control={control}
+                  errors={errors}
+                  label="Select Property"
+                  data={transformedListings}
+                />
+
+                {/* Footer */}
+                <View style={styles.modalFooter}>
+                  <AppButton
+                    onPress={handleResetAll}
+                    title="Reset"
+                    style={styles.flex}
+                  />
+                  <AppButton
+                    onPress={handleCloseFilter}
+                    title="Apply Filter"
+                    style={styles.flex}
+                  />
+                </View>
+              </BottomSheetView>
+            </BottomSheetModal>
 
           </View>
         </TouchableWithoutFeedback>
@@ -396,7 +423,6 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Metrics.verticalScale(35),
   },
   iconCircle: {
     height: 40,
@@ -566,7 +592,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: Metrics.verticalScale(30),
     borderTopRightRadius: Metrics.verticalScale(30),
     padding: Metrics.scale(25),
-    height: Metrics.screenHeight / 3,
+    height: Metrics.screenHeight / 1.5,
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -584,7 +610,27 @@ const styles = StyleSheet.create({
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between'
-  }
+  },
+  sheetContent: {
+    flex: 1,
+    paddingHorizontal: Metrics.scale(20),
+    paddingTop: Metrics.verticalScale(10),
+    paddingBottom: Metrics.verticalScale(20),
+    backgroundColor: Colors.WHITE_OPACITY_90,
+    borderTopLeftRadius: Metrics.verticalScale(30),
+    borderTopRightRadius: Metrics.verticalScale(30),
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Metrics.verticalScale(20),
+  },
+  bottomSheetBackground: {
+  borderTopLeftRadius: 40,
+  borderTopRightRadius: 40,
+  overflow: 'hidden',
+},
 });
 
 export default ChatScreen;

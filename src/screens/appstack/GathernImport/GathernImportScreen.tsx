@@ -12,6 +12,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack } from '@/services/navigationService';
+import InputField from '@/components/molecules/Input/InputField';
 
 const { width } = Dimensions.get('window');
 
@@ -24,9 +25,15 @@ const PropertyCard = ({
   handleIndividualImport,
   watch,
   isMap,
+  rate,
+  availability,
+  setValue, // ✅ ADDED
 }: any) => {
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
+  const showRateInput = !selectedLivedinId;
+  const rateFieldName = `${fieldName}_rate`;
+  const rateValue = watch(rateFieldName);
 
   return (
     <GlassCard width="100%" style={styles.card}>
@@ -42,7 +49,7 @@ const PropertyCard = ({
         </View>
         <View style={styles.iconBox}>
           {/* Using 'gathern' icon to match channel styling, or fallback to 'houseLineIcon' */}
-          <Svgicons path="gathern" size={24} /> 
+          <Svgicons path="gathern" size={24} />
         </View>
       </View>
 
@@ -74,9 +81,29 @@ const PropertyCard = ({
         />
       </View>
 
+      {showRateInput && (
+        <View style={styles.dropdownContainer}>
+          <InputField
+            name={rateFieldName}
+            control={control}
+            errors={errors}
+            label="Rate"
+            placeholder="Enter rate"
+            keyboardType="numeric"
+          />
+        </View>
+      )}
+
       <AppButton
         title={isMap ? 'Unmapped Listing' : 'Map Listing'}
-        onPress={() => handleIndividualImport(fieldName, name)}
+        onPress={() =>
+          handleIndividualImport(
+            fieldName,
+            name,
+            rateValue,
+            availability // ✅ FIXED
+          )
+        }
         backgroundColor="rgba(255, 255, 255, 0.4)"
         borderColor="rgba(255, 255, 255, 0.9)"
         color={Colors.BLACK}
@@ -98,12 +125,14 @@ const GathernImportScreen = () => {
     refetch,
     watch,
     isLoading,
+    setValue,
     listingOptions,
+
   } = useGathernImportContainer();
 
   const renderItem = ({ item }: any) => (
     <PropertyCard
-      id={item.listing_id} // Gathern uses listing_id based on your old code
+      id={item.listing_id}
       name={item.title}
       control={control}
       errors={errors}
@@ -111,6 +140,9 @@ const GathernImportScreen = () => {
       handleIndividualImport={handleIndividualImport}
       watch={watch}
       isMap={item?.isMap}
+      rate={item?.rate}
+      availability={item?.availability}
+      setValue={setValue} 
     />
   );
 

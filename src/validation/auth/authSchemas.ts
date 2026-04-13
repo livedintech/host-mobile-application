@@ -43,8 +43,14 @@ export const profileSchema = yup.object({
     gender: yup
         .string()
         .required('Gender is required'),
-  country: yup.number().required('Country is required'),
-city: yup.number().required('City is required'),
+     country: yup
+    .number()
+    .typeError('Country is required')
+    .required('Country is required'),
+  city: yup
+    .number()
+    .typeError('City is required')
+    .required('City is required'),
     address: yup
         .string()
         .required('Permanent address is required'),

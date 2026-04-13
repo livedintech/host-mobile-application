@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
@@ -6,14 +6,23 @@ import { getUser } from '@/services/UserPermission';
 import { User } from '@/types/api/authTypes';
 import { useQuery } from '@tanstack/react-query';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useHomeContainer() {
+  const {setUser} = useAuthStore()
   const { updateListing, setListingId } = useCreateListingStore();
 
   const { data: UserPermission, isLoading, refetch } = useQuery<User>({
     queryKey: [STORAGE_CONST.GET_USER],
     queryFn: getUser,
+    enabled:true
   });
+
+ useEffect(() => {
+  if (UserPermission) {
+    setUser(UserPermission);
+  }
+}, [UserPermission]);
 
   const channels = UserPermission?.channels || {};
   const unexported_listings = UserPermission?.unexported_listings || [];

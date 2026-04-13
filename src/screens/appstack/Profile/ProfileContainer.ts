@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
 import { profileFormValues, profileSchema } from '@/validation/auth/authSchemas';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -14,36 +14,38 @@ import { ProfilePicture, UpdateProfilePayload } from '@/types/api/profileTypes';
 import STORAGE_CONST from '@/constants/storage';
 
 export default function useProfileContainer() {
+  const [isFullViewVisible, setFullViewVisible] = useState(false);
   const navigation = useNavigation();
   const { user, logout, setUser } = useAuthStore();
+  const isFirstRender = useRef(true);
+  console.log('user:',user);
+  
 
-  // ✅ existing pic bhi state mein rakho
   const [selectedImage, setSelectedImage] = useState<ProfilePicture | null>(null);
-  const currentProfilePic = user?.profile_picture || null; // existing server image
+  const currentProfilePic = user?.profile_picture || null;
 
-  // ✅ Image select hone par turant upload
   const onImageSelect = (image: ProfilePicture) => {
     setSelectedImage(image);
-    uploadImage(image); // ✅ turant API hit
+    uploadImage(image);
   };
 
   const getInitialPhoneData = () => {
-    const rawPhone = user?.phone?.toString() || '';
-    if (!rawPhone) {
-      return { phone_country: { cca2: 'SA', callingCode: '966' }, phone_number: '' };
-    }
-    if (rawPhone.startsWith('966')) {
-      return {
-        phone_country: { cca2: 'SA', callingCode: '966' },
-        phone_number: rawPhone.replace('966', ''),
-      };
-    }
-    return { phone_country: { cca2: 'SA', callingCode: '966' }, phone_number: rawPhone };
+    const phone = user?.phone?.toString() || '';
+    const callingCode = user?.phone_with_code?.toString() || '';
+    const cca2 = user?.country_code || 'SA';
+
+    return {
+      phone_country: {
+        cca2: cca2,
+        callingCode: callingCode,
+      },
+      phone_number: phone,
+    };
   };
 
   const phoneData = getInitialPhoneData();
 
-  const { control, handleSubmit, formState: { errors }, watch } = useForm<profileFormValues>({
+  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<profileFormValues>({
     resolver: yupResolver(profileSchema),
     defaultValues: {
       full_name: user?.name || '',
@@ -59,14 +61,24 @@ export default function useProfileContainer() {
   const selectedCountryId = watch('country');
   const selectedCityId = watch('city');
 
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setValue('city', undefined, {
+      shouldValidate: false,
+      shouldDirty: true,
+    });
+  }, [selectedCountryId]);
+
   // ----------------- Update Profile -----------------
   const { mutate: updateProfile, isPending: isUpdating } = useMutation({
     mutationFn: (payload: UpdateProfilePayload) => updateProfileApi(payload),
     onSuccess: (data) => {
-      // Optionally update local user state
       if (data?.data) setUser(data.data);
       Toast.show({ type: 'success', text1: data?.message || 'Profile updated!' });
-      goBack()
+      goBack();
     },
     onError: (error: any) => {
       console.log('Profile update error:', JSON.stringify(error));
@@ -80,19 +92,17 @@ export default function useProfileContainer() {
 
   // ----------------- Form Submit -----------------
   const onSave = (data: profileFormValues) => {
-    const rawPhone = data.phone_number?.startsWith(data.phone_country.callingCode)
-      ? data.phone_number
-      : `${data.phone_country.callingCode}${data.phone_number}`;
 
     const payload: UpdateProfilePayload = {
-      name: data.full_name,
-      gender: data.gender,
-      country_id: Number(data.country),
-      city_id: Number(data.city),
-      permanent_address: data.address,
-      phone: rawPhone,
-      // ✅ profile_picture bilkul nahi
-    };
+  name: data.full_name,
+  gender: data.gender,
+  country_id: Number(data.country),
+  city_id: Number(data.city),
+  permanent_address: data.address,
+  phone: data.phone_number,
+  phone_with_code: data.phone_country.callingCode.replace('+', ''),
+  country_code: data.phone_country.cca2,
+};
     updateProfile(payload);
   };
 
@@ -119,11 +129,11 @@ export default function useProfileContainer() {
     enabled: Boolean(selectedCountryId),
   });
 
-  // ✅ Image Upload Mutation
+  // Image Upload
   const { mutate: uploadImage, isPending: isUploading } = useMutation({
     mutationFn: uploadProfilePictureApi,
     onSuccess: (data) => {
-      if (data?.data) setUser(data.data); // ✅ store update — MoreScreen par bhi reflect hoga
+      if (data?.data) setUser(data.data);
       setSelectedImage(null);
       Toast.show({ type: 'success', text1: 'Photo updated!' });
     },
@@ -132,11 +142,11 @@ export default function useProfileContainer() {
     },
   });
 
-  // ✅ Image Remove Mutation
+  // Image Remove
   const { mutate: removeImage, isPending: isRemoving } = useMutation({
     mutationFn: removeProfilePictureApi,
     onSuccess: (data) => {
-      if (data?.data) setUser(data.data); // ✅ store update
+      if (data?.data) setUser(data.data);
       Toast.show({ type: 'success', text1: 'Photo removed!' });
     },
     onError: () => {
@@ -146,14 +156,13 @@ export default function useProfileContainer() {
 
   const countriesOptions = countriesData.map((item: any) => ({
     label: item.name,
-    value: item.id,         // number — matches form value with ===
+    value: item.id,
   }));
 
   const citiesOptions = citiesData.map((item: any) => ({
     label: item.name,
     value: item.id,
   }));
-
 
   return {
     control,
@@ -176,5 +185,7 @@ export default function useProfileContainer() {
     citiesOptions,
     isLoadingCountriesData,
     isLoadingStatesData,
+    setFullViewVisible,
+    isFullViewVisible
   };
 }

@@ -106,6 +106,14 @@ const GathrenCreateAccountScreen = () => {
             countryFieldName="country"
             phoneFieldName="mobile"
           />
+          <InputField
+  name="platform_user_id"
+  control={control}
+  errors={errors}
+  label="Platform User ID*"
+  placeholder="Enter Platform User ID"
+  rules={{ required: 'Platform User ID is required' }}
+/>
 
         </View>
 

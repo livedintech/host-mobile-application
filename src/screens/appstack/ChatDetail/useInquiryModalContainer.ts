@@ -4,69 +4,90 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
+import { inquiryPreApproveApi, inquirySpecialOfferApi } from '@/services/chatApi';
 
-// Yup Validation Schema for Special Offer
-const offerSchema = yup.object().shape({
-    offerAmount: yup.string().required('Please enter an offer amount'),
+// Dynamic Validation Schema
+const schema = yup.object().shape({
+    formType: yup.string(),
+    message: yup.string().required('Message is required'), // Message donu mein zaroori hai
+    offerAmount: yup.string().when('formType', {
+        is: 'specialOffer',
+        then: (s) => s.required('Offer amount is required'), // Amount sirf Special Offer mein zaroori hai
+        otherwise: (s) => s.notRequired(),
+    }),
 });
 
-interface InquiryModalProps {
+interface Props {
     onClose: () => void;
-    inquiryId: string; // Dynamic ID for API calls
+    inquiryId: string;
 }
 
-export default function useInquiryModalContainer({ onClose, inquiryId }: InquiryModalProps) {
-    // State to toggle between 'actions' (buttons) and 'form' (Make Offer input)
-    const [viewState, setViewState] = useState<'actions' | 'form'>('actions');
+export default function useInquiryModalContainer({ onClose, inquiryId }: Props) {
+    // viewState ab 3 types ki hogi
+    const [viewState, setViewState] = useState<'actions' | 'specialOffer' | 'preApprove'>('actions');
 
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
-        resolver: yupResolver(offerSchema),
-        defaultValues: { offerAmount: '' },
+    const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            formType: 'actions',
+            message: '',
+            offerAmount: '',
+        },
     });
 
     // --- Mutation 1: Pre-Approve API ---
     const { mutate: preApprove, isPending: isApproving } = useMutation({
-        mutationFn: async () => {
-            // Placeholder API Call: e.g., preApproveApi({ id: inquiryId })
-            return new Promise(resolve => setTimeout(resolve, 1500)); 
-        },
+        mutationFn: inquiryPreApproveApi,
         onSuccess: () => {
             Toast.show({ type: 'success', text1: 'Inquiry Pre-approved successfully' });
-            onClose(); // Close modal on success
+            resetState();
         },
-        onError: (error: any) => {
-            Toast.show({ type: 'error', text1: error?.message || 'Failed to pre-approve' });
-        }
+        onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || 'Error' })
     });
 
     // --- Mutation 2: Special Offer API ---
     const { mutate: sendOffer, isPending: isSendingOffer } = useMutation({
-        mutationFn: async (data: any) => {
-            // Placeholder API Call: e.g., sendOfferApi({ id: inquiryId, amount: data.offerAmount })
-            return new Promise(resolve => setTimeout(resolve, 1500));
-        },
+        mutationFn: inquirySpecialOfferApi,
         onSuccess: () => {
             Toast.show({ type: 'success', text1: 'Special offer sent successfully' });
-            reset();
-            setViewState('actions');
-            onClose();
+            resetState();
         },
-        onError: (error: any) => {
-            Toast.show({ type: 'error', text1: error?.message || 'Failed to send offer' });
-        }
+        onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || 'Error' })
     });
 
-    const onSubmitOffer = (data: any) => {
-        sendOffer(data);
-    };
-
-    const handleSpecialOfferClick = () => {
-        setViewState('form');
+    const resetState = () => {
+        reset({ formType: 'actions', message: '', offerAmount: '' });
+        setViewState('actions');
+        onClose();
     };
 
     const handleBackToActions = () => {
         setViewState('actions');
-        reset(); // Clear form when going back
+        reset({ formType: 'actions', message: '', offerAmount: '' });
+    };
+
+    const handleSpecialOfferClick = () => {
+        setValue('formType', 'specialOffer');
+        setViewState('specialOffer');
+    };
+
+    const handlePreApproveClick = () => {
+        setValue('formType', 'preApprove');
+        setViewState('preApprove');
+    };
+
+    const onSubmit = (data: any) => {
+        const payload = {
+            thread_id: inquiryId,
+            amount: data?.offerAmount,
+            message: data?.message
+        }
+        
+        if (data.formType === 'specialOffer') {
+            sendOffer(payload);
+        } else {
+            preApprove(payload);
+        }
     };
 
     return {
@@ -75,9 +96,9 @@ export default function useInquiryModalContainer({ onClose, inquiryId }: Inquiry
         errors,
         isApproving,
         isSendingOffer,
-        handlePreApprove: () => preApprove(),
         handleSpecialOfferClick,
+        handlePreApproveClick,
         handleBackToActions,
-        handleSubmitOffer: handleSubmit(onSubmitOffer),
+        handleSubmitForm: handleSubmit(onSubmit),
     };
 }
