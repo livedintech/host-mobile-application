@@ -85,8 +85,7 @@ const BookingRequestCard = ({
   );
 
   return (
-    <ButtonView
-      activeOpacity={0.8}
+    <View
     //   onPress={() => !isLoading && onPress?.(id)}
       style={styles.cardShadowWrapper}
     >
@@ -162,7 +161,7 @@ const BookingRequestCard = ({
           </GlassCard>
         </View>
       </View>
-    </ButtonView>
+    </View>
   );
 };
 

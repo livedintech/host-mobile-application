@@ -6,12 +6,10 @@ import {
   TextInput,
   Image,
   Pressable,
-  ListRenderItemInfo,
-  Modal,
-  KeyboardAvoidingView,
+  ListRenderItemInfo, KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
-  Keyboard,
+  Keyboard
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
@@ -31,7 +29,6 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Metrics from '@/utility/Metrics';
 import { useChatContainer } from './ChatContainer';
 import { ChatMessage, ChatStatus } from '@/types/chat';
-import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import dayjs from 'dayjs';
@@ -44,7 +41,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -91,8 +88,8 @@ const ChatScreen = () => {
   );
 
   const { user } = useAuthStore();
-  console.log('!user?.has_listing:',user?.has_listing);
-  
+  console.log('!user?.has_listing:', user?.has_listing);
+
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
@@ -356,7 +353,7 @@ const ChatScreen = () => {
               }
               renderItem={renderItem}
               keyExtractor={item => String(item.id)}
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: Metrics.verticalScale(100) }}
             />
 
             {/* ── Filter Modal ── */}
@@ -366,10 +363,10 @@ const ChatScreen = () => {
               snapPoints={snapPoints}
               enablePanDownToClose
               backdropComponent={renderBackdrop}
-                backgroundStyle={styles.bottomSheetBackground}
-
+              backgroundStyle={styles.bottomSheetBackground}
+              handleIndicatorStyle={styles.sheetIndicator}
             >
-              <BottomSheetView style={styles.sheetContent}>
+              <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
 
                 {/* Header */}
                 <View style={styles.sheetHeader}>
@@ -410,7 +407,7 @@ const ChatScreen = () => {
                     style={styles.flex}
                   />
                 </View>
-              </BottomSheetView>
+              </BottomSheetScrollView>
             </BottomSheetModal>
 
           </View>
@@ -612,13 +609,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   sheetContent: {
-    flex: 1,
-    paddingHorizontal: Metrics.scale(20),
-    paddingTop: Metrics.verticalScale(10),
-    paddingBottom: Metrics.verticalScale(20),
-    backgroundColor: Colors.WHITE_OPACITY_90,
-    borderTopLeftRadius: Metrics.verticalScale(30),
-    borderTopRightRadius: Metrics.verticalScale(30),
+    paddingHorizontal: 25,
+    paddingBottom: 40,
+    paddingTop: 10,
   },
   sheetHeader: {
     flexDirection: 'row',
@@ -627,10 +620,13 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(20),
   },
   bottomSheetBackground: {
-  borderTopLeftRadius: 40,
-  borderTopRightRadius: 40,
-  overflow: 'hidden',
-},
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 40,
+  },
+  sheetIndicator: {
+    backgroundColor: '#ccc',
+    width: 60,
+  },
 });
 
 export default ChatScreen;

@@ -121,9 +121,18 @@ const AppButton = ({
     // ✅ Secondary (e.g. "Next") button: gradient border + transparent bg
     if (!isPrimary) {
         return (
-            <View style={[spacingStyles, { borderRadius }]}>
-                {renderGradientBorder()}
-                {renderButtonInner(Colors.TRANSPARENT)}
+            <View style={[spacingStyles]}>
+                <View style={{ borderRadius, overflow: 'hidden' }}>
+
+                    {/* Gradient Border */}
+                    {renderGradientBorder()}
+
+                    {/* Inner Button with spacing to show border */}
+                    <View style={{ margin: 1 }}>
+                        {renderButtonInner(backgroundColor || Colors.TRANSPARENT)}
+                    </View>
+
+                </View>
             </View>
         );
     }

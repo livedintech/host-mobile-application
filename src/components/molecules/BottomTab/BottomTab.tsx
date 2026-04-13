@@ -1,229 +1,261 @@
 import React from 'react';
-import { StyleSheet, View, Image, Pressable, Text } from 'react-native';
-import { Colors } from '@/theme/colors';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+  Text,
+  Platform,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
+import AppText from '../AppText/AppText';
 import Metrics from '@/utility/Metrics';
-import GlassCard from '../GlassCard/GlassCard';
+
+const ACTIVE_COLOR = '#41B597';
+const INACTIVE_COLOR = '#1A1A1A';
+
+const getIcon = (routeName: string) => {
+  switch (routeName) {
+    case 'HOME_SCREEN':    return require('@/assets/img/home_icon.png');
+    case 'LISTING_SCREEN': return require('@/assets/img/calendar_icon.png');
+    case 'CHAT_SCREEN':    return require('@/assets/img/inbox_icon.png');
+    case 'TASK_SCREEN':    return require('@/assets/img/taskBottomTabIcon.png');
+    case 'MORE_SCREEN':    return require('@/assets/img/more_icon.png');
+    default:               return require('@/assets/img/home_icon.png');
+  }
+};
+
+const getLabel = (routeName: string) => {
+  switch (routeName) {
+    case 'HOME_SCREEN':    return 'Home';
+    case 'LISTING_SCREEN': return 'Calendar';
+    case 'CHAT_SCREEN':    return 'Inbox';
+    case 'TASK_SCREEN':    return 'Tasks';
+    case 'MORE_SCREEN':    return 'More';
+    default:               return '';
+  }
+};
+
+const TabItems = ({ state, navigation }: any) => (
+  <View style={styles.tabRow}>
+    {state.routes.map((route: any, index: number) => {
+      const isFocused = state.index === index;
+
+      const onPress = () => {
+        const event = navigation.emit({
+          type: 'tabPress',
+          target: route.key,
+          canPreventDefault: true,
+        });
+        if (!isFocused && !event.defaultPrevented) {
+          navigation.navigate(route.name);
+        }
+      };
+
+      return (
+        <Pressable
+          key={route.key}
+          onPress={onPress}
+          android_ripple={{
+            color: 'rgba(65,181,151,0.18)',
+            borderless: true,
+            radius: 40,
+          }}
+          style={styles.tabItem}
+        >
+          <Image
+            source={getIcon(route.name)}
+            style={[
+              styles.icon,
+              { tintColor: isFocused ? ACTIVE_COLOR : INACTIVE_COLOR },
+              isFocused && styles.iconActive,
+            ]}
+          />
+          {/* <Text
+            style={[
+              styles.label,
+              { color: isFocused ? ACTIVE_COLOR : INACTIVE_COLOR },
+              isFocused && styles.labelActive,
+            ]}
+          >
+            {getLabel(route.name)}
+          </Text> */}
+          <AppText color={isFocused ? ACTIVE_COLOR : INACTIVE_COLOR } type={isFocused ? 'Bold' : 'Medium'} text={getLabel(route.name)} fontSize={12} mt={5}/>
+        </Pressable>
+      );
+    })}
+  </View>
+);
 
 const BottomTab = ({ state, descriptors, navigation }: any) => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.outerWrapper}>
-      <GlassCard
-        width="100%" 
-        style={styles.glassContainer}
-      >
-        <View style={styles.tabContent}>
-          {state.routes.map((route: any, index: number) => {
-            const isFocused = state.index === index;
-
-            const onPress = () => {
-              const event = navigation.emit({
-                type: 'tabPress',
-                target: route.key,
-                canPreventDefault: true,
-              });
-
-              if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(route.name);
-              }
-            };
-
-            const getIcon = () => {
-              switch (route.name) {
-                case 'HOME_SCREEN': return require('@/assets/img/home_icon.png');
-                case 'LISTING_SCREEN': return require('@/assets/img/calendar_icon.png');
-                case 'CHAT_SCREEN': return require('@/assets/img/inbox_icon.png');
-                case 'TASK_SCREEN': return require('@/assets/img/taskBottomTabIcon.png');
-                case 'MORE_SCREEN': return require('@/assets/img/more_icon.png');
-                default: return require('@/assets/img/home_icon.png');
-              }
-            };
-
-            const getLabel = () => {
-              switch (route.name) {
-                case 'HOME_SCREEN': return 'Home';
-                case 'LISTING_SCREEN': return 'Calendar';
-                case 'CHAT_SCREEN': return 'Inbox';
-                case 'TASK_SCREEN': return 'Task';
-                case 'MORE_SCREEN': return 'More';
-                default: return '';
-              }
-            };
-
-            // Image colors: Teal for active (#41B597), Black/Grey for inactive
-            const activeColor = '#41B597'; 
-            const inactiveColor = '#000000';
-
-            return (
-              <Pressable
-                key={index}
-                onPress={onPress}
-                style={styles.tabItem}
-              >
-                <Image 
-                  source={getIcon()} 
-                  style={[
-                    styles.icon, 
-                    { tintColor: isFocused ? activeColor : inactiveColor }
-                  ]} 
-                />
-                <Text style={[
-                  styles.label, 
-                  { color: isFocused ? activeColor : inactiveColor }
-                ]}>
-                  {getLabel()}
-                </Text>
-              </Pressable>
-            );
-          })}
+    <View
+      style={[
+        styles.absoluteWrapper,
+        { bottom:0 },
+      ]}
+      pointerEvents="box-none"
+    >
+      {Platform.OS === 'ios' ? (
+        // ── iOS — native BlurView (pehle wala best tha) ─────────
+        <View style={styles.borderShell}>
+          <BlurView
+            style={styles.glassInner}
+            blurType="light"
+            blurAmount={30}
+            reducedTransparencyFallbackColor="rgba(232, 232, 232, 0.25)"
+          >
+            <View style={styles.iosOverlay}>
+              <TabItems state={state} navigation={navigation} />
+            </View>
+          </BlurView>
         </View>
-      </GlassCard>
+      ) : (
+        // ── Android — liquid glass simulation ───────────────────
+        <View style={styles.borderShell}>
+          {/* Base frosted gradient */}
+          <LinearGradient
+            colors={[
+              'rgba(255, 255, 255, 0.55)',
+              'rgba(235, 242, 240, 0.30)',
+              'rgba(215, 230, 226, 0.20)',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          />
+
+          {/* Top shine — wet glass reflection */}
+          <LinearGradient
+            colors={[
+              'rgba(255, 255, 255, 0.45)',
+              'rgba(255, 255, 255, 0.00)',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.androidShine}
+          />
+
+          {/* Subtle tint overlay */}
+          <View style={styles.androidNoise} />
+
+          {/* Tab content */}
+          <View style={styles.androidContent}>
+            <TabItems state={state} navigation={navigation} />
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  outerWrapper: {
-    backgroundColor: 'transparent', // Ensures the screen background shows through
-    paddingHorizontal: Metrics.scale(20),
-    paddingBottom: Metrics.verticalScale(20), // Adds space at bottom without absolute
+  absoluteWrapper: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
   },
-  glassContainer: {
-    // Overriding GlassCard defaults to match the thin pill shape in figma
-    padding: 0, 
-    borderRadius: 40,
-    height: Metrics.scale(80),
-    justifyContent: 'center',
-    marginBottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Lighter glass as seen in image
+
+  // ── Border shell — GlassCard style ──────────────────────────
+  borderShell: {
+    borderRadius: 21,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(232, 232, 232, 0.25)',
+
+    borderTopWidth: 1.5,
+    borderLeftWidth: 1.5,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.95)',
+    borderLeftColor: 'rgba(255, 255, 255, 0.95)',
+    borderBottomColor: 'rgba(180, 180, 180, 0.45)',
+    borderRightColor: 'rgba(180, 180, 180, 0.35)',
+
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 0,
+      },
+    }),
   },
-  tabContent: {
+
+  // ── iOS ──────────────────────────────────────────────────────
+  glassInner: {
+    height: 70,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+
+  iosOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+
+  // ── Android ──────────────────────────────────────────────────
+  androidShine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 42,
+    borderTopLeftRadius: 21,
+    borderTopRightRadius: 21,
+  },
+
+  androidNoise: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(200, 220, 215, 0.50)',
+  },
+
+  androidContent: {
+    height: 70,
+  },
+
+  // ── Shared tab layout ────────────────────────────────────────
+  tabRow: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    height: '100%',
+    paddingHorizontal: 6,
   },
+
   tabItem: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    position: 'relative',
   },
+
   icon: {
-    width: 24,
-    height: 24,
+    width: Metrics.scale(20),
+    height: Metrics.scale(20),
     resizeMode: 'contain',
   },
+
+  iconActive: {
+    transform: [{ scale: 1.08 }],
+  },
+
   label: {
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: 11,
+    marginTop: 3,
     fontWeight: '500',
-  }
+    letterSpacing: 0.1,
+  },
+
+  labelActive: {
+    fontWeight: '700',
+  },
 });
 
 export default BottomTab;
-
-
-
-// import React from 'react';
-// import { StyleSheet, View, Image, Pressable } from 'react-native';
-// import LinearGradient from 'react-native-linear-gradient';
-// import { Colors } from '@/theme/colors';
-// import Metrics from '@/utility/Metrics';
-
-// const BottomTab = ({ state, descriptors, navigation }: any) => {
-//   return (
-//     <View style={styles.tabContainer}>
-//       {state.routes.map((route: any, index: number) => {
-//         const isFocused = state.index === index;
-
-//         const onPress = () => {
-//           navigation.navigate(route.name);
-//         };
-
-//         const getIcon = () => {
-//           switch (route.name) {
-//             case 'HOME_SCREEN': return require('@/assets/img/home_icon.png');
-//             case 'LISTING_SCREEN': return require('@/assets/img/calendar_icon.png');
-//             case 'CHAT_SCREEN': return require('@/assets/img/inbox_icon.png');
-//             case 'TASK_SCREEN': return require('@/assets/img/task_icon.png');
-//             case 'MORE_SCREEN': return require('@/assets/img/more_icon.png');
-//             default: return require('@/assets/img/home_icon.png');
-//           }
-//         };
-
-//         // Tab content (background changes if focused)
-//         const TabContent = (
-//           <Pressable
-//             onPress={onPress}
-//             style={[
-//               styles.tabItem,
-//               { backgroundColor: isFocused ? Colors.BRUNSWICK_GREEN : Colors.WHITE }
-//             ]}
-//           >
-//             <Image 
-//               source={getIcon()} 
-//               style={[
-//                 styles.icon, 
-//                 { tintColor: isFocused ? Colors.WHITE : Colors.PINE_FOREST }
-//               ]} 
-//             />
-//           </Pressable>
-//         );
-
-//         // Wrap all tabs in LinearGradient to show border
-//         return (
-//           <LinearGradient
-//             key={index}
-//             colors={[
-//               'rgba(128,128,128,0.52)',
-//               'rgba(255,255,255,0.52)',
-//               'rgba(128,128,128,0.52)',
-//             ]}
-//             start={{ x: 0, y: 0 }}
-//             end={{ x: 1, y: 0 }} // horizontal gradient
-//             style={{ 
-//               borderRadius: 28, 
-//               padding: 1,  // border thickness
-//               marginHorizontal: 5
-//             }}
-//           >
-//             <View style={{ borderRadius: 27, overflow: 'hidden', flex: 1 }}>
-//               {TabContent}
-//             </View>
-//           </LinearGradient>
-//         );
-//       })}
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   tabContainer: {
-//     flexDirection: 'row',
-//     backgroundColor: Colors.WHITE,
-//     height: Metrics.scale(54),
-//     borderRadius: 100,
-//     marginHorizontal: 40,
-//     paddingHorizontal: 10,
-//     alignItems: 'center',
-//     justifyContent: 'center',  
-//     marginBottom: 30,       
-//     marginTop: 10,
-//   },
-//   tabItem: {
-//     width: Metrics.scale(54),
-//     height: Metrics.scale(54),
-//     borderRadius: 100,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   icon: {
-//     width: 20,
-//     height: 20,
-//     resizeMode: 'contain',
-//   }
-// });
-
-// export default BottomTab;
-
-
-

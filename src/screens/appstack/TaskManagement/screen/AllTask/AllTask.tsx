@@ -9,6 +9,7 @@ import {
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
+  BottomSheetModal,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
 
@@ -56,8 +57,8 @@ const AllTask = () => {
   console.log('taskList', taskList);
   const { resetTaskStore } = useTaskStore();
 
-  const filterSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['60%'], []);
+  const filterSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['60%', '80%'], []);
 
   const {
     control,
@@ -68,8 +69,8 @@ const AllTask = () => {
     defaultValues: { listings: [], assignees: [] },
   });
 
-  const handleOpenFilter = () => filterSheetRef.current?.expand();
-  const handleCloseFilter = () => filterSheetRef.current?.close();
+  const handleOpenFilter = () =>{ filterSheetRef.current?.present()};
+  const handleCloseFilter = () => {filterSheetRef.current?.close()};
 
   const onApplyFilter = (data: any) => {
     applyFilters(data);
@@ -265,33 +266,19 @@ const AllTask = () => {
         />
 
         <View style={styles.actionFooter}>
-          <GradientBorder
-            borderRadius={14}
-            borderWidth={1}
-            colors={[
-              'rgba(128, 128, 128, 0.66)',
-              'rgba(255, 255, 255, 0.66)',
-              'rgba(128, 128, 128, 0.66)',
-            ]}
-            locations={[0, 0.5356, 1]}
-            style={styles.gradientMargin}
-          >
-            <AppButton
-              title="Setup Cleaning Schedule"
-              style={styles.outlineBtn}
-              color={Colors.BLACK}
-              onPress={() => {
-                resetTaskStore();
-                navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
-              }}
-            />
-          </GradientBorder>
+          <AppButton
+            variant='secondary'
+            title="Setup Cleaning Schedule"
+            onPress={() => {
+              resetTaskStore();
+              navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
+            }}
+            backgroundColor={Colors.WHITE}
+            mb={11}
+          />
 
           <AppButton
             title="Create Task"
-            backgroundColor={Colors.PRIMARY_TEAL}
-            borderColor={Colors.PRIMARY_TEAL}
-            color={Colors.WHITE}
             onPress={() => {
               resetTaskStore();
               navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
@@ -299,14 +286,14 @@ const AllTask = () => {
           />
         </View>
 
-        <BottomSheet
+        <BottomSheetModal
           ref={filterSheetRef}
-          index={-1}
+          index={0}
           snapPoints={snapPoints}
           enablePanDownToClose
           backdropComponent={renderBackdrop}
-          handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
-          backgroundStyle={{ backgroundColor: Colors.TRANSLUCENT_WHITE }}
+          backgroundStyle={styles.bottomSheetBackground}
+              handleIndicatorStyle={styles.sheetIndicator}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
@@ -352,7 +339,7 @@ const AllTask = () => {
               />
             </View>
           </BottomSheetView>
-        </BottomSheet>
+        </BottomSheetModal>
       </View>
     </BGImage>
   );
@@ -440,7 +427,7 @@ const styles = StyleSheet.create({
   infoRow: { flexDirection: 'row', alignItems: 'center' },
   actionFooter: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 40 : 20,
+    bottom: Platform.OS === 'ios' ? 90 : 90, // 40/20 se badha ke tab bar ke upar
     left: 25,
     right: 25,
   },
@@ -454,6 +441,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   formContent: { marginTop: 10 },
+  bottomSheetBackground: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 40,
+  },
+  sheetIndicator: {
+    backgroundColor: '#ccc',
+    width: 60,
+  },
 });
 
 export default AllTask;

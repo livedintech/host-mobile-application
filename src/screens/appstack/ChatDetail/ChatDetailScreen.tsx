@@ -96,10 +96,10 @@ const processMessagesWithTimeLabels = (
 
     // Show label if there's no older message (last/oldest in list)
     // OR if older message is from a different day
-   const showLabel =
-  !olderMessage ||
-  dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
-    dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
+    const showLabel =
+      !olderMessage ||
+      dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
+      dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
 
     return {
       ...message,
@@ -482,27 +482,28 @@ const ChatScreen = () => {
                   <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
                 </MenuTrigger>
                 <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-              {data?.conversation?.thread_type !== "inquiry" && (
-                <MenuOption
-                    style={styles.menuItem}
-                    onSelect={() =>
-                      navigate(
-                        NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
-                        {
-                          booking_id: conversationData?.booking_id,
-                        },
-                      )
-                    }
-                  >
-                    <AppText
-                      text="Reservation Details"
-                      fontSize={14}
-                      color={Colors.BLACK}
-                    />
-                    <Svgicons path="reservationDetailIcon" size={24} />
-                  </MenuOption>
-              )}
-                  
+                  {data?.conversation?.thread_type !== "inquiry" &&
+                    conversationData?.booking_id && (
+                      <MenuOption
+                        style={styles.menuItem}
+                        onSelect={() =>
+                          navigate(
+                            NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
+                            {
+                              booking_id: conversationData?.booking_id,
+                            },
+                          )
+                        }
+                      >
+                        <AppText
+                          text="Reservation Details"
+                          fontSize={14}
+                          color={Colors.BLACK}
+                        />
+                        <Svgicons path="reservationDetailIcon" size={24} />
+                      </MenuOption>
+                    )}
+
 
                   <MenuOption
                     style={styles.menuItem}

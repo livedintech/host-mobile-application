@@ -262,7 +262,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   bgContainer: { flex: 1 },
   container: { flex: 1 },
-  scrollContent: { paddingHorizontal: Metrics.baseMargin, paddingBottom: Metrics.verticalScale(50) },
+  scrollContent: { paddingHorizontal: Metrics.baseMargin, paddingBottom: Metrics.verticalScale(100) },
 
   banner: {
     backgroundColor: '#00A68A',
@@ -314,8 +314,8 @@ const styles = StyleSheet.create({
   bellBtn: { padding: 5 },
 
   // Old Layout Styles
-  greetingContainer: { marginTop: 40, marginBottom: 30 },
-  greetingText: { fontSize: 28, color: '#1A1A1A', lineHeight: 38 },
+  greetingContainer: { marginTop: 40, marginBottom: 30, paddingLeft: Metrics.scale(10) },
+  greetingText: { fontSize: 28, color: '#1A1A1A', lineHeight: 38, },
   greetingName: { color: '#00A68A', fontWeight: 'bold' },
   gridContainer: {
     flexDirection: 'row',

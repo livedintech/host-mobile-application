@@ -11,6 +11,7 @@ import {
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
 import Video from 'react-native-video';
@@ -62,8 +63,7 @@ const ChecklistDetail = ({ route }: any) => {
     name: string;
   } | null>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['25%'], []);
-
+  const snapPoints = useMemo(() => ['45%', '75%'], []);
   const {
     control,
     handleSubmit,
@@ -290,6 +290,9 @@ const ChecklistDetail = ({ route }: any) => {
             index={-1}
             snapPoints={snapPoints}
             enablePanDownToClose
+            keyboardBehavior="extend"
+            keyboardBlurBehavior="restore"
+            android_keyboardInputMode="adjustResize"
             backdropComponent={props => (
               <BottomSheetBackdrop
                 {...props}
@@ -298,10 +301,10 @@ const ChecklistDetail = ({ route }: any) => {
                 opacity={0.5}
               />
             )}
-            backgroundStyle={styles.sheetBackground} 
+            backgroundStyle={styles.sheetBackground}
             handleIndicatorStyle={styles.sheetIndicator}
           >
-            <BottomSheetView style={styles.sheetContent}>
+            <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
               {/* Header with Close Button */}
               <View style={styles.sheetHeader}>
                 <AppText
@@ -341,7 +344,7 @@ const ChecklistDetail = ({ route }: any) => {
                 borderRadius={30}
                 onPress={handleSubmit(onFormSubmit)}
               />
-            </BottomSheetView>
+            </BottomSheetScrollView>
           </BottomSheet>
         </KeyboardAvoidingView>
       </View>
