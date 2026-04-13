@@ -9,6 +9,7 @@ import {
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
+  BottomSheetModal,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
 
@@ -56,8 +57,8 @@ const AllTask = () => {
   console.log('taskList', taskList);
   const { resetTaskStore } = useTaskStore();
 
-  const filterSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['60%'], []);
+  const filterSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['60%', '80%'], []);
 
   const {
     control,
@@ -68,8 +69,8 @@ const AllTask = () => {
     defaultValues: { listings: [], assignees: [] },
   });
 
-  const handleOpenFilter = () => filterSheetRef.current?.expand();
-  const handleCloseFilter = () => filterSheetRef.current?.close();
+  const handleOpenFilter = () =>{ filterSheetRef.current?.present()};
+  const handleCloseFilter = () => {filterSheetRef.current?.close()};
 
   const onApplyFilter = (data: any) => {
     applyFilters(data);
@@ -267,14 +268,14 @@ const AllTask = () => {
           />
         </View>
 
-        <BottomSheet
+        <BottomSheetModal
           ref={filterSheetRef}
-          index={-1}
+          index={0}
           snapPoints={snapPoints}
           enablePanDownToClose
           backdropComponent={renderBackdrop}
-          handleIndicatorStyle={{ backgroundColor: Colors.SMOOTH_GREY }}
-          backgroundStyle={{ backgroundColor: Colors.TRANSLUCENT_WHITE }}
+          backgroundStyle={styles.bottomSheetBackground}
+              handleIndicatorStyle={styles.sheetIndicator}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
@@ -320,7 +321,7 @@ const AllTask = () => {
               />
             </View>
           </BottomSheetView>
-        </BottomSheet>
+        </BottomSheetModal>
       </View>
     </BGImage>
   );
@@ -422,6 +423,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   formContent: { marginTop: 10 },
+  bottomSheetBackground: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 40,
+  },
+  sheetIndicator: {
+    backgroundColor: '#ccc',
+    width: 60,
+  },
 });
 
 export default AllTask;

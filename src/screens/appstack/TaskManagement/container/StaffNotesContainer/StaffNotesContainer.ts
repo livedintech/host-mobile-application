@@ -17,7 +17,7 @@ const useStaffNotesContainer = () => {
         is_draft: 0,
         description: description,
       }),
-    onSuccess: () => {
+    onSuccess: (data:any) => {
       // Navigate to the next screen (e.g., Task Success or Task List)
       resetTaskStore();
       queryClient.invalidateQueries({
@@ -28,7 +28,10 @@ const useStaffNotesContainer = () => {
       navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
         screen: NavigationRoutes.APP_STACK.TASK,
       });
-      Toast.show({ type: 'success', text1: 'Task created successfully!' });
+      Toast.show({
+        type: 'success',
+        text1: data?.message ,
+      });
     },
     onError: (error: any) => {
       Toast.show({

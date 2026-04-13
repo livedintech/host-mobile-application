@@ -10,6 +10,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
+import AppText from '../AppText/AppText';
+import Metrics from '@/utility/Metrics';
 
 const ACTIVE_COLOR = '#41B597';
 const INACTIVE_COLOR = '#1A1A1A';
@@ -63,9 +65,6 @@ const TabItems = ({ state, navigation }: any) => (
           }}
           style={styles.tabItem}
         >
-          {/* Active indicator dot */}
-          {/* {isFocused && <View style={styles.activeDot} />} */}
-
           <Image
             source={getIcon(route.name)}
             style={[
@@ -74,7 +73,7 @@ const TabItems = ({ state, navigation }: any) => (
               isFocused && styles.iconActive,
             ]}
           />
-          <Text
+          {/* <Text
             style={[
               styles.label,
               { color: isFocused ? ACTIVE_COLOR : INACTIVE_COLOR },
@@ -82,7 +81,8 @@ const TabItems = ({ state, navigation }: any) => (
             ]}
           >
             {getLabel(route.name)}
-          </Text>
+          </Text> */}
+          <AppText color={isFocused ? ACTIVE_COLOR : INACTIVE_COLOR } type={isFocused ? 'Bold' : 'Medium'} text={getLabel(route.name)} fontSize={12} mt={5}/>
         </Pressable>
       );
     })}
@@ -236,19 +236,9 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 
-  // Small teal dot above active icon
-  activeDot: {
-    position: 'absolute',
-    top: 6,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: ACTIVE_COLOR,
-  },
-
   icon: {
-    width: 24,
-    height: 24,
+    width: Metrics.scale(20),
+    height: Metrics.scale(20),
     resizeMode: 'contain',
   },
 

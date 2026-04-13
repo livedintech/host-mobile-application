@@ -3,12 +3,11 @@ import {
   StyleSheet,
   View,
   Platform,
-  KeyboardAvoidingView,
-  Pressable,
+  KeyboardAvoidingView
 } from 'react-native';
 import BottomSheet, {
-  BottomSheetView,
   BottomSheetBackdrop,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
 import { useRoute } from '@react-navigation/native';
@@ -18,7 +17,7 @@ import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { navigate, goBack } from '@/services/navigationService';
+import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
@@ -28,7 +27,6 @@ import useViewChecklistAllContainer from '../../container/viewChecklistAllContai
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { getChecklistIcon } from '@/utility/getChecklistIcon';
 import Metrics from '@/utility/Metrics';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import { useTaskStore } from '@/store/taskStore';
 
@@ -37,10 +35,12 @@ const ViewChecklistAll = () => {
     taskId,
     taskStatus: storeTaskStatus,
     taskType,
-    taskStatus,
   } = useTaskStore();
   console.log('taskStatustaskStatusmkkk', storeTaskStatus);
   console.log('testing:::', storeTaskStatus !== 'completed');
+  const buttonStatus = storeTaskStatus == "todo" || storeTaskStatus === "inprogress" || storeTaskStatus === "pending" || storeTaskStatus === "template";
+  console.log("buttonStatus", buttonStatus)
+
   const insets = useSafeAreaInsets(); // Hook to get notch height
   const route = useRoute<any>();
   // const { taskId, fromEdit, taskType } = route.params || {};
@@ -52,7 +52,7 @@ const ViewChecklistAll = () => {
     useViewChecklistAllContainer({ taskId, taskType });
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['35%'], []);
+  const snapPoints = useMemo(() => ['45%', '75%'], []);
 
   const {
     control,
@@ -164,29 +164,32 @@ const ViewChecklistAll = () => {
             keyExtractor={item => item.id.toString()}
           />
 
-          {/* {storeTaskStatus === "todo" || storeTaskStatus === "inprogress" && ( */}
-          <View style={[styles.footer, { marginBottom: insets.bottom || 20 }]}>
-            <AppButton
-              title="Next"
-              backgroundColor={Colors.PRIMARY_TEAL}
-              color={Colors.WHITE}
-              borderColor={Colors.PRIMARY_TEAL}
-              onPress={() => navigate(NavigationRoutes.APP_STACK.STAFF_NOTES)}
-            />
-          </View>
-          {/* )} */}
+          {buttonStatus && (
+            <View style={[styles.footer, { marginBottom: insets.bottom || 20 }]}>
+              <AppButton
+                title="Next"
+                backgroundColor={Colors.PRIMARY_TEAL}
+                color={Colors.WHITE}
+                borderColor={Colors.PRIMARY_TEAL}
+                onPress={() => navigate(NavigationRoutes.APP_STACK.STAFF_NOTES)}
+              />
+            </View>
+          )}
 
           <BottomSheet
             ref={bottomSheetRef}
             index={-1}
             snapPoints={snapPoints}
             enablePanDownToClose
+            keyboardBehavior="extend"
+            keyboardBlurBehavior="restore"
+            android_keyboardInputMode="adjustResize"
             backdropComponent={renderBackdrop}
             // This makes the actual sheet container transparent/glassy
             backgroundStyle={styles.sheetBackground}
             handleIndicatorStyle={styles.sheetIndicator}
           >
-            <BottomSheetView style={styles.sheetContent}>
+            <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
               <View style={styles.sheetHeader}>
                 <AppText text="Add Section" fontSize={24} type="Medium" />
                 <ButtonView
@@ -222,7 +225,7 @@ const ViewChecklistAll = () => {
                 onPress={handleSubmit(onAddSectionSubmit)}
                 borderRadius={30} // Matches the pill shape in Figma
               />
-            </BottomSheetView>
+            </BottomSheetScrollView>
           </BottomSheet>
         </KeyboardAvoidingView>
       </View>
@@ -296,7 +299,7 @@ const styles = StyleSheet.create({
 
   sheetBackground: {
     // This creates the translucent white "Glass" look
-    backgroundColor: 'rgba(255, 255, 255, 0.85)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     borderRadius: 40,
     // marginHorizontal: 10, 
   },
@@ -317,7 +320,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   closeButton: {
-    backgroundColor:'#BFBFBF', 
+    backgroundColor: '#BFBFBF',
     width: 30,
     height: 30,
     borderRadius: 18,

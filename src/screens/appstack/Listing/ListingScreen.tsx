@@ -72,6 +72,7 @@ const ListingScreen = () => {
     cleaningFee,
     discount,
     setCheckInFilter,
+    handleBookingAction
   } = useListingContainer(route.params?.listing_id, selectedTab);
   console.log('activeFilter', activeFilter);
 
@@ -210,72 +211,73 @@ const ListingScreen = () => {
                 </View>
               ) : (
                 <FlatListSimpleHandler
-                  showsVerticalScrollIndicator={false}
-                  isLoading={isRefreshing}
-                  onRefresh={handleRefresh}
-                  data={filteredReservations}
-                  keyExtractor={item => item.id}
-                  contentContainerStyle={styles.listContent}
-                  ListEmptyComponent={
-                    <View style={styles.centerContainer}>
-                      <AppText text="No reservations found" color="#999" />
-                    </View>
-                  }
-                  renderItem={({ item }) => {
-                    const config = getOtaConfig(item.source);
-                    const isBookingRequest =
-                      activeFilter?.trim() === 'booking_request';
-                    console.log('isBookingRequest', isBookingRequest);
+                    showsVerticalScrollIndicator={false}
+                    isLoading={isRefreshing}
+                    onRefresh={handleRefresh}
+                    data={filteredReservations}
+                    keyExtractor={item => item.id}
+                    contentContainerStyle={styles.listContent}
+                    ListEmptyComponent={
+                      <View style={styles.centerContainer}>
+                        <AppText text="No reservations found" color="#999" />
+                      </View>
+                    }
+                    renderItem={({ item }) => {
+                      const config = getOtaConfig(item.source);
+                      const isBookingRequest =
+                        activeFilter?.trim() === 'booking_request';
+                      console.log('isBookingRequest', isBookingRequest);
 
-                    if (isBookingRequest) {
+                      if (isBookingRequest) {
+                        return (
+                          <BookingRequestCard
+                          key={item.id}
+                            id={item.id}
+                            guestName={item.guest}
+                            platform={
+                              item.source_type === 'livedin'
+                                ? 'Livedin'
+                                : config.label
+                            }
+                            platformColor={config.color}
+                            guests={item?.number_of_guests}
+                            startDate={item.start_date}
+                            endDate={item.end_date}
+                            perNightRate={item.amount} // add this field from your API if available
+                            currency="SAR" // or derive from listing currency
+                            // onPress={handleReservationPress}
+                            onAccept={id =>
+                              handleBookingAction(id, 'accept_request')
+                            }
+                            onReject={id =>
+                              handleBookingAction(id, 'decline_request')
+                            }
+                          />
+                        );
+                      }
+
                       return (
-                        <BookingRequestCard
+                        <ReservationCard
                           id={item.booking_id || item.id}
                           guestName={item.guest}
+                          guests={item?.number_of_guests}
                           platform={
                             item.source_type === 'livedin'
                               ? 'Livedin'
                               : config.label
                           }
-                          platformColor={config.color}
-                          guests={item?.number_of_guests}
-                          startDate={item.start_date}
+                          property={item.listing_title || 'Property'}
                           endDate={item.end_date}
-                          perNightRate={item.amount} // add this field from your API if available
-                          currency="SAR" // or derive from listing currency
+                          startDate={item.start_date}
+                          checkIn={item?.checkIn || '04:00 PM'}
+                          checkOut={item?.checkOut || '12:00 AM'}
+                          checkedoutDate={item?.end_date || ''}
+                          platformColor={config.color}
                           onPress={handleReservationPress}
-                          onAccept={id => {
-                            // call your accept booking handler
-                          }}
-                          onReject={id => {
-                            // call your reject booking handler
-                          }}
                         />
                       );
-                    }
-
-                    return (
-                      <ReservationCard
-                        id={item.booking_id || item.id}
-                        guestName={item.guest}
-                        guests={item?.number_of_guests}
-                        platform={
-                          item.source_type === 'livedin'
-                            ? 'Livedin'
-                            : config.label
-                        }
-                        property={item.listing_title || 'Property'}
-                        endDate={item.end_date}
-                        startDate={item.start_date}
-                        checkIn={item?.checkIn || '04:00 PM'}
-                        checkOut={item?.checkOut || '12:00 AM'}
-                        checkedoutDate={item?.end_date || ''}
-                        platformColor={config.color}
-                        onPress={handleReservationPress}
-                      />
-                    );
-                  }}
-                />
+                    }}
+                  />
               )}
             </View>
           )}
@@ -354,7 +356,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  listContent: { paddingHorizontal: Metrics.baseMargin, flexGrow: 1, paddingVertical: Metrics.verticalScale(100) },
+  listContent: { paddingHorizontal: Metrics.baseMargin, flexGrow: 1, paddingBottom: Metrics.verticalScale(100) },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',

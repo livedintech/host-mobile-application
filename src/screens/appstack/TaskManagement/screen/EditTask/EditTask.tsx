@@ -178,6 +178,14 @@ const EditTask = ({ route }: any) => {
                 mb={20}
               />
 
+              <AppText text="Door Lock Code" fontSize={14} type="Bold" mb={4} />
+              <AppText
+                text={task?.key_code || 'Not Provided' }
+                fontSize={14}
+                color={Colors.DARK_CHARCOAL}
+                mb={20}
+              />
+
               {isEditable ? (
                 <DropdownField
                   name="assignee"
