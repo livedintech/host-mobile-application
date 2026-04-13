@@ -37,10 +37,12 @@ const ViewChecklistAll = () => {
     taskId,
     taskStatus: storeTaskStatus,
     taskType,
-    taskStatus,
   } = useTaskStore();
   console.log('taskStatustaskStatusmkkk', storeTaskStatus);
   console.log('testing:::', storeTaskStatus !== 'completed');
+  const buttonStatus = storeTaskStatus == "todo" || storeTaskStatus === "inprogress" || storeTaskStatus === "pending" || storeTaskStatus === "template";
+  console.log("buttonStatus",buttonStatus)
+  
   const insets = useSafeAreaInsets(); // Hook to get notch height
   const route = useRoute<any>();
   // const { taskId, fromEdit, taskType } = route.params || {};
@@ -164,7 +166,7 @@ const ViewChecklistAll = () => {
             keyExtractor={item => item.id.toString()}
           />
 
-          {/* {storeTaskStatus === "todo" || storeTaskStatus === "inprogress" && ( */}
+          {buttonStatus && (
           <View style={[styles.footer, { marginBottom: insets.bottom || 20 }]}>
             <AppButton
               title="Next"
@@ -174,7 +176,7 @@ const ViewChecklistAll = () => {
               onPress={() => navigate(NavigationRoutes.APP_STACK.STAFF_NOTES)}
             />
           </View>
-          {/* )} */}
+          )}
 
           <BottomSheet
             ref={bottomSheetRef}
