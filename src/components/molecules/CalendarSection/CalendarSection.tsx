@@ -6,6 +6,7 @@ import CustomCalendar from '@/components/molecules/CustomCalendar/CustomCalendar
 import MultiChannelCalendar from '@/components/molecules/MultiChannelCalendar/MultiChannelCalendar';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import { RawBookingData } from '@/types/api/bookingTypes';
+import Metrics from '@/utility/Metrics';
 
 interface Props {
   control: any;
@@ -39,7 +40,7 @@ export const CalendarSection = ({
     <RefreshableScrollView
       isLoading={isLoading}
       onRefresh={onRefresh}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+      contentContainerStyle={{ paddingHorizontal: Metrics.baseMargin, paddingBottom: Metrics.scale(100) }}
     >
       <DropdownField
         name="listing_selection"

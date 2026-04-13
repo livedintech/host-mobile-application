@@ -58,10 +58,10 @@ const ReviewDetailScreen = ({ route }: any) => {
   const fetchBookingDetails = async () => {
     try {
       setIsLoading(true);
+      const idString = String(booking_id);
 
-      const formattedId = booking_id?.startsWith('O')
-        ? booking_id
-        : `O${booking_id}`;
+      const formattedId = idString.startsWith('O') ? idString : `O${idString}`;
+
 
       const response = await getBookingDetailsApi(formattedId);
       setApiData(response?.data || response);
@@ -111,8 +111,8 @@ const ReviewDetailScreen = ({ route }: any) => {
   const overallRating =
     ratingValues.length > 0
       ? (ratingValues.reduce((a, b) => a + b, 0) / ratingValues.length).toFixed(
-          1,
-        )
+        1,
+      )
       : '0.0';
 
   const ratingItems = [
@@ -394,14 +394,13 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={styles.cardHeader}>
               <View>
                 <AppText
-                  text={`${
-                    property?.booking_platform === 'host_booking'
+                  text={`${property?.booking_platform === 'host_booking'
                       ? 'Livedin'
                       : property?.booking_platform
-                      ? property.booking_platform.charAt(0).toUpperCase() +
+                        ? property.booking_platform.charAt(0).toUpperCase() +
                         property.booking_platform.slice(1)
-                      : 'N/A'
-                  } Booking Code`}
+                        : 'N/A'
+                    } Booking Code`}
                   type="Bold"
                   fontSize={16}
                   mb={4}
@@ -433,10 +432,10 @@ const ReviewDetailScreen = ({ route }: any) => {
                   property?.booking_platform === 'host_booking'
                     ? 'livedinLogo'
                     : property?.booking_platform === 'airbnb'
-                    ? 'airbnb'
-                    : property?.booking_platform === 'gathern'
-                    ? 'gathern'
-                    : 'homeIcon'
+                      ? 'airbnb'
+                      : property?.booking_platform === 'gathern'
+                        ? 'gathern'
+                        : 'homeIcon'
                 }
                 size={20}
               />
@@ -468,9 +467,9 @@ const ReviewDetailScreen = ({ route }: any) => {
                   property?.booking_platform === 'host_booking'
                     ? 'Livedin'
                     : property?.booking_platform
-                    ? property.booking_platform.charAt(0).toUpperCase() +
+                      ? property.booking_platform.charAt(0).toUpperCase() +
                       property.booking_platform.slice(1)
-                    : 'N/A'
+                      : 'N/A'
                 }
                 fontSize={13}
                 color={Colors.DARK_CHARCOAL}
@@ -542,7 +541,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               opacity={0.7}
             />
             <TouchableOpacity
-            disabled={guest?.conversation_id}
+              disabled={!guest?.conversation_id}
               style={styles.continueChatBtn}
               onPress={() =>
                 navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
@@ -822,9 +821,8 @@ const ReviewDetailScreen = ({ route }: any) => {
                       fill={Colors.DARK_CHARCOAL}
                     />
                     <AppText
-                      text={`Assigned to ${
-                        item.assigned_user_name || 'Unassigned'
-                      }`}
+                      text={`Assigned to ${item.assigned_user_name || 'Unassigned'
+                        }`}
                       fontSize={13}
                       color={Colors.DARK_CHARCOAL}
                     />
@@ -880,7 +878,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   text={
                     cancellation_policy
                       ? cancellation_policy.charAt(0).toUpperCase() +
-                        cancellation_policy.slice(1)
+                      cancellation_policy.slice(1)
                       : 'N/A'
                   }
                   fontSize={14}

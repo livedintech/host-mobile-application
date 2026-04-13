@@ -8,9 +8,14 @@ const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
   return (
-    <Tab.Navigator tabBar={props => <BottomTab {...props} />}>
+    <Tab.Navigator
+      tabBar={props => <BottomTab {...props} />}
+      screenOptions={{
+        tabBarStyle: { display: 'none' },
+      }}
+    >
       <Tab.Screen
-        options={{ headerShown:false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.HOME}
         component={require('@/screens/appstack/Home/HomeScreen').default}
       />
@@ -20,18 +25,17 @@ const TabStack = () => {
         component={require('@/screens/appstack/Listing/ListingScreen').default}
       />
       <Tab.Screen
-        options={{headerShown: false }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CHAT}
         component={require('@/screens/appstack/Chat/ChatScreen').default}
       />
-    <Tab.Screen
-  name={NavigationRoutes.APP_STACK.TASK}
-  component={
-    require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask')
-      .default
-  }
-  options={{ headerShown: false }}
-/>
+      <Tab.Screen
+        name={NavigationRoutes.APP_STACK.TASK}
+        component={
+          require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask').default
+        }
+        options={{ headerShown: false }}
+      />
       <Tab.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}

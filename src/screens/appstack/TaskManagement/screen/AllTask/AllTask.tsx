@@ -247,33 +247,19 @@ const AllTask = () => {
         />
 
         <View style={styles.actionFooter}>
-          <GradientBorder
-            borderRadius={14}
-            borderWidth={1}
-            colors={[
-              'rgba(128, 128, 128, 0.66)',
-              'rgba(255, 255, 255, 0.66)',
-              'rgba(128, 128, 128, 0.66)',
-            ]}
-            locations={[0, 0.5356, 1]}
-            style={styles.gradientMargin}
-          >
-            <AppButton
-              title="Setup Cleaning Schedule"
-              style={styles.outlineBtn}
-              color={Colors.BLACK}
-              onPress={() => {
-                resetTaskStore();
-                navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
-              }}
-            />
-          </GradientBorder>
+          <AppButton
+            variant='secondary'
+            title="Setup Cleaning Schedule"
+            onPress={() => {
+              resetTaskStore();
+              navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
+            }}
+            backgroundColor={Colors.WHITE}
+            mb={11}
+          />
 
           <AppButton
             title="Create Task"
-            backgroundColor={Colors.PRIMARY_TEAL}
-            borderColor={Colors.PRIMARY_TEAL}
-            color={Colors.WHITE}
             onPress={() => {
               resetTaskStore();
               navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
@@ -422,7 +408,7 @@ const styles = StyleSheet.create({
   infoRow: { flexDirection: 'row', alignItems: 'center' },
   actionFooter: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 40 : 20,
+    bottom: Platform.OS === 'ios' ? 90 : 90, // 40/20 se badha ke tab bar ke upar
     left: 25,
     right: 25,
   },

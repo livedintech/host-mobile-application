@@ -22,6 +22,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BookingRequestCard from '@/components/molecules/BookingRequestCard/BookingRequestCard';
+import Metrics from '@/utility/Metrics';
 
 const ListingScreen = () => {
   const authStore = useAuthStore();
@@ -85,8 +86,8 @@ const ListingScreen = () => {
   if (isLoadingOta) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-          <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-          <AppText text="Checking OTA connection..." mt={10} color={Colors.BRUNSWICK_GREEN} />
+        <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+        <AppText text="Checking OTA connection..." mt={10} color={Colors.BRUNSWICK_GREEN} />
       </BGImage>
     );
   }
@@ -94,7 +95,7 @@ const ListingScreen = () => {
   if (!isOtaConnected) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-          <NoListing onConnect={handleConnectAccount} />
+        <NoListing onConnect={handleConnectAccount} />
       </BGImage>
     );
   }
@@ -133,198 +134,198 @@ const ListingScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <BookingDetailsView
-          isVisible={isDetailsOpen}
-          onClose={() => {
-            setIsDetailsOpen(false);
-            setSelectedBookingId(null);
-          }}
-          bookingId={selectedBookingId}
-          onCardPress={handleReservationPress}
-        />
+      <BookingDetailsView
+        isVisible={isDetailsOpen}
+        onClose={() => {
+          setIsDetailsOpen(false);
+          setSelectedBookingId(null);
+        }}
+        bookingId={selectedBookingId}
+        onCardPress={handleReservationPress}
+      />
 
-        {isFetchingDetails && (
-          <View style={styles.overlayLoader}>
-            <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-          </View>
-        )}
+      {isFetchingDetails && (
+        <View style={styles.overlayLoader}>
+          <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+        </View>
+      )}
 
-        {!isDetailsOpen && (
-          <>
-            <View style={styles.headerFixed}>
-              <View style={styles.headerRow}>
+      {!isDetailsOpen && (
+        <>
+          <View style={styles.headerFixed}>
+            <View style={styles.headerRow}>
+              <AppText
+                text="Guest Bookings"
+                fontSize={22}
+                type="Bold"
+                color={Colors.BLACK}
+              />
+              <ButtonView
+                style={styles.toggleButton}
+                onPress={toggleTab}
+                activeOpacity={0.8}
+              >
                 <AppText
-                  text="Guest Bookings"
-                  fontSize={22}
-                  type="Bold"
-                  color={Colors.BLACK}
+                  text={selectedTab === 0 ? 'Reservations' : 'Calendar'}
+                  color={Colors.WHITE}
+                  fontSize={13}
+                  type="SemiBold"
                 />
-                <ButtonView
-                  style={styles.toggleButton}
-                  onPress={toggleTab}
-                  activeOpacity={0.8}
-                >
-                  <AppText
-                    text={selectedTab === 0 ? 'Reservations' : 'Calendar'}
-                    color={Colors.WHITE}
-                    fontSize={13}
-                    type="SemiBold"
-                  />
-                </ButtonView>
-              </View>
-
-              {selectedTab === 1 && (
-                <ReservationHeader
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  onFilterPress={() => setModalVisible(true)}
-                  activeFilter={activeFilter}
-                  setActiveFilter={setActiveFilter}
-                />
-              )}
+              </ButtonView>
             </View>
 
-            {selectedTab === 0 ? (
-              <CalendarSection
-                control={control}
-                errors={errors}
-                listingOptions={listingOptions}
-                selectedListingId={selectedListingId || ''}
-                markedDates={calendarDataMap}
-                bookings={rawData}
-                onDayPress={handleDayPress}
-                defaultPrice={defaultDailyPrice}
-                isLoading={isRefreshing}
-                onRefresh={handleRefresh}
-                onListingPress={handleListingRowPress}
+            {selectedTab === 1 && (
+              <ReservationHeader
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                onFilterPress={() => setModalVisible(true)}
+                activeFilter={activeFilter}
+                setActiveFilter={setActiveFilter}
               />
-            ) : (
-              <View style={{ flex: 1 }}>
-                {resLoading ? (
-                  <View style={styles.centerContainer}>
-                    <ActivityIndicator
-                      size="large"
-                      color={Colors.BRUNSWICK_GREEN}
-                    />
-                  </View>
-                ) : (
-                  <FlatListSimpleHandler
-                    showsVerticalScrollIndicator={false}
-                    isLoading={isRefreshing}
-                    onRefresh={handleRefresh}
-                    data={filteredReservations}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={styles.listContent}
-                    ListEmptyComponent={
-                      <View style={styles.centerContainer}>
-                        <AppText text="No reservations found" color="#999" />
-                      </View>
-                    }
-                    renderItem={({ item }) => {
-                      const config = getOtaConfig(item.source);
-                      const isBookingRequest =
-                        activeFilter?.trim() === 'booking_request';
-                      console.log('isBookingRequest', isBookingRequest);
+            )}
+          </View>
 
-                      if (isBookingRequest) {
-                        return (
-                          <BookingRequestCard
-                            id={item.booking_id || item.id}
-                            guestName={item.guest}
-                            platform={
-                              item.source_type === 'livedin'
-                                ? 'Livedin'
-                                : config.label
-                            }
-                            platformColor={config.color}
-                            guests={item?.number_of_guests}
-                            startDate={item.start_date}
-                            endDate={item.end_date}
-                            perNightRate={item.amount} // add this field from your API if available
-                            currency="SAR" // or derive from listing currency
-                            onPress={handleReservationPress}
-                            onAccept={id => {
-                              // call your accept booking handler
-                            }}
-                            onReject={id => {
-                              // call your reject booking handler
-                            }}
-                          />
-                        );
-                      }
+          {selectedTab === 0 ? (
+            <CalendarSection
+              control={control}
+              errors={errors}
+              listingOptions={listingOptions}
+              selectedListingId={selectedListingId || ''}
+              markedDates={calendarDataMap}
+              bookings={rawData}
+              onDayPress={handleDayPress}
+              defaultPrice={defaultDailyPrice}
+              isLoading={isRefreshing}
+              onRefresh={handleRefresh}
+              onListingPress={handleListingRowPress}
+            />
+          ) : (
+            <View style={{ flex: 1 }}>
+              {resLoading ? (
+                <View style={styles.centerContainer}>
+                  <ActivityIndicator
+                    size="large"
+                    color={Colors.BRUNSWICK_GREEN}
+                  />
+                </View>
+              ) : (
+                <FlatListSimpleHandler
+                  showsVerticalScrollIndicator={false}
+                  isLoading={isRefreshing}
+                  onRefresh={handleRefresh}
+                  data={filteredReservations}
+                  keyExtractor={item => item.id}
+                  contentContainerStyle={styles.listContent}
+                  ListEmptyComponent={
+                    <View style={styles.centerContainer}>
+                      <AppText text="No reservations found" color="#999" />
+                    </View>
+                  }
+                  renderItem={({ item }) => {
+                    const config = getOtaConfig(item.source);
+                    const isBookingRequest =
+                      activeFilter?.trim() === 'booking_request';
+                    console.log('isBookingRequest', isBookingRequest);
 
+                    if (isBookingRequest) {
                       return (
-                        <ReservationCard
+                        <BookingRequestCard
                           id={item.booking_id || item.id}
                           guestName={item.guest}
-                          guests={item?.number_of_guests}
                           platform={
                             item.source_type === 'livedin'
                               ? 'Livedin'
                               : config.label
                           }
-                          property={item.listing_title || 'Property'}
-                          endDate={item.end_date}
-                          startDate={item.start_date}
-                          checkIn={item?.checkIn || '04:00 PM'}
-                          checkOut={item?.checkOut || '12:00 AM'}
-                          checkedoutDate={item?.end_date || ''}
                           platformColor={config.color}
+                          guests={item?.number_of_guests}
+                          startDate={item.start_date}
+                          endDate={item.end_date}
+                          perNightRate={item.amount} // add this field from your API if available
+                          currency="SAR" // or derive from listing currency
                           onPress={handleReservationPress}
+                          onAccept={id => {
+                            // call your accept booking handler
+                          }}
+                          onReject={id => {
+                            // call your reject booking handler
+                          }}
                         />
                       );
-                    }}
-                  />
-                )}
-              </View>
-            )}
-          </>
-        )}
+                    }
 
-        <FilterModalView
-          isVisible={isModalVisible}
-          onClose={() => setModalVisible(false)}
-          initialSelectedValues={selectedPropertyValues}
-          onApply={(selectedIds, type) => {
-            const idsString = selectedIds.join(',');
-            setSelectedPropertyValues(selectedIds);
-            setAppliedListingIds(idsString);
+                    return (
+                      <ReservationCard
+                        id={item.booking_id || item.id}
+                        guestName={item.guest}
+                        guests={item?.number_of_guests}
+                        platform={
+                          item.source_type === 'livedin'
+                            ? 'Livedin'
+                            : config.label
+                        }
+                        property={item.listing_title || 'Property'}
+                        endDate={item.end_date}
+                        startDate={item.start_date}
+                        checkIn={item?.checkIn || '04:00 PM'}
+                        checkOut={item?.checkOut || '12:00 AM'}
+                        checkedoutDate={item?.end_date || ''}
+                        platformColor={config.color}
+                        onPress={handleReservationPress}
+                      />
+                    );
+                  }}
+                />
+              )}
+            </View>
+          )}
+        </>
+      )}
 
-            if (type) {
-              // Synchronize the top tab with the modal selection
-              setActiveFilter(type);
-              setCheckInFilter(type);
-            }
+      <FilterModalView
+        isVisible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+        initialSelectedValues={selectedPropertyValues}
+        onApply={(selectedIds, type) => {
+          const idsString = selectedIds.join(',');
+          setSelectedPropertyValues(selectedIds);
+          setAppliedListingIds(idsString);
 
-            setModalVisible(false);
-          }}
-          onReset={() => {
-            setSelectedPropertyValues([]);
-            setAppliedListingIds('');
-            setActiveFilter('today'); // Reset to default tab
-            setCheckInFilter('');
-          }}
-          actualProperties={listingOptions.filter(opt => opt.value !== '')}
+          if (type) {
+            // Synchronize the top tab with the modal selection
+            setActiveFilter(type);
+            setCheckInFilter(type);
+          }
+
+          setModalVisible(false);
+        }}
+        onReset={() => {
+          setSelectedPropertyValues([]);
+          setAppliedListingIds('');
+          setActiveFilter('today'); // Reset to default tab
+          setCheckInFilter('');
+        }}
+        actualProperties={listingOptions.filter(opt => opt.value !== '')}
+      />
+
+      {isBookingOpen && (
+        <CreateBookingSheet
+          isVisible={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          bookingType={bookingType}
+          setBookingType={setBookingType}
+          control={control}
+          errors={errors}
+          handleSubmit={handleSubmit}
+          cleaningFee={cleaningFee}
+          discount={discount}
+          listingOptions={listingOptions}
+          selectedListingId={selectedListingId || ''}
+          onSubmit={onBookingSubmit}
+          // onSubmit={handleSubmit(onBookingSubmit)}
+          isLoading={isLoading}
         />
-
-        {isBookingOpen && (
-          <CreateBookingSheet
-            isVisible={isBookingOpen}
-            onClose={() => setIsBookingOpen(false)}
-            bookingType={bookingType}
-            setBookingType={setBookingType}
-            control={control}
-            errors={errors}
-            handleSubmit={handleSubmit}
-            cleaningFee={cleaningFee}
-            discount={discount}
-            listingOptions={listingOptions}
-            selectedListingId={selectedListingId || ''}
-            onSubmit={onBookingSubmit}
-            // onSubmit={handleSubmit(onBookingSubmit)}
-            isLoading={isLoading}
-          />
-        )} 
+      )}
     </BGImage>
   );
 };
@@ -353,7 +354,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  listContent: { padding: s(16), flexGrow: 1 },
+  listContent: { paddingHorizontal: Metrics.baseMargin, flexGrow: 1, paddingVertical: Metrics.verticalScale(100) },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',

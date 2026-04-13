@@ -356,7 +356,7 @@ const ChatScreen = () => {
               }
               renderItem={renderItem}
               keyExtractor={item => String(item.id)}
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1,paddingBottom: Metrics.verticalScale(100) }}
             />
 
             {/* ── Filter Modal ── */}
