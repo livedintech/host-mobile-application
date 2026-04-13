@@ -278,9 +278,17 @@ export const getTaskDetail = async (
 export const vendorUpdate = async ({
   taskId,
   vendor_id,
+  description,
+  start_date,
+  start_time,
+  end_time,
 }: {
   taskId: number | string;
   vendor_id: number;
+  description: string;
+  start_date: string;
+  start_time: string;
+  end_time: string;
 }) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_VENDOR_UPDATE,
@@ -288,14 +296,16 @@ export const vendorUpdate = async ({
   );
 
   const { ok, response, data } = await apiService.put(url, {
-    vendor_id, 
+    vendor_id,
+    description,
+    start_date,
+    start_time, // This now contains "21:00" instead of "09:00 pm"
+    end_time,
   });
 
   if (ok) return data;
-
-  throw new Error(response?.message || 'Failed to update vendor');
+  throw new Error(response?.message || 'Failed to update task');
 };
-
 
 
 // DELETE TASK
