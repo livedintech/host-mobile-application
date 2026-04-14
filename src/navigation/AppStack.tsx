@@ -160,7 +160,9 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => <HeaderApp isGoBackAfterLogo />,
+          header: () => (
+            <HeaderApp isGoBackAfterLogo />
+          ),
         }}
         name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
         getComponent={() =>
@@ -170,7 +172,9 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => <HeaderApp isGoBack />,
+          header: () => (
+            <HeaderApp isGoBack />
+          ),
         }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
@@ -187,7 +191,9 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => <HeaderApp isGoBack />,
+          header: () => (
+            <HeaderApp isGoBack />
+          ),
         }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
         getComponent={() =>
