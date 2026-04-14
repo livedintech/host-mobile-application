@@ -8,7 +8,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface TextareaFieldProps extends TextInputProps {
   name: string;
-  control: Control<any>;
+  control: Control<any, any>;
   errors: FieldErrors;
   label?: string;
   leftIcon?: React.ReactNode;
