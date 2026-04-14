@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Pressable, ActivityIndicator, FlatList } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import {
+    StyleSheet,
+    View,
+    ActivityIndicator,
+    FlatList,
+} from 'react-native';
+
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useManageBookingContainer from './ManageBookingContainer';
@@ -10,10 +16,10 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Metrics from '@/utility/Metrics';
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── TYPES ─────────────────────────────────────────────────────────────
 
-const TABS = ['Airbnb', 'Gathern', 'Booking.com']
-type TabType = (typeof TABS)[number];
+const TABS = ['Airbnb', 'Gathern', 'Booking.com'] as const;
+type TabType = typeof TABS[number];
 
 const TAB_ICON_MAP: Record<TabType, string> = {
     Airbnb: 'airbnb',
@@ -21,26 +27,34 @@ const TAB_ICON_MAP: Record<TabType, string> = {
     'Booking.com': 'bookingCom',
 };
 
+const normalizeType = (type: string) =>
+    type === 'Bookings.com' ? 'Booking.com' : type;
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
+// ─── COMPONENTS ─────────────────────────────────────────────────────────────
 
-interface ConnectedAccountCardProps {
-    account: any;
-    selectedTab: TabType;
-    userName: string;
-    onExport: (account: any) => void;
-}
+const InfoRow = ({ icon, label, value, valueColor }: any) => (
+    <View style={styles.cardRow}>
+        <View style={styles.iconCircle}>
+            <Svgicons path={icon} size={20} />
+        </View>
+        <View>
+            <AppText text={label} type="Regular" color={Colors.BLACK} fontSize={14} />
+            <AppText
+                text={value}
+                type="Medium"
+                color={valueColor}
+                fontSize={14}
+                mt={2}
+            />
+        </View>
+    </View>
+);
 
-const ConnectedAccountCard: React.FC<ConnectedAccountCardProps> = ({
-    account,
-    selectedTab,
-    userName,
-    onExport,
-}) => (
+const ConnectedAccountCard = ({ account, selectedTab, onExport }: any) => (
     <GlassCard width="100%" style={styles.connectedCard}>
         <View style={styles.cardHeader}>
             <AppText
-                text={`${userName}'s ${selectedTab}`}
+                text={selectedTab}
                 type="Bold"
                 color={Colors.BLACK}
                 fontSize={18}
@@ -48,11 +62,12 @@ const ConnectedAccountCard: React.FC<ConnectedAccountCardProps> = ({
         </View>
 
         <InfoRow
-            icon={TAB_ICON_MAP[selectedTab]}
+            icon={TAB_ICON_MAP[selectedTab as TabType]}
             label={`${selectedTab} ID`}
             value={account?.id?.toString() ?? 'N/A'}
             valueColor={Colors.BLACK}
         />
+
         <InfoRow
             icon="database_check"
             label="Connection Status"
@@ -60,8 +75,8 @@ const ConnectedAccountCard: React.FC<ConnectedAccountCardProps> = ({
             valueColor={Colors.TEAL_PRIMARY_ALT}
         />
 
-        <View style={styles.exportBtnContainer}>
-            {selectedTab !== 'Bookings.com' && (
+        {selectedTab !== 'Booking.com' && (
+            <View style={styles.exportBtnContainer}>
                 <AppButton
                     title="Exports"
                     onPress={() => onExport(account)}
@@ -70,37 +85,15 @@ const ConnectedAccountCard: React.FC<ConnectedAccountCardProps> = ({
                     style={styles.exportBtn}
                     variant="secondary"
                 />
-            )}
-        </View>
+            </View>
+        )}
     </GlassCard>
 );
 
-interface InfoRowProps {
-    icon: string;
-    label: string;
-    value: string;
-    valueColor: string;
-}
-
-const InfoRow: React.FC<InfoRowProps> = ({ icon, label, value, valueColor }) => (
-    <View style={styles.cardRow}>
-        <View style={styles.iconCircle}>
-            <Svgicons path={icon} size={20} />
-        </View>
-        <View>
-            <AppText text={label} type="Regular" color={Colors.BLACK} fontSize={14} />
-            <AppText text={value} type="Medium" color={valueColor} fontSize={14} mt={2} />
-        </View>
-    </View>
-);
-
-interface EmptyStateProps {
-    selectedTab: TabType;
-}
-
-const EmptyState: React.FC<EmptyStateProps> = ({ selectedTab }) => (
+const EmptyState = ({ selectedTab }: { selectedTab: TabType }) => (
     <View style={styles.emptyStateContainer}>
         <View style={styles.circleBg} />
+
         <AppText
             text={`This property isn't\nlisted on ${selectedTab}.`}
             fontSize={24}
@@ -109,6 +102,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ selectedTab }) => (
             textAlign="center"
             lineHeight={32}
         />
+
         <AppText
             text={`Only properties connected and\nactive on ${selectedTab} will appear here.`}
             fontSize={14}
@@ -120,11 +114,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({ selectedTab }) => (
     </View>
 );
 
-// ─── Main Screen ─────────────────────────────────────────────────────────────
+// ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
 
 const ManageBookingScreen = () => {
     const {
-        user,
         handleConnect,
         isLoading,
         isPending,
@@ -134,14 +127,14 @@ const ManageBookingScreen = () => {
     } = useManageBookingContainer();
 
     const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
-
-    // All accounts matching the currently selected tab (supports multiple)
-   const currentTabAccounts: any[] = connectedAccounts?.filter(
-  (acc: any) =>
-    selectedTab === 'Booking.com'
-      ? acc.connection_type === 'Bookings.com'
-      : acc.connection_type === selectedTab
-) ?? [];
+    const currentTabAccounts = useMemo(() => {
+        return (
+            connectedAccounts?.filter(
+                (acc: any) =>
+                    normalizeType(acc.connection_type) === selectedTab
+            ) ?? []
+        );
+    }, [connectedAccounts, selectedTab]);
 
     const hasAccounts = currentTabAccounts.length > 0;
 
@@ -151,8 +144,7 @@ const ManageBookingScreen = () => {
             style={styles.bgContainer}
         >
             <View style={styles.container}>
-
-                {/* ── Header ── */}
+                {/* HEADER */}
                 <View style={styles.header}>
                     <AppText
                         text="Channel Manager"
@@ -163,22 +155,36 @@ const ManageBookingScreen = () => {
                     />
                 </View>
 
-                {/* ── Tabs ── */}
+                {/* TABS */}
                 <View style={styles.tabsContainer}>
                     {TABS.map((tab) => {
                         const isSelected = selectedTab === tab;
+
                         return (
-                            <AppButton borderRadius={20} key={tab} title={tab} onPress={() => setSelectedTab(tab)} color={isSelected ? Colors.WHITE : Colors.DARK_CHARCOAL} style={[styles.tabBtn, isSelected && styles.activeTabBtn]} variant='secondary' fontSize={12} />
+                            <AppButton
+                                key={tab}
+                                title={tab}
+                                onPress={() => setSelectedTab(tab)}
+                                color={
+                                    isSelected ? Colors.WHITE : Colors.DARK_CHARCOAL
+                                }
+                                style={[
+                                    styles.tabBtn,
+                                    isSelected && styles.activeTabBtn,
+                                ]}
+                                variant="secondary"
+                                fontSize={12}
+                                borderRadius={20}
+                            />
                         );
                     })}
                 </View>
 
-                {/* ── Content ── */}
+                {/* CONTENT */}
                 <RefreshableScrollView
                     isLoading={isLoading}
                     onRefresh={refetch}
                     contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}
                 >
                     {isLoading ? (
                         <ActivityIndicator
@@ -187,25 +193,28 @@ const ManageBookingScreen = () => {
                             style={styles.loader}
                         />
                     ) : hasAccounts ? (
-                        currentTabAccounts.map((account, index) => (
-                            <View
-                                key={account?.id ?? index}
-                                style={index > 0 && styles.cardSpacing}
-                            >
-                                <ConnectedAccountCard
-                                    account={account}
-                                    selectedTab={selectedTab}
-                                    userName={user?.name ?? 'User'}
-                                    onExport={goToListing}
-                                />
-                            </View>
-                        ))
+                        <FlatList
+                            data={currentTabAccounts}
+                            keyExtractor={(item, index) =>
+                                item?.id?.toString() || index.toString()
+                            }
+                            scrollEnabled={false}
+                            renderItem={({ item }) => (
+                                <View style={styles.cardSpacing}>
+                                    <ConnectedAccountCard
+                                        account={item}
+                                        selectedTab={selectedTab}
+                                        onExport={goToListing}
+                                    />
+                                </View>
+                            )}
+                        />
                     ) : (
                         <EmptyState selectedTab={selectedTab} />
                     )}
                 </RefreshableScrollView>
 
-                {/* ── Footer: always fixed at bottom, title changes based on state ── */}
+                {/* FOOTER */}
                 <View style={styles.footer}>
                     <AppButton
                         title={
@@ -221,13 +230,14 @@ const ManageBookingScreen = () => {
                         fontSize={16}
                     />
                 </View>
-
             </View>
         </BGImage>
     );
 };
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+export default ManageBookingScreen;
+
+// ─── STYLES ─────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
     bgContainer: {
@@ -236,71 +246,84 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+
     header: {
         paddingHorizontal: 20,
         marginTop: 20,
         marginBottom: 25,
     },
+
     tabsContainer: {
         flexDirection: 'row',
         paddingHorizontal: Metrics.baseMargin,
         marginBottom: Metrics.verticalScale(30),
+        justifyContent: 'space-between',
         gap: Metrics.scale(10),
-        justifyContent: 'space-between'
     },
+
     tabBtn: {
         paddingVertical: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
-        width: Metrics.scale(125)
+        backgroundColor: 'rgba(255,255,255,0.4)',
+        width: Metrics.scale(125),
     },
+
     activeTabBtn: {
         backgroundColor: Colors.TEAL_PRIMARY_ALT,
-        borderColor: Colors.TEAL_PRIMARY_ALT,
     },
+
     scrollContent: {
         paddingHorizontal: 20,
         paddingBottom: 40,
         flexGrow: 1,
     },
+
     loader: {
         marginTop: 50,
     },
+
     connectedCard: {
         padding: 24,
         borderRadius: 24,
     },
+
     cardHeader: {
         marginBottom: 25,
     },
+
     cardRow: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
     },
+
     iconCircle: {
         width: 44,
         height: 44,
         borderRadius: 22,
-        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        backgroundColor: 'rgba(255,255,255,0.6)',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: 'rgba(255,255,255,0.9)',
     },
+
     exportBtnContainer: {
         alignItems: 'flex-end',
         marginTop: 10,
     },
+
     exportBtn: {
         paddingHorizontal: 30,
         height: 38,
         minWidth: 120,
         paddingVertical: 0,
     },
+
     cardSpacing: {
         marginTop: 16,
     },
+
     emptyStateContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -308,23 +331,22 @@ const styles = StyleSheet.create({
         marginTop: 60,
         position: 'relative',
     },
+
     circleBg: {
         position: 'absolute',
         width: 250,
         height: 250,
         borderRadius: 125,
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: 'rgba(255,255,255,0.2)',
         top: '50%',
         left: '50%',
         transform: [{ translateX: -125 }, { translateY: -125 }],
         zIndex: -1,
     },
+
     footer: {
         paddingHorizontal: 20,
         paddingBottom: 30,
         paddingTop: 10,
-        backgroundColor: 'transparent',
     },
 });
-
-export default ManageBookingScreen;

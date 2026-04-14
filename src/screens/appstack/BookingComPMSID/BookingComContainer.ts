@@ -12,6 +12,7 @@ import { bookingcomConnectionPayloadType, bookingcomTestConnectionPayloadType, b
 import { bookingcomConnectionApi, bookingcomTestConnectionApi, getUserListingsByUserIDApi } from '@/services/bookingManagementApi'
 import STORAGE_CONST from '@/constants/storage'
 import { useAuthStore } from '@/store/useAuthStore'
+import { queryClient } from '@/services/api'
 
 
 export default function useBookingComContainer() {
@@ -35,12 +36,12 @@ export default function useBookingComContainer() {
         }
     })
 
-const selectedApartment = watch('apartmentId')
+    const selectedApartment = watch('apartmentId')
 
-const hasApartment =
-    selectedApartment !== null &&
-    selectedApartment !== undefined &&
-    selectedApartment !== ''
+    const hasApartment =
+        selectedApartment !== null &&
+        selectedApartment !== undefined &&
+        selectedApartment !== ''
 
     // ----------------- Test Connection -----------------
 
@@ -72,6 +73,9 @@ const hasApartment =
     const { mutate: submitPMS, isPending: isSubmitting } = useMutation({
         mutationFn: bookingcomConnectionApi,
         onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
+            });
             Toast.show({
                 type: 'success',
                 text1: 'Connected!',
@@ -101,7 +105,7 @@ const hasApartment =
 
     const listingOptions = apiResponse?.data?.map((item: any) => ({
         label: item.name,
-        value: String(item.listing_id), // internal Livedin ID for dropdown
+        value: String(item.id), // internal Livedin ID for dropdown
     })) ?? [];
 
 
@@ -120,37 +124,33 @@ const hasApartment =
         testConnection({ hotel_id: hotelId })
     }
 
-    const onSubmit = (data: BookingComFormValues) => {
-        let payload;
+    // BookingComContainer.ts - onSubmit fix
 
-        if (data.apartmentId) {
-            payload = {
+    const onSubmit = (data: BookingComFormValues) => {
+        const payload = data.apartmentId
+            ? {
                 title: data.roomId,
-                listing_id: Number(data.apartmentId),
+                listing_id: String(data.apartmentId),
                 hotel_id: data.hotelId,
             }
-        } else {
-            payload = {
+            : {
                 title: data.roomId,
                 hotel_id: data.hotelId,
                 rate: Number(data.rate || 0),
                 availability: 1,
             }
-        }
 
-        submitPMS(payload)
+        submitPMS(payload as bookingcomConnectionPayloadType)
     }
-
-
     return {
-    control,
-    errors,
-    handleSubmit: handleSubmit(onSubmit),
-    hasApartment,
-    handleTestConnection,
-    isTesting,
-    isSubmitting,
-    isTestSuccess,
-    listingOptions,
-}
+        control,
+        errors,
+        handleSubmit: handleSubmit(onSubmit),
+        hasApartment,
+        handleTestConnection,
+        isTesting,
+        isSubmitting,
+        isTestSuccess,
+        listingOptions,
+    }
 }
