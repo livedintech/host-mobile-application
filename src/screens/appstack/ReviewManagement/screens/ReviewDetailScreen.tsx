@@ -3,13 +3,15 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  ScrollView,
   TouchableOpacity,
-  Modal,
-  Pressable,
-  Platform,
 } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -27,6 +29,11 @@ import { useTaskStore } from '@/store/taskStore';
 
 const FIGMA_TEAL = '#21AA8F';
 
+const MENU_OPTIONS = [
+  { label: 'Change Reservation', icon: 'pencil' },
+  { label: 'Cancel Reservation', icon: 'crossIcon2' },
+];
+
 const ReviewDetailScreen = ({ route }: any) => {
   const initialBookingData = route?.params?.bookingData || {};
   const booking_id = route?.params?.booking_id;
@@ -36,6 +43,7 @@ const ReviewDetailScreen = ({ route }: any) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const { setTaskInfo } = useTaskStore();
+  console.log('booking_iddd', booking_id);
 
   const handlePress = (item: any) => {
     // Navigate on every status
@@ -75,11 +83,9 @@ const ReviewDetailScreen = ({ route }: any) => {
   const fetchBookingDetails = async () => {
     try {
       setIsLoading(true);
-      const idString = String(booking_id);
 
-      const formattedId = idString.startsWith('O') ? idString : `O${idString}`;
+      const response = await getBookingDetailsApi(booking_id);
 
-      const response = await getBookingDetailsApi(formattedId);
       setApiData(response?.data || response);
     } catch (error) {
       console.error('Failed to fetch booking details:', error);
@@ -144,83 +150,87 @@ const ReviewDetailScreen = ({ route }: any) => {
 
   const isCheckedOut = property?.status === 'checkedout';
 
-  const handleCancelReservation = async () => {
-    setMenuVisible(false);
-
-    // Add your actual cancel logic here
-    // Example:
-    // try {
-    //   const response = await cancelBookingApi(booking_id);
-    //   if(response.success) {
-    //      Toast.show({ text1: 'Reservation Cancelled' });
-    //      goBack();
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
-
-    console.log('Cancelling reservation for ID:', booking_id);
+ const handlePopupMenu = (label: string) => {
+  const commonData = {
+    booking_id: property?.booking_id,
+    guest_name: guest?.full_name || 'the guest',
+    listing_id: guest?.listing_id,
   };
+
+  if (label === 'Change Reservation') {
+    navigate(NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN, {
+      bookingData: {
+        ...commonData,
+        check_in: property?.booking_dates?.from,
+        check_out: property?.booking_dates?.to,
+        guests: property?.number_of_guests,
+        basePrice: payment_breakdown?.booking_cost,
+      },
+    });
+  } else if (label === 'Cancel Reservation') {
+    // Navigate to Step One
+    navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
+      bookingData: commonData,
+    });
+  }
+};
+
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      {/* <TouchableOpacity 
-        style={styles.threeDotsContainer} 
-        onPress={() => setMenuVisible(true)}
-        activeOpacity={0.7}
-      >
-        <Svgicons path="threeDots" size={24} color={Colors.BLACK} />
-      </TouchableOpacity> */}
-
-      {/* Action Menu Modal */}
-      <Modal
-        transparent
-        visible={menuVisible}
-        animationType="fade"
-        onRequestClose={() => setMenuVisible(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setMenuVisible(false)}
-        >
-          <View style={styles.menuPopup}>
-            {/* <TouchableOpacity 
-              style={styles.menuItem} 
-              onPress={() => { setMenuVisible(false)}}
-            >
-              <AppText text="Change Reservation" fontSize={14} color={Colors.BLACK} />
-              <Svgicons path="editIcon" size={18} />
-            </TouchableOpacity>
-            
-            <View style={styles.menuDivider} /> */}
-
-            <ButtonView
-              style={styles.menuItem}
-              onPress={handleCancelReservation}
-            >
-              <AppText
-                text="Cancel Reservation"
-                fontSize={14}
-                color={Colors.BLACK}
-              />
-              <Svgicons path="closeIcon" size={18} />
-            </ButtonView>
-          </View>
-        </Pressable>
-      </Modal>
-
       <RefreshableScrollView
         contentContainerStyle={styles.scrollContent}
         refreshing={refreshing}
         onRefresh={onRefresh}
         isLoading={isLoading}
       >
-        <AppText
-          text={guest?.name || 'Guest Details'}
-          type="Bold"
-          fontSize={28}
-          mb={vs(20)}
-          color={Colors.BLACK}
-        />
+        <View style={styles.styleRow}>
+          <AppText
+            text={guest?.name || 'Guest Details'}
+            type="Bold"
+            fontSize={28}
+            mb={vs(20)}
+            color={Colors.BLACK}
+          />
+
+          <Menu>
+            <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
+              <View style={styles.threeDotsContainer}>
+                <View style={styles.dot} />
+                <View style={styles.dot} />
+                <View style={styles.dot} />
+              </View>
+            </MenuTrigger>
+
+            <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
+              {MENU_OPTIONS.filter(item => {
+                // If the menu item is "Change Reservation", check the platform
+                if (item.label === 'Change Reservation') {
+                  const platform = property?.booking_platform;
+                  return (
+                    platform === 'host' ||
+                    platform === 'host_booking' ||
+                    platform === 'direct'
+                  );
+                }
+                // Return true for all other menu items (like "Cancel Reservation")
+                return true;
+              }).map(item => (
+                <MenuOption
+                  key={item.label}
+                  style={styles.menuItem}
+                  onSelect={() => handlePopupMenu(item.label)}
+                >
+                  <AppText
+                    text={item.label}
+                    fontSize={14}
+                    color={Colors.CHARCOAL}
+                  />
+                  <Svgicons path={item.icon as any} size={20} />
+                </MenuOption>
+              ))}
+            </MenuOptions>
+          </Menu>
+        </View>
 
         <View style={styles.card}>
           <View style={styles.cardHeader}>
@@ -945,14 +955,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.WHITE,
   },
   scrollContent: { paddingHorizontal: s(20), paddingTop: vs(20) },
-  // THREE DOTS STYLES
-  threeDotsContainer: {
-    position: 'absolute',
-    right: s(20),
-    top: Platform.OS === 'ios' ? vs(-34) : vs(-36), // Moves icon up into the Header area parallel to arrow
-    zIndex: 9999,
-    padding: ms(8),
-  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.05)',
@@ -971,13 +974,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: vs(10),
-    paddingHorizontal: s(5),
-  },
+
   menuDivider: {
     height: 1,
     backgroundColor: '#F0F0F0',
@@ -1101,6 +1098,47 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
+  },
+
+  threeDotsContainer: {
+    flexDirection: 'row',
+    padding: 10,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: Colors.BLACK,
+    marginHorizontal: 2,
+  },
+  popupMenu: {
+    borderRadius: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    width: 220,
+    marginTop: 35, // Adjust based on your header height
+    // Shadow for the card effect
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+    backgroundColor: Colors.WHITE,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  menuTrigger: {
+    padding: 5,
+  },
+  styleRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

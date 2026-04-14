@@ -162,10 +162,29 @@ export const getBookingDetailsApi = async (bookingId: string | number) => {
 /**
  * 8. SUBMIT BOOKING REQUEST (Accept / Decline)
  */
+// export const submitBookingRequestApi = async (payload: {
+//   thread_id: string | number;
+//   action_type: 'accept_request' | 'decline_request';
+//   reason?: string;
+// }) => {
+//   const url = SERVICE_CONFIG_URLS.APP.BOOKING_REQUEST_SUBMIT;
+
+//   const { ok, data, response } = await apiService.post(url, payload);
+
+//   if (ok) {
+//     return data?.data || data;
+//   }
+
+//   // throw error so caller can handle (like toast / UI)
+//   throw response || data || response;
+// };
+
 export const submitBookingRequestApi = async (payload: {
   thread_id: string | number;
-  action_type: 'accept_request' | 'decline_request';
-  reason?: string;
+  accept: boolean;
+  reason: string | null;
+  decline_message_to_guest: string | null;
+  decline_message_to_airbnb: string | null;
 }) => {
   const url = SERVICE_CONFIG_URLS.APP.BOOKING_REQUEST_SUBMIT;
 
@@ -175,6 +194,74 @@ export const submitBookingRequestApi = async (payload: {
     return data?.data || data;
   }
 
-  // throw error so caller can handle (like toast / UI)
-  throw response || data || response;
+  throw response || data;
 };
+
+//GET LISTING
+export const getListing = async () => {
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_LISTING_TASK_MANAGEMENT,
+  );
+
+  if (ok) {
+    return data.data;
+  }
+
+  throw response.message;
+};
+
+/**
+ * 9. CHANGE RESERVATION
+ */
+export const changeReservationApi = async (payload: {
+  booking_id: number | string;
+  listing_id: number | string;
+  start_date: string;
+  end_date: string;
+  amount: number | string;
+}) => {
+  const formattedPayload = {
+    ...payload,
+    start_date: formatDate(payload.start_date),
+    end_date: formatDate(payload.end_date),
+  };
+
+  // const url = 'api/v2/bookings/reservation/change';
+  const url = SERVICE_CONFIG_URLS.APP.CHANGE_RESERVATION
+
+  const { ok, data, response } = await apiService.post(url, formattedPayload);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  throw response || data;
+};
+
+
+/**
+ * 10. CANCEL OTA BOOKING
+ */
+export const cancelOtaBookingApi = async (
+  bookingId: string | number,
+  payload: {
+    reason: string;
+    sub_reason: string;
+    message_to_guest: string;
+    message_to_airbnb: string;
+  }
+) => {
+  const url = SERVICE_CONFIG_URLS.APP.CANCEL_OTA_BOOKING.replace(
+    '{id}',
+    String(bookingId)
+  );
+
+  const { ok, data, response } = await apiService.post(url, payload);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  throw response || data;
+};
+

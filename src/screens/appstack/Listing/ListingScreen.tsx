@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
 
@@ -72,7 +77,7 @@ const ListingScreen = () => {
     cleaningFee,
     discount,
     setCheckInFilter,
-    handleBookingAction
+    handleBookingAction,
   } = useListingContainer(route.params?.listing_id, selectedTab);
   console.log('activeFilter', activeFilter);
 
@@ -88,7 +93,11 @@ const ListingScreen = () => {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-        <AppText text="Checking OTA connection..." mt={10} color={Colors.BRUNSWICK_GREEN} />
+        <AppText
+          text="Checking OTA connection..."
+          mt={10}
+          color={Colors.BRUNSWICK_GREEN}
+        />
       </BGImage>
     );
   }
@@ -211,73 +220,79 @@ const ListingScreen = () => {
                 </View>
               ) : (
                 <FlatListSimpleHandler
-                    showsVerticalScrollIndicator={false}
-                    isLoading={isRefreshing}
-                    onRefresh={handleRefresh}
-                    data={filteredReservations}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={styles.listContent}
-                    ListEmptyComponent={
-                      <View style={styles.centerContainer}>
-                        <AppText text="No reservations found" color="#999" />
-                      </View>
-                    }
-                    renderItem={({ item }) => {
-                      const config = getOtaConfig(item.source);
-                      const isBookingRequest =
-                        activeFilter?.trim() === 'booking_request';
-                      console.log('isBookingRequest', isBookingRequest);
+                  showsVerticalScrollIndicator={false}
+                  isLoading={isRefreshing}
+                  onRefresh={handleRefresh}
+                  data={filteredReservations}
+                  keyExtractor={item => item.id}
+                  contentContainerStyle={styles.listContent}
+                  ListEmptyComponent={
+                    <View style={styles.centerContainer}>
+                      <AppText text="No reservations found" color="#999" />
+                    </View>
+                  }
+                  renderItem={({ item }) => {
+                    const config = getOtaConfig(item.source);
+                    const isBookingRequest =
+                      activeFilter?.trim() === 'booking_request';
+                    console.log('isBookingRequest', isBookingRequest);
 
-                      if (isBookingRequest) {
-                        return (
-                          <BookingRequestCard
-                          key={item.id}
-                            id={item.id}
-                            guestName={item.guest}
-                            platform={
-                              item.source_type === 'livedin'
-                                ? 'Livedin'
-                                : config.label
-                            }
-                            platformColor={config.color}
-                            guests={item?.number_of_guests}
-                            startDate={item.start_date}
-                            endDate={item.end_date}
-                            perNightRate={item.amount} // add this field from your API if available
-                            currency="SAR" // or derive from listing currency
-                            // onPress={handleReservationPress}
-                            onAccept={id =>
-                              handleBookingAction(id, 'accept_request')
-                            }
-                            onReject={id =>
-                              handleBookingAction(id, 'decline_request')
-                            }
-                          />
-                        );
-                      }
-
+                    if (isBookingRequest) {
                       return (
-                        <ReservationCard
-                          id={item.booking_id || item.id}
+                        <BookingRequestCard
+                          key={item.id}
+                          id={item.id}
                           guestName={item.guest}
-                          guests={item?.number_of_guests}
                           platform={
                             item.source_type === 'livedin'
                               ? 'Livedin'
                               : config.label
                           }
-                          property={item.listing_title || 'Property'}
-                          endDate={item.end_date}
-                          startDate={item.start_date}
-                          checkIn={item?.checkIn || '04:00 PM'}
-                          checkOut={item?.checkOut || '12:00 AM'}
-                          checkedoutDate={item?.end_date || ''}
                           platformColor={config.color}
-                          onPress={handleReservationPress}
+                          guests={item?.number_of_guests}
+                          startDate={item.start_date}
+                          endDate={item.end_date}
+                          perNightRate={item.amount} // add this field from your API if available
+                          currency="SAR" // or derive from listing currency
+                          // onPress={handleReservationPress}
+                          onAccept={id =>
+                            handleBookingAction(id, 'accept_request')
+                          }
+                          onReject={id =>
+                            handleBookingAction(
+                              id,
+                              'decline_request',
+                              item.guest,
+                              item.start_date,
+                              item.end_date
+                            )
+                          }
                         />
                       );
-                    }}
-                  />
+                    }
+
+                    return (
+                      <ReservationCard
+                        id={item.booking_id || item.id}
+                        guestName={item.guest}
+                        guests={item?.number_of_guests}
+                        platform={
+                          item.source_type === 'livedin'
+                            ? 'Livedin'
+                            : config.label
+                        }
+                        property={item.listing_title || 'Property'}
+                        endDate={item.end_date}
+                        startDate={item.start_date}
+                        checkIn={item?.checkIn || '04:00 PM'}
+                        checkOut={item?.checkOut || '12:00 AM'}
+                        checkedoutDate={item?.end_date || ''}
+                        platformColor={config.color}
+                        onPress={handleReservationPress}
+                      />
+                    );
+                  }}
+                />
               )}
             </View>
           )}
@@ -356,7 +371,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  listContent: { paddingHorizontal: Metrics.baseMargin, flexGrow: 1, paddingBottom: Metrics.verticalScale(100) },
+  listContent: {
+    paddingHorizontal: Metrics.baseMargin,
+    flexGrow: 1,
+    paddingBottom: Metrics.verticalScale(100),
+  },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
