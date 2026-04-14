@@ -6,7 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import BottomSheet, {
+import {
   BottomSheetView,
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -23,7 +23,6 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer';
@@ -43,9 +42,6 @@ const formatDate = (dateString: string) => {
 
 const AllTask = () => {
   const {
-    taskList,
-    isAccountEmpty,
-    meta,
     isLoading,
     activeTab,
     handleTabChange,
@@ -53,8 +49,10 @@ const AllTask = () => {
     assigneeOptions,
     applyFilters,
     setTaskInfo,
+    dataQuery,
+    isFetching,
+    rawList,
   } = AllTaskContainer();
-  console.log('taskList', taskList);
   const { resetTaskStore } = useTaskStore();
 
   const filterSheetRef = useRef<BottomSheetModal>(null);
@@ -69,8 +67,8 @@ const AllTask = () => {
     defaultValues: { listings: [], assignees: [] },
   });
 
-  const handleOpenFilter = () =>{ filterSheetRef.current?.present()};
-  const handleCloseFilter = () => {filterSheetRef.current?.close()};
+  const handleOpenFilter = () => { filterSheetRef.current?.present() };
+  const handleCloseFilter = () => { filterSheetRef.current?.close() };
 
   const onApplyFilter = (data: any) => {
     applyFilters(data);
@@ -94,8 +92,6 @@ const AllTask = () => {
     ),
     [],
   );
-  console.log('isAccountEmpty', isAccountEmpty);
-  console.log('isLoading', isLoading);
 
   if (isLoading) {
     return (
@@ -107,11 +103,6 @@ const AllTask = () => {
       </View>
     );
   }
-
-  // --- CONDITIONAL RENDERING ---
-  // if (!isAccountEmpty) {
-  //   return <NoTaskScreen />;
-  // }
 
   const renderTaskItem = ({ item }: { item: any }) => {
     console.log('Task Itemmm:', item.status);
@@ -132,79 +123,79 @@ const AllTask = () => {
     };
     return (
       <ButtonView onPress={handlePress}>
-      <GlassCard width="100%" style={styles.taskCard}>
-        <View style={styles.cardHeader}>
-          <View style={{ flex: 1, marginBottom: 20 }}>
-            <AppText
-              text={
-                item.type
-                  ? item.type.charAt(0).toUpperCase() + item.type.slice(1)
-                  : 'Task'
-              }
-              fontSize={18}
-              type="Medium"
-              color={Colors.BLACK}
-              mb={16}
-            />
-            <AppText
-              text={item.listing_title || 'No Location Provided'}
-              fontSize={13}
-              color={Colors.BLACK}
-              mb={16}
-              lineHeight={16}
-            />
-          </View>
-
-          {!isCompleted && (
-            <ButtonView
-              onPress={() => {
-                setTaskInfo(
-                  item.id,
-                  item.task_type,
-                  item.status,
-                  item.description,
-                );
-
-                navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
-                  taskId: item.id,
-                  taskType: item.type,
-                });
-              }}
-            >
-              <GlassCard width={44} style={styles.editGlassIcon}>
-                <Svgicons path="edit_pencil_icon" size={24} />
-              </GlassCard>
-            </ButtonView>
-          )}
-        </View>
-
-        <View style={styles.infoContainer}>
-          <View style={styles.infoRow}>
-            <Svgicons path="assignTask" size={16} />
-            <AppText
-              text={
-                item.assigned_user_name
-                  ? `Assigned to ${item.assigned_user_name}`
-                  : 'Unassigned'
-              }
-              fontSize={13}
-              ml={10}
-              color={Colors.DARK_CHARCOAL}
-            />
-          </View>
-          {item?.status !== 'template' && (
-            <View style={styles.infoRow}>
-              <Svgicons path="task_calendar" size={16} />
+        <GlassCard width="100%" style={styles.taskCard}>
+          <View style={styles.cardHeader}>
+            <View style={{ flex: 1, marginBottom: 20 }}>
               <AppText
-                text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
+                text={
+                  item.type
+                    ? item.type.charAt(0).toUpperCase() + item.type.slice(1)
+                    : 'Task'
+                }
+                fontSize={18}
+                type="Medium"
+                color={Colors.BLACK}
+                mb={16}
+              />
+              <AppText
+                text={item.listing_title || 'No Location Provided'}
+                fontSize={13}
+                color={Colors.BLACK}
+                mb={16}
+                lineHeight={16}
+              />
+            </View>
+
+            {!isCompleted && (
+              <ButtonView
+                onPress={() => {
+                  setTaskInfo(
+                    item.id,
+                    item.task_type,
+                    item.status,
+                    item.description,
+                  );
+
+                  navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
+                    taskId: item.id,
+                    taskType: item.type,
+                  });
+                }}
+              >
+                <GlassCard width={44} style={styles.editGlassIcon}>
+                  <Svgicons path="edit_pencil_icon" size={24} />
+                </GlassCard>
+              </ButtonView>
+            )}
+          </View>
+
+          <View style={styles.infoContainer}>
+            <View style={styles.infoRow}>
+              <Svgicons path="assignTask" size={16} />
+              <AppText
+                text={
+                  item.assigned_user_name
+                    ? `Assigned to ${item.assigned_user_name}`
+                    : 'Unassigned'
+                }
                 fontSize={13}
                 ml={10}
                 color={Colors.DARK_CHARCOAL}
               />
             </View>
-          )}
-        </View>
-      </GlassCard>
+            {item?.status !== 'template' && (
+              <View style={styles.infoRow}>
+                <Svgicons path="task_calendar" size={16} />
+                <AppText
+                  text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
+                  fontSize={13}
+                  ml={10}
+                  color={Colors.DARK_CHARCOAL}
+                />
+              </View>
+            )}
+          </View>
+        </GlassCard>
       </ButtonView>
     );
   };
@@ -251,9 +242,10 @@ const AllTask = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
         <FlatListHandler
-          data={taskList}
-          meta={meta}
-          isLoading={isLoading}
+          bounces={false}
+          data={rawList}
+          meta={dataQuery}
+          isLoading={isLoading || isFetching}
           renderItem={renderTaskItem}
           ListHeaderComponent={<ListHeader />}
           contentContainerStyle={styles.listContent}
@@ -293,7 +285,7 @@ const AllTask = () => {
           enablePanDownToClose
           backdropComponent={renderBackdrop}
           backgroundStyle={styles.bottomSheetBackground}
-              handleIndicatorStyle={styles.sheetIndicator}
+          handleIndicatorStyle={styles.sheetIndicator}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
@@ -350,7 +342,7 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 25,
     paddingTop: Metrics.verticalScale(20),
-    paddingBottom: Metrics.verticalScale(160),
+    paddingBottom: Metrics.verticalScale(260),
   },
   header: { marginBottom: 20 },
   filterRow: {

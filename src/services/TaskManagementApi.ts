@@ -216,40 +216,60 @@ type GetHostTaskListParams = {
   status?: string;
 };
 
-export const getHostTaskList = async ({
-  page,
-  per_page,
-  listing_id,
-  vendor_id,
-  status,
-}: GetHostTaskListParams) => {
-  const queryParams = new URLSearchParams();
+export const getHostTaskList = async (page = 1, limit = 10, status?: string, listing_id?: number, vendor_id?: number) => {
+  const url = Utils.createDynamicUrl(SERVICE_CONFIG_URLS.APP.GET_HOST_TASK_LIST, {});
 
-  queryParams.append('page', String(page));
-  queryParams.append('per_page', String(per_page));
+  const params: any = { page, limit };
+  if (status) params.status = status;
+  if (listing_id) params.listing_id = listing_id;
+  if (vendor_id) params.vendor_id = vendor_id;
 
-  // 🔥 backend expects flat params (NOT arrays)
-  if (listing_id) queryParams.append('listing_id', String(listing_id));
-  if (vendor_id) queryParams.append('vendor_id', String(vendor_id));
-  if (status) queryParams.append('status', status);
+  const res = await apiService.get(url, params);
 
-  const { ok, data, response } = await apiService.get(
-    `${SERVICE_CONFIG_URLS.APP.GET_HOST_TASK_LIST}?${queryParams.toString()}`,
-  );
-
-  if (ok) {
+  if (res.ok) {
     return {
-      ...data,
-      data: data.data.data,
-      meta: {
-        current_page: data.data.current_page,
-        last_page: data.data.last_page,
-      },
+      data: res.data.data.data,
+      current_page: res.data.data.current_page,
+      last_page: res.data.data.last_page,
     };
   }
 
-  throw response;
+  throw new Error(res.response.message);
 };
+// export const getHostTaskList = async ({
+//   page,
+//   per_page,
+//   listing_id,
+//   vendor_id,
+//   status,
+// }: GetHostTaskListParams) => {
+//   const queryParams = new URLSearchParams();
+
+//   queryParams.append('page', String(page));
+//   queryParams.append('per_page', String(per_page));
+
+//   // 🔥 backend expects flat params (NOT arrays)
+//   if (listing_id) queryParams.append('listing_id', String(listing_id));
+//   if (vendor_id) queryParams.append('vendor_id', String(vendor_id));
+//   if (status) queryParams.append('status', status);
+
+//   const { ok, data, response } = await apiService.get(
+//     `${SERVICE_CONFIG_URLS.APP.GET_HOST_TASK_LIST}?${queryParams.toString()}`,
+//   );
+
+//   if (ok) {
+//     return {
+//       ...data,
+//       data: data.data.data,
+//       meta: {
+//         current_page: data.data.current_page,
+//         last_page: data.data.last_page,
+//       },
+//     };
+//   }
+
+//   throw response;
+// };
 
 
 

@@ -240,10 +240,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: s(24),
-    paddingBottom: vs(20),
+    paddingBottom: vs(40),
   },
   dropdownBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent glass effect
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: ms(12),
     borderWidth: 1.5,
     borderColor: '#FFFFFF',
