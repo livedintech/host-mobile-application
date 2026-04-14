@@ -160,9 +160,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => (
-            <HeaderApp isGoBackAfterLogo />
-          ),
+          header: () => <HeaderApp isGoBackAfterLogo />,
         }}
         name={NavigationRoutes.APP_STACK.MANAGE_BOOKING}
         getComponent={() =>
@@ -172,9 +170,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => (
-            <HeaderApp isGoBack />
-          ),
+          header: () => <HeaderApp isGoBack />,
         }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
@@ -191,9 +187,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => (
-            <HeaderApp isGoBack />
-          ),
+          header: () => <HeaderApp isGoBack />,
         }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
         getComponent={() =>
@@ -346,8 +340,7 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.PROPERTY_TOUR}
         getComponent={() =>
-          require('@/screens/appstack/PropertyTour/PropertyTourScreen')
-            .default
+          require('@/screens/appstack/PropertyTour/PropertyTourScreen').default
         }
       />
       <Stack.Screen
@@ -704,6 +697,67 @@ const AppStack = () => {
       />
 
       {/* /TASK LIST SCREEN NEW END */}
+      {/* DECLINE INQUIRY BOOKING REQUEST */}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.DECLINE_INQUIRY_STEP1_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/DeclineInquiryForm/StepOne').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.DECLINE_INQUIRY_STEP2_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/DeclineInquiryForm/StepTwo').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.DECLINE_INQUIRY_STEP3_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/DeclineInquiryForm/StepThree').default
+        }
+      />
+      {/* DECLINE INQUIRY BOOKING REQUEST END*/}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/ChangeReservation/ChangeReservation')
+            .default
+        }
+      />
+      {/* CANCEL RESERVATION  */}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/CancelReservation/StepOne').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP2_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/CancelReservation/StepTwo').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP3_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/CancelReservation/StepThree').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP4_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/CancelReservation/StepFour').default
+        }
+      />
+      {/* CANCEL RESERVATION END */}
     </Stack.Navigator>
   );
 };

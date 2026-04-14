@@ -264,6 +264,9 @@ import checkboxTick from './checkboxTick.svg';
 import checkboxWithoutTick from './checkboxWithoutTick.svg';
 import crossIconTask from './crossIconTask.svg';
 import dollarCoin from './dollarCoin.svg';
+import crossIcon2 from './crossIcon2.svg';
+import pencil from './pencil.svg';
+import CalendarBlack from './CalendarBlack.svg';
 
 export const icons = {
   iconRoundedCross,
@@ -532,5 +535,8 @@ export const icons = {
   checkboxTick,
   checkboxWithoutTick,
   crossIconTask,
-  dollarCoin
+  dollarCoin,
+  crossIcon2,
+  pencil,
+  CalendarBlack
 };

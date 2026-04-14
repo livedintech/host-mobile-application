@@ -13,7 +13,7 @@ import {
   createDirectBookingApi,
   updateCalendarPricingApi,
   getCalendarBookingManagementListingsApi,
-  submitBookingRequestApi
+  submitBookingRequestApi,
 } from '@/services/calendarBookingManagement';
 import {
   createBookingFormValues,
@@ -369,46 +369,101 @@ export default function useListingContainer(
   };
 
   const handleFilterApply = (listingIds: string, status?: string) => {
-  setAppliedListingIds(listingIds);
-  if (status) {
-    setActiveFilter(status); // This updates the Top Tab AND triggers the API
-    setCheckInFilter(status); // Keeps the modal state in sync
-  }
-};
+    setAppliedListingIds(listingIds);
+    if (status) {
+      setActiveFilter(status); // This updates the Top Tab AND triggers the API
+      setCheckInFilter(status); // Keeps the modal state in sync
+    }
+  };
 
-const handleBookingAction = async (
-  bookingId: string | number,
-  action: 'accept_request' | 'decline_request'
-) => {
-  try {
-    setisLoading(true);
-    
-    const payload = {
-      thread_id: bookingId,
-      action_type: action,
-    };
+  // const handleBookingAction = async (
+  //   bookingId: string | number,
+  //   action: 'accept_request' | 'decline_request'
+  // ) => {
+  //   try {
+  //     setisLoading(true);
 
-    await submitBookingRequestApi(payload);
+  //     const payload = {
+  //       thread_id: bookingId,
+  //       action_type: action,
+  //     };
 
-    Toast.show({
-      type: 'success',
-      text1: action === 'accept_request' ? 'Booking Accepted' : 'Booking Rejected',
-    });
+  //     await submitBookingRequestApi(payload);
 
-    // Refresh the data to remove the item from the request list
-    await handleRefresh(); 
-    
-  } catch (error: any) {
-    const message = error?.data?.message || 'Failed to process request';
-    Toast.show({
-      type: 'error',
-      text1: 'Action Failed',
-      text2: message,
-    });
-  } finally {
-    setisLoading(false);
-  }
-};
+  //     Toast.show({
+  //       type: 'success',
+  //       text1: action === 'accept_request' ? 'Booking Accepted' : 'Booking Rejected',
+  //     });
+
+  //     // Refresh the data to remove the item from the request list
+  //     await handleRefresh();
+
+  //   } catch (error: any) {
+  //     const message = error?.data?.message || 'Failed to process request';
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Action Failed',
+  //       text2: message,
+  //     });
+  //   } finally {
+  //     setisLoading(false);
+  //   }
+  // };
+
+  const handleBookingAction = async (
+    bookingId: string | number,
+    action: 'accept_request' | 'decline_request',
+    guestName?: string,
+    startDate?: string,
+    endDate?: string,
+  ) => {
+    if (action === 'decline_request') {
+      navigation.navigate(
+        NavigationRoutes.APP_STACK.DECLINE_INQUIRY_STEP1_SCREEN,
+        {
+          id: bookingId,
+          type: 'booking_request',
+          guestName: guestName,
+          start_date: startDate,
+          end_date: endDate,
+        },
+      );
+      return;
+    }
+
+    // --- Logic for ACCEPT ---
+    try {
+      setisLoading(true);
+
+      // Matching your requested payload structure for Accept
+      const payload = {
+        thread_id: bookingId,
+        accept: true,
+        reason: null,
+        decline_message_to_guest: null,
+        decline_message_to_airbnb: null,
+      };
+
+      await submitBookingRequestApi(payload);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Booking Accepted',
+        text2: `You have successfully accepted ${guestName}'s request.`,
+      });
+
+      await handleRefresh();
+    } catch (error: any) {
+      const message = error?.data?.message || 'Failed to accept request';
+      Toast.show({
+        type: 'error',
+        text1: 'Action Failed',
+        text2: message,
+      });
+    } finally {
+      setisLoading(false);
+    }
+  };
 
   return {
     control,
@@ -442,6 +497,6 @@ const handleBookingAction = async (
     isLoading,
     cleaningFee,
     discount,
-    handleBookingAction
+    handleBookingAction,
   };
 }
