@@ -53,10 +53,10 @@ export default function useGathernImportContainer() {
   });
 
   // Prepare dropdown options (values must be strings)
-const listingOptions = apiResponse?.data?.map((item: any) => ({
-  label: item.name,
-  value: String(item.id), // ✅ FIX HERE (was listing_id)
-})) ?? [];
+  const listingOptions = apiResponse?.data?.map((item: any) => ({
+    label: item.name,
+    value: String(item.id), // ✅ FIX HERE (was listing_id)
+  })) ?? [];
 
 
   // Initialize form
@@ -141,40 +141,40 @@ const listingOptions = apiResponse?.data?.map((item: any) => ({
   const userListings = apiResponse?.data ?? [];
 
   // Handle individual import (dropdown selection)
- const handleIndividualImport = (
-  fieldName: string,
-  propertyTitle: string,
-  rate?: number,
-  availability?: number,
-) => {
-  const selectedValue = watch(fieldName);
+  const handleIndividualImport = (
+    fieldName: string,
+    propertyTitle: string,
+    rate?: number,
+    availability?: number,
+  ) => {
+    const selectedValue = watch(fieldName);
 
 
-const parentListingId = Number(selectedValue);
-  const airbnbListingId = Number(fieldName);
+    const parentListingId = Number(selectedValue);
+    const airbnbListingId = Number(fieldName);
 
-  const basePayload = {
-    mapping_type: 'gathern',
-    pms_uuid: channelId,
-    property_id: airbnbListingId.toString(),
-    property_title: propertyTitle,
-  };
+    const basePayload = {
+      mapping_type: 'gathern',
+      pms_uuid: channelId,
+      property_id: airbnbListingId.toString(),
+      property_title: propertyTitle,
+    };
 
-  const hasMapping = !!selectedValue;
+    const hasMapping = !!selectedValue;
 
-  const payload = hasMapping
-    ? {
+    const payload = hasMapping
+      ? {
         ...basePayload,
         parent_listing_id: parentListingId, // ✅ FIXED
       }
-    : {
+      : {
         ...basePayload,
         rate,
         availability: 1,
       };
 
-  createListingImportPayload(payload);
-};
+    createListingImportPayload(payload);
+  };
 
   // Final submit
   const onNext = (data: FormValues) => {

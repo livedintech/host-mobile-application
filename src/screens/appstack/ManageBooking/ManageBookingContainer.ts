@@ -13,110 +13,94 @@ import Toast from 'react-native-toast-message';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
-  
 
-  // ✅ GET channel response handling
   const { data: response, isLoading, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
     queryFn: () =>
       getChannelsUserbyId({
-        user_id: Number(user?.id)
+        user_id: Number(user?.id),
       }),
     enabled: !!user?.id,
   });
 
-  // API response structure ke mutabiq data extract karein
   const connectedAccounts = response?.data || [];
-  const isOtaConnected = connectedAccounts.length > 0;
 
-  // ✅ CREATE channex account
+  // 🔥 Platform Config (single source of truth)
+  const PLATFORM_CONFIG = {
+    Airbnb: {
+      key: 'Airbnb',
+      alreadyMsg: 'Airbnb Already Connected',
+      alreadyDesc: 'Your Airbnb account is already connected.',
+      action: () => createChannexAccount(),
+    },
+    Gathern: {
+      key: 'Gathern',
+      alreadyMsg: 'Gathern Already Connected',
+      alreadyDesc: 'Your Gathern account is already connected.',
+      action: () => navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID),
+    },
+    'Booking.com': {
+      key: 'Bookings.com', // ⚠️ API key different
+      alreadyMsg: 'Booking.com Already Connected',
+      alreadyDesc: 'Your Booking.com account is already connected.',
+      action: () => navigate(NavigationRoutes.APP_STACK.BOOKING_COM_PMSID),
+    },
+  };
+
   const { mutate: createChannexAccount, isPending } = useMutation({
     mutationFn: () => createChannelsUserbyId({ user_id: user!.id }),
     onSuccess: (res) => {
-      const airbnbUrl = res?.data?.connection_link_url;
-      if (airbnbUrl) {
-        Linking.openURL(airbnbUrl);
-      }
-      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER] });
+      const url = res?.data?.connection_link_url;
+      if (url) Linking.openURL(url);
+
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_CHANNELS_USER],
+      });
     },
     onError: (error: any) => {
       console.log('Create Error:', error?.message);
     },
   });
 
-  const handleConnect = (platform: string) => {
-    console.log('testinf');
-    
-    
-    if (platform === 'Airbnb') {
-      const isAirbnbConnected = connectedAccounts.some(
-        (acc: any) => acc.connection_type === 'Airbnb'
-      );
+  // ✅ CLEAN handler
+  const handleConnect = (platform: keyof typeof PLATFORM_CONFIG) => {
+    const config = PLATFORM_CONFIG[platform];
 
-      if (isAirbnbConnected) {
-        Toast.show({
-          type: 'info',
-          text1: 'Airbnb Already Connected',
-          text2: 'Your Airbnb account is already connected.',
-        });
-        return;
-      }
+    const isConnected = connectedAccounts.some(
+      (acc: any) => acc.connection_type === config.key
+    );
 
-      createChannexAccount();
-    }
+    // if (isConnected) {
+    //   Toast.show({
+    //     type: 'info',
+    //     text1: config.alreadyMsg,
+    //     text2: config.alreadyDesc,
+    //   });
+    //   return;
+    // }
 
-    if (platform === 'Gathern') {
-      const isGathernConnected = connectedAccounts.some(
-        (acc: any) => acc.connection_type === 'Gathern'
-      );
-
-      if (isGathernConnected) {
-        Toast.show({
-          type: 'info',
-          text1: 'Gathern Already Connected',
-          text2: 'Your Gathern account is already connected.',
-        });
-        return;
-      }
-
-      navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID);
-    }
-
-    if (platform === 'Booking.com') {
-  const isBookingConnected = connectedAccounts.some(
-    (acc: any) => acc.connection_type === 'Bookings.com'
-  );
-
-  if (isBookingConnected) {
-    Toast.show({
-      type: 'info',
-      text1: 'Booking.com Already Connected',
-      text2: 'Your Booking.com account is already connected.',
-    });
-    return;
-  }
-
-  navigate(NavigationRoutes.APP_STACK.BOOKING_COM_PMSID);
-}
+    config.action();
   };
 
-  const goToListing = (item: { connection_type: string, ch_channel_id: string }) => {
+  const goToListing = (item: {
+    connection_type: string;
+    ch_channel_id: string;
+  }) => {
+    const route =
+      item?.connection_type === 'Gathern'
+        ? NavigationRoutes.APP_STACK.GATHERN_IMPORT
+        : NavigationRoutes.APP_STACK.AIRBNB_IMPORT;
 
-    if (item?.connection_type === 'Gathern') {
-      navigate(NavigationRoutes.APP_STACK.GATHERN_IMPORT, { ch_channel_id: item?.ch_channel_id });
-    } else {
-      navigate(NavigationRoutes.APP_STACK.AIRBNB_IMPORT, { ch_channel_id: item?.ch_channel_id });
-    }
-  }
+    navigate(route, { ch_channel_id: item?.ch_channel_id });
+  };
 
   return {
     handleConnect,
-    isOtaConnected,
     isLoading,
     isPending,
     refetch,
-    response,
+    connectedAccounts,
     goToListing,
-    connectedAccounts
+    user,
   };
 }

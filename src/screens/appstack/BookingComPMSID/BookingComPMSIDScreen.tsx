@@ -46,7 +46,7 @@ const BookingComPMSIDScreen = () => {
                             name="roomId"
                             control={control}
                             errors={errors}
-                            placeholder="Enter Room ID"
+                            placeholder="Enter Title"
                         />
                     </View>
 
