@@ -39,8 +39,6 @@ const ListingScreen = () => {
     null,
   );
 
-  const { isOtaConnected, isLoading: isLoadingOta } =
-    useManageBookingContainer();
 
   const {
     control,
@@ -74,7 +72,6 @@ const ListingScreen = () => {
     setCheckInFilter,
     handleBookingAction
   } = useListingContainer(route.params?.listing_id, selectedTab);
-  console.log('activeFilter', activeFilter);
 
   const toggleTab = () => {
     setSelectedTab(prev => (prev === 0 ? 1 : 0));
@@ -84,16 +81,7 @@ const ListingScreen = () => {
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   };
 
-  if (isLoadingOta) {
-    return (
-      <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-        <AppText text="Checking OTA connection..." mt={10} color={Colors.BRUNSWICK_GREEN} />
-      </BGImage>
-    );
-  }
-
-  if (!isOtaConnected) {
+  if (!user?.has_listing) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <NoListing onConnect={handleConnectAccount} />

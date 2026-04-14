@@ -2,6 +2,7 @@ const linking = {
   prefixes: [
     'livedin://',
     'livedinapp://',
+    'https://app.livedin.co',
   ],
   config: {
     screens: {
