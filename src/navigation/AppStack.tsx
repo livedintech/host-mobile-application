@@ -351,6 +351,27 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.BOOKING_COM_STEP_1}
+        getComponent={() =>
+          require('@/screens/appstack/BookingCom/BookingComStep1/BookingComStep1Screen').default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.BOOKING_COM_STEP_2}
+        getComponent={() =>
+          require('@/screens/appstack/BookingCom/BookingComStep2/BookingComStep2Screen').default
+        }
+      />
+       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.BOOKING_COM_STEP_3}
+        getComponent={() =>
+          require('@/screens/appstack/BookingCom/BookingComStep3/BookingComStep3Screen').default
+        }
+      />
+      <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CHAT_DETAIL}
         getComponent={() =>
