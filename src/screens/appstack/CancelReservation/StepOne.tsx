@@ -56,12 +56,12 @@ const reasons = [
     value: 'DECLINE_REASON_HOST_ASKED',
     subreasons: [],
   },
-//   {
-//     id: '6',
-//     title: 'Other reasons',
-//     value: 'DECLINE_REASON_HOST_OTHER',
-//     subreasons: [],
-//   },
+  {
+    id: '6',
+    title: 'Other reasons',
+    value: 'DECLINE_REASON_HOST_OTHER',
+    subreasons: [],
+  },
 ];
 
 const StepOne = () => {

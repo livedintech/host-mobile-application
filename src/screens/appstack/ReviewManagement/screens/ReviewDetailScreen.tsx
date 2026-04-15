@@ -18,15 +18,20 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
+import {
+  cancelDirectBookingApi,
+  getBookingDetailsApi,
+} from '@/services/calendarBookingManagement';
 import { formatTimeWithPeriod } from '@/utility/formatTime';
 import { formatDateDisplay } from '@/utility/formatDate';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTaskStore } from '@/store/taskStore';
-
+import { Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
+import DirectCancelModal from '@/components/molecules/DirectCancelModal/DirectCancelModal';
 const FIGMA_TEAL = '#21AA8F';
 
 const MENU_OPTIONS = [
@@ -42,6 +47,8 @@ const ReviewDetailScreen = ({ route }: any) => {
   const [showDetails, setShowDetails] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [showDirectCancelModal, setShowDirectCancelModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const { setTaskInfo } = useTaskStore();
   console.log('booking_iddd', booking_id);
 
@@ -150,30 +157,55 @@ const ReviewDetailScreen = ({ route }: any) => {
 
   const isCheckedOut = property?.status === 'checkedout';
 
- const handlePopupMenu = (label: string) => {
-  const commonData = {
-    booking_id: property?.booking_id,
-    guest_name: guest?.full_name || 'the guest',
-    listing_id: guest?.listing_id,
+  const handlePopupMenu = (label: string) => {
+    const platform = property?.booking_platform;
+    const isDirect =
+      platform === 'host' ||
+      platform === 'host_booking' ||
+      platform === 'direct';
+
+    const commonData = {
+      booking_id: property?.booking_id,
+      guest_name: guest?.full_name || 'the guest',
+      listing_id: guest?.listing_id,
+      platform: platform,
+    };
+
+    if (label === 'Cancel Reservation') {
+      if (isDirect) {
+        setShowDirectCancelModal(true); // Open the custom modal
+      } else {
+        navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
+          bookingData: commonData,
+        });
+      }
+    }
   };
 
-  if (label === 'Change Reservation') {
-    navigate(NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN, {
-      bookingData: {
-        ...commonData,
-        check_in: property?.booking_dates?.from,
-        check_out: property?.booking_dates?.to,
-        guests: property?.number_of_guests,
-        basePrice: payment_breakdown?.booking_cost,
-      },
-    });
-  } else if (label === 'Cancel Reservation') {
-    // Navigate to Step One
-    navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
-      bookingData: commonData,
-    });
-  }
-};
+  const handleConfirmDirectCancel = async () => {
+    setIsCancelling(true);
+    try {
+      // Calling the API method defined above
+      await cancelDirectBookingApi(property?.booking_id, {
+        reason: 'HOST_CANCELLED_DIRECT',
+      });
+
+      Toast.show({
+        type: 'success',
+        text1: 'Direct booking cancelled successfully',
+      });
+      setShowDirectCancelModal(false);
+      goBack();
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to cancel',
+        text2: error?.message || 'Something went wrong',
+      });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -883,7 +915,11 @@ const ReviewDetailScreen = ({ route }: any) => {
                     mt={30}
                     borderRadius={25}
                     textStyle={{ color: Colors.BLACK }}
-                    onPress={() => navigate(NavigationRoutes.APP_STACK.TASK)}
+                    onPress={() =>
+                      navigate(
+                        NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING,
+                      )
+                    }
                   />
                 </View>
               ))
@@ -943,6 +979,13 @@ const ReviewDetailScreen = ({ route }: any) => {
           />
         )}
       </RefreshableScrollView>
+
+      <DirectCancelModal
+        visible={showDirectCancelModal}
+        onClose={() => setShowDirectCancelModal(false)}
+        onConfirm={handleConfirmDirectCancel}
+        isLoading={isCancelling}
+      />
     </BGImage>
   );
 };

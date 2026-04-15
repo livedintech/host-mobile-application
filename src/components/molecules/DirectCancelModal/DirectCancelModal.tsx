@@ -1,0 +1,106 @@
+import React from 'react';
+import { Modal, View, StyleSheet, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { vs, s, ms } from 'react-native-size-matters';
+import AppText from '@/components/molecules/AppText/AppText';
+import AppButton from '@/components/molecules/AppButton/AppButton';
+import { Colors } from '@/theme/colors';
+
+const { width } = Dimensions.get('window');
+
+interface ConfirmProps {
+  visible: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isLoading?: boolean;
+}
+
+const DirectCancelModal = ({ visible, onClose, onConfirm, isLoading }: ConfirmProps) => {
+  return (
+    <Modal visible={visible} transparent animationType="fade">
+      <View style={styles.modalOverlay}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={styles.absoluteBackground} />
+        </TouchableWithoutFeedback>
+
+        <View style={styles.whiteCard}>
+          <AppText 
+            text="Cancel Reservation" 
+            type="Bold" 
+            fontSize={ms(19)} 
+            mb={vs(12)} 
+            textAlign="center" 
+            color={Colors.BLACK}
+          />
+          
+          <AppText 
+            text="Are you sure you want to cancel this direct booking? This action cannot be undone." 
+            fontSize={ms(14)} 
+            textAlign="center" 
+            mb={vs(25)} 
+            lineHeight={ms(20)}
+            color={Colors.DARK_CHARCOAL_OPACITY_74}
+          />
+          
+          <View style={styles.buttonRow}>
+            <AppButton 
+              title="No" 
+              backgroundColor="#F2F2F2" // Visible grey
+              onPress={onClose} 
+              style={styles.flexButton}
+              color={Colors.BLACK} 
+            />
+            
+            <View style={{ width: s(12) }} /> 
+
+            <AppButton 
+              title="Yes, Cancel" 
+              backgroundColor="#FF4D4D" // Error red
+              onPress={onConfirm} 
+              loading={isLoading}
+              style={styles.flexButton} 
+              color={Colors.WHITE}
+            />
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  absoluteBackground: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+  },
+  whiteCard: {
+    width: width * 0.88,
+    backgroundColor: Colors.WHITE,
+    paddingVertical: vs(25),
+    paddingHorizontal: s(15),
+    borderRadius: ms(20),
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    width: '100%',
+    paddingHorizontal: s(5),
+  },
+  flexButton: {
+    flex: 1, 
+    height: vs(46),
+    borderRadius: ms(12),
+  }
+});
+
+export default DirectCancelModal;
