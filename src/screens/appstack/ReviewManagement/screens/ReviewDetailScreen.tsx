@@ -115,6 +115,8 @@ const ReviewDetailScreen = ({ route }: any) => {
     cancellation_policy,
   } = bookingData;
 
+  console.log('property', property);
+
   if (isLoading || !bookingData.property) {
     return (
       <View style={styles.loadingContainer}>
@@ -158,43 +160,43 @@ const ReviewDetailScreen = ({ route }: any) => {
   const isCheckedOut = property?.status === 'checkedout';
 
   const handlePopupMenu = (label: string) => {
-  const platform = property?.booking_platform;
-  const isDirect =
-    platform === 'host' ||
-    platform === 'host_booking' ||
-    platform === 'direct';
+    const platform = property?.booking_platform;
+    const isDirect =
+      platform === 'host' ||
+      platform === 'host_booking' ||
+      platform === 'direct';
 
-  const commonData = {
-    booking_id: property?.booking_id,
-    guest_name: guest?.full_name || 'the guest',
-    listing_id: guest?.listing_id,
-    platform: platform,
-  };
+    const commonData = {
+      booking_id: property?.booking_id,
+      guest_name: guest?.full_name || 'the guest',
+      listing_id: guest?.listing_id,
+      platform: platform,
+    };
 
-  // 1. HANDLE CHANGE RESERVATION
-  if (label === 'Change Reservation') {
-    navigate(NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN, {
-      bookingData: {
-        ...commonData,
-        check_in: property?.booking_dates?.from,
-        check_out: property?.booking_dates?.to,
-        guests: property?.number_of_guests,
-        basePrice: payment_breakdown?.booking_cost,
-      },
-    });
-  } 
-  
-  // 2. HANDLE CANCEL RESERVATION
-  else if (label === 'Cancel Reservation') {
-    if (isDirect) {
-      setShowDirectCancelModal(true);
-    } else {
-      navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
-        bookingData: commonData,
+    // 1. HANDLE CHANGE RESERVATION
+    if (label === 'Change Reservation') {
+      navigate(NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN, {
+        bookingData: {
+          ...commonData,
+          check_in: property?.booking_dates?.from,
+          check_out: property?.booking_dates?.to,
+          guests: property?.number_of_guests,
+          basePrice: payment_breakdown?.booking_cost,
+        },
       });
     }
-  }
-};
+
+    // 2. HANDLE CANCEL RESERVATION
+    else if (label === 'Cancel Reservation') {
+      if (isDirect) {
+        setShowDirectCancelModal(true);
+      } else {
+        navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
+          bookingData: commonData,
+        });
+      }
+    }
+  };
 
   const handleConfirmDirectCancel = async () => {
     setIsCancelling(true);
@@ -221,6 +223,21 @@ const ReviewDetailScreen = ({ route }: any) => {
     }
   };
 
+  const getPlatformLabel = (platform?: string) => {
+    switch (platform) {
+      case 'host_booking':
+        return 'Livedin';
+      case 'bookingcom':
+        return 'Booking.com';
+      case 'gathern':
+        return 'Gathern';
+      default:
+        return platform
+          ? platform.charAt(0).toUpperCase() + platform.slice(1)
+          : 'N/A';
+    }
+  };
+
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <RefreshableScrollView
@@ -238,44 +255,64 @@ const ReviewDetailScreen = ({ route }: any) => {
             color={Colors.BLACK}
           />
 
-          <Menu>
-            <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
-              <View style={styles.threeDotsContainer}>
-                <View style={styles.dot} />
-                <View style={styles.dot} />
-                <View style={styles.dot} />
-              </View>
-            </MenuTrigger>
+          {/* 1. Calculate filtered options before rendering */}
+          {(() => {
+            const filteredOptions = MENU_OPTIONS.filter(item => {
+              const platform = property?.booking_platform;
 
-            <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-              {MENU_OPTIONS.filter(item => {
-                // If the menu item is "Change Reservation", check the platform
-                if (item.label === 'Change Reservation') {
-                  const platform = property?.booking_platform;
-                  return (
-                    platform === 'host' ||
-                    platform === 'host_booking' ||
-                    platform === 'direct'
-                  );
-                }
-                // Return true for all other menu items (like "Cancel Reservation")
-                return true;
-              }).map(item => (
-                <MenuOption
-                  key={item.label}
-                  style={styles.menuItem}
-                  onSelect={() => handlePopupMenu(item.label)}
+              // Logic for "Change Reservation"
+              if (item.label === 'Change Reservation') {
+                return (
+                  platform === 'host' ||
+                  platform === 'host_booking' ||
+                  platform === 'direct'
+                );
+              }
+
+              // Logic for "Cancel Reservation"
+              if (item.label === 'Cancel Reservation') {
+                return platform !== 'bookingcom';
+              }
+
+              return true;
+            });
+
+            // 2. Only render the Menu if there is at least one option left
+            if (filteredOptions.length === 0) return null;
+
+            return (
+              <Menu>
+                <MenuTrigger
+                  customStyles={{ triggerWrapper: styles.menuTrigger }}
                 >
-                  <AppText
-                    text={item.label}
-                    fontSize={14}
-                    color={Colors.CHARCOAL}
-                  />
-                  <Svgicons path={item.icon as any} size={20} />
-                </MenuOption>
-              ))}
-            </MenuOptions>
-          </Menu>
+                  <View style={styles.threeDotsContainer}>
+                    <View style={styles.dot} />
+                    <View style={styles.dot} />
+                    <View style={styles.dot} />
+                  </View>
+                </MenuTrigger>
+
+                <MenuOptions
+                  customStyles={{ optionsContainer: styles.popupMenu }}
+                >
+                  {filteredOptions.map(item => (
+                    <MenuOption
+                      key={item.label}
+                      style={styles.menuItem}
+                      onSelect={() => handlePopupMenu(item.label)}
+                    >
+                      <AppText
+                        text={item.label}
+                        fontSize={14}
+                        color={Colors.CHARCOAL}
+                      />
+                      <Svgicons path={item.icon as any} size={20} />
+                    </MenuOption>
+                  ))}
+                </MenuOptions>
+              </Menu>
+            );
+          })()}
         </View>
 
         <View style={styles.card}>
@@ -322,7 +359,13 @@ const ReviewDetailScreen = ({ route }: any) => {
                 type="Medium"
               />
               <AppText
-                text={guest?.contact ? `+${guest.contact}` : 'N/A'}
+                text={
+                  guest?.contact
+                    ? property?.booking_platform === 'bookingcom'
+                      ? guest.contact
+                      : `+${guest.contact}`
+                    : 'N/A'
+                }
                 fontSize={13}
                 color={Colors.DARK_CHARCOAL}
               />
@@ -467,18 +510,14 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={styles.cardHeader}>
               <View>
                 <AppText
-                  text={`${
-                    property?.booking_platform === 'host_booking'
-                      ? 'Livedin'
-                      : property?.booking_platform
-                      ? property.booking_platform.charAt(0).toUpperCase() +
-                        property.booking_platform.slice(1)
-                      : 'N/A'
-                  } Booking Code`}
+                  text={`${getPlatformLabel(
+                    property?.booking_platform,
+                  )} Booking Code`}
                   type="Bold"
                   fontSize={16}
                   mb={4}
                 />
+
                 <AppText
                   text={property?.confirmation_code || 'N/A'}
                   fontSize={14}

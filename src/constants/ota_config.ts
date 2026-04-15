@@ -5,6 +5,7 @@ export const getOtaConfig = (source: string) => {
       return { key: 'AIRBNB', label: 'Airbnb', color: '#FF5A5F' };
     case 'gathern':
       return { key: 'GATHERN', label: 'Gathern', color: '#A855F7' };
+     case 'bookingcom':       // ✅ ADD THIS
     case 'booking.com':
     case 'booking':
       return { key: 'BOOKING', label: 'Booking.com', color: '#49A6E9' };

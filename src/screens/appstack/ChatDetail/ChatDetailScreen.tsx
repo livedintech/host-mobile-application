@@ -166,6 +166,8 @@ const ChatScreen = () => {
     data
   } = useChatContainer();
 
+  console.log("conversationData",conversationData)
+
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
@@ -482,7 +484,7 @@ const ChatScreen = () => {
                   <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
                 </MenuTrigger>
                 <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
-                  {data?.conversation?.thread_type !== "inquiry" &&
+                  {data?.conversation?.formatted_booking_id == null &&
                     conversationData?.booking_id && (
                       <MenuOption
                         style={styles.menuItem}
@@ -490,7 +492,7 @@ const ChatScreen = () => {
                           navigate(
                             NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
                             {
-                              booking_id: conversationData?.booking_id,
+                              booking_id: conversationData?.formatted_booking_id,
                             },
                           )
                         }

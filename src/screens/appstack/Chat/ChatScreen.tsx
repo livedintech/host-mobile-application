@@ -6,10 +6,11 @@ import {
   TextInput,
   Image,
   Pressable,
-  ListRenderItemInfo, KeyboardAvoidingView,
+  ListRenderItemInfo,
+  KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
@@ -41,11 +42,15 @@ import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
 
 const ChatScreen = () => {
   const {
@@ -72,7 +77,7 @@ const ChatScreen = () => {
     handleCloseFilter,
     handleOpenFilter,
     bottomSheetRef,
-    snapPoints
+    snapPoints,
   } = useChatContainer();
 
   const renderBackdrop = useCallback(
@@ -84,7 +89,7 @@ const ChatScreen = () => {
         opacity={0.5}
       />
     ),
-    []
+    [],
   );
 
   const { user } = useAuthStore();
@@ -98,19 +103,39 @@ const ChatScreen = () => {
 
   const TABS: ChatStatus[] = ['All', 'Archived', 'Snoozed', 'Unread'];
 
-
   if (isLoading) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
           <SpinnerLoader size={'large'} />
         </View>
       </BGImage>
     );
   }
 
+  type OtaSource = 'airbnb' | 'gathern' | 'bookingcom';
+
+  const sourceLogos: Record<OtaSource, any> & { default: any } = {
+    airbnb: require('@/assets/img/airbnb.png'),
+    gathern: require('@/assets/img/gathernChat.png'),
+    bookingcom: require('@/assets/img/bookingChat.png'),
+    default: require('@/assets/img/airbnb.png'),
+  };
+
+  const getOtaKey = (value?: string): OtaSource | 'default' => {
+    const key = value?.toLowerCase();
+
+    if (key === 'airbnb') return 'airbnb';
+    if (key === 'gathern') return 'gathern';
+    if (key === 'bookingcom') return 'bookingcom';
+
+    return 'default';
+  };
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
+    console.log('itemtestt', item);
     const renderRightActions = (
       _prog: SharedValue<number>,
       drag: SharedValue<number>,
@@ -153,7 +178,6 @@ const ChatScreen = () => {
       );
     };
 
-
     return (
       <Swipeable
         friction={1.5}
@@ -163,13 +187,10 @@ const ChatScreen = () => {
       >
         <View style={styles.chatRow}>
           <Image
-            source={
-              item.img
-                ? { uri: item.img }
-                : require('@/assets/img/dummy/airbnb.png')
-            }
+            source={sourceLogos[getOtaKey(item.booking?.ota_name)]}
             style={styles.avatar}
           />
+
           <Pressable
             style={styles.chatInfo}
             onPress={() => goToChatDetail(item)}
@@ -243,14 +264,18 @@ const ChatScreen = () => {
                 color={Colors.MIDNIGHT}
               />
               <Menu>
-                <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
+                <MenuTrigger
+                  customStyles={{ triggerWrapper: styles.menuTrigger }}
+                >
                   <View style={styles.hamburgerBtn}>
                     <View style={styles.hamburgerLine} />
                     <View style={styles.hamburgerLine} />
                     <View style={styles.hamburgerLine} />
                   </View>
                 </MenuTrigger>
-                <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
+                <MenuOptions
+                  customStyles={{ optionsContainer: styles.popupMenu }}
+                >
                   {MENU_OPTIONS.map(item => (
                     <MenuOption
                       key={item.label}
@@ -272,7 +297,11 @@ const ChatScreen = () => {
             {/* ── Search Row ── */}
             <View style={styles.searchRow}>
               <GlassCard style={styles.searchBox}>
-                <Svgicons path="searchIcon" size={18} color={Colors.GREY_SHADOW} />
+                <Svgicons
+                  path="searchIcon"
+                  size={18}
+                  color={Colors.GREY_SHADOW}
+                />
                 <TextInput
                   placeholder="Search Guest"
                   style={styles.searchInput}
@@ -281,10 +310,7 @@ const ChatScreen = () => {
                   onChangeText={setSearch}
                 />
               </GlassCard>
-              <ButtonView
-                onPress={handleOpenFilter}
-                style={styles.filterBtn}
-              >
+              <ButtonView onPress={handleOpenFilter} style={styles.filterBtn}>
                 <GlassCard width={40} style={styles.iconCircle}>
                   <Svgicons
                     path="filterIcon"
@@ -315,7 +341,9 @@ const ChatScreen = () => {
                         fontSize={14}
                         type={isActive ? 'SemiBold' : 'Regular'}
                         color={
-                          isActive ? Colors.WHITE : Colors.DARK_CHARCOAL_OPACITY_80
+                          isActive
+                            ? Colors.WHITE
+                            : Colors.DARK_CHARCOAL_OPACITY_80
                         }
                       />
                     </Pressable>
@@ -336,13 +364,15 @@ const ChatScreen = () => {
                       activeTab === 'Archived'
                         ? 'No Archived Chats'
                         : activeTab === 'Snoozed'
-                          ? 'No Snoozed Chats'
-                          : activeTab === 'Unread'
-                            ? 'No Unread Chats'
-                            : 'No Messages Found'
+                        ? 'No Snoozed Chats'
+                        : activeTab === 'Unread'
+                        ? 'No Unread Chats'
+                        : 'No Messages Found'
                     }
                     descriptionText={
-                      activeTab === 'Archived' || activeTab === 'Snoozed' || activeTab === 'Unread'
+                      activeTab === 'Archived' ||
+                      activeTab === 'Snoozed' ||
+                      activeTab === 'Unread'
                         ? 'No conversations yet.'
                         : 'Create a new listing or import one from your OTA platform to get started.'
                     }
@@ -353,7 +383,10 @@ const ChatScreen = () => {
               }
               renderItem={renderItem}
               keyExtractor={item => String(item.id)}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: Metrics.verticalScale(100) }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: Metrics.verticalScale(100),
+              }}
             />
 
             {/* ── Filter Modal ── */}
@@ -366,8 +399,10 @@ const ChatScreen = () => {
               backgroundStyle={styles.bottomSheetBackground}
               handleIndicatorStyle={styles.sheetIndicator}
             >
-              <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
-
+              <BottomSheetScrollView
+                contentContainerStyle={styles.sheetContent}
+                keyboardShouldPersistTaps="handled"
+              >
                 {/* Header */}
                 <View style={styles.sheetHeader}>
                   <AppText
@@ -409,7 +444,6 @@ const ChatScreen = () => {
                 </View>
               </BottomSheetScrollView>
             </BottomSheetModal>
-
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -471,6 +505,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Metrics.verticalScale(50),
     paddingHorizontal: Metrics.scale(16),
+    paddingVertical: 0,
     height: Metrics.verticalScale(50),
     gap: 8,
     borderWidth: 1,
@@ -607,7 +642,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   modalHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   sheetContent: {
     paddingHorizontal: 25,

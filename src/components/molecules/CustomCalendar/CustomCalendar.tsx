@@ -267,18 +267,19 @@ const COLORS = {
   LIVEDIN_LIGHT: '#C6E2D9',
   AIRBNB_DARK: '#FF5A5F',
   AIRBNB_LIGHT: 'rgba(255, 90, 95, 0.12)',
-  BOOKING_DARK: '#003580',
+  BOOKING_DARK: '#16AEDD',
   BOOKING_LIGHT: 'rgba(0, 53, 128, 0.1)',
-  GATHERN_DARK: '#BE91E9', 
+  GATHERN_DARK: '#CE92F3', 
   GATHERN_LIGHT: '#E4D1F5', 
   DEFAULT_BLUE: '#49A6E9',
   DEFAULT_LIGHT: '#E1F1FD'
 };
 
 const getOTASource = (source?: string) => {
+  console.log("sourcetestt",source)
   const name = source?.toLowerCase() || '';
   if (name.includes('airbnb')) return { icon: 'airbnb', color: COLORS.AIRBNB_DARK, light: COLORS.AIRBNB_LIGHT };
-  if (name.includes('booking')) return { icon: 'booking', color: COLORS.BOOKING_DARK, light: COLORS.BOOKING_LIGHT };
+  if (name.includes('booking')) return { icon: 'bookingComWhite', color: COLORS.BOOKING_DARK, light: COLORS.BOOKING_LIGHT };
   if (name.includes('gathern')) return { icon: 'gathern', color: COLORS.GATHERN_DARK, light: COLORS.GATHERN_LIGHT };
   return { icon: 'livedin', color: COLORS.LIVEDIN_DARK, light: COLORS.LIVEDIN_LIGHT };
 };

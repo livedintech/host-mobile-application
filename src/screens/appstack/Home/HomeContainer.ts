@@ -28,7 +28,8 @@ export default function useHomeContainer() {
   const unexported_listings = UserPermission?.unexported_listings || [];
   const incomplete_listings = UserPermission?.incomplete_listings || [];
 
-  const isNewLayout = UserPermission?.unexported_listings.length === 0;
+  // const isNewLayout = UserPermission?.unexported_listings.length === 0;
+  const isNewLayout = UserPermission?.has_import_listing;
 
   // ✅ Navigation Fix (bug resolved)
   const onConnect = useCallback((platform: string) => {

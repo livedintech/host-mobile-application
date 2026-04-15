@@ -17,7 +17,9 @@ const ReviewManagementScreen = () => {
 
   const reviewsData = allReviews?.reviews || [];
 
-  const renderItem = ({ item }: { item: ReviewItem }) => (
+  const renderItem = ({ item }: { item: ReviewItem }) => {
+    return(
+    
     <ReviewCard
       item={item}
       hostRating={item.overall_score === 5 ? 5.0 : null} 
@@ -34,11 +36,11 @@ const ReviewManagementScreen = () => {
         navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: item.thread_id })
       }
       onRateGuest={() =>
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN, { id: item.id })
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN, { id: item.id,name: item.guest_name })
       }
       onRequestRating={() => console.log('Requesting Rating...')}
     />
-  );
+    )};
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
