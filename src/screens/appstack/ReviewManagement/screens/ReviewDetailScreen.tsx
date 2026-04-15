@@ -158,29 +158,43 @@ const ReviewDetailScreen = ({ route }: any) => {
   const isCheckedOut = property?.status === 'checkedout';
 
   const handlePopupMenu = (label: string) => {
-    const platform = property?.booking_platform;
-    const isDirect =
-      platform === 'host' ||
-      platform === 'host_booking' ||
-      platform === 'direct';
+  const platform = property?.booking_platform;
+  const isDirect =
+    platform === 'host' ||
+    platform === 'host_booking' ||
+    platform === 'direct';
 
-    const commonData = {
-      booking_id: property?.booking_id,
-      guest_name: guest?.full_name || 'the guest',
-      listing_id: guest?.listing_id,
-      platform: platform,
-    };
-
-    if (label === 'Cancel Reservation') {
-      if (isDirect) {
-        setShowDirectCancelModal(true); // Open the custom modal
-      } else {
-        navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
-          bookingData: commonData,
-        });
-      }
-    }
+  const commonData = {
+    booking_id: property?.booking_id,
+    guest_name: guest?.full_name || 'the guest',
+    listing_id: guest?.listing_id,
+    platform: platform,
   };
+
+  // 1. HANDLE CHANGE RESERVATION
+  if (label === 'Change Reservation') {
+    navigate(NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN, {
+      bookingData: {
+        ...commonData,
+        check_in: property?.booking_dates?.from,
+        check_out: property?.booking_dates?.to,
+        guests: property?.number_of_guests,
+        basePrice: payment_breakdown?.booking_cost,
+      },
+    });
+  } 
+  
+  // 2. HANDLE CANCEL RESERVATION
+  else if (label === 'Cancel Reservation') {
+    if (isDirect) {
+      setShowDirectCancelModal(true);
+    } else {
+      navigate(NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP1_SCREEN, {
+        bookingData: commonData,
+      });
+    }
+  }
+};
 
   const handleConfirmDirectCancel = async () => {
     setIsCancelling(true);
