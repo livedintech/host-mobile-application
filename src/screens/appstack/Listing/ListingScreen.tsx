@@ -102,13 +102,13 @@ const ListingScreen = () => {
     );
   }
 
-  if (!isOtaConnected) {
-    return (
-      <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <NoListing onConnect={handleConnectAccount} />
-      </BGImage>
-    );
-  }
+  // if (!isOtaConnected) {
+  //   return (
+  //     <BGImage source={require('@/assets/img/background/linearBG.png')}>
+  //       <NoListing onConnect={handleConnectAccount} />
+  //     </BGImage>
+  //   );
+  // }
 
   const handleDayPress = (day: any) => {
     const dateData = calendarDataMap[day.dateString];

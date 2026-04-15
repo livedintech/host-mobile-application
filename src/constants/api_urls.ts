@@ -18,7 +18,7 @@ export const SERVICE_CONFIG_URLS = {
     GOOGLE_LOGIN: `${authController}/social-authentication`,
     UPDATE_PASSWORD: `${authController}/update-password`,
     CHANGE_PASSWORD: `${authController}/user/change-password`,
-    DELETE_ACCOUNT: `${authController}/user/delete-account`
+    DELETE_ACCOUNT: `${authController}/user/delete-account`,
   },
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,
@@ -135,14 +135,14 @@ export const SERVICE_CONFIG_URLS = {
     GATHERN_CREATE_CHANNEL: `${authController}/gathern/create-channel`,
     SAVE_PAYMENT_INFO: `${authController}/subscription/payments`,
     SUBSCRIPTION_ACTIVE: `${authController}/subscription/activate`,
-    BOOING_COM_TEST_CONNECTION:`${authController}/bookingcom/test-connection`,
-    BOOING_COM_CONNECTION:`${authController}/bookingcom/connection`,
+    BOOING_COM_TEST_CONNECTION: `${authController}/bookingcom/test-connection`,
+    BOOING_COM_CONNECTION: `${authController}/bookingcom/connection`,
     UPDATE_PROFILE: `${authController}/user/update`,
     PROFILE_CITIES: `${authController}/cities?country_id={country_id}`,
     INQUIRY_SPECIAL_OFFER: `${authController}/bookings/inquiry/special-offer`,
     INQUIRY_PRE_APPROVE: `${authController}/bookings/inquiry/accept`,
     CHANGE_RESERVATION: `${authController}/bookings/reservation/change`,
-    CANCEL_OTA_BOOKING : `${authController}/CANCEL_OTA_BOOKING`
-
+    CANCEL_OTA_BOOKING: `${authController}/bookings/ota/{id}/cancel`,
+    CANCEL_DIRECT_BOOKING: `${authController}/bookings/host/{id}/cancel`,
   },
 };

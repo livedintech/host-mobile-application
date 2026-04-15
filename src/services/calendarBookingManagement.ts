@@ -265,3 +265,24 @@ export const cancelOtaBookingApi = async (
   throw response || data;
 };
 
+/**
+ * CANCEL DIRECT BOOKING (HOST)
+ * Use this for platform === 'host' | 'host_booking' | 'direct'
+ */
+export const cancelDirectBookingApi = async (
+  bookingId: string | number,
+  payload: { reason: string }
+) => {
+  const url = SERVICE_CONFIG_URLS.APP.CANCEL_DIRECT_BOOKING.replace(
+    '{id}',
+    String(bookingId)
+  );
+
+  const { ok, data, response } = await apiService.post(url, payload);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  throw response || data;
+};
