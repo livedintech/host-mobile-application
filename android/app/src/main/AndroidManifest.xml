@@ -69,7 +69,6 @@
                     android:scheme="livedinapp"
                     android:host="signup" />
             </intent-filter>
-
         </activity>
 
     </application>

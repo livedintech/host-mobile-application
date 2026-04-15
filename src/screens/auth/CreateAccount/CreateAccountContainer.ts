@@ -26,6 +26,8 @@ const signUpSchema = yup.object().shape({
 });
 
 export default function useCreateAccountContainer() {
+    const route = useRoute<any>();
+
   const { params } = useRoute();
   const country_code = params?.payload?.country_code;
   const phone_number = params?.payload?.phone_number;
@@ -34,7 +36,11 @@ export default function useCreateAccountContainer() {
   const pricing = params?.payload?.pricing;
   const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
 
-  console.log('paramsss',params);
+    const prefill = (route.params as any) || {};
+    
+
+
+  console.log('deeplinkTest',prefill);
   
 
   const toggleTerms = useCallback(() => setIsTermsAccepted(prev => !prev), []);

@@ -4,12 +4,14 @@ import { queryClient } from '@/services/api';
 import {
   createChannelsUserbyId,
   getChannelsUserbyId,
+  getUserListingsByUserIDApi,
 } from '@/services/bookingManagementApi';
 import { navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Linking, Alert } from 'react-native';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
+import { useForm } from 'react-hook-form';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
@@ -43,7 +45,7 @@ export default function useManageBookingContainer() {
       key: 'Bookings.com', // ⚠️ API key different
       alreadyMsg: 'Booking.com Already Connected',
       alreadyDesc: 'Your Booking.com account is already connected.',
-      action: () => navigate(NavigationRoutes.APP_STACK.BOOKING_COM_PMSID),
+      action: () => navigate(NavigationRoutes.APP_STACK.BOOKING_COM_STEP_1),
     },
   };
 
@@ -94,6 +96,21 @@ export default function useManageBookingContainer() {
     navigate(route, { ch_channel_id: item?.ch_channel_id });
   };
 
+   // Fetch user listings (for dropdown options)
+  const { data: apiResponse, isLoading: isLoadingDropdown, isFetching: isFetchingDropdown } = useQuery({
+    queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+    queryFn: () =>
+      getUserListingsByUserIDApi({
+        user: user?.id!,
+      }),
+    // enabled: Boolean(user?.id),
+  });
+
+  // Prepare dropdown options (values must be strings)
+  const listingOptions = apiResponse?.data?.map((item: any) => ({
+    label: item.name,
+    value: String(item.id), // ✅ listing_id nahi, id use karo
+  })) ?? [];
   return {
     handleConnect,
     isLoading,
@@ -102,5 +119,6 @@ export default function useManageBookingContainer() {
     connectedAccounts,
     goToListing,
     user,
+    listingOptions,
   };
 }

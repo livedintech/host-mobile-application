@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     StyleSheet,
     View,
@@ -15,6 +15,8 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import Metrics from '@/utility/Metrics';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import { useForm } from 'react-hook-form';
 
 // ─── TYPES ─────────────────────────────────────────────────────────────
 
@@ -50,45 +52,92 @@ const InfoRow = ({ icon, label, value, valueColor }: any) => (
     </View>
 );
 
-const ConnectedAccountCard = ({ account, selectedTab, onExport }: any) => (
-    <GlassCard width="100%" style={styles.connectedCard}>
-        <View style={styles.cardHeader}>
-            <AppText
-                text={selectedTab}
-                type="Bold"
-                color={Colors.BLACK}
-                fontSize={18}
-            />
-        </View>
-
-        <InfoRow
-            icon={TAB_ICON_MAP[selectedTab as TabType]}
-            label={`${selectedTab} ID`}
-            value={account?.id?.toString() ?? 'N/A'}
-            valueColor={Colors.BLACK}
-        />
-
-        <InfoRow
-            icon="database_check"
-            label="Connection Status"
-            value="Active"
-            valueColor={Colors.TEAL_PRIMARY_ALT}
-        />
-
-        {selectedTab !== 'Booking.com' && (
-            <View style={styles.exportBtnContainer}>
-                <AppButton
-                    title="Exports"
-                    onPress={() => onExport(account)}
-                    borderColor="rgba(255, 255, 255, 0.9)"
-                    fontSize={14}
-                    style={styles.exportBtn}
-                    variant="secondary"
+const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }: any) => {
+        const { control, formState: { errors }, setValue } = useForm();
+      useEffect(() => {
+        if (account?.listings?.[0]?.id) {
+            setValue('listing_id', String(account.listings[0].listing_id));
+        }
+    }, [account]);
+    return (
+        <GlassCard width="100%" style={styles.connectedCard}>
+            <View style={styles.cardHeader}>
+                <AppText
+                    text={selectedTab}
+                    type="Bold"
+                    color={Colors.BLACK}
+                    fontSize={18}
                 />
             </View>
-        )}
-    </GlassCard>
-);
+
+            <InfoRow
+                icon={TAB_ICON_MAP[selectedTab as TabType]}
+                label={`${selectedTab} ID`}
+                value={account?.id?.toString() ?? 'N/A'}
+                valueColor={Colors.BLACK}
+            />
+
+
+
+            {selectedTab !== 'Booking.com' && (
+                <View>
+                    <InfoRow
+                        icon="database_check"
+                        label="Connection Status"
+                        value="Active"
+                        valueColor={Colors.TEAL_PRIMARY_ALT}
+                    />
+                    <View style={styles.exportBtnContainer}>
+                        <AppButton
+                            title="Exports"
+                            onPress={() => onExport(account)}
+                            borderColor="rgba(255, 255, 255, 0.9)"
+                            fontSize={14}
+                            style={styles.exportBtn}
+                            variant="secondary"
+                        />
+                    </View>
+                </View>
+            )}
+            {selectedTab == 'Booking.com' && (
+                <View>
+                    <InfoRow
+                        icon={TAB_ICON_MAP[selectedTab as TabType]}
+                        label={'Property Name'}
+                        value={account?.listings?.[0]?.title}
+                        valueColor={Colors.BLACK}
+                    />
+                    <InfoRow
+                        icon={TAB_ICON_MAP[selectedTab as TabType]}
+                        label={'Total Property Count'}
+                        value={'01'}
+                        valueColor={Colors.BLACK}
+                    />
+                    <InfoRow
+                        icon="database_check"
+                        label="Connection Status"
+                        value="Active"
+                        valueColor={Colors.TEAL_PRIMARY_ALT}
+                    />
+                    {account?.listings?.[0]?.listing_relation && (
+                        <DropdownField
+                        name={'listing_id'}
+                        control={control}
+                        errors={errors}
+                        label="Existing Listing:"
+                        data={listingOptions}
+                        placeholder="None"
+                        disabled={true}
+                    />
+                    )} 
+                    
+                </View>
+            )}
+        </GlassCard>
+    )
+}
+
+    ;
 
 const EmptyState = ({ selectedTab }: { selectedTab: TabType }) => (
     <View style={styles.emptyStateContainer}>
@@ -124,6 +173,7 @@ const ManageBookingScreen = () => {
         refetch,
         goToListing,
         connectedAccounts,
+        listingOptions,
     } = useManageBookingContainer();
 
     const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
@@ -205,6 +255,7 @@ const ManageBookingScreen = () => {
                                         account={item}
                                         selectedTab={selectedTab}
                                         onExport={goToListing}
+                                        listingOptions={listingOptions}
                                     />
                                 </View>
                             )}

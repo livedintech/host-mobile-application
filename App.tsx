@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { processColor, StatusBar, View, StyleSheet, Linking } from 'react-native';
+import { processColor, StatusBar, View, StyleSheet } from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -36,69 +36,29 @@ const App = () => {
     configureGoogleSignIn();
   }, []);
 
-  // useEffect(() => {
-  //   // App BAND tha, link se khula
-  //   Linking.getInitialURL().then((url) => {
-  //     if (url) handleDeepLink(url);
-  //   });
-
-  //   // App BACKGROUND mein tha
-  //   const sub = Linking.addEventListener('url', ({ url }) => {
-  //     handleDeepLink(url);
-  //   });
-
-  //   return () => sub.remove();
-  // }, []);
-
-  // const handleDeepLink = (url: string) => {
-  //   try {
-  //     const clean = url.replace('livedinapp://', 'https://x.com/');
-  //     const parsed = new URL(clean);
-
-  //     if (parsed.pathname.includes('signup')) {
-  //       const params = {
-  //         ref:   parsed.searchParams.get('ref')   || '',
-  //         name:  parsed.searchParams.get('name')  || '',
-  //         email: parsed.searchParams.get('email') || '',
-  //         phone: parsed.searchParams.get('phone') || '',
-  //       };
-
-  //       // Thodi delay — navigation ready hone do
-  //       setTimeout(() => {
-  //         navigationRef.current?.navigate(
-  //           NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT as never,
-  //           params as never,
-  //         );
-  //       }, 500);
-  //     }
-  //   } catch (e) {
-  //     console.log('Deep link error:', e);
-  //   }
-  // };
-
   const getActiveRouteName = (state: any): string => {
-  const route = state.routes[state.index];
+    const route = state.routes[state.index];
 
-  if (route.state) {
-    return getActiveRouteName(route.state);
-  }
-
-  return route.name;
-};
-
- const handleNavigationStateChange = (state: any) => {
-  try {
-    const currentRouteName = getActiveRouteName(state);
-
-    const onboardingRoute = NavigationRoutes.AUTH_STACK.ON_BOARDING;
-
-    if (currentRouteName === onboardingRoute) {
-      setSafeAreaBg(Colors.BLACK);
-    } else {
-      setSafeAreaBg(Colors.WHITE);
+    if (route.state) {
+      return getActiveRouteName(route.state);
     }
-  } catch (e) {}
-};
+
+    return route.name;
+  };
+
+  const handleNavigationStateChange = (state: any) => {
+    try {
+      const currentRouteName = getActiveRouteName(state);
+
+      const onboardingRoute = NavigationRoutes.AUTH_STACK.ON_BOARDING;
+
+      if (currentRouteName === onboardingRoute) {
+        setSafeAreaBg(Colors.BLACK);
+      } else {
+        setSafeAreaBg(Colors.WHITE);
+      }
+    } catch (e) { }
+  };
 
   const initializeApp = async () => {
     try {
