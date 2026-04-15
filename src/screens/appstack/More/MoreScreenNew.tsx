@@ -19,7 +19,6 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const MoreScreen = () => {
   const { user, logout } = useAuthStore();
-  console.log('userioin', user);
   return (
     <ImageBackground
       source={require('@/assets/img/background/moreScreenBG.png')}
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Metrics.scale(20),
     paddingTop: Metrics.verticalScale(20),
-    paddingBottom: Metrics.verticalScale(20),
+    paddingBottom: Metrics.verticalScale(100),
   },
   profileCard: {
     alignSelf: 'flex-start',
