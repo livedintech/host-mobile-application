@@ -6,6 +6,10 @@ import {
   Modal,
   TouchableOpacity,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { Colors } from '@/theme/colors';
 import { vs, s } from 'react-native-size-matters';
@@ -181,6 +185,11 @@ const ChangeReservation = () => {
 
         {/* ─── Edit Guest Charges Bottom Sheet ─── */}
         <Modal visible={showPriceSheet} transparent animationType="slide">
+           <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={{ flex: 1 }}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.modalOverlay}>
             <View style={styles.bottomSheet}>
               <View style={styles.sheetHeader}>
@@ -218,6 +227,8 @@ const ChangeReservation = () => {
               />
             </View>
           </View>
+          </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </Modal>
       </View>
     </BGImage>
