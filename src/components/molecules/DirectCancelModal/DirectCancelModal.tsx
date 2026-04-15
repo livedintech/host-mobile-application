@@ -1,5 +1,11 @@
 import React from 'react';
-import { Modal, View, StyleSheet, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import {
+  Modal,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Dimensions,
+} from 'react-native';
 import { vs, s, ms } from 'react-native-size-matters';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -14,7 +20,12 @@ interface ConfirmProps {
   isLoading?: boolean;
 }
 
-const DirectCancelModal = ({ visible, onClose, onConfirm, isLoading }: ConfirmProps) => {
+const DirectCancelModal = ({
+  visible,
+  onClose,
+  onConfirm,
+  isLoading,
+}: ConfirmProps) => {
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
@@ -23,41 +34,42 @@ const DirectCancelModal = ({ visible, onClose, onConfirm, isLoading }: ConfirmPr
         </TouchableWithoutFeedback>
 
         <View style={styles.whiteCard}>
-          <AppText 
-            text="Cancel Reservation" 
-            type="Bold" 
-            fontSize={ms(19)} 
-            mb={vs(12)} 
-            textAlign="center" 
+          <AppText
+            text="Are you sure you want to cancel reservation?"
+            type="Bold"
+            fontSize={ms(17)}
+            mb={vs(12)}
+            textAlign="center"
             color={Colors.BLACK}
           />
-          
-          <AppText 
-            text="Are you sure you want to cancel this direct booking? This action cannot be undone." 
-            fontSize={ms(14)} 
-            textAlign="center" 
-            mb={vs(25)} 
-            lineHeight={ms(20)}
-            color={Colors.DARK_CHARCOAL_OPACITY_74}
-          />
-          
-          <View style={styles.buttonRow}>
-            <AppButton 
-              title="No" 
-              backgroundColor="#F2F2F2" // Visible grey
-              onPress={onClose} 
-              style={styles.flexButton}
-              color={Colors.BLACK} 
-            />
-            
-            <View style={{ width: s(12) }} /> 
 
-            <AppButton 
-              title="Yes, Cancel" 
-              backgroundColor="#FF4D4D" // Error red
-              onPress={onConfirm} 
+          <AppText
+            text="Once cancelled, this booking will be removed"
+            fontSize={ms(14)}
+            textAlign="center"
+            mb={vs(25)}
+            lineHeight={ms(20)}
+            color={Colors.DARK_CHARCOAL}
+          />
+
+          <View style={styles.buttonRow}>
+            <AppButton
+              title="Cancel"
+              // variant="secondary"
+              onPress={onClose}
+              style={styles.flexButton}
+              color={Colors.BLACK}
+              backgroundColor={Colors.WHITE}
+            />
+
+            <View style={{ width: s(12) }} />
+
+            <AppButton
+              title="Yes, Cancel"
+              backgroundColor="#09A289" // Error red
+              onPress={onConfirm}
               loading={isLoading}
-              style={styles.flexButton} 
+              style={styles.flexButton}
               color={Colors.WHITE}
             />
           </View>
@@ -76,7 +88,10 @@ const styles = StyleSheet.create({
   },
   absoluteBackground: {
     position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   whiteCard: {
     width: width * 0.88,
@@ -86,7 +101,7 @@ const styles = StyleSheet.create({
     borderRadius: ms(20),
     alignItems: 'center',
     elevation: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
@@ -97,10 +112,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: s(5),
   },
   flexButton: {
-    flex: 1, 
+    flex: 1,
     height: vs(46),
-    borderRadius: ms(12),
-  }
+    borderRadius: ms(100),
+    borderWidth:1,
+    borderColor:'#C0C0C0'
+  },
 });
 
 export default DirectCancelModal;

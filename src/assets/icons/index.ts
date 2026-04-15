@@ -267,6 +267,9 @@ import dollarCoin from './dollarCoin.svg';
 import crossIcon2 from './crossIcon2.svg';
 import pencil from './pencil.svg';
 import CalendarBlack from './CalendarBlack.svg';
+import bookingComWhite from './bookingComWhite.svg';
+import chatBookingCom from './chatBookingCom.svg';
+import chatGathern from './chatGathern.svg';
 
 export const icons = {
   iconRoundedCross,
@@ -538,5 +541,8 @@ export const icons = {
   dollarCoin,
   crossIcon2,
   pencil,
-  CalendarBlack
+  CalendarBlack,
+  bookingComWhite,
+  chatBookingCom,
+  chatGathern
 };

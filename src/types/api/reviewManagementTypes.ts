@@ -6,5 +6,5 @@ export interface RateYourGuestPayload {
   private_review: string;
   public_review: string;
   is_reviewee_recommended: boolean;
-  tags: string[];
+  issues: string[];
 }
