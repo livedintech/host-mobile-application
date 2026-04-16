@@ -29,17 +29,19 @@ const OnboardingScreen = () => {
                     <AppText
                         text={item.title}
                         textAlign='center'
-                        fontSize={32}
+                        fontSize={26}
                         color={Colors.WHITE}
                         type='Bold'
-                        lineHeight={40}
+                        lineHeight={34}
+                        mb={11}
                     />
                     <AppText
                         text={item.subtitle}
                         textAlign='center'
-                        fontSize={16}
+                        fontSize={14}
                         color={Colors.WHITE}
                         style={styles.description}
+                        type='Medium'
                     />
                 </View>
             </View>
@@ -78,14 +80,14 @@ const OnboardingScreen = () => {
                     style={styles.glassButton}
                     onPress={isLastSlide ? handleGetStarted : handleContinue}
                 >
-                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.WHITE} type='Bold' fontSize={16} />
+                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.WHITE} type='Regular' fontSize={14} />
                 </ButtonView>
 
                 <ButtonView
                     style={styles.glassButtonSecondary}
                     onPress={isLastSlide ? loginWithPhone : handleSkip}
                 >
-                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.WHITE} type='Regular' fontSize={16} />
+                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.WHITE} type='Regular' fontSize={14} />
                 </ButtonView>
             </View>
         </View>
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
     pagination: {
         flexDirection: 'row',
         position: 'absolute',
-        bottom: Metrics.verticalScale(180), // Adjusted to sit above buttons
+        bottom: Metrics.verticalScale(195), // Adjusted to sit above buttons
         alignSelf: 'center',
     },
     dot: {
@@ -132,7 +134,7 @@ const styles = StyleSheet.create({
     },
     activeDot: {
         width: Metrics.scale(40),
-        backgroundColor: '#20957B', // Your branding Teal
+        backgroundColor: '#09A389', 
     },
     inactiveDot: {
         width: Metrics.scale(10),
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: Metrics.verticalScale(12),
-        backgroundColor: 'rgba(255, 255, 255, 0.15)', // Glass effect
+        backgroundColor: 'rgba(255, 255, 255, 0.15)', 
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.3)',
     },

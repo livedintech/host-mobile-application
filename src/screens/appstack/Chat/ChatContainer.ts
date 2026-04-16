@@ -279,10 +279,10 @@ export const useChatContainer = () => {
       label: 'Automation Template',
       icon: 'automationTemplateIcon',
     },
-    {
-      label: 'AI Auto Reply',
-      icon: 'aiAutoReplyIcon',
-    },
+    // {
+    //   label: 'AI Auto Reply',
+    //   icon: 'aiAutoReplyIcon',
+    // },
   ];
 
   const handleOpenFilter = () => {

@@ -41,7 +41,7 @@ export default function MentionTextarea({
   // same colors as CustomInput
   const GLASS_BASE = 'rgba(255,255,255,0.25)';
   const GLASS_RIM = 'rgba(255,255,255,0.6)';
-  const FOCUS_COLOR = Colors.PINE_FOREST || '#1A332C';
+  const FOCUS_COLOR = Colors.PINE_FOREST || '#000000';
 
   const handleFocus = () => {
     Animated.timing(animation, {
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    color: '#1A332C',
+    color: '#000000',
     fontSize: Metrics.generatedFontSize(14),
     fontWeight: '600',
     textAlignVertical: 'top',

@@ -44,7 +44,6 @@ const ListingScreen = () => {
     null,
   );
 
-
   const {
     control,
     errors,
@@ -77,6 +76,7 @@ const ListingScreen = () => {
     setCheckInFilter,
     handleBookingAction,
   } = useListingContainer(route.params?.listing_id, selectedTab);
+  console.log('calendarDataMap', calendarDataMap);
 
   const toggleTab = () => {
     setSelectedTab(prev => (prev === 0 ? 1 : 0));
@@ -127,7 +127,7 @@ const ListingScreen = () => {
   };
 
   return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+    <BGImage source={require('@/assets/img/background/linearBG.png') } >
       <BookingDetailsView
         isVisible={isDetailsOpen}
         onClose={() => {
@@ -150,8 +150,8 @@ const ListingScreen = () => {
             <View style={styles.headerRow}>
               <AppText
                 text="Guest Bookings"
-                fontSize={22}
-                type="Bold"
+                fontSize={26}
+                type="Medium"
                 color={Colors.BLACK}
               />
               <ButtonView
@@ -162,7 +162,8 @@ const ListingScreen = () => {
                 <AppText
                   text={selectedTab === 0 ? 'Reservations' : 'Calendar'}
                   color={Colors.WHITE}
-                  fontSize={13}
+                  fontSize={10}
+                  lineHeight={15}
                   type="SemiBold"
                 />
               </ButtonView>
@@ -248,7 +249,7 @@ const ListingScreen = () => {
                               'decline_request',
                               item.guest,
                               item.start_date,
-                              item.end_date
+                              item.end_date,
                             )
                           }
                         />
@@ -335,6 +336,7 @@ const styles = StyleSheet.create({
   transparentContainer: { flex: 1, backgroundColor: 'transparent' },
   headerFixed: {
     paddingHorizontal: s(16),
+    marginTop: vs(35),
     // backgroundColor: 'transparent',
     // zIndex: 10,
   },
@@ -354,6 +356,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
+    height:33,
   },
   listContent: {
     paddingHorizontal: Metrics.baseMargin,

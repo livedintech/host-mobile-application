@@ -31,22 +31,22 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <AppText text="Reservation Details" type="Bold" fontSize={18} color="#1A332C" />
+          <AppText text="Reservation Details" type="Bold" fontSize={18} color="#000000" />
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <X size={ms(24)} color="#1A332C" />
+            <X size={ms(24)} color="#000000" />
           </TouchableOpacity>
         </View>
 
         {isLoading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#1A332C" />
+            <ActivityIndicator size="large" color="#000000" />
             <AppText text="Fetching details..." mt={10} color="#666" />
           </View>
         ) : isError ? (
           <View style={styles.center}>
             <AppText text="Failed to load booking details." color="red" />
             <TouchableOpacity onPress={onClose} style={styles.retryBtn}>
-              <AppText text="Close" color="#1A332C" />
+              <AppText text="Close" color="#000000" />
             </TouchableOpacity>
           </View>
         ) : (

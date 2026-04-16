@@ -34,6 +34,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
           <View style={styles.header}>
             <AppText text={isEdit ? 'Edit User' : 'Create New User'} fontSize={28} type="Bold" />
           </View>
+            <AppText text={isEdit ? '' : 'Create and manage users for your property. Add users to assign tasks and control access. Once a user is created, you can easily assign responsibilities and manage their roles.'} fontSize={12} type="Bold" color = {"#333333A6"} type="Regular" mb={40}/>
 
           <View style={styles.formContainer}>
             <InputField name="name" label="Name" control={control} errors={errors} placeholder="Ahmed" />
@@ -47,7 +48,9 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
               disabled={permissionToEditPhoneNumber}
             />
 
-            <InputField name="email" label="Email" control={control} errors={errors} placeholder="ahmed@example.com" editable={!isEdit} />
+            <InputField name="email" label="Email" control={control} errors={errors} placeholder="ahmed@example.com" 
+            // editable={!isEdit} 
+            />
 
             <DropdownField 
               name="role" 
@@ -123,7 +126,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingHorizontal: 25, paddingTop: 40, paddingBottom: 120 },
-  header: { marginBottom: 30 },
+  header: { marginBottom: 10 },
   formContainer: { gap: 15 },
   checkboxRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
   footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 25 },

@@ -9,7 +9,7 @@ import {
   Platform,
   Animated,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   Menu,
@@ -51,7 +51,9 @@ const formatDateRange = (arrival: string, departure: string) => {
   const end = dayjs(departure);
 
   if (start.format('MMMM') === end.format('MMMM')) {
-    return `${start.format('Do')} - ${end.format('Do')} ${start.format('MMMM')}`;
+    return `${start.format('Do')} - ${end.format('Do')} ${start.format(
+      'MMMM',
+    )}`;
   }
 
   return `${start.format('Do MMMM')} - ${end.format('Do MMMM')}`;
@@ -92,14 +94,15 @@ const processMessagesWithTimeLabels = (
     // index + 1 is the OLDER message (rendered ABOVE current)
     // We show the label ABOVE a group = on the oldest message of that day
     // So compare with the NEXT item (which is older)
-    const olderMessage = index < messages.length - 1 ? messages[index + 1] : null;
+    const olderMessage =
+      index < messages.length - 1 ? messages[index + 1] : null;
 
     // Show label if there's no older message (last/oldest in list)
     // OR if older message is from a different day
     const showLabel =
       !olderMessage ||
       dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
-      dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
+        dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
 
     return {
       ...message,
@@ -121,7 +124,6 @@ const ChatScreen = () => {
     android: Platform.OS === 'android' ? 55 : 55,
   });
   const [menuY, setMenuY] = useState(0);
-
 
   const {
     messages,
@@ -163,23 +165,22 @@ const ChatScreen = () => {
     conversationData,
     sendAiSuggestion,
     assigned_to_ids,
-    data
+    data,
   } = useChatContainer();
 
-  console.log("conversationData",conversationData)
-
+  console.log('conversationData', conversationData);
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardOffset({
         android: 55,
-        iso: 80
+        iso: 80,
       });
     });
     const hideSub = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardOffset({
         android: 0,
-        iso: 0
+        iso: 0,
       });
     });
 
@@ -188,7 +189,6 @@ const ChatScreen = () => {
       hideSub.remove();
     };
   }, []);
-
 
   const [highlightedMessageId, setHighlightedMessageId] = useState<
     string | number | null
@@ -229,8 +229,6 @@ const ChatScreen = () => {
       setPrevMessageCount(messagesWithTimeLabels.length);
     }
   }, [messagesWithTimeLabels.length, isAtBottom, prevMessageCount]);
-
-
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -326,17 +324,17 @@ const ChatScreen = () => {
               />
             </View>
           )}
-          <AppText
+          {/* <AppText
             text={item.user.name}
             fontSize={11}
             type="Medium"
             color={Colors.GREY_SHADOW}
             mb={4}
             style={isHost ? { textAlign: 'right' } : { textAlign: 'left' }}
-          />
+          /> */}
 
           <Pressable
-            onLongPress={(e) => {
+            onLongPress={e => {
               const { pageY } = e.nativeEvent;
               setMenuY(Math.max(10, pageY - 180));
               handleMessageSelect(item);
@@ -428,6 +426,10 @@ const ChatScreen = () => {
               color={
                 isHost && !isAutomated ? Colors.GREY_SHADOW : Colors.GREY_SHADOW
               }
+              style={{
+                textAlign: 'right',
+                alignSelf: 'stretch',
+              }}
               mt={8}
             />
           </Pressable>
@@ -455,10 +457,12 @@ const ChatScreen = () => {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : keyboardOffset.android}>
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' ? 60 : keyboardOffset.android
+        }
+      >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={{ flex: 1 }}>
-
             {/* Header */}
             <View style={styles.header}>
               <GradientBorder
@@ -466,7 +470,10 @@ const ChatScreen = () => {
                 borderWidth={1}
                 style={styles.arrowCircleInner}
               >
-                <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+                <Pressable
+                  style={styles.arrowCircleInner}
+                  onPress={() => goBack()}
+                >
                   <Svgicons path="arrowLeftIcon" size={26} />
                 </Pressable>
               </GradientBorder>
@@ -480,19 +487,25 @@ const ChatScreen = () => {
               />
 
               <Menu>
-                <MenuTrigger customStyles={{ triggerWrapper: styles.menuTrigger }}>
+                <MenuTrigger
+                  customStyles={{ triggerWrapper: styles.menuTrigger }}
+                >
                   <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
                 </MenuTrigger>
-                <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
+                <MenuOptions
+                  customStyles={{ optionsContainer: styles.popupMenu }}
+                >
                   {data?.conversation?.formatted_booking_id == null &&
                     conversationData?.booking_id && (
                       <MenuOption
                         style={styles.menuItem}
                         onSelect={() =>
                           navigate(
-                            NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN,
+                            NavigationRoutes.APP_STACK
+                              .REVIEW_MANAGEMENT_DETAIL_SCREEN,
                             {
-                              booking_id: conversationData?.formatted_booking_id,
+                              booking_id:
+                                conversationData?.formatted_booking_id,
                             },
                           )
                         }
@@ -506,14 +519,14 @@ const ChatScreen = () => {
                       </MenuOption>
                     )}
 
-
                   <MenuOption
                     style={styles.menuItem}
                     onSelect={() => {
                       navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
                         screen: NavigationRoutes.APP_STACK.LISTING,
                         params: {
-                          listing_id: conversationData?.listing_id || listing_id,
+                          listing_id:
+                            conversationData?.listing_id || listing_id,
                         },
                       });
                     }}
@@ -534,7 +547,9 @@ const ChatScreen = () => {
                           conversation_id: conversation_id,
                           guestName: conversationData?.name,
                           assigned_to_ids: assigned_to_ids,
-                          listing_id: conversationData?.listing_id || listing_id,
+                          listing_id:
+                            conversationData?.listing_id || listing_id,
+                            propertyName : conversationData?.listing.be_listing_name
                         });
                       }}
                     >
@@ -581,7 +596,11 @@ const ChatScreen = () => {
                   onPress={scrollToBottom}
                   style={styles.scrollButtonInner}
                 >
-                  <Svgicons path="ChevronDownIcon" size={20} color={Colors.WHITE} />
+                  <Svgicons
+                    path="ChevronDownIcon"
+                    size={20}
+                    color={Colors.WHITE}
+                  />
                   {unreadCount > 0 && (
                     <View style={styles.unreadBadge}>
                       <AppText
@@ -657,7 +676,7 @@ const ChatScreen = () => {
                         listing_id: conversationData?.listing_id,
                         fromChat: true,
                         conversation_id: conversationData?.id,
-                        copyText: selectedMessageData.text
+                        copyText: selectedMessageData.text,
                       });
                     }}
                   >
@@ -764,41 +783,47 @@ const ChatScreen = () => {
                   />
                 </View>
                 <Pressable onPress={cancelReply}>
-                  <Svgicons path="closeIcon" size={18} color={Colors.GREY_SHADOW} />
+                  <Svgicons
+                    path="closeIcon"
+                    size={18}
+                    color={Colors.GREY_SHADOW}
+                  />
                 </Pressable>
               </View>
             )}
 
             {/* Input Area */}
             <View style={styles.inputArea}>
-              <Pressable
-                onPress={() => {
-                  Keyboard.dismiss();
-                  setShowSavedReplies(!showSavedReplies);
-                }}
-                style={[
-                  styles.plusAction,
-                  {
-                    backgroundColor: showSavedReplies
-                      ? Colors.TEAL_PRIMARY_ALT
-                      : Colors.TRANSPARENT,
-                  },
-                ]}
-              >
-                <GlassCard style={styles.plusAction}>
-                  <Svgicons
-                    path={showSavedReplies ? 'chatIconWhite' : 'chatIcon'}
-                    size={20}
-                  />
-                </GlassCard>
-              </Pressable>
+            <Pressable
+    onPress={() => {
+      Keyboard.dismiss();
+      setShowSavedReplies(!showSavedReplies);
+    }}
+    style={[
+      styles.plusAction,
+      {
+        /* UPDATED LOGIC HERE */
+        backgroundColor: (showSavedReplies && inputText.length === 0)
+          ? Colors.TEAL_PRIMARY_ALT 
+          : Colors.TRANSPARENT,
+      },
+    ]}
+  >
+    <GlassCard style={styles.plusAction}>
+      <Svgicons
+        /* UPDATED LOGIC HERE AS WELL */
+        path={(showSavedReplies && inputText.length === 0) ? 'chatIconWhite' : 'chatIcon'}
+        size={20}
+      />
+    </GlassCard>
+  </Pressable>
 
               {/* <View style={styles.combinedInputContainer}> */}
               <GlassCard style={styles.mainCardItem}>
                 <TextInput
                   value={inputText}
                   onChangeText={setInputText}
-                  placeholder="Ask me any question"
+                  placeholder="Write Your Message"
                   placeholderTextColor={Colors.SECRET_CHOCOLATE}
                   style={styles.input}
                   multiline
@@ -814,16 +839,18 @@ const ChatScreen = () => {
                   !inputText.trim() && styles.sendButtonDisabled,
                 ]}
               >
-                <Svgicons
-                  path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
-                  size={18}
-                  color={Colors.WHITE}
-                />
+                <GlassCard style={styles.plusAction}>
+                  <Svgicons
+                    path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
+                    size={18}
+                    color={Colors.WHITE}
+                  />
+                </GlassCard>
               </Pressable>
             </View>
 
             {/* Saved Replies */}
-            {showSavedReplies && (
+            {showSavedReplies && inputText.length === 0 && (
               <View style={styles.savedRepliesWrapper}>
                 <AppText
                   text="Saved Replies"
@@ -832,54 +859,64 @@ const ChatScreen = () => {
                   color={Colors.BLACK}
                   fontSize={18}
                 />
-                <View style={styles.repliesGrid}>
-                  {SAVED_REPLIES.map(
-                    (reply: { id: number; body: string; title: string }) => (
-                      <GlassCard
-                        key={reply?.id}
-                        width="31%"
-                        style={styles.replyGlassCard}
-                      >
-                        <Pressable
-                          onPress={() => {
-                            setInputText(reply?.body);
-                            setShowSavedReplies(false);
-                          }}
-                          style={styles.replyPressable}
-                        >
-                          <AppText
-                            text={reply?.title}
-                            fontSize={12}
-                            color={Colors.BLACK}
-                            style={{ textAlign: 'center' }}
-                            numberOfLines={1}
-                          />
-                        </Pressable>
-                      </GlassCard>
-                    ),
-                  )}
-                </View>
+              <View style={styles.repliesGrid}>
+      {SAVED_REPLIES.map(
+        (reply: { id: number; body: string; title: string }) => (
+          <GlassCard
+            key={reply?.id}
+            width="31%"
+            style={styles.replyGlassCard}
+          >
+            <Pressable
+              onPress={() => {
+                setInputText(reply?.body);
+                // Optional: Hide replies after selecting one
+                setShowSavedReplies(false); 
+              }}
+              style={styles.replyPressable}
+            >
+              <AppText
+                text={reply?.title}
+                fontSize={12}
+                color={Colors.BLACK}
+                style={{ textAlign: 'center' }}
+                numberOfLines={1}
+              />
+            </Pressable>
+          </GlassCard>
+        ),
+      )}
+    </View>
               </View>
             )}
 
             {/* Attachment Menu */}
             {showAttachmentMenu && (
               <View style={styles.attachmentMenu}>
-                <Pressable style={styles.attachmentOption} onPress={handleCamera}>
+                <Pressable
+                  style={styles.attachmentOption}
+                  onPress={handleCamera}
+                >
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="cameraIcon" size={20} />
                   </View>
                   <AppText text="Camera" fontSize={13} />
                 </Pressable>
 
-                <Pressable style={styles.attachmentOption} onPress={handleVideo}>
+                <Pressable
+                  style={styles.attachmentOption}
+                  onPress={handleVideo}
+                >
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="videoIcon" size={20} />
                   </View>
                   <AppText text="Video" fontSize={13} />
                 </Pressable>
 
-                <Pressable style={styles.attachmentOption} onPress={handleGallery}>
+                <Pressable
+                  style={styles.attachmentOption}
+                  onPress={handleGallery}
+                >
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="imageIcon" size={20} />
                   </View>
@@ -910,18 +947,17 @@ const ChatScreen = () => {
             {/* </View>
         </KeyboardStickyView> */}
             <InquiryModal
-              visible={data?.conversation?.thread_type === "inquiry"}
+              visible={data?.conversation?.thread_type === 'inquiry'}
               inquiryId={data?.conversation?.id}
               description={`${formatDateRange(
                 data?.conversation?.arrival_date,
-                data?.conversation?.departure_date
+                data?.conversation?.departure_date,
               )}, ${data?.conversation?.number_of_guests} guests`}
               name={data?.conversation?.name}
             />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-
     </BGImage>
   );
 };
@@ -1188,7 +1224,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
     gap: 10,
-    backgroundColor: Colors.WHITE,
+    backgroundColor: Colors.TRANSPARENT,
   },
   plusAction: {
     justifyContent: 'center',
@@ -1215,21 +1251,22 @@ const styles = StyleSheet.create({
     color: Colors.MIDNIGHT,
     maxHeight: 100,
     padding: 0,
+    backgroundColor: 'transparent',
   },
   sendButton: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderWidth: 1,
-    borderColor: Colors.EMERALD_TEAL,
+    // borderWidth: 1,
+    // borderColor: Colors.EMERALD_TEAL,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.EMERALD_TEAL,
   },
   sendButtonDisabled: {
-    backgroundColor: Colors.SUPER_GREY,
-    opacity: 0.6,
-    borderWidth: 0,
+    backgroundColor: Colors.WHITE,
+    // opacity: 0.6,
+    // borderWidth: 0,
   },
   messageImage: {
     width: 180,

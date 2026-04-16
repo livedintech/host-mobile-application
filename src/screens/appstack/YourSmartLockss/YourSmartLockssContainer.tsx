@@ -154,6 +154,7 @@ import {
 } from '@/types/api/smartLockTypes';
 import { queryClient } from '@/services/api';
 import { useEffect } from 'react';
+import { Colors } from '@/theme/colors';
 
 export default function useYourSmartLockssContainer() {
   const { control, formState: { errors }, setValue } = useForm();
@@ -237,8 +238,8 @@ export default function useYourSmartLockssContainer() {
   };
 
   const getBatteryColor = (level: number) => {
-    if (level > 80) return '#00A699';
-    if (level > 20) return '#FBC02D';
+    if (level > 80) return Colors.PRIMARY_TEAL;
+    if (level > 50) return '#e0ba0f';
     return '#FF5252';
   };
 

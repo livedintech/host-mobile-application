@@ -31,7 +31,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Metrics from '@/utility/Metrics';
 
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = Colors.PRIMARY_TEAL;
 
 const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit, rememberMe, setRememberMe, handleAppleSignIn, handleGoogleSignIn } = useLoginWithPhoneContainer();
@@ -53,13 +53,13 @@ const LoginWithPhoneScreen = () => {
         >
           <View style={styles.content}>
             <View style={styles.headerSection}>
-              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+              <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
                 Please enter your
               </AppText>
-              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+              <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
                 phone number to
               </AppText>
-              <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
+              <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL} lineHeight={40}>
                 continue
               </AppText>
             </View>
@@ -82,9 +82,9 @@ const LoginWithPhoneScreen = () => {
                 />
                 <AppText
                   text="Remember me"
-                  color={Colors.PINE_FOREST}
+                  color={Colors.DARK_1C}
                   type="Medium"
-                  fontSize={14}
+                  fontSize={12}
                   ml={s(8)}
                 />
               </View>
@@ -97,9 +97,10 @@ const LoginWithPhoneScreen = () => {
               backgroundColor={FIGMA_TEAL}
               color={Colors.WHITE}
               borderRadius={100}
-              mt={vs(5)}
-              fontSize={18}
-              type="Bold"
+              mt={vs(30)}
+              mb={vs(30)}
+              fontSize={16}
+              type="Regular"
             />
 
             <View style={styles.separatorRow}>
@@ -115,7 +116,7 @@ const LoginWithPhoneScreen = () => {
                 activeOpacity={0.8}
                 mb={vs(12)}
               >
-                <Svgicons path="google" size={14} />
+                <Svgicons path="google" size={18} />
                 <AppText text="Continue with Google" fontSize={14} ml={10} color={Colors.BLACK} />
               </ButtonView>
               {Platform.OS === 'ios' && (
@@ -150,13 +151,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: s(24),
     paddingBottom: vs(10),
-    paddingTop: vs(40) // Added padding top for overall screen
+    paddingTop: vs(80) 
   },
   headerSection: { 
     marginBottom: vs(25)
   },
   inputWrapper: {
-    marginBottom: vs(5)
+    marginBottom: vs(10)
   },
   rememberMeRow: {
     flexDirection: 'row',

@@ -17,7 +17,7 @@ import useAddNewPasswordContainer from './AddNewPasswordContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#09A389';
 
 const AddNewPasswordScreen = () => {
   const { isLoading, control, errors, handleSubmit } = useAddNewPasswordContainer();

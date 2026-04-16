@@ -24,9 +24,9 @@ const MenuSection = ({ title, headerIcon, items }: SectionProps) => {
     <GlassCard width="100%" style={styles.sectionCard}>
       <View style={styles.header}>
         <AppText text={title} type="Bold" fontSize={18} color={Colors.BLACK} />
-        <GlassCard width={40} style={styles.iconCircle}>
+        <View  style={styles.iconCircle}>
           <Svgicons path={headerIcon} size={22} />
-        </GlassCard>
+        </View>
       </View>
 
       {/* Menu Items */}

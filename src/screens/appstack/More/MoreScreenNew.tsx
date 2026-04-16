@@ -19,6 +19,13 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const MoreScreen = () => {
   const { user, logout } = useAuthStore();
+  console.log("user??",user)
+
+  const displayPhone = user?.phone_with_code && user?.phone 
+    ? `+${user.phone_with_code} ${user.phone}` 
+    : (user?.phone_with_code || user?.phone || '******');
+
+
   return (
     <ImageBackground
       source={require('@/assets/img/background/moreScreenBG.png')}
@@ -49,7 +56,7 @@ const MoreScreen = () => {
                   fontSize={16}
                 />
                 <AppText
-                  text={user?.phone ?? 'No Phone'}
+                  text={displayPhone}
                   fontSize={12}
                   color="grey"
                 />
@@ -128,7 +135,7 @@ const MoreScreen = () => {
         />
 
         {/* Billing Section */}
-        <MenuSection
+        {/* <MenuSection
           title="Billing"
           headerIcon="cardOutline"
           items={[
@@ -154,7 +161,7 @@ const MoreScreen = () => {
               },
             },
           ]}
-        />
+        /> */}
 
         {/* Logout at the bottom */}
         <Pressable onPress={() => logout()}>

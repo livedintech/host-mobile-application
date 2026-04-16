@@ -300,24 +300,24 @@ const ConnectCalendarsIntroScreen = () => {
           <View style={styles.titleSection}>
             <AppText 
               text="Airbnb. Gathern." 
-              fontSize={32} 
-              type="Medium" 
+              fontSize={26} 
+              type="Regular" 
               textAlign="center"
-              color="#1A332C" 
+              color="#000000" 
             />
             <AppText 
               text="Booking.com. Or just" 
-              fontSize={32} 
-              type="Medium" 
+              fontSize={26} 
+              type="Regular" 
               textAlign="center"
-              color="#1A332C" 
+              color="#000000" 
               mt={-5}
             />
             <AppText 
               text="getting started." 
-              fontSize={32} 
-              type="Bold" 
-              color="#21AA8F" 
+              fontSize={26} 
+              type="SemiBold" 
+              color={Colors.PRIMARY_TEAL} 
               textAlign="center"
               mt={-5}
             />
@@ -325,10 +325,11 @@ const ConnectCalendarsIntroScreen = () => {
             <AppText 
               text="Connect your calendars in 1 click. Prevent double bookings and sync your rates instantly."
               textAlign="center"
-              color="#5A716A" 
+              color="#1c1c1c" 
               mt={vs(20)} 
               fontSize={15}
-              lineHeight={22}
+              lineHeight={17}
+              type='Regular'
             />
           </View>
 

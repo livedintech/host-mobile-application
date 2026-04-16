@@ -62,13 +62,13 @@ const styles = StyleSheet.create({
     paddingVertical: vs(10), 
   },
   listContent: {
-    paddingHorizontal: s(16),
-    gap: s(10), 
+    // paddingHorizontal: s(16),
+    gap: s(5), 
     alignItems: 'center',
   },
   chip: {
     height: vs(40),
-    paddingHorizontal: s(18),
+    paddingHorizontal: s(12),
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: ms(20),
@@ -89,12 +89,12 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#FFFFFF',
-    fontSize: ms(13),
-    fontWeight: '600',
+    fontSize: ms(12),
+    fontWeight: '400',
   },
   inactiveText: {
     color: '#333333',
-    fontSize: ms(13),
+    fontSize: ms(12),
   },
 });
 

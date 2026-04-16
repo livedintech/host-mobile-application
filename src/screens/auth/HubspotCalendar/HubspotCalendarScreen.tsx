@@ -21,7 +21,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import useHubspotCalendarContainer from './HubspotCalendarContainer';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#09A389';
 
 const CalendarScreen = ({ route }: any) => {
   const userInfo = route?.params?.userInfo!;

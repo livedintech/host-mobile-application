@@ -8,6 +8,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const AnalyticsChart = ({ activeTab, data, total }: any) => {
   const isReservation = activeTab === 'reservation';
+  console.log("data::",data)
 
   const renderHeader = (title: string) => (
     <View style={styles.cardHeader}>

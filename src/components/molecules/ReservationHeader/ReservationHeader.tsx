@@ -17,7 +17,13 @@ interface Props {
   setActiveFilter: (id: string) => void;
 }
 
-export const ReservationHeader = ({ searchQuery, setSearchQuery, onFilterPress, activeFilter, setActiveFilter }: Props) => (
+export const ReservationHeader = ({
+  searchQuery,
+  setSearchQuery,
+  onFilterPress,
+  activeFilter,
+  setActiveFilter,
+}: Props) => (
   <View style={styles.reservationHeader}>
     <View style={styles.searchRow}>
       <View style={styles.searchContainer}>
@@ -32,17 +38,26 @@ export const ReservationHeader = ({ searchQuery, setSearchQuery, onFilterPress, 
       </View>
       <ButtonView style={styles.filterIconButton} onPress={onFilterPress}>
         <GlassCard width={40} style={styles.iconCircle}>
-          <Svgicons path="filterIcon"  />
+          <Svgicons path="filterIcon" />
         </GlassCard>
       </ButtonView>
     </View>
-    <FilterChipBar options={FILTER_OPTIONS} selectedId={activeFilter} onSelect={setActiveFilter} />
+    <FilterChipBar
+      options={FILTER_OPTIONS}
+      selectedId={activeFilter}
+      onSelect={setActiveFilter}
+    />
   </View>
 );
 
 const styles = StyleSheet.create({
   reservationHeader: { marginBottom: vs(10) },
-  searchRow: { flexDirection: 'row', alignItems: 'center', gap: s(10), marginBottom: vs(12) },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: s(10),
+    marginBottom: vs(12),
+  },
   searchContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -50,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.45)',
     borderRadius: ms(20),
     paddingHorizontal: s(18),
-    height: vs(48),
+    height: vs(40),
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.6)',
   },
@@ -73,5 +88,16 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     padding: 0,
     backgroundColor: '#D9D9D900',
+
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 4,
+        blurRadius: 4,
+        spreadDistance: 0,
+        color: ' #00000021',
+        inset: false, // Supports inner shadows
+      },
+    ],
   },
 });

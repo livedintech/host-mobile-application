@@ -11,7 +11,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#09A389';
 
 const ThankYouScreen = () => {
   const handleClose = () => {

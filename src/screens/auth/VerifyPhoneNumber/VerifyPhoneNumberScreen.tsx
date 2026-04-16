@@ -12,7 +12,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useFocusEffect } from '@react-navigation/native';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#09A389';
 
 const VerifyPhoneNumberScreen = () => {
   const otpRef = useRef<any>(null);

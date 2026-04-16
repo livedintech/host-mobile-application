@@ -247,13 +247,11 @@ const ReviewDetailScreen = ({ route }: any) => {
         isLoading={isLoading}
       >
         <View style={styles.styleRow}>
-          <AppText
-            text={guest?.name || 'Guest Details'}
-            type="Bold"
-            fontSize={28}
-            mb={vs(20)}
-            color={Colors.BLACK}
-          />
+          <View style={styles.headerRow}>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
+          </View>
 
           {/* 1. Calculate filtered options before rendering */}
           {(() => {
@@ -315,16 +313,25 @@ const ReviewDetailScreen = ({ route }: any) => {
           })()}
         </View>
 
+        <AppText
+          text={guest?.name || 'Guest Details'}
+          type="Medium"
+          fontSize={28}
+          mb={vs(20)}
+          color={Colors.BLACK}
+          style={{ paddingHorizontal: s(20) }}
+        />
+
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText
               text="Guest Details"
-              type="Bold"
+              type="Medium"
               fontSize={18}
               color={Colors.BLACK}
             />
             <View style={styles.iconCircle}>
-              <Svgicons path="userIcon" size={24} />
+              <Svgicons path="userIcon2" size={24} />
             </View>
           </View>
 
@@ -479,28 +486,30 @@ const ReviewDetailScreen = ({ route }: any) => {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <View style={{ flex: 1 }}>
-              <AppText
-                text="Property Details"
-                type="Bold"
-                fontSize={18}
-                mb={6}
-              />
+              <View style={styles.flexRowTwo}>
+                <AppText
+                  text="Property Details"
+                  type="Medium"
+                  fontSize={18}
+                  mb={6}
+                />
+                <View style={styles.iconCircle}>
+                  <Svgicons path="homeIcon2" size={24} />
+                </View>
+              </View>
               <AppText
                 text={property?.name || 'N/A'}
-                type="Medium"
+                type="Regular"
                 color={Colors.BLACK}
                 fontSize={14}
               />
               <AppText
                 text={property?.address || 'N/A'}
-                type="Medium"
-                fontSize={14}
-                color={Colors.DARK_CHARCOAL}
+                type="Regular"
+                fontSize={12}
+                color={Colors.DARK_1C}
                 mt={8}
               />
-            </View>
-            <View style={styles.iconCircle}>
-              <Svgicons path="homeIcon" size={20} />
             </View>
           </View>
         </View>
@@ -513,8 +522,8 @@ const ReviewDetailScreen = ({ route }: any) => {
                   text={`${getPlatformLabel(
                     property?.booking_platform,
                   )} Booking Code`}
-                  type="Bold"
-                  fontSize={16}
+                  type="Medium"
+                  fontSize={18}
                   mb={4}
                 />
 
@@ -525,7 +534,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                 />
               </View>
               <View style={styles.iconCircle}>
-                <Svgicons path="bookingCode" size={18} />
+                <Svgicons path="bookingCode" size={24} />
               </View>
             </View>
           </View>
@@ -535,7 +544,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           <View style={styles.cardHeader}>
             <AppText
               text="Booking Details"
-              type="Bold"
+              type="Medium"
               fontSize={18}
               color={Colors.BLACK}
             />
@@ -550,7 +559,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                     ? 'gathern'
                     : 'homeIcon'
                 }
-                size={20}
+                size={24}
               />
             </View>
           </View>
@@ -638,7 +647,7 @@ const ReviewDetailScreen = ({ route }: any) => {
         </View>
 
         {property?.booking_platform !== 'host_booking' && (
-          <View style={styles.card}>
+          <View style={[styles.card, { display: 'none' }]}>
             <View style={styles.cardHeader}>
               <AppText text="AI Chat Summary" type="Bold" fontSize={18} />
               <View style={[styles.iconCircle, { backgroundColor: '#F0F7F6' }]}>
@@ -653,7 +662,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               mt={10}
               opacity={0.7}
             />
-            <TouchableOpacity
+            <ButtonView
               disabled={!guest?.conversation_id}
               style={styles.continueChatBtn}
               onPress={() =>
@@ -669,7 +678,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                 fontSize={14}
                 color={Colors.BLACK}
               />
-            </TouchableOpacity>
+            </ButtonView>
           </View>
         )}
 
@@ -678,12 +687,12 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={styles.cardHeader}>
               <AppText
                 text="Guest Property Ratings"
-                type="Bold"
+                type="Medium"
                 fontSize={18}
                 color={Colors.BLACK}
               />
               <View style={styles.iconCircle}>
-                <Svgicons path="identityCard" size={20} />
+                <Svgicons path="identityCard" size={24} />
               </View>
             </View>
             <View style={styles.ratingContent}>
@@ -786,28 +795,28 @@ const ReviewDetailScreen = ({ route }: any) => {
                   ]}
                   borderRadius={100}
                 />
-                {!bookingData?.guest?.rating && (
-                  <AppButton
-                    disabled={!isCheckedOut}
-                    fontSize={14}
-                    title="Rate Your Guest"
-                    backgroundColor={
-                      isCheckedOut ? Colors.PRIMARY_TEAL : Colors.DISABLED_BG
-                    }
-                    color={isCheckedOut ? Colors.WHITE : Colors.DISABLED_GREY}
-                    style={[
-                      styles.rateGuestBtn,
-                      !isCheckedOut && styles.disabledBtn,
-                    ]}
-                    borderRadius={100}
-                    onPress={() =>
-                      navigate(
-                        NavigationRoutes.APP_STACK
-                          .REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
-                      )
-                    }
-                  />
-                )}
+                {/* {!bookingData?.guest?.rating && ( */}
+                <AppButton
+                  disabled={!isCheckedOut}
+                  fontSize={14}
+                  title="Rate Your Guest"
+                  backgroundColor={
+                    isCheckedOut ? Colors.PRIMARY_TEAL : Colors.DISABLED_BG
+                  }
+                  color={isCheckedOut ? Colors.WHITE : Colors.DISABLED_GREY}
+                  style={[
+                    styles.rateGuestBtn,
+                    !isCheckedOut && styles.disabledBtn,
+                  ]}
+                  borderRadius={100}
+                  onPress={() =>
+                    navigate(
+                      NavigationRoutes.APP_STACK
+                        .REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
+                    )
+                  }
+                />
+                {/* )} */}
               </View>
             </View>
           </View>
@@ -837,9 +846,9 @@ const ReviewDetailScreen = ({ route }: any) => {
         {property?.booking_platform !== 'host_booking' && (
           <View style={[styles.card, { paddingBottom: vs(10) }]}>
             <View style={styles.cardHeader}>
-              <AppText text="Payment Breakdown" type="Bold" fontSize={18} />
+              <AppText text="Payment Breakdown" type="Medium" fontSize={18} />
               <View style={styles.iconCircle}>
-                <Svgicons path="paymentIconNew" size={80} />
+                <Svgicons path="paymentIconNew2" size={24} />
               </View>
             </View>
             <View style={styles.paymentGrid}>
@@ -889,7 +898,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           <View style={styles.cardHeader}>
             <AppText
               text="Assigned Task"
-              type="Bold"
+              type="Medium"
               fontSize={18}
               color={Colors.BLACK}
             />
@@ -977,12 +986,31 @@ const ReviewDetailScreen = ({ route }: any) => {
                 </View>
               ))
             ) : (
-              <AppText
-                text="No tasks assigned"
+              // <AppText
+              //   text="No tasks assigned"
+              //   fontSize={14}
+              //   color={Colors.DARK_CHARCOAL}
+              //   textAlign="center"
+              //   my={vs(10)}
+              // />
+
+              <AppButton
+                title={'Create New Task'}
                 fontSize={14}
-                color={Colors.DARK_CHARCOAL}
-                textAlign="center"
-                my={vs(10)}
+                backgroundColor={'rgba(255, 255, 255, 0.6)'}
+                color={Colors.BLACK}
+                style={[
+                  styles.rateGuestBtn,
+                  {
+                    borderWidth: 1,
+                    borderColor: '#E0E0E0',
+                    marginBottom: 30,
+                  },
+                ]}
+                borderRadius={100}
+                onPress={() =>
+                  navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING)
+                }
               />
             )}
           </View>
@@ -994,7 +1022,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               <View style={styles.headerTextContainer}>
                 <AppText
                   text="Cancellation Policy"
-                  type="Bold"
+                  type="Medium"
                   fontSize={18}
                   color={Colors.BLACK}
                 />
@@ -1003,33 +1031,17 @@ const ReviewDetailScreen = ({ route }: any) => {
                     cancellation_policy
                       ? cancellation_policy.charAt(0).toUpperCase() +
                         cancellation_policy.slice(1)
-                      : 'N/A'
+                      : 'Flexible'
                   }
                   fontSize={14}
                   color={Colors.DARK_CHARCOAL}
                 />
               </View>
               <View style={styles.iconCircle}>
-                <Svgicons path="infoIcon" size={20} />
+                <Svgicons path="infoIcon" size={24} />
               </View>
             </View>
           </View>
-        )}
-
-        {property?.booking_platform !== 'host_booking' && (
-          <AppButton
-            title="Rate Your Guest"
-            backgroundColor={Colors.PRIMARY_TEAL}
-            color={Colors.WHITE}
-            borderRadius={20}
-            mt={vs(10)}
-            mb={vs(40)}
-            onPress={() =>
-              navigate(
-                NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
-              )
-            }
-          />
         )}
       </RefreshableScrollView>
 
@@ -1093,10 +1105,11 @@ const styles = StyleSheet.create({
   iconCircle: {
     width: ms(40),
     height: ms(40),
-    borderRadius: ms(20),
+    borderRadius: ms(16),
     backgroundColor: '#E8F3F1',
     justifyContent: 'center',
     alignItems: 'center',
+    display: 'flex',
   },
   headerTextContainer: { flex: 1, justifyContent: 'center' },
   infoContent: { flex: 1 },
@@ -1195,6 +1208,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
+  flexRowTwo: {
+    justifyContent: 'space-between',
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom:20
+  },
 
   threeDotsContainer: {
     flexDirection: 'row',
@@ -1235,6 +1255,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 30,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

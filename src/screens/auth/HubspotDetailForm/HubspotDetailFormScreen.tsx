@@ -16,7 +16,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { Colors } from '@/theme/colors';
 import useHubspotDetailFormContainer, { COUNTRIES, COUNTRY_FLAGS } from './HubspotDetailFormContainer';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#09A389';
 
 const HubspotDetailFormScreen = () => {
   const {

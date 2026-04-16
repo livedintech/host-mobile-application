@@ -4,10 +4,11 @@ import { s, vs, ms } from 'react-native-size-matters';
 import moment from 'moment';
 import { RawBookingData } from '@/types/api/bookingTypes';
 import ButtonView from '../AppButton/ButtonView';
+import { Colors } from '@/theme/colors';
 
-const FIGMA_TEAL = '#20957B';
-const DOT_EMPTY = '#E0E0E0';
-const TEXT_MAIN = '#1A332C';
+const FIGMA_TEAL = '#09A389';
+const DOT_EMPTY = '#a8a8a8';
+const TEXT_MAIN = '#000000';
 const TEXT_SUB = '#7B8D88';
 
 interface CalendarListingCardProps {
@@ -25,10 +26,9 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
 
     const DOT_SIZE = ms(6);
     const GAP_SIZE = ms(3);
-    const DOTS_PER_ROW = 10;
+    const DOTS_PER_ROW = 7; // Changed from 10 to 7
 
-    // ✅ Track WHICH booking index each day belongs to (-1 = not booked)
-    const daysData: { isBooked: boolean; bookingIndex: number }[] = Array.from({
+    const daysData = Array.from({
       length: daysInMonth,
     }).map((_, i) => {
       const currentDotDate = moment(startOfMonth).add(i, 'days').startOf('day');
@@ -59,7 +59,6 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
           const startIdx = i;
           const currentBookingIndex = row[i].bookingIndex;
 
-          // ✅ Break bar when booking index changes (different booking = new bar)
           while (
             i < row.length &&
             row[i].isBooked &&
@@ -118,7 +117,7 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
           </Text>
 
           {item.address ? (
-            <Text style={styles.propertyAddress} numberOfLines={1}>
+            <Text style={styles.propertyAddress} numberOfLines={2}>
               {item.address}
             </Text>
           ) : null}
@@ -141,16 +140,28 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: ms(20),
+    borderRadius: ms(10),
     padding: s(12),
     marginBottom: vs(12),
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.7)',
+    // borderWidth: 1.5,
+    // borderColor: 'rgba(255, 255, 255, 0.7)',
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
+
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 4,
+        blurRadius: 9,
+        spreadDistance: 0,
+        color: '#00000021',
+        inset: false,
+      },
+    ],
   },
+
   propertyImage: {
-    width: ms(70),
-    height: ms(70),
+    width: ms(62),
+    height: ms(60),
     backgroundColor: '#F5F5F5',
     borderRadius: ms(15),
   },
@@ -166,8 +177,8 @@ const styles = StyleSheet.create({
     marginBottom: vs(2),
   },
   propertyAddress: {
-    fontSize: ms(12),
-    color: '#4A5D58',
+    fontSize: ms(9),
+    color: Colors.DARK_1C,
     fontWeight: '500',
     marginBottom: vs(2),
   },
@@ -177,21 +188,21 @@ const styles = StyleSheet.create({
     marginTop: vs(1),
   },
   calendarColumn: {
-    width: ms(95),
+    width: ms(70), // Reduced width to fit 7 dots better
     alignItems: 'flex-end',
     justifyContent: 'center',
-    // overflow: 'hidden',
   },
   dotsGrid: {
     flexDirection: 'column',
-    gap: ms(3),
-    width: ms(87),
+    gap: ms(6), // Slightly more vertical gap for better readability
+    width: '100%',
     alignItems: 'flex-start',
   },
   dotsRow: {
     flexDirection: 'row',
-    gap: ms(3),
+    gap: ms(4), // This matches the GAP_SIZE in your logic
     alignItems: 'center',
+    marginBottom: vs(1),
   },
   miniDot: {
     width: ms(6),
