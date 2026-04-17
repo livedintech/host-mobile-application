@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   overflowShield: {
-    borderRadius: ms(24),
+    borderRadius: ms(10),
     overflow: 'hidden',  
     marginBottom: vs(12),
   },
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   dayText: { 
     fontSize: ms(15), 
     fontWeight: '600', 
-    color: '#1A332C', 
+    color: '#000000', 
     marginBottom: vs(2),
     zIndex: 10,
   },

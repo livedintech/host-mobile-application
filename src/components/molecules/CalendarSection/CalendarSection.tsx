@@ -35,12 +35,12 @@ export const CalendarSection = ({
   onRefresh,
 }: Props) => {
   console.log("markedDates",markedDates);
-  // console.log("bookingsTest",bookings)
+  console.log("bookingsTest",bookings)
   return (
     <RefreshableScrollView
       isLoading={isLoading}
       onRefresh={onRefresh}
-      contentContainerStyle={{ paddingHorizontal: Metrics.baseMargin, paddingBottom: Metrics.scale(100) }}
+      contentContainerStyle={{ paddingHorizontal: Metrics.baseMargin, paddingBottom: Metrics.scale(100) , paddingTop: Metrics.scale(20)}}
     >
       <DropdownField
         name="listing_selection"
@@ -50,7 +50,7 @@ export const CalendarSection = ({
         data={listingOptions}
         placeholder="All Listings"
       />
-      <View>
+      <View style={{marginTop:30}}>
         {selectedListingId ? (
           <CustomCalendar
             markedDates={markedDates}

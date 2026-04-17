@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: ms(24),
     fontWeight: '700',
-    color: '#1A332C',
+    color: '#000000',
     marginBottom: vs(15)
   },
   scrollArea: { marginBottom: vs(15) },

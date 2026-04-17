@@ -559,7 +559,8 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        // options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{headerShown:false}}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN}
         getComponent={() =>
           require('@/screens/appstack/ReviewManagement/screens/ReviewDetailScreen')

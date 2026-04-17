@@ -39,20 +39,20 @@ const AgentIntroScreen = () => {
               <AppText
                 text="Hi, I’m "
                 fontSize={32}
-                type="Medium"
+                type="Regular"
                 color={Colors.BLACK}
               />
               <AppText
                 text="Agent A.I."
                 fontSize={32}
-                type="BoldItalic"
-                color={Colors.BLACK}
+                type="SemiBold"
+                color={Colors.PRIMARY_TEAL}
               />
             </View>
             <AppText
               text="Let’s get you started."
               fontSize={32}
-              type="Medium"
+              type="Regular"
               color={Colors.BLACK}
               textAlign="left"
             />
@@ -60,10 +60,10 @@ const AgentIntroScreen = () => {
             <AppText
               text="I’m your dedicated expert to guide you from scratch; from creating your listing to securing your first booking. No experience needed."
               textAlign="left"
-              color={Colors.PINE_FOREST}
-              mt={20}
-              fontSize={15}
-              lineHeight={22}
+              color={Colors.DARK_1C}
+              mt={29}
+              fontSize={12}
+              lineHeight={17}
             />
           </View>
 
@@ -130,7 +130,9 @@ const styles = StyleSheet.create({
   },
   introSection: {
     marginTop: vs(20),
+    marginBottom: vs(20),
     alignItems: 'center',
+    paddingLeft: Metrics.verticalScale(20)
   },
   titleRow: {
     flexDirection: 'row',

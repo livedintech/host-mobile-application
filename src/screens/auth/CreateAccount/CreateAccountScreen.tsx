@@ -14,7 +14,7 @@ import useCreateAccountContainer from './CreateAccountContainer';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = '#09A389';
 const DISABLED_GRAY = '#A0A0A0'; // Color for disabled state
 
 const CreateAccountScreen = () => {

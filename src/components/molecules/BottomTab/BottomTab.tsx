@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
 
   androidNoise: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(200, 220, 215, 0.50)',
+    backgroundColor: 'rgba(200, 220, 215, 1)',
   },
 
   androidContent: {

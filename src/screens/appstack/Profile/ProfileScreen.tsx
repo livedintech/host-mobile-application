@@ -163,8 +163,8 @@ const ProfileScreen = () => {
             <PhoneInputField label="Phone Number" control={control} errors={errors} countryFieldName="phone_country" phoneFieldName="phone_number" disabled />
 
             <View style={styles.rowButtons}>
-              <AppButton title="Change Password" onPress={goToChangePassword} style={styles.halfBtn} />
-              <AppButton title="Delete Account" loading={isDeleting} onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} />
+              <AppButton title="Change Password" onPress={goToChangePassword} style={styles.halfBtn} fontSize={14}/>
+              <AppButton title="Delete Account" loading={isDeleting} onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} fontSize={14}/>
             </View>
 
             <AppButton title="Save Changes" onPress={handleSubmit(onSave)} mt={20} loading={isLoading} />

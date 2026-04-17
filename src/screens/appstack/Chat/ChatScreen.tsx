@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Metrics.scale(22),
     paddingTop: Metrics.verticalScale(16),
-    paddingBottom: Metrics.verticalScale(12),
+    paddingBottom: Metrics.verticalScale(30),
   },
   headerLeft: {
     width: 40,
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Metrics.scale(22),
-    marginBottom: Metrics.verticalScale(16),
+    marginBottom: Metrics.verticalScale(30),
     gap: 10,
   },
   searchBox: {
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
 
   /* Tabs */
   tabsWrapper: {
-    marginBottom: Metrics.verticalScale(8),
+    marginBottom: Metrics.verticalScale(37),
   },
   tabsList: {
     paddingHorizontal: Metrics.scale(22),

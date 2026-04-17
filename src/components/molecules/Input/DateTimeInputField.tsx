@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#1A332C',
+    color: '#000000',
     fontSize: Metrics.generatedFontSize(14),
     fontWeight: '600',
     paddingVertical: 0,

@@ -15,12 +15,19 @@ interface HeaderApp {
   isGetStarted?: boolean;
   isLogo?: boolean;
   isLang?: boolean;
-  addIconAfterisGoBack?: string
+  addIconAfterisGoBack?: string;
 }
 
-const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo, addIconAfterisGoBack }: HeaderApp) => {
+const HeaderApp = ({
+  isGoBack,
+  isGetStarted,
+  isLogo,
+  isLang,
+  isGoBackAfterLogo,
+  addIconAfterisGoBack,
+}: HeaderApp) => {
   const getStarted = useCallback(() => {
-    navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
+    navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
 
   return (
@@ -40,11 +47,12 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo, 
           </ButtonView>
         )}
         <View style={styles.headerRight}>
-          {isLang && (
+          {false && (
             <GradientBorder
               borderRadius={16}
               borderWidth={1}
-              style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}>
+              style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}
+            >
               <Pressable style={styles.langBtn}>
                 <AppText text="العربية" fontSize={12} type="Medium" />
               </Pressable>
@@ -52,31 +60,28 @@ const HeaderApp = ({ isGoBack, isGetStarted, isLogo, isLang, isGoBackAfterLogo, 
           )}
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
-              <Pressable
-                style={styles.getStartedBtn}
-                onPress={getStarted}>
+              <Pressable style={styles.getStartedBtn} onPress={getStarted}>
                 <AppText text="Get Started" fontSize={12} type="Medium" />
               </Pressable>
             </GradientBorder>
           )}
-
         </View>
       </View>
       {isGoBackAfterLogo && (
         <View style={styles.headerRow}>
-          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+          <View
+            borderRadius={16}
+            borderWidth={1}
+            style={styles.arrowCircleInner}
+          >
             <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-              <Svgicons path='arrowLeftIcon' size={24} />
+              <Svgicons path="arrowLeftIcon" size={24} />
             </Pressable>
-          </GradientBorder>
-          {addIconAfterisGoBack && (
-            <Svgicons path='mapIcon' size={35} />
-          )}
+          </View>
+          {addIconAfterisGoBack && <Svgicons path="mapIcon" size={35} />}
         </View>
       )}
-
     </View>
-
   );
 };
 
@@ -84,17 +89,17 @@ export default HeaderApp;
 
 const styles = StyleSheet.create({
   headerRight: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   header: {
     paddingHorizontal: Metrics.baseMargin,
     backgroundColor: Colors.WHITE,
-    paddingTop: Metrics.verticalScale(15)
+    paddingTop: Metrics.verticalScale(15),
   },
   langBtn: {
     width: Metrics.scale(60),
@@ -102,7 +107,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Colors.WHITE,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   getStartedBtn: {
     width: Metrics.scale(110),
@@ -110,9 +115,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Colors.WHITE,
     justifyContent: 'center',
-    alignItems: 'center'
-
+    alignItems: 'center',
   },
-  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
-
+  arrowCircleInner: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
 });

@@ -4,6 +4,7 @@ import { s, vs, ms } from 'react-native-size-matters';
 import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '../AppButton/ButtonView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { Colors } from '@/theme/colors';
 
 interface ReservationCardProps {
   id: string | number;
@@ -57,17 +58,17 @@ const ReservationCard = ({
             path={icon}
             // If it's a platform logo, make it smaller (e.g., 20)
             // so it doesn't touch the edges of the 34px box
-            size={isPlatformIcon ? ms(20) : ms(32)}
+            size={isPlatformIcon ? ms(32) : ms(32)}
           />
         </View>
         <View style={styles.textContainer}>
-          <AppText text={label} color="#8E8E93" fontSize={11} type="Medium" />
+          <AppText text={label} color="#000000" fontSize={14} type="Regular" />
           <AppText
             text={value}
-            color={valueColor}
-            fontSize={14}
-            type="SemiBold"
-            numberOfLines={1}
+            color={Colors.DARK_CHARCOAL}
+            fontSize={12}
+            type="Regular"
+            numberOfLines={2}
           />
         </View>
       </View>
@@ -83,7 +84,7 @@ const ReservationCard = ({
       <View style={styles.glassContainer}>
         {/* Header Section - Reduced Margin */}
         <View style={styles.headerRow}>
-          <AppText text={guestName} type="Bold" fontSize={18} color="#1A1A1A" />
+          <AppText text={guestName} type="Medium" fontSize={18} color="#1A1A1A" />
           <Svgicons path="reservationtitle" size={ms(55)} />
         </View>
 
@@ -118,11 +119,13 @@ const ReservationCard = ({
           value={checkedoutDate}
         />
 
-        <InfoRow
-          icon="reservationguests"
-          label="Number of Guests"
-          value={guests}
-        />
+        {!platform?.toLowerCase().includes('livedin') && (
+          <InfoRow
+            icon="reservationguests"
+            label="Number of Guests"
+            value={guests}
+          />
+        )}
       </View>
     </ButtonView>
   );

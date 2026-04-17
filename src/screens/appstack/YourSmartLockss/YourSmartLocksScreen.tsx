@@ -49,19 +49,19 @@ const YourSmartLocksScreen = () => {
     return (
       <GlassCard width="100%" style={styles.glassCard}>
         <Pressable onPress={() => goToScreen(item?.lock_id)}>
-          <AppText text={item.alias} fontSize={20} type="Bold" color={Colors.BLACK} mb={8} />
+          <AppText text={item.alias} fontSize={18} type="Medium" color={Colors.BLACK} mb={8} />
           <View style={styles.infoSection}>
             <View style={styles.rowSmall}>
-              <AppText text="TT Account: " fontSize={14} color={Colors.BLACK} />
-              <AppText text={item.username} fontSize={14} color={Colors.BLACK} />
+              <AppText text="TT Account: " fontSize={12} color={Colors.BLACK} />
+              <AppText text={item.username} fontSize={12} color={Colors.BLACK} />
             </View>
             <View style={styles.rowSmall}>
-              <AppText text="Lock Number: " fontSize={14} color={Colors.BLACK} />
-              <AppText text={item.lock_id.toString()} fontSize={14} color={Colors.BLACK} />
+              <AppText text="Lock Number: " fontSize={12} color={Colors.BLACK} />
+              <AppText text={item.lock_id.toString()} fontSize={12} color={Colors.BLACK} />
             </View>
             <View style={styles.rowSmall}>
-              <AppText text="Battery Level: " fontSize={14} color={Colors.BLACK} />
-              <AppText text={item.battery_percentage} fontSize={14} type="Bold" color={getBatteryColor(batteryValue)} />
+              <AppText text="Battery Level: " fontSize={12} color={Colors.BLACK} />
+              <AppText text={item.battery_percentage} fontSize={12} type="Regular" color={getBatteryColor(batteryValue)} />
             </View>
           </View>
         </Pressable>
@@ -86,7 +86,7 @@ const YourSmartLocksScreen = () => {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <View style={styles.titleContainer}>
-            <AppText text="Your Smart Locks" fontSize={28} type="Bold" color={Colors.BLACK} />
+            <AppText text="Your Smart Locks" fontSize={28} type="SemiBold" color={Colors.BLACK} />
           </View>
           <FlatListSimpleHandler
             data={locksData}
@@ -115,7 +115,7 @@ const YourSmartLocksScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  titleContainer: { paddingHorizontal: Metrics.scale(25), paddingTop: Metrics.verticalScale(30), paddingBottom: Metrics.verticalScale(20) },
+  titleContainer: { paddingHorizontal: Metrics.scale(25), paddingTop: Metrics.verticalScale(30), paddingBottom: Metrics.verticalScale(28) },
   listContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(120) },
   glassCard: { padding: Metrics.scale(20), marginBottom: Metrics.verticalScale(20) },
   infoSection: { marginBottom: Metrics.verticalScale(10) },

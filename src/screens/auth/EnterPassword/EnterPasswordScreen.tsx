@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { s, vs } from 'react-native-size-matters';
 
@@ -12,7 +12,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-const FIGMA_TEAL = '#20957B';
+const FIGMA_TEAL = Colors.PRIMARY_TEAL;
 
 const EnterPasswordScreen = () => {
   const { isLoading, control, errors, handleSubmit, gotToVerifyOTP } = useEnterPasswordContainer();
@@ -26,34 +26,41 @@ const EnterPasswordScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.mainContent}>
-            {/* Title Section - Left Aligned */}
-            <View style={styles.headerSection}>
-              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                Please enter your
-              </AppText>
-              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                password to{' '}
-                <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                  continue
+            {/* Note: Ensure your Parent Navigation or Header component 
+                handles the Back Arrow and 'العربية' button seen in the image.
+            */}
+
+            <View style={styles.centerBody}>
+              {/* Title Section */}
+              <View style={styles.headerSection}>
+                <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={42}>
+                  Please enter your
                 </AppText>
-              </AppText>
-            </View>
+                <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={42}>
+                  password to{' '}
+                  <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL}>
+                    continue
+                  </AppText>
+                </AppText>
+              </View>
 
-            {/* Form Fields */}
-            <View style={styles.form}>
-              <PasswordField
-                label="Password *"
-                name="password"
-                control={control}
-                errors={errors}
-                placeholder=""
-              />
+              {/* Form Fields */}
+              <View style={styles.form}>
+                <PasswordField
+                  label="Password *"
+                  name="password"
+                  control={control as any}
+                  errors={errors}
+                  placeholder=""
+                  // Ensure your PasswordField component uses a transparent/thin underline style per design
+                />
 
-              {/* Forgot Password Link */}
-              <View style={styles.forgotRow}>
-                <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
-                  <AppText text="Forgot password?" color={Colors.BLACK} fontSize={14} />
-                </ButtonView>
+                {/* Forgot Password Link - Aligned Right */}
+                <View style={styles.forgotRow}>
+                  <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
+                    <AppText text="Forgot password?" color={Colors.BLACK} fontSize={14} />
+                  </ButtonView>
+                </View>
               </View>
             </View>
 
@@ -65,70 +72,54 @@ const EnterPasswordScreen = () => {
                 title="Continue"
                 backgroundColor={FIGMA_TEAL}
                 color={Colors.WHITE}
-                borderRadius={100}
-                type="Bold"
-                fontSize={18}
+                borderRadius={100} // Keeps the pill shape
+                type="SemiBold"
+                fontSize={16}
               />
             </View>
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>
     </BGImage>
-
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
   mainContent: {
     flex: 1,
-    paddingHorizontal: s(24),
-    paddingTop: vs(40),
+    paddingHorizontal: s(30),
+    justifyContent: 'space-between', // Pushes bottomSec to the bottom
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: s(20),
-    paddingTop: vs(10),
-    alignItems: 'center',
-  },
-  backButton: {
-    width: s(40),
-    height: s(40),
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.WHITE,
-  },
-  langButton: {
-    paddingHorizontal: s(15),
-    paddingVertical: vs(5),
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    backgroundColor: Colors.WHITE,
+  centerBody: {
+    flex: 1,
+    justifyContent: 'center', // Centers the text and input vertically like the design
+    marginTop: vs(20),
   },
   headerSection: {
-    marginBottom: vs(50),
+    marginBottom: vs(40),
   },
   form: {
     width: '100%',
   },
   forgotRow: {
     alignItems: 'flex-end',
-    marginTop: vs(10),
+    marginTop: vs(8),
   },
   forgotBtn: {
     paddingVertical: 5,
   },
   bottomSec: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: vs(30),
-    marginTop: vs(20),
+    paddingBottom: vs(100),
+    width: '100%',
+  },
+  buttonHeight: {
+    height: vs(50), // Ensures the button has enough presence
   },
 });
 

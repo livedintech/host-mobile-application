@@ -51,13 +51,13 @@ const UserManagementScreen = () => {
         <View>
           <AppText
             text={item.name}
-            fontSize={20}
+            fontSize={18}
             type="Bold"
             color={Colors.BLACK}
           />
           <AppText
             text={item.role_namwe || 'User'}
-            fontSize={14}
+            fontSize={12}
             color={Colors.BLACK}
           />
         </View>
@@ -84,7 +84,7 @@ const UserManagementScreen = () => {
       <View style={styles.listingSection}>
         <AppText
           text="Listing Access"
-          fontSize={14}
+          fontSize={12}
           type="Bold"
           color={Colors.BLACK}
         />
@@ -95,8 +95,8 @@ const UserManagementScreen = () => {
         /> */}
         <AppText
           text={renderListingAccess(item)} // Changed to use the helper function
-          fontSize={14}
-          color={Colors.DARK_CHARCOAL_OPACITY}
+          fontSize={12}
+          color={Colors.BLACK}
           // numberOfLines={2}
         />
       </View>

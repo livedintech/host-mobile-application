@@ -39,8 +39,8 @@ const PropertyAreaChart: React.FC<Props> = ({ chartPoints, roundedMax, yAxisLabe
               ))}
 
               {/* Path + Gradient */}
-              <LineChart.Path color={Colors.BRUNSWICK_GREEN} width={2}>
-                <LineChart.Gradient color={Colors.BRUNSWICK_GREEN + '30'} />
+              <LineChart.Path color={Colors.PRIMARY_TEAL} width={2}>
+                <LineChart.Gradient color={Colors.PRIMARY_TEAL + '30'} />
               </LineChart.Path>
 
               {/* Cursor tooltip */}

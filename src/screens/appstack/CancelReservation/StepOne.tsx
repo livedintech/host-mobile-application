@@ -10,15 +10,79 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 // The reasons array provided in your previous context
+// const reasons = [
+//   {
+//     id: '1',
+//     title: "My place isn't available",
+//     value: 'DECLINE_REASON_HOST_DOUBLE',
+//     subreasons: [
+//       { value: 'DECLINE_REASON_HOST_EMERGENCY', label: 'I have an emergency' },
+//       { value: 'DECLINE_REASON_HOST_HOST_UNAVAILABLE', label: 'I cannot host on these dates anymore' },
+//       { value: 'DECLINE_REASON_HOST_DOUBLE_BOOKED', label: 'Another guest has already reserved these dates' },
+//     ],
+//   },
+//   {
+//     id: '2',
+//     title: 'I am looking for a different price or trip length',
+//     value: 'DECLINE_REASON_HOST_CHANGE',
+//     subreasons: [
+//       { value: 'DECLINE_REASON_HOST_RESERVATION_LENGTH', label: 'I want a different trip length.' },
+//       { value: 'DECLINE_REASON_HOST_DIFFERENT_PRICE', label: 'I want a different price' },
+//     ],
+//   },
+//   {
+//     id: '3',
+//     title: "I'm worried the guest will have an unauthorized party",
+//     value: 'DECLINE_REASON_HOST_UNAUTHORIZED_PARTY',
+//     subreasons: [
+//       { value: 'DECLINE_REASON_HOST_PARTY_REVIEWS', label: 'Guests have negative reviews that indicate party ban violations' },
+//       { value: 'DECLINE_REASON_HOST_PARTY_INDICATION', label: 'Guests indicated they are going to host a party' },
+//     ],
+//   },
+//   {
+//     id: '4',
+//     title: 'Guest behavior is not good',
+//     value: 'DECLINE_REASON_HOST_BEHAVIOR',
+//     subreasons: [
+//       { value: 'DECLINE_REASON_HOST_BEHAVIOR_REVIEWS', label: 'Guests have negative reviews indicating broken house rules' },
+//       { value: 'DECLINE_REASON_HOST_BEHAVIOR_INDICATION', label: 'Guests indicated they will break house rules' },
+//       { value: 'DECLINE_REASON_HOST_BEHAVIOR_OTHER', label: "Host has other concerns about this guest's behavior" },
+//       { value: 'DECLINE_REASON_HOST_GUEST_PROFILE', label: 'Guests have bad reviews or insufficient profile info' },
+//     ],
+//   },
+//   {
+//     id: '5',
+//     title: 'The guest wants to cancel',
+//     value: 'DECLINE_REASON_HOST_ASKED',
+//     subreasons: [],
+//   },
+//   {
+//     id: '6',
+//     title: 'Other reasons',
+//     value: 'DECLINE_REASON_HOST_OTHER',
+//     subreasons: [],
+//   },
+// ];
+
+
 const reasons = [
   {
     id: '1',
     title: "My place isn't available",
     value: 'DECLINE_REASON_HOST_DOUBLE',
     subreasons: [
-      { value: 'DECLINE_REASON_HOST_EMERGENCY', label: 'I have an emergency' },
-      { value: 'DECLINE_REASON_HOST_HOST_UNAVAILABLE', label: 'I cannot host on these dates anymore' },
-      { value: 'DECLINE_REASON_HOST_DOUBLE_BOOKED', label: 'Another guest has already reserved these dates' },
+      {
+        value: 'DECLINE_REASON_HOST_EMERGENCY',
+        label: 'I have an emergency',
+      },
+      {
+        value: 'DECLINE_REASON_HOST_HOST_UNAVAILABLE',
+        label: 'I cannot host on these dates anymore',
+      },
+      {
+        value: 'DECLINE_REASON_HOST_DOUBLE_BOOKED',
+        label: 'Another guest is already coming on these dates',
+      },
     ],
   },
   {
@@ -26,8 +90,14 @@ const reasons = [
     title: 'I am looking for a different price or trip length',
     value: 'DECLINE_REASON_HOST_CHANGE',
     subreasons: [
-      { value: 'DECLINE_REASON_HOST_RESERVATION_LENGTH', label: 'I want a different trip length.' },
-      { value: 'DECLINE_REASON_HOST_DIFFERENT_PRICE', label: 'I want a different price' },
+      {
+        value: 'DECLINE_REASON_HOST_RESERVATION_LENGTH',
+        label: 'I want a different trip length.',
+      },
+      {
+        value: 'DECLINE_REASON_HOST_DIFFERENT_PRICE',
+        label: 'I want a different price',
+      },
     ],
   },
   {
@@ -35,29 +105,26 @@ const reasons = [
     title: "I'm worried the guest will have an unauthorized party",
     value: 'DECLINE_REASON_HOST_UNAUTHORIZED_PARTY',
     subreasons: [
-      { value: 'DECLINE_REASON_HOST_PARTY_REVIEWS', label: 'Guests have negative reviews that indicate party ban violations' },
-      { value: 'DECLINE_REASON_HOST_PARTY_INDICATION', label: 'Guests indicated they are going to host a party' },
+      {
+        value: 'DECLINE_REASON_HOST_PARTY_REVIEWS',
+        label:
+          "The guest has negative reviews indicating they've thrown an unauthorized party in the past",
+      },
+      {
+        value: 'DECLINE_REASON_HOST_PARTY_INDICATION',
+        label:
+          "The guest has indicated they're going to throw a party in our message thread",
+      },
     ],
   },
   {
     id: '4',
-    title: 'Guest behavior is not good',
-    value: 'DECLINE_REASON_HOST_BEHAVIOR',
-    subreasons: [
-      { value: 'DECLINE_REASON_HOST_BEHAVIOR_REVIEWS', label: 'Guests have negative reviews indicating broken house rules' },
-      { value: 'DECLINE_REASON_HOST_BEHAVIOR_INDICATION', label: 'Guests indicated they will break house rules' },
-      { value: 'DECLINE_REASON_HOST_BEHAVIOR_OTHER', label: "Host has other concerns about this guest's behavior" },
-      { value: 'DECLINE_REASON_HOST_GUEST_PROFILE', label: 'Guests have bad reviews or insufficient profile info' },
-    ],
-  },
-  {
-    id: '5',
     title: 'The guest wants to cancel',
     value: 'DECLINE_REASON_HOST_ASKED',
     subreasons: [],
   },
   {
-    id: '6',
+    id: '5',
     title: 'Other reasons',
     value: 'DECLINE_REASON_HOST_OTHER',
     subreasons: [],

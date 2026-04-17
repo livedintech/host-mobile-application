@@ -163,12 +163,12 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: Metrics.generatedFontSize(14),
     color: '#7B8D88', // Matches calendar price color
-    fontWeight: '600',
+    fontWeight: '400',
   },
   selectedTextStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: '#1A332C', // Deep forest color for contrast
-    fontWeight: '600',
+    color: '#000000', // Deep forest color for contrast
+    fontWeight: '400',
   },
   itemTextStyle: {
     fontSize: Metrics.generatedFontSize(14),

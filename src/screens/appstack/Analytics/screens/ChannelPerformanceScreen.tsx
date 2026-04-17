@@ -14,6 +14,8 @@ import AnalyticsChart from '../components/AnalyticsChart';
 
 const BG_IMAGE = require('@/assets/img/background/channelPerformanceBG.png');
 
+
+
 const ChannelPerformanceScreen = () => {
   const [activeTab, setActiveTab] = useState('reservation');
 
@@ -53,18 +55,34 @@ const ChannelPerformanceScreen = () => {
   const maxVal = values.length > 0 ? Math.max(...values) : 1;
   const safeMaxVal = maxVal <= 0 ? 1 : maxVal;
 
-  const chartData = rawList.map((item: any) => {
+const chartData = rawList.map((item: any) => {
     let displayValue = 0;
     if (activeTab === 'reservation') displayValue = item?.reservations || 0;
     else if (activeTab === 'revenue') displayValue = item?.revenue || 0;
     else if (activeTab === 'nights') displayValue = item?.nights || 0;
 
+    // 1. Handle the Label (BookingCom)
+    const rawChannel = item?.channel?.toLowerCase() || '';
+    const displayLabel = rawChannel === 'bookingcom' 
+      ? 'BookingCom' 
+      : rawChannel.charAt(0).toUpperCase() + rawChannel.slice(1);
+
+    // 2. Handle the Color (#16AEDD for BookingCom)
+    let barColor = '#00A78E'; // Default green
+    if (rawChannel === 'airbnb') {
+      barColor = '#FF0000';
+    } else if (rawChannel === 'gathern') {
+      barColor = '#CE92F3';
+    } else if (rawChannel === 'bookingcom') {
+      barColor = '#16AEDD'; // Your new blue color
+    }
+
     return {
       value: displayValue,
       count: item?.reservations || 0,
-      label: item?.channel ? item.channel.charAt(0).toUpperCase() + item.channel.slice(1) : 'Unknown',
+      label: displayLabel,
       percentage: (displayValue / safeMaxVal) * 100,
-      color: item?.channel === 'airbnb' ? '#DF3B3E' : item?.channel === 'gathern' ? '#A85CDA' : '#00A78E',
+      color: barColor,
     };
   });
 

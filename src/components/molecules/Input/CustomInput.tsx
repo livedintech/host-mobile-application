@@ -66,7 +66,7 @@ const CustomInput = ({
   // Matching your Dropdown styling exactly
   const GLASS_BASE = 'rgba(255, 255, 255, 0.25)';
   const GLASS_RIM = 'rgba(255, 255, 255, 0.6)';
-  const FOCUS_COLOR = Colors.PINE_FOREST || '#1A332C';
+  const FOCUS_COLOR = Colors.PINE_FOREST || '#000000';
 
   const handleFocus = () => {
     Animated.timing(animation, {
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#1A332C', // Matches dropdown selectedTextStyle
+    color: '#000000', // Matches dropdown selectedTextStyle
     fontSize: Metrics.generatedFontSize(14),
     fontWeight: '600',
     paddingVertical: 0,

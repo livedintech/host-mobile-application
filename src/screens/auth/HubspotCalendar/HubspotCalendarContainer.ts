@@ -92,7 +92,7 @@ export default function useHubspotCalendarContainer(
     marked[selectedDate] = {
       ...marked[selectedDate],
       selected: true,
-      selectedColor: '#20957B',
+      selectedColor: '#09A389',
       selectedTextColor: '#fff',
     };
   }

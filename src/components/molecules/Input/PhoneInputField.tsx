@@ -36,7 +36,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
   // Glass Constants matching Dropdown/Input
   const GLASS_BASE = 'rgba(255, 255, 255, 0.25)';
   const GLASS_RIM = 'rgba(255, 255, 255, 0.6)';
-  const TEXT_COLOR = '#1A332C'; // Deep forest for contrast
+  const TEXT_COLOR = '#000000'; // Deep forest for contrast
 
   const handleFocus = () => {
     if (disabled) return;
@@ -147,7 +147,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
               onChangeText={onChange}
               value={value}
               editable={!disabled}
-              placeholder="50 123 4567"
+              placeholder="050 111111"
               placeholderTextColor={'#7B8D88'}
               keyboardType="phone-pad"
             />
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
-    color: '#1A332C',
+    color: '#000000',
     fontSize: Metrics.generatedFontSize(14),
     fontWeight: '600',
     paddingVertical: 0,

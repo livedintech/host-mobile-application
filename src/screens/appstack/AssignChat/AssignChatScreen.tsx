@@ -19,6 +19,7 @@ const AssignChatScreen = () => {
   const params = route?.params;
   const assignedIds = params?.assigned_to_ids || [];
   const listing_id = params?.listing_id;
+  const propertyName = params?.propertyName;
   const guestName = params?.guestName || 'Oasis Tower, Al Riyadh';
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -111,7 +112,15 @@ const AssignChatScreen = () => {
               <Svgicons path="arrowLeftIcon" size={26} />
             </Pressable>
           </GradientBorder>
-          {/* <View style={styles.menuIconPlaceholder}>
+   {/* <AppText
+            text={guestName}
+            fontSize={16}
+            color={Colors.BLACK}
+            mt={4}
+            numberOfLines={2}
+          />
+          
+          <View style={styles.menuIconPlaceholder}>
             <Svgicons path="menu" size={28} color={Colors.CHARCOAL} />
           </View> */}
         </View>
@@ -121,14 +130,16 @@ const AssignChatScreen = () => {
           <AppText
             text="Assign chat to users"
             fontSize={28}
-            type="Bold"
+            type="Medium"
             color={Colors.BLACK}
+            mb={20}
           />
           <AppText
-            text={guestName}
+            text={propertyName}
             fontSize={16}
             color={Colors.BLACK}
             mt={4}
+            numberOfLines={2}
           />
         </View>
 
@@ -202,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 37,
   },
   arrowCircleInner: {
     width: 35,
@@ -220,7 +231,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     paddingHorizontal: 25,
-    marginBottom: 30,
+    marginBottom: 40,
   },
   listContainer: {
     paddingHorizontal: 20,

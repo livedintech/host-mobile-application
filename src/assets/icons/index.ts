@@ -239,6 +239,7 @@ import reservationlivedin from './reservations/reservationlivedin.svg';
 import reservationfilter from './reservations/reservationfilter.svg';
 import threeDots from './threeDots.svg';
 import bookingCom from './bookingCom.svg'
+import bookingcom from './bookingCom.svg'
 import cross from './cross.svg'
 import bell from './bell.svg'
 import houseIllustration from './houseIllustration.svg'
@@ -270,6 +271,12 @@ import CalendarBlack from './CalendarBlack.svg';
 import bookingComWhite from './bookingComWhite.svg';
 import chatBookingCom from './chatBookingCom.svg';
 import chatGathern from './chatGathern.svg';
+import airbnbWhite from './airbnbWhite.svg';
+import gathernWhite from './gathernWhite.svg';
+import userIcon2 from './userIcon2.svg';
+import homeIcon2 from './homeIcon2.svg';
+import paymentIconNew2 from './paymentIconNew2.svg';
+import checkedCheckbox from './checkedCheckbox.svg';
 
 export const icons = {
   iconRoundedCross,
@@ -294,6 +301,7 @@ export const icons = {
   bell,
   cross,
   bookingCom,
+  bookingcom,
   sendWhite,
   reservationtitle,
   reservationaddress,
@@ -544,5 +552,11 @@ export const icons = {
   CalendarBlack,
   bookingComWhite,
   chatBookingCom,
-  chatGathern
+  chatGathern,
+  airbnbWhite,
+  gathernWhite,
+  userIcon2,
+  homeIcon2,
+  paymentIconNew2,
+  checkedCheckbox
 };

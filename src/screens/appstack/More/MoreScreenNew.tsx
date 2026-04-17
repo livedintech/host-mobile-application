@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // Added useState
 import {
   StyleSheet,
   ScrollView,
@@ -6,6 +6,7 @@ import {
   ImageBackground,
   Image,
   Pressable,
+  Modal, // Added Modal
 } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import Metrics from '@/utility/Metrics';
@@ -15,10 +16,23 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import MenuSection from '@/components/molecules/MenuSection/MenuSection';
 import { useAuthStore } from '@/store/useAuthStore';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-
+import { Colors } from '@/theme/colors';
 
 const MoreScreen = () => {
   const { user, logout } = useAuthStore();
+  const [isModalVisible, setModalVisible] = useState(false); // Modal state
+
+  const toggleModal = () => setModalVisible(!isModalVisible);
+
+  const handleLogout = () => {
+    toggleModal();
+    logout();
+  };
+
+  const displayPhone = user?.phone_with_code && user?.phone 
+    ? `+${user.phone_with_code} ${user.phone}` 
+    : (user?.phone_with_code || user?.phone || '******');
+
   return (
     <ImageBackground
       source={require('@/assets/img/background/moreScreenBG.png')}
@@ -29,139 +43,50 @@ const MoreScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Profile Header */}
-        <Pressable
-          onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}
-        >
+        <Pressable onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}>
           <GlassCard width="auto" style={styles.profileCard}>
             <View style={styles.profileInfo}>
               {user?.profile_picture ? (
-                <Image
-                  source={{ uri: user.profile_picture }}
-                  style={styles.avatar}
-                />
+                <Image source={{ uri: user.profile_picture }} style={styles.avatar} />
               ) : (
                 <Svgicons path="imageUploadIcon" size={25} />
               )}
               <View>
-                <AppText
-                  text={user?.name ?? 'User Name'}
-                  type="Bold"
-                  fontSize={16}
-                />
-                <AppText
-                  text={user?.phone ?? 'No Phone'}
-                  fontSize={12}
-                  color="grey"
-                />
+                <AppText text={user?.name ?? 'User Name'} type="Bold" fontSize={16} />
+                <AppText text={displayPhone} fontSize={12} color="grey" />
               </View>
             </View>
           </GlassCard>
         </Pressable>
 
-        {/* Account Section */}
+        {/* Sections (Account & Analytics) */}
         <MenuSection
           title="Account"
           headerIcon="userOutline"
           items={[
-            {
-              title: 'Listing Management',
-              icon: 'direct',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-              },
-            },
-            {
-              title: 'Booking Platform Management',
-              icon: 'bookingIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
-              },
-            },
-            {
-              title: 'User Management',
-              icon: 'userManagementIconNew',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
-              },
-            },
-            {
-              title: 'Review Management',
-              icon: 'reviewManagementIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT);
-              },
-            },
-            {
-              title: 'Smart Lock Management',
-              icon: 'lockIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS);
-              },
-            },
+            { title: 'Listing Management', icon: 'direct', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS) },
+            { title: 'Booking Platform Management', icon: 'bookingIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING) },
+            { title: 'User Management', icon: 'userManagementIconNew', onPress: () => navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT) },
+            { title: 'Review Management', icon: 'reviewManagementIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT) },
+            { title: 'Smart Lock Management', icon: 'lockIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS) },
           ]}
         />
 
-        {/* Analytics Section */}
         <MenuSection
           title="Analytics"
           headerIcon="analyticsOutline"
           items={[
-            {
-              title: 'Statistics',
-              icon: 'statsIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN),
-            },
-            {
-              title: 'Listing Performance',
-              icon: 'performanceIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE),
-            },
-            {
-              title: 'Channel Performance',
-              icon: 'performanceIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE),
-            },
+            { title: 'Statistics', icon: 'statsIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN) },
+            { title: 'Listing Performance', icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE) },
+            { title: 'Channel Performance', icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE) },
           ]}
         />
 
-        {/* Billing Section */}
-        <MenuSection
-          title="Billing"
-          headerIcon="cardOutline"
-          items={[
-            {
-              title: 'Payment Methods',
-              icon: 'paymentIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST);
-              },
-            },
-            {
-              title: 'Subscription',
-              icon: 'subscriptionIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY);
-              },
-            },
-            {
-              title: 'Transaction History',
-              icon: 'transactionIcon',
-              onPress: () => {
-                navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY);
-              },
-            },
-          ]}
-        />
-
-        {/* Logout at the bottom */}
-        <Pressable onPress={() => logout()}>
+        {/* Logout Trigger */}
+        <Pressable onPress={toggleModal}>
           <GlassCard width="100%" style={styles.logoutCard}>
             <View style={styles.logoutContent}>
               <AppText text="Logout" type="Medium" fontSize={16} />
-
               <GlassCard width={36} style={styles.logoutIconGlass}>
                 <Svgicons path="logoutIcon" size={18} />
               </GlassCard>
@@ -169,6 +94,42 @@ const MoreScreen = () => {
           </GlassCard>
         </Pressable>
       </ScrollView>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        animationType="fade"
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <AppText 
+              text="Are you sure you want to logout?" 
+              type="Bold" 
+              fontSize={18} 
+              style={styles.modalTitle} 
+            />
+            
+            <AppText 
+              text="You will need to login again to access your account." 
+              fontSize={14} 
+              color="grey"
+              style={styles.modalSubTitle}
+            />
+
+            <View style={styles.modalButtonContainer}>
+              <Pressable style={styles.cancelButton} onPress={toggleModal}>
+                <AppText text="Cancel" type="Medium" fontSize={16} color="black" />
+              </Pressable>
+
+              <Pressable style={styles.confirmButton} onPress={handleLogout}>
+                <AppText text="Confirm" type="Medium" fontSize={16} color="white" />
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
@@ -180,6 +141,7 @@ const styles = StyleSheet.create({
     paddingTop: Metrics.verticalScale(20),
     paddingBottom: Metrics.verticalScale(100),
   },
+  // ... (existing styles remain the same)
   profileCard: {
     alignSelf: 'flex-start',
     padding: Metrics.scale(8),
@@ -188,16 +150,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D933',
     marginBottom: Metrics.verticalScale(30),
   },
-  profileInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-  },
+  profileInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  avatar: { width: 45, height: 45, borderRadius: 22.5 },
   logoutCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 24,
@@ -205,11 +159,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.scale(16),
     marginBottom: Metrics.verticalScale(20),
   },
-  logoutContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+  logoutContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   logoutIconGlass: {
     height: 36,
     borderRadius: 18,
@@ -219,13 +169,52 @@ const styles = StyleSheet.create({
     padding: 0,
     marginBottom: 0,
   },
-  iconCircleSmall: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    alignItems: 'center',
+
+  // NEW MODAL STYLES
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '85%',
+    backgroundColor: '#F2F2F2', // Light grey/white like the screenshot
+    borderRadius: 35,
+    padding: Metrics.scale(25),
+    alignItems: 'center',
+  },
+  modalTitle: {
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#000',
+  },
+  modalSubTitle: {
+    textAlign: 'center',
+    marginBottom: 25,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    gap: 15,
+    width: '100%',
+  },
+  cancelButton: {
+    flex: 1,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#D1D1D1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  confirmButton: {
+    flex: 1,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.PRIMARY_TEAL, // The teal/green color from your screenshot
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

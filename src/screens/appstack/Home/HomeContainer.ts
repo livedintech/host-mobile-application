@@ -77,7 +77,7 @@ export default function useHomeContainer() {
 
       if (count > 0) {
         return {
-          title: `${platform} Connected`,
+          title: `Connect ${platform} `,
           desc: `Import listings from ${platform}`,
         };
       }

@@ -90,7 +90,7 @@ const SavedRepliesScreen = () => {
 
         {!!data?.length && (
           <View style={styles.topTextSection}>
-            <AppText text="Saved Replies" fontSize={28} type="Bold" color={Colors.BLACK} mb={12} />
+            <AppText text="Saved Replies" fontSize={28} type="Bold" color={Colors.BLACK} mb={20} />
             <AppText
               text="Create saved replies to reuse common messages. Use shortcuts in chats to quickly insert them."
               fontSize={14}

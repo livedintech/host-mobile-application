@@ -157,7 +157,14 @@ const ChecklistDetail = ({ route }: any) => {
     ({ item }: { item: any }) => {
       const isLocked = item.images && item.images.length > 0;
       return (
-        <GlassCard width="100%" style={styles.taskCard}>
+   <GlassCard 
+        width="100%" 
+        style={[
+          styles.taskCard, 
+          // ✅ Add this line to change background color when checked
+          item.isChecked && { backgroundColor: Colors.WHITE } 
+        ]}
+      >
           <View style={styles.taskRow}>
             <GlassCard width={46} style={styles.checkboxGlassWrapper}>
               <Checkbox
