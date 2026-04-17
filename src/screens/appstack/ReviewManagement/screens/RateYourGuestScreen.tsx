@@ -235,8 +235,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         // 1. Show Success Toast
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Review submitted successfully! ✅',
+          text1: 'Review submitted successfully!',
           visibilityTime: 3000,
         });
 
@@ -253,8 +252,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         // Handing potential API errors
         Toast.show({
           type: 'error',
-          text1: 'Submission Failed',
-          text2: error?.message || 'Something went wrong. Please try again.',
+          text1: error?.message || 'Something went wrong. Please try again.',
         });
       },
     });

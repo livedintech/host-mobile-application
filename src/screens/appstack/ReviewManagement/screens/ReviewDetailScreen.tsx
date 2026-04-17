@@ -823,9 +823,9 @@ const ReviewDetailScreen = ({ route }: any) => {
                   backgroundColor={
                     isCheckedOut
                       ? 'rgba(255, 255, 255, 0.6)'
-                      : Colors.DISABLED_BG
+                      : ''
                   }
-                  color={isCheckedOut ? Colors.BLACK : Colors.DISABLED_GREY}
+                  color={isCheckedOut ? Colors.BLACK : ''}
                   style={[
                     styles.rateGuestBtn,
                     {
@@ -834,22 +834,22 @@ const ReviewDetailScreen = ({ route }: any) => {
                         ? '#E0E0E0'
                         : Colors.SMOOTH_GREY,
                     },
-                    !isCheckedOut && styles.disabledBtn,
+                    // !isCheckedOut && styles.disabledBtn,
                   ]}
                   borderRadius={100}
                 />
                 {/* {!bookingData?.guest?.rating && ( */}
                 <AppButton
-                  disabled={!isCheckedOut}
+                  // disabled={!isCheckedOut}
                   fontSize={14}
                   title="Rate Your Guest"
                   backgroundColor={
-                    isCheckedOut ? Colors.PRIMARY_TEAL : Colors.DISABLED_BG
+                    isCheckedOut ? Colors.PRIMARY_TEAL : ''
                   }
-                  color={isCheckedOut ? Colors.WHITE : Colors.DISABLED_GREY}
+                  color={isCheckedOut ? Colors.WHITE : ''}
                   style={[
                     styles.rateGuestBtn,
-                    !isCheckedOut && styles.disabledBtn,
+                    // !isCheckedOut && styles.disabledBtn,
                   ]}
                   borderRadius={100}
                   onPress={() =>

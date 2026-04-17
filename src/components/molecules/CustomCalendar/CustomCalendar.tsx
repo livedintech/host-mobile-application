@@ -168,14 +168,14 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                     color={iconColor}
                   />
                 )}
-                <AppText
+                {/* <AppText
                   text={displayName}
                   style={[
                     styles.guestTextInside,
                     { color: isMid ? themeColor : '#FFF' } as TextStyle,
                   ]}
                   numberOfLines={1}
-                />
+                /> */}
               </View>
             </View>
           )}
@@ -183,7 +183,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
           <View
             style={[
               styles.textGroup,
-              showLabel && isActive && { marginTop: vs(12) },
+              showLabel && isActive && { marginTop: vs(0) },
             ]}
           >
             <Text
@@ -191,6 +191,10 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                 styles.dayNumber,
                 {
                   color: isActive ? (isMid ? '#000000' : '#FFF') : '#000000',
+                  // Increase font size conditionally
+                  fontSize: isActive ? 20 : 14,
+                  // Optional: Add Bold to make it pop more
+                  fontWeight: isActive ? '600' : '400',
                 } as TextStyle,
               ]}
             >
@@ -245,7 +249,10 @@ const CustomCalendar = ({
                 paddingRight: 0,
                 backgroundColor: 'transparent',
               },
-              monthView: { backgroundColor: 'transparent', marginHorizontal: 0, },
+              monthView: {
+                backgroundColor: 'transparent',
+                marginHorizontal: 0,
+              },
             },
             'stylesheet.calendar.header': {
               header: {
@@ -289,7 +296,7 @@ const styles = StyleSheet.create({
     height: vs(45),
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 0, 
+    marginHorizontal: 0,
     paddingHorizontal: 0,
   },
   selectionBase: {
@@ -312,7 +319,7 @@ const styles = StyleSheet.create({
   labelPositioner: {
     position: 'absolute',
     top: vs(7),
-    left:vs(10),
+    left: vs(10),
     zIndex: 20,
     width: '100%',
   },

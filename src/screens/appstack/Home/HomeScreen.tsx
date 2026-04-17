@@ -366,7 +366,7 @@ const HomeScreen = ({ navigation }: any) => {
     icon: 'direct',
     title: 'Booking Requests',
     subtitle: `${UserPermission?.dashboard_counts?.reservation_requests} Pending Requests`,
-    route: NavigationRoutes.APP_STACK.BOOKING_REQUESTS,
+    route: NavigationRoutes.APP_STACK.LISTING,
   },
   {
     id: 6,
