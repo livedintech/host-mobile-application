@@ -197,6 +197,8 @@ const EditTask = ({ route }: any) => {
                 <AppText text={task?.description || 'No instructions provided.'} fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
               )}
 
+              <AppText text="Door Code" fontSize={14} type="Bold" mb={4} />
+              <AppText text={task?.key_code } fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
               <AppText text="Property" fontSize={14} type="Bold" mb={4} />
               <AppText text={task?.listing_title || 'Address not available'} fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
 

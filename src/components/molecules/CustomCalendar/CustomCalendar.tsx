@@ -168,14 +168,14 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                     color={iconColor}
                   />
                 )}
-                {/* <AppText
+                <AppText
                   text={displayName}
                   style={[
                     styles.guestTextInside,
                     { color: isMid ? themeColor : '#FFF' } as TextStyle,
                   ]}
                   numberOfLines={1}
-                /> */}
+                />
               </View>
             </View>
           )}
