@@ -103,7 +103,7 @@ export default function useBookingDetailsContainer() {
       Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
   });
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
+  // ---- Handlers ----
   const onNext = (data: BookingDetailsFormValues) => {
     updateListing({
       instant_booking: data.booking_type === 'Instant',
@@ -148,4 +148,5 @@ export default function useBookingDetailsContainer() {
     isLoading: isCreating || isUpdating,
     isEdit
   };
+
 }

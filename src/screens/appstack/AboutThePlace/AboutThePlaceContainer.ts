@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { goBack, navigate } from '@/services/navigationService';
+import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';

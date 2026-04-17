@@ -37,7 +37,6 @@ const AddPropertyGuidelinesScreen = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
               <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
