@@ -384,7 +384,7 @@ const HomeScreen = ({ navigation }: any) => {
     >
       <View style={styles.container}>
         {/* Banner */}
-        {showBanner && (
+        {/* {showBanner && (
           <View style={styles.banner}>
             <Text style={styles.bannerText}>
               Trial ends in <Text style={styles.bannerBold}>8 days</Text>{' '}
@@ -402,7 +402,7 @@ const HomeScreen = ({ navigation }: any) => {
               />
             </ButtonView>
           </View>
-        )}
+        )} */}
 
         {/* Header */}
         <View style={styles.header}>
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  bannerText: { color: 'white', fontSize: 18 },
+  bannerText: { color: 'white', fontSize: 18, },
   bannerBold: { fontWeight: 'bold' },
   bannerLink: { textDecorationLine: 'underline' },
   closeIcon: {

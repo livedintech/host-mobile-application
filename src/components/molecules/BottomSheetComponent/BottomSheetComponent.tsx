@@ -1,11 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Modal,
-} from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableWithoutFeedback, Modal } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -19,7 +13,7 @@ import { s, vs, ms } from 'react-native-size-matters';
 import Metrics from '@/utility/Metrics';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const DEFAULT_SHEET_HEIGHT = SCREEN_HEIGHT * 0.75;
+const DEFAULT_SHEET_HEIGHT = SCREEN_HEIGHT * 0.85;
 
 interface BottomSheetProps {
   isVisible: boolean;
@@ -32,7 +26,7 @@ const BottomSheetComponent: React.FC<BottomSheetProps> = ({
   isVisible,
   onClose,
   children,
-  customHeight,
+  customHeight
 }) => {
   const finalHeight = customHeight || DEFAULT_SHEET_HEIGHT;
   const topOffset = SCREEN_HEIGHT - finalHeight;
@@ -50,13 +44,9 @@ const BottomSheetComponent: React.FC<BottomSheetProps> = ({
         easing: Easing.out(Easing.cubic),
       });
     } else {
-      translateY.value = withTiming(
-        SCREEN_HEIGHT,
-        { duration: 300 },
-        finished => {
-          if (finished) runOnJS(setShouldRender)(false);
-        },
-      );
+      translateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 }, (finished) => {
+        if (finished) runOnJS(setShouldRender)(false);
+      });
     }
   }, [isVisible, topOffset]);
 
@@ -73,19 +63,27 @@ const BottomSheetComponent: React.FC<BottomSheetProps> = ({
   return (
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.absoluteOverlay}>
+        
         <TouchableWithoutFeedback onPress={onClose}>
           <Animated.View style={[styles.backdrop, backdropStyle]} />
         </TouchableWithoutFeedback>
 
         <Animated.View
-          style={[styles.sheet, animatedStyle, { height: finalHeight }]}
+          style={[
+            styles.sheet,
+            animatedStyle,
+            { height: finalHeight }
+          ]}
         >
           <View style={styles.handleContainer}>
             <View style={styles.handle} />
           </View>
 
-          <View style={styles.content}>{children}</View>
+          <View style={styles.content}>
+            {children}
+          </View>
         </Animated.View>
+
       </View>
     </Modal>
   );
@@ -96,23 +94,25 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: 9999,
     justifyContent: 'flex-end',
-    flex: 1,
+    flex:1
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-sheet: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)', // Increased opacity for better visibility
+  sheet: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     width: '100%',
     borderTopLeftRadius: ms(40),
     borderTopRightRadius: ms(40),
-    // REMOVE flex: 1 here so it doesn't try to fill the screen
-    // flex: 1, 
-    
-    // REDUCE this padding; 100 is very large and adds "empty" height
-    paddingBottom: Metrics.verticalScale(20), 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 10,
+    overflow: 'visible',
+    flex:1,
+    paddingBottom: Metrics.verticalScale(100)
   },
   handleContainer: {
     alignItems: 'center',

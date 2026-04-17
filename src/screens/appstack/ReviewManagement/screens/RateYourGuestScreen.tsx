@@ -633,12 +633,31 @@ const styles = StyleSheet.create({
   starRow: { flexDirection: 'row', marginTop: 10 },
   tagSection: { marginTop: 10 },
   pillContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12 },
-  activePill: {
-    borderWidth: 1.5,
-    borderColor: Colors.BOTTLE_GREEN,
-    backgroundColor: 'rgba(29, 187, 159, 0.05)',
+pill: {
+  paddingHorizontal: 16,
+  paddingVertical: 10,
+  borderRadius: 12,
+  backgroundColor: Colors.WHITE, // Required for shadow to be visible
+  borderWidth: 0,                // Ensure no default border
+  borderColor: 'transparent',
+},
+activePill: {
+  // backgroundColor: 'rgba(29, 187, 159, 0.1)', // Light teal tint when selected
+  borderWidth: 0,                             // Explicitly remove border
+  borderColor: 'transparent',
+
+  // --- iOS Shadow (box-shadow: 0px 4px 8.1px 0px #00000021) ---
+  shadowColor: '#000000',
+  shadowOffset: {
+    width: 0,
+    height: 4,
   },
+  shadowOpacity: 0.13, // 0x21 is ~13% opacity
+  shadowRadius: 8.1,
+
+  // --- Android Shadow ---
+  elevation: 5, 
+},
   recommendRow: { flexDirection: 'row', gap: 15 },
   choiceGradient: { flex: 1 },
   choiceInner: {
