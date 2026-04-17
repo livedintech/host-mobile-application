@@ -30,7 +30,7 @@ const AnalyticContainers = () => {
 
   const channelOptions = [
     { label: 'Airbnb', value: 'airbnb' },
-    // { label: 'Bcom', value: 'bcom' },
+    { label: 'Bcom', value: 'bcom' },
     { label: 'Gathern', value: 'gathern' },
   ];
 

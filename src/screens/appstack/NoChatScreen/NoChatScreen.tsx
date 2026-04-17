@@ -48,7 +48,7 @@ const NoChatScreen = ({
         />
       )}
 
-      {showFirstButton && (
+      {/* {showFirstButton && (
 
         <AppButton
           title="Add New Listing"
@@ -70,7 +70,7 @@ const NoChatScreen = ({
           mx={40}
           type="SemiBold"
         />
-      )}
+      )} */}
     </View>
   );
 };

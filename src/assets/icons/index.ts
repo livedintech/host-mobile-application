@@ -277,6 +277,8 @@ import userIcon2 from './userIcon2.svg';
 import homeIcon2 from './homeIcon2.svg';
 import paymentIconNew2 from './paymentIconNew2.svg';
 import checkedCheckbox from './checkedCheckbox.svg';
+import trendUp from './trendUp.svg';
+import trendDown from './trendDown.svg';
 
 export const icons = {
   iconRoundedCross,
@@ -558,5 +560,7 @@ export const icons = {
   userIcon2,
   homeIcon2,
   paymentIconNew2,
-  checkedCheckbox
+  checkedCheckbox,
+  trendUp,
+  trendDown
 };

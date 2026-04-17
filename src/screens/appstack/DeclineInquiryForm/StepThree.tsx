@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 
@@ -19,11 +25,16 @@ const StepThree = () => {
   const [loading, setLoading] = useState(false);
 
   // Initialize React Hook Form
-  const { control, handleSubmit, watch, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       msgAirbnb: '',
       msgGuest: '',
-    }
+    },
   });
 
   // Watch values for character count validation (optional UI display)
@@ -42,14 +53,14 @@ const StepThree = () => {
       };
 
       await submitBookingRequestApi(payload);
-      
+
       Toast.show({ type: 'success', text1: 'Trip Declined Successfully' });
-      navigation.popToTop(); 
+      navigation.popToTop();
     } catch (error: any) {
-      Toast.show({ 
-        type: 'error', 
-        text1: 'Error declining trip', 
-        text2: error?.message || 'Something went wrong' 
+      Toast.show({
+        type: 'error',
+        text1: 'Error declining trip',
+        text2: error?.message || 'Something went wrong',
       });
     } finally {
       setLoading(false);
@@ -58,36 +69,45 @@ const StepThree = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'android' ? 120 : 0} // Adjust 60 as needed
         style={{ flex: 1 }}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Section 1: Private message to Airbnb */}
-          <AppText text="What else would you like us to know?*" fontSize={28} type="Bold" mb={4} />
-          
+          <AppText
+            text="What else would you like us to know?*"
+            fontSize={28}
+            type="Bold"
+            mb={4}
+          />
+
           <TextareaField
             name="msgAirbnb"
             control={control as any}
             errors={errors}
             multiline
             placeholder="I'm declining this reservation because..."
-            rules={{ 
+            rules={{
               required: 'This field is required',
-              minLength: { value: 20, message: 'Minimum 20 characters required' }
+              minLength: {
+                value: 20,
+                message: 'Minimum 20 characters required',
+              },
             }}
           />
 
           {/* Section 2: Public message to Guest */}
-          <AppText 
-            text={`Let ${guestName || 'Mohammed'} know why you're unable to host`} 
-            fontSize={28} 
-            type="Bold" 
-            mt={24} 
-            mb={4} 
+          <AppText
+            text={`Let ${guestName} know why you're unable to host`}
+            fontSize={28}
+            type="Bold"
+            mt={24}
+            mb={4}
           />
 
           <TextareaField
@@ -96,26 +116,29 @@ const StepThree = () => {
             errors={errors}
             multiline
             placeholder="I'm declining this reservation because..."
-            rules={{ 
+            rules={{
               required: 'This field is required',
-              minLength: { value: 20, message: 'Minimum 20 characters required' }
+              minLength: {
+                value: 20,
+                message: 'Minimum 20 characters required',
+              },
             }}
           />
         </ScrollView>
 
         {/* Footer: Fixed at the bottom */}
         <View style={styles.footer}>
-          <AppButton 
-            title="Cancel" 
-            variant="secondary" 
-            onPress={() => navigation.goBack()} 
-            mb={12} 
+          <AppButton
+            title="Cancel"
+            variant="secondary"
+            onPress={() => navigation.goBack()}
+            mb={12}
           />
-          <AppButton 
-            title="Send and decline trip" 
+          <AppButton
+            title="Send and decline trip"
             loading={loading}
             backgroundColor="#21AA8F"
-            onPress={handleSubmit(onDeclineSubmit)} 
+            onPress={handleSubmit(onDeclineSubmit)}
           />
         </View>
       </KeyboardAvoidingView>
@@ -124,16 +147,16 @@ const StepThree = () => {
 };
 
 const styles = StyleSheet.create({
-  scrollContent: { 
-    paddingHorizontal: Metrics.scale(24), 
+  scrollContent: {
+    paddingHorizontal: Metrics.scale(24),
     paddingTop: Metrics.verticalScale(20),
     paddingBottom: Metrics.verticalScale(120), // Extra space for footer
   },
-  footer: { 
+  footer: {
     paddingHorizontal: Metrics.scale(24),
     paddingBottom: Metrics.verticalScale(Platform.OS === 'ios' ? 34 : 24),
     backgroundColor: 'transparent', // Keeps the BG image visible
-  }
+  },
 });
 
 export default StepThree;
