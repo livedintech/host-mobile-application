@@ -18,38 +18,58 @@ const ReviewManagementScreen = () => {
   const reviewsData = allReviews?.reviews || [];
 
   const renderItem = ({ item }: { item: ReviewItem }) => {
-    return(
-    
-    <ReviewCard
-      item={item}
-      hostRating={item.overall_score === 5 ? 5.0 : null} 
-      onPress={() => 
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { 
-          booking_id: item.booking_id, 
-          id: item.id 
-        })
-      }
-      onViewReview={() =>
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN, { id: item.id })
-      }
-      onTalkToGuest={() =>
-        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: item.thread_id })
-      }
-      onRateGuest={() =>
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN, { id: item.id,name: item.guest_name })
-      }
-      onRequestRating={() => console.log('Requesting Rating...')}
-    />
-    )};
+    return (
+      <ReviewCard
+        item={item}
+        hostRating={item.overall_score === 5 ? 5.0 : null}
+        onPress={() =>
+          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+            booking_id: item.booking_id,
+            id: item.id,
+          })
+        }
+        onViewReview={() =>
+          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN, {
+            id: item.id,
+          })
+        }
+        onTalkToGuest={() =>
+          navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+            conversation_id: item.thread_id,
+          })
+        }
+        onRateGuest={() =>
+          navigate(
+            NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
+            { id: item.id, name: item.guest_name },
+          )
+        }
+        onRequestRating={() =>
+          navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+            conversation_id: item.thread_id,
+          })
+        }
+      />
+    );
+  };
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        
         {!allReviewsLoading && reviewsData.length > 0 && (
           <View style={styles.header}>
-            <AppText text="Review" fontSize={32} type="Bold" color={Colors.BLACK} />
-            <AppText text="Management" fontSize={32} type="Bold" color={Colors.BLACK} />
+            <AppText
+              text="Review"
+              fontSize={32}
+              type="Bold"
+              color={Colors.BLACK}
+            />
+            <AppText
+              text="Management"
+              fontSize={32}
+              type="Bold"
+              color={Colors.BLACK}
+            />
           </View>
         )}
 
@@ -59,8 +79,10 @@ const ReviewManagementScreen = () => {
           </View>
         ) : reviewsData.length === 0 ? (
           <View style={styles.emptyWrapper}>
-            <NoReviewScreen 
-              onManageListing={() => navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)} 
+            <NoReviewScreen
+              onManageListing={() =>
+                navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)
+              }
             />
           </View>
         ) : (
@@ -70,7 +92,7 @@ const ReviewManagementScreen = () => {
             renderItem={renderItem}
             onRefresh={refreshReviews}
             contentContainerStyle={styles.listContent}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
           />
         )}
       </View>
@@ -79,8 +101,8 @@ const ReviewManagementScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? vs(60) : vs(30),

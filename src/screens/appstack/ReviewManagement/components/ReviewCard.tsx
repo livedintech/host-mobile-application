@@ -139,8 +139,8 @@ const ReviewCard = ({
                 title="Talk To Guest"
                 onPress={onTalkToGuest}
                 color={Colors.WHITE}
-                backgroundColor={Colors.BOTTLE_GREEN}
-                borderColor={Colors.BOTTLE_GREEN}
+                backgroundColor={Colors.PRIMARY_TEAL}
+                borderColor={Colors.PRIMARY_TEAL}
                 style={styles.primaryBtn}
               />
             </View>
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   primaryBtn: {
     flex: 1,
     height: 48,
-    backgroundColor: '#4DB6AC',
+    backgroundColor: Colors.PRIMARY_TEAL,
     borderRadius: 25,
     marginLeft: 10,
   },

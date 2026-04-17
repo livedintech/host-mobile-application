@@ -159,7 +159,7 @@ const StepOne = () => {
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <AppText text="Cancelling may lead to consequences" type="Bold" fontSize={24} mb={vs(10)} />
         <AppText 
-          text="In the next step, we'll ask why you're cancelling. If the reason isn't valid, a cancellation fee may apply. Frequent cancellations may affect your Superhost eligibility." 
+          text="In the next step, we'll ask why you're cancelling. If the reason isn't valid, a cancellation fee may apply. Frequent cancellations may affect your Superhost eligibility could lead to listing suspension." 
           fontSize={13} 
           lineHeight={18}
           color={Colors.DARK_CHARCOAL_OPACITY_74} 

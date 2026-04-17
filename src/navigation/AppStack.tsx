@@ -665,7 +665,7 @@ const AppStack = () => {
       />
       {/* NEW ANALYTIC SCREEN START */}
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ headerShown: false, }}
         name={NavigationRoutes.APP_STACK.STATISTICS_SCREEN}
         getComponent={() =>
           require('@/screens/appstack/Analytics/screens/StatisticsScreen')
