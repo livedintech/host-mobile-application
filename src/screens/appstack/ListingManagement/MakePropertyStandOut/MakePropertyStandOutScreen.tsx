@@ -22,7 +22,7 @@ const MakePropertyStandOutScreen = () => {
         {/* Header with Back Button */}
         <View style={styles.header}>
           <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtn}>
-            <Pressable onPress={() => goBack()}>
+            <Pressable style={styles.backBtn} onPress={() => goBack()}>
               <Svgicons path='arrowLeftIcon' size={24} />
             </Pressable>
           </GradientBorder>

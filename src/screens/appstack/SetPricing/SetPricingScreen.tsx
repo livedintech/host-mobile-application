@@ -13,7 +13,7 @@ import { goBack } from '@/services/navigationService';
 import usePricingContainer from './SetPricingContainer';
 
 const SetPricingScreen = () => {
-  const { control, errors, handleSubmit, onSubmit, isLoading } = usePricingContainer();
+  const { control, errors, handleSubmit, onSubmit, isLoading,isEdit } = usePricingContainer();
 
   const currencyOptions = [
     { label: 'Riyal (SAR)', value: 'SAR' },
@@ -26,7 +26,7 @@ const SetPricingScreen = () => {
           
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
@@ -60,18 +60,20 @@ const SetPricingScreen = () => {
           </View>
         </ScrollView>
 
-        <View style={styles.footer}>
-          <AppButton 
-            title="Next" 
-            variant="secondary" 
-            onPress={handleSubmit((d) => onSubmit(d, false))} 
-            loading={isLoading} 
-          />
-          <AppButton 
-            title="Save & Exit" 
-            mt={12} 
-            onPress={handleSubmit((d) => onSubmit(d, true))} 
-            disabled={isLoading} 
+         <View style={styles.footer}>
+          {!isEdit && ( // ✅ create mode mein Next show hoga
+            <AppButton
+              title="Next"
+              variant="secondary"
+              onPress={handleSubmit((d) => onSubmit(d, false))}
+              loading={isLoading}
+            />
+          )}
+          <AppButton
+            title="Save & Exit"
+            mt={!isEdit ? 12 : 0}
+            onPress={handleSubmit((d) => onSubmit(d, true))}
+            disabled={isLoading}
           />
         </View>
       </View>

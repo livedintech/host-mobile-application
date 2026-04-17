@@ -33,7 +33,8 @@ const SelectPropertyPoliciesScreen = () => {
     onSaveExit,
     isLoading,
     setSelectedPolicies,
-    isPolicySelected
+    isPolicySelected,
+    isEdit
   } = usePoliciesContainer();
 
   return (
@@ -43,11 +44,11 @@ const SelectPropertyPoliciesScreen = () => {
           {/* Header */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={50} size={48} strokeWidth={4} />
+            {!isEdit && <CircularProgress percentage={50} size={48} strokeWidth={4} />}
           </View>
 
           <AppText text="Select property policies" fontSize={32} type="Bold" mt={30} pr={40}/>
@@ -84,7 +85,10 @@ const SelectPropertyPoliciesScreen = () => {
 
         {/* Footer */}
         <View style={styles.footer}>
+          {!isEdit && (
           <AppButton title="Next" variant="secondary" onPress={handleSubmit(onNext)} loading={isLoading} disabled={!isPolicySelected}/>
+
+          )}
           <AppButton title="Save & Exit" mt={12} onPress={handleSubmit(onSaveExit)} disabled={isLoading || !isPolicySelected} />
         </View>
 
@@ -101,13 +105,13 @@ const SelectPropertyPoliciesScreen = () => {
 
               <View style={styles.modalBody}>
                 <DateTimeInputField
-                  name="start_time" label="Start Time" mode="time"
+                  name="quiet_hours_start" label="Start Time" mode="time"
                   control={control as any} errors={errors} placeholder="09:00 am"
                   rightIcon={<Svgicons path="ChevronDownIcon" size={14} />}
                 />
 
                 <DateTimeInputField
-                  name="end_time" label="End Time" mode="time"
+                  name="quiet_hours_end" label="End Time" mode="time"
                   control={control as any} errors={errors} placeholder="09:00 am"
                   rightIcon={<Svgicons path="ChevronDownIcon" size={14} />}
                 />

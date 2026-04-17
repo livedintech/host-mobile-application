@@ -13,104 +13,114 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import Metrics from '@/utility/Metrics';
 
 const AddPropertyGuidelinesScreen = () => {
-  const { 
-    control, 
-    errors, 
-    handleSubmit, 
-    onNext, 
-    onSaveExit, 
+  const {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
     isLoading,
     arrivalGuideLength,
     houseRulesLength,
-    checkoutInstructionsLength
+    checkoutInstructionsLength,
+    isEdit,
+    hideWifiFields,
+    lockOptions
   } = useGuidelinesContainer();
 
-  const lockOptions = [
-    { label: 'Front Door Lock', value: 'front_01' },
-    { label: 'Basement Lock', value: 'base_02' },
-  ];
+  
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-          
+
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
               <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={45} size={48} strokeWidth={4} />
+            {!isEdit && (
+              <CircularProgress percentage={45} size={48} strokeWidth={4} />
+            )}
           </View>
 
           <AppText text="Add property guidelines" fontSize={32} type="Bold" mt={30} />
           <AppText text="Fill these details so AI Auto Reply can assist guests on your behalf." fontSize={15} color="#6B6B6B" mt={10} />
+          {!isEdit && (
+            <View style={styles.skipWrapper}>
+              <TouchableOpacity
+                style={styles.skipBtn}
+                onPress={() => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES)}
+              >
+                <AppText text="Skip for now" color={Colors.WHITE} fontSize={14} type="Medium" />
+              </TouchableOpacity>
+            </View>
+          )}
 
-          <View style={styles.skipWrapper}>
-            <TouchableOpacity 
-              style={styles.skipBtn} 
-              onPress={() => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES)}
-            >
-              <AppText text="Skip for now" color={Colors.WHITE} fontSize={14} type="Medium" />
-            </TouchableOpacity>
-          </View>
 
-          <View style={styles.formGroup}>
-            <TextareaField 
-                name="arrival_guide" 
-                control={control as any} 
-                errors={errors} 
-                label={`Arrival Guide`} 
-                placeholder={"• Property Name: Olive Residency\n• Address: Building 12, Al Noor Street, City Center"} 
-                multiline
+          <View style={[styles.formGroup, isEdit && { marginTop: Metrics.verticalScale(40) }]}>
+            <TextareaField
+              name="arrival_guide"
+              control={control as any}
+              errors={errors}
+              label={`Arrival Guide`}
+              placeholder={"• Property Name: Olive Residency\n• Address: Building 12, Al Noor Street, City Center"}
+              multiline
             />
             <View style={styles.fieldGap} />
-            <TextareaField 
-                name="property_rules" 
-                control={control as any} 
-                errors={errors} 
-                label={`Property Rules`} 
-                placeholder={"• Please maintain a low noise level at all times."} 
-                multiline
+            <TextareaField
+              name="property_rules"
+              control={control as any}
+              errors={errors}
+              label={`Property Rules`}
+              placeholder={"• Please maintain a low noise level at all times."}
+              multiline
             />
             <View style={styles.fieldGap} />
-            <TextareaField 
-                name="checkout_instructions" 
-                control={control as any} 
-                errors={errors} 
-                label={`Check-out Instructions`} 
-                placeholder={"• Please leave the apartment in a reasonable condition."} 
-                multiline
+            <TextareaField
+              name="checkout_instructions"
+              control={control as any}
+              errors={errors}
+              label={`Check-out Instructions`}
+              placeholder={"• Please leave the apartment in a reasonable condition."}
+              multiline
             />
           </View>
 
           <View style={styles.bottomSection}>
-            <InputField name="wifi_username" label="Wifi Username" control={control as any} errors={errors} placeholder="Wifi_Us" />
-            <InputField name="wifi_password" label="Wifi Password" control={control as any} errors={errors} placeholder="Wifi123456" />
-            
-            <DropdownField 
-                name="door_lock_code" 
-                label="Door Lock Code" 
-                control={control as any} 
-                errors={errors} 
-                placeholder="Select Lock" 
-                data={lockOptions} 
-            />
-            
+            {!hideWifiFields && (
+              <>
+                <InputField name="wifi_username" label="Wifi Username" control={control as any} errors={errors} placeholder="Wifi_Us" />
+                <InputField name="wifi_password" label="Wifi Password" control={control as any} errors={errors} placeholder="Wifi123456" />
+
+                <DropdownField
+                  name="door_lock_code"
+                  label="Door Lock Code"
+                  control={control as any}
+                  errors={errors}
+                  placeholder="Select Lock"
+                  data={lockOptions}
+                />
+              </>
+            )}
+
+
             <Text style={styles.lockText}>
-                Select a lock to continue. If no lock appears, set up your TTLock in More →{' '}
-                <Text style={styles.linkText} onPress={() => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS)}>
-                    Smart Lock.
-                </Text>
+              Select a lock to continue. If no lock appears, set up your TTLock in More →{' '}
+              <Text style={styles.linkText} onPress={() => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS)}>
+                Smart Lock.
+              </Text>
             </Text>
           </View>
         </ScrollView>
 
         <View style={styles.footer}>
-          <AppButton title="Next" variant="secondary" onPress={handleSubmit(onNext)} loading={isLoading} />
+          {!isEdit && <AppButton title="Next" variant="secondary" onPress={handleSubmit(onNext)} loading={isLoading} />}
           <AppButton title="Save & Exit" mt={12} onPress={handleSubmit(onSaveExit)} disabled={isLoading} />
         </View>
       </View>

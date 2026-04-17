@@ -1,3 +1,4 @@
+// AboutThePlaceScreen.tsx
 import React from 'react';
 import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -13,17 +14,26 @@ import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const AboutThePlaceScreen = () => {
-  const { control, errors, numberOptions, handleSubmit, onNext, isLoading } = useAboutThePlaceContainer();
+  const {
+    control, errors, numberOptions,
+    handleSubmit, onNext, onSaveExit,
+    isLoading, isEdit,
+  } = useAboutThePlaceContainer();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <View style={styles.headerRow}>
-          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircle}>
+          {/* <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircle}>
             <Pressable onPress={() => goBack()}>
               <Svgicons path='arrowLeftIcon' size={24} />
             </Pressable>
-          </GradientBorder>
+          </GradientBorder> */}
+            <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
+              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+                <Svgicons path="arrowLeftIcon" size={24} />
+              </Pressable>
+            </GradientBorder>
           <CircularProgress percentage={15} size={48} strokeWidth={4} />
         </View>
 
@@ -41,7 +51,6 @@ const AboutThePlaceScreen = () => {
             />
           </View>
 
-          {/* Cards as per new design layout */}
           <View style={styles.card}>
             <View style={styles.iconRow}>
               <Svgicons path="guestIcon" size={20} />
@@ -76,7 +85,15 @@ const AboutThePlaceScreen = () => {
         </ScrollView>
 
         <View style={styles.footer}>
-          <AppButton title="Next" onPress={handleSubmit(onNext)} loading={isLoading} variant='secondary' />
+          {!isEdit && (
+            <AppButton title="Next" variant="secondary" onPress={handleSubmit(onNext)} loading={isLoading} />
+          )}
+          <AppButton
+            title="Save & Exit"
+            mt={!isEdit ? 15 : 0}
+            onPress={handleSubmit(onSaveExit)} // ✅ fixed
+            disabled={isLoading}
+          />
         </View>
       </View>
     </BGImage>
@@ -86,7 +103,7 @@ const AboutThePlaceScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 10 },
-  arrowCircle: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center', },
+  arrowCircle: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
   inputWrapper: { marginBottom: 15 },
   card: {
@@ -95,10 +112,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)'
+    borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   iconRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
   footer: { paddingHorizontal: 25, paddingBottom: 30 },
+  arrowCircleInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default AboutThePlaceScreen;

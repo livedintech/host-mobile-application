@@ -63,14 +63,16 @@ const PhotoUploadTemplate = (props: any) => {
           {/* Header Row */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
             <CircularProgress percentage={props.percentage} size={48} strokeWidth={4} />
           </View>
 
-          <AppText text={props.step} fontSize={18} type="Medium" mt={25} mb={23} />
+          {props.step && (
+            <AppText text={props.step} fontSize={18} type="Medium" mt={25} mb={23} />
+          )}
           <AppText text={props.screenTitle} fontSize={32} type="Bold" />
 
           <View style={styles.infoSection}>
@@ -112,7 +114,7 @@ const PhotoUploadTemplate = (props: any) => {
               <FlatList
                 data={props.mediaList}
                 renderItem={renderMediaItem}
-                numColumns={3}
+                numColumns={2}
                 keyExtractor={(_, i) => i.toString()}
                 scrollEnabled={false}
                 style={{
@@ -125,16 +127,20 @@ const PhotoUploadTemplate = (props: any) => {
 
         {/* Footer Buttons */}
         <View style={styles.footer}>
-          <AppButton
-            title={props.primaryBtnTitle}
-            variant="secondary"
-            onPress={props.onPrimaryPress}
-            loading={props.primaryLoading}
-          />
+          {props.primaryBtnTitle && (
+            <AppButton
+              title={props.primaryBtnTitle}
+              variant="secondary"
+              onPress={props.onPrimaryPress}
+              loading={props.primaryLoading}
+            />
+          )}
+
           <AppButton
             title={props.secondaryBtnTitle}
             mt={12}
             onPress={props.onSecondaryPress}
+            loading={props.primaryLoading}
           />
         </View>
 
@@ -217,7 +223,7 @@ const styles = StyleSheet.create({
     margin: 0,
     marginRight: 0
   },
-  mediaWrapper: { width: '31.3%', aspectRatio: 1, margin: '1%', borderRadius: 12, overflow: 'hidden' },
+  mediaWrapper: { width: '48%', aspectRatio: 1, margin: '1%', borderRadius: 12, overflow: 'hidden' },
   thumbnail: { width: '100%', height: '100%', backgroundColor: '#EEE' },
   moreBtn: { position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 10, padding: 4 },
   footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, backgroundColor: 'rgba(255,255,255,0.95)', paddingBottom: 35 },

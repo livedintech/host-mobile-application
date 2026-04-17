@@ -12,7 +12,7 @@ import { goBack } from '@/services/navigationService';
 import useDiscountsContainer from './DiscountsContainer';
 
 const AddDiscountsScreen = () => {
-    const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible } = useDiscountsContainer();
+    const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit } = useDiscountsContainer();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -23,32 +23,38 @@ const AddDiscountsScreen = () => {
                         <TouchableOpacity onPress={() => goBack()} style={styles.backBtn}>
                             <Svgicons path='arrowLeftIcon' size={24} />
                         </TouchableOpacity>
-                        <CircularProgress percentage={85} size={48} strokeWidth={4} />
+                        {!isEdit && <CircularProgress percentage={85} size={48} strokeWidth={4} />}
                     </View>
 
                     <AppText text="Add discounts" fontSize={32} type="Bold" mt={30} />
-                    <AppText text="Create discounts to attract more bookings and offer special pricing..." fontSize={15} color="#6B6B6B" mt={10} />
-
-                    <TouchableOpacity style={styles.addBtn} onPress={() => setModalVisible(true)}>
-                        <AppText text="Add Discounts" color={Colors.WHITE} fontSize={14} />
-                    </TouchableOpacity>
+                    <AppText text="Create discounts to attract more bookings and offer special pricing for specific situations like last-minute stays or longer reservations." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mt={10} mb={15} pr={40} />
 
                     <View style={styles.formGroup}>
                         <InputField name="weekly_discount" label="Weekly Discounts" control={control as any} errors={errors} placeholder="4%" />
                         <View style={styles.gap} />
                         <InputField name="monthly_discount" label="Monthly Discounts" control={control as any} errors={errors} placeholder="4%" />
                         <View style={styles.gap} />
-                        <InputField name="other_special_discount" label="Other Special Discounts" control={control as any} errors={errors} placeholder="10%" />
-                        <View style={styles.gap} />
-                        <InputField name="employee_discount" label="Employee Discount" control={control as any} errors={errors} placeholder="10%" />
-                        <View style={styles.gap} />
                         <InputField name="last_minute_discount" label="Last Minute Discount" control={control as any} errors={errors} placeholder="10%" />
+                        <InputField name="early_bird_price_change" label="Early Bird Price Change" control={control as any} errors={errors} placeholder="10%" />
+
                     </View>
                 </ScrollView>
 
                 <View style={styles.footer}>
-                    <AppButton title="Next" variant="secondary" onPress={handleSubmit((d) => onSubmit(d, false))} loading={isLoading} />
-                    <AppButton title="Save & Exit" mt={12} onPress={handleSubmit((d) => onSubmit(d, true))} disabled={isLoading} />
+                    {!isEdit && (
+                        <AppButton
+                            title="Next"
+                            variant="secondary"
+                            onPress={handleSubmit((d) => onSubmit(d, false))}
+                            loading={isLoading}
+                        />
+                    )}
+                    <AppButton
+                        title="Save & Exit"
+                        mt={!isEdit ? 12 : 0}
+                        onPress={handleSubmit((d) => onSubmit(d, true))}
+                        disabled={isLoading}
+                    />
                 </View>
 
                 {/* Add Discount Modal (Screenshot 2 & 5) */}
@@ -83,7 +89,7 @@ const styles = StyleSheet.create({
     content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: 220 },
     headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     backBtn: { padding: 8, borderRadius: 20, backgroundColor: Colors.WHITE, borderWidth: 1, borderColor: '#EEE' },
-    addBtn: { alignSelf: 'flex-end', backgroundColor: '#00A684', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, marginTop: 10 },
+    addBtn: { alignSelf: 'flex-end', backgroundColor: '#00A684', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 13, marginTop: 10 },
     formGroup: { marginTop: 20 },
     gap: { height: 15 },
     footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, backgroundColor: 'white', paddingBottom: 40 },

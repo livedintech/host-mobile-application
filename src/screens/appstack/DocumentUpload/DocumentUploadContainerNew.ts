@@ -1,3 +1,4 @@
+// useCreateEditListingDocumentUploadContainer.ts
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,15 +29,18 @@ type OtaAccountFormValues = { ota_account: string };
 
 export default function useCreateEditListingDocumentUploadContainer() {
   const [isLoading, setIsLoading] = useState(false);
-  const { params } = useRoute() as any;
-  const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
-  const { user, token } = useAuthStore();
-  
-  const listing = params?.paramData?.listing;
-  const isEdit = Boolean(listing?.id);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
-  // --- Fetch OTA Accounts ---
+  const { params } = useRoute<any>();
+  const { listing_id, channel_id } = useCreateListingStore();
+  const { user, token } = useAuthStore();
+
+  const listing = params?.paramData?.listing;
+  const isEdit = Boolean(listing?.listing_id); // ✅ consistent
+  console.log('listing', listing);
+
+
+  // ── Fetch OTA Accounts ────────────────────────────────────────────────────
   const { data: response, isLoading: isLoadingChannelList } = useQuery({
     queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
     queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
@@ -45,16 +49,37 @@ export default function useCreateEditListingDocumentUploadContainer() {
 
   const connectedAccounts = response?.data || [];
 
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DocumentFormValues>({
-    resolver: yupResolver(documentUploadSchema) as any,
-    defaultValues: {
-      propertyOwnership: null,
-      authorityLicense: null,
-      nationalId: null,
-    },
-  });
+  // ✅ Helper — existing documents se form values banao
+  const getExistingDoc = (type: string) => {
+    const docs = Array.isArray(listing?.documents) ? listing.documents : [];
+    const doc = docs.find((d: any) => d.type === type);
+    if (!doc) return null;
+    return {
+      uri: doc.path,
+      name: doc.file_name,
+      type: 'application/pdf',
+      base64: null,       // ✅ already uploaded — no base64 needed
+      isExisting: true,      // ✅ flag to differentiate
+    };
+  };
 
-  const { control: otaControl, handleSubmit: handleOtaSubmit, formState: { errors: otaErrors } } = useForm<OtaAccountFormValues>({
+  // ── Document form ─────────────────────────────────────────────────────────
+  const { control, handleSubmit, formState: { errors }, watch, setValue } =
+    useForm<DocumentFormValues>({
+      resolver: yupResolver(documentUploadSchema) as any,
+      defaultValues: {
+        propertyOwnership: getExistingDoc('ownership'),          // ✅
+        authorityLicense: getExistingDoc('authority_license'),  // ✅
+        nationalId: getExistingDoc('national_id'),        // ✅
+      },
+    });
+
+  // ── OTA form ──────────────────────────────────────────────────────────────
+  const {
+    control: otaControl,
+    handleSubmit: handleOtaSubmit,
+    formState: { errors: otaErrors },
+  } = useForm<OtaAccountFormValues>({
     resolver: yupResolver(otaAccountSchema) as any,
   });
 
@@ -62,7 +87,7 @@ export default function useCreateEditListingDocumentUploadContainer() {
   const authorityLicenseDoc = watch('authorityLicense');
   const nationalIdDoc = watch('nationalId');
 
-  // --- Document Picker ---
+  // ── Document picker ───────────────────────────────────────────────────────
   const pickDocument = async (fieldName: any) => {
     try {
       const result = await DocumentPicker.pick({ type: ['application/pdf'] });
@@ -78,7 +103,81 @@ export default function useCreateEditListingDocumentUploadContainer() {
     }
   };
 
-  // --- Export Mutation ---
+  const removeDocument = (fieldName: any) => setValue(fieldName, null);
+
+  // ── Payload builder ───────────────────────────────────────────────────────
+  const buildPayload = (data: DocumentFormValues) => {
+    const documents: any[] = [];
+
+    if (data.propertyOwnership?.base64) {
+      documents.push({
+        url: `data:application/pdf;base64,${data.propertyOwnership.base64}`,
+        type: 'ownership',
+        file_name: data.propertyOwnership.name,
+      });
+    }
+    if (data.authorityLicense?.base64) {
+      documents.push({
+        url: `data:application/pdf;base64,${data.authorityLicense.base64}`,
+        type: 'authority_license',
+        file_name: data.authorityLicense.name,
+      });
+    }
+    if (data.nationalId?.base64) {
+      documents.push({
+        url: `data:application/pdf;base64,${data.nationalId.base64}`,
+        type: 'national_id',
+        file_name: data.nationalId.name,
+      });
+    }
+
+    return {
+      save_and_exit: 0,
+      listing_id: String(listing_id),
+      channel_id,
+      documents,
+    };
+  };
+
+// onSaveExit fix — modal nahi, seedha navigate
+
+const onSaveExit = async (data: DocumentFormValues) => {
+  const payload = buildPayload(data);
+  setIsLoading(true);
+  try {
+    const res = await fetch(
+      `${BASE_URL}api/v2/channelmanagement/create-listing/documents`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(payload),
+      },
+    );
+    const result = await res.json();
+    if (res.ok) {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+      });
+      Toast.show({ type: 'success', text1: result?.message || 'Saved successfully' });
+
+      // ✅ Edit ya Create — dono mein seedha navigate, modal nahi
+      if (isEdit) {
+        goBack();
+      } else {
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+      }
+    } else {
+      throw new Error(result.message);
+    }
+  } catch (error: any) {
+    Toast.show({ type: 'error', text1: error.message });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  // ── Export mutation ───────────────────────────────────────────────────────
   const { mutate: exportListing, isPending: isExporting } = useMutation({
     mutationFn: createListingExportApi,
     onSuccess: () => {
@@ -86,68 +185,45 @@ export default function useCreateEditListingDocumentUploadContainer() {
       Toast.show({ type: 'success', text1: 'Listing exported successfully' });
       navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
     },
-    onError: (err: any) => Toast.show({ type: 'error', text1: err.message }),
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message }),
   });
 
-  const buildPayload = (data: DocumentFormValues) => {
-    const documents = [];
-    if (data.propertyOwnership?.base64) documents.push({ url: `data:application/pdf;base64,${data.propertyOwnership.base64}`, type: 'ownership', file_name: data.propertyOwnership.name });
-    if (data.authorityLicense?.base64) documents.push({ url: `data:application/pdf;base64,${data.authorityLicense.base64}`, type: 'authority_license', file_name: data.authorityLicense.name });
-    if (data.nationalId?.base64) documents.push({ url: `data:application/pdf;base64,${data.nationalId.base64}`, type: 'national_id', file_name: data.nationalId.name });
-
-    return {
-      user_id: Number(user?.id),
-      channel_id,
-      listing_id: String(listing_id || listing?.id),
-      save_and_exit: 0,
-      documents,
-      listing: { name: propertyDetail?.name || listing?.name || 'New Listing' },
-    };
-  };
-
-  const onSaveExit = async (data: DocumentFormValues) => {
-    const payload = buildPayload(data);
-    setIsLoading(true);
-    try {
-      const res = await fetch(`${BASE_URL}api/v2/channelmanagement/create-listing/documents`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(payload),
-      });
-      const result = await res.json();
-      if (res.ok) {
-        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        if (isEdit) {
-          Toast.show({ type: 'success', text1: 'Updated successfully' });
-          goBack();
-        } else {
-          setBottomSheetVisible(true);
-        }
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (error: any) {
-      Toast.show({ type: 'error', text1: error.message });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleExport = () => setBottomSheetVisible(true);
 
   const handleExportSubmit = (data: OtaAccountFormValues) => {
-    exportListing({ channel_id: data.ota_account, listing_id: String(listing_id || listing?.id) });
+    exportListing({
+      channel_id: data.ota_account,
+      listing_id: String(listing_id),
+    });
   };
 
-  const listingOptions = connectedAccounts?.map((item: any) => ({
+  const listingOptions = connectedAccounts.map((item: any) => ({
     label: item.connection_type,
     value: item.ch_channel_id,
-  })) || [];
+  }));
 
   return {
-    control, errors, handleSubmit, onSaveExit, isLoading,
-    propertyOwnershipDoc, authorityLicenseDoc, nationalIdDoc,
-    pickDocument, removeDocument: (f: any) => setValue(f, null),
-    bottomSheetVisible, setBottomSheetVisible,
-    otaControl, otaErrors, handleOtaSubmit, handleExportSubmit,
-    listingOptions, isLoadingChannelList, isCreating: isExporting
+    control,
+    errors,
+    handleSubmit,
+    onSaveExit,
+    isEdit,
+    isLoading,
+    propertyOwnershipDoc,
+    authorityLicenseDoc,
+    nationalIdDoc,
+    pickDocument,
+    removeDocument,
+    handleExport,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    handleExportSubmit,
+    listingOptions,
+    isLoadingChannelList,
+    isCreating: isExporting,
   };
 }

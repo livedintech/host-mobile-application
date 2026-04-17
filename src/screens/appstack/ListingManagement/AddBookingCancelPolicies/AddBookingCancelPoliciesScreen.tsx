@@ -12,7 +12,7 @@ import { goBack } from '@/services/navigationService';
 import useBookingCancelPoliciesContainer from './BookingCancelPoliciesContainer';
 
 const AddBookingCancelPoliciesScreen = () => {
-  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading } = useBookingCancelPoliciesContainer();
+  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit } = useBookingCancelPoliciesContainer();
 
   const policyOptions = [
     { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
@@ -29,76 +29,78 @@ const AddBookingCancelPoliciesScreen = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          
+
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={70} size={48} strokeWidth={4} />
+            {!isEdit && <CircularProgress percentage={70} size={48} strokeWidth={4} />}
           </View>
 
-          <AppText text="Add booking cancel policies" fontSize={28} type="Bold" mt={30} pr={100}/>
+          <AppText text="Add booking cancel policies" fontSize={28} type="Bold" mt={30} pr={100} />
 
           <View style={styles.formGroup}>
-            <DropdownField 
-                name="airbnb_policy" 
-                label="Airbnb" 
-                control={control as any} 
-                errors={errors} 
-                data={policyOptions} 
-                placeholder="Flexible - Guests can cancel at least 24.."
-            />
-            
-            <View style={styles.fieldGap} />
-            
-            <DropdownField 
-                name="airbnb_longterm_policy" 
-                label="Airbnb Long-term" 
-                control={control as any} 
-                errors={errors} 
-                data={longTermOptions} 
-                placeholder="Long-term with grace period - To recie..."
+            <DropdownField
+              name="airbnb_policy"
+              label="Airbnb"
+              control={control as any}
+              errors={errors}
+              data={policyOptions}
+              placeholder="Flexible - Guests can cancel at least 24.."
             />
 
             <View style={styles.fieldGap} />
 
-            <DropdownField 
-                name="gathern_policy" 
-                label="Gathern" 
-                control={control as any} 
-                errors={errors} 
-                data={policyOptions} 
-                placeholder="Flexible - Guests can cancel at least 24.."
+            <DropdownField
+              name="airbnb_longterm_policy"
+              label="Airbnb Long-term"
+              control={control as any}
+              errors={errors}
+              data={longTermOptions}
+              placeholder="Long-term with grace period - To recie..."
             />
 
             <View style={styles.fieldGap} />
 
-            <DropdownField 
-                name="booking_com_policy" 
-                label="Booking.com" 
-                control={control as any} 
-                errors={errors} 
-                data={policyOptions} 
-                placeholder="Flexible - Guests can cancel at least 24.."
+            <DropdownField
+              name="gathern_policy"
+              label="Gathern"
+              control={control as any}
+              errors={errors}
+              data={policyOptions}
+              placeholder="Flexible - Guests can cancel at least 24.."
+            />
+
+            <View style={styles.fieldGap} />
+
+            <DropdownField
+              name="booking_com_policy"
+              label="Booking.com"
+              control={control as any}
+              errors={errors}
+              data={policyOptions}
+              placeholder="Flexible - Guests can cancel at least 24.."
             />
           </View>
         </ScrollView>
 
         <View style={styles.footer}>
-          <AppButton 
-          backgroundColor={Colors.WHITE}
-            title="Next" 
-            variant="secondary" 
-            onPress={handleSubmit(onNext)} 
-            loading={isLoading} 
-          />
-          <AppButton 
-            title="Save & Exit" 
-            mt={12} 
-            onPress={handleSubmit(onSaveExit)} 
-            disabled={isLoading} 
+          {!isEdit && (
+            <AppButton
+              backgroundColor={Colors.WHITE}
+              title="Next"
+              variant="secondary"
+              onPress={handleSubmit(onNext)}
+              loading={isLoading}
+            />
+          )}
+          <AppButton
+            title="Save & Exit"
+            mt={12}
+            onPress={handleSubmit(onSaveExit)}
+            disabled={isLoading}
           />
         </View>
       </View>
@@ -114,12 +116,12 @@ const styles = StyleSheet.create({
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   formGroup: { marginTop: 40 },
   fieldGap: { height: 25 },
-  footer: { 
-    position: 'absolute', 
-    bottom: 0, 
-    width: '100%', 
-    padding: 25, 
-    paddingBottom: 40 
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: 25,
+    paddingBottom: 40
   },
 });
 

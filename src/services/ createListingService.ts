@@ -40,7 +40,7 @@ export const createListingPricingApi = async (payload: createListingPricingPaylo
 // Manage Your Listings
 export const getManageYourListings = async (payload: getUserListingsByUserID) => {
     const url = Utils.createDynamicUrl(
-        SERVICE_CONFIG_URLS.APP.GET_MANAGE_YOUR_LISTINGS,
+        SERVICE_CONFIG_URLS.APP.GET_MANAGE_YOUR_LISTINGS_FETCH,
         { user: payload.user },
     );
 
@@ -140,6 +140,19 @@ export const createNewListingApi = async (payload: getUserListingsByUserID) => {
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
 
+
+//Get Amunities 
+export const getTTLOCKSApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_TT_LOCK
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
 
 //Get Amunities 
 export const getAmenitiesApi = async () => {

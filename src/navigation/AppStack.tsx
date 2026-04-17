@@ -282,6 +282,22 @@ const AppStack = () => {
             .default
         }
       />
+       <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.LOCATION}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/Edit/Location/LocationScreen')
+            .default
+        }
+      />
+       <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.WIFI_AND_DOOR_LOCK_SCREEN}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/Edit/WifiAndDoorLock/WifiAndDoorLockScreen')
+            .default
+        }
+      />
       <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS}

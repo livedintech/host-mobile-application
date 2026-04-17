@@ -197,7 +197,7 @@ const ManageBookingScreen = () => {
                 {/* HEADER */}
                 <View style={styles.header}>
                     <AppText
-                        text="Channel Manager"
+                        text={`Connected \n Booking Platforms`}
                         fontSize={28}
                         type="Bold"
                         color={Colors.BLACK}

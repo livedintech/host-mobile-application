@@ -1,3 +1,4 @@
+// useAIPricingContainer.ts
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -12,64 +13,96 @@ import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-// --- SCHEMA ---
+// ── Schema ────────────────────────────────────────────────────────────────────
 export const aiPricingSchema = yup.object().shape({
-  maximum_price: yup.string().required('Maximum price is required'),
-  minimum_price: yup.string().required('Minimum price is required'),
+  maximum_price: yup.string().required('Maximum price is required'), // 🆕 NEW
+  minimum_price: yup.string().required('Minimum price is required'), // 🆕 NEW
 });
 
 export type AIPricingFormValues = yup.InferType<typeof aiPricingSchema>;
 
+// ── Container ─────────────────────────────────────────────────────────────────
 export default function useAIPricingContainer() {
-  const { params } = useRoute() as any;
-  
+  const { params } = useRoute<any>();
   const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
-  
-  const listing = params?.paramData?.listing;
-  const isEdit = Boolean(listing?.id);
 
+  const listing = params?.paramData?.listing;
+  const isEdit  = Boolean(listing?.listing_id); // ✅ consistent
+
+  // ── Form ──────────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors } } = useForm<AIPricingFormValues>({
     resolver: yupResolver(aiPricingSchema) as any,
     defaultValues: {
-      maximum_price: listing?.maximum_price ?? propertyDetail?.maximum_price ?? '',
-      minimum_price: listing?.minimum_price ?? propertyDetail?.minimum_price ?? '',
+      maximum_price: String(listing?.maximum_price ?? propertyDetail?.maximum_price ?? ''),
+      minimum_price: String(listing?.minimum_price ?? propertyDetail?.minimum_price ?? ''),
     },
   });
 
-  // ---- Mutations ----
-  const { mutate: handleApi, isPending } = useMutation({
-    mutationFn: isEdit ? editListingApi : createListingDetailsApi,
+  // ── Payload builder ───────────────────────────────────────────────────────
+  const buildPayload = (data: AIPricingFormValues, isSaveAndExit: boolean = false) => ({
+    user_id:       String(user?.id),
+    channel_id,
+    listing_id:    String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name:          propertyDetail?.name || 'New Listing',
+      maximum_price: Number(data.maximum_price), // 🆕 NEW
+      minimum_price: Number(data.minimum_price), // 🆕 NEW
+    },
+  });
+
+  // ── Mutations ─────────────────────────────────────────────────────────────
+  const { mutate: createDetails, isPending: isCreating } = useMutation({
+    mutationFn: createListingDetailsApi,
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+  });
+
+  const { mutate: updateDetails, isPending: isUpdating } = useMutation({
+    mutationFn: editListingApi,
     onSuccess: (res: any) => {
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-      Toast.show({ type: 'success', text1: res?.message || 'Pricing saved successfully' });
-      isEdit ? goBack() : navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING); // Replace with your final step route
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+      });
+      Toast.show({ type: 'success', text1: res?.message || 'Updated successfully' });
+      goBack();
     },
-    onError: (error: any) => Toast.show({ type: 'error', text1: error.message || 'Something went wrong' }),
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
   });
 
-  // ---- Handlers ----
+  // ── Handler ───────────────────────────────────────────────────────────────
   const onSave = (data: AIPricingFormValues, isSaveAndExit: boolean = false) => {
-    const payload = {
-      channel_id,
-      listing_id: String(listing_id || listing?.id),
-      user_id: String(user?.id),
-      save_and_exit: isSaveAndExit ? 1 : 0,
-      listing: {
-        name: propertyDetail?.name || listing?.name || 'New Listing',
-        maximum_price: data.maximum_price,
-        minimum_price: data.minimum_price,
-      },
-    };
+    updateListing({
+      maximum_price: Number(data.maximum_price),
+      minimum_price: Number(data.minimum_price),
+    });
 
-    handleApi(payload as any);
+    if (isEdit) {
+      updateDetails(buildPayload(data, isSaveAndExit) as any);
+    } else {
+      createDetails(buildPayload(data, isSaveAndExit) as any, {
+        onSuccess: (res: any) => {
+          queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+          Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+
+          if (isSaveAndExit) {
+            navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          } else {
+            navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING);
+          }
+        },
+      });
+    }
   };
 
-  return { 
-    control, 
-    errors, 
-    handleSubmit, 
-    onSave, 
-    isLoading: isPending 
+  return {
+    control,
+    errors,
+    handleSubmit,
+    onSave,
+    isLoading: isCreating || isUpdating,
   };
 }

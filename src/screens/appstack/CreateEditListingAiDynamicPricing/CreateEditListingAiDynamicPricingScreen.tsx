@@ -13,7 +13,9 @@ const AIDynamicPricingScreen = () => {
   const { 
     selectedMode, setSelectedMode, 
     manualOverride, setManualOverride, 
-    onSave, isLoading 
+    onSave,
+    isLoading,
+    isEdit
   } = useAIDynamicPricingContainer();
 
   const ModeCard = ({ title, type, points }: any) => {
@@ -97,8 +99,20 @@ const AIDynamicPricingScreen = () => {
         </ScrollView>
 
         <View style={styles.footer}>
-          <AppButton title="Next" variant="secondary" onPress={() => onSave(false)} loading={isLoading} />
-          <AppButton title="Save & Exit" mt={12} onPress={() => onSave(true)} disabled={isLoading} />
+          {!isEdit && (
+            <AppButton
+              title="Next"
+              variant="secondary"
+              onPress={() => onSave(false)}
+              loading={isLoading}
+            />
+          )}
+          <AppButton
+            title="Save & Exit"
+            mt={!isEdit ? 12 : 0}
+            onPress={() => onSave(true)}
+            disabled={isLoading}
+          />
         </View>
       </View>
     </BGImage>

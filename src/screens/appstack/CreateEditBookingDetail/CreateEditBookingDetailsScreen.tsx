@@ -14,7 +14,7 @@ import Metrics from '@/utility/Metrics';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 
 const AddBookingDetailsScreen = () => {
-  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading } = useBookingDetailsContainer();
+  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit } = useBookingDetailsContainer();
 
   const yesNoOptions = [{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }];
   const bookingTypeOptions = [{ label: 'Instant', value: 'Instant' }, { label: 'Manual', value: 'Manual' }];
@@ -27,15 +27,23 @@ const AddBookingDetailsScreen = () => {
 
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={60} size={48} strokeWidth={4} />
+            {!isEdit && <CircularProgress percentage={60} size={48} strokeWidth={4} />}
           </View>
+          {isEdit ? (
+            <>
+              <AppText text="Booking Details" fontSize={32} type="Bold" mt={20} pr={80} />
+            </>
+          ) : (
+            <>
+              <AppText text="Step 3" fontSize={18} type="Medium" mt={20} />
+              <AppText text="Add booking details" fontSize={32} type="Bold" mt={5} pr={80} />
+            </>
+          )}
 
-          <AppText text="Step 3" fontSize={18} type="Medium" mt={20} />
-          <AppText text="Add booking details" fontSize={32} type="Bold" mt={5} pr={80}/>
 
           <View style={styles.formGroup}>
             <DropdownField name="booking_type" label="Booking Type" control={control as any} errors={errors} data={bookingTypeOptions} />
@@ -51,7 +59,7 @@ const AddBookingDetailsScreen = () => {
               errors={errors}
               mode="time"
               placeholder="09:00"
-            />           
+            />
 
             <DateTimeInputField
               name="check_out_time"
@@ -60,7 +68,7 @@ const AddBookingDetailsScreen = () => {
               errors={errors}
               mode="time"
               placeholder="23:00"
-            />            
+            />
 
             <DropdownField name="allow_same_day" label="Allow Same-day Booking.com Bookings" control={control as any} errors={errors} data={yesNoOptions} />
             <View style={styles.fieldGap} />
@@ -70,7 +78,9 @@ const AddBookingDetailsScreen = () => {
         </ScrollView>
 
         <View style={styles.footer}>
-          <AppButton title="Next" variant="secondary" backgroundColor={Colors.WHITE} onPress={handleSubmit(onNext)} loading={isLoading} />
+          {!isEdit && (
+            <AppButton title="Next" variant="secondary" backgroundColor={Colors.WHITE} onPress={handleSubmit(onNext)} loading={isLoading} />
+          )}
           <AppButton title="Save & Exit" mt={12} onPress={handleSubmit(onSaveExit)} disabled={isLoading} />
         </View>
       </View>

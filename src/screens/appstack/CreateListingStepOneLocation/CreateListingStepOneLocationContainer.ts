@@ -1,10 +1,12 @@
+// useCreateListingStepOneLocationContainer.ts
 import { useState, useRef, useEffect } from 'react';
 import { Region } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import { Platform, PermissionsAndroid, Alert } from 'react-native';
+import { Platform, PermissionsAndroid, Alert, Linking } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useRoute } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
 interface GooglePlaceDetail {
@@ -14,38 +16,65 @@ interface GooglePlaceDetail {
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyBFLqCFWozTt6lfoGyNGl95OYsceWSo8LE';
 
+const FALLBACK_REGION: Region = {
+  latitude: 24.7136,
+  longitude: 46.6753,
+  latitudeDelta: 0.015,
+  longitudeDelta: 0.0121,
+};
+
 let geocodeTimer: ReturnType<typeof setTimeout> | null = null;
 
 export default function useCreateListingStepOneLocationContainer() {
-
-  // ── All hooks at top — never conditional ──────────────────────────────────
   const { updateListing } = useCreateListingStore();
+  const { params } = useRoute<any>();
 
-  const mapRef        = useRef<any>(null);
-  const placesRef     = useRef<any>(null);
+  // ✅ Edit mode — existing lat/lng se start karo
+  const existingLat = parseFloat(params?.paramData?.listing?.lat);
+  const existingLng = parseFloat(params?.paramData?.listing?.lng);
+  const hasExistingLocation = !isNaN(existingLat) && !isNaN(existingLng);
+  const isEdit = hasExistingLocation;
+
+  const INITIAL_REGION: Region = hasExistingLocation
+    ? {
+      latitude: existingLat,
+      longitude: existingLng,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    }
+    : FALLBACK_REGION;
+
+  const mapRef = useRef<any>(null);
+  const placesRef = useRef<any>(null);
   const isPlaceSelected = useRef(false);
 
-  const [region, setRegion] = useState<Region>({
-    latitude: 24.7136,
-    longitude: 46.6753,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.0121,
-  });
+  const [region, setRegion] = useState<Region>(INITIAL_REGION);
   const [currentAddress, setCurrentAddress] = useState('');
-  const [isGeocoding, setIsGeocoding]       = useState(false);
-  const [isLocating, setIsLocating]         = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+  const [hasUserLocation, setHasUserLocation] = useState(hasExistingLocation);
 
+  const [isInitializing, setIsInitializing] = useState(!hasExistingLocation);
+
+  // ── Auto-fetch ────────────────────────────────────────────────────────────
   useEffect(() => {
-    getAddressFromCoordinates(24.7136, 46.6753);
+    if (hasExistingLocation) {
+      setHasUserLocation(true);
+      getAddressFromCoordinates(existingLat, existingLng);
+      setTimeout(() => {
+        mapRef.current?.animateToRegion(INITIAL_REGION, 500);
+      }, 300);
+      return;
+    }
+    fetchCurrentLocationOnMount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Plain functions ───────────────────────────────────────────────────────
-
+  // ── Geocoding ─────────────────────────────────────────────────────────────
   const getAddressFromCoordinates = async (lat: number, lng: number) => {
     try {
       setIsGeocoding(true);
-      const res  = await fetch(
+      const res = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_APIKEY}`
       );
       const data = await res.json();
@@ -63,6 +92,7 @@ export default function useCreateListingStepOneLocationContainer() {
     return '';
   };
 
+  // ── Permission ────────────────────────────────────────────────────────────
   const requestPermission = async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
       const result = await PermissionsAndroid.request(
@@ -80,18 +110,85 @@ export default function useCreateListingStepOneLocationContainer() {
     return true;
   };
 
+  // ── First mount GPS fetch ─────────────────────────────────────────────────
+  const fetchCurrentLocationOnMount = async () => {
+    const ok = await requestPermission();
+    if (!ok) {
+      setIsInitializing(false);
+      Alert.alert(
+        'Location Required',
+        'To create a listing, please enable location permission.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+        ]
+      );
+      return;
+    }
+
+    // ✅ Pehle low accuracy se try karo (fast) — phir high accuracy
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        const newRegion: Region = {
+          latitude,
+          longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        };
+        setRegion(newRegion);
+        setHasUserLocation(true);
+        getAddressFromCoordinates(latitude, longitude);
+        setIsInitializing(false);
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(newRegion, 500);
+        }, 300);
+      },
+      error => {
+        console.error('GPS error code:', error.code, error.message);
+        // ✅ Low accuracy se bhi fail ho toh fallback region use karo
+        setIsInitializing(false);
+        setHasUserLocation(true); // ✅ fallback region pe bhi allow karo
+        Toast.show({
+          type: 'info',
+          text1: 'Using approximate location',
+          text2: 'Could not get exact location. You can search manually.',
+        });
+      },
+      {
+        enableHighAccuracy: false, // ✅ false — real device par fast
+        timeout: 20000,            // ✅ 20s timeout
+        maximumAge: 60000,         // ✅ 1 min cache accept karo
+      }
+    );
+  };
+
+  // ── Locate Me ─────────────────────────────────────────────────────────────
   const handleLocateMe = async () => {
     const ok = await requestPermission();
     if (!ok) {
-      Alert.alert('Permission Denied', 'Enable location permission in Settings.');
+      Alert.alert(
+        'Permission Denied',
+        'Enable location permission in Settings.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+        ]
+      );
       return;
     }
     setIsLocating(true);
     Geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
-        const newRegion: Region = { latitude, longitude, latitudeDelta: 0.015, longitudeDelta: 0.0121 };
+        const newRegion: Region = {
+          latitude,
+          longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        };
         setRegion(newRegion);
+        setHasUserLocation(true);
         mapRef.current?.animateToRegion(newRegion, 1000);
         getAddressFromCoordinates(latitude, longitude);
         setIsLocating(false);
@@ -105,17 +202,25 @@ export default function useCreateListingStepOneLocationContainer() {
     );
   };
 
+  // ── Place Select ──────────────────────────────────────────────────────────
   const handlePlaceSelect = (details: GooglePlaceDetail) => {
     isPlaceSelected.current = true;
     const { lat, lng } = details.geometry.location;
-    const newRegion: Region = { latitude: lat, longitude: lng, latitudeDelta: 0.015, longitudeDelta: 0.0121 };
+    const newRegion: Region = {
+      latitude: lat,
+      longitude: lng,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    };
     setRegion(newRegion);
+    setHasUserLocation(true);
     setCurrentAddress(details.formatted_address);
     placesRef.current?.setAddressText(details.formatted_address);
     mapRef.current?.animateToRegion(newRegion, 1000);
     setTimeout(() => { isPlaceSelected.current = false; }, 1500);
   };
 
+  // ── Region Change ─────────────────────────────────────────────────────────
   const onRegionChangeComplete = (newRegion: Region) => {
     setRegion(newRegion);
     if (isPlaceSelected.current) return;
@@ -125,35 +230,38 @@ export default function useCreateListingStepOneLocationContainer() {
     }, 600);
   };
 
-  /**
-   * CONFIRM BUTTON
-   * - Saves lat/lng to store
-   * - Navigates to ConfirmAddress screen
-   * - API call happens on ConfirmAddress screen (createListingDetailsApi)
-   */
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleConfirm = () => {
+    if (!hasUserLocation) {
+      Toast.show({
+        type: 'error',
+        text1: 'Location required',
+        text2: 'Please allow location access or pick a location to continue.',
+      });
+      return;
+    }
     if (!currentAddress) {
       Toast.show({ type: 'error', text1: 'Please wait for address to resolve.' });
       return;
     }
-    updateListing({
-      lat: region.latitude,
-      lng: region.longitude,
+    updateListing({ lat: region.latitude, lng: region.longitude });
+
+    // ✅ Edit mode mein paramData forward karo
+    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, {
+      paramData: params?.paramData,
     });
-    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
   };
 
-  /**
-   * SET MANUALLY BUTTON
-   * - Saves current lat/lng to store (best guess from current map center)
-   * - Navigates to ConfirmAddress screen where user fills form fields manually
-   * - API call happens on ConfirmAddress screen (createListingDetailsApi)
-   */
   const handleSetManually = () => {
-    updateListing({
-      lat: region.latitude,
-      lng: region.longitude,
-    });
+    if (!hasUserLocation) {
+      Toast.show({
+        type: 'error',
+        text1: 'Location required',
+        text2: 'Please allow location access or pick a location to continue.',
+      });
+      return;
+    }
+    updateListing({ lat: region.latitude, lng: region.longitude });
     navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
   };
 
@@ -164,6 +272,9 @@ export default function useCreateListingStepOneLocationContainer() {
     currentAddress,
     isGeocoding,
     isLocating,
+    hasUserLocation,
+    isInitializing,
+    isEdit, // ✅ added
     handleConfirm,
     handleSetManually,
     onRegionChangeComplete,

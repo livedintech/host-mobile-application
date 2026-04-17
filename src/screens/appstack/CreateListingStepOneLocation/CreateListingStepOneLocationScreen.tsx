@@ -1,3 +1,4 @@
+// CreateListingStepOneLocationScreen.tsx
 import React from 'react';
 import {
   StyleSheet,
@@ -27,7 +28,20 @@ const CreateListingStepOneLocationScreen = () => {
     currentAddress,
     isGeocoding,
     isLocating,
+    hasUserLocation,
+    isInitializing,
+    isEdit, // ✅ added
   } = useCreateListingStepOneLocationContainer();
+
+  // ── First-mount full screen loader ─────────────────────────────────────────
+  if (isInitializing) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+        <Text style={styles.loaderText}>Getting your location...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -97,21 +111,25 @@ const CreateListingStepOneLocationScreen = () => {
               : <Svgicons path="locateMeIcon" size={32} color={Colors.BRUNSWICK_GREEN} />
             }
           </ButtonView>
+
           <View style={styles.footerBtn}>
             <AppButton
-              variant='secondary'
-              disabled={isGeocoding || isLocating}
+              disabled={isGeocoding || isLocating || !hasUserLocation}
               title="Enter Manually"
               onPress={handleConfirm}
               mb={12}
+              variant={!isEdit ? 'secondary' : 'primary'}
             />
 
-            <AppButton
-              disabled={isLocating}
-              title="Save & Exit"
-              onPress={handleSetManually}
-              mb={18}
-            />
+            {/* ✅ Save & Exit sirf create mode mein */}
+            {!isEdit && (
+              <AppButton
+                disabled={isLocating || !hasUserLocation}
+                title="Save & Exit"
+                onPress={handleSetManually}
+                mb={18}
+              />
+            )}
           </View>
         </View>
       </View>
@@ -123,7 +141,19 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { ...StyleSheet.absoluteFillObject },
 
-  // Pin tip points exactly at coordinate
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loaderText: {
+    marginTop: 14,
+    fontSize: 15,
+    color: Colors.BRUNSWICK_GREEN,
+    fontWeight: '500',
+  },
+
   markerFixed: {
     position: 'absolute',
     top: '50%',
@@ -132,13 +162,11 @@ const styles = StyleSheet.create({
     marginTop: -45,
   },
 
-  // Transparent overlay — search bar top, footer bottom
   overlay: {
     flex: 1,
     justifyContent: 'space-between',
   },
 
-  // ── Search bar ─────────────────────────────────────────────────────────────
   header: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -181,15 +209,8 @@ const styles = StyleSheet.create({
   row: { padding: 13, flexDirection: 'row', alignItems: 'center' },
   description: { fontSize: 14, color: '#333' },
 
-  // ── Footer ─────────────────────────────────────────────────────────────────
-  footer: {
-    // paddingHorizontal: 20,
-    // bottom: Metrics.verticalScale(150),
-    // right: 0,
-    // position:'absolute',
-  },
+  footer: {},
 
-  // Locate Me FAB — bottom right
   locateMeBtn: {
     width: 48,
     height: 48,
@@ -206,59 +227,11 @@ const styles = StyleSheet.create({
   },
   btnDisabled: { opacity: 0.5 },
 
-  // Address banner — shows resolved address of current pin position
-  addressBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 14,
-    gap: 8,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-  },
-  addressText: {
-    flex: 1,
-    fontSize: 13,
-    color: '#333',
-    lineHeight: 18,
-  },
-
-  // Confirm — solid primary
-  confirmBtn: {
-    backgroundColor: Colors.BRUNSWICK_GREEN,
-    borderRadius: 14,
-    height: 52,
-  },
-  confirmBtnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-
-  // Set Manually — outlined secondary
-  manualBtn: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    height: 52,
-    marginTop: 12,
-    borderWidth: 1.5,
-    borderColor: '#D0D0D0',
-  },
-  manualBtnText: {
-    color: '#444',
-    fontWeight: '500',
-    fontSize: 15,
-  },
   footerBtn: {
     backgroundColor: '#e2e5e5',
     paddingHorizontal: Metrics.scale(20),
-    paddingTop: Metrics.verticalScale(36)
-  }
+    paddingTop: Metrics.verticalScale(36),
+  },
 });
 
 export default CreateListingStepOneLocationScreen;

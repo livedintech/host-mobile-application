@@ -1,3 +1,4 @@
+// useBookingCancelPoliciesContainer.ts
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -12,7 +13,7 @@ import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-// --- SCHEMA ---
+// ── Schema ────────────────────────────────────────────────────────────────────
 export const cancelPoliciesSchema = yup.object().shape({
   airbnb_policy: yup.string().required('Airbnb policy is required'),
   airbnb_longterm_policy: yup.string().required('Airbnb long-term policy is required'),
@@ -22,84 +23,158 @@ export const cancelPoliciesSchema = yup.object().shape({
 
 export type CancelPoliciesValues = yup.InferType<typeof cancelPoliciesSchema>;
 
+// ── Helper — object { id, title } ya primitive dono handle ───────────────────
+const getPolicyValue = (raw: any, fallback: any): string => {
+  // Object form: { id, title }
+  if (raw?.id !== undefined && raw?.id !== null) return String(raw.id);
+  // Primitive form: number / string
+  if (raw !== null && raw !== undefined && raw !== '') return String(raw);
+  // Fallback (store se)
+  if (fallback?.id !== undefined && fallback?.id !== null) return String(fallback.id);
+  if (fallback !== null && fallback !== undefined && fallback !== '') return String(fallback);
+  return '';
+};
+
+// ── Container ─────────────────────────────────────────────────────────────────
 export default function useBookingCancelPoliciesContainer() {
-  const { params } = useRoute() as any;
-  
+  const { params } = useRoute<any>();
   const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
-  
-  const listing = params?.paramData?.listing;
-  const isEdit = Boolean(listing?.id);
 
+  const listing = params?.paramData?.listing;
+  const isEdit = Boolean(listing?.listing_id); // ✅ consistent
+
+
+  const getPolicyValue = (raw: any, fallback: any): string => {
+    // null / undefined — skip
+    if (raw === null || raw === undefined) {
+      // fallback check
+      if (fallback === null || fallback === undefined) return '';
+      if (typeof fallback === 'string' && fallback !== '') return fallback;
+      if (fallback?.id !== undefined) return String(fallback.id);
+      return '';
+    }
+    // Object form: { id, title } — id se map karo
+    if (typeof raw === 'object' && raw?.id !== undefined) {
+      // id → slug mapping
+      const idToSlug: Record<number, string> = {
+        1: 'flexible',
+        2: 'moderate',
+        3: 'strict',
+      };
+      return idToSlug[raw.id] || String(raw.id);
+    }
+    // String slug — directly use karo
+    if (typeof raw === 'string' && raw !== '') return raw;
+    // Number id
+    if (typeof raw === 'number') {
+      const idToSlug: Record<number, string> = {
+        1: 'flexible',
+        2: 'moderate',
+        3: 'strict',
+      };
+      return idToSlug[raw] || String(raw);
+    }
+    return '';
+  };
+
+
+  // ── Form ──────────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors } } = useForm<CancelPoliciesValues>({
     resolver: yupResolver(cancelPoliciesSchema) as any,
     defaultValues: {
-      airbnb_policy: listing?.airbnb_policy ?? propertyDetail?.airbnb_policy ?? '',
-      airbnb_longterm_policy: listing?.airbnb_longterm_policy ?? propertyDetail?.airbnb_longterm_policy ?? '',
-      gathern_policy: listing?.gathern_policy ?? propertyDetail?.gathern_policy ?? '',
-      booking_com_policy: listing?.booking_com_policy ?? propertyDetail?.booking_com_policy ?? '',
+      airbnb_policy: getPolicyValue(
+        listing?.airbnb_cancellation_policy,
+        propertyDetail?.airbnb_cancellation_policy
+      ),
+      airbnb_longterm_policy: listing?.airbnb_longterm_policy
+        ?? propertyDetail?.airbnb_longterm_policy
+        ?? '',
+      gathern_policy: getPolicyValue(
+        listing?.gathern_cancellation_policy,
+        propertyDetail?.gathern_cancellation_policy
+      ),
+      booking_com_policy: getPolicyValue(
+        listing?.bookingCom_cancellation_policy,
+        propertyDetail?.bookingCom_cancellation_policy
+      ),
     },
   });
 
-  // ---- Mutations ----
+  // ── Payload builder ───────────────────────────────────────────────────────
+  const buildPayload = (data: CancelPoliciesValues, isSaveAndExit: boolean = false) => ({
+    user_id: String(user?.id),
+    channel_id,
+    listing_id: String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name: propertyDetail?.name || 'New Listing',
+      airbnb_cancellation_policy: data.airbnb_policy,
+      airbnb_longterm_policy: data.airbnb_longterm_policy,
+      gathern_cancellation_policy: data.gathern_policy,
+      bookingCom_cancellation_policy: data.booking_com_policy,
+    },
+  });
+
+  // ── Mutations ─────────────────────────────────────────────────────────────
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
-    onError: error => Toast.show({ type: 'error', text1: error.message || 'Something went wrong' }),
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
     mutationFn: editListingApi,
     onSuccess: ({ message }: any) => {
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+      });
       Toast.show({ type: 'success', text1: message || 'Updated successfully' });
       goBack();
     },
-    onError: error => Toast.show({ type: 'error', text1: error.message || 'Something went wrong' }),
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
   });
 
-  // ---- Payload builder ----
-  const buildPayload = (data: CancelPoliciesValues, isSaveAndExit: boolean = false) => ({
-    channel_id,
-    listing_id: String(listing_id || listing?.id),
-    user_id: String(user?.id),
-    save_and_exit: isSaveAndExit ? 1 : 0,
-    listing: {
-      name: propertyDetail?.name || listing?.name || 'New Listing',
-      airbnb_cancel_policy: data.airbnb_policy,
-      airbnb_longterm_cancel_policy: data.airbnb_longterm_policy,
-      gathern_cancel_policy: data.gathern_policy,
-      booking_com_cancel_policy: data.booking_com_policy,
-    },
-  });
-
-  // ---- Handlers ----
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const onNext = (data: CancelPoliciesValues) => {
     updateListing({
-      // @ts-ignore
-      airbnb_cancel_policy: data.airbnb_policy,
-      gathern_cancel_policy: data.gathern_policy,
+      airbnb_cancellation_policy: data.airbnb_policy,
+      airbnb_longterm_policy: data.airbnb_longterm_policy,
+      gathern_cancellation_policy: data.gathern_policy,
+      bookingCom_cancellation_policy: data.booking_com_policy,
     });
 
-    const payload = buildPayload(data, false);
-    if (isEdit) {
-      updateDetails(payload as any);
-    } else {
-      createDetails(payload as any, {
-        onSuccess: () => navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING),
-      });
-    }
+    createDetails(buildPayload(data, false) as any, {
+      onSuccess: () => navigate(NavigationRoutes.APP_STACK.SET_YOUR_PRICING),
+    });
   };
 
   const onSaveExit = (data: CancelPoliciesValues) => {
-    const payload = buildPayload(data, true);
+    updateListing({
+      airbnb_cancellation_policy: data.airbnb_policy,
+      airbnb_longterm_policy: data.airbnb_longterm_policy,
+      gathern_cancellation_policy: data.gathern_policy,
+      bookingCom_cancellation_policy: data.booking_com_policy,
+    });
+
     if (isEdit) {
-      updateDetails(payload as any);
+      updateDetails(buildPayload(data, true) as any);
     } else {
-      createDetails(payload as any, {
+      createDetails(buildPayload(data, true) as any, {
         onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
       });
     }
   };
 
-  return { control, errors, handleSubmit, onNext, onSaveExit, isLoading: isCreating || isUpdating };
+  return {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isLoading: isCreating || isUpdating,
+    isEdit,
+  };
 }

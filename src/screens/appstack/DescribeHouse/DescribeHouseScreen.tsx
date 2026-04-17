@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -20,8 +20,13 @@ const DescribeHouseScreen = () => {
         isLoading,
         descriptionLength,
         titleLength,
-        onSaveExit
+        onSaveExit,
+        isEdit,
+        editType
     } = useDescribeHouseContainer();
+
+      const showTitle       = !editType || editType === 'title';
+  const showDescription = !editType || editType === 'description';
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -34,12 +39,14 @@ const DescribeHouseScreen = () => {
                     {/* Header Row */}
                     <View style={styles.headerRow}>
                         <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-                            <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+                            <Pressable style={styles.backBtnWrapper} onPress={() => goBack()}>
                                 <Svgicons path='arrowLeftIcon' size={24} />
-                            </TouchableOpacity>
+                            </Pressable>
                         </GradientBorder>
                         {/* Progress set to 40% as per attachment */}
-                        <CircularProgress percentage={40} size={48} strokeWidth={4} />
+                        {!isEdit && (
+                            <CircularProgress percentage={40} size={48} strokeWidth={4} />
+                        )}
                     </View>
 
                     {/* Titles */}
@@ -53,6 +60,7 @@ const DescribeHouseScreen = () => {
                     />
 
                     {/* Property Title Input */}
+                     {showTitle && (
                     <TextareaField
                         name="name"
                         control={control}
@@ -66,8 +74,9 @@ const DescribeHouseScreen = () => {
                         sparkleIcon
                         height={65}
                     />
-
+                     )}
                     {/* Property Description Input */}
+                    {showDescription && (
                     <View style={styles.descriptionWrapper}>
                         <TextareaField
                             name="listing_descriptions"
@@ -82,24 +91,35 @@ const DescribeHouseScreen = () => {
                             sparkleIcon
                         />
                     </View>
+                     )}
                 </ScrollView>
 
                 {/* Fixed Footer Buttons as per attachment */}
-                <View style={styles.footerContainer}>
-                    <AppButton
-                        title="Next"
-                        variant="secondary" // Glassy/Transparent style
-                        onPress={handleSubmit(onNext)}
-                        loading={isLoading}
-                        backgroundColor={Colors.WHITE}
-                    />
-                    <AppButton
-                        title="Save & Exit"
-                        mt={12}
-                        onPress={handleSubmit(onSaveExit)}
-                        disabled={isLoading}
-                    // Default variant is primary (Solid Green)
-                    />
+                <View style={styles.footer}>
+                    {!isEdit && (
+                        <>
+                            <AppButton
+                                title="Next"
+                                onPress={handleSubmit(onNext)}
+                                loading={isLoading}
+                                variant='secondary'
+                            />
+                            <AppButton
+                                title="Save & Exit"
+                                onPress={handleSubmit(onSaveExit)}
+                                mt={15}
+                                disabled={isLoading}
+                            />
+                        </>
+                    )}
+
+                    {isEdit && (
+                        <AppButton
+                            title="Save & Exit"
+                            onPress={handleSubmit(onSaveExit)}
+                            loading={isLoading}
+                        />
+                    )}
                 </View>
             </View>
         </BGImage>
@@ -136,7 +156,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingBottom: 40,
         paddingTop: 20,
-    }
+    },
+      footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 35 },
+
 });
 
 export default DescribeHouseScreen;

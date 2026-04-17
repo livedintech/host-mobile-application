@@ -12,7 +12,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 
 const AddPropertyDisclosureScreen = () => {
-  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading } = usePropertyDisclosureContainer();
+  const { control, errors, handleSubmit, onNext, onSaveExit, isLoading,isEdit } = usePropertyDisclosureContainer();
 
   const options = [
     { label: 'Yes', value: 'Yes' },
@@ -27,11 +27,11 @@ const AddPropertyDisclosureScreen = () => {
           {/* Header */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={55} size={48} strokeWidth={4} />
+            {!isEdit && <CircularProgress percentage={55} size={48} strokeWidth={4} />}
           </View>
 
           <AppText text="Add property disclosure details" fontSize={28} type="SemiBold" mt={40} pr={40}/>
@@ -74,13 +74,15 @@ const AddPropertyDisclosureScreen = () => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <AppButton 
+          {!isEdit && (
+            <AppButton 
             title="Next" 
             variant="secondary" 
             onPress={handleSubmit(onNext)} 
             loading={isLoading} 
             backgroundColor={Colors.WHITE}
           />
+          )}
           <AppButton 
             title="Save & Exit" 
             mt={12} 
