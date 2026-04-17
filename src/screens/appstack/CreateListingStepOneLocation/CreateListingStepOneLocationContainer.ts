@@ -146,9 +146,8 @@ export default function useCreateListingStepOneLocationContainer() {
       },
       error => {
         console.error('GPS error code:', error.code, error.message);
-        // ✅ Low accuracy se bhi fail ho toh fallback region use karo
         setIsInitializing(false);
-        setHasUserLocation(true); // ✅ fallback region pe bhi allow karo
+        setHasUserLocation(true);
         Toast.show({
           type: 'info',
           text1: 'Using approximate location',
@@ -156,9 +155,10 @@ export default function useCreateListingStepOneLocationContainer() {
         });
       },
       {
-        enableHighAccuracy: false, // ✅ false — real device par fast
-        timeout: 20000,            // ✅ 20s timeout
-        maximumAge: 60000,         // ✅ 1 min cache accept karo
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 10000, 
+        distanceFilter: 0,
       }
     );
   };
