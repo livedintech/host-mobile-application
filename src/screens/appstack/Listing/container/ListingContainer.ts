@@ -270,21 +270,21 @@ export default function useListingContainer(
       const rateValue = Number(formData?.rate || 0);
 
       // ✅ FRONTEND VALIDATION (optional safety)
-      if (rateValue < 38 && bookingType !== 'direct') {
-        Toast.show({
-          type: 'error',
-          text1: 'The minimum price allowed is SAR 38',
-        });
-        return;
-      }
+      // if (rateValue < 38 && bookingType !== 'direct') {
+      //   Toast.show({
+      //     type: 'error',
+      //     text1: 'The minimum price allowed is SAR 38',
+      //   });
+      //   return;
+      // }
 
-      if (rateValue > 375000) {
-        Toast.show({
-          type: 'error',
-          text1: 'Maximum price allowed is SAR 375000',
-        });
-        return;
-      }
+      // if (rateValue > 375000) {
+      //   Toast.show({
+      //     type: 'error',
+      //     text1: 'Maximum price allowed is SAR 375000',
+      //   });
+      //   return;
+      // }
 
       // Build payload
       const payload: any = {
@@ -298,6 +298,7 @@ export default function useListingContainer(
 
       delete payload.country;
       delete payload.phoneNumber;
+      console.log("bookingType",bookingType)
 
       const res =
         bookingType === 'direct'
@@ -306,7 +307,7 @@ export default function useListingContainer(
               ...payload,
               price: formData.rate || '',
             });
-
+console.log("respp",res)
       if (res) {
         Toast.show({
           type: 'success',
@@ -321,38 +322,26 @@ export default function useListingContainer(
 
         return true;
       }
-    } catch (error: any) {
-      console.error('Booking Error:', error);
+    }catch (error: any) {
+  console.log('FULL ERROR:', error);
 
-      // ✅ Extract backend message safely
-      const backendMessage =
-        error?.message || error?.data?.message || error?.error?.message;
+  const validationErrors = error?.data?.errors;
 
-      const validationErrors = error?.data?.errors;
+  if (validationErrors) {
+    const firstKey = Object.keys(validationErrors)[0];
+    Toast.show({
+      type: 'error',
+      text1: validationErrors[firstKey][0],
+    });
+    return;
+  }
 
-      if (validationErrors) {
-        const firstField = Object.keys(validationErrors)[0];
-        const errorMessage = validationErrors[firstField][0];
-
-        Toast.show({
-          type: 'error',
-          text1: errorMessage,
-          visibilityTime: 4000,
-        });
-      } else if (backendMessage) {
-        Toast.show({
-          type: 'error',
-          text1: backendMessage,
-          visibilityTime: 4000,
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Something went wrong',
-          visibilityTime: 4000,
-        });
-      }
-    } finally {
+  Toast.show({
+    type: 'error',
+    text1: error?.data?.message || error?.message || 'Something went wrong',
+  });
+}
+finally {
       setisLoading(false);
     }
 

@@ -107,19 +107,23 @@ export const createDirectBookingApi = async (payload: any) => {
     start_date: formatDate(payload.start_date),
     end_date: formatDate(payload.end_date),
   };
-  
+
   const url = SERVICE_CONFIG_URLS.APP.GET_CALENDAR_BOOKINGS;
   const response = await apiService.post(url, formattedPayload);
+  console.log("responsebookij",response)
 
-  // If the request was successful
   if (response.ok) {
     return response.data?.data || response.data;
   }
 
-  // If the request failed (like your 409 error), throw it!
-  // This forces the 'catch' block in ListingScreen to trigger.
-throw response.data || response;
+  const error: any = new Error(response.data?.message || 'Request failed');
+  console.log("errormmm",error)
+  error.data = response.data;
+  error.status = response.status;
+
+  throw error;
 };
+
 
 /**
  * 6. UPDATE CALENDAR PRICING
@@ -137,9 +141,16 @@ export const updateCalendarPricingApi = async (payload: {
   };
 
   const url = SERVICE_CONFIG_URLS.APP.SET_CALENDAR_PRICING;
-  const { ok, data } = await apiService.post(url, formattedPayload);
+  const { ok, data, status } = await apiService.post(url, formattedPayload);
+
   if (ok) return data;
-  return null;
+
+  // 🔥 THROW instead of returning null
+  const error: any = new Error(data?.message || 'Request failed');
+  error.data = data;
+  error.status = status;
+
+  throw error;
 };
 
 /**

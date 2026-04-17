@@ -47,8 +47,14 @@ const StatCard = ({ title, value, subText, trend, icon }: StatCardProps) => {
       {/* Trend Badge - Now wrapped in GlassCard for the layered effect */}
       <GlassCard width="auto" style={styles.badgeGlassContainer}>
         <View style={styles.badgeContent}>
+          <Svgicons
+            path={isPositive ? 'trendUp' : 'trendDown'}
+            size={12}
+            mr={4}
+            color={trendColor}
+          />
           <AppText
-            text={`${isPositive ? '↗' : '↘'} ${Math.abs(trend)}%`}
+            text={`${Math.abs(trend)}%`}
             fontSize={11}
             type="Bold"
             color={trendColor}

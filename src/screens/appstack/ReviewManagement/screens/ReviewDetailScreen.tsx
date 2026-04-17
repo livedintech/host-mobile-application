@@ -248,28 +248,51 @@ const ReviewDetailScreen = ({ route }: any) => {
         isLoading={isLoading}
       >
         <View style={styles.styleRow}>
-          <View
-            style={styles.arrowCircleInner}
-          >
+          <View style={styles.arrowCircleInner}>
             <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
             </Pressable>
           </View>
           {/* 1. Calculate filtered options before rendering */}
           {(() => {
-            const filteredOptions = MENU_OPTIONS.filter(item => {
-              const platform = property?.booking_platform;
+            const platform = property?.booking_platform;
+            const checkInDateStr = property?.booking_dates?.from;
 
-              // Logic for "Change Reservation"
-              if (item.label === 'Change Reservation') {
-                return (
-                  platform === 'host' ||
-                  platform === 'host_booking' ||
-                  platform === 'direct'
-                );
+            // Helper to get normalized dates (midnight) for accurate comparison
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const checkInDate = checkInDateStr
+              ? new Date(checkInDateStr)
+              : null;
+            if (checkInDate) checkInDate.setHours(0, 0, 0, 0);
+
+            const isPreviousDate = checkInDate && checkInDate < today;
+            const isToday =
+              checkInDate && checkInDate.getTime() === today.getTime();
+            const isDirectBooking = ['host', 'host_booking', 'direct'].includes(
+              platform,
+            );
+            const isOTABooking = !isDirectBooking;
+
+            // --- Logic for filtering menu options ---
+            const filteredOptions = MENU_OPTIONS.filter(item => {
+              // Case 1: Direct booking + previous date = Hide everything
+              if (isDirectBooking && isPreviousDate) {
+                return false;
               }
 
-              // Logic for "Cancel Reservation"
+              // Case 2: OTA booking + (previous date OR today) = Hide everything
+              if (isOTABooking && (isPreviousDate || isToday)) {
+                return false;
+              }
+
+              // Existing "Change Reservation" Logic
+              if (item.label === 'Change Reservation') {
+                return isDirectBooking;
+              }
+
+              // Existing "Cancel Reservation" Logic
               if (item.label === 'Cancel Reservation') {
                 return platform !== 'bookingcom';
               }
@@ -277,7 +300,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               return true;
             });
 
-            // 2. Only render the Menu if there is at least one option left
+            // If no options remain after filtering, the whole dot icon modal (Menu) returns null
             if (filteredOptions.length === 0) return null;
 
             return (
@@ -821,9 +844,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   fontSize={14}
                   onPress={() => setShowDetails(!showDetails)}
                   backgroundColor={
-                    isCheckedOut
-                      ? 'rgba(255, 255, 255, 0.6)'
-                      : ''
+                    isCheckedOut ? 'rgba(255, 255, 255, 0.6)' : ''
                   }
                   color={isCheckedOut ? Colors.BLACK : ''}
                   style={[
@@ -843,9 +864,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   // disabled={!isCheckedOut}
                   fontSize={14}
                   title="Rate Your Guest"
-                  backgroundColor={
-                    isCheckedOut ? Colors.PRIMARY_TEAL : ''
-                  }
+                  backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
                   color={isCheckedOut ? Colors.WHITE : ''}
                   style={[
                     styles.rateGuestBtn,
@@ -1305,7 +1324,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-    arrowCircleInner: {
+  arrowCircleInner: {
     width: 40,
     height: 40,
     borderRadius: 20,

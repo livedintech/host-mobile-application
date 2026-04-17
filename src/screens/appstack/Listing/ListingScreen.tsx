@@ -118,8 +118,15 @@ const ListingScreen = () => {
   };
 
   const onBookingSubmit = async (data: any) => {
-    const success = await onCreateBooking(data);
-    if (success) setIsBookingOpen(false);
+    // const success = await onCreateBooking(data);
+    // if (success) setIsBookingOpen(false);
+
+
+    // 1. Close the sheet immediately when the response starts/comes back
+    setIsBookingOpen(false); 
+    
+    // 2. Call the function to handle the API and show the Toast
+    await onCreateBooking(data);
   };
 
   const handleListingRowPress = (id: string | number) => {
