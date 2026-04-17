@@ -50,7 +50,7 @@ export default function usePropertyDisclosureContainer() {
                 type: 'success',
                 text1: message || 'Property disclosure saved successfully',
             });
-            navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
+            navigate(NavigationRoutes.APP_STACK.FINISH_UP_STEP_3);
         },
         onError: error => {
             Toast.show({
@@ -111,7 +111,7 @@ export default function usePropertyDisclosureContainer() {
         // 2. API Hit
         createListingDetailsPayload(buildPayload(data, false), {
             onSuccess: () => {
-                navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
+                navigate(NavigationRoutes.APP_STACK.FINISH_UP_STEP_3);
             },
         });
     };

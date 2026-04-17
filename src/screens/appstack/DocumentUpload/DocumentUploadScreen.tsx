@@ -42,15 +42,15 @@ const DocumentUploadScreen = () => {
     document: any
   ) => (
     <View style={styles.uploadSection}>
-      <AppText text={label} fontSize={16} type="SemiBold" color={Colors.PINE_FOREST} mb={12} />
+      <AppText text={label} fontSize={16} type="SemiBold"  mb={12} />
 
       <TouchableOpacity
         style={styles.uploadButton}
         onPress={() => pickDocument(fieldName)}
         activeOpacity={0.7}
       >
-        <AppText text="Upload Pdf" fontSize={16} color={Colors.PINE_FOREST} />
         <Svgicons path="attachmentIcon" size={24} />
+        <AppText text="Upload PDF" fontSize={16}  />
       </TouchableOpacity>
 
       {document && (
@@ -60,7 +60,7 @@ const DocumentUploadScreen = () => {
             <AppText text={document.name} fontSize={14} color={Colors.PINE_FOREST} ml={8} style={{ flex: 1 }} />
           </View>
           <TouchableOpacity onPress={() => removeDocument(fieldName)}>
-            <Svgicons path="closeCircleIcon" size={20} />
+            <Svgicons path="greenCross" size={15} />
           </TouchableOpacity>
         </View>
       )}
@@ -90,18 +90,17 @@ const DocumentUploadScreen = () => {
 
           {/* Title */}
           <AppText
-            text="Upload Ownership Licence Documents"
+            text="Upload ownership licence documents"
             fontSize={26}
             type="SemiBold"
-            color={Colors.BRUNSWICK_GREEN}
-            textAlign="center"
             mb={30}
+            pr={80}
           />
 
           {/* Info */}
           <View style={styles.infoBox}>
-            <AppText text="• Accepted formats: PDF." fontSize={13} color={Colors.SUPER_GREY} mb={4} />
-            <AppText text="• File size ≤ 10 MB per document." fontSize={13} color={Colors.SUPER_GREY} />
+            <AppText text="• Accepted formats: PDF." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mb={4} />
+            <AppText text="• File size ≤ 10 MB per document." fontSize={12  } color={Colors.DARK_CHARCOAL_OPACITY} />
           </View>
 
           {/* Upload Sections */}
@@ -150,7 +149,6 @@ const DocumentUploadScreen = () => {
               </View>
               {/* Export Button */}
               <AppButton title="Export" onPress={handleOtaSubmit(handleExportSubmit)} mt={20} loading={isLoadingChannelList || isCreating} />
-
             </Pressable>
           </Pressable>
         </Modal>
@@ -186,13 +184,12 @@ const styles = StyleSheet.create({
   uploadButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
-    borderRadius: 30,
-    backgroundColor: Colors.WHITE,
+    borderRadius: 18,
+    gap: 10
   },
   uploadedFile: {
     flexDirection: 'row',

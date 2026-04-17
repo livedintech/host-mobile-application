@@ -277,8 +277,26 @@ import userIcon2 from './userIcon2.svg';
 import homeIcon2 from './homeIcon2.svg';
 import paymentIconNew2 from './paymentIconNew2.svg';
 import checkedCheckbox from './checkedCheckbox.svg';
+import bedroomIcon from './bedroomIcon.svg'
+import guestIcon from './guestIcon.svg'
+import house_outline from './house_outline.svg'
+import smokingIcon from './smokingIcon.svg'
+import partyIcon from './partyIcon.svg'
+import petIcon from './petIcon.svg'
+import quietHoursIcon from './quietHoursIcon.svg'
+import house_step3 from './house_step3.svg'
+import greenCross from './greenCross.svg'
 
 export const icons = {
+  greenCross,
+  house_step3,
+  quietHoursIcon,
+  petIcon,
+  partyIcon,
+  smokingIcon,
+  house_outline,
+  guestIcon,
+  bedroomIcon,
   iconRoundedCross,
   adWhite,
   houseRoofShelterBlack,

@@ -1,149 +1,92 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { PricingFormValues, pricingSchema } from '@/validation/auth/createListingSchemas';
+import * as yup from 'yup';
+import { useMutation } from '@tanstack/react-query';
+import { useRoute } from '@react-navigation/native';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useMutation } from '@tanstack/react-query';
-import { CreateListingDetailsPayload, CreateListingDetailsResponse, createListingPricingPayload, createListingPricingResponse } from '@/types/api/createListingTypes';
-import { createListingDetailsApi, createListingPricingApi, editListingApi, editListingPriceApi } from '@/services/ createListingService';
-import Toast from 'react-native-toast-message';
+import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRoute } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
-import { useEffect } from 'react';
 
-export default function useSetPricingContainer() {
-  const { params } = useRoute();
-  const { updateListing, listing_id, channel_id } = useCreateListingStore();
+// --- SCHEMA ---
+export const pricingSchema = yup.object().shape({
+  currency: yup.string().required('Currency is required'),
+  weekday_price: yup.string().required('Required'),
+  weekend_price: yup.string().required('Required'),
+  tax_vat: yup.string().required('Required'),
+  airbnb_markup: yup.string().required('Required'),
+  gathern_markup: yup.string().required('Required'),
+  booking_com_markup: yup.string().required('Required'),
+  extra_guest_fee: yup.string().required('Required'),
+});
+
+export type PricingFormValues = yup.InferType<typeof pricingSchema>;
+
+export default function usePricingContainer() {
+  const { params } = useRoute() as any;
+  const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
+  
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
-  // Discount percentage options
-  const discountOptions = Array.from({ length: 21 }, (_, i) => ({
-    label: `${i * 5}%`,
-    value: String(i * 5),
-  }));
-
-
-  const { control, handleSubmit, formState: { errors } } =
-    useForm<PricingFormValues>({
-      resolver: yupResolver(pricingSchema) as any,
-      defaultValues: {
-        weekday_base_price: listing?.prices?.weekday?.toString() || '',
-        weekend_base_price: listing?.prices?.weekend?.toString() || '',
-        discount: String(listing?.discounts ?? 0),           // ✅ listing.discounts
-        tax_vat: String(listing?.tax ?? 0),                  // ✅ already correct
-        markup_price: String(listing?.markup ?? 0),          // ✅ already correct
-        cleaning_fee: listing?.prices?.cleaning_fee?.toString() || '',
-        airbnb_discount: String(listing?.prices?.airbnb_discount ?? 0),
-        gathern_discount: String(listing?.prices?.gathern_discount ?? 0),
-        booking_discount: String(listing?.prices?.bookingCom_discount ?? 0),
-        extra_guest_fee: listing?.prices?.price_per_extra_person?.toString() || '',
-      },
-    });
-
-
-  // ---- Mutations ----
-  const { mutate: createListingDetailsPayload, isPending: isCreating } =
-    useMutation<createListingPricingResponse, Error, createListingPricingPayload>({
-      mutationFn: createListingPricingApi,
-      onError: error => {
-        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
-      },
-    });
-
-  const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
-    mutationFn: editListingPriceApi,
-    onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
-      });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
-      goBack();
-    },
-    onError: error => {
-      Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+  const { control, handleSubmit, formState: { errors } } = useForm<PricingFormValues>({
+    resolver: yupResolver(pricingSchema) as any,
+    defaultValues: {
+      currency: listing?.currency ?? propertyDetail?.currency ?? 'SAR',
+      weekday_price: String(listing?.weekday_price ?? propertyDetail?.weekday_price ?? ''),
+      weekend_price: String(listing?.weekend_price ?? propertyDetail?.weekend_price ?? ''),
+      tax_vat: String(listing?.tax_vat ?? propertyDetail?.tax_vat ?? ''),
+      airbnb_markup: String(listing?.airbnb_markup ?? propertyDetail?.airbnb_markup ?? ''),
+      gathern_markup: String(listing?.gathern_markup ?? propertyDetail?.gathern_markup ?? ''),
+      booking_com_markup: String(listing?.booking_com_markup ?? propertyDetail?.booking_com_markup ?? ''),
+      extra_guest_fee: String(listing?.extra_guest_fee ?? propertyDetail?.extra_guest_fee ?? ''),
     },
   });
 
-  // ---- Payload builder ----
-  const buildPayload = (data: PricingFormValues, isSaveAndExit: boolean = false): createListingPricingPayload => ({
-    user_id: Number(user?.id),
-    listing_id: String(listing_id),
-    channel_id: String(channel_id),
-    listing_currency: "SAR", // Swagger requirement
-    // save_and_exit: isSaveAndExit ? 1 : 0,
-    save_and_exit: 0,
-    prices: {
-      weekday: Number(data.weekday_base_price),
-      weekend: Number(data.weekend_base_price),
-      cleaning_fee: Number(data.cleaning_fee),
-      security_deposit: 0, 
-      ...data.extra_guest_fee && { price_per_extra_person: Number(data.extra_guest_fee)},
-      discount: Number(data.discount || 0),
-      tax: Number(data.tax_vat || 0),
-      markup: Number(data.markup_price || 0),
-      airbnb_discount: Number(data.airbnb_discount || 0),
-      gathern_discount: Number(data.gathern_discount || 0),
-      bookingCom_discount: Number(data.booking_discount || 0), // Swagger key: bookingCom_discount
-    }
+  const { mutate: handleApi, isPending } = useMutation({
+    mutationFn: isEdit ? editListingApi : createListingDetailsApi,
+    onSuccess: (res: any) => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+      Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+      isEdit ? goBack() : navigate(NavigationRoutes.APP_STACK.ADD_DISCOUNTS); 
+    },
+    onError: error => Toast.show({ type: 'error', text1: error.message || 'Something went wrong' }),
   });
 
-  // ---- Handlers ----
-  const onNext = (data: PricingFormValues) => {
-    // Store update for UI persistence
+  const onSubmit = (data: PricingFormValues, isSaveAndExit: boolean = false) => {
+    // Store Update
     updateListing({
-      weekday_base_price: data.weekday_base_price,
-      weekend_base_price: data.weekend_base_price,
-      discount: data.discount,
-      tax_vat: data.tax_vat,
-      markup_price: data.markup_price,
-      cleaning_fee: data.cleaning_fee,
-      airbnb_discount: data.airbnb_discount,
-      gathern_discount: data.gathern_discount,
-      booking_discount: data.booking_discount,
-      extra_guest_fee: data.extra_guest_fee,
+      // @ts-ignore
+      weekday_price: data.weekday_price,
+      weekend_price: data.weekend_price,
+      currency: data.currency,
     });
 
-    // API Call with exact Swagger structure
-    createListingDetailsPayload(buildPayload(data, false), {
-      onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING);
+    const payload = {
+      channel_id,
+      listing_id: String(listing_id || listing?.id),
+      user_id: String(user?.id),
+      save_and_exit: isSaveAndExit ? 1 : 0,
+      listing: {
+        name: propertyDetail?.name || listing?.name,
+        currency: data.currency,
+        weekday_price: data.weekday_price,
+        weekend_price: data.weekend_price,
+        tax_vat: data.tax_vat,
+        airbnb_markup: data.airbnb_markup,
+        gathern_markup: data.gathern_markup,
+        booking_com_markup: data.booking_com_markup,
+        extra_guest_fee: data.extra_guest_fee,
       },
-    });
+    };
+
+    handleApi(payload as any);
   };
 
-  const onSaveExit = (data: PricingFormValues) => {
-    // Persistence call
-    updateListing({ weekday_base_price: data.weekday_base_price });
-
-    const payload = buildPayload(data, true); // save_and_exit: 1
-
-    if (isEdit) {
-      updateListingDetails(payload);
-    } else {
-      createListingDetailsPayload(payload, {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
-      });
-    }
-  };
-
-  return {
-    control,
-    errors,
-    handleSubmit,
-    onNext,
-    onSaveExit,
-    isEdit,
-    isLoading: isCreating || isUpdating,
-    discountOptions,
-  };
+  return { control, errors, handleSubmit, onSubmit, isLoading: isPending };
 }

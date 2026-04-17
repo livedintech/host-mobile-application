@@ -266,6 +266,22 @@ const AppStack = () => {
             .default
         }
       />
+       <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.AMENITIES}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/Amenities/AmenitiesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.MAKE_PROPERTY_STAND_OUT}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/MakePropertyStandOut/MakePropertyStandOutScreen')
+            .default
+        }
+      />
       <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS}
@@ -302,6 +318,62 @@ const AppStack = () => {
         name={NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE}
         getComponent={() =>
           require('@/screens/appstack/DescribeHouse/DescribeHouseScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/AddPropertyGuidelines/AddPropertyGuidelinesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/SelectPropertyPolicies/SelectPropertyPoliciesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.FINISH_UP_STEP_3}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/FinishUpStep3/FinishUpStep3Screen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.ADD_BOOKING_RULES}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/AddBookingRules/AddBookingRulesScreen')
+            .default
+        }
+      />
+       <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.ADD_BOOKING_CANCEL_POLICIES}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/AddBookingCancelPolicies/AddBookingCancelPoliciesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.ADD_DISCOUNTS}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/AddDiscounts/AddDiscountsScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.ADD_AI_PRICING}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/AIPricing/AddAIPricingScreen')
             .default
         }
       />

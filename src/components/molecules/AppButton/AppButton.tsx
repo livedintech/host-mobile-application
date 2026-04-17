@@ -7,11 +7,15 @@ import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import ButtonView from './ButtonView';
 import AppText from '../AppText/AppText';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 type ButtonVariant = 'primary' | 'secondary';
 
 const AppButton = ({
     title,
+    leftIcon,        // 👈 Left Icon path
+    rightIcon,       // 👈 Right Icon path
+    iconSize = 18,
     fontSize = 16,
     textTransform,
     onPress,
@@ -30,6 +34,9 @@ const AppButton = ({
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
     variant?: ButtonVariant;
+    leftIcon?: string;
+    rightIcon?: string;
+    iconSize?: number;
 }) => {
     const spacingStyles = {
         margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
@@ -46,25 +53,14 @@ const AppButton = ({
     };
 
     const isPrimary = variant === 'primary';
-
-    // ✅ Disabled hone par text color semi-transparent black, warna normal color
     const txtColor = color || (disabled ? '#0000005E' : isPrimary ? Colors.WHITE : Colors.BLACK);
 
-    // Gradient border — reusable for both secondary and disabled primary
     const renderGradientBorder = () => (
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
             <MaskedView
                 style={StyleSheet.absoluteFill}
                 maskElement={
-                    <View
-                        style={{
-                            flex: 1,
-                            backgroundColor: 'transparent',
-                            borderColor: 'white',
-                            borderWidth: 1,
-                            borderRadius: borderRadius,
-                        }}
-                    />
+                    <View style={{ flex: 1, backgroundColor: 'transparent', borderColor: 'white', borderWidth: 1, borderRadius: borderRadius }} />
                 }
             >
                 <LinearGradient
@@ -78,14 +74,13 @@ const AppButton = ({
         </View>
     );
 
-    // Inner button logic
     const renderButtonInner = (innerBgColor: string) => (
         <ButtonView
             activeOpacity={0.1}
             backgroundColor={innerBgColor}
             style={[
                 styles.button,
-                { borderRadius },
+                { borderRadius, flexDirection: 'row' },
                 isPrimary && !disabled && { ...spacingStyles },
                 style,
             ]}
@@ -95,20 +90,35 @@ const AppButton = ({
             {loading ? (
                 <ActivityIndicator color={txtColor} />
             ) : (
-                <AppText
-                    text={title}
-                    fontSize={Metrics.generatedFontSize(fontSize)}
-                    textAlign='center'
-                    color={txtColor}
-                    textTransform={textTransform}
-                    type={type}
-                    style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
-                />
+                <>
+                    {/* Left Icon */}
+                    {leftIcon && (
+                        <View style={{ marginRight: 8 }}>
+                            <Svgicons path={leftIcon} size={iconSize} color={txtColor} />
+                        </View>
+                    )}
+
+                    <AppText
+                        text={title}
+                        fontSize={Metrics.generatedFontSize(fontSize)}
+                        textAlign='center'
+                        color={txtColor}
+                        textTransform={textTransform}
+                        type={type}
+                        style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
+                    />
+
+                    {/* Right Icon */}
+                    {rightIcon && (
+                        <View style={{ marginLeft: 8 }}>
+                            <Svgicons path={rightIcon} size={iconSize} color={txtColor} />
+                        </View>
+                    )}
+                </>
             )}
         </ButtonView>
     );
 
-    // ✅ Primary disabled: gradient border + transparent background + dim text
     if (isPrimary && disabled) {
         return (
             <View style={[spacingStyles, { borderRadius }]}>
@@ -118,26 +128,19 @@ const AppButton = ({
         );
     }
 
-    // ✅ Secondary (e.g. "Next") button: gradient border + transparent bg
     if (!isPrimary) {
         return (
             <View style={[spacingStyles]}>
                 <View style={{ borderRadius, overflow: 'hidden' }}>
-
-                    {/* Gradient Border */}
                     {renderGradientBorder()}
-
-                    {/* Inner Button with spacing to show border */}
                     <View style={{ margin: 1 }}>
                         {renderButtonInner(backgroundColor || Colors.TRANSPARENT)}
                     </View>
-
                 </View>
             </View>
         );
     }
 
-    // ✅ Primary enabled: solid background
     return renderButtonInner(backgroundColor || Colors.MEDIUM_JUNGLE_GREEN);
 };
 
@@ -148,8 +151,7 @@ const styles = StyleSheet.create({
         paddingVertical: Metrics.verticalScale(14),
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: Metrics.scale(15), // Basic horizontal padding
     },
-    text: {
-        fontWeight: '500',
-    },
+    text: { fontWeight: '500' },
 });

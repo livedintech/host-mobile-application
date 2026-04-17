@@ -4,7 +4,7 @@ import { DescribeHouseFormValues, describeHouseSchema } from '@/validation/auth/
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation } from '@tanstack/react-query';
-import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
+import { CreateListingDetailsPayload } from '@/types/api/createListingTypes';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import Toast from 'react-native-toast-message';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -17,75 +17,56 @@ export default function useDescribeHouseContainer() {
   const { params } = useRoute();
   const { updateListing, listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore();
-  const listing = params?.paramData?.listing;
+  
+  const listing = (params as any)?.paramData?.listing;
   const isEdit = Boolean(listing?.id);
 
+  // Safe description parsing
   let listingDescription = '';
   try {
     const raw = listing?.listing_descriptions?.[0] ?? '';
-    if (typeof raw === 'string') {
+    if (typeof raw === 'string' && raw.startsWith('{')) {
       const parsed = JSON.parse(raw);
       listingDescription = parsed?.description || raw;
     } else {
-      listingDescription = raw?.description || '';
+      listingDescription = typeof raw === 'object' ? raw.description : raw;
     }
   } catch {
-    listingDescription = listing?.listing_descriptions?.[0] ?? '';
-  }
-
-
-  // Safe access for edit mode only
-  const listingDescriptionRaw = listing?.listing_descriptions?.[0] ?? null;
-
-  let listingDescriptionParsed: any = null;
-  try {
-    listingDescriptionParsed =
-      typeof listingDescriptionRaw === 'string'
-        ? JSON.parse(listingDescriptionRaw)
-        : listingDescriptionRaw;
-  } catch (e) {
-    listingDescriptionParsed = null;
+    listingDescription = listing?.listing_descriptions?.[0] || '';
   }
 
   const { control, handleSubmit, formState: { errors }, watch } = useForm<DescribeHouseFormValues>({
     resolver: yupResolver(describeHouseSchema) as any,
-     defaultValues: {
+    defaultValues: {
       name: listing?.name ?? '',
       listing_descriptions: listingDescription,
-      wifi_username: listing?.wifi_network ?? '',
-      wifi_password: listing?.wifi_password ?? '',
-      door_lock_code: listing?.door_lock_code ?? '',
     },
   });
 
+  // Counters for UI
+  const titleValue = watch('name') || '';
   const descriptionValue = watch('listing_descriptions') || '';
 
-  const { mutate: createListingDetailsPayload, isPending } =
-    useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
-      mutationFn: createListingDetailsApi,
-      onSuccess: ({ message }) => {
-        Toast.show({ type: 'success', text1: message || 'Saved successfully' });
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
-      },
-      onError: error => {
-        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
-      },
-    });
+  const { mutate: createListingDetailsPayload, isPending } = useMutation({
+    mutationFn: createListingDetailsApi,
+    onSuccess: ({ message }) => {
+      Toast.show({ type: 'success', text1: message || 'Saved successfully' });
+      navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES);
+    },
+    onError: error => {
+      Toast.show({ type: 'error', text1: error.message });
+    },
+  });
 
   const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
     mutationFn: editListingApi,
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
-      });
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
       Toast.show({ type: 'success', text1: message || 'Updated successfully' });
       goBack();
     },
     onError: error => {
-      Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+      Toast.show({ type: 'error', text1: error.message });
     },
   });
 
@@ -96,32 +77,22 @@ export default function useDescribeHouseContainer() {
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
       name: data.name,
-      listing_desc: data.listing_descriptions, // Swagger key: listing_desc
-      wifi_network: data.wifi_username,         // Swagger key: wifi_network
-      wifi_password: data.wifi_password,
-      door_lock_code: data.door_lock_code,
-      listing_descriptions: [
-        {
-          description: data.listing_descriptions
-        }
-      ]
+      listing_desc: data.listing_descriptions,
+      listing_descriptions: [{ description: data.listing_descriptions }]
     },
   });
 
   const onNext = (data: DescribeHouseFormValues) => {
     updateListing({ name: data.name });
-    createListingDetailsPayload(buildPayload(data));
-    // navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
+    createListingDetailsPayload(buildPayload(data, false));
   };
 
   const onSaveExit = (data: DescribeHouseFormValues) => {
     if (isEdit) {
-      updateListingDetails(buildPayload(data));
+      updateListingDetails(buildPayload(data, true));
     } else {
-      createListingDetailsPayload(buildPayload(data), {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        },
+      createListingDetailsPayload(buildPayload(data, true), {
+        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
       });
     }
   };
@@ -134,6 +105,7 @@ export default function useDescribeHouseContainer() {
     handleSubmit,
     onNext,
     onSaveExit,
+    titleLength: titleValue.length,
     descriptionLength: descriptionValue.length,
   };
 }

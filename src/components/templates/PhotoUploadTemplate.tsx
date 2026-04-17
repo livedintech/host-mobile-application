@@ -1,55 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
-  Pressable,
   Image,
   FlatList,
   Modal,
-  ActivityIndicator,
+  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import Metrics from '@/utility/Metrics';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import { useMediaUpload, MediaItem } from './useMediaUpload';
 import CircularProgress from '../molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import BGImage from '../molecules/BGImage/BGImage';
+import { useMediaUpload, MediaItem } from './useMediaUpload';
+import Metrics from '@/utility/Metrics';
 
-interface PhotoUploadTemplateProps {
-  step?: string;
-  screenTitle: string;
-  sectionTitle: string;
-  maxImages: number;
-  percentage?:number;
-  maxVideos: number;
-  mediaList: MediaItem[];
-  onMediaChange: (list: MediaItem[]) => void;
-  loading?: boolean;
-  isFetching?: boolean;
+const PhotoUploadTemplate = (props: any) => {
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
+  const [showOptions, setShowOptions] = useState(false);
 
-  secondaryBtnTitle?: string;
-  onSecondaryPress: () => void;
-  secondaryLoading?: boolean;
-  secondaryDisable?: boolean;
-
-  primaryBtnTitle?: string | null;
-  onPrimaryPress?: () => void;
-  primaryLoading?: boolean;
-  primaryDisable?: boolean;
-}
-
-const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
+  // Hook for media selection logic
   const {
     isPopupVisible,
     setPopupVisible,
     uploadActions,
     removeMedia,
-    handlePick,
+    handlePick
   } = useMediaUpload({
     maxImages: props.maxImages,
     maxVideos: props.maxVideos,
@@ -57,405 +37,194 @@ const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
     onMediaChange: props.onMediaChange,
   });
 
-  // Render thumbnail
-  const renderMediaItem = ({
-    item,
-    index,
-  }: {
-    item: MediaItem;
-    index: number;
-  }) => {
-    const isVideo = item.type?.includes('video');
-
-    return (
-      <View style={styles.mediaWrapper}>
-        <Image source={{ uri: item.path }} style={styles.thumbnail} />
-
-        {isVideo && (
-          <View style={styles.videoBadge}>
-            <Svgicons path="videoIcon" size={12} color={Colors.WHITE} />
-          </View>
-        )}
-
-        <Pressable
-          style={styles.deleteBtn}
-          onPress={() => removeMedia(index)}
-        >
-          <Svgicons path="closeCircleIcon" size={25} />
-        </Pressable>
-      </View>
-    );
-  };
-
-  // Fetch loader
-  if (props.isFetching) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center' }]}>
-        <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-        <AppText text="Loading data..." textAlign="center" mt={10} />
-      </View>
-    );
-  }
+  const renderMediaItem = ({ item, index }: { item: MediaItem; index: number }) => (
+    <View style={styles.mediaWrapper}>
+      <Image source={{ uri: item.path }} style={styles.thumbnail} />
+      <TouchableOpacity
+        style={styles.moreBtn}
+        onPress={() => {
+          setSelectedItemIndex(index);
+          setShowOptions(true);
+        }}
+      >
+        <Svgicons path="threeDots" size={16} color={Colors.BLACK} />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-    <View style={styles.container}>
-
-      <View style={styles.content}>
-        <View style={styles.headerRow}>
-          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-              <Svgicons path='arrowLeftIcon' size={24} />
-            </Pressable>
-          </GradientBorder>
-          {props?.percentage && (
-          <CircularProgress percentage={props?.percentage} size={48} strokeWidth={4} />
-
-          )}
-        </View>
-        {/* Step */}
-        {props.step && (
-          <AppText
-            text={props.step}
-            fontSize={42}
-            type="Bold"
-            color={Colors.BRUNSWICK_GREEN}
-            textAlign="center"
-          />
-        )}
-
-        {/* Header */}
-        <View style={styles.subTitleRow}>
-          <AppText
-            text={props.screenTitle}
-            fontSize={24}
-            type="SemiBold"
-            color={Colors.BRUNSWICK_GREEN}
-          />
-          <Svgicons path="imageIcon" size={24} />
-        </View>
-
-        {/* Instructions */}
-        <View style={styles.infoSection}>
-          <View style={styles.bulletRow}>
-            <View style={styles.bullet} />
-            <AppText
-              text={`Upload up to ${props.maxImages} images and ${props.maxVideos} video per section.`}
-              fontSize={12}
-              color={Colors.PINE_FOREST}
-            />
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.flex1}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header Row */}
+          <View style={styles.headerRow}>
+            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
+              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+                <Svgicons path='arrowLeftIcon' size={24} />
+              </TouchableOpacity>
+            </GradientBorder>
+            <CircularProgress percentage={props.percentage} size={48} strokeWidth={4} />
           </View>
 
-          <View style={styles.bulletRow}>
-            <View style={styles.bullet} />
-            <AppText
-              text="Allowed formats: jpg, png, mp4."
-              fontSize={12}
-              color={Colors.PINE_FOREST}
-            />
+          <AppText text={props.step} fontSize={18} type="Medium" mt={25} mb={23} />
+          <AppText text={props.screenTitle} fontSize={32} type="Bold" />
+
+          <View style={styles.infoSection}>
+            <AppText text={`Upload up to ${props.maxImages} images and ${props.maxVideos} video per section.`} fontSize={14} color="#6B6B6B" />
+            <AppText text="Allowed formats: jpg, png, mp4" fontSize={14} color="#6B6B6B" />
+            <AppText text="Video limit: ≤ 20 MB" fontSize={14} color="#6B6B6B" />
           </View>
 
-          <View style={styles.bulletRow}>
-            <View style={styles.bullet} />
-            <AppText
-              text="Video limit: ≤ 20 MB."
-              fontSize={12}
-              color={Colors.PINE_FOREST}
-            />
-          </View>
-        </View>
+          <AppText text={props.sectionTitle} fontSize={22} type="Bold" mt={30} mb={15} />
 
-        {/* Section title */}
-        <AppText
-          text={props.sectionTitle}
-          fontSize={22}
-          type="SemiBold"
-          color={Colors.BRUNSWICK_GREEN}
-          textAlign="center"
-          mt={20}
-        />
+          {/* Upload Area */}
+          {props.mediaList.length === 0 ? (
+            <View>
+              <TouchableOpacity activeOpacity={0.8} style={styles.glassCard} onPress={() => handlePick()}>
+                <Svgicons path="plusIcon" size={24} />
+                <AppText text="Add Photos & Videos" ml={15} fontSize={16} type="Medium" />
+              </TouchableOpacity>
 
-        {/* Upload area */}
-        {props.mediaList.length === 0 ? (
-          <GradientBorder borderRadius={20} style={styles.uploadBoxWrapper}>
-            <Pressable
-              style={styles.uploadBoxInner}
-              onPress={handlePick}
-            >
-              <Svgicons path="fileUploadIcon" size={60} />
-              <AppText
-                text="Upload Images"
-                fontSize={24}
-                type="SemiBold"
-                mt={10}
-              />
-            </Pressable>
-          </GradientBorder>
-        ) : (
-          <GradientBorder borderRadius={15} style={styles.gridWrapper}>
-            <View style={styles.gridInner}>
+              <TouchableOpacity activeOpacity={0.8} style={styles.glassCard} onPress={() => uploadActions.takePhoto()}>
+                <Svgicons path="cameraIcon" size={24} />
+                <AppText text="Take New Picture" ml={15} fontSize={16} type="Medium" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <View style={{ alignSelf: 'flex-end' }}>
+                <AppButton
+                  title="Add More"
+                  leftIcon="plusIcon"
+                  variant="secondary"
+                  fontSize={14}
+                  onPress={() => handlePick()}
+                  style={styles.addMoreMini}
+                  type='SemiBold'
+                  borderRadius={13}
+                  mb={30}
+                />
+              </View>
               <FlatList
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                data={[...props.mediaList, { isButton: true }]}
-                numColumns={4}
-                keyExtractor={(_, index) => index.toString()}
-                renderItem={({ item, index }) =>
-                  (item as any).isButton ? (
-                    <GradientBorder
-                      borderRadius={12}
-                      style={styles.plusBtnWrapper}
-                    >
-                      <Pressable
-                        style={styles.plusBtnInner}
-                        onPress={handlePick}
-                      >
-                        <Svgicons
-                          path="plusIcon"
-                          size={22}
-                          color={Colors.BRUNSWICK_GREEN}
-                        />
-                      </Pressable>
-                    </GradientBorder>
-                  ) : (
-                    renderMediaItem({
-                      item: item as MediaItem,
-                      index,
-                    })
-                  )
-                }
+                data={props.mediaList}
+                renderItem={renderMediaItem}
+                numColumns={3}
+                keyExtractor={(_, i) => i.toString()}
+                scrollEnabled={false}
+                style={{
+                  paddingBottom: Metrics.verticalScale(50)
+                }}
               />
             </View>
-          </GradientBorder>
-        )}
+          )}
+        </ScrollView>
 
-        {/* Modal */}
-        <Modal visible={isPopupVisible} transparent animationType="slide">
-          <Pressable
+        {/* Footer Buttons */}
+        <View style={styles.footer}>
+          <AppButton
+            title={props.primaryBtnTitle}
+            variant="secondary"
+            onPress={props.onPrimaryPress}
+            loading={props.primaryLoading}
+          />
+          <AppButton
+            title={props.secondaryBtnTitle}
+            mt={12}
+            onPress={props.onSecondaryPress}
+          />
+        </View>
+
+        {/* Selection Modal (Gallery/Camera) */}
+        <Modal visible={isPopupVisible} transparent animationType="fade">
+          <TouchableOpacity
             style={styles.modalOverlay}
+            activeOpacity={1}
             onPress={() => setPopupVisible(false)}
           >
             <View style={styles.modalContent}>
-              <AppText
-                text="Select Media"
-                type="Bold"
-                fontSize={18}
-                mb={20}
-                textAlign="center"
-              />
+              <View style={styles.modalIndicator} />
+              <AppText text="Select Media" type="Bold" fontSize={18} mb={20} textAlign="center" />
 
-              <ButtonView
-                style={styles.optionRow}
-                onPress={uploadActions.fromGallery}
-              >
-                <Svgicons
-                  path="imageIcon"
-                  size={24}
-                  color={Colors.BRUNSWICK_GREEN}
-                />
-                <AppText
-                  text="Gallery (Photo & Video)"
-                  ml={15}
-                  fontSize={16}
-                />
-              </ButtonView>
+              <TouchableOpacity style={styles.optionRow} onPress={uploadActions.fromGallery}>
+                <Svgicons path="imageIcon" size={24} color={Colors.PRIMARY} />
+                <AppText text="Gallery (Photo & Video)" ml={15} fontSize={16} />
+              </TouchableOpacity>
 
-              <ButtonView
-                style={styles.optionRow}
-                onPress={uploadActions.takePhoto}
-              >
-                <Svgicons
-                  path="cameraIcon"
-                  size={24}
-                  color={Colors.BRUNSWICK_GREEN}
-                />
+              <TouchableOpacity style={styles.optionRow} onPress={uploadActions.takePhoto}>
+                <Svgicons path="cameraIcon" size={24} color={Colors.PRIMARY} />
                 <AppText text="Take Photo" ml={15} fontSize={16} />
-              </ButtonView>
+              </TouchableOpacity>
 
-              <ButtonView
-                style={styles.optionRow}
-                onPress={uploadActions.recordVideo}
-              >
-                <Svgicons
-                  path="videoIcon"
-                  size={24}
-                  color={Colors.BRUNSWICK_GREEN}
-                />
-                <AppText text="Record Video" ml={15} fontSize={16} />
-              </ButtonView>
-
-              <AppButton
-                title="Cancel"
-                mt={20}
-                onPress={() => setPopupVisible(false)}
-              />
+              <AppButton title="Cancel" mt={20} onPress={() => setPopupVisible(false)} />
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </Modal>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          {props.primaryBtnTitle && props.onPrimaryPress && (
-            <AppButton
-              title={props.primaryBtnTitle}
-              onPress={props.onPrimaryPress}
-              loading={props.primaryLoading}
-              disabled={props.primaryDisable}
-            />
-          )}
-
-          {props.secondaryBtnTitle && (
-            <AppButton
-              title={props.secondaryBtnTitle}
-              onPress={props.onSecondaryPress}
-              loading={props.secondaryLoading}
-              disabled={props.secondaryDisable}
-              mt={15}
-            />
-          )}
-        </View>
+        {/* Actions Modal (Cover/Delete) */}
+        <Modal visible={showOptions} transparent animationType="fade">
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowOptions(false)}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalIndicator} />
+              <AppButton
+                title="Make this picture the cover photo"
+                variant="secondary"
+                onPress={() => setShowOptions(false)}
+              />
+              <AppButton
+                title="Delete picture"
+                mt={15}
+                onPress={() => {
+                  removeMedia(selectedItemIndex!);
+                  setShowOptions(false);
+                }}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
-    </View>
     </BGImage>
   );
 };
 
-export default PhotoUploadTemplate;
-
 const styles = StyleSheet.create({
+  flex1: { flex: 1 },
   container: { flex: 1 },
-  content: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
-
-  subTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Metrics.verticalScale(24),
-    marginTop: Metrics.verticalScale(49),
-    gap: Metrics.scale(6),
-  },
-
-  infoSection: {
-    marginTop: 15,
-    paddingHorizontal: 10,
-    alignSelf: 'flex-start',
-  },
-
-  bulletRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-
-  bullet: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.PINE_FOREST,
-    marginRight: 8,
-  },
-
-  uploadBoxWrapper: { marginTop: 40, height: 250 },
-
-  uploadBoxInner: {
-    flex: 1,
-    borderRadius: 20,
-    backgroundColor: Colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  gridWrapper: {
-    marginTop: 30,
-    height: Metrics.verticalScale(220),
-  },
-
-  gridInner: {
-    flex: 1,
-    borderRadius: 15,
-    backgroundColor: Colors.WHITE,
-    padding: 10,
-  },
-
-  mediaWrapper: {
-    width: '23%',
-    height: Metrics.verticalScale(88),
-    margin: '1%',
-    borderRadius: 12,
-    position: 'relative',
-    marginTop: Metrics.verticalScale(10),
-  },
-
-  thumbnail: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12,
-    backgroundColor: '#EEE',
-  },
-
-  videoBadge: {
-    position: 'absolute',
-    bottom: 4,
-    left: 4,
-    backgroundColor: Colors.WHITE,
-    borderRadius: 4,
-    padding: 2,
-  },
-
-  deleteBtn: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    backgroundColor: Colors.WHITE,
-    borderRadius: 100,
-    zIndex: 10,
-  },
-
-  plusBtnWrapper: {
-    width: '23%',
-    height: Metrics.verticalScale(88),
-    margin: '1%',
-    marginTop: Metrics.verticalScale(10),
-  },
-
-  plusBtnInner: {
-    flex: 1,
-    borderRadius: 12,
-    backgroundColor: Colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-
-  modalContent: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+  scrollContent: { paddingHorizontal: 25, paddingBottom: 160 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, alignItems: 'center' },
+  backBtnWrapper: { width: 32, height: 32, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+  backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
+  infoSection: { marginTop: 15 },
+  glassCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 16,
     padding: 25,
-    paddingBottom: 40,
-  },
-
-  optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    marginBottom: 15,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.5)'
   },
-
-  footer: {
-    marginTop: Metrics.verticalScale(20),
-    marginBottom: Metrics.verticalScale(20),
+  addMoreMini: {
+    paddingVertical: Metrics.verticalScale(10),
+    margin: 0,
+    marginRight: 0
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+  mediaWrapper: { width: '31.3%', aspectRatio: 1, margin: '1%', borderRadius: 12, overflow: 'hidden' },
+  thumbnail: { width: '100%', height: '100%', backgroundColor: '#EEE' },
+  moreBtn: { position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 10, padding: 4 },
+  footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, backgroundColor: 'rgba(255,255,255,0.95)', paddingBottom: 35 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: Colors.WHITE, borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 25, paddingBottom: 40 },
+  modalIndicator: { width: 40, height: 4, backgroundColor: '#DDD', borderRadius: 2, alignSelf: 'center', marginBottom: 20 },
+  optionRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: '#F0F0F0' },
 });
+
+export default PhotoUploadTemplate;

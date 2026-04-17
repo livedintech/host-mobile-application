@@ -8,7 +8,7 @@ const CircularProgress = ({
   percentage = 10, 
   size = 100, 
   strokeWidth = 5, 
-  progressColor = Colors.BRUNSWICK_GREEN, // Dark green color from image
+  progressColor = Colors.PRIMARY_TEAL, // Dark green color from image
   backgroundColor = Colors.LIGHT_GRAY
 }) => {
   const radius = (size - strokeWidth) / 2;
@@ -45,7 +45,7 @@ const CircularProgress = ({
       {/* Percentage Text */}
       <View style={StyleSheet.absoluteFillObject}>
         <View style={styles.textContainer}>
-          <AppText text={`${percentage}%`} fontSize={17} color={Colors.BRUNSWICK_GREEN}/>
+          <AppText text={`${percentage}%`} fontSize={17} color={Colors.PRIMARY_TEAL}/>
         </View>
       </View>
     </View>

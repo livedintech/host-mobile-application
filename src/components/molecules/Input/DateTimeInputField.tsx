@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: Metrics.verticalScale(54),
-    borderRadius: 24,
+    borderRadius: 10,
     paddingHorizontal: 16,
     borderWidth: 1.5,
   },
