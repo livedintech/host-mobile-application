@@ -76,7 +76,6 @@ const CreateListingStepOneLocationScreen = () => {
             query={{
               key: 'AIzaSyBFLqCFWozTt6lfoGyNGl95OYsceWSo8LE',
               language: 'en',
-              components: 'country:sa',
             }}
             fetchDetails={true}
             enablePoweredByContainer={false}

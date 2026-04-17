@@ -72,7 +72,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
                       <GlassCard width={'100%'} style={[
                             styles.optionItem,
                             isSelected && styles.selectedItem
-                          ]}>
+                          ]} onPress={() => onChange(item.value)}>
                         <ButtonView
                           key={item.value}
                           style={[
