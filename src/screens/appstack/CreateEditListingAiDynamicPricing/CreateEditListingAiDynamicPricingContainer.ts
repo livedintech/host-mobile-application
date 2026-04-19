@@ -1,150 +1,103 @@
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { AiDynamicPricingFormValues, aiDynamicPricingSchema } from '@/validation/auth/createListingSchemas';
+// useAIDynamicPricingContainer.ts
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useRoute } from '@react-navigation/native';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useMutation } from '@tanstack/react-query';
-import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
-import Toast from 'react-native-toast-message';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRoute } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-export default function useCreateEditListingAiDynamicPricingContainer() {
-  const { params } = useRoute();
-  const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+// ── Container ─────────────────────────────────────────────────────────────────
+export default function useAIDynamicPricingContainer() {
+  const { params } = useRoute<any>();
+  const { listing_id, channel_id, listing: propertyDetail, updateListing } = useCreateListingStore();
   const { user } = useAuthStore();
+
   const listing = params?.paramData?.listing;
-  const isEdit = Boolean(listing?.id);
+  const isEdit  = Boolean(listing?.listing_id); // ✅ consistent
 
-  const PRICING_MODES = [
-    {
-      id: 1,
-      key: 'conservative',
-      title: 'Conservative Mode',
-      points: [
-        'Stable occupancy 📈',
-        'Fewer vacant nights',
-        'Slightly lower nightly rate',
-      ],
+  // ── States ────────────────────────────────────────────────────────────────
+  const [selectedMode, setSelectedMode] = useState<'conservative' | 'aggressive'>(
+    listing?.ai_pricing_mode ?? propertyDetail?.ai_pricing_mode ?? 'conservative',
+  );
+
+  const [manualOverride, setManualOverride] = useState<boolean>(
+    listing?.manual_price_override === 1 ||
+    listing?.manual_price_override === true ||
+    propertyDetail?.manual_price_override === true ||
+    false,
+  );
+
+  // ── Payload builder ───────────────────────────────────────────────────────
+  const buildPayload = (isSaveAndExit: boolean = false) => ({
+    user_id:       String(user?.id),
+    channel_id,
+    listing_id:    String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name:                  propertyDetail?.name || 'New Listing',
+      ai_pricing_mode:       selectedMode,       // 🆕 NEW
+      manual_price_override: manualOverride,     // 🆕 NEW (boolean)
     },
-    {
-      id: 2,
-      key: 'aggressive',
-      title: 'Aggressive Mode',
-      points: [
-        'Higher revenue per stay 💰',
-        'Premium positioning',
-        'Lower booking volume',
-      ],
-    },
-  ];
-
-
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<AiDynamicPricingFormValues>({
-    resolver: yupResolver(aiDynamicPricingSchema) as any,
-    defaultValues: {
-      pricing_mode: listing?.pricing_mode ?? null,
-      manual_price_override: listing?.manual_price_override ?? false,
-    },
-
   });
 
-  const selectedMode = watch('pricing_mode');
-  const manualOverride = watch('manual_price_override');
+  // ── Mutations ─────────────────────────────────────────────────────────────
+  const { mutate: createDetails, isPending: isCreating } = useMutation({
+    mutationFn: createListingDetailsApi,
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+  });
 
-  // ---- Mutations ----
-  const { mutate: createListingDetailsPayload, isPending: isCreating } =
-    useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
-      mutationFn: createListingDetailsApi,
-      onError: error => {
-        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
-      },
-    });
-
-  const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
+  const { mutate: updateDetails, isPending: isUpdating } = useMutation({
     mutationFn: editListingApi,
-    onSuccess: ({ message }) => {
+    onSuccess: (res: any) => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
-      });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: res?.message || 'Updated successfully' });
       goBack();
     },
-    onError: error => {
-      Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
-    },
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
   });
 
-  // ---- Handlers ----
-  const handleModeSelect = (modeId: number) => {
-    setValue('pricing_mode', modeId, { shouldValidate: true });
-  };
-  // ---- Payload builder ----
-  const buildPayload = (data: AiDynamicPricingFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => ({
-    channel_id,
-    listing_id: String(listing_id),
-    user_id: String(user?.id),
-    // save_and_exit: isSaveAndExit ? 1 : 0,
-    save_and_exit: 0,
-    listing: {
-      name: propertyDetail?.name || 'New Listing',
-      pricing_mode: data.pricing_mode, // 'conservative' or 'aggressive'
-      manual_price_override: data.manual_price_override ? 1 : 0, // Sending as 1/0 or boolean based on Swagger preference
-    },
-  });
-
-  const onNext = (data: AiDynamicPricingFormValues) => {
-    // 1. Store Update (taake UI selections persist rahein)
+  // ── Handler ───────────────────────────────────────────────────────────────
+  const onSave = (isSaveAndExit: boolean = false) => {
     updateListing({
-      pricing_mode: data.pricing_mode,
-      manual_price_override: data.manual_price_override,
+      ai_pricing_mode:       selectedMode,
+      manual_price_override: manualOverride,
     });
-
-    // 2. API Hit
-    createListingDetailsPayload(buildPayload(data, false), {
-      onSuccess: () => {
-        // Navigate to Property Disclosure (Next Step)
-        navigate(NavigationRoutes.APP_STACK.PROPERTY_DISCLOSURE);
-      },
-    });
-  };
-
-  const onSaveExit = (data: AiDynamicPricingFormValues) => {
-    // Persistence logic
-    updateListing({ pricing_mode: data.pricing_mode });
-
-    const payload = buildPayload(data, true); // save_and_exit: 1
 
     if (isEdit) {
-      updateListingDetails(payload);
+      updateDetails(buildPayload(isSaveAndExit) as any);
     } else {
-      createListingDetailsPayload(payload, {
-        onSuccess: () => {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+      createDetails(buildPayload(isSaveAndExit) as any, {
+        onSuccess: (res: any) => {
+          queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+          Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+
+          if (isSaveAndExit) {
+            navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          } else {
+            navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
+          }
         },
       });
     }
   };
 
   return {
-    control,
-    errors,
-    handleSubmit,
-    onNext,
-    onSaveExit,
-    isEdit,
-    isLoading: isCreating || isUpdating,
     selectedMode,
+    setSelectedMode,
     manualOverride,
-    handleModeSelect,
-    Controller,
-    PRICING_MODES
+    setManualOverride,
+    onSave,
+    isLoading: isCreating || isUpdating,
+    isEdit
   };
 }

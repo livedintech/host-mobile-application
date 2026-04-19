@@ -21,6 +21,11 @@ type Listing = {
   district_id: number | undefined;
   district: string;
 
+  // ─── Naye Design ke Mutabiq Changes (Step 2) ───────────────────────
+  guest_limit: number;     // <-- Pehle nahi tha (Design mein hai)
+  bathrooms: number;       // <-- Pehle nahi tha (Design mein hai)
+  amenities: string[];     // <-- Pehle kitchen/pool alag thay, ab array mein jayenge
+
   // ─── Step 2 fields ───────────────────────
   size_sqm: number;
   bedrooms: number;

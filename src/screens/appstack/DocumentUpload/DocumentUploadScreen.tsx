@@ -1,3 +1,4 @@
+// DocumentUploadScreen.tsx
 import React from 'react';
 import { StyleSheet, View, ScrollView, Pressable, TouchableOpacity, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -6,6 +7,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import useCreateEditListingDocumentUploadContainer from './DocumentUploadContainerNew';
 import Metrics from '@/utility/Metrics';
@@ -33,40 +35,51 @@ const DocumentUploadScreen = () => {
     handleExportSubmit,
     listingOptions,
     isLoadingChannelList,
-    isCreating
+    isCreating,
   } = useCreateEditListingDocumentUploadContainer();
 
   const renderUploadButton = (
     label: string,
     fieldName: 'propertyOwnership' | 'authorityLicense' | 'nationalId',
-    document: any
+    document: any,
   ) => (
     <View style={styles.uploadSection}>
-      <AppText text={label} fontSize={16} type="SemiBold" color={Colors.PINE_FOREST} mb={12} />
+      <AppText text={label} fontSize={16} type="SemiBold" mb={12} />
 
       <TouchableOpacity
         style={styles.uploadButton}
         onPress={() => pickDocument(fieldName)}
         activeOpacity={0.7}
       >
-        <AppText text="Upload Pdf" fontSize={16} color={Colors.PINE_FOREST} />
         <Svgicons path="attachmentIcon" size={24} />
+        <AppText text="Upload PDF" fontSize={16} />
       </TouchableOpacity>
 
       {document && (
         <View style={styles.uploadedFile}>
           <View style={styles.fileInfo}>
             <Svgicons path="checkCircleIcon" size={20} />
-            <AppText text={document.name} fontSize={14} color={Colors.PINE_FOREST} ml={8} style={{ flex: 1 }} />
+            <AppText
+              text={document.name}
+              fontSize={14}
+              color={Colors.PINE_FOREST}
+              ml={8}
+              style={{ flex: 1 }}
+            />
           </View>
           <TouchableOpacity onPress={() => removeDocument(fieldName)}>
-            <Svgicons path="closeCircleIcon" size={20} />
+            <Svgicons path="greenCross" size={15} />
           </TouchableOpacity>
         </View>
       )}
 
       {errors[fieldName] && (
-        <AppText text={errors[fieldName]?.message as string} fontSize={13} color={Colors.INDIAN_RED} mt={5} />
+        <AppText
+          text={errors[fieldName]?.message as string}
+          fontSize={13}
+          color={Colors.INDIAN_RED}
+          mt={5}
+        />
       )}
     </View>
   );
@@ -83,77 +96,93 @@ const DocumentUploadScreen = () => {
                 <Svgicons path="arrowLeftIcon" size={24} />
               </Pressable>
             </GradientBorder>
-            <View style={styles.wavyCheck}>
-              <Svgicons path='wavy_check' size={20} />
-            </View>
+            {!isEdit && <CircularProgress percentage={95} size={48} strokeWidth={4} />}
           </View>
 
           {/* Title */}
           <AppText
-            text="Upload Ownership Licence Documents"
+            text="Upload ownership licence documents"
             fontSize={26}
             type="SemiBold"
-            color={Colors.BRUNSWICK_GREEN}
-            textAlign="center"
             mb={30}
+            pr={80}
           />
 
           {/* Info */}
           <View style={styles.infoBox}>
-            <AppText text="• Accepted formats: PDF." fontSize={13} color={Colors.SUPER_GREY} mb={4} />
-            <AppText text="• File size ≤ 10 MB per document." fontSize={13} color={Colors.SUPER_GREY} />
+            <AppText text="• Accepted formats: PDF." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mb={4} />
+            <AppText text="• File size ≤ 10 MB per document." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} />
           </View>
 
           {/* Upload Sections */}
           {renderUploadButton('Property Ownership / Rental Documents*', 'propertyOwnership', propertyOwnershipDoc)}
           {renderUploadButton('Authority license', 'authorityLicense', authorityLicenseDoc)}
           {renderUploadButton('Aqama / National ID', 'nationalId', nationalIdDoc)}
+
+          {/* Footer */}
           <View style={styles.footer}>
-            {/* <AppButton title="Export" onPress={handleExport} /> */}
+            {/* ✅ Export sirf create mode mein show hoga */}
+            {!isEdit && (
+              <AppButton
+                title="Export"
+                variant="secondary"
+                onPress={handleExport}
+                disabled={isLoading}
+              />
+            )}
             <AppButton
               title="Save & Exit"
+              mt={!isEdit ? 15 : 0}
               onPress={handleSubmit(onSaveExit)}
               loading={isLoading}
-            // mt={15}
             />
           </View>
+
         </ScrollView>
 
-        {/* Bottom Sheet Modal */}
-        <Modal
-          visible={bottomSheetVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+        {/* Bottom Sheet Modal — sirf create mode mein */}
+        {!isEdit && (
+          <Modal
+            visible={bottomSheetVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setBottomSheetVisible(false)}
+          >
+            <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+              <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
 
-              {/* Handle Bar */}
-              <View style={styles.handleBar} />
+                <View style={styles.handleBar} />
 
-              <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
-
-              {/* OTA Account Dropdown */}
-              <View style={{
-                paddingBottom: Metrics.verticalScale(30)
-              }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder="Select Account"
-                  dropdownPosition='top'
+                <AppText
+                  text="Select OTA Account"
+                  fontSize={20}
+                  type="SemiBold"
+                  color={Colors.PINE_FOREST}
+                  mb={20}
                 />
-              </View>
-              {/* Export Button */}
-              <AppButton title="Export" onPress={handleOtaSubmit(handleExportSubmit)} mt={20} loading={isLoadingChannelList || isCreating} />
 
+                <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
+                  <DropdownField
+                    name="ota_account"
+                    control={otaControl}
+                    errors={otaErrors}
+                    label=""
+                    data={listingOptions}
+                    placeholder="Select Account"
+                    dropdownPosition="top"
+                  />
+                </View>
+
+                <AppButton
+                  title="Export"
+                  onPress={handleOtaSubmit(handleExportSubmit)}
+                  mt={20}
+                  loading={isLoadingChannelList || isCreating}
+                />
+              </Pressable>
             </Pressable>
-          </Pressable>
-        </Modal>
+          </Modal>
+        )}
 
       </View>
     </BGImage>
@@ -177,22 +206,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  infoBox: {
-    marginBottom: 30,
-  },
-  uploadSection: {
-    marginBottom: 25,
-  },
+  infoBox: { marginBottom: 30 },
+  uploadSection: { marginBottom: 25 },
   uploadButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
-    borderRadius: 30,
-    backgroundColor: Colors.WHITE,
+    borderRadius: 18,
+    gap: 10,
   },
   uploadedFile: {
     flexDirection: 'row',
@@ -207,9 +231,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  // footer: { marginTop: 30 },
-
-  // Bottom Sheet Styles
+  footer: { marginTop: 10 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -231,15 +253,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
   },
-  wavyCheck: {
-    borderWidth: 1,
-    borderColor: Colors.LIGHT_GRAY,
-    width: Metrics.scale(48),
-    height: Metrics.scale(48),
-    borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 });
 
 export default DocumentUploadScreen;

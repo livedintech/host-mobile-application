@@ -35,7 +35,7 @@ const {
 
   return (
     <PhotoUploadTemplate
-      step="Step 3"
+      step=""
       screenTitle="Add Photos & Videos"
       sectionTitle={`${category} Photos & Videos`}
       maxImages={10}

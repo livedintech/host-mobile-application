@@ -25,15 +25,14 @@ const PropertyTourScreen = () => {
         <View style={styles.titleSection}>
           <AppText 
             text="Property Tour" 
-            fontSize={32} 
+            fontSize={28} 
             type="Bold" 
             color={Colors.BLACK} 
           />
           <AppText 
             text="Manage your listing photos here. Upload, organize, and update the images that will be showcased to guests on your listing." 
-            fontSize={14} 
-            color="#6B6B6B" 
-            lineHeight={22}
+            fontSize={12} 
+            color={Colors.DARK_CHARCOAL_OPACITY}
             mt={12}
           />
         </View>

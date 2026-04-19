@@ -1,7 +1,8 @@
+// useConfirmAddressContainer.ts
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { addressSchema, AddressFormValues, CountryOption } from '@/validation/auth/createListingSchemas';
+import { useNavigation, useRoute, StackActions } from '@react-navigation/native';
+import { addressSchema, AddressFormValues } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -11,14 +12,14 @@ import Toast from 'react-native-toast-message';
 import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
-import { 
-    createListingDetailsApi,
+import {
+  createListingDetailsApi,
   editListingApi,
   getListingCityApi,
   getListingCountriesApi,
   getListingDistrictsApi,
   getListingStateApi,
- } from '@/services/ createListingService';
+} from '@/services/ createListingService';
 
 export default function useConfirmAddressContainer() {
   const { params } = useRoute<any>();
@@ -27,12 +28,9 @@ export default function useConfirmAddressContainer() {
   const navigation = useNavigation();
 
   const listing = params?.paramData?.listing;
-  const isEdit  = Boolean(listing?.id);
+  const isEdit  = Boolean(listing?.listing_id); // ✅ consistent
 
   // ── Form ──────────────────────────────────────────────────────────────────
-  // API returns nested objects: { id, name } for country, state, city, district
-  // We store primitive id in form, and lookup full object at submit time
-
   const {
     control,
     handleSubmit,
@@ -42,9 +40,9 @@ export default function useConfirmAddressContainer() {
     resolver: yupResolver(addressSchema),
     defaultValues: {
       name:          listing?.name || 'New Listing',
-      country_code:  listing?.country?.id ?? undefined,
-      state:         listing?.state?.id ?? undefined,
-      city:          listing?.city?.id ?? undefined,
+      country_code:  listing?.country?.id  ?? undefined,
+      state:         listing?.state?.id    ?? undefined,
+      city:          listing?.city?.id     ?? undefined,
       district:      listing?.district?.id ?? undefined,
       address:       listing?.street || listing?.address || '',
       postalAddress: listing?.apt || '',
@@ -56,90 +54,72 @@ export default function useConfirmAddressContainer() {
   const selectedCityId    = watch('city');
 
   // ── Cascading Queries ─────────────────────────────────────────────────────
-
-  const { data: countriesData = [], isLoading:isLoadingCountriesData } = useQuery({
+  const { data: countriesData = [], isLoading: isLoadingCountriesData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_COUNTRIES],
     queryFn:  getListingCountriesApi,
   });
 
-  const { data: statesData = [],isLoading:isLoadingStatesData } = useQuery({
+  const { data: statesData = [], isLoading: isLoadingStatesData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_STATE, selectedCountryId],
     queryFn:  () => getListingStateApi({ country_id: Number(selectedCountryId) }),
     enabled:  Boolean(selectedCountryId),
   });
 
-  const { data: citiesData = [], isLoading:isLoadingCitiesData } = useQuery({
+  const { data: citiesData = [], isLoading: isLoadingCitiesData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_CITIES, selectedStateId],
     queryFn:  () => getListingCityApi({ state_id: Number(selectedStateId) }),
     enabled:  Boolean(selectedStateId),
   });
 
-  const { data: districtsData = [],isLoading:isLoadingDistrictsData } = useQuery({
+  const { data: districtsData = [], isLoading: isLoadingDistrictsData } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_DISTRICTS, selectedCityId],
     queryFn:  () => getListingDistrictsApi({ city_id: Number(selectedCityId) }),
     enabled:  Boolean(selectedCityId),
   });
 
-  // ── Dropdown Options — value is always primitive id ───────────────────────
+  // ── Dropdown Options ──────────────────────────────────────────────────────
+  const countriesOptions = countriesData.map((item: any) => ({ label: item.name, value: item.id }));
+  const statesOptions    = statesData.map((item: any)    => ({ label: item.name, value: item.id }));
+  const citiesOptions    = citiesData.map((item: any)    => ({ label: item.name, value: item.id }));
+  const districtsOptions = districtsData.map((item: any) => ({ label: item.name, value: item.id }));
 
-  const countriesOptions = countriesData.map((item: any) => ({
-    label: item.name,
-    value: item.id,         // number — matches form value with ===
-  }));
-
-  const statesOptions = statesData.map((item: any) => ({
-    label: item.name,
-    value: item.id,
-  }));
-
-  const citiesOptions = citiesData.map((item: any) => ({
-    label: item.name,
-    value: item.id,
-  }));
-
-  const districtsOptions = districtsData.map((item: any) => ({
-    label: item.name,
-    value: item.id,
-  }));
-
-  // ── Lookup helpers — id → full object at submit time ─────────────────────
-
+  // ── Lookup helpers ────────────────────────────────────────────────────────
   const findCountry  = (id: number) => countriesData.find((c: any) => c.id === id);
   const findState    = (id: number) => statesData.find((s: any)    => s.id === id);
   const findCity     = (id: number) => citiesData.find((c: any)    => c.id === id);
   const findDistrict = (id: number) => districtsData.find((d: any) => d.id === id);
 
   // ── Build Payload ─────────────────────────────────────────────────────────
-
-  const buildPayload = (data: AddressFormValues, isSaveAndExit: boolean = false): CreateListingDetailsPayload => {
-    const countryObj = findCountry(Number(data.country_code));
-    const stateObj = findState(Number(data.state));
-    const cityObj = findCity(Number(data.city));
+  const buildPayload = (
+    data: AddressFormValues,
+    isSaveAndExit: boolean = false,
+  ): CreateListingDetailsPayload => {
+    const countryObj  = findCountry(Number(data.country_code));
+    const stateObj    = findState(Number(data.state));
+    const cityObj     = findCity(Number(data.city));
     const districtObj = findDistrict(Number(data.district));
 
     return {
-      user_id: String(user?.id),
+      user_id:       String(user?.id),
       channel_id,
-      listing_id: String(listing_id),
-      // save_and_exit: isSaveAndExit ? 1 : 0,
-      save_and_exit:0,
+      listing_id:    String(listing_id),
+      save_and_exit: isSaveAndExit ? 1 : 0,
       listing: {
-        name: propertyDetail?.name || 'New Listing',
-        street: data.address,
-        apt: data.postalAddress,
-        zipcode: data.postalAddress,
-        city: cityObj?.name || '',
-        state: stateObj?.name || '',
-        district: districtObj?.name || '',
+        name:         propertyDetail?.name || 'New Listing',
+        street:       data.address,
+        apt:          data.postalAddress,
+        zipcode:      data.postalAddress,
+        city:         cityObj?.name     || '',
+        state:        stateObj?.name    || '',
+        district:     districtObj?.name || '',
         country_code: countryObj?.sortname || countryObj?.code || '',
-        lat: propertyDetail?.lat ?? 24.7136,
-        lng: propertyDetail?.lng ?? 46.6753,
+        lat:          propertyDetail?.lat ?? 24.7136,
+        lng:          propertyDetail?.lng ?? 46.6753,
       },
     };
   };
 
   // ── Mutations ─────────────────────────────────────────────────────────────
-
   const { mutate: createListingDetailsPayload, isPending, isIdle } =
     useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
       mutationFn: createListingDetailsApi,
@@ -161,7 +141,13 @@ export default function useConfirmAddressContainer() {
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
         Toast.show({ type: 'success', text1: message || 'Saved successfully' });
-        goBack();
+
+        // ✅ PROPERTY_DETAIL tak pop karo — dono paths work karenge
+        // 1. Direct:       Main → ConfirmAddress (edit) → pops 1 screen
+        // 2. Via location: Main → Location → CreateListingStepOne → ConfirmAddress → pops 3 screens
+        navigation.dispatch(
+          StackActions.popTo(NavigationRoutes.APP_STACK.PROPERTY_DETAIL),
+        );
       },
       onError: (error) => {
         Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
@@ -170,20 +156,18 @@ export default function useConfirmAddressContainer() {
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const onNext = (data: AddressFormValues) => {
-    // 1. Update Store
     const countryObj = findCountry(Number(data.country_code));
-    const stateObj = findState(Number(data.state));
-    const cityObj = findCity(Number(data.city));
+    const stateObj   = findState(Number(data.state));
+    const cityObj    = findCity(Number(data.city));
 
     updateListing({
-      street: data.address,
-      apt: data.postalAddress,
+      street:       data.address,
+      apt:          data.postalAddress,
       country_code: countryObj?.sortname || countryObj?.code || '',
-      state: stateObj?.name || '',
-      city: cityObj?.name || '',
+      state:        stateObj?.name || '',
+      city:         cityObj?.name  || '',
     });
 
-    // 2. API Hit & Navigate
     createListingDetailsPayload(buildPayload(data, false), {
       onSuccess: () => navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE),
     });
@@ -192,7 +176,7 @@ export default function useConfirmAddressContainer() {
   const onSaveExit = (data: AddressFormValues) => {
     updateListing({
       street: data.address,
-      apt: data.postalAddress,
+      apt:    data.postalAddress,
     });
 
     const payload = buildPayload(data, true);
@@ -212,7 +196,13 @@ export default function useConfirmAddressContainer() {
     onNext,
     onSaveExit,
     navigation,
-    isLoading: (isPending && !isIdle) || (isPendingEdit && !isIdleEdit) || isLoadingCountriesData || isLoadingStatesData || isLoadingCitiesData || isLoadingDistrictsData,
+    isLoading:
+      (isPending && !isIdle) ||
+      (isPendingEdit && !isIdleEdit) ||
+      isLoadingCountriesData ||
+      isLoadingStatesData ||
+      isLoadingCitiesData ||
+      isLoadingDistrictsData,
     isEdit,
     countriesOptions,
     statesOptions,

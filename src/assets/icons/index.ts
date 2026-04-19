@@ -277,10 +277,64 @@ import userIcon2 from './userIcon2.svg';
 import homeIcon2 from './homeIcon2.svg';
 import paymentIconNew2 from './paymentIconNew2.svg';
 import checkedCheckbox from './checkedCheckbox.svg';
+import bedroomIcon from './bedroomIcon.svg'
+import guestIcon from './guestIcon.svg'
+import house_outline from './house_outline.svg'
+import smokingIcon from './smokingIcon.svg'
+import partyIcon from './partyIcon.svg'
+import petIcon from './petIcon.svg'
+import quietHoursIcon from './quietHoursIcon.svg'
+import house_step3 from './house_step3.svg'
+import greenCross from './greenCross.svg'
+import wifi from './wifi.svg'
+import tv from './tv.svg'
+import washingMachine from './washingMachine.svg';
+import oven from './oven.svg';
+import car from './car.svg';
+import parkingSign from './parkingSign.svg';
+import airConditioner from './airConditioner.svg';
+import workspace from './workspace.svg'
+import pool from './pool.svg'
+import hotTub from './hotTub.svg'
+import chickenGrilledStream from './chickenGrilledStream.svg'
+import outdoorDining from './outdoorDining.svg'
+import firepit from './firepit.svg'
+import fireExtinguisher from './fireExtinguisher.svg';
+import smokeDetector from './smokeDetector.svg'
+import gymEquipment from './gymEquipment.svg'
+import smokeAlarm from './smokeAlarm.svg'
+import medicalBag from './medicalBag.svg';
 import trendUp from './trendUp.svg';
 import trendDown from './trendDown.svg';
 
 export const icons = {
+  medicalBag,
+  smokeAlarm,
+  gymEquipment,
+  smokeDetector,
+  fireExtinguisher,
+  firepit,
+  outdoorDining,
+  chickenGrilledStream,
+  hotTub,
+  pool,
+  workspace,
+  airConditioner,
+  parkingSign,
+  car,
+  oven,
+  washingMachine,
+  tv,
+  wifi,
+  greenCross,
+  house_step3,
+  quietHoursIcon,
+  petIcon,
+  partyIcon,
+  smokingIcon,
+  house_outline,
+  guestIcon,
+  bedroomIcon,
   iconRoundedCross,
   adWhite,
   houseRoofShelterBlack,

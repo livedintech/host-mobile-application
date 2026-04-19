@@ -42,16 +42,25 @@ const ConfirmAddressScreen = () => {
               <Svgicons path='arrowLeftIcon' size={24} />
             </Pressable>
           </GradientBorder>
-          <CircularProgress percentage={10} size={48} strokeWidth={4} />
+          {!isEdit && <CircularProgress percentage={10} size={48} strokeWidth={4} />}
         </View>
         <View style={styles.titleContainer}>
-          <AppText
-            text="Confirm Address "
-            fontSize={22}
-            type="Medium"
-            color={Colors.BRUNSWICK_GREEN}
-          />
-          <Svgicons path="mapIcon" size={25} />
+          {isEdit ? (
+            <AppText
+              text="Edit Address"
+              fontSize={28}
+              type="Medium"
+            />
+          ) : (
+            <>
+              <AppText
+                text="Confirm Address "
+                fontSize={22}
+                type="Medium"
+              />
+              <Svgicons path="mapIcon" size={25} />
+            </>
+          )}
         </View>
 
         <View style={styles.form}>

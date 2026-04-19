@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useDescribeHouseContainer from './DescribeHouseContainer';
-import InputField from '@/components/molecules/Input/InputField';
 import TextareaField from '@/components/molecules/Input/TextareaField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
@@ -13,81 +12,89 @@ import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const DescribeHouseScreen = () => {
-    const { control, errors, handleSubmit, onNext, isLoading, descriptionLength, isEdit, onSaveExit } = useDescribeHouseContainer();
+    const {
+        control,
+        errors,
+        handleSubmit,
+        onNext,
+        isLoading,
+        descriptionLength,
+        titleLength,
+        onSaveExit,
+        isEdit,
+        editType
+    } = useDescribeHouseContainer();
+
+      const showTitle       = !editType || editType === 'title';
+  const showDescription = !editType || editType === 'description';
 
     return (
-         <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                <View style={styles.headerRow}>
-                    <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-                        <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-                            <Svgicons path='arrowLeftIcon' size={24} />
-                        </Pressable>
-                    </GradientBorder>
-                    <CircularProgress percentage={40} size={48} strokeWidth={4} />
-                </View>
+        <BGImage source={require('@/assets/img/background/linearBG.png')}>
+            <View style={styles.container}>
+                <ScrollView
+                    contentContainerStyle={styles.content}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {/* Header Row */}
+                    <View style={styles.headerRow}>
+                        <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
+                            <Pressable style={styles.backBtnWrapper} onPress={() => goBack()}>
+                                <Svgicons path='arrowLeftIcon' size={24} />
+                            </Pressable>
+                        </GradientBorder>
+                        {/* Progress set to 40% as per attachment */}
+                        {!isEdit && (
+                            <CircularProgress percentage={40} size={48} strokeWidth={4} />
+                        )}
+                    </View>
 
-                <AppText text="Step 4" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
+                    {/* Titles */}
+                    <AppText text="Describe your property" fontSize={32} type="Bold" mt={35} mb={28} />
+                    <AppText
+                        text="Short descriptions work best. You can always change it later"
+                        fontSize={12}
+                        color={Colors.DARK_CHARCOAL_OPACITY}
+                        mt={12}
+                        mb={35}
+                    />
 
-                <View style={styles.subTitleRow}>
-                    <AppText text="Describe Your House" fontSize={24} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
-                    <Svgicons path="homeIcon" size={24} />
-                </View>
-
-                {/* House Title */}
-                <InputField
-                    name="name"
-                    control={control}
-                    errors={errors}
-                    label="House Title"
-                    placeholder='"Cozy Villa with Pool in Riyadh"'
-                />
-
-                {/* House Description with Counter */}
-                <View style={styles.descriptionWrapper}>
+                    {/* Property Title Input */}
+                     {showTitle && (
                     <TextareaField
-                        name="listing_descriptions"
+                        name="name"
                         control={control}
                         errors={errors}
-                        label="House Description"
-                        placeholder='"Kick back and relax in this calm and stylish space."'
+                        label="Property Title *"
+                        placeholder='"Cozy Villa with Pool in Riyadh"'
                         multiline={true}
-                        numberOfLines={6}
-                        descriptionLength={descriptionLength}
-                        wordLimit={250}
+                        numberOfLines={2}
+                        wordLimit={50}
+                        descriptionLength={titleLength}
                         sparkleIcon
+                        height={65}
                     />
-                </View>
+                     )}
+                    {/* Property Description Input */}
+                    {showDescription && (
+                    <View style={styles.descriptionWrapper}>
+                        <TextareaField
+                            name="listing_descriptions"
+                            control={control}
+                            errors={errors}
+                            label="Property Description *"
+                            placeholder='"Kick back and relax in this calm and stylish space."'
+                            multiline={true}
+                            numberOfLines={6}
+                            wordLimit={500}
+                            descriptionLength={descriptionLength} // Shows "0/500 Words"
+                            sparkleIcon
+                        />
+                    </View>
+                     )}
+                </ScrollView>
 
-                {/* Wifi Username */}
-                <InputField
-                    name="wifi_username"
-                    control={control}
-                    errors={errors}
-                    label="Wifi Username"
-                    placeholder="Wifi_Network_1"
-                />
-
-                {/* Wifi Password */}
-                <InputField
-                    name="wifi_password"
-                    control={control}
-                    errors={errors}
-                    label="Wifi Password"
-                    placeholder="Livedin123"
-                />
-
-                {/* Door Lock Code */}
-                <InputField
-                    name="door_lock_code"
-                    control={control}
-                    errors={errors}
-                    label="Door Lock Code"
-                    placeholder="345678"
-                    keyboardType="numeric"
-                />
-
+                {/* Fixed Footer Buttons as per attachment */}
                 <View style={styles.footer}>
                     {!isEdit && (
                         <>
@@ -95,6 +102,7 @@ const DescribeHouseScreen = () => {
                                 title="Next"
                                 onPress={handleSubmit(onNext)}
                                 loading={isLoading}
+                                variant='secondary'
                             />
                             <AppButton
                                 title="Save & Exit"
@@ -113,24 +121,44 @@ const DescribeHouseScreen = () => {
                         />
                     )}
                 </View>
-            </ScrollView>
-        </View>
+            </View>
         </BGImage>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1},
-    content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
-    subTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, gap: 8 },
-    descriptionWrapper: { position: 'relative' },
-    footer: { marginTop: 20 },
+    container: { flex: 1 },
+    content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: 180 },
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginTop: 10
     },
-    arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+    backBtnWrapper: {
+        width: 35,
+        height: 35,
+        backgroundColor: Colors.WHITE,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    backBtn: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    descriptionWrapper: { marginTop: 25 },
+    footerContainer: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        paddingHorizontal: 25,
+        paddingBottom: 40,
+        paddingTop: 20,
+    },
+      footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 35 },
+
 });
 
 export default DescribeHouseScreen;

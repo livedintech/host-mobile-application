@@ -73,7 +73,7 @@ const ManageListingScreen = ({ navigation }: any) => {
           {item?.listing_steps !== 'completed' && (
             <GlassCard style={styles.percentageBadge}>
               <AppText
-                text={`${getCompletionPercentage(item?.listing_steps)} Completed`}
+                text={`${item?.completion_percentage} Completed`}
                 fontSize={10}
                 type="Bold"
                 color={Colors.BRUNSWICK_GREEN}

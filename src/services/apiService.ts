@@ -10,7 +10,7 @@ const BASE_URL = BASE_URL_DEV;
 // Create API instance
 const apiSauceInstance = create({
   baseURL: BASE_URL,
-  timeout: 30000, // 30 second timeout
+  timeout: 120000, // ✅ 2 minutes
 });
 
 // Types for better type safety
