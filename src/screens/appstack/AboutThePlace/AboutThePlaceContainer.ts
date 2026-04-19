@@ -16,11 +16,11 @@ import * as yup from 'yup';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const aboutThePlaceSchema = yup.object().shape({
-  size_sqm:    yup.number().typeError('Must be a number').required('Required'),
-  guest_limit: yup.string().required('Required'),
-  bedrooms:    yup.string().required('Required'),
-  beds:        yup.string().required('Required'),
-  bathrooms:   yup.string().required('Required'),
+  size_sqm:    yup.number().typeError('Property size must be a number').required('Property size is required'),
+  guest_limit: yup.string().required('Number of guests is required'),
+  bedrooms:    yup.string().required('Number of bedrooms is required'),
+  beds:        yup.string().required('Number of beds is required'),
+  bathrooms:   yup.string().required('Number of bathrooms is required'),
 });
 
 export type AboutThePlaceFormValues = yup.InferType<typeof aboutThePlaceSchema>;

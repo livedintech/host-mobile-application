@@ -15,14 +15,14 @@ import { queryClient } from '@/services/api';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const pricingSchema = yup.object().shape({
-  currency: yup.string().required('Currency is required'),
-  weekday_price: yup.string().required('Required'),
-  weekend_price: yup.string().required('Required'),
-  tax_vat: yup.string().required('Required'),
-  airbnb_markup: yup.string().required('Required'),
-  gathern_markup: yup.string().required('Required'),
-  booking_com_markup: yup.string().required('Required'),
-  extra_guest_fee: yup.string().required('Required'),
+  currency:           yup.string().required('Currency is required'),
+  weekday_price:      yup.string().required('Weekday base price is required'),
+  weekend_price:      yup.string().required('Weekend base price is required'),
+  tax_vat:            yup.string().optional(),
+  airbnb_markup:      yup.string().optional(),
+  gathern_markup:     yup.string().optional(),
+  booking_com_markup: yup.string().optional(),
+  extra_guest_fee:    yup.string().optional(),
 });
 
 export type PricingFormValues = yup.InferType<typeof pricingSchema>;

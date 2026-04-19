@@ -189,7 +189,22 @@ const onSaveExit = async (data: DocumentFormValues) => {
       Toast.show({ type: 'error', text1: err.message }),
   });
 
-  const handleExport = () => setBottomSheetVisible(true);
+const handleExport = () => {
+  // ✅ Teeno documents required
+  if (!propertyOwnershipDoc) {
+    Toast.show({ type: 'error', text1: 'Please upload Property Ownership document' });
+    return;
+  }
+  if (!authorityLicenseDoc) {
+    Toast.show({ type: 'error', text1: 'Please upload Authority License document' });
+    return;
+  }
+  if (!nationalIdDoc) {
+    Toast.show({ type: 'error', text1: 'Please upload Aqama / National ID document' });
+    return;
+  }
+  setBottomSheetVisible(true);
+};
 
   const handleExportSubmit = (data: OtaAccountFormValues) => {
     exportListing({

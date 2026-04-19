@@ -60,7 +60,7 @@ const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }:
         }
     }, [account]);
     return (
-        <GlassCard width="100%" style={styles.connectedCard}>
+        <GlassCard width="100%" style={styles.connectedCard} onPress={() => onExport(account)}>
             <View style={styles.cardHeader}>
                 <AppText
                     text={selectedTab}
@@ -77,8 +77,6 @@ const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }:
                 valueColor={Colors.BLACK}
             />
 
-
-
             {selectedTab !== 'Booking.com' && (
                 <View>
                     <InfoRow
@@ -87,7 +85,7 @@ const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }:
                         value="Active"
                         valueColor={Colors.TEAL_PRIMARY_ALT}
                     />
-                    <View style={styles.exportBtnContainer}>
+                    {/* <View style={styles.exportBtnContainer}>
                         <AppButton
                             title="Exports"
                             onPress={() => onExport(account)}
@@ -96,7 +94,7 @@ const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }:
                             style={styles.exportBtn}
                             variant="secondary"
                         />
-                    </View>
+                    </View> */}
                 </View>
             )}
             {selectedTab == 'Booking.com' && (

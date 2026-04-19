@@ -11,6 +11,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import usePricingContainer from './SetPricingContainer';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const SetPricingScreen = () => {
   const { control, errors, handleSubmit, onSubmit, isLoading,isEdit } = usePricingContainer();
@@ -22,15 +23,19 @@ const SetPricingScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-          
+        {/* <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"> */}
+          <KeyboardAwareScrollView
+  contentContainerStyle={styles.content}
+  showsVerticalScrollIndicator={false}
+  keyboardShouldPersistTaps="handled"
+>
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
               <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={80} size={48} strokeWidth={4} />
+            {!isEdit && <CircularProgress percentage={80} size={48} strokeWidth={4} />}
           </View>
 
           <AppText text="Set your pricing" fontSize={32} type="Bold" mt={30} />
@@ -58,7 +63,7 @@ const SetPricingScreen = () => {
             <View style={styles.fieldGap} />
             <InputField name="extra_guest_fee" label="Extra Guest Fee" control={control as any} errors={errors} placeholder="200 SAR" keyboardType="numeric" />
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
          <View style={styles.footer}>
           {!isEdit && ( // ✅ create mode mein Next show hoga

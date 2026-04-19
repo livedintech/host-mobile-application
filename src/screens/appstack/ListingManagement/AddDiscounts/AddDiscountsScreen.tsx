@@ -30,12 +30,12 @@ const AddDiscountsScreen = () => {
                     <AppText text="Create discounts to attract more bookings and offer special pricing for specific situations like last-minute stays or longer reservations." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mt={10} mb={15} pr={40} />
 
                     <View style={styles.formGroup}>
-                        <InputField name="weekly_discount" label="Weekly Discounts" control={control as any} errors={errors} placeholder="4%" />
+                        <InputField name="weekly_discount" label="Weekly Discounts" control={control as any} errors={errors} placeholder="4%" keyboardType="numeric"/>
                         <View style={styles.gap} />
-                        <InputField name="monthly_discount" label="Monthly Discounts" control={control as any} errors={errors} placeholder="4%" />
+                        <InputField name="monthly_discount" label="Monthly Discounts" control={control as any} errors={errors} placeholder="4%" keyboardType="numeric"/>
                         <View style={styles.gap} />
-                        <InputField name="last_minute_discount" label="Last Minute Discount" control={control as any} errors={errors} placeholder="10%" />
-                        <InputField name="early_bird_price_change" label="Early Bird Price Change" control={control as any} errors={errors} placeholder="10%" />
+                        <InputField name="last_minute_discount" label="Last Minute Discount" control={control as any} errors={errors} placeholder="10%" keyboardType="numeric"/>
+                        <InputField name="early_bird_price_change" label="Early Bird Price Change" control={control as any} errors={errors} placeholder="10%" keyboardType="numeric"/>
 
                     </View>
                 </ScrollView>

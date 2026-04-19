@@ -9,6 +9,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 // ✅ API key → available SVG icon mapping
 const AMENITY_ICON_MAP: Record<string, string> = {
@@ -68,7 +69,7 @@ const AmenitiesScreen = () => {
     const iconPath = AMENITY_ICON_MAP[item.key] || DEFAULT_ICON; // ✅ mapping ya default
 
     return (
-      <Pressable
+      <GlassCard
         onPress={() => toggleAmenity(item.key)}
         style={[styles.card, isSelected && styles.selectedCard]}
       >
@@ -86,7 +87,7 @@ const AmenitiesScreen = () => {
           textAlign="center"
           mt={8}
         />
-      </Pressable>
+      </GlassCard>
     );
   };
 
@@ -174,7 +175,6 @@ const styles = StyleSheet.create({
   row: { justifyContent: 'space-between' },
   card: {
     width: '48%',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
     borderRadius: 16,
     paddingVertical: 20,
     alignItems: 'center',
