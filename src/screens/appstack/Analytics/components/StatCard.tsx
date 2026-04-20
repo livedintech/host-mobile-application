@@ -53,8 +53,10 @@ const StatCard = ({ title, value, subText, trend, icon }: StatCardProps) => {
             mr={4}
             color={trendColor}
           />
+
           <AppText
-            text={`${Math.abs(trend)}%`}
+            /* Logic: Adds + if positive, - if negative, then shows absolute value */
+            text={`${isPositive ? '+' : '-'}${Math.abs(trend)}%`}
             fontSize={11}
             type="Bold"
             color={trendColor}
