@@ -29,7 +29,8 @@ const AnalyticsTabBar = ({
           fontSize={26}
           type="Bold"
           color={Colors.BLACK}
-          textAlign="center"
+          textAlign='left'
+          mt={20}
         />
       </View>
 
@@ -78,7 +79,7 @@ const AnalyticsTabBar = ({
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 20, paddingTop: 15 },
-  headerRow: { marginBottom: 35, alignItems: 'center' },
+  headerRow: { marginBottom: 35, alignItems: 'flex-start' },
   tabRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

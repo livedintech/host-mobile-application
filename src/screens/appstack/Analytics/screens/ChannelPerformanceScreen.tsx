@@ -77,6 +77,8 @@ const chartData = rawList.map((item: any) => {
       barColor = '#16AEDD'; // Your new blue color
     }
 
+    console.log("displayValue,safeMaxVal",displayValue,safeMaxVal)
+
     return {
       value: displayValue,
       count: item?.reservations || 0,

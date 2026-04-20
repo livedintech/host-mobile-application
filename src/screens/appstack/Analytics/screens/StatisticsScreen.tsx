@@ -95,7 +95,7 @@ const StatisticsScreen = () => {
             text="Statistics"
             type="Medium"
             fontSize={26}
-            textAlign="center"
+            textAlign="left"
             mt={10}
             mb={47}
             color="#000"

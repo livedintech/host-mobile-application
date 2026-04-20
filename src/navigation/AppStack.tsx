@@ -34,6 +34,14 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.RESERVATION_CALENDAR}
+        getComponent={() =>
+          require('@/screens/appstack/Listing/ReservationCalendarScreen')
+            .default
+        }
+      />
+      <Stack.Screen
         // options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.CHAT}
         getComponent={() =>
@@ -266,7 +274,7 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.AMENITIES}
         getComponent={() =>
@@ -282,7 +290,7 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.LOCATION}
         getComponent={() =>
@@ -290,7 +298,7 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.WIFI_AND_DOOR_LOCK_SCREEN}
         getComponent={() =>
@@ -369,7 +377,7 @@ const AppStack = () => {
             .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.ADD_BOOKING_CANCEL_POLICIES}
         getComponent={() =>
@@ -442,21 +450,24 @@ const AppStack = () => {
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.BOOKING_COM_STEP_1}
         getComponent={() =>
-          require('@/screens/appstack/BookingCom/BookingComStep1/BookingComStep1Screen').default
+          require('@/screens/appstack/BookingCom/BookingComStep1/BookingComStep1Screen')
+            .default
         }
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.BOOKING_COM_STEP_2}
         getComponent={() =>
-          require('@/screens/appstack/BookingCom/BookingComStep2/BookingComStep2Screen').default
+          require('@/screens/appstack/BookingCom/BookingComStep2/BookingComStep2Screen')
+            .default
         }
       />
-       <Stack.Screen
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
         name={NavigationRoutes.APP_STACK.BOOKING_COM_STEP_3}
         getComponent={() =>
-          require('@/screens/appstack/BookingCom/BookingComStep3/BookingComStep3Screen').default
+          require('@/screens/appstack/BookingCom/BookingComStep3/BookingComStep3Screen')
+            .default
         }
       />
       <Stack.Screen
@@ -648,7 +659,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         // options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
-        options={{headerShown:false}}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN}
         getComponent={() =>
           require('@/screens/appstack/ReviewManagement/screens/ReviewDetailScreen')
@@ -665,7 +676,7 @@ const AppStack = () => {
       />
       {/* NEW ANALYTIC SCREEN START */}
       <Stack.Screen
-        options={{ headerShown: false, }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.STATISTICS_SCREEN}
         getComponent={() =>
           require('@/screens/appstack/Analytics/screens/StatisticsScreen')

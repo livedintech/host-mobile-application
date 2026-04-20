@@ -24,9 +24,6 @@ interface PendingActionCardProps {
   showDot?: boolean;
 }
 
-
-
-
 const PendingActionCard = ({
   iconPath,
   text,
@@ -205,7 +202,7 @@ const NewLayout = ({
             styles.listItem,
             index !== updatesItems.length - 1 && styles.borderBottom,
           ]}
-          onPress={() => item.route && onNavigate(item.route)}
+          onPress={() => item.route && onNavigate(item.route, item.params)}
         >
           <View style={styles.listItemIcon}>
             <Svgicons path={item.icon} size={22} />
@@ -256,9 +253,9 @@ const HomeScreen = ({ navigation }: any) => {
   const isSupervisor = UserPermission?.role_key === 'supervisor';
 
   // Navigation Central Handler
-  const handleNavigation = (route: any) => {
+  const handleNavigation = (route: any, params?: any) => {
     if (route) {
-      navigation.navigate(route);
+      navigation.navigate(route, params);
     }
   };
 
@@ -333,49 +330,52 @@ const HomeScreen = ({ navigation }: any) => {
   // ];
 
   const updatesItems = [
-  {
-    id: 1,
-    icon: 'chatBubble', // or 'messages' based on your SVG names
-    title: 'Inbox',
-    subtitle: `${UserPermission?.dashboard_counts?.unread_messages} messages`,
-    route: NavigationRoutes.APP_STACK.CHAT, // Replace with your actual route name
-  },
-  {
-    id: 2,
-    icon: 'direct', 
-    title: 'Total Check-ins',
-    subtitle: `${UserPermission?.dashboard_counts?.checkins_today} check-ins`,
-    route: NavigationRoutes.APP_STACK.CHECK_INS, 
-  },
-  // {
-  //   id: 3,
-  //   icon: 'direct',
-  //   title: 'Property Tasks',
-  //   subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
-  //   route: NavigationRoutes.APP_STACK.TASKS, 
-  // },
-  {
-    id: 4,
-    icon: 'direct',
-    title: 'Total Check-outs',
-    subtitle: `${UserPermission?.dashboard_counts?.checkouts_today} check-outs`,
-    route: NavigationRoutes.APP_STACK.CHECK_OUTS,
-  },
-  {
-    id: 5,
-    icon: 'direct',
-    title: 'Booking Requests',
-    subtitle: `${UserPermission?.dashboard_counts?.reservation_requests} Pending Requests`,
-    route: NavigationRoutes.APP_STACK.LISTING,
-  },
-  {
-    id: 6,
-    icon: 'direct',
-    title: 'Analytics',
-    subtitle: `${UserPermission?.occupancy?.last_7_days_percentage}% occupancy this week`,
-    route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN,
-  },
-];
+    {
+      id: 1,
+      icon: 'chatBubble', // or 'messages' based on your SVG names
+      title: 'Inbox',
+      subtitle: `${UserPermission?.dashboard_counts?.unread_messages} messages`,
+      route: NavigationRoutes.APP_STACK.CHAT, // Replace with your actual route name
+    },
+    {
+      id: 2,
+      icon: 'direct',
+      title: 'Total Check-ins',
+      subtitle: `${UserPermission?.dashboard_counts?.checkins_today} check-ins`,
+      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+      params: { activeFilter: 'today' },
+    },
+    // {
+    //   id: 3,
+    //   icon: 'direct',
+    //   title: 'Property Tasks',
+    //   subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
+    //   route: NavigationRoutes.APP_STACK.TASKS,
+    // },
+    {
+      id: 4,
+      icon: 'direct',
+      title: 'Total Check-outs',
+      subtitle: `${UserPermission?.dashboard_counts?.checkouts_today} check-outs`,
+      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+      params: { activeFilter: 'today' },
+    },
+    {
+      id: 5,
+      icon: 'direct',
+      title: 'Booking Requests',
+      subtitle: `${UserPermission?.dashboard_counts?.reservation_requests} Pending Requests`,
+      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+      params: { activeFilter: 'booking_request' },
+    },
+    {
+      id: 6,
+      icon: 'direct',
+      title: 'Analytics',
+      subtitle: `${UserPermission?.occupancy?.last_7_days_percentage}% occupancy this week`,
+      route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN,
+    },
+  ];
 
   return (
     <BGImage
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  bannerText: { color: 'white', fontSize: 18, },
+  bannerText: { color: 'white', fontSize: 18 },
   bannerBold: { fontWeight: 'bold' },
   bannerLink: { textDecorationLine: 'underline' },
   closeIcon: {
