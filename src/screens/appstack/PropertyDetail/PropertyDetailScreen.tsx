@@ -1,6 +1,6 @@
 // PropertyDetailScreen.tsx
 import React, { useState } from 'react';
-import { Modal, Pressable, StyleSheet, View, Image } from 'react-native';
+import { Modal, Pressable, StyleSheet, View, Image, Platform } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -19,7 +19,7 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const PropertyDetailScreen = () => {
   const {
@@ -257,7 +257,7 @@ const PropertyDetailScreen = () => {
               <BasicCard title="Location" onPress={() => handleEditSection('Location')}>
                 <View style={styles.mapContainer} pointerEvents="none">
                   <MapView
-                    provider={PROVIDER_GOOGLE}
+                    provider={Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE}
                     style={styles.map}
                     initialRegion={{
                       latitude,
@@ -276,6 +276,25 @@ const PropertyDetailScreen = () => {
                 </View>
                 <AppText text={propertyData.address} color={Colors.DARK_CHARCOAL} fontSize={13} mt={20} />
               </BasicCard>
+
+              {/* Property Information */}
+              <IconCard
+                title="Property Information"
+                subtitle={(() => {
+                  const parts = [
+                    propertyData.placeInfo?.size && `${propertyData.placeInfo.size} SQM`,
+                    propertyData.placeInfo?.bedrooms && `${propertyData.placeInfo.bedrooms} Bedrooms`,
+                    propertyData.placeInfo?.beds && `${propertyData.placeInfo.beds} Beds`,
+                    propertyData.placeInfo?.bathrooms && `${propertyData.placeInfo.bathrooms} Bathrooms`,
+                  ].filter(Boolean);
+
+                  if (parts.length === 0) return 'Not set';
+                  if (parts.length <= 2) return parts.join(', ');
+                  return `${parts[0]}, + ${parts.length - 1} More`;
+                })()}
+                icon="infoIcon"
+                onPress={() => handleEditSection('PlaceInfo')} // ✅
+              />
 
               {/* Amenities */}
               <IconCard

@@ -1,12 +1,12 @@
 // LocationScreen.tsx
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { goBack, navigate } from '@/services/navigationService';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
@@ -54,7 +54,7 @@ const LocationScreen = () => {
         {/* Map */}
         <View style={styles.mapWrapper}>
           <MapView
-            provider={PROVIDER_GOOGLE}
+       provider={ Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE }
             style={styles.map}
             initialRegion={{
               latitude,

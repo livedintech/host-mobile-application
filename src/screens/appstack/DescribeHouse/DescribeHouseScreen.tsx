@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -10,6 +10,8 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Metrics from '@/utility/Metrics';
 
 const DescribeHouseScreen = () => {
     const {
@@ -25,16 +27,18 @@ const DescribeHouseScreen = () => {
         editType
     } = useDescribeHouseContainer();
 
-      const showTitle       = !editType || editType === 'title';
-  const showDescription = !editType || editType === 'description';
+    const showTitle = !editType || editType === 'title';
+    const showDescription = !editType || editType === 'description';
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView
-                    contentContainerStyle={styles.content}
+                <KeyboardAwareScrollView
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
+                    bottomOffset={80}
+                    scrollIndicatorInsets={{ bottom: 0 }}        // ← removes indicator offset
+                    automaticallyAdjustKeyboardInsets={false}
                 >
                     {/* Header Row */}
                     <View style={styles.headerRow}>
@@ -60,39 +64,39 @@ const DescribeHouseScreen = () => {
                     />
 
                     {/* Property Title Input */}
-                     {showTitle && (
-                    <TextareaField
-                        name="name"
-                        control={control}
-                        errors={errors}
-                        label="Property Title *"
-                        placeholder='"Cozy Villa with Pool in Riyadh"'
-                        multiline={true}
-                        numberOfLines={2}
-                        wordLimit={50}
-                        descriptionLength={titleLength}
-                        sparkleIcon
-                        height={65}
-                    />
-                     )}
-                    {/* Property Description Input */}
-                    {showDescription && (
-                    <View style={styles.descriptionWrapper}>
+                    {showTitle && (
                         <TextareaField
-                            name="listing_descriptions"
+                            name="name"
                             control={control}
                             errors={errors}
-                            label="Property Description *"
-                            placeholder='"Kick back and relax in this calm and stylish space."'
+                            label="Property Title *"
+                            placeholder='"Cozy Villa with Pool in Riyadh"'
                             multiline={true}
-                            numberOfLines={6}
-                            wordLimit={500}
-                            descriptionLength={descriptionLength} // Shows "0/500 Words"
+                            numberOfLines={2}
+                            wordLimit={50}
+                            descriptionLength={titleLength}
                             sparkleIcon
+                            height={65}
                         />
-                    </View>
-                     )}
-                </ScrollView>
+                    )}
+                    {/* Property Description Input */}
+                    {showDescription && (
+                        <View style={styles.descriptionWrapper}>
+                            <TextareaField
+                                name="listing_descriptions"
+                                control={control}
+                                errors={errors}
+                                label="Property Description *"
+                                placeholder='"Kick back and relax in this calm and stylish space."'
+                                multiline={true}
+                                numberOfLines={6}
+                                wordLimit={500}
+                                descriptionLength={descriptionLength} // Shows "0/500 Words"
+                                sparkleIcon
+                            />
+                        </View>
+                    )}
+                </KeyboardAwareScrollView>
 
                 {/* Fixed Footer Buttons as per attachment */}
                 <View style={styles.footer}>
@@ -103,6 +107,7 @@ const DescribeHouseScreen = () => {
                                 onPress={handleSubmit(onNext)}
                                 loading={isLoading}
                                 variant='secondary'
+                                backgroundColor={Colors.WHITE}
                             />
                             <AppButton
                                 title="Save & Exit"
@@ -127,8 +132,7 @@ const DescribeHouseScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: 180 },
+    container: { flex: 1, paddingHorizontal: Metrics.baseMargin },
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
         paddingTop: 20,
     },
-      footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 35 },
+    footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 35 },
 
 });
 

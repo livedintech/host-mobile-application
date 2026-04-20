@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -16,7 +16,7 @@ import * as yup from 'yup';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const aboutThePlaceSchema = yup.object().shape({
-  size_sqm:    yup.number().typeError('Property size must be a number').required('Property size is required'),
+  size_sqm:    yup.string().typeError('Property size must be a number').required('Property size is required'),
   guest_limit: yup.string().required('Number of guests is required'),
   bedrooms:    yup.string().required('Number of bedrooms is required'),
   beds:        yup.string().required('Number of beds is required'),
@@ -33,6 +33,9 @@ export default function useAboutThePlaceContainer() {
   const listing = params?.paramData?.listing;
   const isEdit  = Boolean(listing?.listing_id);
 
+  console.log('listing::',listing);
+  
+
   // ── Dropdown options ──────────────────────────────────────────────────────
   const numberOptions = useMemo(
     () => Array.from({ length: 10 }, (_, i) => ({ label: `${i + 1}`, value: `${i + 1}` })),
@@ -44,7 +47,7 @@ export default function useAboutThePlaceContainer() {
     resolver: yupResolver(aboutThePlaceSchema),
     defaultValues: {
   // ✅ Edit mode mein listing se, Create mode mein empty
-  size_sqm:    isEdit ? (listing?.property_area    ?? '') : '',
+  size_sqm:    isEdit ? (String(listing?.property_area)  ?? '') : '',
   guest_limit: isEdit ? (listing?.guest_limit ? String(listing.guest_limit) : '') : '',
   bedrooms:    isEdit ? (listing?.bedrooms    ? String(listing.bedrooms)    : '') : '',
   beds:        isEdit ? (listing?.beds        ? String(listing.beds)        : '') : '',

@@ -24,17 +24,12 @@ const AboutThePlaceScreen = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <View style={styles.headerRow}>
-          {/* <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircle}>
-            <Pressable onPress={() => goBack()}>
-              <Svgicons path='arrowLeftIcon' size={24} />
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
+            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path="arrowLeftIcon" size={24} />
             </Pressable>
-          </GradientBorder> */}
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-                <Svgicons path="arrowLeftIcon" size={24} />
-              </Pressable>
-            </GradientBorder>
-          <CircularProgress percentage={15} size={48} strokeWidth={4} />
+          </GradientBorder>
+          {!isEdit && <CircularProgress percentage={15} size={48} strokeWidth={4} />}
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -91,7 +86,8 @@ const AboutThePlaceScreen = () => {
           <AppButton
             title="Save & Exit"
             mt={!isEdit ? 15 : 0}
-            onPress={handleSubmit(onSaveExit)} // ✅ fixed
+            onPress={handleSubmit(onSaveExit)}
+            loading={isLoading}
             disabled={isLoading}
           />
         </View>

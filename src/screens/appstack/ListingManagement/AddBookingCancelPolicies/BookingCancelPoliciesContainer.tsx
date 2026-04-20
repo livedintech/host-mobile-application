@@ -23,18 +23,6 @@ export const cancelPoliciesSchema = yup.object().shape({
 
 export type CancelPoliciesValues = yup.InferType<typeof cancelPoliciesSchema>;
 
-// ── Helper — object { id, title } ya primitive dono handle ───────────────────
-const getPolicyValue = (raw: any, fallback: any): string => {
-  // Object form: { id, title }
-  if (raw?.id !== undefined && raw?.id !== null) return String(raw.id);
-  // Primitive form: number / string
-  if (raw !== null && raw !== undefined && raw !== '') return String(raw);
-  // Fallback (store se)
-  if (fallback?.id !== undefined && fallback?.id !== null) return String(fallback.id);
-  if (fallback !== null && fallback !== undefined && fallback !== '') return String(fallback);
-  return '';
-};
-
 // ── Container ─────────────────────────────────────────────────────────────────
 export default function useBookingCancelPoliciesContainer() {
   const { params } = useRoute<any>();
@@ -83,21 +71,18 @@ export default function useBookingCancelPoliciesContainer() {
   const { control, handleSubmit, formState: { errors } } = useForm<CancelPoliciesValues>({
     resolver: yupResolver(cancelPoliciesSchema) as any,
     defaultValues: {
-      airbnb_policy: getPolicyValue(
-        listing?.airbnb_cancellation_policy,
-        propertyDetail?.airbnb_cancellation_policy
-      ),
-      airbnb_longterm_policy: listing?.airbnb_longterm_policy
-        ?? propertyDetail?.airbnb_longterm_policy
-        ?? '',
-      gathern_policy: getPolicyValue(
-        listing?.gathern_cancellation_policy,
-        propertyDetail?.gathern_cancellation_policy
-      ),
-      booking_com_policy: getPolicyValue(
-        listing?.bookingCom_cancellation_policy,
-        propertyDetail?.bookingCom_cancellation_policy
-      ),
+      airbnb_policy: isEdit
+        ? getPolicyValue(listing?.airbnb_cancellation_policy, null)
+        : '',
+      airbnb_longterm_policy: isEdit
+        ? (listing?.airbnb_longterm_policy ?? '')
+        : '',
+      gathern_policy: isEdit
+        ? getPolicyValue(listing?.gathern_cancellation_policy, null)
+        : '',
+      booking_com_policy: isEdit
+        ? getPolicyValue(listing?.bookingCom_cancellation_policy, null)
+        : '',
     },
   });
 

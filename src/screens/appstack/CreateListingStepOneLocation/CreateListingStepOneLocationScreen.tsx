@@ -5,8 +5,9 @@ import {
   View,
   Text,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -49,7 +50,7 @@ const CreateListingStepOneLocationScreen = () => {
       {/* ── Google Map ────────────────────────────────────────────────── */}
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
+       provider={ Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE }
         style={styles.map}
         initialRegion={region}
         onRegionChangeComplete={onRegionChangeComplete}

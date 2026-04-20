@@ -15,10 +15,10 @@ const AddBookingCancelPoliciesScreen = () => {
   const { control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit } = useBookingCancelPoliciesContainer();
 
   const policyOptions = [
-    { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
-    { label: 'Moderate - Guests can cancel at least 5 days before check-in', value: 'moderate' },
-    { label: 'Strict - No refunds for cancellations', value: 'strict' },
-  ];
+  { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
+  { label: 'Moderate - Guests can cancel at least 5 days before check-in',   value: 'moderate' },
+  { label: 'Strict - No refunds for cancellations',                           value: 'strict'   },
+];
 
   const longTermOptions = [
     { label: 'Long-term with grace period', value: 'longterm_grace' },
