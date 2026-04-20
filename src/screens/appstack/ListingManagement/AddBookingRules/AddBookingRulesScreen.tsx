@@ -10,6 +10,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
+import Metrics from '@/utility/Metrics';
 
 const AddBookingRulesScreen = () => {
   const { control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit } = useBookingRulesContainer();
@@ -95,6 +96,7 @@ const AddBookingRulesScreen = () => {
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
+              backgroundColor={Colors.WHITE}
             />
           )}
 
@@ -111,8 +113,8 @@ const AddBookingRulesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: 200 },
+  container: { flex: 1, paddingHorizontal: Metrics.baseMargin, paddingTop: 10, },
+  content: { paddingBottom: Metrics.verticalScale(220) },  
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
   backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
@@ -123,7 +125,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     padding: 25,
-    backgroundColor: 'rgba(255,255,255,0.95)',
     paddingBottom: 40
   },
 });

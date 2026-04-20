@@ -12,9 +12,10 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import usePricingContainer from './SetPricingContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Metrics from '@/utility/Metrics';
 
 const SetPricingScreen = () => {
-  const { control, errors, handleSubmit, onSubmit, isLoading,isEdit } = usePricingContainer();
+  const { control, errors, handleSubmit, onSubmit, isLoading, isEdit } = usePricingContainer();
 
   const currencyOptions = [
     { label: 'Riyal (SAR)', value: 'SAR' },
@@ -23,12 +24,13 @@ const SetPricingScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        {/* <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"> */}
-          <KeyboardAwareScrollView
-  contentContainerStyle={styles.content}
-  showsVerticalScrollIndicator={false}
-  keyboardShouldPersistTaps="handled"
->
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={0}
+          automaticallyAdjustKeyboardInsets={false}
+        >
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
               <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
@@ -39,15 +41,15 @@ const SetPricingScreen = () => {
           </View>
 
           <AppText text="Set your pricing" fontSize={32} type="Bold" mt={30} />
-          <AppText 
-            text="Base price is set by the platform. Set a markup for each platform individually." 
-            fontSize={14} 
-            color="#6B6B6B" 
-            mt={10} 
+          <AppText
+            text="Base price is set by the platform. Set a markup for each platform individually."
+            fontSize={14}
+            color="#6B6B6B"
+            mt={10}
           />
 
           <View style={styles.formGroup}>
-            <DropdownField name="currency" label="Select Money Currency" control={control as any} errors={errors} data={currencyOptions} disabled/>
+            <DropdownField name="currency" label="Select Money Currency" control={control as any} errors={errors} data={currencyOptions} disabled />
             <View style={styles.fieldGap} />
             <InputField name="weekday_price" label="Weekday Base Price" control={control as any} errors={errors} placeholder="500 SAR" keyboardType="numeric" />
             <View style={styles.fieldGap} />
@@ -65,7 +67,7 @@ const SetPricingScreen = () => {
           </View>
         </KeyboardAwareScrollView>
 
-         <View style={styles.footer}>
+        <View style={styles.footer}>
           {!isEdit && ( // ✅ create mode mein Next show hoga
             <AppButton
               title="Next"
@@ -88,19 +90,19 @@ const SetPricingScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: 220 },
+  content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: Metrics.verticalScale(120) }, // footer ke liye space
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
   backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   formGroup: { marginTop: 30 },
   fieldGap: { height: 20 },
-  footer: { 
-    position: 'absolute', 
-    bottom: 0, 
-    width: '100%', 
-    padding: 25, 
-    backgroundColor: 'rgba(255,255,255,0.95)', 
-    paddingBottom: 40 
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: 25,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    paddingBottom: 40
   },
 });
 

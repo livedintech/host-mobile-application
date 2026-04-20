@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Pressable } from 'react-native';
 import useGuidelinesContainer from './GuidelinesContainer';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -14,6 +14,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Metrics from '@/utility/Metrics';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const AddPropertyGuidelinesScreen = () => {
   const {
@@ -23,25 +24,29 @@ const AddPropertyGuidelinesScreen = () => {
     onNext,
     onSaveExit,
     isLoading,
-    arrivalGuideLength,
-    houseRulesLength,
-    checkoutInstructionsLength,
     isEdit,
     hideWifiFields,
     lockOptions
   } = useGuidelinesContainer();
 
-  
+
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.content}    // ← yeh add karo
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={120}                         // ← 80 se 120 karo
+          scrollIndicatorInsets={{ bottom: 0 }}
+          automaticallyAdjustKeyboardInsets={false}
+        >
           <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
+            <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
+              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
-              </TouchableOpacity>
+              </Pressable>
             </GradientBorder>
             {!isEdit && (
               <CircularProgress percentage={45} size={48} strokeWidth={4} />
@@ -116,10 +121,10 @@ const AddPropertyGuidelinesScreen = () => {
               </Text>
             </Text>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         <View style={styles.footer}>
-          {!isEdit && <AppButton title="Next" variant="secondary" onPress={handleSubmit(onNext)} loading={isLoading} />}
+          {!isEdit && <AppButton title="Next" variant="secondary" backgroundColor={Colors.WHITE} onPress={handleSubmit(onNext)} loading={isLoading} />}
           <AppButton title="Save & Exit" mt={12} onPress={handleSubmit(onSaveExit)} disabled={isLoading} />
         </View>
       </View>
@@ -128,8 +133,8 @@ const AddPropertyGuidelinesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: 220 },
+  container: { flex: 1, paddingHorizontal: Metrics.baseMargin, paddingTop: 10, },
+  content: { paddingBottom: Metrics.verticalScale(120) },             // ← footer + dropdown ke liye space
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
   backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
@@ -140,7 +145,9 @@ const styles = StyleSheet.create({
   bottomSection: { marginTop: 10 },
   lockText: { fontSize: 12, color: '#6B6B6B', marginTop: -5, lineHeight: 18 },
   linkText: { color: '#00A88E', textDecorationLine: 'underline', fontWeight: 'bold' },
-  footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, backgroundColor: 'rgba(255,255,255,0.95)', paddingBottom: 40 },
+  footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
+  arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+
 });
 
 export default AddPropertyGuidelinesScreen;
