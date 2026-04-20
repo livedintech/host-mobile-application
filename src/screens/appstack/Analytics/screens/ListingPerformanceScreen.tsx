@@ -36,7 +36,7 @@ const ListingPerformanceScreen = () => {
       text="Listing Performance" 
       type="Medium" 
       fontSize={26} 
-      textAlign='center' 
+      textAlign='left' 
       mt={50} 
       mb={36} 
       color="#000" 
