@@ -86,6 +86,8 @@ const OldLayout = ({
                   fontSize={11}
                   type="Regular"
                   color={Colors.BLACK}
+                  numberOfLines={2}
+                  style={{ flex: 1 }}
                 />
               </View>
               <View style={styles.cardFooter}>
@@ -95,6 +97,7 @@ const OldLayout = ({
                   type="Medium"
                   color={Colors.BLACK}
                   style={{ flex: 1, marginRight: 10 }}
+                  numberOfLines={3}
                 />
                 <GlassCard style={styles.arrowBtn}>
                   <Svgicons
@@ -259,36 +262,77 @@ const HomeScreen = ({ navigation }: any) => {
     }
   };
 
-  const recommendedNextItems = [
+  const allRecommendedItems = [
     {
-      id: 1,
+      id: 'has_staff', // Map ID to the key in UserPermission.recommendations
       icon: 'airbnb',
       title: 'Create Staff User',
       subtitle: 'Assign staff to cleaning tasks',
       route: NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM,
     },
     {
-      id: 2,
+      id: 'has_ttlock_connected',
       icon: 'lockIcon',
       title: 'Connect Smart TT Lock',
       subtitle: 'Generate codes for staff & guest',
       route: NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS,
     },
     {
-      id: 3,
+      id: 'has_recurring_cleaning',
       icon: 'cleaning_sanitization',
       title: 'Create Cleaning Schedule',
-      subtitle: 'For property – Al Riyadh',
+      subtitle: (() => {
+        const recommendations = UserPermission?.recommendations;
+        const count = recommendations?.remaining_count ?? 0;
+
+        // 1. If exactly 1 property, show the specific title from API
+        if (count === 1 && recommendations?.remaining_title) {
+          return recommendations.remaining_title;
+        }
+
+        // 2. If 2 or more properties, show "For X+ properties"
+        if (count > 1) {
+          return `For ${count}+ properties`;
+        }
+
+        // Default fallback if no properties or loading
+        // return 'Set up recurring cleanings';
+      })(),
+      // subtitle: 'For property – Al Riyadh',
       route: NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN,
     },
     {
-      id: 4,
+      id: 'manage_listings', // Optional: if you want a flag for this too
       icon: 'direct',
       title: 'Manage Listings',
       subtitle: 'Create/Add new listings',
-      // route: NavigationRoutes.APP_STACK.LISTING_MANAGEMENT
+      route: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
     },
   ];
+
+  // 2. Filter the list based on UserPermission.recommendations
+  // Logic: Keep the item ONLY if the permission is false/null
+  const recommendedNextItems = allRecommendedItems.filter(item => {
+    const recommendations = UserPermission?.recommendations;
+
+    // If data isn't loaded yet, keep everything visible
+    if (!recommendations) return true;
+
+    // SPECIAL CASE: Recurring Cleaning
+    if (item.id === 'has_recurring_cleaning') {
+      const count = recommendations?.remaining_count ?? 0;
+      // ONLY show if count is greater than 0
+      return count > 0;
+    }
+
+    // GENERAL CASE: Boolean flags (has_staff, etc.)
+    // Keep item ONLY if the flag is false (not completed)
+    const isCompleted =
+      recommendations[item.id as keyof typeof recommendations];
+    return !isCompleted;
+  });
+
+  console.log('recommendedNextItems', recommendedNextItems);
 
   // const updatesItems = [
   //   {
@@ -345,13 +389,13 @@ const HomeScreen = ({ navigation }: any) => {
       route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
       params: { activeFilter: 'today' },
     },
-    // {
-    //   id: 3,
-    //   icon: 'direct',
-    //   title: 'Property Tasks',
-    //   subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
-    //   route: NavigationRoutes.APP_STACK.TASKS,
-    // },
+    {
+      id: 3,
+      icon: 'direct',
+      title: 'Property Tasks',
+      subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
+      route: NavigationRoutes.APP_STACK.TASK,
+    },
     {
       id: 4,
       icon: 'direct',
@@ -574,7 +618,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
   },
-  cardHeader: { alignItems: 'center', flexDirection: 'row' },
+  cardHeader: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   iconBox: {
     backgroundColor: Colors.TRANSPARENT,
     padding: 10,

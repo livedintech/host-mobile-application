@@ -9,21 +9,25 @@ import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useHomeContainer() {
-  const {setUser} = useAuthStore()
+  const { setUser } = useAuthStore();
   const { updateListing, setListingId } = useCreateListingStore();
 
-  const { data: UserPermission, isLoading, refetch } = useQuery<User>({
+  const {
+    data: UserPermission,
+    isLoading,
+    refetch,
+  } = useQuery<User>({
     queryKey: [STORAGE_CONST.GET_USER],
     queryFn: getUser,
-    enabled:true
+    enabled: true,
   });
 
- useEffect(() => {
-  if (UserPermission) {
-    setUser(UserPermission);
-  }
-}, [UserPermission]);
-console.log("UserPermission",UserPermission)
+  useEffect(() => {
+    if (UserPermission) {
+      setUser(UserPermission);
+    }
+  }, [UserPermission]);
+  console.log('UserPermission', UserPermission);
 
   const channels = UserPermission?.channels || {};
   const unexported_listings = UserPermission?.unexported_listings || [];
@@ -45,7 +49,7 @@ console.log("UserPermission",UserPermission)
     }
   }, []);
 
-  const iconMap = {
+const iconMap = {
     Airbnb: 'airbnb',
     Gathern: 'gathern',
     Booking: 'bookingCom',
@@ -61,10 +65,11 @@ console.log("UserPermission",UserPermission)
 
   const getCardContent = useCallback(
     (platform: string) => {
-      const countMap = {
+      // 1. Define the map with a explicit type so platform (string) can access it
+      const countMap: Record<string, number> = {
         Airbnb: channels?.airbnb ?? 0,
         Gathern: channels?.gathern ?? 0,
-        Booking: channels?.bcom ?? 0,
+        Booking: channels?.bcom ?? 0, // This correctly maps "Booking" key to "bcom" data
       };
 
       if (platform === 'Manual') {
@@ -74,32 +79,45 @@ console.log("UserPermission",UserPermission)
         };
       }
 
+      // 2. Ensure count is actually retrieved
       const count = countMap[platform] ?? 0;
+      const displayName = platform === 'Booking' ? 'Booking.com' : platform;
 
       if (count > 0) {
         return {
-          title: `Connect ${platform} `,
-          desc: `Import listings from ${platform}`,
+          // 3. Make sure UserPermission exists before accessing name
+          title: `${UserPermission?.name ?? 'User'}'s ${displayName}`,
+          desc: `Import listings from ${displayName}`,
         };
       }
 
       return {
-        title: `Connect ${platform}`,
-        desc: `Import listings from ${platform}`,
+        title: `Connect ${displayName}`,
+        desc: `Import listings from ${displayName}`,
       };
     },
-    [channels]
+    // 4. CRITICAL: Added UserPermission to dependencies
+    [channels, UserPermission], 
   );
 
-  const goToPropertyDetail = ({ id, name }: { name: string; id: string | number; }) => {
+  const goToPropertyDetail = ({
+    id,
+    name,
+  }: {
+    name: string;
+    id: string | number;
+  }) => {
     updateListing({
       name,
-    })
-    setListingId(id.toString())
+    });
+    setListingId(id.toString());
     navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
   };
 
-  const handleListingNavigation = (listings: any[], type: 'incomplete' | 'unexported') => {
+  const handleListingNavigation = (
+    listings: any[],
+    type: 'incomplete' | 'unexported',
+  ) => {
     if (!listings || listings.length === 0) return;
 
     if (listings.length > 1) {
@@ -117,7 +135,6 @@ console.log("UserPermission",UserPermission)
     }
   };
 
-
   return {
     onConnect,
     UserPermission,
@@ -130,6 +147,6 @@ console.log("UserPermission",UserPermission)
     incomplete_listings,
     unexported_listings,
     isNewLayout,
-    handleListingNavigation
+    handleListingNavigation,
   };
 }

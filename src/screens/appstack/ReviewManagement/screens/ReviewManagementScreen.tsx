@@ -22,6 +22,7 @@ const ReviewManagementScreen = () => {
       <ReviewCard
         item={item}
         hostRating={item.overall_score === 5 ? 5.0 : null}
+        hasGuestRating={item.host_review?.total_rating}
         onPress={() =>
           navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
             booking_id: item.booking_id,
