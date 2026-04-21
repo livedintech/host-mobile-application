@@ -10,9 +10,9 @@ const OtherPhotosScreen = () => {
   const route = useRoute<any>();
   const { listing_id, listing } = useCreateListingStore();
 
-  const paramListing = route.params?.paramData?.listing;
-  const isEdit = Boolean(paramListing?.listing_id);
+  const isEdit = route.params?.isEdit;
   const category = route.params?.category || 'other';
+  
 
   const {
     mediaList,
@@ -37,7 +37,7 @@ const OtherPhotosScreen = () => {
   return (
     <PhotoUploadTemplate
       step={!isEdit ? 'Step 5' : undefined}
-      screenTitle="Add Photos & Videos"
+      screenTitle={`Add Photos & \nVideos`}
       sectionTitle={`${category} Photos & Videos`}
       maxImages={10}
       maxVideos={1}

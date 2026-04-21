@@ -93,7 +93,7 @@ const { mutate: uploadMutate, isPending: isUploading } = useMutation({
     Toast.show({ type: 'success', text1: 'Photos uploaded successfully' });
     refetchPhotos(); // ✅ GET se fresh photos aayenge — tab show honge
     queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-           queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+           queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.LISTING_PHOTOS] });
 
     queryClient.invalidateQueries({
       queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
@@ -109,6 +109,7 @@ const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
   mutationFn: deleteListingPhotoApi,
   onSuccess: () => {
     refetchPhotos();
+    queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.LISTING_PHOTOS] });
     queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
     queryClient.invalidateQueries({
       queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
@@ -125,6 +126,7 @@ const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
     mutationFn: setFeaturedPhotoApi,
     onSuccess: (_: any, variables: any) => {
        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.LISTING_PHOTOS] });
       setMediaList(prev =>
         prev.map(m => ({ ...m, isFeatured: m.id === variables.media_id }))
       );

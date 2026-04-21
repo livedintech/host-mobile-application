@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   StyleSheet, View, Image, FlatList,
-  Modal, TouchableOpacity, ActivityIndicator
+  Modal, ActivityIndicator
 } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -14,11 +14,15 @@ import BGImage from '../molecules/BGImage/BGImage';
 import { useMediaUpload, MediaItem } from './useMediaUpload';
 import Metrics from '@/utility/Metrics';
 import RefreshableScrollView from '../organisms/RefreshableScrollView/RefreshableScrollView';
+import ImageViewing from 'react-native-image-viewing';
+import ButtonView from '../molecules/AppButton/ButtonView';
 
 const PhotoUploadTemplate = (props: any) => {
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
   const [showOptions, setShowOptions] = useState(false);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+  const [isViewerVisible, setIsViewerVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
 
   const {
@@ -33,9 +37,21 @@ const PhotoUploadTemplate = (props: any) => {
     onMediaChange: props.onMediaChange,
   });
 
+  const featuredItem = props.mediaList.find(item => item.isFeatured);
+  console.log('featuredItem',props.mediaList);
+  
+
   const renderMediaItem = ({ item, index }: { item: MediaItem; index: number }) => (
     <View style={styles.mediaWrapper}>
-      <Image source={{ uri: item.path }} style={styles.thumbnail} />
+      <ButtonView
+        activeOpacity={0.9}
+        onPress={() => {
+          setSelectedImage(item.path);
+          setIsViewerVisible(true);
+        }}
+      >
+        <Image source={{ uri: item.path }} style={styles.thumbnail} />
+      </ButtonView>
 
       {/* ✅ Delete loader */}
       {deletingIndex === index && props.isDeleting ? (
@@ -44,14 +60,7 @@ const PhotoUploadTemplate = (props: any) => {
         </View>
       ) : null}
 
-      {/* ✅ Featured badge */}
-      {item.isFeatured && (
-        <View style={styles.featuredBadge}>
-          <AppText text="Cover" fontSize={10} color={Colors.WHITE} type="Bold" />
-        </View>
-      )}
-
-      <TouchableOpacity
+      <ButtonView
         style={styles.moreBtn}
         onPress={() => {
           setSelectedItemIndex(index);
@@ -59,7 +68,7 @@ const PhotoUploadTemplate = (props: any) => {
         }}
       >
         <Svgicons path="threeDots" size={16} color={Colors.BLACK} />
-      </TouchableOpacity>
+      </ButtonView>
     </View>
   );
 
@@ -88,9 +97,9 @@ const PhotoUploadTemplate = (props: any) => {
           {/* Header */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
+              <ButtonView style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
-              </TouchableOpacity>
+              </ButtonView>
             </GradientBorder>
             {/* ✅ Edit mode mein progress hide */}
             {props.primaryBtnTitle && (
@@ -113,14 +122,14 @@ const PhotoUploadTemplate = (props: any) => {
 
           {props.mediaList.length === 0 ? (
             <View>
-              <TouchableOpacity activeOpacity={0.8} style={styles.glassCard} onPress={() => handlePick()}>
+              <ButtonView activeOpacity={0.8} style={styles.glassCard} onPress={() => handlePick()}>
                 <Svgicons path="plusIcon" size={24} />
                 <AppText text="Add Photos & Videos" ml={15} fontSize={16} type="Medium" />
-              </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.8} style={styles.glassCard} onPress={() => uploadActions.takePhoto()}>
+              </ButtonView>
+              <ButtonView activeOpacity={0.8} style={styles.glassCard} onPress={() => uploadActions.takePhoto()}>
                 <Svgicons path="cameraIcon" size={24} />
                 <AppText text="Take New Picture" ml={15} fontSize={16} type="Medium" />
-              </TouchableOpacity>
+              </ButtonView>
             </View>
           ) : (
             <View>
@@ -137,6 +146,26 @@ const PhotoUploadTemplate = (props: any) => {
                   mb={30}
                 />
               </View>
+
+              {featuredItem && (
+                <ButtonView
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    setSelectedImage(featuredItem.path);
+                    setIsViewerVisible(true);
+                  }}
+                  style={{ marginBottom: 20 }}
+                >
+                  <Image
+                    source={{ uri: featuredItem.path }}
+                    style={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 12,
+                    }}
+                  />
+                </ButtonView>
+              )}
               <FlatList
                 data={props.mediaList}
                 renderItem={renderMediaItem}
@@ -169,26 +198,26 @@ const PhotoUploadTemplate = (props: any) => {
 
         {/* Gallery/Camera Modal */}
         <Modal visible={isPopupVisible} transparent animationType="fade">
-          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setPopupVisible(false)}>
+          <ButtonView style={styles.modalOverlay} activeOpacity={1} onPress={() => setPopupVisible(false)}>
             <View style={styles.modalContent}>
               <View style={styles.modalIndicator} />
               <AppText text="Select Media" type="Bold" fontSize={18} mb={20} textAlign="center" />
-              <TouchableOpacity style={styles.optionRow} onPress={uploadActions.fromGallery}>
+              <ButtonView style={styles.optionRow} onPress={uploadActions.fromGallery}>
                 <Svgicons path="imageIcon" size={24} color={Colors.BLACK} />
                 <AppText text="Gallery (Photo & Video)" ml={15} fontSize={16} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.optionRow} onPress={uploadActions.takePhoto}>
+              </ButtonView>
+              <ButtonView style={styles.optionRow} onPress={uploadActions.takePhoto}>
                 <Svgicons path="cameraIcon" size={24} color={Colors.BLACK} />
                 <AppText text="Take Photo" ml={15} fontSize={16} />
-              </TouchableOpacity>
+              </ButtonView>
               <AppButton title="Cancel" mt={20} onPress={() => setPopupVisible(false)} />
             </View>
-          </TouchableOpacity>
+          </ButtonView>
         </Modal>
 
         {/* Actions Modal — Cover/Delete */}
         <Modal visible={showOptions} transparent animationType="fade">
-          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowOptions(false)}>
+          <ButtonView style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowOptions(false)}>
             <View style={styles.modalContent}>
               <View style={styles.modalIndicator} />
 
@@ -220,9 +249,18 @@ const PhotoUploadTemplate = (props: any) => {
                 onPress={() => setShowOptions(false)}
               />
             </View>
-          </TouchableOpacity>
+          </ButtonView>
         </Modal>
       </View>
+      <ImageViewing
+        images={selectedImage ? [{ uri: selectedImage }] : []}
+        imageIndex={0}
+        visible={isViewerVisible}
+        onRequestClose={() => {
+          setIsViewerVisible(false);
+          setSelectedImage(null);
+        }}
+      />
     </BGImage>
   );
 };

@@ -402,10 +402,8 @@ const PropertyDetailScreen = () => {
               <IconCard
                 title="Discounts"
                 subtitle={
-                  propertyData.aiPricing?.pricingMode
-                    ? propertyData.aiPricing.pricingMode === 'conservative'
-                      ? 'Conservative Mode'
-                      : 'Aggressive Mode'
+                  propertyData?.pricing?.weekday
+                    ? 'Weekly, Monthly, + 2 More '
                     : 'Not set'
                 }
                 icon="discountPercentCoupon"
