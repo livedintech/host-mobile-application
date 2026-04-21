@@ -115,7 +115,7 @@ const AppUpdateCheck = () => {
                          <UpdateIcon />
                     </View>
                 <AppText
-                    text="Update Available 🚀"
+                    text="Update Available"
                     fontSize={24}
                     type="Bold"
                     color={Colors.BLACK}

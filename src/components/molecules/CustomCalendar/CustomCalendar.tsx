@@ -191,9 +191,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                 styles.dayNumber,
                 {
                   color: isActive ? (isMid ? '#000000' : '#FFF') : '#000000',
-                  // Increase font size conditionally
-                  fontSize: isActive ? 20 : 14,
-                  // Optional: Add Bold to make it pop more
+                  fontSize: isActive ? 14 : 14,
                   fontWeight: isActive ? '600' : '400',
                 } as TextStyle,
               ]}
