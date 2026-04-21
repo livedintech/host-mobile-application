@@ -17,6 +17,7 @@ import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/
 import Metrics from '@/utility/Metrics';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import { useForm } from 'react-hook-form';
+import { useAuthStore } from '@/store/useAuthStore';
 
 // ─── TYPES ─────────────────────────────────────────────────────────────
 
@@ -52,7 +53,7 @@ const InfoRow = ({ icon, label, value, valueColor }: any) => (
     </View>
 );
 
-const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }: any) => {
+const ConnectedAccountCard = ({user, account, selectedTab, onExport,listingOptions }: any) => {    
         const { control, formState: { errors }, setValue } = useForm();
       useEffect(() => {
         if (account?.listings?.[0]?.id) {
@@ -74,6 +75,18 @@ const ConnectedAccountCard = ({ account, selectedTab, onExport,listingOptions }:
                 icon={TAB_ICON_MAP[selectedTab as TabType]}
                 label={`${selectedTab} ID`}
                 value={account?.id?.toString() ?? 'N/A'}
+                valueColor={Colors.BLACK}
+            />
+            <InfoRow
+                icon={TAB_ICON_MAP[selectedTab as TabType]}
+                label={`Livedin Name`}
+                value={user?.name}
+                valueColor={Colors.BLACK}
+            />
+             <InfoRow
+                icon={TAB_ICON_MAP[selectedTab as TabType]}
+                label={`Total Property Count`}
+                value={'01'}
                 valueColor={Colors.BLACK}
             />
 
@@ -173,6 +186,8 @@ const ManageBookingScreen = () => {
         connectedAccounts,
         listingOptions,
     } = useManageBookingContainer();
+    const {user} = useAuthStore()
+
 
     const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
     const currentTabAccounts = useMemo(() => {
@@ -222,7 +237,7 @@ const ManageBookingScreen = () => {
                                 ]}
                                 variant="secondary"
                                 fontSize={12}
-                                borderRadius={20}
+                                borderRadius={16}
                             />
                         );
                     })}
@@ -254,6 +269,7 @@ const ManageBookingScreen = () => {
                                         selectedTab={selectedTab}
                                         onExport={goToListing}
                                         listingOptions={listingOptions}
+                                        user={user}
                                     />
                                 </View>
                             )}
