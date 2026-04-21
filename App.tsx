@@ -25,6 +25,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 import { configureGoogleSignIn } from '@/services/googleConfig';
 import NavigationRoutes from './src/navigation/NavigationRoutes';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
+import AppUpdateCheck from '@/components/molecules/AppUpdateCheck/AppUpdateCheck';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -160,14 +161,14 @@ const App = () => {
                 onStateChange={handleNavigationStateChange} // ✅ route change listener
               >
                 <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
-                  {/* ✅ dynamic background */}
                   <StatusBar
                     barStyle={safeAreaBg === Colors.BLACK ? 'light-content' : 'dark-content'}
-                    backgroundColor={safeAreaBg} // ✅ Android ke liye
-                    translucent={safeAreaBg === Colors.BLACK} // ✅ Onboarding par translucent
+                    backgroundColor={safeAreaBg}
+                    translucent={safeAreaBg === Colors.BLACK} 
                   />
                   <MenuProvider skipInstanceCheck>
                     <StackNavigator />
+                    <AppUpdateCheck />
                   </MenuProvider>
                   <Toast config={toastConfig} />
                 </SafeAreaView>

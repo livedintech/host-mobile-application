@@ -1,32 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 import { goBack, navigate } from '@/services/navigationService';
-import { BASE_URL_DEV } from '@env';
 import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { useAuthStore } from '@/store/useAuthStore';
-
-const BASE_URL = BASE_URL_DEV;
+import { useQuery, useMutation } from '@tanstack/react-query';
+import {
+  getListingPhotosApi,
+  uploadListingPhotosApi,
+  deleteListingPhotoApi,
+  setFeaturedPhotoApi,
+} from '@/services/ createListingService';
 
 export interface MediaItem {
-  path: string;
-  type: string;
-  size?: number;
+  path:         string;
+  type:         string;
+  size?:        number;
+  id?:          number;        // ✅ primary key — delete ke liye
+  external_id?: string | null; // ✅ null aa sakta hai
+  isExisting?:  boolean;
+  isFeatured?:  boolean;
 }
 
-interface UseMediaUploadProps {
-  listingId: string;
-  category: 'interior' | 'exterior' | 'bedroom' | 'bathroom' | 'other';
-  nextRoute?: string;
-  exitRoute?: string; // 👈 ADD
+interface UsePropertyMediaUploadProps {
+  listingId:    string | number | null;
+  category:     'interior' | 'exterior' | 'bedroom' | 'bathroom' | 'other';
+  nextRoute?:   string;
+  exitRoute?:   string;
   description?: string;
-  mode?: 'create' | 'edit';
-  initialMedia?: MediaItem[];
+  mode?:        'create' | 'edit';
 }
-
 
 export const usePropertyMediaUpload = ({
   listingId,
@@ -34,129 +39,170 @@ export const usePropertyMediaUpload = ({
   nextRoute,
   description = 'Property Photo',
   mode = 'create',
-  initialMedia = [],
-  exitRoute
-}: UseMediaUploadProps) => {
-  const { listing_id } = useCreateListingStore()
-  const [mediaList, setMediaList] = useState<MediaItem[]>(initialMedia);
-  const [isLoading, setIsLoading] = useState(false);
-  const { token } = useAuthStore();
+  exitRoute,
+}: UsePropertyMediaUploadProps) => {
+  const { listing_id, channel_id } = useCreateListingStore();
+  const effectiveListingId = String(listingId || listing_id);
 
-  const getBase64 = async (uri: string) => {
+  const [mediaList, setMediaList] = useState<MediaItem[]>([]);
+
+  // ── GET photos ────────────────────────────────────────────────────────────
+  const { isFetching, data: photosData, refetch: refetchPhotos } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_PHOTOS, effectiveListingId, category],
+    queryFn:  () => getListingPhotosApi({ listing_id: effectiveListingId }),
+    enabled:  Boolean(effectiveListingId),
+  });
+
+  // ✅ v5 — useEffect se photos set karo
+  useEffect(() => {
+    if (photosData?.data?.photos) {
+      const photos = photosData.data.photos;
+      const categoryKey = Object.keys(photos).find(
+        key => key.toLowerCase() === category.toLowerCase()
+      );
+      const categoryPhotos = categoryKey ? photos[categoryKey] : [];
+      const existing: MediaItem[] = categoryPhotos.map((p: any) => ({
+        path:        p.url,
+        type:        'image/jpeg',
+        id:          p.id,
+        external_id: p.external_id,
+        isExisting:  true,
+        isFeatured:  p.is_featured,
+      }));
+      setMediaList(existing);
+    }
+  }, [photosData]);
+
+  // ── Base64 helper ─────────────────────────────────────────────────────────
+  const getBase64 = async (uri: string): Promise<string | null> => {
     try {
-      const filePath =
-        Platform.OS === 'android'
-          ? uri.replace('file://', '')
-          : decodeURI(uri.replace('file://', ''));
-
+      const filePath = Platform.OS === 'android'
+        ? uri.replace('file://', '')
+        : decodeURI(uri.replace('file://', ''));
       return await RNFS.readFile(filePath, 'base64');
     } catch (error) {
-      console.error('Base64 Conversion Error: ', error);
+      console.error('Base64 error:', error);
       return null;
     }
   };
 
-  // -----------------------------
-  // COMMON UPLOAD FUNCTION
-  // -----------------------------
-  const uploadMedia = async (): Promise<boolean> => {
+  // ── POST upload ───────────────────────────────────────────────────────────
+const { mutate: uploadMutate, isPending: isUploading } = useMutation({
+  mutationFn: uploadListingPhotosApi,
+  onSuccess: () => {
+    Toast.show({ type: 'success', text1: 'Photos uploaded successfully' });
+    refetchPhotos(); // ✅ GET se fresh photos aayenge — tab show honge
+    queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+    queryClient.invalidateQueries({
+      queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+    });
+  },
+  onError: (err: any) => {
+    // ✅ Local state touch nahi kiya — kuch remove karne ki zarurat nahi
+    Alert.alert('Upload Error', err?.message || 'Something went wrong');
+  },
+});
+  // ── DELETE ────────────────────────────────────────────────────────────────
+const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
+  mutationFn: deleteListingPhotoApi,
+  onSuccess: () => {
+    refetchPhotos();
+    queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+    queryClient.invalidateQueries({
+      queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+    });
+    Toast.show({ type: 'success', text1: 'Photo deleted successfully' });
+  },
+  onError: (err: any) => {
+    Toast.show({ type: 'error', text1: err?.message || 'Delete failed' });
+  },
+});
+
+  // ── COVER ─────────────────────────────────────────────────────────────────
+  const { mutate: coverMutate } = useMutation({
+    mutationFn: setFeaturedPhotoApi,
+    onSuccess: (_: any, variables: any) => {
+      setMediaList(prev =>
+        prev.map(m => ({ ...m, isFeatured: m.id === variables.media_id }))
+      );
+      Toast.show({ type: 'success', text1: 'Cover photo set successfully' });
+    },
+    onError: (err: any) => {
+      Toast.show({ type: 'error', text1: err?.message || 'Failed to set cover photo' });
+    },
+  });
+
+ // ── Image select — immediately upload ─────────────────────────────────────
+const uploadNewPhotos = async (newItems: MediaItem[]) => {
+  if (!newItems.length) return;
+
+  // ✅ Local state mein ADD MAT KARO — sirf API hit karo
+  try {
+    const photoObjects = await Promise.all(
+      newItems.map(async item => {
+        const base64String = await getBase64(item.path);
+        return {
+          url:         base64String || item.path,
+          description,
+          category,
+        };
+      })
+    );
+
+    uploadMutate({
+      listing_id:    effectiveListingId,
+      channel_id,
+      save_and_exit: 0,
+      photos:        photoObjects,
+    });
+  } catch (error: any) {
+    Alert.alert('Error', error?.message || 'Something went wrong');
+  }
+};
+  // ── Delete ────────────────────────────────────────────────────────────────
+const deletePhoto = (index: number) => {
+  const item = mediaList[index];
+
+  if (!item.id) {
+    Toast.show({ type: 'error', text1: 'Cannot delete this photo' });
+    return;
+  }
+
+  deleteMutate({
+    media_id:   item.id,           // ✅ id use karo
+    listing_id: effectiveListingId,
+  });
+};
+  // ── Cover ─────────────────────────────────────────────────────────────────
+  const setCoverPhoto = (index: number) => {
+    const item = mediaList[index];
+
+    if (!item.id) {
+      Toast.show({ type: 'error', text1: 'Photo not uploaded yet' });
+      return;
+    }
+
+    coverMutate({
+      listing_id: effectiveListingId,
+      media_id:   item.id,
+    });
+  };
+
+  // ── Next — sirf navigate ──────────────────────────────────────────────────
+  const handleNext = () => {
     if (mediaList.length === 0) {
       Alert.alert('Required', `Please upload at least one ${category} photo.`);
-      return false;
+      return;
     }
-
-    try {
-      const photoObjects = await Promise.all(
-        mediaList.map(async item => {
-          const base64String = item.path.startsWith('http')
-            ? null
-            : await getBase64(item.path);
-
-          return {
-            url: base64String
-              ? `${base64String}`
-              : item.path,
-            description,
-            category,
-          };
-        }),
-      );
-
-      const body = {
-        listing_id: listingId,
-        photos: photoObjects,
-      };
-
-      const url =
-        mode === 'edit'
-          ? `${BASE_URL}api/v2/channelmanagement/create-listing/photos`
-          : `${BASE_URL}api/v2/channelmanagement/create-listing/photos`;
-
-      const response = await fetch(url, {
-        method: mode === 'edit' ? 'POST' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result?.message || 'Upload failed');
-      }
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
-      });
-
-      Toast.show({
-        type: 'success',
-        text1: result?.message || 'Uploaded successfully',
-      });
-
-      return true;
-    } catch (error: any) {
-      Alert.alert(
-        'Upload Error',
-        error?.message || 'Something went wrong',
-      );
-      return false;
-    }
+    if (nextRoute) navigate(nextRoute);
   };
 
-  // -----------------------------
-  // NEXT (CREATE MODE)
-  // -----------------------------
-  const handleNext = async () => {
-    if (mode === 'edit') return;
-
-    setIsLoading(true);
-
-    const success = await uploadMedia();
-
-    setIsLoading(false);
-
-    if (success && nextRoute) {
-      navigate(nextRoute);
+  // ── Save & Exit — sirf navigate ───────────────────────────────────────────
+  const handleSaveAndExit = () => {
+    if (mediaList.length === 0) {
+      Alert.alert('Required', `Please upload at least one ${category} photo.`);
+      return;
     }
-  };
-
-  // -----------------------------
-  // SAVE & EXIT (EDIT MODE)
-  // -----------------------------
-  const handleSaveAndExit = async () => {
-    setIsLoading(true);
-
-    const success = await uploadMedia();
-
-    setIsLoading(false);
-
-    if (!success) return;
-
     if (mode === 'edit') {
       goBack();
     } else if (exitRoute) {
@@ -164,13 +210,17 @@ export const usePropertyMediaUpload = ({
     }
   };
 
-
-
   return {
     mediaList,
     setMediaList,
+    uploadNewPhotos,
+    deletePhoto,
+    setCoverPhoto,
     handleNext,
     handleSaveAndExit,
-    isLoading,
+    isLoading: isUploading,
+    isFetching,
+    refetchPhotos,
+    isDeleting
   };
 };

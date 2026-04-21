@@ -7,7 +7,7 @@ export default function SpinnerLoader(props: SpinnerLoaderProps) {
     const { containerStyles, size = "large" } = props
     return (
       <View style={[styles.container, containerStyles]}>
-        <ActivityIndicator size={size} color={Colors.BRUNSWICK_GREEN} />
+        <ActivityIndicator size={size} color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
 }

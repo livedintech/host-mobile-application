@@ -1,6 +1,5 @@
-// AboutThePlaceScreen.tsx
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -12,12 +11,23 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import Metrics from '@/utility/Metrics';
 
 const AboutThePlaceScreen = () => {
   const {
     control, errors, numberOptions,
     handleSubmit, onNext, onSaveExit,
     isLoading, isEdit,
+    // ✅ Export
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
   } = useAboutThePlaceContainer();
 
   return (
@@ -79,9 +89,24 @@ const AboutThePlaceScreen = () => {
           </View>
         </ScrollView>
 
+        {/* Footer */}
         <View style={styles.footer}>
+          {/* ✅ Export — sirf edit mode mein */}
+          {isEdit && (
+            <AppButton
+              title="Export"
+              onPress={handleExport}
+              variant='secondary'
+              mb={12}
+            />
+          )}
           {!isEdit && (
-            <AppButton title="Next" variant="secondary" onPress={handleSubmit(onNext)} loading={isLoading} />
+            <AppButton
+              title="Next"
+              variant="secondary"
+              onPress={handleSubmit(onNext)}
+              loading={isLoading}
+            />
           )}
           <AppButton
             title="Save & Exit"
@@ -91,34 +116,92 @@ const AboutThePlaceScreen = () => {
             disabled={isLoading}
           />
         </View>
+
+        {/* ✅ Export Modal */}
+        <Modal
+          visible={bottomSheetVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setBottomSheetVisible(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+              <View style={styles.handleBar} />
+              <AppText
+                text="Select OTA Account"
+                fontSize={20}
+                type="SemiBold"
+                color={Colors.PINE_FOREST}
+                mb={20}
+              />
+              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
+                <DropdownField
+                  name="ota_account"
+                  control={otaControl}
+                  errors={otaErrors}
+                  label=""
+                  data={listingOptions}
+                  placeholder="Select Account"
+                  dropdownPosition="top"
+                />
+              </View>
+              <AppButton
+                title="Export"
+                onPress={handleOtaSubmit(handleExportSubmit)}
+                mt={20}
+                loading={isPendingExporting}
+                backgroundColor="#00A68A"
+                borderColor="transparent"
+                color={Colors.WHITE}
+              />
+            </Pressable>
+          </Pressable>
+        </Modal>
+
       </View>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 10 },
-  arrowCircle: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+  container:  { flex: 1 },
+  headerRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 10 },
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
-  inputWrapper: { marginBottom: 15 },
+  inputWrapper:  { marginBottom: 15 },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    padding: 12,
-    borderRadius: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    padding:         12,
+    borderRadius:    16,
+    marginBottom:    15,
+    borderWidth:     1,
+    borderColor:     'rgba(255, 255, 255, 0.5)',
   },
-  iconRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
-  footer: { paddingHorizontal: 25, paddingBottom: 30 },
+  iconRow:       { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
+  footer:        { paddingHorizontal: 25, paddingBottom: 30 },
   arrowCircleInner: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width:           32,
+    height:          32,
+    borderRadius:    16,
     backgroundColor: Colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent:  'center',
+    alignItems:      'center',
+  },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  bottomSheet: {
+    backgroundColor:      Colors.WHITE,
+    borderTopLeftRadius:  24,
+    borderTopRightRadius: 24,
+    paddingHorizontal:    24,
+    paddingTop:           12,
+    paddingBottom:        40,
+  },
+  handleBar: {
+    width:           40,
+    height:          5,
+    backgroundColor: '#D4D4D4',
+    borderRadius:    3,
+    alignSelf:       'center',
+    marginBottom:    25,
   },
 });
 

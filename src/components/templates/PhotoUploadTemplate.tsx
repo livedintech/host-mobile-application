@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  Image,
-  FlatList,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
+  StyleSheet, View, Image, FlatList,
+  Modal, TouchableOpacity, ActivityIndicator
 } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -18,18 +13,19 @@ import { goBack } from '@/services/navigationService';
 import BGImage from '../molecules/BGImage/BGImage';
 import { useMediaUpload, MediaItem } from './useMediaUpload';
 import Metrics from '@/utility/Metrics';
+import RefreshableScrollView from '../organisms/RefreshableScrollView/RefreshableScrollView';
 
 const PhotoUploadTemplate = (props: any) => {
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
   const [showOptions, setShowOptions] = useState(false);
+  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
 
-  // Hook for media selection logic
+
   const {
     isPopupVisible,
     setPopupVisible,
     uploadActions,
-    removeMedia,
-    handlePick
+    handlePick,
   } = useMediaUpload({
     maxImages: props.maxImages,
     maxVideos: props.maxVideos,
@@ -40,6 +36,21 @@ const PhotoUploadTemplate = (props: any) => {
   const renderMediaItem = ({ item, index }: { item: MediaItem; index: number }) => (
     <View style={styles.mediaWrapper}>
       <Image source={{ uri: item.path }} style={styles.thumbnail} />
+
+      {/* ✅ Delete loader */}
+      {deletingIndex === index && props.isDeleting ? (
+        <View style={styles.deletingOverlay}>
+          <ActivityIndicator size="small" color={Colors.WHITE} />
+        </View>
+      ) : null}
+
+      {/* ✅ Featured badge */}
+      {item.isFeatured && (
+        <View style={styles.featuredBadge}>
+          <AppText text="Cover" fontSize={10} color={Colors.WHITE} type="Bold" />
+        </View>
+      )}
+
       <TouchableOpacity
         style={styles.moreBtn}
         onPress={() => {
@@ -52,22 +63,39 @@ const PhotoUploadTemplate = (props: any) => {
     </View>
   );
 
+  // ✅ Fetching loader
+  if (props.isFetching) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+          <AppText text="Loading photos..." mt={15} fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} />
+        </View>
+      </BGImage>
+    );
+  }
+
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        <ScrollView
+        <RefreshableScrollView
           style={styles.flex1}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          refreshing={props.isFetching}
+          onRefresh={props.onRefresh}
         >
-          {/* Header Row */}
+          {/* Header */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
               <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
               </TouchableOpacity>
             </GradientBorder>
-            <CircularProgress percentage={props.percentage} size={48} strokeWidth={4} />
+            {/* ✅ Edit mode mein progress hide */}
+            {props.primaryBtnTitle && (
+              <CircularProgress percentage={props.percentage} size={48} strokeWidth={4} />
+            )}
           </View>
 
           {props.step && (
@@ -83,14 +111,12 @@ const PhotoUploadTemplate = (props: any) => {
 
           <AppText text={props.sectionTitle} fontSize={22} type="Bold" mt={30} mb={15} />
 
-          {/* Upload Area */}
           {props.mediaList.length === 0 ? (
             <View>
               <TouchableOpacity activeOpacity={0.8} style={styles.glassCard} onPress={() => handlePick()}>
                 <Svgicons path="plusIcon" size={24} />
                 <AppText text="Add Photos & Videos" ml={15} fontSize={16} type="Medium" />
               </TouchableOpacity>
-
               <TouchableOpacity activeOpacity={0.8} style={styles.glassCard} onPress={() => uploadActions.takePhoto()}>
                 <Svgicons path="cameraIcon" size={24} />
                 <AppText text="Take New Picture" ml={15} fontSize={16} type="Medium" />
@@ -117,15 +143,13 @@ const PhotoUploadTemplate = (props: any) => {
                 numColumns={2}
                 keyExtractor={(_, i) => i.toString()}
                 scrollEnabled={false}
-                style={{
-                  paddingBottom: Metrics.verticalScale(50)
-                }}
+                style={{ paddingBottom: Metrics.verticalScale(50) }}
               />
             </View>
           )}
-        </ScrollView>
+        </RefreshableScrollView>
 
-        {/* Footer Buttons */}
+        {/* Footer */}
         <View style={styles.footer}>
           {props.primaryBtnTitle && (
             <AppButton
@@ -135,62 +159,65 @@ const PhotoUploadTemplate = (props: any) => {
               loading={props.primaryLoading}
             />
           )}
-
           <AppButton
             title={props.secondaryBtnTitle}
-            mt={12}
+            mt={props.primaryBtnTitle ? 12 : 0}
             onPress={props.onSecondaryPress}
-            loading={props.primaryLoading}
+            loading={props.secondaryLoading || props.primaryLoading}
           />
         </View>
 
-        {/* Selection Modal (Gallery/Camera) */}
+        {/* Gallery/Camera Modal */}
         <Modal visible={isPopupVisible} transparent animationType="fade">
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setPopupVisible(false)}
-          >
+          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setPopupVisible(false)}>
             <View style={styles.modalContent}>
               <View style={styles.modalIndicator} />
               <AppText text="Select Media" type="Bold" fontSize={18} mb={20} textAlign="center" />
-
               <TouchableOpacity style={styles.optionRow} onPress={uploadActions.fromGallery}>
-                <Svgicons path="imageIcon" size={24} color={Colors.PRIMARY} />
+                <Svgicons path="imageIcon" size={24} color={Colors.BLACK} />
                 <AppText text="Gallery (Photo & Video)" ml={15} fontSize={16} />
               </TouchableOpacity>
-
               <TouchableOpacity style={styles.optionRow} onPress={uploadActions.takePhoto}>
-                <Svgicons path="cameraIcon" size={24} color={Colors.PRIMARY} />
+                <Svgicons path="cameraIcon" size={24} color={Colors.BLACK} />
                 <AppText text="Take Photo" ml={15} fontSize={16} />
               </TouchableOpacity>
-
               <AppButton title="Cancel" mt={20} onPress={() => setPopupVisible(false)} />
             </View>
           </TouchableOpacity>
         </Modal>
 
-        {/* Actions Modal (Cover/Delete) */}
+        {/* Actions Modal — Cover/Delete */}
         <Modal visible={showOptions} transparent animationType="fade">
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setShowOptions(false)}
-          >
+          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowOptions(false)}>
             <View style={styles.modalContent}>
               <View style={styles.modalIndicator} />
+
+              {/* ✅ Cover photo */}
               <AppButton
                 title="Make this picture the cover photo"
                 variant="secondary"
-                onPress={() => setShowOptions(false)}
+                onPress={() => {
+                  props.onSetCover?.(selectedItemIndex!);
+                  setShowOptions(false);
+                }}
               />
+
+              {/* ✅ Delete */}
               <AppButton
                 title="Delete picture"
                 mt={15}
                 onPress={() => {
-                  removeMedia(selectedItemIndex!);
+                  setDeletingIndex(selectedItemIndex!); // ✅ track karo
+                  props.onDelete?.(selectedItemIndex!);
                   setShowOptions(false);
                 }}
+              />
+
+              <AppButton
+                title="Cancel"
+                mt={15}
+                variant="secondary"
+                onPress={() => setShowOptions(false)}
               />
             </View>
           </TouchableOpacity>
@@ -206,31 +233,43 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 25, paddingBottom: 160 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, alignItems: 'center' },
   backBtnWrapper: { width: 32, height: 32, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
-  backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   infoSection: { marginTop: 15 },
   glassCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderRadius: 16,
-    padding: 25,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.5)'
+    borderRadius: 16, padding: 25,
+    flexDirection: 'row', alignItems: 'center',
+    marginBottom: 15, borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
   },
-  addMoreMini: {
-    paddingVertical: Metrics.verticalScale(10),
-    margin: 0,
-    marginRight: 0
-  },
+  addMoreMini: { paddingVertical: Metrics.verticalScale(10), margin: 0 },
   mediaWrapper: { width: '48%', aspectRatio: 1, margin: '1%', borderRadius: 12, overflow: 'hidden' },
   thumbnail: { width: '100%', height: '100%', backgroundColor: '#EEE' },
-  moreBtn: { position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 10, padding: 4 },
-  footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, backgroundColor: 'rgba(255,255,255,0.95)', paddingBottom: 35 },
+  featuredBadge: {
+    position: 'absolute', bottom: 6, left: 6,
+    backgroundColor: Colors.EMERALD_TEAL,
+    borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3,
+  },
+  moreBtn: {
+    position: 'absolute', top: 5, right: 5,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 10, padding: 4,
+  },
+  footer: {
+    position: 'absolute', bottom: 0, width: '100%',
+    padding: 25, backgroundColor: 'rgba(255,255,255,0.95)', paddingBottom: 35,
+  },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: { backgroundColor: Colors.WHITE, borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 25, paddingBottom: 40 },
   modalIndicator: { width: 40, height: 4, backgroundColor: '#DDD', borderRadius: 2, alignSelf: 'center', marginBottom: 20 },
   optionRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: '#F0F0F0' },
+  deletingOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+  },
 });
 
 export default PhotoUploadTemplate;

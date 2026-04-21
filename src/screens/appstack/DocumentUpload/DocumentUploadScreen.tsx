@@ -9,9 +9,9 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
-import useCreateEditListingDocumentUploadContainer from './DocumentUploadContainerNew';
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import useDocumentUploadContainer from './DocumentUploadContainer';
 
 const DocumentUploadScreen = () => {
   const {
@@ -36,7 +36,7 @@ const DocumentUploadScreen = () => {
     listingOptions,
     isLoadingChannelList,
     isCreating,
-  } = useCreateEditListingDocumentUploadContainer();
+  } = useDocumentUploadContainer();
 
   const renderUploadButton = (
     label: string,
@@ -120,32 +120,30 @@ const DocumentUploadScreen = () => {
           {renderUploadButton('Aqama / National ID', 'nationalId', nationalIdDoc)}
 
           {/* Footer */}
-          <View style={styles.footer}>
-            {/* ✅ Export sirf create mode mein show hoga */}
-            {!isEdit && (
-              <AppButton
-                title="Export"
-                variant="secondary"
-                onPress={handleExport}
-                disabled={isLoading}
-              />
-            )}
-            <AppButton
-              title="Save & Exit"
-              mt={!isEdit ? 15 : 0}
-              onPress={handleSubmit(onSaveExit)}
-              loading={isLoading}
-            />
-          </View>
+      {/* Footer */}
+<View style={styles.footer}>
+  {/* ✅ Export — hamesha show karo, create + edit dono mein */}
+  <AppButton
+    title="Export"
+    variant='secondary'
+    onPress={handleExport}
+    disabled={isLoading}
+    mb={12}
+  />
+  <AppButton
+    title="Save & Exit"
+    onPress={handleSubmit(onSaveExit)}
+    loading={isLoading}
+  />
+</View>
 
         </ScrollView>
 
         {/* Bottom Sheet Modal — sirf create mode mein */}
-        {!isEdit && (
           <Modal
             visible={bottomSheetVisible}
             transparent
-            animationType="slide"
+            animationType="fade"
             onRequestClose={() => setBottomSheetVisible(false)}
           >
             <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
@@ -182,7 +180,6 @@ const DocumentUploadScreen = () => {
               </Pressable>
             </Pressable>
           </Modal>
-        )}
 
       </View>
     </BGImage>

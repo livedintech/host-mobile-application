@@ -1,34 +1,90 @@
-// useAmenitiesContainer.ts
 import { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { navigate } from '@/services/navigationService';
+import { navigate, goBack } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { getAmenitiesApi, CreateUpdateAmenitiesApi } from '@/services/ createListingService';
+import { getAmenitiesApi, CreateUpdateAmenitiesApi, createListingExportApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
+import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
+
+const otaAccountSchema = yup.object({
+  ota_account: yup.string().required('Please select an OTA account'),
+});
+type OtaAccountFormValues = { ota_account: string };
 
 export default function useAmenitiesContainer() {
   const { user } = useAuthStore();
   const { listing_id, channel_id, updateListing, listing: propertyDetail } = useCreateListingStore();
   const { params } = useRoute<any>();
 
-  const listing  = params?.paramData?.listing;
-  const isEdit   = Boolean(listing?.listing_id);
+  const listing = params?.paramData?.listing;
+  const isEdit  = Boolean(listing?.listing_id);
 
-  // ── Local selection state ─────────────────────────────────────────────────
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
-  // ── Seed from edit params OR store ───────────────────────────────────────
   useEffect(() => {
-  const initial = isEdit
-    ? (listing?.amenities ?? [])        // ✅ Edit mode — params se
-    : [];                               // ✅ Create mode — empty
-  setSelectedAmenities(initial);
-}, []);
+    const initial = isEdit ? (listing?.amenities ?? []) : [];
+    setSelectedAmenities(initial);
+  }, []);
+
+  // ── OTA Form ──────────────────────────────────────────────────────────────
+  const {
+    control: otaControl,
+    handleSubmit: handleOtaSubmit,
+    formState: { errors: otaErrors },
+    watch: otaWatch,
+  } = useForm<OtaAccountFormValues>({
+    resolver: yupResolver(otaAccountSchema) as any,
+    defaultValues: { ota_account: '' },
+  });
+
+  const ota_Account = otaWatch('ota_account');
+
+  // ── OTA Accounts ──────────────────────────────────────────────────────────
+  const { data: response,isLoading } = useQuery({
+    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
+    queryFn:  () => getChannelsUserbyId({ user_id: Number(user?.id) }),
+    enabled:  !!user?.id,
+  });
+
+  const connectedAccounts = response?.data || [];
+  const listingOptions = connectedAccounts
+    .filter((item: any) => item.connection_type === 'Airbnb')
+    .map((item: any) => ({
+      label: 'Airbnb',
+      value: item.ch_channel_id,
+    }));
+
+  // ── Export Mutation ───────────────────────────────────────────────────────
+  const { mutate: createListingExportPayload, isPending: isPendingExporting } =
+    useMutation<CreateListingDetailsResponse, Error, CreateListingExportPayloadType>({
+      mutationFn: createListingExportApi,
+      onSuccess: ({ message }: any) => {
+        setBottomSheetVisible(false);
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+      },
+      onError: (err: any) =>
+        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+    });
+
+  const handleExport = () => setBottomSheetVisible(true);
+
+  const handleExportSubmit = (data: OtaAccountFormValues) => {
+    createListingExportPayload({
+      channel_id: ota_Account,
+      listing_id: String(listing_id),
+    });
+  };
 
   // ── Fetch amenities list ──────────────────────────────────────────────────
   const { data: rawAmenities = [], isLoading: isLoadingAmenities } = useQuery({
@@ -36,34 +92,28 @@ export default function useAmenitiesContainer() {
     queryFn:  getAmenitiesApi,
   });
 
-  // ── Toggle ────────────────────────────────────────────────────────────────
   const toggleAmenity = (key: string) => {
     setSelectedAmenities(prev =>
       prev.includes(key) ? prev.filter(i => i !== key) : [...prev, key],
     );
   };
 
-  // ── Payload builder ───────────────────────────────────────────────────────
-  // Note: CreateUpdateAmenitiesApi has its own endpoint — amenities at root level
   const buildPayload = () => ({
     user_id:       String(user?.id),
     channel_id,
     listing_id:    String(listing_id),
     save_and_exit: 0,
-    amenities:     selectedAmenities, // root level — as per CreateUpdateAmenitiesApi
+    amenities:     selectedAmenities,
   });
 
-  // ── Mutation ──────────────────────────────────────────────────────────────
   const { mutate: syncAmenities, isPending } = useMutation({
     mutationFn: CreateUpdateAmenitiesApi,
     onError: (err: any) =>
       Toast.show({ type: 'error', text1: err?.response?.data?.message || err.message || 'Something went wrong' }),
   });
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
   const onNext = () => {
     updateListing({ amenities: selectedAmenities });
-
     syncAmenities(buildPayload() as any, {
       onSuccess: () => navigate(NavigationRoutes.APP_STACK.MAKE_PROPERTY_STAND_OUT),
     });
@@ -71,16 +121,17 @@ export default function useAmenitiesContainer() {
 
   const onSaveExit = () => {
     updateListing({ amenities: selectedAmenities });
-
     syncAmenities(buildPayload() as any, {
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+        });
         if (isEdit) {
-          queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-          queryClient.invalidateQueries({
-            queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
-          });
+          goBack();
+        } else {
+          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
         }
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
       },
     });
   };
@@ -90,9 +141,19 @@ export default function useAmenitiesContainer() {
     selectedAmenities,
     toggleAmenity,
     onNext,
-    onSaveExit,        // ← screen mein "Save & Exit" button ko yeh pass karo
+    onSaveExit,
     isLoading:         isPending,
     isLoadingAmenities,
     isEdit,
+    // ✅ Export
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
   };
 }

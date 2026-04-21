@@ -306,8 +306,12 @@ import smokeAlarm from './smokeAlarm.svg'
 import medicalBag from './medicalBag.svg';
 import trendUp from './trendUp.svg';
 import trendDown from './trendDown.svg';
+import towerBuilding from './towerBuilding.svg';
+import noAccountFound from './noAccountFound.svg';
 
 export const icons = {
+  noAccountFound,
+  towerBuilding,
   medicalBag,
   smokeAlarm,
   gymEquipment,

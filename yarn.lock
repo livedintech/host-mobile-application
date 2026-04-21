@@ -6415,6 +6415,11 @@ react-native-calendars@^1.1314.0:
   optionalDependencies:
     moment "^2.29.4"
 
+react-native-check-version@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-check-version/-/react-native-check-version-1.4.0.tgz#9650e94c33090c22c1d245f14f75fc40c6b7cfdc"
+  integrity sha512-5Ar/LN0/wFSBEOY9TjtIApTrDu1/i4OYN9u0xW/DG2edlCyyfo/BfQkT15muKrKoDpolaoQfGjkDK8/nx9fT0A==
+
 react-native-country-picker-modal@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-country-picker-modal/-/react-native-country-picker-modal-2.0.0.tgz#005421303349a81fedf5975e465405bb4b7312d5"

@@ -194,7 +194,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-       options={{
+        options={{
           headerShown: false
         }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
@@ -855,6 +855,13 @@ const AppStack = () => {
         name={NavigationRoutes.APP_STACK.CANCEL_RESERVATION_STEP4_SCREEN}
         getComponent={() =>
           require('@/screens/appstack/CancelReservation/StepFour').default
+        }
+      />
+      <Stack.Screen
+      options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        name={NavigationRoutes.APP_STACK.CONNECT_OTA_PLATFORMS}
+        getComponent={() =>
+          require('@/screens/appstack/ConnectOTAPlatforms/ConnectOTAPlatformsScreen').default
         }
       />
       {/* CANCEL RESERVATION END */}
