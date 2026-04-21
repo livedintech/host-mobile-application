@@ -83,7 +83,7 @@ const FlatListSimpleHandler = forwardRef<
             title=""
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={Colors.INDIAN_RED}
+            tintColor={Colors.MEDIUM_JUNGLE_GREEN}
           />
         ) : undefined
       }

@@ -178,7 +178,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          header: () => <HeaderApp isGoBack />,
+          headerShown: false
         }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
@@ -194,8 +194,8 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{
-          header: () => <HeaderApp isGoBack />,
+       options={{
+          headerShown: false
         }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
         getComponent={() =>

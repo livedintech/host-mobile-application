@@ -68,19 +68,6 @@ export default function useManageBookingContainer() {
   const handleConnect = (platform: keyof typeof PLATFORM_CONFIG) => {
     const config = PLATFORM_CONFIG[platform];
 
-    const isConnected = connectedAccounts.some(
-      (acc: any) => acc.connection_type === config.key
-    );
-
-    // if (isConnected) {
-    //   Toast.show({
-    //     type: 'info',
-    //     text1: config.alreadyMsg,
-    //     text2: config.alreadyDesc,
-    //   });
-    //   return;
-    // }
-
     config.action();
   };
 
@@ -88,15 +75,15 @@ export default function useManageBookingContainer() {
     connection_type: string;
     ch_channel_id: string;
   }) => {
-    const route =
-      item?.connection_type === 'Gathern'
-        ? NavigationRoutes.APP_STACK.GATHERN_IMPORT
-        : NavigationRoutes.APP_STACK.AIRBNB_IMPORT;
-
-    navigate(route, { ch_channel_id: item?.ch_channel_id });
+    if (item?.connection_type === 'Gathern') {
+      navigate(NavigationRoutes.APP_STACK.GATHERN_IMPORT, { ch_channel_id: item?.ch_channel_id });
+    }
+    else if (item?.connection_type === 'Airbnb') {
+      navigate(NavigationRoutes.APP_STACK.AIRBNB_IMPORT, { ch_channel_id: item?.ch_channel_id });
+    }
   };
 
-   // Fetch user listings (for dropdown options)
+  // Fetch user listings (for dropdown options)
   const { data: apiResponse, isLoading: isLoadingDropdown, isFetching: isFetchingDropdown } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () =>
