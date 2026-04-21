@@ -18,6 +18,7 @@ interface ReviewCardProps {
   onRequestRating: () => void;
   onRateGuest: () => void;
   hostRating?: number | null;
+  hasGuestRating?: number | null;
 }
 
 const ReviewCard = ({
@@ -28,6 +29,7 @@ const ReviewCard = ({
   onRateGuest,
   onRequestRating,
   hostRating = null,
+  hasGuestRating = null,
 }: ReviewCardProps) => {
   const guestRating = item.overall_score || 0;
 
@@ -188,10 +190,10 @@ const ReviewCard = ({
           />
         </View>
         {
-        hostRating !== null ? 
+        hasGuestRating !== null ? 
         // false ?
         (
-          renderProgressBar(hostRating)
+          renderProgressBar(hasGuestRating)
         ) : (
           <GradientBorder
             colors={borderColors}

@@ -103,7 +103,10 @@ export interface ReviewItem {
   guest_name?: string | null;
   platform?: string;
   booking_id?: string;
-  thread_id ? : string
+  thread_id ? : string;
+  host_review?: {
+    total_rating: number;
+  } | null;
 }
 
 const useFetchReviews = () => {
