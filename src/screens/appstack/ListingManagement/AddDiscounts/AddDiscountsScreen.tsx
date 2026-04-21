@@ -10,6 +10,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import useDiscountsContainer from './DiscountsContainer';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const AddDiscountsScreen = () => {
     const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit } = useDiscountsContainer();
@@ -17,7 +18,13 @@ const AddDiscountsScreen = () => {
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                <KeyboardAwareScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={0}
+          automaticallyAdjustKeyboardInsets={false}
+        >
 
                     <View style={styles.headerRow}>
                         <TouchableOpacity onPress={() => goBack()} style={styles.backBtn}>
@@ -38,7 +45,7 @@ const AddDiscountsScreen = () => {
                         <InputField name="early_bird_price_change" label="Early Bird Price Change" control={control as any} errors={errors} placeholder="10%" keyboardType="numeric"/>
 
                     </View>
-                </ScrollView>
+                </KeyboardAwareScrollView>
 
                 <View style={styles.footer}>
                     {!isEdit && (

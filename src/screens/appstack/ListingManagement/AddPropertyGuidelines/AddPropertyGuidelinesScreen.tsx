@@ -41,6 +41,7 @@ const AddPropertyGuidelinesScreen = () => {
           bottomOffset={120}                         // ← 80 se 120 karo
           scrollIndicatorInsets={{ bottom: 0 }}
           automaticallyAdjustKeyboardInsets={false}
+          bounces={false}
         >
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
@@ -134,7 +135,7 @@ const AddPropertyGuidelinesScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: Metrics.baseMargin, paddingTop: 10, },
-  content: { paddingBottom: Metrics.verticalScale(120) },             // ← footer + dropdown ke liye space
+  content: { paddingBottom: Metrics.verticalScale(120) },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
   backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   bottomSection: { marginTop: 10 },
   lockText: { fontSize: 12, color: '#6B6B6B', marginTop: -5, lineHeight: 18 },
   linkText: { color: '#00A88E', textDecorationLine: 'underline', fontWeight: 'bold' },
-  footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
+  footer: { bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
   arrowCircleInner: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
 
 });

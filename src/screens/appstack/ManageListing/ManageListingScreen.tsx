@@ -11,7 +11,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
-const ManageListingScreen = ({ navigation }: any) => {
+const ManageListingScreen = () => {
   const {
     listings,
     onCreateNew,
@@ -21,17 +21,6 @@ const ManageListingScreen = ({ navigation }: any) => {
     refetch,
     UserPermission,
   } = useManageListingContainer();
-
-  const getCompletionPercentage = (step: any) => {
-    switch (step) {
-      case 'step_1': return '20%';
-      case 'step_2': return '40%';
-      case 'step_3': return '60%';
-      case 'step_4': return '80%';
-      case 'completed': return '100%';
-      default: return '0%';
-    }
-  };
 
   const data = listings?.data ?? [];
   const isSupervisor = UserPermission?.role_key === 'supervisor';
@@ -73,7 +62,7 @@ const ManageListingScreen = ({ navigation }: any) => {
           {item?.listing_steps !== 'completed' && (
             <GlassCard style={styles.percentageBadge}>
               <AppText
-                text={`${item?.completion_percentage} Completed`}
+                text={`${item?.completion_percentage}% Completed`}
                 fontSize={10}
                 type="Bold"
                 color={Colors.BRUNSWICK_GREEN}

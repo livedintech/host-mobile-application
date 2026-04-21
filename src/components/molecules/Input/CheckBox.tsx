@@ -22,7 +22,7 @@ const Checkbox = ({ isChecked, onPress, disabled = false }: CheckboxProps) => (
     activeOpacity={disabled ? 1 : 1} 
   >
     <Svgicons
-      path={isChecked ? 'checkedCheckbox' : 'checkboxTick'}
+      path={isChecked ? 'checkboxTick' : 'checkboxWithoutTick'}
       size={20}
       color={disabled ? '#A0A0A0' : undefined} 
     />

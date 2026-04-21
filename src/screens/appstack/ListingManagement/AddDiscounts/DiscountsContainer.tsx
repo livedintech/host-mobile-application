@@ -16,10 +16,10 @@ import { queryClient } from '@/services/api';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const discountsSchema = yup.object().shape({
-  weekly_discount:         yup.string().required('Weekly discount is required'),
-  monthly_discount:        yup.string().required('Monthly discount is required'),
-  early_bird_price_change: yup.string().required('Early bird price change is required'),
-  last_minute_discount:    yup.string().required('Last minute discount is required'),
+  weekly_discount:         yup.string().optional(),
+  monthly_discount:        yup.string().optional(),
+  early_bird_price_change: yup.string().optional(),
+  last_minute_discount:    yup.string().optional(),
 });
 
 export type DiscountFormValues = yup.InferType<typeof discountsSchema>;

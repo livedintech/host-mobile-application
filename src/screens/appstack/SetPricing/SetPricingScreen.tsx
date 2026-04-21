@@ -90,15 +90,13 @@ const SetPricingScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: Metrics.verticalScale(120) }, // footer ke liye space
+  content: { paddingHorizontal: 25, paddingTop: 10, paddingBottom: Metrics.verticalScale(60) }, // footer ke liye space
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
   backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   formGroup: { marginTop: 30 },
   fieldGap: { height: 20 },
   footer: {
-    position: 'absolute',
-    bottom: 0,
     width: '100%',
     padding: 25,
     backgroundColor: 'rgba(255,255,255,0.95)',

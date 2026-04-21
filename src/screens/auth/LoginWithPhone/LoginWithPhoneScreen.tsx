@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-  Platform
+  StyleSheet, Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -12,15 +9,8 @@ import PhoneInputField from '@/components/molecules/Input/PhoneInputField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useLoginWithPhoneContainer from './LoginWithPhoneContainer';
 import { configureGoogleSignIn } from '@/services/googleConfig';
-import {
-  GoogleSignin,
-  isSuccessResponse,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import { socialAuthApi } from '@/services/authApi';
 import { useAuthStore } from '@/store/useAuthStore';
-import Toast from 'react-native-toast-message';
 import { Colors } from '@/theme/colors';
 import { s, vs } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
@@ -28,7 +18,6 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import DeviceInfo from 'react-native-device-info';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import Metrics from '@/utility/Metrics';
 
 
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
@@ -130,11 +119,11 @@ const LoginWithPhoneScreen = () => {
               )}
             </View>
           </View>
-          
-          <AppText 
-            textAlign='center' 
+
+          <AppText
+            textAlign='center'
             style={styles.versionText}
-            text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`} 
+            text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`}
           />
 
         </KeyboardAwareScrollView>
@@ -151,9 +140,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: s(24),
     paddingBottom: vs(10),
-    paddingTop: vs(80) 
+    paddingTop: vs(80)
   },
-  headerSection: { 
+  headerSection: {
     marginBottom: vs(25)
   },
   inputWrapper: {

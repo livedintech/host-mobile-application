@@ -42,7 +42,7 @@ const AddBookingRulesScreen = () => {
             {!isEdit && <CircularProgress percentage={65} size={48} strokeWidth={4} />}
           </View>
 
-          <AppText text="Add booking rules" fontSize={28} type="Bold" mt={30} pr={130} />
+          <AppText text="Add booking rules" fontSize={28} type="Bold" mt={30} pr={160} />
 
           <View style={styles.formGroup}>
             <DropdownField
@@ -114,15 +114,15 @@ const AddBookingRulesScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: Metrics.baseMargin, paddingTop: 10, },
-  content: { paddingBottom: Metrics.verticalScale(220) },  
+  content: { paddingBottom: Metrics.verticalScale(50) },  
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
   backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
   backBtn: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   formGroup: { marginTop: 40 },
   fieldGap: { height: 25 },
   footer: {
-    position: 'absolute',
-    bottom: 0,
+    // position: 'absolute',
+    // bottom: 0,
     width: '100%',
     padding: 25,
     paddingBottom: 40

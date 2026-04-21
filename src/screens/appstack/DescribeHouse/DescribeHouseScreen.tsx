@@ -54,7 +54,7 @@ const DescribeHouseScreen = () => {
                     </View>
 
                     {/* Titles */}
-                    <AppText text="Describe your property" fontSize={32} type="Bold" mt={35} mb={28} />
+                    <AppText text="Describe your property" fontSize={32} type="Bold" mt={35} mb={28} pr={60}/>
                     <AppText
                         text="Short descriptions work best. You can always change it later"
                         fontSize={12}
@@ -153,15 +153,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     descriptionWrapper: { marginTop: 25 },
-    footerContainer: {
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        paddingHorizontal: 25,
-        paddingBottom: 40,
-        paddingTop: 20,
-    },
-    footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 35 },
+    footer: { bottom: 0, right: 0, width: '100%', padding: 25, paddingBottom: 35 },
 
 });
 

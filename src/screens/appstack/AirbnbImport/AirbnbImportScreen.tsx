@@ -10,6 +10,11 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import HeaderApp from '@/components/molecules/Header/HeaderApp';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { goBack } from '@/services/navigationService';
+import Metrics from '@/utility/Metrics';
 
 const PropertyCard = ({
   id,
@@ -117,6 +122,18 @@ const AirbnbImportScreen = () => {
             <SpinnerLoader />
           </View>
         )}
+        {/* <HeaderApp isGoBack /> */}
+        <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
+            <ButtonView style={styles.backBtnWrapper} onPress={() => goBack()}>
+              <Svgicons path='arrowLeftIcon' size={24} />
+            </ButtonView>
+          </GradientBorder>
+          <AppButton title='Refresh' onPress={refetch} variant='secondary' type='Regular' borderRadius={100} style={{
+            paddingHorizontal: Metrics.scale(35),
+            paddingVertical: Metrics.verticalScale(8)
+          }}/>
+        </View>
 
         <View style={styles.header}>
           <AppText
@@ -237,6 +254,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     backgroundColor: 'transparent',
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Metrics.baseMargin,
+    paddingTop: Metrics.baseMargin,
+  },
+  backBtnWrapper: { width: 32, height: 32, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+
 });
 
 export default AirbnbImportScreen;
