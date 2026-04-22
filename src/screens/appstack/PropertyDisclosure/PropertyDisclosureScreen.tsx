@@ -122,7 +122,6 @@ const AddPropertyDisclosureScreen = () => {
             </Pressable>
           </Pressable>
         </Modal>
-
       </View>
     </BGImage>
   );
