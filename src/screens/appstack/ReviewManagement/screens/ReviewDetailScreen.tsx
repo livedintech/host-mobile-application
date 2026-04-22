@@ -779,12 +779,19 @@ const ReviewDetailScreen = ({ route }: any) => {
                       <View
                         style={[
                           styles.progressBarFill,
-                          { width: `${(Number(overallRating) / 5) * 100}%` },
+                          {
+                            // Universal logic: (Current / Max) * 100
+                            width: `${
+                              (Number(guest?.rating) /
+                                Number(guest?.total_rating)) *
+                              100
+                            }%`,
+                          },
                         ]}
                       />
                     </View>
                     <AppText
-                      text={overallRating}
+                      text={guest.rating}
                       fontSize={14}
                       type="Bold"
                       color={Colors.BLACK}
@@ -838,7 +845,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                 </View>
               )}
               <View style={styles.buttonRow}>
-                <AppButton
+                {/* <AppButton
                   disabled={!isCheckedOut}
                   title={showDetails ? 'Hide Details' : 'View Details'}
                   fontSize={14}
@@ -858,27 +865,54 @@ const ReviewDetailScreen = ({ route }: any) => {
                     // !isCheckedOut && styles.disabledBtn,
                   ]}
                   borderRadius={100}
-                />
-                {/* {!bookingData?.guest?.rating && ( */}
+                /> */}
+
                 <AppButton
-                  // disabled={!isCheckedOut}
+                  disabled={guest?.rating == 0}
+                  title={'View Details'}
                   fontSize={14}
-                  title="Rate Your Guest"
-                  backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
-                  color={isCheckedOut ? Colors.WHITE : ''}
+                  onPress={() =>
+                    navigate(
+                      NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN,
+                      {
+                        id: guest.review_id,
+                      },
+                    )
+                  }
+                  backgroundColor={
+                     'rgba(255, 255, 255, 0.6)'
+                  }
+                  color={ Colors.BLACK }
                   style={[
                     styles.rateGuestBtn,
+                    {
+                      borderWidth: 1,
+                      borderColor:  '#E0E0E0'
+                    },
                     // !isCheckedOut && styles.disabledBtn,
                   ]}
                   borderRadius={100}
-                  onPress={() =>
-                    navigate(
-                      NavigationRoutes.APP_STACK
-                        .REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
-                    )
-                  }
                 />
-                {/* )} */}
+                {property.booking_platform !== 'bookingcom' && guest?.host_review?.total_rating==0 && (
+                  <AppButton
+                    // disabled={!isCheckedOut}
+                    fontSize={14}
+                    title="Rate Your Guest"
+                    backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
+                    color={isCheckedOut ? Colors.WHITE : ''}
+                    style={[
+                      styles.rateGuestBtn,
+                      // !isCheckedOut && styles.disabledBtn,
+                    ]}
+                    borderRadius={100}
+                    onPress={() =>
+                      navigate(
+                        NavigationRoutes.APP_STACK
+                          .REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
+                      )
+                    }
+                  />
+                )}
               </View>
             </View>
           </View>

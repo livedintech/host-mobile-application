@@ -175,44 +175,44 @@ const ReviewCard = ({
         )}
       </View>
 
-      {/* SECTION: Guest Rating - By You */}
-      <View style={styles.sectionMargin}>
-        <View style={styles.rowAlignCenter}>
-          <View style={styles.iconBox}>
-            <Svgicons path="guestExpIcon" size={30} />
+   {/* SECTION: Guest Rating - By You - Hidden for BookingCom */}
+      {item.booking_platform !== 'BookingCom' && (
+        <View style={styles.sectionMargin}>
+          <View style={styles.rowAlignCenter}>
+            <View style={styles.iconBox}>
+              <Svgicons path="guestExpIcon" size={30} />
+            </View>
+            <AppText
+              text="Guest Rating - By You"
+              fontSize={14}
+              type="Bold"
+              color={Colors.PINE_FOREST}
+              ml={10}
+            />
           </View>
-          <AppText
-            text="Guest Rating - By You"
-            fontSize={14}
-            type="Bold"
-            color={Colors.PINE_FOREST}
-            ml={10}
-          />
-        </View>
-        {
-        hasGuestRating !== null ? 
-        // false ?
-        (
-          renderProgressBar(hasGuestRating)
-        ) : (
-          <GradientBorder
-            colors={borderColors}
-            borderRadius={25}
-            style={styles.smallGradientBtn}
-          >
-            <ButtonView
-              onPress={onRateGuest}
-              style={styles.gradientBtnInner}
+          
+          {hasGuestRating !== null ? (
+            renderProgressBar(hasGuestRating)
+          ) : (
+            <GradientBorder
+              colors={borderColors}
+              borderRadius={25}
+              style={styles.smallGradientBtn}
             >
-              <AppText
-                text="Rate Your Guest"
-                fontSize={12}
-                color={Colors.PINE_FOREST}
-              />
-            </ButtonView>
-          </GradientBorder>
-        )}
-      </View>
+              <ButtonView
+                onPress={onRateGuest}
+                style={styles.gradientBtnInner}
+              >
+                <AppText
+                  text="Rate Your Guest"
+                  fontSize={12}
+                  color={Colors.PINE_FOREST}
+                />
+              </ButtonView>
+            </GradientBorder>
+          )}
+        </View>
+      )}
       </View>
       </ButtonView>
     </GlassCard>

@@ -70,211 +70,92 @@ const generateSlots = (
   return slots;
 };
 
-// ───────────────── 2️⃣ FETCH SLOTS FOR DATE ─────────────────
-
-// export const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
-//   try {
-//     // 1. Get and Encode Timezone
-//     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-//     const encodedTz = encodeURIComponent(timezone);
-
-//     const [year, month, day] = date.split('-').map(Number);
-    
-//     const startOfDay = Date.UTC(year, month - 1, day, 0, 0, 0);
-//     const endOfDay = Date.UTC(year, month - 1, day, 23, 59, 59, 999);
-
-//     const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startOfDay}&endTime=${endOfDay}&start=${startOfDay}&end=${endOfDay}&timezone=${encodedTz}`;
-
-//     const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-//     console.log('OH NO....', res)
-//     if (!res.ok) return [];
-
-//     const data = await res.json();
-    
-//     const availabilityData = data.linkAvailability?.linkAvailabilityByDuration?.['1800000']?.availabilities || [];
-    
-//     const filteredSlots = availabilityData.filter((slot: any) => {
-//       const slotDate = new Date(slot.startMillisUtc).toISOString().split('T')[0];
-//       return slotDate === date; 
-//     });
-
-//     return filteredSlots.map((slot: any) => ({
-//       startTime: slot.startMillisUtc,
-//       endTime: slot.endMillisUtc
-//     }));
-//   } catch (error) {
-//     console.error('[HubSpot] Slot fetch error', error);
-//     return [];
-//   }
-// };
-
-// ───────────────── 3️⃣ FETCH ALL AGENTS AVAILABLE DATES ─────────────────
-
-// export const fetchAllAgentsAvailableDates = async (
-//   year: number,
-//   month: number
-// ): Promise<Record<string, boolean>> => {
-//   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-//   const startTime = new Date(year, month - 1, 1, 0, 0, 0, 0).getTime();
-//   const endTime = new Date(year, month, 0, 23, 59, 59, 999).getTime();
-
-//   const results = await Promise.all(
-//     AGENTS.map(async (agent) => {
-//       const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${agent.meetingSlug}?startTime=${startTime}&endTime=${endTime}&timezone=${timezone}`;
-
-//       const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-//       if (!res.ok) return [];
-
-//       const data = await res.json();
-//       return data.busyTimes || [];
-//     })
-//   );
-
-//   const availableDates: Record<string, boolean> = {};
-//   const daysInMonth = new Date(year, month, 0).getDate();
-
-//   for (let day = 1; day <= daysInMonth; day++) {
-//     const dateStr = new Date(year, month - 1, day)
-//       .toISOString()
-//       .split('T')[0];
-//     availableDates[dateStr] = true;
-//   }
-
-//   return availableDates;
-// };
-// export const fetchAllAgentsAvailableDates = async (
-//   year: number,
-//   month: number
-// ): Promise<Record<string, boolean>> => {
-//   const availableDates: Record<string, boolean> = {};
-//   const daysInMonth = new Date(year, month, 0).getDate();
-//   const today = new Date().toISOString().split('T')[0];
-
-//   // Har din ke liye parallel check karo
-//   const dateChecks = await Promise.all(
-//     Array.from({ length: daysInMonth }, async (_, i) => {
-//       const day = i + 1;
-//       const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-//       // Past dates skip karo
-//       if (dateStr < today) return { dateStr, available: false };
-
-//       // Saudi weekend skip karo (Fri=5, Sat=6)
-//       const dayOfWeek = new Date(year, month - 1, day).getDay();
-//       if (dayOfWeek === 5 || dayOfWeek === 6) return { dateStr, available: false };
-
-//       // Kisi bhi agent ke paas slots hain?
-//       const agentResults = await Promise.all(
-//         AGENTS.map(agent => fetchSlotsForDate(agent.meetingSlug, dateStr))
-//       );
-
-//       const hasSlots = agentResults.some(slots => slots.length > 0);
-//       return { dateStr, available: hasSlots };
-//     })
-//   );
-
-//   dateChecks.forEach(({ dateStr, available }) => {
-//     availableDates[dateStr] = available;
-//   });
-
-//   return availableDates;
-// };
-
-// export const fetchAllAgentsAvailableDates = async (
-//   year: number,
-//   month: number
-// ): Promise<Record<string, boolean>> => {
-//   const availableDates: Record<string, boolean> = {};
-//   const timezone = encodeURIComponent(
-//     Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-//   );
-
-//   const startTime = new Date(year, month - 1, 1, 0, 0, 0).getTime();
-//   const endTime = new Date(year, month, 0, 23, 59, 59, 999).getTime();
-
-//   await Promise.all(
-//     AGENTS.map(async (agent) => {
-//       try {
-//         const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${agent.meetingSlug}?startTime=${startTime}&endTime=${endTime}&timezone=${timezone}`;
-
-//         const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-//         if (!res.ok) return;
-
-//         const data = await res.json();
-
-//         const availabilities =
-//           data.linkAvailability?.linkAvailabilityByDuration?.['1800000']
-//             ?.availabilities || [];
-
-//         // HubSpot ne jo dates di hain sirf wahi true karo
-//         availabilities.forEach((slot: any) => {
-//           const slotDate = new Date(slot.startMillisUtc)
-//             .toISOString()
-//             .split('T')[0];
-//           availableDates[slotDate] = true;
-//         });
-//       } catch (e) {
-//         console.error('[HubSpot] Month fetch error', e);
-//       }
-//     })
-//   );
-
-//   return availableDates;
-// };
+/**
+ * Fetches available meeting slots for a specific date from HubSpot.
+ * Handles 45-minute durations and fixes the "n-1" pagination bug.
+ */
 export const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
   try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
     const encodedTz = encodeURIComponent(timezone);
+    
+    // Split date (YYYY-MM-DD) to create local time bounds
     const [year, month, day] = date.split('-').map(Number);
 
+    // Define the window for the specific day
     const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0).getTime();
     const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999).getTime();
 
     const allSlots: HubSpotSlot[] = [];
     let cursor = startOfDay;
     let hasMore = true;
-    let lastCursor = -1; // ← guard
+    let lastCursor = -1;
 
     while (hasMore && cursor < endOfDay && cursor !== lastCursor) {
       lastCursor = cursor;
 
       const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${cursor}&endTime=${endOfDay}&start=${cursor}&end=${endOfDay}&timezone=${encodedTz}`;
 
-      const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-      if (!res.ok) break;
+      const res = await fetch(url, { 
+        method: 'GET', 
+        headers: getHeaders() 
+      });
+
+      if (!res.ok) {
+        console.error(`[HubSpot] API error: ${res.status}`);
+        break;
+      }
 
       const data = await res.json();
-
-      const availabilityData =
-        data.linkAvailability?.linkAvailabilityByDuration?.['1800000']
-          ?.availabilities || [];
+      const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
+      
+      /**
+       * 45 Minutes = 2700000 ms.
+       * We look for the 45min key you enabled in your HubSpot settings.
+       * Fallback to the first available duration if 45m isn't found.
+       */
+      const targetDurationKey = durationMap['2700000'] ? '2700000' : Object.keys(durationMap)[0];
+      const availabilityData = targetDurationKey ? durationMap[targetDurationKey]?.availabilities || [] : [];
 
       availabilityData.forEach((slot: any) => {
-        const slotDate = new Date(slot.startMillisUtc).toISOString().split('T')[0];
+        // Use 'en-CA' for YYYY-MM-DD format to match the input 'date' string
+        const slotDate = new Date(slot.startMillisUtc).toLocaleDateString('en-CA'); 
+        
         if (slotDate === date) {
-          allSlots.push({
-            startTime: slot.startMillisUtc,
-            endTime: slot.endMillisUtc,
-          });
+          // Guard against duplicates that can happen when cursor = previousEnd
+          const isDuplicate = allSlots.some(s => s.startTime === slot.startMillisUtc);
+          if (!isDuplicate) {
+            allSlots.push({
+              startTime: slot.startMillisUtc,
+              endTime: slot.endMillisUtc,
+            });
+          }
         }
       });
 
       hasMore = data.linkAvailability?.hasMore ?? false;
 
       if (hasMore && availabilityData.length > 0) {
-        cursor = availabilityData[availabilityData.length - 1].endMillisUtc + 1;
+        /**
+         * FIX: We set the cursor to the EXACT end of the last slot.
+         * Using + 1 (the old way) was skipping slots that started 
+         * exactly when the previous one ended.
+         */
+        cursor = availabilityData[availabilityData.length - 1].endMillisUtc;
       } else {
         break;
       }
     }
 
-    return allSlots;
+    // Sort slots by time before returning to the UI
+    return allSlots.sort((a, b) => a.startTime - b.startTime);
   } catch (error) {
     console.error('[HubSpot] Slot fetch error', error);
     return [];
   }
 };
+
+// ───────────────── FETCH MONTH DATES ─────────────────
 
 export const fetchAllAgentsAvailableDates = async (
   year: number,
@@ -284,7 +165,6 @@ export const fetchAllAgentsAvailableDates = async (
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
   const encodedTz = encodeURIComponent(timezone);
 
-  // ✅ Requested month ki start — today se nahi
   const startTime = new Date(year, month - 1, 1, 0, 0, 0, 0).getTime();
   const endTime = new Date(year, month, 0, 23, 59, 59, 999).getTime();
 
@@ -297,22 +177,27 @@ export const fetchAllAgentsAvailableDates = async (
         if (!res.ok) return;
 
         const data = await res.json();
-        const availabilities =
-          data.linkAvailability?.linkAvailabilityByDuration?.['1800000']
-            ?.availabilities || [];
+        
+        // ─── FIX STARTS HERE ───
+        const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
+        
+        // Look for 45 mins (2700000). If not found, use 30 mins (1800000) or whatever is first.
+        const targetKey = durationMap['2700000'] 
+          ? '2700000' 
+          : durationMap['1800000'] 
+            ? '1800000' 
+            : Object.keys(durationMap)[0];
 
-        console.log('Slots received:', availabilities.length);
-        console.log('hasMore:', data.linkAvailability?.hasMore);
-        if (availabilities.length > 0) {
-          console.log('First:', new Date(availabilities[0].startMillisUtc).toISOString());
-          console.log('Last:', new Date(availabilities[availabilities.length - 1].startMillisUtc).toISOString());
-        }
+        const availabilities = targetKey ? durationMap[targetKey]?.availabilities || [] : [];
+        // ─── FIX ENDS HERE ───
 
         availabilities.forEach((slot: any) => {
           const d = new Date(slot.startMillisUtc);
           const slotYear = d.getUTCFullYear();
           const slotMonth = d.getUTCMonth() + 1;
-          const slotDate = `${slotYear}-${String(slotMonth).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+          
+          // Use 'en-CA' for stable YYYY-MM-DD formatting
+          const slotDate = new Date(slot.startMillisUtc).toLocaleDateString('en-CA');
 
           if (slotMonth === month && slotYear === year) {
             availableDates[slotDate] = true;
@@ -325,7 +210,6 @@ export const fetchAllAgentsAvailableDates = async (
     })
   );
 
-  console.log('Final dates:', availableDates);
   return availableDates;
 };
 // ───────────────── 4️⃣ FETCH FIRST AVAILABLE AGENT ─────────────────

@@ -38,7 +38,7 @@ export const hostReviewReply = async (
   payload: { review_id: number; content: string },
 ) => {
   const { ok, response, data } = await apiService.post(
-    SERVICE_CONFIG_URLS.APP.CREATE_TASK_MANAGEMENT,
+    SERVICE_CONFIG_URLS.APP.HOST_REPLY_TO_GUEST,
     payload,
   );
 
