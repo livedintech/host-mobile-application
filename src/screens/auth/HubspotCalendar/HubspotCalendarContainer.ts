@@ -159,7 +159,7 @@ export default function useHubspotCalendarContainer(
     const refreshDates = () => {
   loadMonthDates(currentMonth.year, currentMonth.month);
 };
-
+console.log("agentWithSlots",agentWithSlots)
   return {
     today,
     currentMonth,

@@ -84,13 +84,12 @@ const CalendarScreen = ({ route }: any) => {
           }).start();
         }
       },
-    })
+    }),
   ).current;
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-
         {/* ── Main scrollable content ── */}
         <ScrollView
           style={styles.scrollView}
@@ -106,12 +105,17 @@ const CalendarScreen = ({ route }: any) => {
         >
           {/* Header */}
           <View style={styles.headerSection}>
-            <AppText type="Bold" fontSize={28} color={Colors.BLACK} lineHeight={34}>
+            <AppText
+              type="Bold"
+              fontSize={28}
+              color={Colors.BLACK}
+              lineHeight={34}
+            >
               Please select a{' '}
               <AppText type="Bold" fontSize={28} color={FIGMA_TEAL}>
                 date
-              </AppText>
-              {' '}so our agent can schedule a meeting with you
+              </AppText>{' '}
+              so our agent can schedule a meeting with you
             </AppText>
           </View>
 
@@ -129,7 +133,9 @@ const CalendarScreen = ({ route }: any) => {
               </View>
             ) : (
               <Calendar
-                current={`${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-01`}
+                current={`${currentMonth.year}-${String(
+                  currentMonth.month,
+                ).padStart(2, '0')}-01`}
                 markedDates={buildMarkedDates()}
                 onDayPress={(day: { dateString: string }) =>
                   handleDateSelect(day.dateString)
@@ -139,7 +145,11 @@ const CalendarScreen = ({ route }: any) => {
                 renderArrow={(direction: 'left' | 'right') => (
                   <View style={styles.arrowContainer}>
                     <Svgicons
-                      path={direction === 'left' ? 'arrowLeftIcon' : 'arrowRightIcon'}
+                      path={
+                        direction === 'left'
+                          ? 'arrowLeftIcon'
+                          : 'arrowRightIcon'
+                      }
                       size={14}
                       color={Colors.BLACK}
                     />
@@ -205,7 +215,10 @@ const CalendarScreen = ({ route }: any) => {
             />
 
             <Animated.View
-              style={[styles.sheetContent, { transform: [{ translateY: panY }] }]}
+              style={[
+                styles.sheetContent,
+                { transform: [{ translateY: panY }] },
+              ]}
             >
               <View style={styles.handleWrapper} {...panResponder.panHandlers}>
                 <View style={styles.sheetHandle} />
@@ -224,7 +237,10 @@ const CalendarScreen = ({ route }: any) => {
                     ml={10}
                   />
                 </View>
-                <TouchableOpacity onPress={closeSheet} style={styles.closeCircle}>
+                <TouchableOpacity
+                  onPress={closeSheet}
+                  style={styles.closeCircle}
+                >
                   <Svgicons path="closeIcon" size={14} color={Colors.BLACK} />
                 </TouchableOpacity>
               </View>
@@ -249,10 +265,12 @@ const CalendarScreen = ({ route }: any) => {
                         onPress={() => setSelectedSlot(slot)}
                       >
                         <AppText
-                          text={formatTime(slot.startTime)}
+                          text={formatTime(slot.startTime)} // Only show start time (e.g., 11:00 AM)
                           fontSize={12}
                           type="Bold"
-                          color={selectedSlot === slot ? Colors.WHITE : FIGMA_TEAL}
+                          color={
+                            selectedSlot === slot ? Colors.WHITE : FIGMA_TEAL
+                          }
                         />
                       </TouchableOpacity>
                     ))}
@@ -272,7 +290,6 @@ const CalendarScreen = ({ route }: any) => {
             </Animated.View>
           </View>
         </Modal>
-
       </SafeAreaView>
     </BGImage>
   );
