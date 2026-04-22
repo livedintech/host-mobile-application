@@ -306,6 +306,10 @@ import smokeAlarm from './smokeAlarm.svg'
 import medicalBag from './medicalBag.svg';
 import trendUp from './trendUp.svg';
 import trendDown from './trendDown.svg';
+import cleanliness from './cleanliness.svg';
+import comfort from './comfort.svg';
+import facilities from './facilities.svg';
+import staff from './staff.svg';
 
 export const icons = {
   medicalBag,
@@ -616,5 +620,9 @@ export const icons = {
   paymentIconNew2,
   checkedCheckbox,
   trendUp,
-  trendDown
+  trendDown,
+  cleanliness,
+  comfort,
+  facilities,
+  staff
 };

@@ -44,9 +44,11 @@ const ViewReviewScreen = () => {
 
   const replyText = watch('reply');
 
+  // Logic: Map the API response to the form field
   useEffect(() => {
-    if (reviewDetail?.reply_review) {
-      setValue('reply', reviewDetail.reply_review);
+    const apiReply = reviewDetail?.reply?.content || reviewDetail?.reply_review;
+    if (apiReply) {
+      setValue('reply', apiReply);
     }
   }, [reviewDetail, setValue]);
 
@@ -65,7 +67,48 @@ const ViewReviewScreen = () => {
     );
   };
 
-  // UPDATED: Bar is now below the Label
+  const formatText = (value: any) => {
+    return value?.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+  };
+
+  const isBookingCom = reviewDetail?.booking?.platform === 'BookingCom';
+  const isAirbnb = reviewDetail?.booking?.platform === 'AirBNB';
+  const hasExistingReply = !!(
+    reviewDetail?.reply?.content || reviewDetail?.reply_review
+  );
+
+  const maxScale = isBookingCom ? 10 : 5;
+
+  /**
+   * DYNAMIC LABEL GENERATOR
+   * Converts "check_in" to "Check In" or "cleanliness" to "Cleanliness"
+   */
+  const generateLabel = (key: string) => {
+    return key
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  /**
+   * ICON FALLBACK
+   * Tries to find a matching icon, otherwise returns a default star
+   */
+  const getDynamicIcon = (key: string) => {
+    const iconMap: Record<string, string> = {
+      accuracy: 'accuracy',
+      communication: 'communication',
+      location: 'location',
+      check_in: 'checkIn',
+      cleanliness: 'cleanliness',
+      comfort: 'comfort',
+      facilities: 'facilities',
+      value: 'value',
+      staff : 'staff'
+    };
+    return iconMap[key] || 'starIcon'; // Fallback to a generic icon
+  };
+
   const FeedbackBar = ({
     label,
     value,
@@ -88,10 +131,11 @@ const ViewReviewScreen = () => {
           ml={12}
         />
       </View>
-
       <View style={styles.progressSection}>
         <View style={styles.barBg}>
-          <View style={[styles.barFill, { width: `${(value / 5) * 100}%` }]} />
+          <View
+            style={[styles.barFill, { width: `${(value / maxScale) * 100}%` }]}
+          />
         </View>
         <AppText
           text={value.toFixed(1)}
@@ -128,6 +172,7 @@ const ViewReviewScreen = () => {
         <View style={styles.headerTitleRow}>
           <Svgicons path="smileIcon" size={32} />
         </View>
+
         <AppText
           text="Overall Rating"
           fontSize={30}
@@ -136,14 +181,26 @@ const ViewReviewScreen = () => {
           mb={30}
         />
 
-        <AppText
-          text={reviewDetail?.review?.private || 'No review text provided.'}
-          color={Colors.DARK_CHARCOAL_OPACITY_74}
-          lineHeight={22}
-          fontSize={15}
-          type="Regular"
-          style={styles.description}
-        />
+        <View style={{ marginBottom: 10 }}>
+          <AppText
+            text={
+              formatText(reviewDetail?.review?.public) ||
+              'No public review provided.'
+            }
+            color={Colors.DARK_CHARCOAL_OPACITY_74}
+            lineHeight={20}
+            fontSize={15}
+            type="Regular"
+            mb={20}
+          />
+          <AppText
+            text={formatText(reviewDetail?.review?.private)}
+            color={Colors.DARK_CHARCOAL_OPACITY_74}
+            lineHeight={22}
+            fontSize={15}
+            type="Regular"
+          />
+        </View>
 
         <GlassCard width="100%" style={styles.glassCard}>
           <View style={styles.glassHeader}>
@@ -158,92 +215,87 @@ const ViewReviewScreen = () => {
             </View>
           </View>
 
-          <FeedbackBar
-            label="Booking Platform"
-            value={starRating || 5.0}
-            icon="bookingPlatform"
-          />
-          <FeedbackBar
-            label="Accuracy"
-            value={reviewDetail?.scores?.accuracy || 0}
-            icon="accuracy"
-          />
-          <FeedbackBar
-            label="Communication"
-            value={reviewDetail?.scores?.communication || 0}
-            icon="communication"
-          />
-          <FeedbackBar
-            label="Location"
-            value={reviewDetail?.scores?.location || 0}
-            icon="location"
-          />
-          <FeedbackBar
-            label="Check-in"
-            value={reviewDetail?.scores?.check_in || 0}
-            icon="checkIn"
-          />
-          <FeedbackBar
-            label="Value"
-            value={reviewDetail?.scores?.value || 0}
-            icon="value"
-          />
+          {reviewDetail?.scores &&
+            Object.entries(reviewDetail.scores).map(([key, value]) => (
+              <FeedbackBar
+                key={key}
+                label={generateLabel(key)}
+                value={Number(value) || 0}
+                icon={getDynamicIcon(key)}
+              />
+            ))}
         </GlassCard>
 
-        <AppText
-          text="Your Reply"
-          type="Bold"
-          fontSize={26}
-          color={Colors.BLACK}
-          mt={30}
-          mb={15}
-        />
+        {isBookingCom && (
+          <>
+            <AppText
+              text="Your Reply"
+              type="Bold"
+              fontSize={26}
+              color={Colors.BLACK}
+              mt={30}
+              mb={15}
+            />
 
-        <View style={styles.replyBox}>
-          <TextareaField
-            name="reply"
-            control={control}
-            errors={errors}
-            placeholder="Thank you for your response..."
-            multiline
-            style={styles.textArea}
-          />
-        </View>
-        <AppText
-          text={`${replyText?.length || 0}/500 characters`}
-          fontSize={12}
-          color={Colors.DARK_CHARCOAL}
-          mt={0}
-        />
-
-        <View style={styles.bottomButtons}>
-          <GradientBorder
-            colors={borderColors}
-            borderRadius={28}
-            style={styles.fullWidthGradient}
-          >
-            <ButtonView
-              onPress={handleSubmit(onFormSubmit)}
-              style={styles.submitInner}
-            >
-              <AppText
-                text="Submit"
-                fontSize={16}
-                type="Medium"
-                color={Colors.BLACK}
+            <View style={styles.replyBox}>
+              <TextareaField
+                name="reply"
+                control={control}
+                errors={errors}
+                placeholder="No response yet..."
+                multiline
+                style={[
+                  styles.textArea,
+                  hasExistingReply && styles.disabledTextArea,
+                ]}
+                editable={!hasExistingReply} // ✅ READ ONLY if reply exists
               />
-            </ButtonView>
-          </GradientBorder>
+            </View>
 
-          <AppButton
-            title="Save & Exit"
-            onPress={() => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)}
-            style={styles.exitBtn}
-            color={Colors.WHITE}
-            backgroundColor={Colors.BOTTLE_GREEN}
-            borderColor={Colors.BOTTLE_GREEN}
-          />
-        </View>
+            {!hasExistingReply && (
+              <AppText
+                text={`${replyText?.length || 0}/500 characters`}
+                fontSize={12}
+                color={Colors.DARK_CHARCOAL}
+                mt={0}
+              />
+            )}
+          </>
+        )}
+
+        {isBookingCom && !hasExistingReply && (
+          <View style={styles.bottomButtons}>
+            {/* Only show Submit if user can actually edit */}
+            <GradientBorder
+              colors={borderColors}
+              borderRadius={28}
+              style={styles.fullWidthGradient}
+            >
+              <ButtonView
+                onPress={handleSubmit(onFormSubmit)}
+                style={styles.submitInner}
+              >
+                <AppText
+                  text={isSubmitting ? 'Submitting...' : 'Submit'}
+                  fontSize={16}
+                  type="Medium"
+                  color={Colors.BLACK}
+                />
+              </ButtonView>
+            </GradientBorder>
+
+            <AppButton
+              title="Save & Exit"
+              onPress={() =>
+                navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)
+              }
+              style={styles.exitBtn}
+              color={Colors.WHITE}
+              backgroundColor={Colors.BOTTLE_GREEN}
+              borderColor={Colors.BOTTLE_GREEN}
+            />
+          </View>
+        )}
       </ScrollView>
     </BGImage>
   );
@@ -257,17 +309,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
     paddingBottom: 60,
   },
-  backCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
   headerTitleRow: { marginBottom: 30 },
-  description: { marginBottom: 40, lineHeight: 22 },
   glassCard: { padding: 20 },
   glassHeader: {
     flexDirection: 'row',
@@ -280,8 +322,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.5)',
     borderRadius: 10,
   },
-
-  // Bar Styling matching the image
   barItemContainer: { marginBottom: 12 },
   barLabelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
   iconBox: {
@@ -303,14 +343,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.06)',
     borderRadius: 2,
   },
-  barFill: { height: '100%', backgroundColor: '#40B69C', borderRadius: 2 }, // Teal color from img
-
+  barFill: { height: '100%', backgroundColor: '#40B69C', borderRadius: 2 },
   replyBox: { marginTop: 5 },
   textArea: {
     backgroundColor: 'rgba(255,255,255,0.5)',
     borderRadius: 15,
     borderBottomWidth: 0,
   },
+  disabledTextArea: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    color: Colors.DARK_CHARCOAL,
+  }, // Visual cue for read-only
   bottomButtons: { marginTop: 30 },
   fullWidthGradient: { width: '100%', marginBottom: 15 },
   submitInner: {
@@ -319,9 +362,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.WHITE,
   },
-  exitBtn: { 
-    height: 52, backgroundColor: '#1DBB9F', borderRadius: 28 },
-  exitBtnText: {},
+  exitBtn: { height: 52, backgroundColor: '#1DBB9F', borderRadius: 28 },
 });
 
 export default ViewReviewScreen;

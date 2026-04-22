@@ -113,6 +113,7 @@ export const SERVICE_CONFIG_URLS = {
     GET_ANALYTICS_CHANNEL: `${authController}/analytics/revenue-by-channel`,
     GET_REVIEWS_ALL: `${authController}/reviews`,
     GET_REVIEW_BY_ID: `${authController}/reviews/{id}`,
+    HOST_REPLY_TO_GUEST:`${authController}/reviews/reply`,
     HOST_REVIEW_REPLY: `${authController}/reviews/reply`,
     GET_CALENDAR_BOOKINGS: `${authController}/bookings`,
     BOOKING_MULTI_CALENDAR: `${authController}/bookingsmulticalendar`,
