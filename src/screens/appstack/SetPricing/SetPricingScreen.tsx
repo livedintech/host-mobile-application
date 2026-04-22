@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -13,9 +13,10 @@ import { goBack } from '@/services/navigationService';
 import usePricingContainer from './SetPricingContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Metrics from '@/utility/Metrics';
+import Modal from 'react-native-modal';
 
 const SetPricingScreen = () => {
-  const { control, errors, handleSubmit, onSubmit, isLoading, isEdit } = usePricingContainer();
+  const { control, errors, handleSubmit, onSubmit, isLoading, isEdit, bottomSheetVisible, handleExport, handleExportSubmit, handleOtaSubmit, isExporting, listingOptions, otaControl, otaErrors, setBottomSheetVisible, } = usePricingContainer();
 
   const currencyOptions = [
     { label: 'Riyal (SAR)', value: 'SAR' },
@@ -68,6 +69,14 @@ const SetPricingScreen = () => {
         </KeyboardAwareScrollView>
 
         <View style={styles.footer}>
+          {isEdit && (
+            <AppButton
+              title="Export"
+              onPress={handleExport}
+              variant='secondary'
+              mb={12}
+            />
+          )}
           {!isEdit && ( // ✅ create mode mein Next show hoga
             <AppButton
               title="Next"
@@ -84,6 +93,33 @@ const SetPricingScreen = () => {
           />
         </View>
       </View>
+      <Modal
+        visible={bottomSheetVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setBottomSheetVisible(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+          <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+            <AppText text="Select OTA Account" fontSize={18} type="SemiBold" mb={20} />
+            <DropdownField
+              name="ota_account"
+              control={otaControl}
+              errors={otaErrors}
+              data={listingOptions}
+              placeholder="Select Account"
+            />
+
+            <AppButton
+              title="Export"
+              onPress={handleOtaSubmit(handleExportSubmit)}
+              loading={isExporting}
+              mt={20}
+            />
+
+          </Pressable>
+        </Pressable>
+      </Modal>
     </BGImage>
   );
 };
@@ -101,6 +137,16 @@ const styles = StyleSheet.create({
     padding: 25,
     backgroundColor: 'rgba(255,255,255,0.95)',
     paddingBottom: 40
+  },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+
+  bottomSheet: {
+    backgroundColor: Colors.WHITE,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 40,
   },
 });
 

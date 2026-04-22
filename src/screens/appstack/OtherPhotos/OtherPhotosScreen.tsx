@@ -8,48 +8,52 @@ import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 const OtherPhotosScreen = () => {
   const route = useRoute<any>();
-  const { isEdit = false, existingPhotos = [],category = '' } = route.params || {};
+  const { listing_id, listing } = useCreateListingStore();
 
-  const { listing_id } = useCreateListingStore();
+  const isEdit = route.params?.isEdit;
+  const category = route.params?.category || 'other';
+  
 
-const {
-  mediaList,
-  setMediaList,
-  handleNext,
-  handleSaveAndExit,
-  isLoading,
-} = usePropertyMediaUpload({
-  listingId: listing_id,
-  category: category,
-  nextRoute: !isEdit
-    ? NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS
-    : undefined,
-  exitRoute: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
-  mode: isEdit ? 'edit' : 'create',
-  initialMedia: existingPhotos.map((p: any) => ({
-    path: p.url,
-    type: p.type || 'image/jpeg',
-  })),
-});
-
+  const {
+    mediaList,
+    setMediaList,
+    deletePhoto,
+    setCoverPhoto,
+    handleNext,
+    handleSaveAndExit,
+    isLoading,
+    isFetching,
+    isDeleting,
+    refetchPhotos,
+    uploadNewPhotos
+  } = usePropertyMediaUpload({
+    listingId: String(listing_id),
+    category,
+    nextRoute: NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS,
+    exitRoute: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
+    mode: isEdit ? 'edit' : 'create',
+  });
 
   return (
     <PhotoUploadTemplate
-      step=""
-      screenTitle="Add Photos & Videos"
+      step={!isEdit ? 'Step 5' : undefined}
+      screenTitle={`Add Photos & \nVideos`}
       sectionTitle={`${category} Photos & Videos`}
       maxImages={10}
       maxVideos={1}
       mediaList={mediaList}
-      onMediaChange={setMediaList}
-      primaryBtnTitle={!isEdit ? 'Next' : null}
-      onPrimaryPress={!isEdit ? handleNext : undefined}
+      onDelete={deletePhoto}
+      onSetCover={setCoverPhoto}
+      isFetching={isFetching}
+      primaryBtnTitle={!isEdit ? 'Next' : undefined}
+      onPrimaryPress={handleNext}
       primaryLoading={isLoading}
-      primaryDisable={mediaList.length === 0 || isLoading}
       secondaryBtnTitle="Save & Exit"
       onSecondaryPress={handleSaveAndExit}
-      secondaryLoading={false}
-      secondaryDisable={isLoading}
+      secondaryLoading={isLoading}
+      onMediaChange={uploadNewPhotos}
+      onRefresh={refetchPhotos}
+      isDeleting={isDeleting}
     />
   );
 };

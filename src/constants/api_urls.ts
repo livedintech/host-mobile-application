@@ -147,5 +147,9 @@ export const SERVICE_CONFIG_URLS = {
     CHANGE_RESERVATION: `${authController}/bookings/reservation/change`,
     CANCEL_OTA_BOOKING: `${authController}/bookings/ota/{id}/cancel`,
     CANCEL_DIRECT_BOOKING: `${authController}/bookings/host/{id}/cancel`,
+    CREATE_LISTING_PHOTOS: `${authController}/channelmanagement/create-listing/photos`,
+  DELETE_LISTING_PHOTO: `${authController}/channelmanagement/listing/photos/{external_id}`,
+  SET_FEATURED_PHOTO: `${authController}/channelmanagement/listing/{listing_id}/photos/{media_id}/featured`,
+  GET_LISTING_PHOTOS: `${authController}/channelmanagement/listing/{listing_id}/photos`,
   },
 };

@@ -37,8 +37,8 @@ const RefreshableScrollView: FC<RefreshableScrollViewProps> = ({
                 <RefreshControl
                     refreshing={refreshing || false}
                     onRefresh={onRefresh}
-                    tintColor={Colors.BLACK}
-                    colors={[Colors.BLACK]}
+                    tintColor={Colors.MEDIUM_JUNGLE_GREEN}
+                    colors={[Colors.MEDIUM_JUNGLE_GREEN]}
                 />
             }
             {...rest}

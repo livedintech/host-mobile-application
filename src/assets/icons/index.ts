@@ -310,8 +310,12 @@ import cleanliness from './cleanliness.svg';
 import comfort from './comfort.svg';
 import facilities from './facilities.svg';
 import staff from './staff.svg';
+import towerBuilding from './towerBuilding.svg';
+import noAccountFound from './noAccountFound.svg';
 
 export const icons = {
+  noAccountFound,
+  towerBuilding,
   medicalBag,
   smokeAlarm,
   gymEquipment,
