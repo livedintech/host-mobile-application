@@ -33,7 +33,7 @@ const AddDiscountsScreen = () => {
                         {!isEdit && <CircularProgress percentage={85} size={48} strokeWidth={4} />}
                     </View>
 
-                    <AppText text="Add discounts" fontSize={32} type="Bold" mt={30} />
+                    <AppText text={isEdit ? "Discounts" : "Add discounts"} fontSize={32} type="Bold" mt={30} />
                     <AppText text="Create discounts to attract more bookings and offer special pricing for specific situations like last-minute stays or longer reservations." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mt={10} mb={15} pr={40} />
 
                     <View style={styles.formGroup}>

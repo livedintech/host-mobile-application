@@ -57,8 +57,10 @@ export default function usePropertyDetailContainer() {
   });
 
   const connectedAccounts = response?.data || [];
-  const listingOptions = connectedAccounts.map((item: any) => ({
-    label: item.connection_type,
+ const listingOptions = connectedAccounts
+  .filter((item: any) => item.connection_type === 'Airbnb')
+  .map((item: any) => ({
+    label: 'Airbnb',
     value: item.ch_channel_id,
   }));
 
@@ -302,7 +304,7 @@ export default function usePropertyDetailContainer() {
         });
         break;
       case 'channel':
-        navigate(NavigationRoutes.APP_STACK.CONNECTED_OTA);
+        navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
         break;
       case 'delete':
         Alert.alert(

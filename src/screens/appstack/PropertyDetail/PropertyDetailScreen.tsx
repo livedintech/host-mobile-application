@@ -129,12 +129,12 @@ const PropertyDetailScreen = () => {
                 style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
               >
                 <AppText text="Channel" fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="channelIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BRUNSWICK_GREEN} />
+                <Svgicons path="channelIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
               </MenuOption>
 
               <MenuOption onSelect={() => handleMenuAction('task')} style={styles.menuItem}>
                 <AppText text="Task" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="taskIcon" size={20} color={Colors.BRUNSWICK_GREEN} />
+                <Svgicons path="taskIcon" size={20} />
               </MenuOption>
 
               <MenuOption
@@ -151,8 +151,8 @@ const PropertyDetailScreen = () => {
                 onSelect={() => handleMenuAction('delete')}
                 style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
               >
-                <AppText text="Delete Property" fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.INDIAN_RED} style={styles.menuText} />
-                <Svgicons path="deleteIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.INDIAN_RED} />
+                <AppText text="Delete Listing" fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                <Svgicons path="TrashFull" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
               </MenuOption>
             </MenuOptions>
           </Menu>
@@ -402,10 +402,8 @@ const PropertyDetailScreen = () => {
               <IconCard
                 title="Discounts"
                 subtitle={
-                  propertyData.aiPricing?.pricingMode
-                    ? propertyData.aiPricing.pricingMode === 'conservative'
-                      ? 'Conservative Mode'
-                      : 'Aggressive Mode'
+                  propertyData?.pricing?.weekday
+                    ? 'Weekly, Monthly, + 2 More '
                     : 'Not set'
                 }
                 icon="discountPercentCoupon"
@@ -459,7 +457,7 @@ const optionsStyles = {
   optionsContainer: {
     backgroundColor: Colors.WHITE,
     borderRadius: 12,
-    width: 200,
+    width: 250,
     paddingVertical: 8,
     elevation: 10,
     shadowColor: '#000',

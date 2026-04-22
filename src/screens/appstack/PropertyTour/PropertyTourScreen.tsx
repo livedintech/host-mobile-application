@@ -1,82 +1,126 @@
 import React from 'react';
-import { StyleSheet, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Image, Modal, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import usePropertyTourContainer from './PropertyTourContainer';
 import Metrics from '@/utility/Metrics';
+import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import DropdownField from '@/components/molecules/Input/DropdownField';
 
 const PropertyTourScreen = () => {
-  const { 
-    tourData, 
-    handleGoBack, 
-    handleExport, 
-    handleCardPress 
+  const {
+    tourData,
+    handleExport,
+    handleExportSubmit,
+    handleCardPress,
+    isFetching,
+    refetch,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
   } = usePropertyTourContainer();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
       <View style={styles.container}>
-        
+
         <View style={styles.titleSection}>
-          <AppText 
-            text="Property Tour" 
-            fontSize={28} 
-            type="Bold" 
-            color={Colors.BLACK} 
-          />
-          <AppText 
-            text="Manage your listing photos here. Upload, organize, and update the images that will be showcased to guests on your listing." 
-            fontSize={12} 
+          <AppText text="Property Tour" fontSize={28} type="Bold" color={Colors.BLACK} />
+          <AppText
+            text="Manage your listing photos here. Upload, organize, and update the images that will be showcased to guests on your listing."
+            fontSize={12}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={12}
           />
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.gridContainer}>
-            {tourData.map((item) => (
-              <GlassCard key={item.id} width="48%" style={styles.cardWrapper}>
-                <ButtonView onPress={() => handleCardPress(item.title)}>
-                  <Image 
-                    // Yahan high res filter add kar diya agar URL me query params hon
-                    source={{ uri: item.image?.split('?')[0] }} 
-                    style={styles.cardImage} 
-                  />
-                  <View style={styles.cardTextContainer}>
-                    <AppText 
-                      text={item.title} 
-                      fontSize={16} 
-                      type="SemiBold" 
-                      color={Colors.BLACK} 
-                    />
-                    <AppText 
-                      text={`${item.count} photos`} 
-                      fontSize={12} 
-                      color="#6B6B6B" 
-                      mt={4}
-                    />
-                  </View>
-                </ButtonView>
-              </GlassCard>
-            ))}
-          </View>
-        </ScrollView>
+        <FlatListSimpleHandler
+          data={tourData}
+          isLoading={isFetching}
+          onRefresh={refetch}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          contentContainerStyle={styles.scrollContent}
+          keyExtractor={(item: any) => item.id}
+          renderItem={({ item }: any) => (
+            <GlassCard width="48%" style={styles.cardWrapper}>
+              <ButtonView onPress={() => handleCardPress(item.title)}>
+                <Image
+                  source={
+                    item.image
+                      ? { uri: item.image?.split('?')[0] }
+                      : require('@/assets/img/background/linearBG.png')
+                  }
+                  style={styles.cardImage}
+                />
+                <View style={styles.cardTextContainer}>
+                  <AppText text={item.title} fontSize={16} type="SemiBold" color={Colors.BLACK} />
+                  <AppText text={`${item.count} photos`} fontSize={12} color="#6B6B6B" mt={4} />
+                </View>
+              </ButtonView>
+            </GlassCard>
+          )}
+        />
 
         <View style={styles.footer}>
-          <AppButton 
-            title="Export" 
-            onPress={handleExport} 
-            backgroundColor="#00A68A" 
+          <AppButton
+            title="Export"
+            onPress={handleExport}
+            backgroundColor="#00A68A"
             borderColor="transparent"
             color={Colors.WHITE}
             fontSize={16}
           />
         </View>
+
+        {/* ✅ Export Modal — same as PropertyDetailScreen */}
+        <Modal
+          visible={bottomSheetVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setBottomSheetVisible(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+              <View style={styles.handleBar} />
+              <AppText
+                text="Select OTA Account"
+                fontSize={20}
+                type="SemiBold"
+                color={Colors.PINE_FOREST}
+                mb={20}
+              />
+              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
+                <DropdownField
+                  name="ota_account"
+                  control={otaControl}
+                  errors={otaErrors}
+                  label=""
+                  data={listingOptions}
+                  placeholder="Select Account"
+                  dropdownPosition="top"
+                />
+              </View>
+              <AppButton
+                title="Export"
+                onPress={handleOtaSubmit(handleExportSubmit)}
+                mt={20}
+                loading={isPendingExporting}
+                backgroundColor="#00A68A"
+                borderColor="transparent"
+                color={Colors.WHITE}
+              />
+            </Pressable>
+          </Pressable>
+        </Modal>
 
       </View>
     </BGImage>
@@ -86,62 +130,52 @@ const PropertyTourScreen = () => {
 export default PropertyTourScreen;
 
 const styles = StyleSheet.create({
-  bgContainer: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    marginTop: Metrics.verticalScale(34)
-  },
-  header: {
-    paddingHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  titleSection: {
-    paddingHorizontal: 20,
-    marginBottom: 25,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
+  bgContainer:   { flex: 1 },
+  container:     { flex: 1, marginTop: Metrics.verticalScale(34) },
+  titleSection:  { paddingHorizontal: 20, marginBottom: 25 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
   cardWrapper: {
-    padding: 14,
-    borderRadius: 24,
-    marginBottom: 16,
+    padding:         14,
+    borderRadius:    24,
+    marginBottom:    16,
     backgroundColor: Colors.TRANSPARENT,
-    borderWidth:4
+    borderWidth:     1,
   },
   cardImage: {
-    width: '100%',
-    height: 130,
+    width:        '100%',
+    height:       130,
     borderRadius: 16,
-    resizeMode: 'cover',
+    resizeMode:   'cover',
   },
   cardTextContainer: {
-    marginTop: 12,
-    marginBottom: 4,
+    marginTop:      12,
+    marginBottom:   4,
     paddingHorizontal: 4,
   },
   footer: {
     paddingHorizontal: 20,
-    paddingBottom: 30,
-    paddingTop: 10,
+    paddingBottom:     30,
+    paddingTop:        10,
+  },
+  modalOverlay: {
+    flex:            1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent:  'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor:     Colors.WHITE,
+    borderTopLeftRadius:  24,
+    borderTopRightRadius: 24,
+    paddingHorizontal:    24,
+    paddingTop:           12,
+    paddingBottom:        40,
+  },
+  handleBar: {
+    width:        40,
+    height:       5,
+    backgroundColor: '#D4D4D4',
+    borderRadius: 3,
+    alignSelf:    'center',
+    marginBottom: 25,
   },
 });

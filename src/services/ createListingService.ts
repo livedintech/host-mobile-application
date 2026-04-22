@@ -257,3 +257,53 @@ export const createListingExportApi = async (payload: CreateListingExportPayload
     }
     throw response;
 };
+
+
+// GET photos
+export const getListingPhotosApi = async ({ listing_id }: { listing_id: string }) => {
+  const url = `api/v2/channelmanagement/listing/${listing_id}/photos`;
+  const { ok, response, data } = await apiService.get(url);
+  if (ok) return data;
+  throw new Error(response.message || 'Failed to fetch photos');
+};
+
+// POST upload photos
+export const uploadListingPhotosApi = async (payload: any) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.CREATE_LISTING_PHOTOS, // ✅ url_constants me add karo
+    payload
+  );
+  if (ok) return data;
+  throw new Error(response.message || 'Failed to upload photos');
+};
+
+// DELETE photo
+// DELETE photo — media_id use karo
+export const deleteListingPhotoApi = async ({
+  media_id,
+  listing_id,
+}: {
+  media_id:   number;  // ✅ external_id → media_id
+  listing_id: string;
+}) => {
+  const { ok, response, data } = await apiService.delete(
+    `api/v2/channelmanagement/listing/photos/${media_id}`, // ✅ media_id path mein
+    { listing_id }
+  );
+  if (ok) return data;
+  throw new Error(response.message || 'Failed to delete photo');
+};
+
+// Cover photo
+export const setFeaturedPhotoApi = async ({
+  listing_id,
+  media_id,
+}: {
+  listing_id: string;
+  media_id: number;
+}) => {
+  const url = `api/v2/channelmanagement/listing/${listing_id}/photos/${media_id}/featured`;
+  const { ok, response, data } = await apiService.post(url, {});
+  if (ok) return data;
+  throw new Error(response.message || 'Failed to set cover photo');
+};

@@ -1,6 +1,5 @@
-// LocationScreen.tsx
 import React from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -9,16 +8,30 @@ import { goBack, navigate } from '@/services/navigationService';
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import Metrics from '@/utility/Metrics';
+import useLocationContainer from './LocationContainer';
 
 const LocationScreen = () => {
   const { params } = useRoute<any>();
   const listing = params?.paramData?.listing;
 
-  const latitude = parseFloat(listing?.lat) || 24.7136;
+  const {
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
+  } = useLocationContainer();
+
+  const latitude  = parseFloat(listing?.lat)  || 24.7136;
   const longitude = parseFloat(listing?.lng) || 46.6753;
 
   const address = [
@@ -54,14 +67,9 @@ const LocationScreen = () => {
         {/* Map */}
         <View style={styles.mapWrapper}>
           <MapView
-       provider={ Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE }
+            provider={Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE}
             style={styles.map}
-            initialRegion={{
-              latitude,
-              longitude,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
-            }}
+            initialRegion={{ latitude, longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
             scrollEnabled
             zoomEnabled
             loadingEnabled
@@ -80,13 +88,7 @@ const LocationScreen = () => {
               <Svgicons path="pinLocationIcon" size={22} color={Colors.BLACK} />
             </View>
             <View style={styles.addressTextCol}>
-              <AppText
-                text="Update Address"
-                fontSize={16}
-                type="Bold"
-                color={Colors.BLACK}
-                mb={6}
-              />
+              <AppText text="Update Address" fontSize={16} type="Bold" color={Colors.BLACK} mb={6} />
               <AppText
                 text={address || 'No address provided'}
                 fontSize={14}
@@ -97,14 +99,54 @@ const LocationScreen = () => {
           </View>
         </GlassCard>
 
-        {/* Footer */}
+        {/* ✅ Export Button */}
         <View style={styles.footer}>
           <AppButton
             title="Export"
-            onPress={() => { }}
-            style={styles.exportBtn}
+            onPress={handleExport}
           />
         </View>
+
+        {/* ✅ Export Modal */}
+        <Modal
+          visible={bottomSheetVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setBottomSheetVisible(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+              <View style={styles.handleBar} />
+              <AppText
+                text="Select OTA Account"
+                fontSize={20}
+                type="SemiBold"
+                color={Colors.PINE_FOREST}
+                mb={20}
+              />
+              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
+                <DropdownField
+                  name="ota_account"
+                  control={otaControl}
+                  errors={otaErrors}
+                  label=""
+                  data={listingOptions}
+                  placeholder="Select Account"
+                  dropdownPosition="top"
+                />
+              </View>
+              <AppButton
+                title="Export"
+                onPress={handleOtaSubmit(handleExportSubmit)}
+                mt={20}
+                loading={isPendingExporting}
+                backgroundColor="#00A68A"
+                borderColor="transparent"
+                color={Colors.WHITE}
+              />
+            </Pressable>
+          </Pressable>
+        </Modal>
 
       </View>
     </BGImage>
@@ -112,68 +154,32 @@ const LocationScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  container:      { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
+  backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
+  title:          { marginBottom: 20 },
+  mapWrapper:     { width: '100%', height: 280, borderRadius: 20, overflow: 'hidden', marginBottom: 20 },
+  map:            { ...StyleSheet.absoluteFillObject },
+  addressCard:    { borderRadius: 16, padding: 18, borderWidth: 1, borderColor: Colors.TRANSPARENT },
+  addressRow:     { flexDirection: 'row', alignItems: 'flex-start' },
+  pinIconWrapper: { marginRight: 12, marginTop: 2 },
+  addressTextCol: { flex: 1 },
+  footer:         { position: 'absolute', bottom: 40, left: 20, right: 20 },
+  modalOverlay:   { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.4)', justifyContent: 'flex-end' },
+  bottomSheet: {
+    backgroundColor:      Colors.WHITE,
+    borderTopLeftRadius:  24,
+    borderTopRightRadius: 24,
+    paddingHorizontal:    24,
+    paddingTop:           12,
+    paddingBottom:        40,
   },
-  backBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: Colors.WHITE,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    marginBottom: 20,
-  },
-  mapWrapper: {
-    width: '100%',
-    height: 280,
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  addressCard: {
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: Colors.TRANSPARENT,
-  },
-  addressRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  pinIconWrapper: {
-    marginRight: 12,
-    marginTop: 2,
-  },
-  addressTextCol: {
-    flex: 1,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 20,
-    right: 20,
-  },
-  exportBtn: {
-    borderRadius: 30,
-    height: 56,
-  },
-  backBtnWrapper: {
-    width: 35,
-    height: 35,
-    backgroundColor: Colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center'
+  handleBar: {
+    width:           40,
+    height:          5,
+    backgroundColor: '#D4D4D4',
+    borderRadius:    3,
+    alignSelf:       'center',
+    marginBottom:    25,
   },
 });
 
