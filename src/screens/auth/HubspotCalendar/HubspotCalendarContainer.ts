@@ -99,39 +99,36 @@ export default function useHubspotCalendarContainer(
 
   return marked;
 };
-
+console.log("userInfo",userInfo)
   // ─── Book meeting + create lead ───────────────────────────────────────────
-  const { mutate: confirmBooking, isPending: isBooking } = useMutation({
-    mutationFn: () =>
-      submitLeadAndBookMeeting(
-        {
-          fullName: userInfo.fullName,
-          phone: userInfo?.phone?.phone || '',
-          email: userInfo.email || '',
-          country: userInfo.country,
-          city: userInfo.city,
-        },
-        selectedSlot!,
-        agentWithSlots!.agent
-      ),
-    onSuccess: (result) => {
-      if (result.success) {
-        // Navigate to Thank You screen
-        navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: result.error || 'Booking failed. Please try again.',
-        });
-      }
-    },
-    onError: (error: Error) => {
-      Toast.show({
-        type: 'error',
-        text1: error.message || 'Something went wrong.',
-      });
-    },
-  });
+const { mutate: confirmBooking, isPending: isBooking } = useMutation({
+  mutationFn: () => {
+    // Combine: "966" + "44448881" -> "+96644448881"
+    const fullPhone = `+${userInfo.phone_with_code}${userInfo.phone_number}`;
+
+    return submitLeadAndBookMeeting(
+      {
+        fullName: userInfo.fullName,
+        phone: fullPhone, 
+        email: userInfo.email || '',
+        country: userInfo.country,
+        city: userInfo.city,
+        language: 'English',
+        potentialUnits: String(userInfo.listing_count || '1'), // Using listing_count from log
+        meetingDate: new Date(selectedSlot!.startTime).toISOString(),
+      },
+      selectedSlot!,
+      agentWithSlots!.agent
+    );
+  },
+  onSuccess: (result) => {
+    if (result.success) {
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
+    } else {
+      Toast.show({ type: 'error', text1: result.error });
+    }
+  },
+});
 
   const handleConfirmBooking = () => {
     if (!selectedSlot || !agentWithSlots) return;
