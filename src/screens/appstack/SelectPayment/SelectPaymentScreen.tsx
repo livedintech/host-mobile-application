@@ -7,9 +7,12 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const SelectPaymentScreen = () => {
   const { paymentMethods, onSelect } = useSelectPaymentContainer();
+  const { t } = useTranslation();
+
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -18,20 +21,20 @@ const SelectPaymentScreen = () => {
           {/* Screen Title */}
           <View style={styles.titleWrapper}>
             <AppText
-              text="Select"
+              text={t('auth.select_payment.title_1')}
               fontSize={30}
               color={Colors.BLACK}
               textAlign="center"
             />
             <AppText
-              text="Payment"
+              text={t('auth.select_payment.title_2')}
               fontSize={30}
               color={Colors.PRIMARY_TEAL}
               textAlign="center"
               type='SemiBold'
             />
             <AppText
-              text="Method"
+              text={t('auth.select_payment.title_3')}
               fontSize={30}
               color={Colors.BLACK}
               textAlign="center"
@@ -42,7 +45,7 @@ const SelectPaymentScreen = () => {
           <GlassCard style={styles.mainCard}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Metrics.verticalScale(30) }}>
               <AppText
-                text="Payment Method"
+                text={t('auth.select_payment.card_header')}
                 fontSize={18}
                 type="Medium"
                 color={Colors.BLACK}
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
   },
   iconCard: {
     height: 27,
-    borderRadius: 16,
+    borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#D9D9D900',

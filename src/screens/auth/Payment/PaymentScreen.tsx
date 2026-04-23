@@ -10,9 +10,12 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import { useTranslation } from 'react-i18next';
 
 const PaymentScreen = () => {
     const { selectedPlan, onPlanSelect, handleStartTrial, handleSkipThis, addons, base,pricing,isLoading,refetch } = usePaymentContainer();
+    const { t } = useTranslation();
+
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -20,9 +23,9 @@ const PaymentScreen = () => {
                 <RefreshableScrollView isLoading={isLoading} onRefresh={refetch} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                     {/* Title & Subtitle */}
                     <View style={styles.titleSection}>
-                        <AppText text="Payment" fontSize={36} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText text={t('auth.payment.title')} fontSize={36} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                         <AppText
-                            text="Your card is required to start the free trial. No charges during the trial. You can remove your card anytime from your Profile."
+                            text={t('auth.payment.subtitle')}
                             fontSize={15} textAlign="center" mt={15} lineHeight={22}
                         />
                     </View>
@@ -65,13 +68,13 @@ const PaymentScreen = () => {
                             onPress={() => onPlanSelect('monthly')}
                             style={[styles.planCard, selectedPlan === 'monthly' && styles.activeCard, { marginTop: 16 }]}
                         >
-                            <AppText text="Monthly" fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
-                            <AppText text={`14-day free trial, then SAR ${pricing}/month per listing`} fontSize={13} color={Colors.BLACK} mt={6} />
+                            <AppText text={t('auth.payment.monthly')} fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
+                            <AppText text={t('auth.payment.monthly_trial', { price: pricing })} fontSize={13} color={Colors.BLACK} mt={6} />
                         </Pressable>
                     </GlassCard>
                     <GlassCard style={styles.features}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <AppText text='What is included?' fontSize={18} type='Medium' mb={13} />
+                            <AppText text={t('auth.payment.what_included')} fontSize={18} type='Medium' mb={13} />
                             <GlassCard width={40} style={styles.iconCircle}>
                                 <Svgicons path='giftImg' />
                             </GlassCard>
@@ -92,7 +95,7 @@ const PaymentScreen = () => {
                     </GlassCard>
                     <GlassCard style={styles.addons}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <AppText text='Additional Add-ons' fontSize={18} type='Medium' mb={13} />
+                            <AppText text={t('auth.payment.additional_addons')} fontSize={18} type='Medium' mb={13} />
                             <GlassCard width={40} style={styles.iconCircle}>
                                 <Svgicons path='giftImg' />
                             </GlassCard>
@@ -113,7 +116,7 @@ const PaymentScreen = () => {
 
                     {/* Action Button */}
                     <AppButton
-                        title={`Start ${selectedPlan === 'annual' ? '14' : '14'}-day free trial`}
+                        title={t('auth.payment.start_trial')}
                         onPress={handleStartTrial}
                         mt={30}
                         fontSize={16}
@@ -133,11 +136,11 @@ const PaymentScreen = () => {
                     {/* Legal Disclaimer */}
                     <View style={styles.legalContainer}>
                         <Text style={styles.legalText}>
-                            By placing this order, you agree to the{' '}
-                            <Text style={styles.boldText}>Terms of Service</Text>
-                            {' '}and{' '}
-                            <Text style={styles.boldText}>Privacy Policy</Text>
-                            . Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.
+                            {t('auth.payment.legal_1')}{' '}
+                            <Text style={styles.boldText}>{t('auth.payment.terms_of_service')}</Text>
+                            {' '}{t('auth.payment.legal_2')}{' '}
+                            <Text style={styles.boldText}>{t('auth.payment.privacy_policy')}</Text>
+                            {t('auth.payment.legal_3')}
                         </Text>
                     </View>
                 </RefreshableScrollView>

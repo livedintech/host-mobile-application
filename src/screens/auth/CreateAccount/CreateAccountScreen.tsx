@@ -15,12 +15,15 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Metrics from '@/utility/Metrics';
 import { handleOpenLink } from '@/utility/Utils';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
 const DISABLED_GRAY = '#A0A0A0'; // Color for disabled state
 
 const CreateAccountScreen = () => {
   const { control, errors, handleSubmit, isLoading, handleLanguage, isTermsAccepted, toggleTerms } = useCreateAccountContainer();
+  const { t } = useTranslation();
+
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -35,14 +38,14 @@ const CreateAccountScreen = () => {
             <View style={styles.textSection}>
               <View style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: 5 }}>
                 <AppText type="Regular" fontSize={20} color={Colors.BLACK} >
-                  Create Your Free
+                  {t('auth.create_account.title_1')}
                 </AppText>
                 <AppText type="SemiBold" fontSize={20} color={FIGMA_TEAL}>
-                  Account
+                  {t('auth.create_account.title_2')}
                 </AppText>
               </View>
               <AppText
-                text="Welcome to livedin. Let’s build a brighter hosting journey together."
+                text={t('auth.create_account.subtitle')}
                 fontSize={16}
                 color={Colors.DARK_CHARCOAL}
                 mt={14}
@@ -52,21 +55,21 @@ const CreateAccountScreen = () => {
             {/* Form Section */}
             <View style={styles.form}>
               <InputField
-                label="Full Name *"
+                label={t('auth.create_account.full_name')}
                 name="fullName"
                 control={control}
                 errors={errors}
                 placeholder=""
               />
               <PasswordField
-                label="Password *"
+                label={t('auth.create_account.password')}
                 name="password"
                 control={control}
                 errors={errors}
                 placeholder=""
               />
               <AppText
-                text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
+                text={t('auth.create_account.password_hint')}
                 fontSize={11}
                 color={Colors.DARK_CHARCOAL}
                 style={styles.passwordHint}
@@ -90,10 +93,10 @@ const CreateAccountScreen = () => {
                 onPress={toggleTerms}
               />
               <AppText fontSize={10} color={Colors.NIGHT} style={styles.termsText}>
-                I confirm that I have read and accept the{' '}
-                <AppText fontSize={10} color={Colors.NIGHT} style={styles.underline} onPress={()=>handleOpenLink('https://livedin.co/privacy-policy')}>terms and conditions</AppText>
-                {' '}and{' '}
-                <AppText fontSize={10} color={Colors.NIGHT} style={styles.underline} onPress={()=>handleOpenLink('https://livedin.co/privacy-policy')}>privacy policy</AppText>
+                {t('auth.create_account.terms_1')}{' '}
+                <AppText fontSize={10} color={Colors.NIGHT} style={styles.underline} onPress={()=>handleOpenLink('https://livedin.co/privacy-policy')}>{t('auth.create_account.terms_and_conditions')}</AppText>
+                {' '}{t('auth.create_account.terms_2')}{' '}
+                <AppText fontSize={10} color={Colors.NIGHT} style={styles.underline} onPress={()=>handleOpenLink('https://livedin.co/privacy-policy')}>{t('auth.create_account.privacy_policy')}</AppText>
               </AppText>
             </View>
 
@@ -102,7 +105,7 @@ const CreateAccountScreen = () => {
               <AppButton
                 loading={isLoading}
                 onPress={handleSubmit}
-                title="Next"
+                title={t('auth.create_account.next')}
                 fontSize={18}
                 disabled={!isTermsAccepted}
               />

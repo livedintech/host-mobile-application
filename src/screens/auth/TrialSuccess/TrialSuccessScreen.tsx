@@ -11,6 +11,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { Text } from 'react-native';
 import Svg, { Line, Polygon } from 'react-native-svg';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { useTranslation } from 'react-i18next';
 
 const StarIcon = () => (
     <Svg width={90} height={90} viewBox="0 0 90 90" fill="none">
@@ -30,6 +31,8 @@ const StarIcon = () => (
 );
 
 const TrialSuccessScreen = () => {
+    const { t } = useTranslation();
+
     const { params } = useRoute();
     const plan = params?.plan === 'annual' ? '14-day' : '7-day';
 
@@ -37,17 +40,17 @@ const TrialSuccessScreen = () => {
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
                 <View style={styles.iconWrapper}>
-                    <Svgicons path='motionStar' size={76}/>
+                    <Svgicons path='motionStar' size={76} />
                 </View>
-
                 <Text style={styles.message}>
-                    {`Your ${plan} trial has started `}
-                    <Text style={styles.highlight}>successfully</Text>
-                    {`.\nYou'll be charged once\nthe trial period ends.`}
+                    {t('auth.trial_success.message_1', { plan })}
+                    <Text style={styles.highlight}>
+                        {t('auth.trial_success.highlight')}
+                    </Text>
+                    {t('auth.trial_success.message_2')}
                 </Text>
-
                 <AppButton
-                    title="Next"
+                    title={t('auth.trial_success.next')}
                     onPress={() => navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)}
                     mt={48}
                     backgroundColor={Colors.MEDIUM_JUNGLE_GREEN}

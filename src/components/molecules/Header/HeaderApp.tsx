@@ -8,6 +8,9 @@ import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { useTranslation } from 'react-i18next';
+import i18n, { changeLanguage } from '@/locales/i18n/i18n';
+import RNRestart from 'react-native-restart';
 
 interface HeaderApp {
   isGoBack?: boolean;
@@ -30,6 +33,14 @@ const HeaderApp = ({
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
 
+  const { t } = useTranslation();
+
+const handleLanguageToggle = async () => {
+  const newLang = i18n.language === 'en' ? 'ar' : 'en';
+  await changeLanguage(newLang);
+    RNRestart.restart();
+};
+
   return (
     <View style={styles.header}>
       <View style={styles.headerRow}>
@@ -47,14 +58,14 @@ const HeaderApp = ({
           </ButtonView>
         )}
         <View style={styles.headerRight}>
-          {false && (
+          {isLang && (
             <GradientBorder
               borderRadius={16}
               borderWidth={1}
               style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}
             >
-              <Pressable style={styles.langBtn}>
-                <AppText text="العربية" fontSize={12} type="Medium" />
+              <Pressable style={styles.langBtn} onPress={handleLanguageToggle}>
+                <AppText text={t('common.lang_switch')} fontSize={12} type="Medium" />
               </Pressable>
             </GradientBorder>
           )}

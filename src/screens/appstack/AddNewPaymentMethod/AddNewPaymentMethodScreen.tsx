@@ -8,8 +8,11 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import useAddNewPaymentMethodContainer from './AddNewPaymentMethodContainer';
+import { useTranslation } from 'react-i18next';
 
 const AddNewPaymentMethodScreen = () => {
+  const { t } = useTranslation();
+
   const {
     isLoading,
     isProcessingPayment,
@@ -28,12 +31,12 @@ const AddNewPaymentMethodScreen = () => {
 
   // Loading Overlay Component
   const LoadingOverlay = () => {
-    let loadingText = `Loading ${paymentMethodName || 'Payment'}...`;
+    let loadingText = t('auth.add_payment.loading_payment', { name: paymentMethodName || 'Payment' });
 
     if (isProcessingPayment) {
-      loadingText = "Processing Payment...";
+      loadingText = t('auth.add_payment.processing_payment')
     } else if (isSaving) {
-      loadingText = "Saving Payment Details...";
+      loadingText = t('auth.add_payment.saving_payment')
     }
 
     return (
@@ -57,7 +60,7 @@ const AddNewPaymentMethodScreen = () => {
       </View>
 
       <AppText
-        text={`Pay with ${paymentMethodName}`}
+        text={t('auth.add_payment.pay_with', { name: paymentMethodName })}
         fontSize={24}
         type="Bold"
         textAlign="center"
@@ -66,7 +69,7 @@ const AddNewPaymentMethodScreen = () => {
       />
 
       <AppText
-        text="You will be redirected to complete your payment"
+        text={t('auth.add_payment.redirect_text')}
         fontSize={14}
         textAlign="center"
         color={Colors.SUPER_GREY}
@@ -77,7 +80,7 @@ const AddNewPaymentMethodScreen = () => {
         <View style={styles.instructionItem}>
           <AppText text="1️⃣" fontSize={20} />
           <AppText
-            text={`Open ${paymentMethodName} app/website`}
+            text={t('auth.add_payment.step_1', { name: paymentMethodName })}
             fontSize={14}
             color={Colors.BLACK}
             ml={10}
@@ -87,7 +90,7 @@ const AddNewPaymentMethodScreen = () => {
         <View style={styles.instructionItem}>
           <AppText text="2️⃣" fontSize={20} />
           <AppText
-            text="Confirm payment details"
+            text={t('auth.add_payment.step_2')}
             fontSize={14}
             color={Colors.BLACK}
             ml={10}
@@ -97,7 +100,7 @@ const AddNewPaymentMethodScreen = () => {
         <View style={styles.instructionItem}>
           <AppText text="3️⃣" fontSize={20} />
           <AppText
-            text="Complete authentication"
+            text={t('auth.add_payment.step_3')}
             fontSize={14}
             color={Colors.BLACK}
             ml={10}
@@ -133,8 +136,8 @@ const AddNewPaymentMethodScreen = () => {
             <AppText
               text={
                 isCardMethod
-                  ? "Enter your card details securely"
-                  : "Quick and secure payment"
+                  ? t('auth.add_payment.subtitle_card')
+                  : t('auth.add_payment.subtitle_wallet')
               }
               fontSize={14}
               color={Colors.SUPER_GREY}
@@ -183,7 +186,7 @@ const AddNewPaymentMethodScreen = () => {
                     onPress={retrySession}
                   >
                     <AppText
-                      text="⟳ Retry Loading"
+                      text={t('auth.add_payment.retry_loading')}
                       color={Colors.INDIAN_RED}
                       type="Bold"
                       fontSize={16}
@@ -203,7 +206,7 @@ const AddNewPaymentMethodScreen = () => {
           <View style={styles.securityInfo}>
             <View style={styles.securityBadge}>
               <AppText
-                text="🔒 Your payment information is encrypted and secure"
+                text={t('auth.add_payment.security_text')}
                 fontSize={12}
                 color={Colors.SUPER_GREY}
                 textAlign="center"
@@ -218,12 +221,12 @@ const AddNewPaymentMethodScreen = () => {
               <AppButton
                 title={
                   isProcessingPayment
-                    ? "Processing Payment..."
+                    ? t('auth.add_payment.processing_btn')
                     : isSaving
-                      ? "Saving Details..."
+                      ? t('auth.add_payment.saving_btn')
                       : !isCardMethod
-                        ? `Pay with ${paymentMethodName}`
-                        : "Pay Now"
+                        ? t('auth.add_payment.pay_with', { name: paymentMethodName })
+                        : t('auth.add_payment.pay_now')
                 }
                 onPress={handlePay}
                 disabled={cardLoading}
@@ -237,7 +240,7 @@ const AddNewPaymentMethodScreen = () => {
                 onPress={retrySession}
               >
                 <AppText
-                  text="🔄 Reset Payment Form"
+                  text={t('auth.add_payment.reset_form')}
                   color={Colors.SUPER_GREY}
                   fontSize={12}
                   textAlign="center"
@@ -246,7 +249,7 @@ const AddNewPaymentMethodScreen = () => {
             )}
 
             <AppText
-              text="By proceeding, you agree to our terms and conditions"
+              text={t('auth.add_payment.agree_terms')}
               fontSize={11}
               color={Colors.SUPER_GREY}
               textAlign="center"
