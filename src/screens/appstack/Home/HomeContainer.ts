@@ -7,10 +7,12 @@ import { User } from '@/types/api/authTypes';
 import { useQuery } from '@tanstack/react-query';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useTranslation } from 'react-i18next';
 
 export default function useHomeContainer() {
   const { setUser } = useAuthStore();
   const { updateListing, setListingId } = useCreateListingStore();
+  const { t } = useTranslation();
 
   const {
     data: UserPermission,
@@ -64,41 +66,37 @@ const iconMap = {
   ];
 
   const getCardContent = useCallback(
-    (platform: string) => {
-      // 1. Define the map with a explicit type so platform (string) can access it
-      const countMap: Record<string, number> = {
-        Airbnb: channels?.airbnb ?? 0,
-        Gathern: channels?.gathern ?? 0,
-        Booking: channels?.bcom ?? 0, // This correctly maps "Booking" key to "bcom" data
-      };
+  (platform: string) => {
+    const countMap: Record<string, number> = {
+      Airbnb: channels?.airbnb ?? 0,
+      Gathern: channels?.gathern ?? 0,
+      Booking: channels?.bcom ?? 0,
+    };
 
-      if (platform === 'Manual') {
-        return {
-          title: 'Create Listing',
-          desc: 'Add a new listing manually',
-        };
-      }
-
-      // 2. Ensure count is actually retrieved
-      const count = countMap[platform] ?? 0;
-      const displayName = platform === 'Booking' ? 'Booking.com' : platform;
-
-      if (count > 0) {
-        return {
-          // 3. Make sure UserPermission exists before accessing name
-          title: `${UserPermission?.name ?? 'User'}'s ${displayName}`,
-          desc: `Import listings from ${displayName}`,
-        };
-      }
-
+    if (platform === 'Manual') {
       return {
-        title: `Connect ${displayName}`,
-        desc: `Import listings from ${displayName}`,
+        title: t('app.home.create_listing'),
+        desc:  t('app.home.add_listing_manually'),
       };
-    },
-    // 4. CRITICAL: Added UserPermission to dependencies
-    [channels, UserPermission], 
-  );
+    }
+
+    const count = countMap[platform] ?? 0;
+    const displayName = platform === 'Booking' ? 'Booking.com' : platform;
+
+    if (count > 0) {
+      return {
+        title: `${UserPermission?.name ?? 'User'}'s ${displayName}`,
+        desc:  t('app.home.import_listings', { name: displayName }),
+      };
+    }
+
+    return {
+      title: t('app.home.connect', { name: displayName }),
+      desc:  t('app.home.import_listings', { name: displayName }),
+    };
+  },
+  [channels, UserPermission, t], // ✅ t add karo
+);
 
   const goToPropertyDetail = ({
     id,

@@ -124,5 +124,48 @@
       "forgot_password": "هل نسيت كلمة المرور؟",
       "continue": "التالي"
     }
+  },
+  "app": {
+    "home": {
+      "hello": "مرحباً {{name}}!",
+      "good_morning": "صباح الخير",
+      "lang_switch": "English",
+
+      "greeting_hi": "مرحباً",
+      "greeting_old_end": "لنبدأ بإعداد كل ما تحتاجه",
+      "greeting_new_end": "هذه أهم الأمور التي تحتاج انتباهك اليوم",
+
+      "recommended_next": "المقترحات التالية",
+      "your_updates": "تحديثاتك",
+      "create_staff": "إضافة مستخدم للموظفين",
+      "create_staff_sub": "تعيين الموظفين لمهام التنظيف",
+      "connect_ttlock": "ربط القفل الذكي TT Lock",
+      "connect_ttlock_sub": "إنشاء رموز دخول للموظفين والضيوف",
+      "create_cleaning": "إنشاء جدول تنظيف",
+      "for_properties": "لـ {{count}}+ عقارات",
+      "manage_listings": "إدارة العقارات",
+      "manage_listings_sub": "إنشاء / إضافة عقارات جديدة",
+
+      "inbox": "الرسائل",
+      "inbox_sub": "{{count}} رسائل",
+      "checkins": "إجمالي تسجيلات الدخول",
+      "checkins_sub": "{{count}} تسجيل دخول",
+      "tasks": "مهام العقار",
+      "tasks_sub": "{{count}} مهام قيد التنفيذ",
+      "checkouts": "إجمالي تسجيلات المغادرة",
+      "checkouts_sub": "{{count}} تسجيل مغادرة",
+      "booking_requests": "طلبات الحجز",
+      "booking_requests_sub": "{{count}} طلبات قيد الانتظار",
+      "analytics": "التحليلات",
+      "analytics_sub": "نسبة الإشغال هذا الأسبوع {{count}}%",
+
+      "connect": "ربط {{name}}",
+      "import_listings": "استيراد العقارات من {{name}}",
+      "create_listing": "إضافة عقار",
+      "add_listing_manually": "إضافة عقار جديد يدوياً",
+
+      "complete_pending": "أكمل نموذج العقار المعلق",
+      "export_pending": "صدّر عقارك المعلق"
+    }
   }
 }

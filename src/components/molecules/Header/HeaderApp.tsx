@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import React, { useCallback } from 'react';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -11,6 +11,8 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { useTranslation } from 'react-i18next';
 import i18n, { changeLanguage } from '@/locales/i18n/i18n';
 import RNRestart from 'react-native-restart';
+import GlassCard from '../GlassCard/GlassCard';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface HeaderApp {
   isGoBack?: boolean;
@@ -19,6 +21,7 @@ interface HeaderApp {
   isLogo?: boolean;
   isLang?: boolean;
   addIconAfterisGoBack?: string;
+  isShowProfile?:boolean;
 }
 
 const HeaderApp = ({
@@ -28,18 +31,20 @@ const HeaderApp = ({
   isLang,
   isGoBackAfterLogo,
   addIconAfterisGoBack,
+  isShowProfile
 }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
+  const { user } = useAuthStore();
 
   const { t } = useTranslation();
 
-const handleLanguageToggle = async () => {
-  const newLang = i18n.language === 'en' ? 'ar' : 'en';
-  await changeLanguage(newLang);
+  const handleLanguageToggle = async () => {
+    const newLang = i18n.language === 'en' ? 'ar' : 'en';
+    await changeLanguage(newLang);
     RNRestart.restart();
-};
+  };
 
   return (
     <View style={styles.header}>
@@ -57,6 +62,34 @@ const handleLanguageToggle = async () => {
             <Svgicons path="back" size={40} />
           </ButtonView>
         )}
+        {isShowProfile && (
+          <GlassCard width="auto" style={styles.profilePill}>
+          {user?.profile_picture ? (
+            <Image
+              source={{ uri: user.profile_picture }}
+              style={styles.profileImage}
+            />
+          ) : (
+            <View style={styles.placeholderIcon}>
+              <Svgicons path="imageUploadIcon" size={25} />
+            </View>
+          )}
+          <View>
+            <AppText
+              text={t('app.home.hello', { name: user?.name })}
+              fontSize={12}
+              color={Colors.PINE_FOREST}
+            />
+            <AppText
+              text={t('app.home.good_morning')}
+              fontSize={14}
+              type="SemiBold"
+              color={Colors.BLACK}
+            />
+          </View>
+        </GlassCard>
+        )}
+        
         <View style={styles.headerRight}>
           {isLang && (
             <GradientBorder
@@ -138,4 +171,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
+  profilePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginBottom: 0,
+    borderRadius: 30,
+    backgroundColor: Colors.TRANSPARENT,
+  },
+  profileImage: { width: 36, height: 36, borderRadius: 18, marginRight: 10 },
+  placeholderIcon: {
+    width: 36,
+    height: 36,
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
 });

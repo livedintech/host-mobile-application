@@ -124,5 +124,49 @@
       "forgot_password": "Forgot password?",
       "continue": "Continue"
     }
+  },
+  "app": {
+    "home": {
+      "hello": "Hello {{name}}!",
+      "good_morning": "Good Morning",
+      "lang_switch": "العربية",
+
+      "greeting_hi": "Hi",
+      "greeting_old_end": "let's begin setting up everything you need!",
+      "greeting_new_end": "here's what needs your attention today!",
+
+      "recommended_next": "Recommended Next",
+      "your_updates": "Your Updates",
+
+      "create_staff": "Create Staff User",
+      "create_staff_sub": "Assign staff to cleaning tasks",
+      "connect_ttlock": "Connect Smart TT Lock",
+      "connect_ttlock_sub": "Generate codes for staff & guest",
+      "create_cleaning": "Create Cleaning Schedule",
+      "for_properties": "For {{count}}+ properties",
+      "manage_listings": "Manage Listings",
+      "manage_listings_sub": "Create/Add new listings",
+
+      "inbox": "Inbox",
+      "inbox_sub": "{{count}} messages",
+      "checkins": "Total Check-ins",
+      "checkins_sub": "{{count}} check-ins",
+      "tasks": "Property Tasks",
+      "tasks_sub": "{{count}} tasks in action",
+      "checkouts": "Total Check-outs",
+      "checkouts_sub": "{{count}} check-outs",
+      "booking_requests": "Booking Requests",
+      "booking_requests_sub": "{{count}} Pending Requests",
+      "analytics": "Analytics",
+      "analytics_sub": "{{count}}% occupancy this week",
+
+      "connect": "Connect {{name}}",
+      "import_listings": "Import listings from {{name}}",
+      "create_listing": "Create Listing",
+      "add_listing_manually": "Add a new listing manually",
+
+      "complete_pending": "Complete your pending listing form",
+      "export_pending": "Export your pending listing"
+    }
   }
 }
