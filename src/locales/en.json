@@ -1,0 +1,128 @@
+{
+  "common": {
+    "lang_switch": "العربية",
+    "or": "Or"
+  },
+  "auth": {
+    "login": {
+      "title_1": "Please enter your",
+      "title_2": "phone number to",
+      "title_3": "continue",
+      "phone_label": "Phone Number*",
+      "remember_me": "Remember me",
+      "next": "Next",
+      "continue_google": "Continue with Google",
+      "continue_apple": "Continue with Apple"
+    },
+    "onboarding": {
+      "slide1": {
+        "title": "Unlock Higher Returns From Your Property",
+        "subtitle": "Powered by intelligent automation",
+        "primary_btn": "Continue",
+        "secondary_btn": "Skip"
+      },
+      "slide2": {
+        "title": "One Intelligent Control\nfor Every Channel",
+        "subtitle": "Agent ALI works across all channels so that you don't have to",
+        "primary_btn": "Continue",
+        "secondary_btn": "Skip"
+      },
+      "slide3": {
+        "title": "Total Control. Zero\nHeavy Lifting.",
+        "subtitle": "Agent ALI does the work. You stay in charge.",
+        "primary_btn": "Explore First",
+        "secondary_btn": "Get Started"
+      }
+    },
+    "verify_phone": {
+      "title_1": "Verify Your ",
+      "title_2": "Phone Number",
+      "subtitle": "We have sent you 5-digit verification code at",
+      "didnt_receive": "Didn't receive the code? ",
+      "resend_here": "Resend here",
+      "resend_in": "Resend in",
+      "next": "Next"
+    },
+    "manage_listing": {
+      "title_1": "How many ",
+      "title_2": "listings",
+      "title_3": " do\nyou manage?",
+      "card_header": "Listing Selection",
+      "next": "Next"
+    },
+    "create_account": {
+      "title_1": "Create Your Free ",
+      "title_2": "Account",
+      "subtitle": "Welcome to livedin. Let's build a brighter hosting journey together.",
+      "full_name": "Full Name *",
+      "password": "Password *",
+      "password_hint": "Please choose a stronger password. Try a mix of letters, numbers, and symbols.",
+      "terms_1": "I confirm that I have read and accept the ",
+      "terms_and_conditions": "terms and conditions",
+      "terms_2": " and ",
+      "privacy_policy": "privacy policy",
+      "next": "Next"
+    },
+    "payment": {
+      "title": "Payment",
+      "subtitle": "Your card is required to start the free trial. No charges during the trial. You can remove your card anytime from your Profile.",
+      "monthly": "Monthly",
+      "monthly_trial": "14-day free trial, then SAR {{price}}/month per listing",
+      "what_included": "What is included?",
+      "additional_addons": "Additional Add-ons",
+      "start_trial": "Start 14-days free trial",
+      "legal_1": "By placing this order, you agree to the ",
+      "terms_of_service": "Terms of Service",
+      "legal_2": " and ",
+      "privacy_policy": "Privacy Policy",
+      "legal_3": ". Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period."
+    },
+    "select_payment": {
+      "title_1": "Select ",
+      "title_2": "Payment",
+      "title_3": "Method",
+      "card_header": "Payment Method",
+      "stc_pay": "STC Pay",
+      "credit_card": "Credit Card",
+      "apple_pay": "Apple Pay",
+      "google_pay": "Google Pay"
+    },
+    "add_payment": {
+      "title": "Add Payment Method",
+      "subtitle_card": "Enter your card details securely",
+      "subtitle_wallet": "Quick and secure payment",
+      "loading_payment": "Loading {{name}}...",
+      "processing_payment": "Processing Payment...",
+      "saving_payment": "Saving Payment Details...",
+      "pay_with": "Pay with {{name}}",
+      "pay_now": "Pay Now",
+      "redirect_text": "You will be redirected to complete your payment",
+      "step_1": "Open {{name}} app/website",
+      "step_2": "Confirm payment details",
+      "step_3": "Complete authentication",
+      "step_4": "Return to app after payment",
+      "security_text": "🔒 Your payment information is encrypted and secure",
+      "retry_loading": "⟳ Retry Loading",
+      "reset_form": "🔄 Reset Payment Form",
+      "agree_terms": "By proceeding, you agree to our terms and conditions",
+      "processing_btn": "Processing Payment...",
+      "saving_btn": "Saving Details..."
+    },
+    "trial_success": {
+      "message_1": "Your {{plan}} trial has started ",
+      "highlight": "successfully",
+      "message_2": ".\nYou'll be charged once\nthe trial period ends.",
+      "next": "Next",
+      "plan_14": "14-day",
+      "plan_7": "7-day"
+    },
+    "enter_password": {
+      "title_1": "Please enter your",
+      "title_2": "password to ",
+      "title_3": "continue",
+      "password_label": "Password *",
+      "forgot_password": "Forgot password?",
+      "continue": "Continue"
+    }
+  }
+}

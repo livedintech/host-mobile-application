@@ -8,6 +8,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import useAddCardDetailContainer from './AddCardDetailContainer';
+import { useTranslation } from 'react-i18next';
 
 const AddCardDetailScreen = () => {
   const {
@@ -20,15 +21,17 @@ const AddCardDetailScreen = () => {
     handlePay,
     retrySession,
   } = useAddCardDetailContainer();
+  const { t } = useTranslation();
+
 
   // Loading Overlay Component
   const LoadingOverlay = () => {
-    let loadingText = "Loading Secure Payment...";
+    let loadingText = t('auth.add_payment.loading_payment', { name: 'Secure Payment' });
 
     if (isProcessingPayment) {
-      loadingText = "Processing Payment...";
+      loadingText = t('auth.add_payment.processing_btn');
     } else if (isSaving) {
-      loadingText = "Saving Payment Details...";
+      loadingText = t('auth.add_payment.saving_btn');
     }
 
     return (
@@ -53,13 +56,13 @@ const AddCardDetailScreen = () => {
           {/* Header Section */}
           <View style={styles.headerSection}>
             <AppText
-              text="Add Payment Method"
+              text={t('auth.add_payment.title')}
               fontSize={24}
               type="Bold"
               color={Colors.BLACK}
             />
             <AppText
-              text="Enter your card details securely"
+              text={t('auth.add_payment.subtitle_card')}
               fontSize={14}
               color={Colors.SUPER_GREY}
               mt={5}
@@ -89,7 +92,7 @@ const AddCardDetailScreen = () => {
                 onPress={retrySession}
               >
                 <AppText
-                  text="⟳ Retry Loading"
+                  text={t('auth.add_payment.retry_loading')}
                   color={Colors.INDIAN_RED}
                   type="Bold"
                   fontSize={16}
@@ -102,7 +105,7 @@ const AddCardDetailScreen = () => {
           <View style={styles.securityInfo}>
             <View style={styles.securityBadge}>
               <AppText
-                text="🔒 Your payment information is encrypted and secure"
+                text={t('auth.add_payment.security_text')}
                 fontSize={12}
                 color={Colors.SUPER_GREY}
                 textAlign="center"
@@ -115,10 +118,10 @@ const AddCardDetailScreen = () => {
             <AppButton
               title={
                 isProcessingPayment
-                  ? "Processing Payment..."
+                  ? t('auth.add_payment.processing_btn')
                   : isSaving
-                    ? "Saving Details..."
-                    : "Pay Now"
+                    ? t('auth.add_payment.saving_btn')
+                    : t('auth.add_payment.pay_now')
               }
               onPress={handlePay}
               disabled={cardLoading}
@@ -132,7 +135,7 @@ const AddCardDetailScreen = () => {
                 onPress={retrySession}
               >
                 <AppText
-                  text="🔄 Reset Payment Form"
+                  text={t('auth.add_payment.reset_form')}
                   color={Colors.SUPER_GREY}
                   fontSize={12}
                   textAlign="center"
@@ -142,7 +145,7 @@ const AddCardDetailScreen = () => {
 
             {/* Additional Info */}
             <AppText
-              text="By proceeding, you agree to our terms and conditions"
+              text={t('auth.add_payment.agree_terms')}
               fontSize={11}
               color={Colors.SUPER_GREY}
               textAlign="center"

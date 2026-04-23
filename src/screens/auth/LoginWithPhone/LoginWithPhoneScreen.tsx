@@ -18,12 +18,15 @@ import Checkbox from '@/components/molecules/Input/CheckBox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import DeviceInfo from 'react-native-device-info';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
 
 const LoginWithPhoneScreen = () => {
   const { control, errors, handleSubmit, isLoading, onSubmit, rememberMe, setRememberMe, handleAppleSignIn, handleGoogleSignIn } = useLoginWithPhoneContainer();
+  const { t } = useTranslation();
+
   const { setToken, setUser } = useAuthStore();
 
   useEffect(() => {
@@ -43,19 +46,19 @@ const LoginWithPhoneScreen = () => {
           <View style={styles.content}>
             <View style={styles.headerSection}>
               <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
-                Please enter your
+                {t('auth.login.title_1')}
               </AppText>
               <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
-                phone number to
+                {t('auth.login.title_2')}
               </AppText>
               <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL} lineHeight={40}>
-                continue
+               {t('auth.login.title_3')}
               </AppText>
             </View>
 
             <View style={styles.inputWrapper}>
               <PhoneInputField
-                label="Phone Number*"
+                label={t('auth.login.phone_label')}
                 control={control}
                 errors={errors}
                 countryFieldName="country"
@@ -70,7 +73,7 @@ const LoginWithPhoneScreen = () => {
                   onPress={() => setRememberMe(!rememberMe)}
                 />
                 <AppText
-                  text="Remember me"
+                  text={t('auth.login.remember_me')}
                   color={Colors.DARK_1C}
                   type="Medium"
                   fontSize={12}
@@ -80,7 +83,7 @@ const LoginWithPhoneScreen = () => {
             </View>
 
             <AppButton
-              title="Next"
+              title={t('auth.login.next')}
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               backgroundColor={FIGMA_TEAL}
@@ -94,7 +97,7 @@ const LoginWithPhoneScreen = () => {
 
             <View style={styles.separatorRow}>
               <View style={styles.line} />
-              <AppText text="Or" fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
+              <AppText text={t('common.or')} fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
               <View style={styles.line} />
             </View>
 
@@ -106,7 +109,7 @@ const LoginWithPhoneScreen = () => {
                 mb={vs(12)}
               >
                 <Svgicons path="google" size={18} />
-                <AppText text="Continue with Google" fontSize={14} ml={10} color={Colors.BLACK} />
+                <AppText text={t('auth.login.continue_google')} fontSize={14} ml={10} color={Colors.BLACK} />
               </ButtonView>
               {Platform.OS === 'ios' && (
                 <ButtonView
@@ -114,7 +117,7 @@ const LoginWithPhoneScreen = () => {
                   onPress={handleAppleSignIn}
                   activeOpacity={0.8}>
                   <Svgicons path="apple" size={14} />
-                  <AppText text="Continue with Apple" fontSize={14} ml={10} color={Colors.BLACK} />
+                  <AppText text={t('auth.login.continue_apple')} fontSize={14} ml={10} color={Colors.BLACK} />
                 </ButtonView>
               )}
             </View>

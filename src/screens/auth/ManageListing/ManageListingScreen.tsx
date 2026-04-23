@@ -11,10 +11,12 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#333333';
 
 const ManageListingScreen = () => {
+  const { t } = useTranslation();
   const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId, refetch, } = useManageListingContainer();
 
   const handleNextPress = () => {
@@ -47,15 +49,15 @@ const ManageListingScreen = () => {
             {/* Main Title */}
             <View style={styles.titleSection}>
               <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                How many{' '}
-                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>listings</AppText> do{'\n'}you manage?
+                {t('auth.manage_listing.title_1')}{' '}
+                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>{t('auth.manage_listing.title_2')}</AppText> {t('auth.manage_listing.title_3')}
               </AppText>
             </View>
 
             {/* Glass Card & Options */}
             <GlassCard width="100%">
               <View style={styles.cardHeader}>
-                <AppText text="Listing Selection" fontSize={20} type="Medium" color={Colors.BLACK} />
+                <AppText text={t('auth.manage_listing.card_header')} fontSize={20} type="Medium" color={Colors.BLACK} />
                 <View style={styles.iconCircle}>
                   <Svgicons path="home" size={24} />
                 </View>
@@ -94,7 +96,7 @@ const ManageListingScreen = () => {
             {/* Bottom Button Section */}
             <View style={styles.bottomSec}>
               <AppButton
-                title="Next"
+                title={t('auth.manage_listing.next')}
                 disabled={localSelectedId === null || isLoading}
                 borderRadius={100}
                 fontSize={16}

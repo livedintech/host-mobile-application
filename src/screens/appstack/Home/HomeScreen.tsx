@@ -396,6 +396,13 @@ const HomeScreen = ({ navigation }: any) => {
       subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
       route: NavigationRoutes.APP_STACK.TASK,
     },
+    // {
+    //   id: 3,
+    //   icon: 'direct',
+    //   title: 'Property Tasks',
+    //   subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
+    //   route: NavigationRoutes.APP_STACK.TASKS,
+    // },
     {
       id: 4,
       icon: 'direct',
