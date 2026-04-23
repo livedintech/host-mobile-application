@@ -46,7 +46,6 @@ const ViewReviewScreen = () => {
 
   const replyText = watch('reply');
 
-  // Logic: Map the API response to the form field
   useEffect(() => {
     const apiReply = reviewDetail?.reply?.content || reviewDetail?.reply_review;
     if (apiReply) {
