@@ -29,7 +29,7 @@ const ViewReviewScreen = () => {
   const route = useRoute<any>();
   const { id } = route.params || {};
 
-  const { reviewDetail, isLoading, starRating, submitReply, isSubmitting } =
+  const { reviewDetail, isLoading, submitReply, isSubmitting } =
     useReviewDetail(id);
 
   const {
@@ -44,7 +44,6 @@ const ViewReviewScreen = () => {
 
   const replyText = watch('reply');
 
-  // Logic: Map the API response to the form field
   useEffect(() => {
     const apiReply = reviewDetail?.reply?.content || reviewDetail?.reply_review;
     if (apiReply) {
@@ -72,17 +71,15 @@ const ViewReviewScreen = () => {
   };
 
   const isBookingCom = reviewDetail?.booking?.platform === 'BookingCom';
-  const isAirbnb = reviewDetail?.booking?.platform === 'AirBNB';
   const hasExistingReply = !!(
     reviewDetail?.reply?.content || reviewDetail?.reply_review
   );
 
+  // Constants for scaling
   const maxScale = isBookingCom ? 10 : 5;
+  // Get overall score from your specific path: reviewDetail.overall.stars
+  const overallScore = Number(reviewDetail?.overall?.stars) || 0;
 
-  /**
-   * DYNAMIC LABEL GENERATOR
-   * Converts "check_in" to "Check In" or "cleanliness" to "Cleanliness"
-   */
   const generateLabel = (key: string) => {
     return key
       .split('_')
@@ -90,10 +87,6 @@ const ViewReviewScreen = () => {
       .join(' ');
   };
 
-  /**
-   * ICON FALLBACK
-   * Tries to find a matching icon, otherwise returns a default star
-   */
   const getDynamicIcon = (key: string) => {
     const iconMap: Record<string, string> = {
       accuracy: 'accuracy',
@@ -104,35 +97,40 @@ const ViewReviewScreen = () => {
       comfort: 'comfort',
       facilities: 'facilities',
       value: 'value',
-      staff : 'staff'
+      staff: 'staff',
     };
-    return iconMap[key] || 'starIcon'; // Fallback to a generic icon
+    return iconMap[key] || 'starIcon';
   };
 
+  /**
+   * REUSABLE FEEDBACK BAR COMPONENT
+   */
   const FeedbackBar = ({
     label,
     value,
     icon,
+    isLarge = false,
   }: {
     label: string;
     value: number;
     icon: string;
+    isLarge?: boolean;
   }) => (
     <View style={styles.barItemContainer}>
       <View style={styles.barLabelRow}>
-        <View style={styles.iconBox}>
-          <Svgicons path={icon} size={18} />
+        <View style={[styles.iconBox, isLarge && styles.largeIconBox]}>
+          <Svgicons path={icon} size={isLarge ? 24 : 18} />
         </View>
         <AppText
           text={label}
-          fontSize={15}
+          fontSize={isLarge ? 18 : 15}
           color={Colors.BLACK}
           type="Medium"
           ml={12}
         />
       </View>
       <View style={styles.progressSection}>
-        <View style={styles.barBg}>
+        <View style={[styles.barBg, isLarge && styles.largeBarBg]}>
           <View
             style={[styles.barFill, { width: `${(value / maxScale) * 100}%` }]}
           />
@@ -141,8 +139,8 @@ const ViewReviewScreen = () => {
           text={value.toFixed(1)}
           ml={12}
           type="Bold"
-          fontSize={12}
-          color={Colors.PINE_FOREST}
+          fontSize={isLarge ? 16 : 12}
+          color={isLarge ? Colors.BLACK : Colors.PINE_FOREST}
         />
       </View>
     </View>
@@ -173,34 +171,78 @@ const ViewReviewScreen = () => {
           <Svgicons path="smileIcon" size={32} />
         </View>
 
-        <AppText
-          text="Overall Rating"
-          fontSize={30}
-          type="Bold"
-          color={Colors.BLACK}
-          mb={30}
-        />
+        {isBookingCom ? (
+          <AppText
+            text={reviewDetail?.review?.headline || ''}
+            fontSize={28}
+            type="Bold"
+            color={Colors.BLACK}
+            mb={30}
+          />
+        ) : (
+          <AppText
+            text="Overall Rating"
+            fontSize={28}
+            type="Bold"
+            color={Colors.BLACK}
+            mb={60}
+          />
+        )}
 
-        <View style={{ marginBottom: 10 }}>
+        {/* --- REVIEW TEXT SECTION --- */}
+      {isBookingCom &&  <View style={{ marginBottom: 20 }}>
+          {/* Positive Section */}
+          <AppText
+            text="What a guest likes about us?"
+            fontSize={16}
+            type="Bold"
+            color={Colors.BLACK}
+            mb={10}
+          />
           <AppText
             text={
-              formatText(reviewDetail?.review?.public) ||
-              'No public review provided.'
+              formatText(reviewDetail?.review?.positive) ||
+              'No feedback provided.'
             }
             color={Colors.DARK_CHARCOAL_OPACITY_74}
-            lineHeight={20}
-            fontSize={15}
+            lineHeight={18}
+            fontSize={14}
             type="Regular"
-            mb={20}
+            mb={40}
+          />
+
+          {/* Negative Section */}
+          <AppText
+            text="What a guest doesn’t like about us?"
+            fontSize={16}
+            type="Bold"
+            color={Colors.BLACK}
+            mb={10}
           />
           <AppText
-            text={formatText(reviewDetail?.review?.private)}
+            text={
+              formatText(reviewDetail?.review?.negative) ||
+              'No specific complaints provided.'
+            }
             color={Colors.DARK_CHARCOAL_OPACITY_74}
-            lineHeight={22}
-            fontSize={15}
+            lineHeight={18}
+            fontSize={14}
             type="Regular"
+            mb={30}
           />
-        </View>
+        </View>}
+
+        {/* --- OVERALL RATING UI BLOCK (From Screenshot) --- */}
+        {isBookingCom && (
+          <View style={styles.overallRatingWrapper}>
+            <FeedbackBar
+              label="Overall Rating"
+              value={overallScore}
+              icon="identityCard"
+              isLarge={true}
+            />
+          </View>
+        )}
 
         <GlassCard width="100%" style={styles.glassCard}>
           <View style={styles.glassHeader}>
@@ -248,7 +290,7 @@ const ViewReviewScreen = () => {
                   styles.textArea,
                   hasExistingReply && styles.disabledTextArea,
                 ]}
-                editable={!hasExistingReply} // ✅ READ ONLY if reply exists
+                editable={!hasExistingReply}
               />
             </View>
 
@@ -265,7 +307,6 @@ const ViewReviewScreen = () => {
 
         {isBookingCom && !hasExistingReply && (
           <View style={styles.bottomButtons}>
-            {/* Only show Submit if user can actually edit */}
             <GradientBorder
               colors={borderColors}
               borderRadius={28}
@@ -302,14 +343,20 @@ const ViewReviewScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, marginTop: 20 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   content: {
     padding: 20,
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
     paddingBottom: 60,
   },
-  headerTitleRow: { marginBottom: 30 },
+  headerTitleRow: { marginBottom: 20 },
+  overallRatingWrapper: {
+    marginBottom: 30,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 10,
+    borderRadius: 15,
+  },
   glassCard: { padding: 20 },
   glassHeader: {
     flexDirection: 'row',
@@ -323,7 +370,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   barItemContainer: { marginBottom: 12 },
-  barLabelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
+  barLabelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   iconBox: {
     width: 34,
     height: 34,
@@ -331,6 +378,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  largeIconBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: 'rgba(255,255,255,0.6)',
   },
   progressSection: {
     flexDirection: 'row',
@@ -343,6 +395,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.06)',
     borderRadius: 2,
   },
+  largeBarBg: {
+    height: 6,
+  },
   barFill: { height: '100%', backgroundColor: '#40B69C', borderRadius: 2 },
   replyBox: { marginTop: 5 },
   textArea: {
@@ -353,7 +408,7 @@ const styles = StyleSheet.create({
   disabledTextArea: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     color: Colors.DARK_CHARCOAL,
-  }, // Visual cue for read-only
+  },
   bottomButtons: { marginTop: 30 },
   fullWidthGradient: { width: '100%', marginBottom: 15 },
   submitInner: {

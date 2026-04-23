@@ -868,7 +868,8 @@ const ReviewDetailScreen = ({ route }: any) => {
                 /> */}
 
                 <AppButton
-                  disabled={guest?.rating == 0}
+                  // disabled={guest?.rating == 0}
+                  disabled={!isCheckedOut}
                   title={'View Details'}
                   fontSize={14}
                   onPress={() =>
@@ -889,20 +890,20 @@ const ReviewDetailScreen = ({ route }: any) => {
                       borderWidth: 1,
                       borderColor:  '#E0E0E0'
                     },
-                    // !isCheckedOut && styles.disabledBtn,
+                    !isCheckedOut && styles.disabledBtn,
                   ]}
                   borderRadius={100}
                 />
                 {property.booking_platform !== 'bookingcom' && guest?.host_review?.total_rating==0 && (
                   <AppButton
-                    // disabled={!isCheckedOut}
+                    disabled={!isCheckedOut}
                     fontSize={14}
                     title="Rate Your Guest"
                     backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
                     color={isCheckedOut ? Colors.WHITE : ''}
                     style={[
                       styles.rateGuestBtn,
-                      // !isCheckedOut && styles.disabledBtn,
+                      !isCheckedOut && styles.disabledBtn,
                     ]}
                     borderRadius={100}
                     onPress={() =>
