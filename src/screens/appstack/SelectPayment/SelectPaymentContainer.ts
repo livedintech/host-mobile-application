@@ -3,6 +3,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
 import { MFSDK, MFLanguage, MFCurrencyISO, MFInitiatePaymentRequest } from 'myfatoorah-reactnative';
+import { useTranslation } from 'react-i18next';
 
 // Payment Method Types
 export type PaymentMethodType =
@@ -23,6 +24,7 @@ interface PaymentMethod {
 
 export default function useSelectPaymentContainer() {
   const navigation = useNavigation();
+   const { t } = useTranslation();
 
   const { params } = useRoute();
   const country_code = params?.country_code;
@@ -44,10 +46,6 @@ export default function useSelectPaymentContainer() {
 
       const response = await MFSDK.initiatePayment(request, MFLanguage.ENGLISH);
 
-      console.log('=================================');
-      console.log('📋 AVAILABLE PAYMENT METHODS');
-      console.log('=================================');
-
       // Response might be PaymentMethods array directly or nested
       const methods = response.PaymentMethods || response;
 
@@ -63,9 +61,6 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
         console.log('Full response:', response);
       }
 
-      console.log('=================================');
-      console.log('✅ Copy IDs and update paymentMethods array below');
-      console.log('=================================');
 
     } catch (error) {
       console.error('❌ Error getting payment methods:', error);
@@ -78,34 +73,34 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
     {
       id: '1',
       type: 'stc_pay',
-      name: 'STC Pay',
+      name: t('auth.select_payment.stc_pay'),       // ✅
       icon: 'LogoStcCardIcon',
-      apiIdentifier: 11, // ⚠️ UPDATE THIS
-      isCardMethod: false, // ⚠️ UPDATE THIS
+      apiIdentifier: 11,
+      isCardMethod: false,
     },
     {
       id: '2',
       type: 'visa_master',
-      name: 'MasterCard/Visa',
+      name: t('auth.select_payment.credit_card'),   // ✅
       icon: 'LogoVisaCardIcon',
-      apiIdentifier: 2, // ⚠️ UPDATE THIS
-      isCardMethod: true, // ⚠️ UPDATE THIS
+      apiIdentifier: 2,
+      isCardMethod: true,
     },
     {
       id: '4',
       type: 'apple_pay',
-      name: 'Apple Pay',
+      name: t('auth.select_payment.apple_pay'),     // ✅
       icon: 'LogoAppleCardICon',
-      apiIdentifier: 20, // ⚠️ UPDATE THIS
-      isCardMethod: false, // ⚠️ UPDATE THIS
+      apiIdentifier: 20,
+      isCardMethod: false,
     },
     {
       id: '5',
       type: 'google_pay',
-      name: 'Google Pay',
+      name: t('auth.select_payment.google_pay'),    // ✅
       icon: 'LogoGooglePayCardIcon',
-      apiIdentifier: 21, // ⚠️ UPDATE THIS
-      isCardMethod: false, // ⚠️ UPDATE THIS
+      apiIdentifier: 21,
+      isCardMethod: false,
     },
   ];
 
@@ -118,20 +113,17 @@ Type: ${method.IsDirectPayment ? 'CARD (Shows form)' : 'WALLET (Redirects)'}
       return;
     }
 
-    console.log('✅ Selected Payment Method:', selectedMethod.name);
-    console.log('📱 Method Type:', selectedMethod.isCardMethod ? 'Card Form' : 'Redirect');
-    console.log('🔑 API Identifier:', selectedMethod.apiIdentifier);
 
     // Navigate to payment screen with method details
-   navigate(NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD, {
-  paymentMethodType: selectedMethod.type,
-  paymentMethodId: selectedMethod.apiIdentifier,
-  paymentMethodName: selectedMethod.name,
-  isCardMethod: selectedMethod.isCardMethod,
-  country_code,
-  phone_number,
-  phone_with_code,
-});
+    navigate(NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD, {
+      paymentMethodType: selectedMethod.type,
+      paymentMethodId: selectedMethod.apiIdentifier,
+      paymentMethodName: selectedMethod.name,
+      isCardMethod: selectedMethod.isCardMethod,
+      country_code,
+      phone_number,
+      phone_with_code,
+    });
   };
 
   return {

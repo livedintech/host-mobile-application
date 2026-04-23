@@ -11,6 +11,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
 
@@ -34,6 +35,7 @@ const VerifyPhoneNumberScreen = () => {
     RESEND_TIME_LIMIT,
     resetKey
   } = useVerifyPhoneNumberContainer();
+  const { t } = useTranslation();
 
   useFocusEffect(
   useCallback(() => {
@@ -77,15 +79,15 @@ const VerifyPhoneNumberScreen = () => {
           <View style={styles.mainContent}>
             <View style={styles.textSection}>
               <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40} textAlign="center">
-                Verify Your{' '}
+                {t('auth.verify_phone.title_1')}{' '}
                 <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                  Phone Number
+                  {t('auth.verify_phone.title_2')}
                 </AppText>
               </AppText>
               
               <View style={styles.subTextWrap}>
                 <AppText
-                  text="We have sent you 5-digit verification code at"
+                  text={t('auth.verify_phone.subtitle')}
                   type="Regular"
                   fontSize={16}
                   color={Colors.BLACK}
@@ -124,10 +126,10 @@ const VerifyPhoneNumberScreen = () => {
             </View>
 
             <View style={styles.footerSec}>
-              <AppText text="Didn’t receive the code? " fontSize={15} color={Colors.BLACK} />
+              <AppText text={t('auth.verify_phone.didnt_receive')} fontSize={15} color={Colors.BLACK} />
               <AppText
                 onPress={isResendDisabled ? undefined : onResendPress}
-                text={isResendDisabled ? `Resend in ${formatTimer(timer)}` : "Resend here"}
+                text={isResendDisabled ? `${t('auth.verify_phone.resend_in')} ${formatTimer(timer)}` : t('auth.verify_phone.resend_here')}
                 fontSize={15}
                 type="Bold"
                 color={FIGMA_TEAL}
@@ -138,7 +140,7 @@ const VerifyPhoneNumberScreen = () => {
               <AppButton
                 loading={isLoading}
                 onPress={handleVerifyOtp}
-                title="Next"
+                title={t('auth.verify_phone.next')}
                 backgroundColor={FIGMA_TEAL}
                 color={Colors.WHITE}
                 borderRadius={100}

@@ -4,7 +4,8 @@ import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import useOnboardingContainer, { onboardingData } from './OnboardingContainer';
+import useOnboardingContainer from './OnboardingContainer';
+import i18n from '@/locales/i18n/i18n';
 
 const OnboardingScreen = () => {
     const {
@@ -14,39 +15,44 @@ const OnboardingScreen = () => {
         handleContinue,
         handleGetStarted,
         loginWithPhone,
-        handleSkip
+        handleSkip,
+        onboardingData
     } = useOnboardingContainer();
 
     const isLastSlide = activeIndex === onboardingData.length - 1;
 
-    const renderItem = ({ item }: any) => (
-        <ImageBackground style={styles.slide} source={item.bg} resizeMode='cover'>
-            {/* Dark overlay for text legibility if needed */}
-            <View style={styles.overlay} />
+    const renderItem = ({ item }: any) => {
+        const bgImage = i18n.language === 'ar' ? item.bgAr : item.bg;
 
-            <View style={styles.contentContainer}>
-                <View style={styles.textSection}>
-                    <AppText
-                        text={item.title}
-                        textAlign='center'
-                        fontSize={26}
-                        color={Colors.WHITE}
-                        type='Bold'
-                        lineHeight={34}
-                        mb={11}
-                    />
-                    <AppText
-                        text={item.subtitle}
-                        textAlign='center'
-                        fontSize={14}
-                        color={Colors.WHITE}
-                        style={styles.description}
-                        type='Medium'
-                    />
+        return (
+            <ImageBackground style={styles.slide} source={bgImage} resizeMode='cover'>
+                {/* Dark overlay for text legibility if needed */}
+                <View style={styles.overlay} />
+
+                <View style={styles.contentContainer}>
+                    <View style={styles.textSection}>
+                        <AppText
+                            text={item.title}
+                            textAlign='center'
+                            fontSize={26}
+                            color={Colors.WHITE}
+                            type='Bold'
+                            lineHeight={34}
+                            mb={11}
+                        />
+                        <AppText
+                            text={item.subtitle}
+                            textAlign='center'
+                            fontSize={14}
+                            color={Colors.WHITE}
+                            style={styles.description}
+                            type='Medium'
+                        />
+                    </View>
                 </View>
-            </View>
-        </ImageBackground>
-    );
+            </ImageBackground>
+        )
+    };
 
     return (
         <View style={styles.container}>
@@ -134,7 +140,7 @@ const styles = StyleSheet.create({
     },
     activeDot: {
         width: Metrics.scale(40),
-        backgroundColor: '#09A389', 
+        backgroundColor: '#09A389',
     },
     inactiveDot: {
         width: Metrics.scale(10),
@@ -152,7 +158,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: Metrics.verticalScale(12),
-        backgroundColor: 'rgba(255, 255, 255, 0.15)', 
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.3)',
     },

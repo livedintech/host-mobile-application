@@ -11,10 +11,13 @@ import useEnterPasswordContainer from './EnterPasswordContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
 
 const EnterPasswordScreen = () => {
+  const { t } = useTranslation();
+
   const { isLoading, control, errors, handleSubmit, gotToVerifyOTP } = useEnterPasswordContainer();
 
   return (
@@ -34,12 +37,12 @@ const EnterPasswordScreen = () => {
               {/* Title Section */}
               <View style={styles.headerSection}>
                 <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={42}>
-                  Please enter your
+                  {t('auth.enter_password.title_1')}
                 </AppText>
                 <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={42}>
-                  password to{' '}
+                  {t('auth.enter_password.title_2')}
                   <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL}>
-                    continue
+                    {t('auth.enter_password.title_3')}
                   </AppText>
                 </AppText>
               </View>
@@ -47,7 +50,7 @@ const EnterPasswordScreen = () => {
               {/* Form Fields */}
               <View style={styles.form}>
                 <PasswordField
-                  label="Password *"
+                  label={t('auth.enter_password.password_label')}
                   name="password"
                   control={control as any}
                   errors={errors}
@@ -58,7 +61,7 @@ const EnterPasswordScreen = () => {
                 {/* Forgot Password Link - Aligned Right */}
                 <View style={styles.forgotRow}>
                   <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
-                    <AppText text="Forgot password?" color={Colors.BLACK} fontSize={14} />
+                    <AppText text={t('auth.enter_password.forgot_password')} color={Colors.BLACK} fontSize={14} />
                   </ButtonView>
                 </View>
               </View>
@@ -69,7 +72,7 @@ const EnterPasswordScreen = () => {
               <AppButton
                 loading={isLoading}
                 onPress={handleSubmit}
-                title="Continue"
+                title={t('auth.enter_password.continue')}
                 backgroundColor={FIGMA_TEAL}
                 color={Colors.WHITE}
                 borderRadius={100} // Keeps the pill shape

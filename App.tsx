@@ -26,6 +26,8 @@ import { configureGoogleSignIn } from '@/services/googleConfig';
 import NavigationRoutes from './src/navigation/NavigationRoutes';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import AppUpdateCheck from '@/components/molecules/AppUpdateCheck/AppUpdateCheck';
+import i18n, { changeLanguage, getStoredLanguage } from '@/locales/i18n/i18n';
+import { I18nextProvider } from 'react-i18next';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -33,6 +35,9 @@ const App = () => {
   const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK); // Splash/Onboarding ke liye pehle BLACK
 
   useEffect(() => {
+   const savedLang = getStoredLanguage();
+  changeLanguage(savedLang);
+
     initializeApp();
     configureGoogleSignIn();
   }, []);
@@ -149,6 +154,7 @@ const App = () => {
   };
 
   return (
+    <I18nextProvider i18n={i18n}>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
@@ -178,6 +184,7 @@ const App = () => {
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+    </I18nextProvider>
   );
 };
 

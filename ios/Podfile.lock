@@ -2111,6 +2111,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-restart (0.0.27):
+    - React-Core
   - react-native-safe-area-context (5.7.0):
     - boost
     - DoubleConversion
@@ -3447,6 +3449,7 @@ DEPENDENCIES:
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-keyboard-controller (from `../node_modules/react-native-keyboard-controller`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -3619,6 +3622,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keyboard-controller"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-restart:
+    :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-video:
@@ -3786,6 +3791,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: c43df081568b7568b4d68240a03263037b2eb90f
   react-native-keyboard-controller: c431d7b4cbdfc621c4530fc21016eb3b52bcfd8f
   react-native-maps: 00f50855f1a061186f2923be0709b3f09708ddf7
+  react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 0f4986a88ec555aff660503b483d6e4bd6980a9a
   react-native-video: f96a08ee6b99f74e2c000d529ac16e98cd785bba
   react-native-webview: 278eeb4df23d6202b559ceb21bd4088dbde30090
