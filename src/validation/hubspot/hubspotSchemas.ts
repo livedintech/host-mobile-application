@@ -1,18 +1,17 @@
 import * as yup from 'yup';
 
 export interface MeetingDetailsFormValues {
-  fullName: string;
-  phone: {
-    phone: string;      
-    actualPhone: string;
-  };
+fullName: string;
   email: string;
-  country: string;
   city: string;
-  countryCode: {
-    cca2: string;
-    callingCode: string;
-  };
+  country: string;
+  phone_number: string;     // e.g., '44448881'
+  phone_with_code: string;  // e.g., '966'
+  listing_count: number;
+  pricing: string;
+  // Keep others if needed for your form
+  phone?: string; 
+  country_code?: string;
 }
 
 export const meetingDetailsSchema = yup.object({
