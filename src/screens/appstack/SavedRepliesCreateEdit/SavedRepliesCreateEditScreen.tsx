@@ -13,6 +13,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const CreateSavedReplyScreen = () => {
     const { 
@@ -21,8 +22,9 @@ const CreateSavedReplyScreen = () => {
         handleSubmit, 
         isLoading, 
         isEditMode, 
-        transformedListing 
+        transformedListing
     } = useSavedRepliesCreateEditContainer();
+    const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -35,17 +37,14 @@ const CreateSavedReplyScreen = () => {
                     {/* ── Title & Description ── */}
                     <View style={styles.topTextSection}>
                         <AppText 
-                            text={isEditMode ? "Edit Saved Replies" : "Create Saved Replies"} 
+                            text={isEditMode ? t('app.saved_replies_create_edit.title_edit') : t('app.saved_replies_create_edit.title_create')}
                             fontSize={28} 
                             type="Bold" 
                             color={Colors.BLACK} 
                             mb={10} 
                         />
                         <AppText 
-                            text={isEditMode 
-                                ? "Update the name, message content, and assigned listings. Changes will apply wherever this saved reply is used." 
-                                : "Create a saved reply by adding a name and message content. Assign it to specific listings, or enable auto-create to make it available for all new listings."
-                            } 
+                            text={isEditMode ? t('app.saved_replies_create_edit.desc_edit') : t('app.saved_replies_create_edit.desc_create')}
                             fontSize={14} 
                             color={Colors.DARK_CHARCOAL_OPACITY} 
                             lineHeight={20}
@@ -55,30 +54,30 @@ const CreateSavedReplyScreen = () => {
                     {/* ── Form Fields ── */}
                     <View style={styles.form}>
                         <InputField
-                            label="Message Name"
+                            label={t('app.saved_replies_create_edit.name_label')}
                             name="title"
                             control={control}
                             errors={errors}
-                            placeholder="Wifi Password"
+                            placeholder={t('app.saved_replies_create_edit.name_placeholder')}
                             // Adding specific styles to match glass design if your InputField supports it
                         />
 
                         <TextareaField
-                            label="Message Content"
+                            label={t('app.saved_replies_create_edit.content_label')}
                             name="body"
                             control={control}
                             errors={errors}
-                            placeholder="Hi Sir, here are your Wi-Fi details..."
+                            placeholder={t('app.saved_replies_create_edit.content_placeholder')}
                             multiline
                         />
 
                         <MultiSelectDropdownField
-                            label="Select Property"
+                            label={t('app.saved_replies_create_edit.property_label')}
                             name="listing_ids"
                             control={control}
                             errors={errors}
                             data={transformedListing || []}
-                            placeholder="Select Multiple Options"
+                            placeholder={t('app.saved_replies_create_edit.property_placeholder')}
                         />
 
                         {/* ── Auto-Create Checkbox ── */}
@@ -93,7 +92,7 @@ const CreateSavedReplyScreen = () => {
                                             onPress={() => onChange(!value)}
                                         />
                                         <AppText
-                                            text="Auto-create for all new listings"
+                                            text={t('app.saved_replies_create_edit.auto_create')}
                                             ml={10}
                                             color={Colors.MIDNIGHT}
                                             fontSize={14}
@@ -110,7 +109,7 @@ const CreateSavedReplyScreen = () => {
                         <AppButton 
                             onPress={handleSubmit}
                             loading={isLoading}
-                            title={isEditMode ? "Save Changes" : "Create New Saved Reply"}
+                            title={isEditMode ? t('app.saved_replies_create_edit.save_btn') : t('app.saved_replies_create_edit.create_btn')}
                             backgroundColor={Colors.TEAL_PRIMARY_ALT}
                             borderColor={Colors.TEAL_PRIMARY_ALT}
                         />

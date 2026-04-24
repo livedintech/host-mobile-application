@@ -17,8 +17,10 @@ import MenuSection from '@/components/molecules/MenuSection/MenuSection';
 import { useAuthStore } from '@/store/useAuthStore';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 const MoreScreen = () => {
+  const { t } = useTranslation();
   const { user, logout } = useAuthStore();
   const [isModalVisible, setModalVisible] = useState(false); // Modal state
 
@@ -61,7 +63,7 @@ const MoreScreen = () => {
 
         {/* Sections (Account & Analytics) */}
         <MenuSection
-          title="Account"
+          title={t('app.more.account_section')}
           headerIcon="userOutline"
           items={[
             { title: 'Listing Management', icon: 'direct', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS) },
@@ -73,7 +75,7 @@ const MoreScreen = () => {
         />
 
         <MenuSection
-          title="Analytics"
+          title={t('app.more.analytics_section')}
           headerIcon="analyticsOutline"
           items={[
             { title: 'Statistics', icon: 'statsIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN) },
@@ -86,7 +88,7 @@ const MoreScreen = () => {
         <Pressable onPress={toggleModal}>
           <GlassCard width="100%" style={styles.logoutCard}>
             <View style={styles.logoutContent}>
-              <AppText text="Logout" type="Medium" fontSize={16} />
+              <AppText text={t('app.more.logout')} type="Medium" fontSize={16} />
               <GlassCard width={36} style={styles.logoutIconGlass}>
                 <Svgicons path="logoutIcon" size={18} />
               </GlassCard>
@@ -105,14 +107,14 @@ const MoreScreen = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <AppText 
-              text="Are you sure you want to logout?" 
+              text={t('app.more.logout_confirm')}
               type="Bold" 
               fontSize={18} 
               style={styles.modalTitle} 
             />
             
             <AppText 
-              text="You will need to login again to access your account." 
+              text={t('app.more.logout_subtitle')}
               fontSize={14} 
               color="grey"
               style={styles.modalSubTitle}
@@ -120,11 +122,11 @@ const MoreScreen = () => {
 
             <View style={styles.modalButtonContainer}>
               <Pressable style={styles.cancelButton} onPress={toggleModal}>
-                <AppText text="Cancel" type="Medium" fontSize={16} color="black" />
+                <AppText text={t('app.more.cancel')} type="Medium" fontSize={16} color="black" />
               </Pressable>
 
               <Pressable style={styles.confirmButton} onPress={handleLogout}>
-                <AppText text="Confirm" type="Medium" fontSize={16} color="white" />
+                <AppText text={t('app.more.confirm')} type="Medium" fontSize={16} color="white" />
               </Pressable>
             </View>
           </View>

@@ -110,7 +110,7 @@ const AddNewPaymentMethodScreen = () => {
         <View style={styles.instructionItem}>
           <AppText text="4️⃣" fontSize={20} />
           <AppText
-            text="Return to app after payment"
+            text={t('auth.add_payment.step_4')}
             fontSize={14}
             color={Colors.BLACK}
             ml={10}

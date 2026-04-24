@@ -12,6 +12,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmAddressScreen = () => {
   const {
@@ -27,6 +28,7 @@ const ConfirmAddressScreen = () => {
     citiesOptions,
     districtsOptions,
   } = useConfirmAddressContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -47,14 +49,14 @@ const ConfirmAddressScreen = () => {
         <View style={styles.titleContainer}>
           {isEdit ? (
             <AppText
-              text="Edit Address"
+              text={t('app.confirm_address.edit_title')}
               fontSize={28}
               type="Medium"
             />
           ) : (
             <>
               <AppText
-                text="Confirm Address "
+                text={t('app.confirm_address.title')}
                 fontSize={22}
                 type="Medium"
               />
@@ -68,68 +70,68 @@ const ConfirmAddressScreen = () => {
           {/* All dropdowns work identically — value is primitive id */}
           <DropdownField
             name="country_code"
-            label="Country"
+            label={t('app.confirm_address.country_label')}
             control={control}
             errors={errors}
-            placeholder="Select country"
+            placeholder={t('app.confirm_address.country_placeholder')}
             disabled={isEdit}
             data={countriesOptions}
           />
 
           <DropdownField
             name="state"
-            label="State / Province"
+            label={t('app.confirm_address.state_label')}
             control={control}
             errors={errors}
-            placeholder="Select state"
+            placeholder={t('app.confirm_address.state_placeholder')}
             data={statesOptions}
           />
 
           <DropdownField
             name="city"
-            label="City"
+            label={t('app.confirm_address.city_label')}
             control={control}
             errors={errors}
-            placeholder="Select city"
+            placeholder={t('app.confirm_address.city_placeholder')}
             data={citiesOptions}
           />
 
           <DropdownField
             name="district"
-            label="District"
+            label={t('app.confirm_address.district_label')}
             control={control}
             errors={errors}
-            placeholder="Select district"
+            placeholder={t('app.confirm_address.district_placeholder')}
             data={districtsOptions}
           />
 
           <InputField
             name="address"
-            label="Address"
+            label={t('app.confirm_address.address_label')}
             control={control}
             errors={errors}
-            placeholder="e.g. 123 King Fahad Rd"
+            placeholder={t('app.confirm_address.address_placeholder')}
           />
 
           <InputField
             name="postalAddress"
-            label="Postal Address"
+            label={t('app.confirm_address.postal_label')}
             control={control}
             errors={errors}
-            placeholder="e.g. 12345"
+            placeholder={t('app.confirm_address.postal_placeholder')}
           />
 
           <View style={styles.footer}>
             {!isEdit && (
               <>
                 <AppButton
-                  title="Next"
+                  title={t('app.confirm_address.next')}
                   onPress={handleSubmit(onNext)}
                   loading={isLoading}
                   variant='secondary'
                 />
                 <AppButton
-                  title="Save & Exit"
+                  title={t('app.confirm_address.save_exit')}
                   onPress={handleSubmit(onSaveExit)}
                   mt={15}
                   disabled={isLoading}
@@ -138,7 +140,7 @@ const ConfirmAddressScreen = () => {
             )}
             {isEdit && (
               <AppButton
-                title="Save & Exit"
+                title={t('app.confirm_address.save_exit')}
                 onPress={handleSubmit(onSaveExit)}
                 loading={isLoading}
               />

@@ -276,8 +276,10 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { s, vs } from 'react-native-size-matters';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 const ConnectCalendarsIntroScreen = () => {
+  const { t } = useTranslation();
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.AGENT_INTRO);
   }, []);
@@ -298,35 +300,35 @@ const ConnectCalendarsIntroScreen = () => {
           </View>
 
           <View style={styles.titleSection}>
-            <AppText 
-              text="Airbnb. Gathern." 
-              fontSize={26} 
-              type="Regular" 
+            <AppText
+              text={t('auth.connect_calendars.title_1')}
+              fontSize={26}
+              type="Regular"
               textAlign="center"
-              color="#000000" 
+              color="#000000"
             />
-            <AppText 
-              text="Booking.com. Or just" 
-              fontSize={26} 
-              type="Regular" 
+            <AppText
+              text={t('auth.connect_calendars.title_2')}
+              fontSize={26}
+              type="Regular"
               textAlign="center"
-              color="#000000" 
+              color="#000000"
               mt={-5}
             />
-            <AppText 
-              text="getting started." 
-              fontSize={26} 
-              type="SemiBold" 
-              color={Colors.PRIMARY_TEAL} 
+            <AppText
+              text={t('auth.connect_calendars.title_3')}
+              fontSize={26}
+              type="SemiBold"
+              color={Colors.PRIMARY_TEAL}
               textAlign="center"
               mt={-5}
             />
-            
-            <AppText 
-              text="Connect your calendars in 1 click. Prevent double bookings and sync your rates instantly."
+
+            <AppText
+              text={t('auth.connect_calendars.description')}
               textAlign="center"
-              color="#1c1c1c" 
-              mt={vs(20)} 
+              color="#1c1c1c"
+              mt={vs(20)}
               fontSize={15}
               lineHeight={17}
               type='Regular'
@@ -335,8 +337,8 @@ const ConnectCalendarsIntroScreen = () => {
 
           {/* Footer Action Area */}
           <View style={styles.footer}>
-            <AppButton 
-              title="Connect Account" 
+            <AppButton
+              title={t('auth.connect_calendars.connect_account')}
               onPress={getStarted}
               style={styles.connectBtn}
               color="#FFFFFF" 

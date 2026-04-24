@@ -15,6 +15,7 @@ import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Metrics from '@/utility/Metrics';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 
 const AddPropertyGuidelinesScreen = () => {
   const {
@@ -38,6 +39,7 @@ const AddPropertyGuidelinesScreen = () => {
     listingOptions,
     isPendingExporting,
   } = useGuidelinesContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -61,13 +63,13 @@ const AddPropertyGuidelinesScreen = () => {
           </View>
 
           <AppText
-            text={isEdit ? "Property Guidelines" : "Add Property Guidelines"}
+            text={isEdit ? t('app.property_guidelines.title_edit') : t('app.property_guidelines.title_new')}
             fontSize={28}
             type="Bold"
             mt={30}
           />
           <AppText
-            text={`Fill these details so AI Auto Reply can assist guests \n on your behalf.`}
+            text={t('app.property_guidelines.subtitle')}
             fontSize={12}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={10}
@@ -79,7 +81,7 @@ const AddPropertyGuidelinesScreen = () => {
                 style={styles.skipBtn}
                 onPress={() => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES)}
               >
-                <AppText text="Skip for now" color={Colors.WHITE} fontSize={14} type="Medium" />
+                <AppText text={t('app.property_guidelines.skip')} color={Colors.WHITE} fontSize={14} type="Medium" />
               </TouchableOpacity>
             </View>
           )}
@@ -89,7 +91,7 @@ const AddPropertyGuidelinesScreen = () => {
               name="arrival_guide"
               control={control as any}
               errors={errors}
-              label="Arrival Guide"
+              label={t('app.property_guidelines.arrival_guide_label')}
               placeholder={"• Property Name: Olive Residency\n• Address: Building 12, Al Noor Street, City Center"}
               multiline
             />
@@ -98,7 +100,7 @@ const AddPropertyGuidelinesScreen = () => {
               name="property_rules"
               control={control as any}
               errors={errors}
-              label="Property Rules"
+              label={t('app.property_guidelines.property_rules_label')}
               placeholder={"• Please maintain a low noise level at all times."}
               multiline
             />
@@ -107,7 +109,7 @@ const AddPropertyGuidelinesScreen = () => {
               name="checkout_instructions"
               control={control as any}
               errors={errors}
-              label="Check-out Instructions"
+              label={t('app.property_guidelines.checkout_instructions_label')}
               placeholder={"• Please leave the apartment in a reasonable condition."}
               multiline
             />
@@ -116,22 +118,22 @@ const AddPropertyGuidelinesScreen = () => {
           <View style={styles.bottomSection}>
             {!hideWifiFields && (
               <>
-                <InputField name="wifi_username" label="Wifi Username" control={control as any} errors={errors} placeholder="Wifi_Us" />
-                <InputField name="wifi_password" label="Wifi Password" control={control as any} errors={errors} placeholder="Wifi123456" />
+                <InputField name="wifi_username" label={t('app.property_guidelines.wifi_username_label')} control={control as any} errors={errors} placeholder={t('app.property_guidelines.wifi_username_placeholder')} />
+                <InputField name="wifi_password" label={t('app.property_guidelines.wifi_password_label')} control={control as any} errors={errors} placeholder={t('app.property_guidelines.wifi_password_placeholder')} />
                 <DropdownField
                   name="door_lock_code"
-                  label="Door Lock Code"
+                  label={t('app.property_guidelines.door_lock_label')}
                   control={control as any}
                   errors={errors}
-                  placeholder="Select Lock"
+                  placeholder={t('app.property_guidelines.door_lock_placeholder')}
                   data={lockOptions}
                 />
               </>
             )}
             <Text style={styles.lockText}>
-              Select a lock to continue. If no lock appears, set up your TTLock in More →{' '}
+              {t('app.property_guidelines.lock_hint')}{' '}
               <Text style={styles.linkText} onPress={() => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS)}>
-                Smart Lock.
+                {t('app.property_guidelines.smart_lock_link')}
               </Text>
             </Text>
           </View>
@@ -142,7 +144,7 @@ const AddPropertyGuidelinesScreen = () => {
           {/* ✅ Export — sirf edit mode mein */}
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.property_guidelines.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -150,7 +152,7 @@ const AddPropertyGuidelinesScreen = () => {
           )}
           {!isEdit && (
             <AppButton
-              title="Next"
+              title={t('app.property_guidelines.next')}
               variant="secondary"
               backgroundColor={Colors.WHITE}
               onPress={handleSubmit(onNext)}
@@ -158,7 +160,7 @@ const AddPropertyGuidelinesScreen = () => {
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.property_guidelines.save_exit')}
             mt={12}
             onPress={handleSubmit(onSaveExit)}
             disabled={isLoading}
@@ -176,7 +178,7 @@ const AddPropertyGuidelinesScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.property_guidelines.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -189,12 +191,12 @@ const AddPropertyGuidelinesScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.property_guidelines.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.property_guidelines.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

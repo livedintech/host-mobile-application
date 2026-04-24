@@ -15,8 +15,10 @@ import SpinnerLoader from '@/components/molecules/SmallLoader';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ImageViewing from 'react-native-image-viewing';
+import { useTranslation } from 'react-i18next';
 
 const ProfileScreen = () => {
+  const { t } = useTranslation();
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [localImage, setLocalImage] = useState<string | null>(null);
@@ -133,41 +135,41 @@ const ProfileScreen = () => {
 
           {/* Form */}
           <View style={styles.form}>
-            <InputField name="full_name" label="Full Name" control={control} errors={errors} placeholder="Tooba J" />
-            <DropdownField name="gender" control={control} errors={errors} label="Gender" data={[{ label: 'Female', value: 'Female' }, { label: 'Male', value: 'Male' }]} />
+            <InputField name="full_name" label={t('app.profile.full_name_label')} control={control} errors={errors} placeholder="Tooba J" />
+            <DropdownField name="gender" control={control} errors={errors} label={t('app.profile.gender_label')} data={[{ label: 'Female', value: 'Female' }, { label: 'Male', value: 'Male' }]} />
             <DropdownField
               name="country"
               control={control}
               errors={errors}
-              label="Country"
+              label={t('app.profile.country_label')}
               data={countriesOptions}
               disabled={isLoadingCountriesData}
-              placeholder={isLoadingCountriesData ? 'Loading...' : 'Select Country'}
+              placeholder={isLoadingCountriesData ? 'Loading...' : t('app.profile.country_placeholder')}
             />
             <DropdownField
               name="city"
               control={control}
               errors={errors}
-              label="City"
+              label={t('app.profile.city_label')}
               data={citiesOptions}
               disabled={isLoadingStatesData || !watch('country')}
               placeholder={
                 !watch('country')
-                  ? 'Select Country first'
+                  ? t('app.profile.select_country_first')
                   : isLoadingStatesData
                     ? 'Loading...'
-                    : 'Select City'
+                    : t('app.profile.city_placeholder')
               }
             />
-            <InputField name="address" label="Permanent Address" control={control} errors={errors} placeholder="XYZ" />
-            <PhoneInputField label="Phone Number" control={control} errors={errors} countryFieldName="phone_country" phoneFieldName="phone_number" disabled />
+            <InputField name="address" label={t('app.profile.address_label')} control={control} errors={errors} placeholder="XYZ" />
+            <PhoneInputField label={t('app.profile.phone_label')} control={control} errors={errors} countryFieldName="phone_country" phoneFieldName="phone_number" disabled />
 
             <View style={styles.rowButtons}>
-              <AppButton title="Change Password" onPress={goToChangePassword} style={styles.halfBtn} fontSize={14}/>
-              <AppButton title="Delete Account" loading={isDeleting} onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} fontSize={14}/>
+              <AppButton title={t('app.profile.change_password_btn')} onPress={goToChangePassword} style={styles.halfBtn} fontSize={14}/>
+              <AppButton title={t('app.profile.delete_account_btn')} loading={isDeleting} onPress={() => setDeleteModalVisible(true)} style={styles.halfBtn} fontSize={14}/>
             </View>
 
-            <AppButton title="Save Changes" onPress={handleSubmit(onSave)} mt={20} loading={isLoading} />
+            <AppButton title={t('app.profile.save_changes_btn')} onPress={handleSubmit(onSave)} mt={20} loading={isLoading} />
           </View>
         </KeyboardAwareScrollView>
         {/* ✅ Image Picker Bottom Sheet */}
@@ -186,16 +188,16 @@ const ProfileScreen = () => {
               <View style={styles.bottomSheet}>
                 <View style={styles.sheetHandle} />
 
-                <AppText text="Upload Photo" type="SemiBold" fontSize={16} mb={20} />
+                <AppText text={t('app.profile.upload_photo')} type="SemiBold" fontSize={16} mb={20} />
                 {/* Gallery Button */}
-                <AppButton onPress={handleOpenGallery} title="Choose from Gallery" mb={10} />
+                <AppButton onPress={handleOpenGallery} title={t('app.profile.gallery_btn')} mb={10} />
 
                 {/* Camera Button */}
-                <AppButton onPress={handleOpenCamera} title="Take a Photo" mb={10} />
+                <AppButton onPress={handleOpenCamera} title={t('app.profile.camera_btn')} mb={10} />
 
                 {/* Cancel */}
                 <AppButton
-                  title="Cancel"
+                  title={t('app.profile.cancel_btn')}
                   onPress={() => setImageModalVisible(false)}
                   mt={10}
                   backgroundColor={Colors.BRUNSWICK_GREEN}
@@ -209,7 +211,7 @@ const ProfileScreen = () => {
           isVisible={isDeleteModalVisible}
           onClose={() => setDeleteModalVisible(false)}
           onConfirm={handleDeleteAccount}
-          title="Are you sure you want to delete your account?"
+          title={t('app.profile.delete_confirm')}
           description="This action is permanent and cannot be undone."
         />
       </View>

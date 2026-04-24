@@ -7,8 +7,10 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useChangePasswordContainer from './ChangePasswordContainer';
 import PasswordField from '@/components/molecules/Input/PasswordField';
+import { useTranslation } from 'react-i18next';
 
 const ChangePasswordScreen = () => {
+  const { t } = useTranslation();
   const { control, errors, handleSubmit, onSubmit, isLoading } = useChangePasswordContainer();
 
   return (
@@ -18,7 +20,7 @@ const ChangePasswordScreen = () => {
       <View style={styles.content}>
         <View style={styles.titleSection}>
           <AppText 
-            text="Change Your Password" 
+            text={t('app.change_password.title')}
             fontSize={32} 
             type="Bold" 
             color={Colors.BRUNSWICK_GREEN} 
@@ -29,31 +31,31 @@ const ChangePasswordScreen = () => {
         <View style={styles.form}>
           <PasswordField
             name="oldPassword"
-            label="Old Password *"
+            label={t('app.change_password.old_label')}
             control={control}
             errors={errors}
-            placeholder="Enter old password"
+            placeholder={t('app.change_password.old_placeholder')}
           />
 
           <PasswordField
             name="newPassword"
-            label="New Password *"
+            label={t('app.change_password.new_label')}
             control={control}
             errors={errors}
-            placeholder="Enter new password"
+            placeholder={t('app.change_password.new_placeholder')}
           />
 
           <PasswordField
             name="confirmPassword"
-            label="Confirm Password *"
+            label={t('app.change_password.confirm_label')}
             control={control}
             errors={errors}
-            placeholder="Confirm new password"
+            placeholder={t('app.change_password.confirm_placeholder')}
           />
 
           <View style={styles.footer}>
             <AppButton 
-              title="Change Password" 
+              title={t('app.change_password.submit_btn')}
               onPress={handleSubmit(onSubmit)} 
               loading={isLoading}
               mt={40}

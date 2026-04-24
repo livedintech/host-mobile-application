@@ -8,10 +8,10 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import useSmartLockActivityLogContainer from './SmartLockActivityLogContainer';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-
-
+import { useTranslation } from 'react-i18next';
 
 const SmartLockActivityLogScreen = ({ navigation }: any) => {
+  const { t } = useTranslation();
   const { logs, handleRefresh, isLoading } = useSmartLockActivityLogContainer();
 
   const renderLogItem = ({ item }: { item: any }) => (
@@ -36,7 +36,7 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
     <View style={styles.emptyContainer}>
       <Svgicons path="logIcon" size={50} color={Colors.SMOOTH_GREY} />
       <AppText
-        text="No activity logs found."
+        text={t('app.smart_lock_activity.empty')}
         fontSize={18}
         type="Medium"
         color={Colors.BLACK}
@@ -63,7 +63,7 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
               {isLoading ? (
                 <ActivityIndicator size="small" color={Colors.BLACK} />
               ) : (
-                <AppText text="Refresh" fontSize={12} color={Colors.BLACK} />
+                <AppText text={t('app.smart_lock_activity.refresh')} fontSize={12} color={Colors.BLACK} />
               )}
             </ButtonView>
             
@@ -77,7 +77,7 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
         {/* Screen Title */}
         <View style={styles.titleContainer}>
           <AppText
-            text="Your Activity"
+            text={t('app.smart_lock_activity.title')}
             fontSize={30}
             type="Bold"
             color={Colors.BLACK}

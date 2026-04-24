@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { useTranslation } from 'react-i18next';
 
 // ─── APNA CALENDLY URL YAHAN RAKHO ───────────────────────────────────────────
 const CALENDLY_URL = 'https://calendly.com/haseeb-tariq-livedin/30min';
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function ThreePlusListingScreen({ info, onBooked }: Props) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const webRef = useRef<WebView>(null);
 
@@ -74,7 +76,7 @@ export default function ThreePlusListingScreen({ info, onBooked }: Props) {
 
       {/* Heading */}
       <Text style={styles.heading}>
-        Please select a date so our agent can schedule a meeting with you.
+        {t('auth.three_plus_listing.heading')}
       </Text>
 
       {/* Calendly WebView */}
@@ -82,7 +84,7 @@ export default function ThreePlusListingScreen({ info, onBooked }: Props) {
         {loading && (
           <View style={styles.loader}>
             <ActivityIndicator size="large" color={BRAND} />
-            <Text style={styles.loaderText}>Loading calendar...</Text>
+            <Text style={styles.loaderText}>{t('auth.three_plus_listing.loading')}</Text>
           </View>
         )}
         <WebView

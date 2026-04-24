@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -8,13 +9,14 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
 const AccountScreen = () => {
   const { accountOptions, handlePress } = useAccountContainer();
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* Account Title with Icon */}
         <View style={styles.titleRow}>
-          <AppText text="Account" fontSize={32} type="Bold" color={Colors.PINE_FOREST} mr={10}/>
+          <AppText text={t('app.account_screen.title')} fontSize={32} type="Bold" color={Colors.PINE_FOREST} mr={10}/>
           <Svgicons path='userIcon' size={49}/>
         </View>
 

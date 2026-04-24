@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -18,6 +19,7 @@ const NoChatScreen = ({
   headingText,
   descriptionText,
 }: Props) => {
+  const { t } = useTranslation();
 
   const handleNavigate = useCallback(() => {
     console.log('');
@@ -51,7 +53,7 @@ const NoChatScreen = ({
       {/* {showFirstButton && (
 
         <AppButton
-          title="Add New Listing"
+          title={t('app.no_chat_screen.add_listing')}
           backgroundColor="transparent"
           borderColor={Colors.WHITE_OPACITY_60}
           color={Colors.MIDNIGHT}
@@ -63,7 +65,7 @@ const NoChatScreen = ({
       )}
       {showSecondButton && (
         <AppButton
-          title="Create New Listing"
+          title={t('app.no_chat_screen.create_listing')}
           backgroundColor={Colors.TEAL_PRIMARY_ALT}
           borderColor={Colors.TEAL_PRIMARY_ALT}
           onPress={handleNavigate}

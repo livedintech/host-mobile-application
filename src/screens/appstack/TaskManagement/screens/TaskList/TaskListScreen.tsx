@@ -17,6 +17,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const TaskListScreen: React.FC = () => {
   const {
@@ -64,7 +65,7 @@ const TaskListScreen: React.FC = () => {
           <View style={styles.cardContent}>
             <View style={styles.infoRow}>
               <AppText
-                text="Description: "
+                text={t('app.task_management.description_label')}
                 type="Bold"
                 color={Colors.PINE_FOREST}
               />
@@ -76,7 +77,7 @@ const TaskListScreen: React.FC = () => {
             </View>
             <View style={styles.infoRow}>
               <AppText
-                text="Property: "
+                text={t('app.task_management.property_label')}
                 type="Bold"
                 color={Colors.PINE_FOREST}
               />
@@ -88,7 +89,7 @@ const TaskListScreen: React.FC = () => {
             </View>
             <View style={styles.infoRow}>
               <AppText
-                text="Assigned To: "
+                text={t('app.task_management.assigned_to')}
                 type="Bold"
                 color={Colors.PINE_FOREST}
               />
@@ -99,7 +100,7 @@ const TaskListScreen: React.FC = () => {
             </View>
             <View style={styles.infoRow}>
               <AppText
-                text="Due Date: "
+                text={t('app.task_management.due_date')}
                 type="Bold"
                 color={Colors.PINE_FOREST}
               />
@@ -109,7 +110,7 @@ const TaskListScreen: React.FC = () => {
               />
             </View>
             <View style={styles.infoRow}>
-              <AppText text="Status: " type="Bold" color={Colors.PINE_FOREST} />
+              <AppText text={t('app.task_management.status')} type="Bold" color={Colors.PINE_FOREST} />
               <AppText
                 text={item.status.toUpperCase()}
                 color={
@@ -132,7 +133,7 @@ const TaskListScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <AppText
-          text="Task Management"
+          text={t('app.task_management.title')}
           fontSize={26}
           type="Bold"
           color={Colors.BRUNSWICK_GREEN}
@@ -155,7 +156,7 @@ const TaskListScreen: React.FC = () => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.createBtn} onPress={handleCreateTask}>
-          <AppText text="Create Task" type="Bold" color={Colors.PINE_FOREST} />
+          <AppText text={t('app.task_management.create_task')} type="Bold" color={Colors.PINE_FOREST} />
         </TouchableOpacity>
       </View>
       {isFilterVisible && (
@@ -168,7 +169,7 @@ const TaskListScreen: React.FC = () => {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <AppText
-                text="Apply Filter"
+                text={t('app.task_management.apply_filter')}
                 fontSize={22}
                 type="Bold"
                 color={Colors.BRUNSWICK_GREEN}
@@ -176,23 +177,23 @@ const TaskListScreen: React.FC = () => {
             </View>
             <MultiSelectDropdownField
               name="listings"
-              label="Select Listings"
+              label={t('app.task_management.select_listings')}
               control={control}
               errors={errors}
               data={listingDropdown}
-              placeholder="Select Multiple Options"
+              placeholder={t('app.task_management.select_multiple')}
             />
             <MultiSelectDropdownField
               name="assignee"
-              label="Task Assignee"
+              label={t('app.task_management.task_assignee')}
               control={control}
               errors={errors}
               data={vendorDropdown}
-              placeholder="Select Multiple Options"
+              placeholder={t('app.task_management.select_multiple')}
             />
             <MultiSelectDropdownField
               name="status"
-              label="Task Status"
+              label={t('app.task_management.task_status')}
               control={control}
               errors={errors}
               data={[
@@ -200,17 +201,17 @@ const TaskListScreen: React.FC = () => {
                 { label: 'In Progress', value: 'inprogress' },
                 { label: 'Completed', value: 'completed' },
               ]}
-              placeholder="Select Multiple Options"
+              placeholder={t('app.task_management.select_multiple')}
             />
             <View style={styles.modalFooter}>
               <AppButton
-                title="Reset"
+                title={t('app.task_management.reset')}
                 onPress={onResetFilter}
                 style={styles.flex1}
                 mx={5}
               />
               <AppButton
-                title="Apply Filter"
+                title={t('app.task_management.apply_filter')}
                 onPress={handleSubmit(onApplyFilter)}
                 style={styles.flex1}
                 mx={5}

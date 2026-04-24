@@ -11,6 +11,7 @@ import { useRoute } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import TextareaField from '@/components/molecules/Input/TextareaField';
@@ -26,6 +27,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ViewReviewScreen = () => {
+  const { t } = useTranslation();
   const route = useRoute<any>();
   const { id } = route.params || {};
 
@@ -174,7 +176,7 @@ const ViewReviewScreen = () => {
         </View>
 
         <AppText
-          text="Overall Rating"
+          text={t('app.view_review.overall_rating')}
           fontSize={30}
           type="Bold"
           color={Colors.BLACK}
@@ -205,7 +207,7 @@ const ViewReviewScreen = () => {
         <GlassCard width="100%" style={styles.glassCard}>
           <View style={styles.glassHeader}>
             <AppText
-              text="Guest Property Ratings"
+              text={t('app.view_review.guest_property_ratings')}
               fontSize={18}
               type="Medium"
               color={Colors.BLACK}
@@ -229,7 +231,7 @@ const ViewReviewScreen = () => {
         {isBookingCom && (
           <>
             <AppText
-              text="Your Reply"
+              text={t('app.view_review.your_reply')}
               type="Bold"
               fontSize={26}
               color={Colors.BLACK}
@@ -242,7 +244,7 @@ const ViewReviewScreen = () => {
                 name="reply"
                 control={control}
                 errors={errors}
-                placeholder="No response yet..."
+                placeholder={t('app.view_review.no_response')}
                 multiline
                 style={[
                   styles.textArea,
@@ -285,7 +287,7 @@ const ViewReviewScreen = () => {
             </GradientBorder>
 
             <AppButton
-              title="Save & Exit"
+              title={t('app.view_review.save_exit')}
               onPress={() =>
                 navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT)
               }

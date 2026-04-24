@@ -9,9 +9,10 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { s, vs } from 'react-native-size-matters';
+import { useTranslation } from 'react-i18next';
 
 const AgentIntroScreen = () => {
-    
+  const { t } = useTranslation();
   const goToLoginViaPhoneNumber = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
@@ -37,20 +38,20 @@ const AgentIntroScreen = () => {
           <View style={[styles.introSection, { alignItems: 'flex-start' }]}>
             <View style={styles.titleRow}>
               <AppText
-                text="Hi, I’m "
+                text={t('auth.agent_intro.greeting_1')}
                 fontSize={32}
                 type="Regular"
                 color={Colors.BLACK}
               />
               <AppText
-                text="Agent A.I."
+                text={t('auth.agent_intro.agent_name')}
                 fontSize={32}
                 type="SemiBold"
                 color={Colors.PRIMARY_TEAL}
               />
             </View>
             <AppText
-              text="Let’s get you started."
+              text={t('auth.agent_intro.subtitle')}
               fontSize={32}
               type="Regular"
               color={Colors.BLACK}
@@ -58,7 +59,7 @@ const AgentIntroScreen = () => {
             />
 
             <AppText
-              text="I’m your dedicated expert to guide you from scratch; from creating your listing to securing your first booking. No experience needed."
+              text={t('auth.agent_intro.description')}
               textAlign="left"
               color={Colors.DARK_1C}
               mt={29}
@@ -79,7 +80,7 @@ const AgentIntroScreen = () => {
           {/* Action Button */}
           <AppButton
             mt={62}
-            title="Start my Setup"
+            title={t('auth.agent_intro.start_setup')}
             style={styles.connectBtn}
             onPress={goToLoginViaPhoneNumber}
             color='#FFFFFF'

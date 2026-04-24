@@ -13,6 +13,7 @@ import { useRoute } from '@react-navigation/native';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { useTranslation } from 'react-i18next';
 
 const AssignChatScreen = () => {
   const route = useRoute<any>();
@@ -24,6 +25,7 @@ const AssignChatScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
 
 
+  const { t } = useTranslation();
   const {
     userManagement,
     handleAssignUser,
@@ -128,7 +130,7 @@ const AssignChatScreen = () => {
         {/* Title Section */}
         <View style={styles.titleContainer}>
           <AppText
-            text="Assign chat to users"
+            text={t('app.assign_chat.title')}
             fontSize={28}
             type="Medium"
             color={Colors.BLACK}
@@ -150,7 +152,7 @@ const AssignChatScreen = () => {
           contentContainerStyle={styles.listContainer}
           isLoading={isLoading}
           onRefresh={refetch}
-          listEmptyText="No users found for this listing"
+          listEmptyText={t('app.assign_chat.empty_text')}
         />
 
         {/* <ConfirmAction
@@ -174,7 +176,7 @@ const AssignChatScreen = () => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <AppText
-                text={isSelectedUserAssigned ? "Unassign User" : `Assign this chat to ${selectedUser?.name}?`}
+                text={isSelectedUserAssigned ? t('app.assign_chat.unassign_title') : t('app.assign_chat.assign_title', { name: selectedUser?.name })}
                 fontSize={17}
                 type="Bold"
                 textAlign="center"
@@ -183,17 +185,16 @@ const AssignChatScreen = () => {
               <AppText
                 text={
                   isSelectedUserAssigned
-                    // ? `Do you want to unassign ${selectedUser?.name} from this chat?`
-                    ? `Are you sure you want to unassign ${selectedUser?.name} from this task/chat?`
-                    : `Are you sure you want to assign this task/chat to ${selectedUser?.name}?`
+                    ? t('app.assign_chat.unassign_confirm', { name: selectedUser?.name })
+                    : t('app.assign_chat.assign_confirm', { name: selectedUser?.name })
                 }
                 fontSize={16}
                 textAlign="center"
                 mb={25}
               />
               <View style={styles.modalButtons}>
-                <AppButton title='Cancel' onPress={() => setModalVisible(false)} variant='secondary' style={{ width: Metrics.scale(160) }} />
-                <AppButton title={isLoadingRemoved ? "Wait..." : (isSelectedUserAssigned ? 'Unassign' : 'Confirm')} onPress={handleConfirmAction} style={{ width: Metrics.scale(160) }} />
+                <AppButton title={t('app.assign_chat.cancel')} onPress={() => setModalVisible(false)} variant='secondary' style={{ width: Metrics.scale(160) }} />
+                <AppButton title={isLoadingRemoved ? t('app.assign_chat.wait') : (isSelectedUserAssigned ? t('app.assign_chat.unassign') : t('app.assign_chat.confirm'))} onPress={handleConfirmAction} style={{ width: Metrics.scale(160) }} />
               </View>
             </View>
           </View>

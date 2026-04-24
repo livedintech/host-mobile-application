@@ -10,9 +10,11 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const AddAIPricingScreen = () => {
   const { control, errors, handleSubmit, onSave, isLoading } = useAIPricingContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -29,16 +31,16 @@ const AddAIPricingScreen = () => {
             <CircularProgress percentage={87} size={48} strokeWidth={4} />
           </View>
 
-          <AppText text="Add AI Pricing" fontSize={32} type="Bold" mt={35} />
+          <AppText text={t('app.ai_pricing.title')} fontSize={32} type="Bold" mt={35} />
 
           {/* Form Fields */}
           <View style={styles.formGroup}>
             <InputField 
                 name="maximum_price" 
-                label="Maximum Price" 
-                control={control as any} 
-                errors={errors} 
-                placeholder="4%" 
+                label={t('app.ai_pricing.max_price_label')}
+                control={control as any}
+                errors={errors}
+                placeholder={t('app.ai_pricing.price_placeholder')} 
                 keyboardType="numeric"
             />
             
@@ -46,10 +48,10 @@ const AddAIPricingScreen = () => {
             
             <InputField 
                 name="minimum_price" 
-                label="Minimum Price" 
-                control={control as any} 
-                errors={errors} 
-                placeholder="4%" 
+                label={t('app.ai_pricing.min_price_label')}
+                control={control as any}
+                errors={errors}
+                placeholder={t('app.ai_pricing.price_placeholder')} 
                 keyboardType="numeric"
             />
           </View>
@@ -57,15 +59,15 @@ const AddAIPricingScreen = () => {
 
         {/* Action Buttons */}
         <View style={styles.footer}>
-          <AppButton 
-            title="Next" 
-            variant="secondary" 
+          <AppButton
+            title={t('app.ai_pricing.next')}
+            variant="secondary"
             onPress={handleSubmit((d) => onSave(d, false))} 
             loading={isLoading} 
           />
-          <AppButton 
-            title="Save & Exit" 
-            mt={12} 
+          <AppButton
+            title={t('app.ai_pricing.save_exit')}
+            mt={12}
             onPress={handleSubmit((d) => onSave(d, true))} 
             disabled={isLoading} 
           />

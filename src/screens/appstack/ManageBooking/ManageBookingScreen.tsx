@@ -21,6 +21,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const TABS = ['Airbnb', 'Gathern', 'Booking.com'] as const;
 type TabType = typeof TABS[number];
@@ -136,6 +137,7 @@ const ManageBookingScreen = () => {
     listingOptions,
   } = useManageBookingContainer();
   const { user } = useAuthStore();
+  const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
   const totalAccounts = connectedAccounts?.length ?? 0;
 
@@ -171,7 +173,7 @@ const ManageBookingScreen = () => {
           <View style={styles.noAccountContainer}>
             <Svgicons path="noAccountFound" size={258} />
             <AppText
-              text="No Account Found"
+              text={t('app.manage_booking.no_account_title')}
               fontSize={28}
               type="SemiBold"
               color={Colors.BLACK}
@@ -179,7 +181,7 @@ const ManageBookingScreen = () => {
               mt={20}
             />
             <AppText
-              text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+              text={t('app.manage_booking.no_account_desc')}
               fontSize={12}
               color={Colors.DARK_CHARCOAL_OPACITY}
               textAlign="center"
@@ -190,7 +192,7 @@ const ManageBookingScreen = () => {
 
           <View style={styles.footer}>
             <AppButton
-              title="Connect Accounts"
+              title={t('app.manage_booking.connect_accounts')}
               onPress={() => navigate(NavigationRoutes.APP_STACK.CONNECT_OTA_PLATFORMS)}
               backgroundColor={Colors.TEAL_PRIMARY_ALT}
               borderColor="transparent"
@@ -267,7 +269,7 @@ const ManageBookingScreen = () => {
             <View style={styles.tabEmptyContainer}>
               <Svgicons path="noAccountFound" size={200} />
               <AppText
-                text={`No ${selectedTab} Account`}
+                text={t('app.manage_booking.no_tab_account', { tab: selectedTab })}
                 fontSize={22}
                 type="SemiBold"
                 color={Colors.BLACK}
@@ -281,7 +283,7 @@ const ManageBookingScreen = () => {
         {/* FOOTER */}
         <View style={styles.footer}>
           <AppButton
-            title={hasAccounts ? `+ Add Another ${selectedTab} Account` : `Connect ${selectedTab} Account`}
+            title={hasAccounts ? t('app.manage_booking.add_account', { tab: selectedTab }) : t('app.manage_booking.connect_account', { tab: selectedTab })}
             onPress={() => handleConnect(selectedTab)}
             loading={isPending}
             backgroundColor={Colors.TEAL_PRIMARY_ALT}

@@ -11,8 +11,10 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import CreateTaskContainer from '../../container/CreateTaskContainer/CreateTaskContainer';
+import { useTranslation } from 'react-i18next';
 
 const RecurringTaskScreen = () => {
+  const { t } = useTranslation();
   const { 
     transformedListingCleaning, 
     transformedVendor, 
@@ -43,7 +45,7 @@ const RecurringTaskScreen = () => {
         >
           <View style={styles.titleContainer}>
             <AppText
-              text="Set up Recurring Cleaning Schedule"
+              text={t('app.task_management.recurring_title')}
               fontSize={28}
               type="Bold"
               lineHeight={32}
@@ -51,7 +53,7 @@ const RecurringTaskScreen = () => {
               color={Colors.BLACK}
             />
             <AppText
-              text="Select the listing and assign a team member. This cleaning task is set up once and will automatically appear in task management for every new booking."
+              text={t('app.task_management.recurring_body')}
               fontSize={14}
               color={Colors.DARK_CHARCOAL_OPACITY_80}
               lineHeight={20}
@@ -66,7 +68,7 @@ const RecurringTaskScreen = () => {
               errors={errors}
               label="Listing Selection"
               data={transformedListingCleaning}
-              placeholder="Select Listing"
+              placeholder={t('app.task_management.listing_placeholder')}
               rules={{ required: 'Please select a listing' }}
             />
 
@@ -76,7 +78,7 @@ const RecurringTaskScreen = () => {
               control={control}
               errors={errors}
               data={transformedVendor}
-              placeholder="Select User"
+              placeholder={t('app.task_management.select_user')}
               rules={{ required: 'Assigning a user is required' }}
               disabled={isLoadingCleaning}
             />
@@ -87,7 +89,7 @@ const RecurringTaskScreen = () => {
                 color={Colors.DARK_CHARCOAL_OPACITY_80}
                 lineHeight={18}
               >
-                Select a user to continue. If you can’t find the user, create
+                Select a user to continue. If you can't find the user, create
                 one in More →{' '}
                 <AppText
                   text="User Management."

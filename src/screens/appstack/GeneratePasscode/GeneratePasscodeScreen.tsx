@@ -10,8 +10,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const GeneratePasscodeScreen = () => {
+  const { t } = useTranslation();
   const { type, control, errors, handleSubmit, instructionText, isLoading } =
     useGeneratePasscodeContainer();
 
@@ -26,35 +28,35 @@ const GeneratePasscodeScreen = () => {
           <View style={styles.titleWrapper}>
             {type === 'Timed' ? (
               <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
-                Enter{' '}
+                {t('app.generate_passcode.enter_prefix')}{' '}
                 <AppText
-                  text="Passcode"
+                  text={t('app.generate_passcode.passcode')}
                   fontSize={30}
                   type="Medium"
                   color={Colors.PRIMARY_TEAL}
                 />{' '}
-                Details
+                {t('app.generate_passcode.details_suffix')}
               </AppText>
             ) : (
               <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
-                Enter your{' '}
+                {t('app.generate_passcode.enter_your')}{' '}
                 <AppText
-                  text="Code"
+                  text={t('app.generate_passcode.code')}
                   fontSize={30}
                   type="Medium"
                   color={Colors.PRIMARY_TEAL}
                 />{' '}
-                Name
+                {t('app.generate_passcode.name_suffix')}
               </AppText>
             )}
           </View>
           <View style={styles.form}>
             <InputField
-              label="Name*"
+              label={t('app.generate_passcode.name_label')}
               name="name"
               control={control}
               errors={errors}
-              placeholder="Cleaner Code"
+              placeholder={t('app.generate_passcode.name_placeholder')}
               // If your InputField supports glassy style, you can pass it here
             />
 
@@ -64,8 +66,8 @@ const GeneratePasscodeScreen = () => {
                   name="startDate"
                   control={control}
                   errors={errors}
-                  label="Select Start Date*"
-                  placeholder="mm/dd/yyyy"
+                  label={t('app.generate_passcode.start_date_label')}
+                  placeholder={t('app.generate_passcode.date_placeholder')}
                   mode="date"
                   rightIcon={
                     <Svgicons path="calendar" size={20} color={Colors.BLACK} />
@@ -76,8 +78,8 @@ const GeneratePasscodeScreen = () => {
                   name="startTime"
                   control={control}
                   errors={errors}
-                  label="Select Start time*"
-                  placeholder="-- : --"
+                  label={t('app.generate_passcode.start_time_label')}
+                  placeholder={t('app.generate_passcode.time_placeholder')}
                   mode="time"
                   rightIcon={
                     <Svgicons path="Clock" size={20} color={Colors.BLACK} />
@@ -88,8 +90,8 @@ const GeneratePasscodeScreen = () => {
                   name="endDate"
                   control={control}
                   errors={errors}
-                  label="Select End Date*"
-                  placeholder="mm/dd/yyyy"
+                  label={t('app.generate_passcode.end_date_label')}
+                  placeholder={t('app.generate_passcode.date_placeholder')}
                   mode="date"
                   rightIcon={
                     <Svgicons path="calendar" size={20} color={Colors.BLACK} />
@@ -100,8 +102,8 @@ const GeneratePasscodeScreen = () => {
                   name="endTime"
                   control={control}
                   errors={errors}
-                  label="Select End Time*"
-                  placeholder="-- : --"
+                  label={t('app.generate_passcode.end_time_label')}
+                  placeholder={t('app.generate_passcode.time_placeholder')}
                   mode="time"
                   rightIcon={
                     <Svgicons path="Clock" size={20} color={Colors.BLACK} />
@@ -120,7 +122,7 @@ const GeneratePasscodeScreen = () => {
 
           <View style={styles.footer}>
             <AppButton
-              title="Generate Passcode"
+              title={t('app.generate_passcode.generate_btn')}
               onPress={handleSubmit}
               backgroundColor={Colors.PRIMARY_TEAL}
               color={Colors.WHITE}

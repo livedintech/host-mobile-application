@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -93,9 +94,9 @@ const PreActivity = ({ route }: any) => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <AppText text="Pre-activity Preview" fontSize={28} type="Bold" mt={20} mb={10} />
+          <AppText text={t('app.pre_activity_screen.title')} fontSize={28} type="Bold" mt={20} mb={10} />
           <AppText 
-            text="View the uploaded photos to check the condition before the task begins." 
+            text={t('app.pre_activity_screen.description')}
             fontSize={14} 
             color={Colors.DARK_CHARCOAL_OPACITY}
             lineHeight={20}
@@ -112,7 +113,7 @@ const PreActivity = ({ route }: any) => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-               <AppText text="No media uploaded for this task." color={Colors.DARK_CHARCOAL} />
+               <AppText text={t('app.pre_activity_screen.no_media')} color={Colors.DARK_CHARCOAL} />
             </View>
           }
         />

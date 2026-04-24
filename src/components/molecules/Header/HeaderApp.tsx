@@ -51,7 +51,7 @@ const HeaderApp = ({
       <View style={styles.headerRow}>
         {isLogo && (
           <AppText
-            text="Livedin"
+            text={t('app.header.brand')}
             fontSize={32}
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}
@@ -105,7 +105,7 @@ const HeaderApp = ({
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
               <Pressable style={styles.getStartedBtn} onPress={getStarted}>
-                <AppText text="Get Started" fontSize={12} type="Medium" />
+                <AppText text={t('app.header.get_started')} fontSize={12} type="Medium" />
               </Pressable>
             </GradientBorder>
           )}

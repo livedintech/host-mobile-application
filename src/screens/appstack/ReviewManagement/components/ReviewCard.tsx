@@ -9,6 +9,7 @@ import { ReviewItem } from '../containers/useFetchReviews';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 interface ReviewCardProps {
   item: ReviewItem;
@@ -31,6 +32,7 @@ const ReviewCard = ({
   hostRating = null,
   hasGuestRating = null,
 }: ReviewCardProps) => {
+  const { t } = useTranslation();
   const guestRating = item.overall_score || 0;
 
  
@@ -87,7 +89,7 @@ const ReviewCard = ({
         /> */}
 
         <AppText
-          text="Booking Dates"
+          text={t('app.review_card.booking_dates')}
           fontSize={14}
           type="Bold"
           color={Colors.BLACK}
@@ -107,7 +109,7 @@ const ReviewCard = ({
             <Svgicons path="guestExpIcon" size={30} />
           </View>
           <AppText
-            text="Guest Experience Rating"
+            text={t('app.review_card.guest_experience')}
             fontSize={14}
             type="Bold"
             color={Colors.PINE_FOREST}
@@ -130,7 +132,7 @@ const ReviewCard = ({
                   style={styles.gradientBtnInner}
                 >
                   <AppText
-                    text="View Details"
+                    text={t('app.review_card.view_details')}
                     fontSize={13}
                     color={Colors.BLACK}
                   />
@@ -138,7 +140,7 @@ const ReviewCard = ({
               </GradientBorder>
 
               <AppButton
-                title="Talk To Guest"
+                title={t('app.review_card.talk_to_guest')}
                 onPress={onTalkToGuest}
                 color={Colors.WHITE}
                 backgroundColor={Colors.PRIMARY_TEAL}
@@ -150,7 +152,7 @@ const ReviewCard = ({
         ) : (
           <View>
             <AppText
-              text="The guest hasn't submitted a review yet. Reach out via chat."
+              text={t('app.review_card.no_review_msg')}
               fontSize={12}
               color={Colors.SUPER_GREY}
               mt={8}
@@ -165,7 +167,7 @@ const ReviewCard = ({
                 style={styles.gradientBtnInner}
               >
                 <AppText
-                  text="Request Rating"
+                  text={t('app.review_card.request_rating')}
                   fontSize={12}
                   color={Colors.PINE_FOREST}
                 />
@@ -183,7 +185,7 @@ const ReviewCard = ({
               <Svgicons path="guestExpIcon" size={30} />
             </View>
             <AppText
-              text="Guest Rating - By You"
+              text={t('app.review_card.guest_rating_by_you')}
               fontSize={14}
               type="Bold"
               color={Colors.PINE_FOREST}
@@ -204,7 +206,7 @@ const ReviewCard = ({
                 style={styles.gradientBtnInner}
               >
                 <AppText
-                  text="Rate Your Guest"
+                  text={t('app.review_card.rate_guest')}
                   fontSize={12}
                   color={Colors.PINE_FOREST}
                 />

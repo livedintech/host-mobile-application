@@ -11,6 +11,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import useBookingCancelPoliciesContainer from './BookingCancelPoliciesContainer';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const AddBookingCancelPoliciesScreen = () => {
   const {
@@ -18,6 +19,7 @@ const AddBookingCancelPoliciesScreen = () => {
     handleExport, handleExportSubmit, bottomSheetVisible, setBottomSheetVisible,
     otaControl, otaErrors, handleOtaSubmit, listingOptions, isPendingExporting,
   } = useBookingCancelPoliciesContainer();
+  const { t } = useTranslation();
 
   const policyOptions = [
     { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
@@ -45,7 +47,7 @@ const AddBookingCancelPoliciesScreen = () => {
           </View>
 
           <AppText
-            text={isEdit ? "Booking cancel policies" : "Add booking cancel policies"}
+            text={isEdit ? t('app.booking_cancel_policies.title_edit') : t('app.booking_cancel_policies.title_new')}
             fontSize={28}
             type="Bold"
             mt={30}
@@ -53,13 +55,13 @@ const AddBookingCancelPoliciesScreen = () => {
           />
 
           <View style={styles.formGroup}>
-            <DropdownField name="airbnb_policy" label="Airbnb" control={control as any} errors={errors} data={policyOptions} placeholder="Flexible - Guests can cancel at least 24.." />
+            <DropdownField name="airbnb_policy" label="Airbnb" control={control as any} errors={errors} data={policyOptions} placeholder={t('app.booking_cancel_policies.flexible_placeholder')} />
             <View style={styles.fieldGap} />
-            <DropdownField name="airbnb_longterm_policy" label="Airbnb Long-term" control={control as any} errors={errors} data={longTermOptions} placeholder="Long-term with grace period - To recie..." />
+            <DropdownField name="airbnb_longterm_policy" label="Airbnb Long-term" control={control as any} errors={errors} data={longTermOptions} placeholder={t('app.booking_cancel_policies.longterm_placeholder')} />
             <View style={styles.fieldGap} />
-            <DropdownField name="gathern_policy" label="Gathern" control={control as any} errors={errors} data={policyOptions} placeholder="Flexible - Guests can cancel at least 24.." />
+            <DropdownField name="gathern_policy" label="Gathern" control={control as any} errors={errors} data={policyOptions} placeholder={t('app.booking_cancel_policies.flexible_placeholder')} />
             <View style={styles.fieldGap} />
-            <DropdownField name="booking_com_policy" label="Booking.com" control={control as any} errors={errors} data={policyOptions} placeholder="Flexible - Guests can cancel at least 24.." />
+            <DropdownField name="booking_com_policy" label="Booking.com" control={control as any} errors={errors} data={policyOptions} placeholder={t('app.booking_cancel_policies.flexible_placeholder')} />
           </View>
         </ScrollView>
 
@@ -68,7 +70,7 @@ const AddBookingCancelPoliciesScreen = () => {
           {/* ✅ Export — sirf edit mode mein */}
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.booking_cancel_policies.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -77,14 +79,14 @@ const AddBookingCancelPoliciesScreen = () => {
           {!isEdit && (
             <AppButton
               backgroundColor={Colors.WHITE}
-              title="Next"
+              title={t('app.booking_cancel_policies.next')}
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.booking_cancel_policies.save_exit')}
             mt={12}
             onPress={handleSubmit(onSaveExit)}
             disabled={isLoading}
@@ -101,7 +103,7 @@ const AddBookingCancelPoliciesScreen = () => {
           <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
-              <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+              <AppText text={t('app.booking_cancel_policies.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
                 <DropdownField
                   name="ota_account"
@@ -109,12 +111,12 @@ const AddBookingCancelPoliciesScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.booking_cancel_policies.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.booking_cancel_policies.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

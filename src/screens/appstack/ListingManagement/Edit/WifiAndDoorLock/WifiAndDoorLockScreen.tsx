@@ -13,6 +13,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import useWifiAndDoorLockContainer from './WifiAndDoorLockContainer';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const WifiAndDoorLockScreen = () => {
   const {
@@ -34,6 +35,7 @@ const WifiAndDoorLockScreen = () => {
     listingOptions,
     isPendingExporting,
   } = useWifiAndDoorLockContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -52,9 +54,9 @@ const WifiAndDoorLockScreen = () => {
         </View>
 
         {/* Title */}
-        <AppText text="Wifi & Door Lock" fontSize={32} type="Bold" color={Colors.BLACK} mt={41} mb={15} />
+        <AppText text={t('app.wifi_door_lock.title')} fontSize={32} type="Bold" color={Colors.BLACK} mt={41} mb={15} />
         <AppText
-          text="Fill these details so AI Auto Reply can assist guests on your behalf."
+          text={t('app.wifi_door_lock.subtitle')}
           fontSize={12}
           color={Colors.DARK_CHARCOAL_OPACITY}
           lineHeight={22}
@@ -63,18 +65,18 @@ const WifiAndDoorLockScreen = () => {
 
         {/* Form */}
         <View style={styles.form}>
-          <InputField name="wifi_username" label="Wifi Username" control={control} errors={errors} placeholder="Wifi_Us" />
+          <InputField name="wifi_username" label={t('app.wifi_door_lock.wifi_username_label')} control={control} errors={errors} placeholder={t('app.wifi_door_lock.wifi_username_placeholder')} />
           <View style={{ marginTop: 20 }}>
-            <InputField name="wifi_password" label="Wifi Password" control={control} errors={errors} placeholder="Wifi123456" />
+            <InputField name="wifi_password" label={t('app.wifi_door_lock.wifi_password_label')} control={control} errors={errors} placeholder={t('app.wifi_door_lock.wifi_password_placeholder')} />
           </View>
           <View style={{ marginTop: 20 }}>
-            <DropdownField name="door_lock_code" label="Door Lock Code" control={control} errors={errors} data={lockOptions} placeholder="Select Lock" />
+            <DropdownField name="door_lock_code" label={t('app.wifi_door_lock.door_lock_label')} control={control} errors={errors} data={lockOptions} placeholder={t('app.wifi_door_lock.door_lock_placeholder')} />
           </View>
 
           <View style={styles.helperTextRow}>
-            <AppText text="Select a lock to continue. If no lock appears, set up your TTLock in More → " fontSize={13} color={Colors.DARK_CHARCOAL_OPACITY} lineHeight={20} />
+            <AppText text={t('app.wifi_door_lock.lock_hint') + ' '} fontSize={13} color={Colors.DARK_CHARCOAL_OPACITY} lineHeight={20} />
             <ButtonView onPress={handleSmartLockPress}>
-              <AppText text="Smart Lock." fontSize={13} color={Colors.EMERALD_TEAL} type="Medium" style={styles.smartLockLink} />
+              <AppText text={t('app.wifi_door_lock.smart_lock_link')} fontSize={13} color={Colors.EMERALD_TEAL} type="Medium" style={styles.smartLockLink} />
             </ButtonView>
           </View>
         </View>
@@ -85,13 +87,13 @@ const WifiAndDoorLockScreen = () => {
       <View style={styles.footer}>
         {/* ✅ Export button */}
         <AppButton
-          title="Export"
+          title={t('app.wifi_door_lock.export')}
           onPress={handleExport}
           variant='secondary'
           mb={12}
         />
         <AppButton
-          title="Save & Exit"
+          title={t('app.wifi_door_lock.save_exit')}
           onPress={handleSubmit(onSaveExit)}
           loading={isLoading}
         />
@@ -107,7 +109,7 @@ const WifiAndDoorLockScreen = () => {
         <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
           <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
             <View style={styles.handleBar} />
-            <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+            <AppText text={t('app.wifi_door_lock.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
             <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
               <DropdownField
                 name="ota_account"
@@ -115,12 +117,12 @@ const WifiAndDoorLockScreen = () => {
                 errors={otaErrors}
                 label=""
                 data={listingOptions}
-                placeholder="Select Account"
+                placeholder={t('app.wifi_door_lock.select_account')}
                 dropdownPosition="top"
               />
             </View>
             <AppButton
-              title="Export"
+              title={t('app.wifi_door_lock.export')}
               onPress={handleOtaSubmit(handleExportSubmit)}
               mt={20}
               loading={isPendingExporting}

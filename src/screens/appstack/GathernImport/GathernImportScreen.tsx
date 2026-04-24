@@ -15,6 +15,7 @@ import { goBack } from '@/services/navigationService';
 import InputField from '@/components/molecules/Input/InputField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -31,6 +32,7 @@ const PropertyCard = ({
   availability,
   setValue, // ✅ ADDED
 }: any) => {
+  const { t } = useTranslation();
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
   const showRateInput = !selectedLivedinId;
@@ -57,12 +59,12 @@ const PropertyCard = ({
 
       <View style={styles.infoSection}>
         <View style={styles.infoRow}>
-          <AppText text="Gathern ID:  " type="Regular" color={Colors.BLACK} fontSize={14} />
+          <AppText text={t('app.gathern_import.gathern_id')} type="Regular" color={Colors.BLACK} fontSize={14} />
           <AppText text={String(id)} type="Bold" color={Colors.BLACK} fontSize={14} />
         </View>
 
         <View style={styles.infoRow}>
-          <AppText text="Livedin ID:  " type="Regular" color={Colors.BLACK} fontSize={14} />
+          <AppText text={t('app.gathern_import.livedin_id')} type="Regular" color={Colors.BLACK} fontSize={14} />
           <AppText
             text={selectedLivedinId ? String(selectedLivedinId) : '-'}
             type="Bold"
@@ -77,9 +79,9 @@ const PropertyCard = ({
           name={fieldName}
           control={control}
           errors={errors}
-          label="Existing Listing:"
+          label={t('app.gathern_import.existing_listing')}
           data={listingOptions}
-          placeholder="Select.."
+          placeholder={t('app.gathern_import.select_placeholder')}
         />
       </View>
 
@@ -89,15 +91,15 @@ const PropertyCard = ({
             name={rateFieldName}
             control={control}
             errors={errors}
-            label="Rate"
-            placeholder="Enter rate"
+            label={t('app.gathern_import.rate_label')}
+            placeholder={t('app.gathern_import.rate_placeholder')}
             keyboardType="numeric"
           />
         </View>
       )}
 
       <AppButton
-        title={isMap ? 'Unmapped Listing' : 'Map Listing'}
+        title={isMap ? t('app.gathern_import.unmap_btn') : t('app.gathern_import.map_btn')}
         onPress={() =>
           handleIndividualImport(
             fieldName,
@@ -117,6 +119,7 @@ const PropertyCard = ({
 };
 
 const GathernImportScreen = () => {
+  const { t } = useTranslation();
   const {
     control,
     errors,
@@ -170,7 +173,7 @@ const GathernImportScreen = () => {
 
         <View style={styles.header}>
           <AppText
-            text="Gathern Properties"
+            text={t('app.gathern_import.title')}
             fontSize={28}
             type="Bold"
             color={Colors.BLACK}
@@ -192,7 +195,7 @@ const GathernImportScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Next"
+            title={t('app.gathern_import.next')}
             onPress={handleSubmit(onNext)}
             backgroundColor="#00A68A"
             borderColor="transparent"

@@ -20,10 +20,12 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import useHubspotCalendarContainer from './HubspotCalendarContainer';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
 
 const CalendarScreen = ({ route }: any) => {
+  const { t } = useTranslation();
   const userInfo = route?.params?.userInfo!;
   const panY = useRef(new Animated.Value(vs(500))).current;
 
@@ -111,11 +113,11 @@ const CalendarScreen = ({ route }: any) => {
               color={Colors.BLACK}
               lineHeight={34}
             >
-              Please select a{' '}
+              {t('auth.hubspot_calendar.title_1')}
               <AppText type="Bold" fontSize={28} color={FIGMA_TEAL}>
-                date
-              </AppText>{' '}
-              so our agent can schedule a meeting with you
+                {t('auth.hubspot_calendar.title_highlight')}
+              </AppText>
+              {t('auth.hubspot_calendar.title_2')}
             </AppText>
           </View>
 
@@ -125,7 +127,7 @@ const CalendarScreen = ({ route }: any) => {
               <View style={styles.calendarLoader}>
                 <ActivityIndicator size="large" color={FIGMA_TEAL} />
                 <AppText
-                  text="Loading available dates..."
+                  text={t('auth.hubspot_calendar.loading_dates')}
                   fontSize={13}
                   color="#666"
                   style={{ marginTop: vs(8) }}
@@ -194,7 +196,7 @@ const CalendarScreen = ({ route }: any) => {
         {/* ── Next button — always visible at bottom ── */}
         <View style={styles.mainFooter}>
           <AppButton
-            title="Next"
+            title={t('auth.hubspot_calendar.next')}
             onPress={openSheet}
             disabled={!selectedDate}
           />
@@ -230,7 +232,7 @@ const CalendarScreen = ({ route }: any) => {
                     <Svgicons path="Clock" size={20} color={Colors.BLACK} />
                   </View>
                   <AppText
-                    text="Select Any One Available Time Slot"
+                    text={t('auth.hubspot_calendar.select_slot')}
                     type="Bold"
                     fontSize={14}
                     color="#333"
@@ -281,7 +283,7 @@ const CalendarScreen = ({ route }: any) => {
 
               <View style={styles.sheetFooter}>
                 <AppButton
-                  title="Confirm"
+                  title={t('auth.hubspot_calendar.confirm')}
                   onPress={handleConfirmBooking}
                   loading={isBooking}
                   disabled={!selectedSlot}

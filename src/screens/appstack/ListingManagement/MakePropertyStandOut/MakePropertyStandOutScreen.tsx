@@ -8,9 +8,10 @@ import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import { useTranslation } from 'react-i18next';
 
 const MakePropertyStandOutScreen = () => {
-  
+  const { t } = useTranslation();
   const onNext = () => {
     navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS); 
   };
@@ -33,16 +34,16 @@ const MakePropertyStandOutScreen = () => {
           <Svgicons path='house_outline' size={326} />
 
           {/* Text Content */}
-          <AppText text="Step 2" fontSize={18} type="Medium" mt={40} />
-          <AppText 
-            text="Make your property stand out" 
-            fontSize={32} 
-            type="Bold" 
+          <AppText text={t('app.make_standout.step_label')} fontSize={18} type="Medium" mt={40} />
+          <AppText
+            text={t('app.make_standout.title')}
+            fontSize={32}
+            type="Bold"
             lineHeight={40}
-            mt={10} 
+            mt={10}
           />
           <AppText
-            text="In this step, upload at least five photos, and create a clear, attractive title and description to showcase your space." 
+            text={t('app.make_standout.description')}
             fontSize={15} 
             color={Colors.DARK_CHARCOAL_OPACITY} 
             mt={25}
@@ -53,8 +54,8 @@ const MakePropertyStandOutScreen = () => {
         {/* Footer Button */}
         <View style={styles.footer}>
           <AppButton 
-            title="Next" 
-            onPress={onNext} 
+            title={t('app.make_standout.next')}
+            onPress={onNext}
           />
         </View>
       </View>

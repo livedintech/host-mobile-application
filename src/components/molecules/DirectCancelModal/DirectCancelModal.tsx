@@ -10,6 +10,7 @@ import { vs, s, ms } from 'react-native-size-matters';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +27,7 @@ const DirectCancelModal = ({
   onConfirm,
   isLoading,
 }: ConfirmProps) => {
+  const { t } = useTranslation();
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
@@ -35,7 +37,7 @@ const DirectCancelModal = ({
 
         <View style={styles.whiteCard}>
           <AppText
-            text="Are you sure you want to cancel reservation?"
+            text={t('app.direct_cancel_modal.confirm_text')}
             type="Bold"
             fontSize={ms(17)}
             mb={vs(12)}
@@ -44,7 +46,7 @@ const DirectCancelModal = ({
           />
 
           <AppText
-            text="Once cancelled, this booking will be removed"
+            text={t('app.direct_cancel_modal.subtitle')}
             fontSize={ms(14)}
             textAlign="center"
             mb={vs(25)}

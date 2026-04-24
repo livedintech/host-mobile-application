@@ -6,8 +6,10 @@ import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useTranslation } from 'react-i18next';
 
 const StepTwo = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { start_date, end_date } = route.params || {};
@@ -38,7 +40,7 @@ const StepTwo = () => {
             mb={20} 
           />
           <AppText 
-            text="Since those dates aren't available, they'll remain blocked. If your availability info isn't correct, please update your calendar after you decline." 
+            text={t('app.decline_step2.description')}
             fontSize={16} 
             color="#333333" 
             lineHeight={22}
@@ -47,14 +49,14 @@ const StepTwo = () => {
 
         <View style={styles.footer}>
           <AppButton 
-            title="Cancel" 
-            variant="secondary" 
-            onPress={() => navigation.goBack()} 
+            title={t('app.decline_step2.cancel')}
+            variant="secondary"
+            onPress={() => navigation.goBack()}
             mb={12}
           />
           <AppButton 
-            title="Next" 
-            variant="primary" 
+            title={t('app.decline_step2.next')}
+            variant="primary"
             backgroundColor="#21AA8F"
             onPress={() => navigation.navigate(NavigationRoutes.APP_STACK.DECLINE_INQUIRY_STEP3_SCREEN, route.params)} 
           />

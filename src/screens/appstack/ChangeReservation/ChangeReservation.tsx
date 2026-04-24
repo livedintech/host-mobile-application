@@ -22,6 +22,7 @@ import ChangeReservationContainer from './ChangeReservationContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import InputField from '@/components/molecules/Input/InputField';
+import { useTranslation } from 'react-i18next';
 
 const ChangeReservation = () => {
   const {
@@ -33,6 +34,7 @@ const ChangeReservation = () => {
     handleSubmit,
     isUpdating,
   } = ChangeReservationContainer();
+  const { t } = useTranslation();
 
   const [showDetailsSheet, setShowDetailsSheet] = useState(false);
   const [showPriceSheet, setShowPriceSheet] = useState(false);
@@ -49,7 +51,7 @@ const ChangeReservation = () => {
     const end = watch('end_date');
 
     if (start && end && start === end) {
-      setDateError("Start and end date cannot be the same.");
+      setDateError(t('app.change_reservation.date_error'));
       return; // Stop execution
     }
 
@@ -71,7 +73,7 @@ const ChangeReservation = () => {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <AppText
-            text="What do you want to change?"
+            text={t('app.change_reservation.page_title')}
             type="Bold"
             fontSize={28}
             mb={vs(30)}
@@ -79,7 +81,7 @@ const ChangeReservation = () => {
 
           <DropdownField
             name="listing_id"
-            label="Change Listing"
+            label={t('app.change_reservation.change_listing')}
             control={control as any}
             errors={errors}
             data={listingOptions}
@@ -87,14 +89,14 @@ const ChangeReservation = () => {
 
           <GlassCard width="100%" style={styles.detailCard}>
             <View style={styles.cardHeader}>
-              <AppText text="Reservation Details" type="Bold" fontSize={16} />
+              <AppText text={t('app.change_reservation.reservation_details')} type="Bold" fontSize={16} />
               <ButtonView onPress={openDetailsSheet}>
                 <Svgicons path="pencil" size={20} />
               </ButtonView>
             </View>
             <View style={styles.row}>
               <View style={styles.column}>
-                <AppText text="Dates" fontSize={12} color={Colors.BLACK} />
+                <AppText text={t('app.change_reservation.dates')} fontSize={12} color={Colors.BLACK} />
                 <AppText
                   text={currentDates}
                   fontSize={14}
@@ -107,12 +109,12 @@ const ChangeReservation = () => {
 
           <GlassCard width="100%" style={styles.detailCard}>
             <View style={styles.cardHeader}>
-              <AppText text="Guest Charges" type="Bold" fontSize={16} />
+              <AppText text={t('app.change_reservation.guest_charges')} type="Bold" fontSize={16} />
               <ButtonView onPress={() => setShowPriceSheet(true)}>
                 <Svgicons path="pencil" size={20} />
               </ButtonView>
             </View>
-            <AppText text="Base Price" fontSize={12} color={Colors.BLACK} />
+            <AppText text={t('app.change_reservation.base_price')} fontSize={12} color={Colors.BLACK} />
             <AppText
               text={`SR${currentPrice}`}
               fontSize={14}
@@ -124,7 +126,7 @@ const ChangeReservation = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Send Request"
+            title={t('app.change_reservation.send_request')}
             backgroundColor={Colors.PRIMARY_TEAL}
             borderRadius={25}
             onPress={handleSubmit}
@@ -139,7 +141,7 @@ const ChangeReservation = () => {
             <View style={styles.bottomSheet}>
               <View style={styles.sheetHeader}>
                 <AppText
-                  text="Edit Reservation Details"
+                  text={t('app.change_reservation.edit_details_title')}
                   type="Medium"
                   fontSize={20}
                 />
@@ -150,7 +152,7 @@ const ChangeReservation = () => {
 
               <DateTimeInputField
                 name="start_date"
-                label="Start Date"
+                label={t('app.change_reservation.start_date')}
                 mode="date"
                 control={control as any}
                 errors={errors}
@@ -159,7 +161,7 @@ const ChangeReservation = () => {
 
               <DateTimeInputField
                 name="end_date"
-                label="End Date"
+                label={t('app.change_reservation.end_date')}
                 mode="date"
                 control={control as any}
                 errors={errors}
@@ -174,7 +176,7 @@ const ChangeReservation = () => {
               )}
 
               <AppButton
-                title="Save"
+                title={t('app.change_reservation.save')}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 onPress={handleSaveDetails}
                 mt={vs(10)}
@@ -194,7 +196,7 @@ const ChangeReservation = () => {
                 <View style={styles.bottomSheet}>
                   <View style={styles.sheetHeader}>
                     <AppText
-                      text="Edit Guest Charges"
+                      text={t('app.change_reservation.edit_charges_title')}
                       type="Bold"
                       fontSize={18}
                     />
@@ -205,27 +207,27 @@ const ChangeReservation = () => {
 
                   <InputField
                     name="basePrice"
-                    label="Base Price"
+                    label={t('app.change_reservation.base_price')}
                     control={control as any}
                     errors={errors}
-                    placeholder="SAR 500"
+                    placeholder={t('app.change_reservation.base_price_placeholder')}
                   />
 
                   <AppText
-                    text="SR499 - SR500 depending on promotions"
+                    text={t('app.change_reservation.price_hint')}
                     fontSize={12}
                     color={Colors.DARK_CHARCOAL}
                     mb={vs(5)}
                   />
                   <AppText
-                    text="Similar listings SR86 - SR129"
+                    text={t('app.change_reservation.similar_listings')}
                     fontSize={12}
                     color={Colors.DARK_CHARCOAL_OPACITY_74}
                     mb={vs(20)}
                   />
 
                   <AppButton
-                    title="Save"
+                    title={t('app.change_reservation.save')}
                     backgroundColor={Colors.PRIMARY_TEAL}
                     onPress={() => setShowPriceSheet(false)}
                   />

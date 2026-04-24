@@ -11,6 +11,7 @@ import { goBack } from '@/services/navigationService';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 const ActiveCodesScreen = () => {
   const {
@@ -22,6 +23,7 @@ const ActiveCodesScreen = () => {
     refetch,
     handleViewLogs,
   } = useActiveCodesContainer();
+  const { t } = useTranslation();
   console.log('currentData', currentData);
 
   const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
@@ -50,7 +52,7 @@ const ActiveCodesScreen = () => {
         )}
 
         <View style={styles.detailRow}>
-          <AppText text="Passcode: " fontSize={14} color={Colors.BLACK} />
+          <AppText text={t('app.active_codes.passcode_label')} fontSize={14} color={Colors.BLACK} />
           <AppText text={item.passcode} fontSize={14} color={Colors.BLACK} />
         </View>
 
@@ -66,7 +68,7 @@ const ActiveCodesScreen = () => {
         )}
 
         <View style={styles.detailRow}>
-          <AppText text="Code Status: " fontSize={14} color={Colors.BLACK} />
+          <AppText text={t('app.active_codes.status_label')} fontSize={14} color={Colors.BLACK} />
           <AppText
             text={item.status}
             fontSize={14}
@@ -91,13 +93,13 @@ const ActiveCodesScreen = () => {
           </ButtonView>
 
           <ButtonView style={styles.viewLogsBtn} onPress={handleViewLogs}>
-            <AppText text="View Logs" fontSize={12} color={Colors.BLACK} />
+            <AppText text={t('app.active_codes.view_logs')} fontSize={12} color={Colors.BLACK} />
           </ButtonView>
         </View>
         {/* Title */}
         <View style={styles.titleContainer}>
           <AppText
-            text="Active Codes"
+            text={t('app.active_codes.title')}
             fontSize={32}
             type="Bold"
             color={Colors.BLACK}
@@ -139,7 +141,7 @@ const ActiveCodesScreen = () => {
         {/* Footer Action */}
         <View style={styles.footer}>
           <AppButton
-            title="Generate New Passcode"
+            title={t('app.active_codes.generate_btn')}
             onPress={handleGenerateNew}
             backgroundColor="#00A68A" // Teal color from design
             color={Colors.WHITE}

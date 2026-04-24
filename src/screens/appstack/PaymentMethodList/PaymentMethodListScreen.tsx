@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { StyleSheet, View, Image, TextInput, Switch } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -9,6 +10,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 
 const PaymentMethodListScreen = () => {
+  const { t } = useTranslation();
   const {
     isSecure,
     setIsSecure,
@@ -50,7 +52,7 @@ const PaymentMethodListScreen = () => {
 
       {/* Card Number */}
       <AppText
-        text="Card Number"
+        text={t('app.payment_method_list.card_number')}
         fontSize={14}
         color={Colors.PINE_FOREST}
         mt={15}
@@ -70,7 +72,7 @@ const PaymentMethodListScreen = () => {
 
       {/* Token Type */}
       <AppText
-        text="Card Type"
+        text={t('app.payment_method_list.card_type')}
         fontSize={14}
         color={Colors.PINE_FOREST}
         mt={15}
@@ -85,7 +87,7 @@ const PaymentMethodListScreen = () => {
       {/* Default Switch */}
       <View style={styles.switchRow}>
         <AppText
-          text="Set as default"
+          text={t('app.payment_method_list.set_default')}
           fontSize={16}
           color={Colors.PINE_FOREST}
         />
@@ -111,7 +113,7 @@ const PaymentMethodListScreen = () => {
         contentContainerStyle={styles.scrollContent}
         ListFooterComponent={
           <AppButton
-            title="Add New Payment Method"
+            title={t('app.payment_method_list.add_new')}
             onPress={onAddNew}
             mt={!cards || cards.length === 0 ? 40 : 34}
           />

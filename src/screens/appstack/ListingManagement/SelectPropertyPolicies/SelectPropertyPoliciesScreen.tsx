@@ -13,15 +13,17 @@ import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import DropdownField from '@/components/molecules/Input/DropdownField';
-
-const POLICY_DATA = [
-  { id: 'smoking', label: 'Smoking Allowed', icon: 'smokingIcon' },
-  { id: 'parties', label: 'Parties Allowed', icon: 'partyIcon' },
-  { id: 'pets', label: 'Pets Allowed', icon: 'petIcon' },
-  { id: 'quiet_hours', label: 'Select Quiet Hours', icon: 'quietHoursIcon' },
-];
+import { useTranslation } from 'react-i18next';
 
 const SelectPropertyPoliciesScreen = () => {
+  const { t } = useTranslation();
+
+  const POLICY_DATA = [
+    { id: 'smoking', label: t('app.property_policies.smoking'), icon: 'smokingIcon' },
+    { id: 'parties', label: t('app.property_policies.parties'), icon: 'partyIcon' },
+    { id: 'pets', label: t('app.property_policies.pets'), icon: 'petIcon' },
+    { id: 'quiet_hours', label: t('app.property_policies.quiet_hours'), icon: 'quietHoursIcon' },
+  ];
   const {
     control,
     errors,
@@ -63,9 +65,9 @@ const SelectPropertyPoliciesScreen = () => {
             {!isEdit && <CircularProgress percentage={50} size={48} strokeWidth={4} />}
           </View>
 
-          <AppText text="Select property policies" fontSize={32} type="Bold" mt={30} pr={40} />
+          <AppText text={t('app.property_policies.title')} fontSize={32} type="Bold" mt={30} pr={40} />
           <AppText
-            text="Choose which policies guests are permitted to follow for this listing."
+            text={t('app.property_policies.subtitle')}
             fontSize={12}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={29}
@@ -95,14 +97,14 @@ const SelectPropertyPoliciesScreen = () => {
         {isEdit ? (
           <View style={styles.footer}>
             <AppButton
-              title="Export"
+              title={t('app.property_policies.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
               disabled={isLoading}
             />
             <AppButton
-              title="Save & Exit"
+              title={t('app.property_policies.save_exit')}
               mt={12}
               onPress={handleSubmit(onSaveExit)}
               disabled={isLoading || !isPolicySelected}
@@ -111,14 +113,14 @@ const SelectPropertyPoliciesScreen = () => {
         ) : (
           <View style={styles.footer}>
             <AppButton
-              title="Next"
+              title={t('app.property_policies.next')}
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
               disabled={!isPolicySelected}
             />
             <AppButton
-              title="Save & Exit"
+              title={t('app.property_policies.save_exit')}
               mt={12}
               onPress={handleSubmit(onSaveExit)}
               disabled={isLoading || !isPolicySelected}
@@ -131,24 +133,24 @@ const SelectPropertyPoliciesScreen = () => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <View style={styles.modalHeader}>
-                <AppText text="Select Quiet Hours" fontSize={20} type="Bold" />
+                <AppText text={t('app.property_policies.select_quiet_hours')} fontSize={20} type="Bold" />
                 <TouchableOpacity onPress={() => setShowTimeModal(false)}>
                   <Svgicons path="closeIcon" size={24} color={Colors.BLACK} />
                 </TouchableOpacity>
               </View>
               <View style={styles.modalBody}>
                 <DateTimeInputField
-                  name="quiet_hours_start" label="Start Time" mode="time"
+                  name="quiet_hours_start" label={t('app.property_policies.start_time')} mode="time"
                   control={control as any} errors={errors} placeholder="09:00 am"
                   rightIcon={<Svgicons path="ChevronDownIcon" size={14} />}
                 />
                 <DateTimeInputField
-                  name="quiet_hours_end" label="End Time" mode="time"
+                  name="quiet_hours_end" label={t('app.property_policies.end_time')} mode="time"
                   control={control as any} errors={errors} placeholder="09:00 am"
                   rightIcon={<Svgicons path="ChevronDownIcon" size={14} />}
                 />
                 <AppButton
-                  title="Save Quiet Hours"
+                  title={t('app.property_policies.save_quiet_hours')}
                   mt={10}
                   onPress={() => {
                     setSelectedPolicies(prev => [...new Set([...prev, 'quiet_hours'])]);
@@ -171,7 +173,7 @@ const SelectPropertyPoliciesScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.property_policies.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -184,12 +186,12 @@ const SelectPropertyPoliciesScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.property_policies.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.property_policies.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

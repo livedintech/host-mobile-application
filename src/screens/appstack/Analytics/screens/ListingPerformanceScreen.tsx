@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import {
   View,
@@ -12,6 +13,7 @@ import PerformanceCard from '../components/PerformanceCard';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 
 const ListingPerformanceScreen = () => {
+  const { t } = useTranslation();
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const {
     AnalyticsPerformance,
@@ -33,7 +35,7 @@ const ListingPerformanceScreen = () => {
   // Header component for the FlatList
   const ListHeader = () => (
     <AppText 
-      text="Listing Performance" 
+      text={t('app.analytics.listing_performance')} 
       type="Medium" 
       fontSize={26} 
       textAlign='left' 

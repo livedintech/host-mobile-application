@@ -9,6 +9,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack } from '@/services/navigationService';
 import useCreateEditListingHouseGuidelinesContainer from './useCreateEditListingHouseGuidelinesContainer';
+import { useTranslation } from 'react-i18next';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const CreateEditListingHouseGuidelinesScreen = () => {
@@ -24,6 +25,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
     houseRulesLength,
     checkoutInstructionsLength,
   } = useCreateEditListingHouseGuidelinesContainer();
+  const { t } = useTranslation();
 
   return (
      <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -42,7 +44,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
 
         {/* Title */}
         <View style={styles.titleRow}>
-          <AppText text="House Guidelines" fontSize={28} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
+          <AppText text={t('app.house_guidelines.title')} fontSize={28} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
           <Svgicons path="bookIcon" size={24} />
         </View>
 
@@ -52,7 +54,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
             name="arrival_guide"
             control={control}
             errors={errors}
-            label="Arrival Guide"
+            label={t('app.house_guidelines.arrival_label')}
             placeholder="Property Name: Olive Residency&#10;Address: Building 12, Al Noor Street, City Center&#10;Apartment Number: Unit 504&#10;Entry Access: Self check-in via smart lock.&#10;Access Code: Your unique access code will be shared before arrival.&#10;Parking: One reserved parking space is available for guests.&#10;Wi-Fi: High-speed internet is available inside the apartment."
             multiline={true}
             numberOfLines={8}
@@ -66,7 +68,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
             name="house_rules"
             control={control}
             errors={errors}
-            label="House Rules"
+            label={t('app.house_guidelines.rules_label')}
             placeholder="Please maintain a low noise level at all times.&#10;Please keep the apartment clean and tidy.&#10;Do not damage or remove any items from the apartment.&#10;Smoking is not allowed inside the apartment.&#10;Pets are not allowed unless approved in advance.&#10;Only registered guests are allowed to stay in the apartment."
             multiline={true}
             numberOfLines={8}
@@ -80,7 +82,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
             name="checkout_instructions"
             control={control}
             errors={errors}
-            label="Checkout Instructions"
+            label={t('app.house_guidelines.checkout_label')}
             placeholder="Please leave the apartment in a reasonable condition at check-out.&#10;Turn off all lights, air conditioning, and electrical appliances.&#10;Place used towels in the bathroom or laundry basket.&#10;Leave used bed linens on the bed.&#10;Do not leave food items open or uncovered.&#10;Report any spills, stains, or damages immediately."
             multiline={true}
             numberOfLines={8}
@@ -93,12 +95,12 @@ const CreateEditListingHouseGuidelinesScreen = () => {
           {!isEdit && (
             <>
               <AppButton
-                title="Next"
+                title={t('app.house_guidelines.next')}
                 onPress={handleSubmit(onNext)}
                 loading={isLoading}
               />
               <AppButton
-                title="Save & Exit"
+                title={t('app.house_guidelines.save_exit')}
                 onPress={handleSubmit(onSaveExit)}
                 mt={15}
                 disabled={isLoading}
@@ -108,7 +110,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
 
           {isEdit && (
             <AppButton
-              title="Save & Exit"
+              title={t('app.house_guidelines.save_exit')}
               onPress={handleSubmit(onSaveExit)}
               loading={isLoading}
             />

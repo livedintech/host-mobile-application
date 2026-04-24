@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Colors } from '@/theme/colors';
@@ -19,6 +20,7 @@ interface ChannelData {
 }
 
 const AnalyticsScreen = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('reservation');
   
   const {
@@ -154,7 +156,7 @@ const AnalyticsScreen = () => {
         {/* LISTING PERFORMANCE HEADER */}
         <View style={styles.listingHeaderRow}>
           <AppText 
-            text="Listing Performance" 
+            text={t('app.analytics.listing_performance')}
             type="Bold" 
             fontSize={20} 
             color={Colors.BRUNSWICK_GREEN} 

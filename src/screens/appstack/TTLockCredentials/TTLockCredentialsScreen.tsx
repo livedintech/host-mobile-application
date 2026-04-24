@@ -8,8 +8,10 @@ import InputField from '@/components/molecules/Input/InputField';
 import PasswordField from '@/components/molecules/Input/PasswordField';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const TTLockCredentialsScreen = () => {
+  const { t } = useTranslation();
   const { control, errors, handleSubmit, isLoading } =
     useTTLockCredentialsContainer();
 
@@ -24,20 +26,20 @@ const TTLockCredentialsScreen = () => {
         >
           <View style={styles.titleWrapper}>
             <AppText fontSize={30} type="Medium" color={Colors.BLACK}>
-              Enter your{' '}
+              {t('app.ttlock_credentials.enter_your')}{' '}
               <AppText
-                text="TT Lock"
+                text={t('app.ttlock_credentials.tt_lock')}
                 fontSize={30}
                 type="Bold"
                 color={Colors.PRIMARY_TEAL}
               />{' '}
-              account credentials
+              {t('app.ttlock_credentials.credentials_suffix')}
             </AppText>
           </View>
 
           <View style={styles.form}>
             <InputField
-              label="Email*"
+              label={t('app.ttlock_credentials.email_label')}
               name="username"
               control={control}
               errors={errors}
@@ -46,7 +48,7 @@ const TTLockCredentialsScreen = () => {
             />
 
             <PasswordField
-              label="Password*"
+              label={t('app.ttlock_credentials.password_label')}
               name="password"
               control={control}
               errors={errors}
@@ -55,7 +57,7 @@ const TTLockCredentialsScreen = () => {
           </View>
 
           <AppText
-            text="Enter your TTLock account credentials to connect and manage your smart lock. Don't have an account yet? Simply create one using the TTLock Smart Lock app, then return here to sign in and continue."
+            text={t('app.ttlock_credentials.description')}
             fontSize={11}
             lineHeight={6}
             color={Colors.BLACK_53_PERCENT}
@@ -64,7 +66,7 @@ const TTLockCredentialsScreen = () => {
 
           <View style={styles.footer}>
             <AppButton
-              title="Connect"
+              title={t('app.ttlock_credentials.connect_btn')}
               onPress={handleSubmit}
               loading={isLoading}
               backgroundColor={Colors.PRIMARY_TEAL}

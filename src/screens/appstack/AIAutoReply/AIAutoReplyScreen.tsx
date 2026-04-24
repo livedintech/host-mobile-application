@@ -14,8 +14,10 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 import NoAiAutoReplyScreen from '../NoAiAutoReplyScreen/NoAiAutoReplyScreen';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 const AIAutoReplyScreen = () => {
+  const { t } = useTranslation();
   const {
     data,
     dataQuery,
@@ -75,13 +77,13 @@ const AIAutoReplyScreen = () => {
           <View style={styles.cardFooter}>
             <View style={{ flex: 1 }}>
               <AppText
-                text="Listing Access"
+                text={t('app.ai_auto_reply.listing_access')}
                 fontSize={14}
                 type="Bold"
                 color={Colors.BLACK}
               />
               <AppText
-                text={item.listing_label || 'All Listings'}
+                text={item.listing_label || t('app.ai_auto_reply.all_listings')}
                 fontSize={13}
                 color={Colors.DARK_CHARCOAL_OPACITY}
                 mt={2}
@@ -119,7 +121,7 @@ const AIAutoReplyScreen = () => {
               {!!data?.length && (
                 <View>
                   <AppText
-                    text="AI Auto Reply"
+                    text={t('app.ai_auto_reply.title')}
                     fontSize={28}
                     type="Bold"
                     color={Colors.BLACK}
@@ -128,7 +130,7 @@ const AIAutoReplyScreen = () => {
 
                   <View style={styles.descriptionWrapper}>
                     <AppText
-                      text="AI auto replies allow you to respond to guests instantly based on the rules and instructions you define."
+                      text={t('app.ai_auto_reply.description')}
                       fontSize={14}
                       color={Colors.DARK_CHARCOAL_OPACITY}
                       lineHeight={20}
@@ -138,7 +140,7 @@ const AIAutoReplyScreen = () => {
                       style={styles.knowledgeLink}
                     >
                       <AppText
-                        text="What AI already knows?"
+                        text={t('app.ai_auto_reply.knowledge_base')}
                         fontSize={14}
                         type="Bold"
                         color={Colors.TEAL_PRIMARY_ALT}
@@ -159,7 +161,7 @@ const AIAutoReplyScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Create New Reply"
+            title={t('app.ai_auto_reply.create_new')}
             onPress={handleCreateNew}
             backgroundColor={Colors.TEAL_PRIMARY_ALT}
             borderColor={Colors.TEAL_PRIMARY_ALT}
@@ -169,9 +171,9 @@ const AIAutoReplyScreen = () => {
         <ConfirmAction
           ref={removeSheetRef}
           title={`${Item?.name}`}
-          content="Are you sure you want to delete this AI rule?"
-          confirmText="Confirm"
-          closeText="Cancel"
+          content={t('app.ai_auto_reply.delete_confirm')}
+          confirmText={t('app.ai_auto_reply.confirm_btn')}
+          closeText={t('app.ai_auto_reply.cancel_btn')}
           onConfirm={confirm}
           isLoading={isLoadingRemoved}
         />

@@ -3,6 +3,7 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmModalProps {
   isVisible: boolean;
@@ -13,6 +14,7 @@ interface ConfirmModalProps {
 }
 
 const AccountDeleteModal = ({ isVisible, onClose, onConfirm, title, description }: ConfirmModalProps) => {
+  const { t } = useTranslation();
   return (
     <Modal 
       isVisible={isVisible} 
@@ -27,11 +29,11 @@ const AccountDeleteModal = ({ isVisible, onClose, onConfirm, title, description 
         
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-            <AppText text="Cancel" color={Colors.WHITE} />
+            <AppText text={t('app.account_delete_modal.cancel')} color={Colors.WHITE} />
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.confirmBtn} onPress={onConfirm}>
-            <AppText text="Confirm" color={Colors.WHITE} />
+            <AppText text={t('app.account_delete_modal.confirm')} color={Colors.WHITE} />
           </TouchableOpacity>
         </View>
       </View>
