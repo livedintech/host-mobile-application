@@ -884,14 +884,15 @@ const ReviewDetailScreen = ({ route }: any) => {
                      'rgba(255, 255, 255, 0.6)'
                   }
                   color={ Colors.BLACK }
-                  style={[
-                    styles.rateGuestBtn,
-                    {
-                      borderWidth: 1,
-                      borderColor:  '#E0E0E0'
-                    },
-                    !isCheckedOut && styles.disabledBtn,
-                  ]}
+                  style={{width:'100%'}}
+                  // style={[
+                  //   styles.rateGuestBtn,
+                  //   {
+                  //     borderWidth: 1,
+                  //     borderColor:  '#E0E0E0'
+                  //   },
+                  //   !isCheckedOut && styles.disabledBtn,
+                  // ]}
                   borderRadius={100}
                 />
                 {property.booking_platform !== 'bookingcom' && guest?.host_review?.total_rating==0 && (

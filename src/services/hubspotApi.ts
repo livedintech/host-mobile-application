@@ -10,6 +10,7 @@ export const AGENTS = [
 ];
 
 const BASE_URL = 'https://api.hubapi.com';
+const APP_TIMEZONE = 'Asia/Baghdad'; 
 
 const getHeaders = () => ({
   Authorization: `Bearer ${HUBSPOT_ACCESS_TOKEN}`,
@@ -41,57 +42,95 @@ export interface LeadInfo {
   meetingDate?: string;
 }
 
-// ───────────────── HELPER FETCHERS ─────────────────
+// ───────────────── HELPERS ─────────────────
 
-export const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
-  try {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-    const [year, month, day] = date.split('-').map(Number);
-    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0).getTime();
-    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999).getTime();
-
-    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startOfDay}&endTime=${endOfDay}&timezone=${encodeURIComponent(timezone)}`;
-    const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-    if (!res.ok) return [];
-
-    const data = await res.json();
-    const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
-    const targetKey = durationMap['2700000'] || Object.keys(durationMap)[0];
-    const availabilityData = targetKey ? durationMap[targetKey]?.availabilities || [] : [];
-
-    return availabilityData
-      .map((slot: any) => ({ startTime: slot.startMillisUtc, endTime: slot.endMillisUtc }))
-      .filter((s: any) => new Date(s.startTime).toLocaleDateString('en-CA') === date)
-      .sort((a: any, b: any) => a.startTime - b.startTime);
-  } catch (error) {
-    return [];
-  }
+const formatToBaghdadDate = (timestamp: number) => {
+  const date = new Date(timestamp);
+  // Returns "YYYY-MM-DD" strictly in Baghdad time
+  return new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: APP_TIMEZONE,
+  }).format(date);
 };
 
+// ───────────────── API FUNCTIONS ─────────────────
+
+/**
+ * Fetches all available dates for the calendar UI based on Baghdad Time
+ */
 export const fetchAllAgentsAvailableDates = async (year: number, month: number): Promise<Record<string, boolean>> => {
   const availableDates: Record<string, boolean> = {};
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-  const startTime = new Date(year, month - 1, 1, 0, 0, 0, 0).getTime();
-  const endTime = new Date(year, month, 0, 23, 59, 59, 999).getTime();
+
+  // Request window: 1 day before to 1 day after to catch timezone boundary slots
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth = new Date(year, month, 0, 23, 59, 59);
+  
+  const startTime = startOfMonth.getTime() - 86400000; 
+  const endTime = endOfMonth.getTime() + 86400000;
 
   await Promise.all(AGENTS.map(async agent => {
     try {
-      const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${agent.meetingSlug}?startTime=${startTime}&endTime=${endTime}&timezone=${encodeURIComponent(timezone)}`;
+      const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${agent.meetingSlug}?startTime=${startTime}&endTime=${endTime}&timezone=${encodeURIComponent(APP_TIMEZONE)}`;
       const res = await fetch(url, { method: 'GET', headers: getHeaders() });
+      if (!res.ok) return;
+      
       const data = await res.json();
       const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
-      const targetKey = durationMap['2700000'] || Object.keys(durationMap)[0];
-      const availabilities = targetKey ? durationMap[targetKey]?.availabilities || [] : [];
-      availabilities.forEach((slot: any) => {
-        availableDates[new Date(slot.startMillisUtc).toLocaleDateString('en-CA')] = true;
+      
+      // Use 2700000ms for 45-minute slots
+      const availabilityData = durationMap['2700000']?.availabilities || [];
+
+      availabilityData.forEach((slot: any) => {
+        const dateStr = formatToBaghdadDate(slot.startMillisUtc);
+        availableDates[dateStr] = true;
       });
-    } catch (e) {}
+    } catch (e) {
+      console.error("[fetchAllAgentsAvailableDates Error]:", e);
+    }
   }));
   return availableDates;
 };
 
+/**
+ * Fetches specific time slots for a date (YYYY-MM-DD) based on Baghdad Time
+ */
+export const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
+  try {
+    const [year, month, day] = date.split('-').map(Number);
+    
+    // Create a search window centered around the target date
+    const targetDateMidnight = new Date(year, month - 1, day).getTime();
+    const startTime = targetDateMidnight - 86400000;
+    const endTime = targetDateMidnight + (2 * 86400000);
+
+    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startTime}&endTime=${endTime}&timezone=${encodeURIComponent(APP_TIMEZONE)}`;
+    
+    const res = await fetch(url, { method: 'GET', headers: getHeaders() });
+    const data = await res.json();
+    
+    const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
+    const availabilityData = durationMap['2700000']?.availabilities || [];
+
+    return availabilityData
+      .filter((slot: any) => formatToBaghdadDate(slot.startMillisUtc) === date)
+      .map((slot: any) => ({
+        startTime: slot.startMillisUtc,
+        endTime: slot.endMillisUtc,
+      }))
+      .sort((a, b) => a.startTime - b.startTime);
+  } catch (error) {
+    console.error("[fetchSlotsForDate Error]:", error);
+    return [];
+  }
+};
+
 export const fetchFirstAvailableAgentForDate = async (date: string): Promise<AgentWithSlots | null> => {
-  const results = await Promise.all(AGENTS.map(async agent => ({ agent, slots: await fetchSlotsForDate(agent.meetingSlug, date) })));
+  const results = await Promise.all(AGENTS.map(async agent => ({ 
+    agent, 
+    slots: await fetchSlotsForDate(agent.meetingSlug, date) 
+  })));
   return results.find(r => r.slots.length > 0) || null;
 };
 
@@ -112,7 +151,7 @@ export const createHubSpotContact = async (lead: LeadInfo, ownerId: string): Pro
         hs_lead_status: 'Meeting Scheduled',
         full_name: lead.fullName,
         city__district: lead.city, 
-        number_of_potential_units: lead.potentialUnits, // UPDATED KEY
+        number_of_potential_units: lead.potentialUnits,
         lead_source: 'Mobile App',
         language: lead.language || 'English',
         interested_in_str: 'YES',
@@ -129,10 +168,7 @@ export const createHubSpotContact = async (lead: LeadInfo, ownerId: string): Pro
 
     const data = await res.json();
     if (res.status === 409) return data?.message?.match(/Existing ID: (\d+)/)?.[1] || null;
-    if (!res.ok) {
-      console.error('[HubSpot Contact Error]:', data);
-      return null;
-    }
+    if (!res.ok) return null;
     return data.id;
   } catch (error) {
     return null;
@@ -142,16 +178,11 @@ export const createHubSpotContact = async (lead: LeadInfo, ownerId: string): Pro
 const createHubSpotDeal = async (lead: LeadInfo, ownerId: string, contactId: string): Promise<string | null> => {
   try {
     const lastFour = lead.phone.replace(/\D/g, '').slice(-4) || '0000';
-    
     const body = {
       properties: {
         dealname: `${lastFour} - ${lead.fullName} - Deal`,
-        
-        // --- PIPELINE FIX ---
-        // Using the Pipeline ID and Stage ID provided by your HubSpot error
         pipeline: '846163609', 
-        dealstage: '1259055478', // This is a valid numeric stage ID from your error logs
-        
+        dealstage: '1259055478',
         hubspot_owner_id: ownerId,
         city__district: lead.city,
         number_of_potential_units: lead.potentialUnits, 
@@ -171,10 +202,7 @@ const createHubSpotDeal = async (lead: LeadInfo, ownerId: string, contactId: str
     });
 
     const data = await res.json();
-    if (!res.ok) {
-      console.error('[HubSpot Deal Error]:', data);
-      return null;
-    }
+    if (!res.ok) return null;
     return data.id;
   } catch (error) {
     return null;
@@ -189,13 +217,9 @@ export const submitLeadAndBookMeeting = async (
   agent: Agent,
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    // 1. Create Contact
     const contactId = await createHubSpotContact(lead, agent.ownerId);
     if (!contactId) return { success: false, error: 'Failed to create contact' };
-
-    // 2. Create Deal and link to Contact
     await createHubSpotDeal(lead, agent.ownerId, contactId);
-
     return { success: true };
   } catch (error) {
     return { success: false, error: 'Submission failed' };
