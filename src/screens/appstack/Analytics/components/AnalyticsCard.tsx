@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Colors } from '@/theme/colors';
@@ -6,6 +7,7 @@ import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
+  const { t } = useTranslation();
   // console.log("analyticsanalyticsItem",item)
 
   const numericDelta = parseFloat(item?.delta_pct || item?.trend || 0);
@@ -26,7 +28,7 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
         <View style={styles.aiTextContainer}>
           <View style={styles.insightRow}>
             <AppText
-              text="AI Insights: "
+              text={t('app.analytics.ai_insights')}
               type="Bold"
               fontSize={12}
               color={Colors.BRUNSWICK_GREEN}

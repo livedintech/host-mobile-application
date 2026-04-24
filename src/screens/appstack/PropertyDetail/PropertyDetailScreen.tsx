@@ -394,7 +394,7 @@ const PropertyDetailScreen = () => {
             <>
               {/* Pricing */}
               <IconCard
-                title="Pricing"
+                title={t('app.property_detail.pricing')}
                 subtitle={t('app.property_detail.pricing_subtitle')}
                 icon="adr"
                 onPress={() => handleEditSection('Pricing')}

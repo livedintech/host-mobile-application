@@ -137,7 +137,7 @@ const PhotoUploadTemplate = (props: any) => {
             <View>
               <View style={{ alignSelf: 'flex-end' }}>
                 <AppButton
-                  title="Add More"
+                  title={t('app.photo_upload.add_more')}
                   leftIcon="plusIcon"
                   variant="secondary"
                   fontSize={14}
@@ -212,7 +212,7 @@ const PhotoUploadTemplate = (props: any) => {
                 <Svgicons path="cameraIcon" size={24} color={Colors.BLACK} />
                 <AppText text={t('app.photo_upload.take_photo')} ml={15} fontSize={16} />
               </ButtonView>
-              <AppButton title="Cancel" mt={20} onPress={() => setPopupVisible(false)} />
+              <AppButton title={t('app.photo_upload.cancel')} mt={20} onPress={() => setPopupVisible(false)} />
             </View>
           </ButtonView>
         </Modal>
@@ -225,7 +225,7 @@ const PhotoUploadTemplate = (props: any) => {
 
               {/* ✅ Cover photo */}
               <AppButton
-                title="Make this picture the cover photo"
+                title={t('app.photo_upload.set_cover')}
                 variant="secondary"
                 onPress={() => {
                   props.onSetCover?.(selectedItemIndex!);
@@ -235,7 +235,7 @@ const PhotoUploadTemplate = (props: any) => {
 
               {/* ✅ Delete */}
               <AppButton
-                title="Delete picture"
+                title={t('app.photo_upload.delete_picture')}
                 mt={15}
                 onPress={() => {
                   setDeletingIndex(selectedItemIndex!); // ✅ track karo
@@ -245,7 +245,7 @@ const PhotoUploadTemplate = (props: any) => {
               />
 
               <AppButton
-                title="Cancel"
+                title={t('app.photo_upload.cancel')}
                 mt={15}
                 variant="secondary"
                 onPress={() => setShowOptions(false)}

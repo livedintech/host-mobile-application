@@ -175,7 +175,7 @@ export const FilterModalView = ({
 
           <View style={styles.footer}>
             <AppButton
-              title="Apply"
+              title={t('app.analytics.apply')}
               onPress={handleSubmit(onApplyInternal)}
               fontSize={18}
               type="Bold"

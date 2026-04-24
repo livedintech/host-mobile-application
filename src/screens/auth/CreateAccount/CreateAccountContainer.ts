@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native'; // Added useNavigation
 import { useMutation } from '@tanstack/react-query';
 import {
   CreateAccountPayload,
@@ -11,7 +11,7 @@ import { createAccountApi } from '@/services/authApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Toast from 'react-native-toast-message';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react'; // Added useEffect, useRef
 
 // SignUp Schema
 const signUpSchema = yup.object().shape({
@@ -22,11 +22,11 @@ const signUpSchema = yup.object().shape({
     .matches(/[a-zA-Z]/, 'Password must contain letters')
     .matches(/[0-9]/, 'Password must contain numbers')
     .required('Password is required'),
-  // agreeToTerms: yup.boolean().oneOf([true], 'You must accept the terms'),
 });
 
 export default function useCreateAccountContainer() {
-    const route = useRoute<any>();
+  const route = useRoute<any>();
+  const navigation = useNavigation(); // Hook for navigation
 
   const { params } = useRoute();
   const country_code = params?.payload?.country_code;
@@ -34,17 +34,19 @@ export default function useCreateAccountContainer() {
   const phone_with_code = params?.payload?.phone_with_code;
   const listing_count = params?.payload?.listing_count;
   const pricing = params?.payload?.pricing;
-  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
-
-    const prefill = (route.params as any) || {};
-    
-
-
-  console.log('deeplinkTest',prefill);
   
+  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
+  
+  // --- Back Navigation Interception States ---
+  const [isExitModalVisible, setIsExitModalVisible] = useState(false);
+  const [navAction, setNavAction] = useState<any>(null);
+  const allowGoBack = useRef(false); // Ref to check if we should allow going back
+
+  const prefill = (route.params as any) || {};
+
+  console.log('deeplinkTest', prefill);
 
   const toggleTerms = useCallback(() => setIsTermsAccepted(prev => !prev), []);
-
 
   const {
     control,
@@ -55,9 +57,42 @@ export default function useCreateAccountContainer() {
     defaultValues: {
       fullName: '',
       password: '',
-      // agreeToTerms: false,
     },
   });
+
+  // Intercept back navigation
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (allowGoBack.current) {
+        return; // Modal me 'Confirm' press karne par back jane do
+      }
+
+      // Default back behavior ko rok do
+      e.preventDefault();
+      
+      // Action save karo aur modal show karo
+      setNavAction(e.data.action);
+      setIsExitModalVisible(true);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const onConfirmExit = () => {
+    setIsExitModalVisible(false);
+    allowGoBack.current = true; // Ab allow kar do back jana
+    setTimeout(() => {
+      if (navAction) {
+        navigation.dispatch(navAction); // Save kiya hua action perform karo (jaise goBack)
+      }
+    }, 100);
+  };
+
+  const onCancelExit = () => {
+    setIsExitModalVisible(false);
+    setNavAction(null);
+  };
+  // -------------------------------------------
 
   const {
     mutate: createAccountPayload,
@@ -90,7 +125,6 @@ export default function useCreateAccountContainer() {
       agreeToTerms: isTermsAccepted
     };
     createAccountPayload(payload);
-    // console.log('onSubmit', payload);
   };
 
   return {
@@ -101,5 +135,9 @@ export default function useCreateAccountContainer() {
     handleLanguage: () => console.log('AR Toggled'),
     isTermsAccepted,
     toggleTerms,
+    // Export modal states and functions
+    isExitModalVisible,
+    onConfirmExit,
+    onCancelExit,
   };
 }

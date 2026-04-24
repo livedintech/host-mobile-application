@@ -187,13 +187,24 @@ const HubspotDetailFormScreen = () => {
         </KeyboardAvoidingView>
 
         {/* --- Unified Picker Bottom Sheet --- */}
+        {/* --- Unified Picker Bottom Sheet --- */}
         {pickerType && (
           <View style={styles.pickerOverlay}>
-            <TouchableOpacity style={styles.pickerBackdrop} onPress={() => setPickerType(null)} />
+            {/* Backdrop ab poori screen cover karega */}
+            <TouchableOpacity 
+              style={styles.pickerBackdrop} 
+              activeOpacity={1} 
+              onPress={() => setPickerType(null)} 
+            />
+            
             <View style={styles.pickerSheet}>
               <View style={styles.pickerHandle} />
               <View style={styles.pickerHeader}>
-                <AppText text={t('auth.hubspot_form.select_picker', { type: pickerType.charAt(0).toUpperCase() + pickerType.slice(1) })} fontSize={17} type="Bold" />
+                <AppText 
+                  text={t('auth.hubspot_form.select_picker', { type: pickerType.charAt(0).toUpperCase() + pickerType.slice(1) })} 
+                  fontSize={17} 
+                  type="Bold" 
+                />
                 <TouchableOpacity onPress={() => setPickerType(null)}>
                   <AppText text={t('auth.hubspot_form.done')} fontSize={16} color={FIGMA_TEAL} type="Bold" />
                 </TouchableOpacity>
@@ -248,14 +259,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  pickerOverlay: { ...StyleSheet.absoluteFillObject, zIndex: 999, justifyContent: 'flex-end' },
-  pickerBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
+pickerOverlay: { 
+    ...StyleSheet.absoluteFillObject, 
+    zIndex: 999, 
+    justifyContent: 'flex-end' 
+  },
+   pickerBackdrop: { 
+    ...StyleSheet.absoluteFillObject, // flex: 1 ki jagah absoluteFill use kiya hai
+    backgroundColor: 'rgba(0,0,0,0.4)' 
+  },
   pickerSheet: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: ms(28),
-    borderTopRightRadius: ms(28),
+    borderTopLeftRadius: ms(24), // Radius thoda refine kiya design ke mutabiq
+    borderTopRightRadius: ms(24),
     maxHeight: '60%',
     paddingBottom: vs(32),
+    overflow: 'hidden', // Extra safety taake koi child view corner se bahar na nikle
   },
   pickerHandle: {
     width: s(40),

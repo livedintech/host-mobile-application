@@ -27,6 +27,8 @@ const TOTAL_HORIZONTAL_PADDING = 50; // paddingHorizontal: 25 * 2
 const COLUMN_WIDTH = (width - TOTAL_HORIZONTAL_PADDING - GAP) / NUM_COLUMNS;
 
 const PreActivity = ({ route }: any) => {
+    const { t } = useTranslation();
+  
   const taskData = route?.params?.taskData || {};
   
   // Use a fallback to ensure we always have an array

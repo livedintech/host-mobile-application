@@ -16,7 +16,7 @@ const NoTaskScreen = () => {
   return (
     <View style={styles.container}>
       <AppText
-        text={'No Task Available'}
+        text={t('app.no_task.available')}
         fontSize={28}
         type="Bold"
         color={Colors.BRUNSWICK_GREEN}

@@ -4,7 +4,6 @@ import {
   View,
   Image,
   Pressable,
-  Text,
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,6 +11,7 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import AppText from '../AppText/AppText';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const ACTIVE_COLOR = '#41B597';
 const INACTIVE_COLOR = '#1A1A1A';
@@ -27,18 +27,18 @@ const getIcon = (routeName: string) => {
   }
 };
 
-const getLabel = (routeName: string) => {
+const getLabel = (routeName: string, t: any) => {
   switch (routeName) {
-    case 'HOME_SCREEN':    return 'Home';
-    case 'LISTING_SCREEN': return 'Calendar';
-    case 'CHAT_SCREEN':    return 'Inbox';
-    case 'TASK_SCREEN':    return 'Tasks';
-    case 'MORE_SCREEN':    return 'More';
+    case 'HOME_SCREEN':    return t('common.tab.home');
+    case 'LISTING_SCREEN': return t('common.tab.calendar');
+    case 'CHAT_SCREEN':    return t('common.tab.inbox');
+    case 'TASK_SCREEN':    return t('common.tab.tasks');
+    case 'MORE_SCREEN':    return t('common.tab.more');
     default:               return '';
   }
 };
 
-const TabItems = ({ state, navigation }: any) => (
+const TabItems = ({ state, navigation, t }: any) => (
   <View style={styles.tabRow}>
     {state.routes.map((route: any, index: number) => {
       const isFocused = state.index === index;
@@ -73,16 +73,13 @@ const TabItems = ({ state, navigation }: any) => (
               isFocused && styles.iconActive,
             ]}
           />
-          {/* <Text
-            style={[
-              styles.label,
-              { color: isFocused ? ACTIVE_COLOR : INACTIVE_COLOR },
-              isFocused && styles.labelActive,
-            ]}
-          >
-            {getLabel(route.name)}
-          </Text> */}
-          <AppText color={isFocused ? ACTIVE_COLOR : INACTIVE_COLOR } type={isFocused ? 'Bold' : 'Medium'} text={getLabel(route.name)} fontSize={12} mt={5}/>
+          <AppText 
+            color={isFocused ? ACTIVE_COLOR : INACTIVE_COLOR} 
+            type={isFocused ? 'Bold' : 'Medium'} 
+            text={getLabel(route.name, t)} 
+            fontSize={12} 
+            mt={5}
+          />
         </Pressable>
       );
     })}
@@ -90,18 +87,18 @@ const TabItems = ({ state, navigation }: any) => (
 );
 
 const BottomTab = ({ state, descriptors, navigation }: any) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <View
       style={[
         styles.absoluteWrapper,
-        { bottom:0 },
+        { bottom: 0 },
       ]}
       pointerEvents="box-none"
     >
       {Platform.OS === 'ios' ? (
-        // ── iOS — native BlurView (pehle wala best tha) ─────────
         <View style={styles.borderShell}>
           <BlurView
             style={styles.glassInner}
@@ -110,14 +107,13 @@ const BottomTab = ({ state, descriptors, navigation }: any) => {
             reducedTransparencyFallbackColor="rgba(232, 232, 232, 0.25)"
           >
             <View style={styles.iosOverlay}>
-              <TabItems state={state} navigation={navigation} />
+              {/* iOS par 't' pass ho raha tha */}
+              <TabItems state={state} navigation={navigation} t={t}/>
             </View>
           </BlurView>
         </View>
       ) : (
-        // ── Android — liquid glass simulation ───────────────────
         <View style={styles.borderShell}>
-          {/* Base frosted gradient */}
           <LinearGradient
             colors={[
               'rgba(255, 255, 255, 0.55)',
@@ -129,7 +125,6 @@ const BottomTab = ({ state, descriptors, navigation }: any) => {
             style={StyleSheet.absoluteFillObject}
           />
 
-          {/* Top shine — wet glass reflection */}
           <LinearGradient
             colors={[
               'rgba(255, 255, 255, 0.45)',
@@ -140,12 +135,11 @@ const BottomTab = ({ state, descriptors, navigation }: any) => {
             style={styles.androidShine}
           />
 
-          {/* Subtle tint overlay */}
           <View style={styles.androidNoise} />
 
-          {/* Tab content */}
           <View style={styles.androidContent}>
-            <TabItems state={state} navigation={navigation} />
+            {/* FIXED: Android block mein bhi 't={t}' add kar diya hai */}
+            <TabItems state={state} navigation={navigation} t={t} />
           </View>
         </View>
       )}
@@ -159,13 +153,10 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
   },
-
-  // ── Border shell — GlassCard style ──────────────────────────
   borderShell: {
     borderRadius: 21,
     overflow: 'hidden',
     backgroundColor: 'rgba(232, 232, 232, 0.25)',
-
     borderTopWidth: 1.5,
     borderLeftWidth: 1.5,
     borderBottomWidth: 1,
@@ -174,7 +165,6 @@ const styles = StyleSheet.create({
     borderLeftColor: 'rgba(255, 255, 255, 0.95)',
     borderBottomColor: 'rgba(180, 180, 180, 0.45)',
     borderRightColor: 'rgba(180, 180, 180, 0.35)',
-
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -187,19 +177,14 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
-  // ── iOS ──────────────────────────────────────────────────────
   glassInner: {
     height: 70,
     backgroundColor: 'rgba(0,0,0,0)',
   },
-
   iosOverlay: {
     flex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
   },
-
-  // ── Android ──────────────────────────────────────────────────
   androidShine: {
     position: 'absolute',
     top: 0,
@@ -209,17 +194,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 21,
     borderTopRightRadius: 21,
   },
-
   androidNoise: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(200, 220, 215, 1)',
   },
-
   androidContent: {
     height: 70,
   },
-
-  // ── Shared tab layout ────────────────────────────────────────
   tabRow: {
     flex: 1,
     flexDirection: 'row',
@@ -227,7 +208,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 6,
   },
-
   tabItem: {
     flex: 1,
     alignItems: 'center',
@@ -235,26 +215,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     position: 'relative',
   },
-
   icon: {
     width: Metrics.scale(20),
     height: Metrics.scale(20),
     resizeMode: 'contain',
   },
-
   iconActive: {
     transform: [{ scale: 1.08 }],
-  },
-
-  label: {
-    fontSize: 11,
-    marginTop: 3,
-    fontWeight: '500',
-    letterSpacing: 0.1,
-  },
-
-  labelActive: {
-    fontWeight: '700',
   },
 });
 

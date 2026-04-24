@@ -20,6 +20,8 @@ import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
 
 const TaskListScreen: React.FC = () => {
+    const { t } = useTranslation();
+  
   const {
     tasks,
     taskQuery,

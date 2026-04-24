@@ -68,6 +68,8 @@ const RATING_LABELS: Record<number, string> = {
 };
 
 const RateYourGuestScreen = ({ route }: any) => {
+    const { t } = useTranslation();
+  
   const reviewId = route.params?.id || 'default';
   const guestName = route.params?.name || 'Guest';
 

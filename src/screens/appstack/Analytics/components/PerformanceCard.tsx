@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -6,6 +7,7 @@ import { Colors } from '@/theme/colors';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const PerformanceCard = ({ data }: any) => {
+  const { t } = useTranslation();
   const getAssessmentStyle = (type: string) => {
     switch (type?.toLowerCase()) {
       case 'top performer':
@@ -47,7 +49,7 @@ const PerformanceCard = ({ data }: any) => {
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
                 <Svgicons path="walletIcon" size={12} mr={4} />
-                <AppText text="Revenue" fontSize={10} color={Colors.DIM_GREY} />
+                <AppText text={t('app.analytics.revenue')} fontSize={10} color={Colors.DIM_GREY} />
               </View>
               <AppText text={`SAR ${data.revenue}`} fontSize={11} type="Bold" />
             </View>
@@ -56,7 +58,7 @@ const PerformanceCard = ({ data }: any) => {
               <View style={styles.labelGroup}>
                 <Svgicons path="occupancy" size={12} mr={4} />
                 <AppText
-                  text="Occupancy"
+                  text={t('app.analytics.occupancy')}
                   fontSize={10}
                   color={Colors.DIM_GREY}
                 />
@@ -67,7 +69,7 @@ const PerformanceCard = ({ data }: any) => {
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
                 <Svgicons path="adr" size={12} mr={4} />
-                <AppText text="ADR" fontSize={10} color={Colors.DIM_GREY} />
+                <AppText text={t('app.analytics.adr')} fontSize={10} color={Colors.DIM_GREY} />
               </View>
               <AppText text={`SAR ${data.adr}`} fontSize={11} type="Bold" />
             </View>

@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Modal, TouchableOpacity } from 'react-native'; // Added Modal and TouchableOpacity
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Controller, useWatch } from 'react-hook-form'; // Added useWatch
+import { Controller, useWatch } from 'react-hook-form'; 
 
 import InputField from '@/components/molecules/Input/InputField';
 import PasswordField from '@/components/molecules/Input/PasswordField';
@@ -18,12 +18,23 @@ import { handleOpenLink } from '@/utility/Utils';
 import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
-const DISABLED_GRAY = '#A0A0A0'; // Color for disabled state
+const DISABLED_GRAY = '#A0A0A0'; 
 
 const CreateAccountScreen = () => {
-  const { control, errors, handleSubmit, isLoading, handleLanguage, isTermsAccepted, toggleTerms } = useCreateAccountContainer();
+  const { 
+    control, 
+    errors, 
+    handleSubmit, 
+    isLoading, 
+    handleLanguage, 
+    isTermsAccepted, 
+    toggleTerms,
+    isExitModalVisible, // Get modal state
+    onConfirmExit,      // Get confirm function
+    onCancelExit        // Get cancel function
+  } = useCreateAccountContainer();
+  
   const { t } = useTranslation();
-
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -78,16 +89,6 @@ const CreateAccountScreen = () => {
 
             {/* Terms and Conditions Section */}
             <View style={styles.termsWrapper}>
-              {/* <Controller
-                control={control}
-                name="agreeToTerms"
-                render={({ field: { onChange, value } }) => (
-                  <Checkbox
-                    isChecked={!!value}
-                    onPress={() => onChange(!value)}
-                  />
-                )}
-              /> */}
               <Checkbox
                 isChecked={isTermsAccepted}
                 onPress={toggleTerms}
@@ -113,11 +114,45 @@ const CreateAccountScreen = () => {
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>
+
+      {/* --- Exit Confirmation Modal --- */}
+      <Modal
+        visible={isExitModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={onCancelExit} // Handles hardware back on Android while modal is open
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <AppText type="SemiBold" fontSize={18} color={Colors.BLACK} style={styles.modalTitle}>
+              Leave Account Setup?
+            </AppText>
+            
+            <AppText type="Regular" fontSize={14} color={Colors.DARK_CHARCOAL} style={styles.modalText}>
+              Going back will invalidate your OTP and you'll need to restart sign-up.
+            </AppText>
+
+            <View style={styles.modalButtonsRow}>
+              <TouchableOpacity style={styles.cancelBtn} onPress={onCancelExit}>
+                <AppText type="Medium" fontSize={16} color={Colors.BLACK}>
+                  Cancel
+                </AppText>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.confirmBtn} onPress={onConfirmExit}>
+                <AppText type="Medium" fontSize={16} color={'#FFFFFF'}>
+                  Confirm
+                </AppText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* ------------------------------- */}
     </BGImage>
   );
 };
 
-// ... Styles remain the same ...
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { flexGrow: 1 },
@@ -144,6 +179,52 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: vs(30),
     marginTop: vs(20),
+  },
+  // --- Modal Styles ---
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Dim background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '85%',
+    backgroundColor: '#F5F5F5', // Light greyish white like design
+    borderRadius: 24,
+    paddingVertical: vs(25),
+    paddingHorizontal: s(20),
+    alignItems: 'center',
+  },
+  modalTitle: {
+    marginBottom: vs(12),
+    textAlign: 'center',
+  },
+  modalText: {
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: vs(25),
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: s(12),
+  },
+  cancelBtn: {
+    flex: 1,
+    paddingVertical: vs(12),
+    borderRadius: 30,
+    backgroundColor: '#EAEAEA', // Light grey cancel button
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
+  },
+  confirmBtn: {
+    flex: 1,
+    paddingVertical: vs(12),
+    borderRadius: 30,
+    backgroundColor: FIGMA_TEAL, // Teal color
+    alignItems: 'center',
   },
 });
 

@@ -21,7 +21,7 @@ const TaskScreen = () => {
               <AppText text={t('app.ali_widget.agent_name')} type="Bold" color={Colors.PINE_FOREST} />
               <AppText text="9:36 AM" color="#999" fontSize={12} />
             </View>
-            <AppText text={'Connect your Airbnb, Gathern, or other platforms to manage all your listings in one place.'} color={Colors.PINE_FOREST} mt={5} lineHeight={20} />
+            <AppText text={t('app.ali_widget.connect_prompt')} color={Colors.PINE_FOREST} mt={5} lineHeight={20} />
           </View>
         </View>
       </View>

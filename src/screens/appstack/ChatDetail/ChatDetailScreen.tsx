@@ -38,6 +38,7 @@ import Metrics from '@/utility/Metrics';
 import InquiryModal from './InquiryModal';
 
 import advancedFormat from 'dayjs/plugin/advancedFormat';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(advancedFormat);
 
@@ -555,7 +556,7 @@ const ChatScreen = () => {
                       }}
                     >
                       <AppText
-                        text={'Assign Chat To User'}
+                        text={t('app.assign_chat.title')}
                         fontSize={14}
                         color={Colors.BLACK}
                       />
