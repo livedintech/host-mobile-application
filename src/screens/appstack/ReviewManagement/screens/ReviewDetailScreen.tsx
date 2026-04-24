@@ -42,6 +42,8 @@ const MENU_OPTIONS = [
 ];
 
 const ReviewDetailScreen = ({ route }: any) => {
+    const { t } = useTranslation();
+  
   const initialBookingData = route?.params?.bookingData || {};
   const booking_id = route?.params?.booking_id;
   const [apiData, setApiData] = useState<any>(null);
