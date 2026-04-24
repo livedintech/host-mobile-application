@@ -5,6 +5,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 import { ChatMessage } from '@/types/chat';
 
 interface RightActionsProps {
@@ -13,6 +14,7 @@ interface RightActionsProps {
 }
 
 const RightActions: React.FC<RightActionsProps> = ({ item, handleAction }) => {
+  const { t } = useTranslation();
   // Optional animated effect (simple spring)
   const translateX = useSharedValue(0);
   const style = useAnimatedStyle(() => ({
@@ -26,14 +28,14 @@ const RightActions: React.FC<RightActionsProps> = ({ item, handleAction }) => {
         onPress={() => handleAction(item.id, 'Snoozed')}
       >
         <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
-        <AppText text="Snooze" color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
+        <AppText text={t('app.right_actions.snooze')} color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
       </ButtonView>
       <ButtonView
         style={{ flex: 1, backgroundColor: '#1A3D32', justifyContent: 'center', alignItems: 'center' }}
         onPress={() => handleAction(item.id, 'Archived')}
       >
         <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
-        <AppText text="Archive" color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
+        <AppText text={t('app.right_actions.archive')} color={Colors.WHITE} fontSize={12} mt={5} type="Medium" />
       </ButtonView>
     </Reanimated.View>
   );

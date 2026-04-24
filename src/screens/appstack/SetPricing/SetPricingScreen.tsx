@@ -12,10 +12,12 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import usePricingContainer from './SetPricingContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
 import Modal from 'react-native-modal';
 
 const SetPricingScreen = () => {
+  const { t } = useTranslation();
   const { control, errors, handleSubmit, onSubmit, isLoading, isEdit, bottomSheetVisible, handleExport, handleExportSubmit, handleOtaSubmit, isExporting, listingOptions, otaControl, otaErrors, setBottomSheetVisible, } = usePricingContainer();
 
   const currencyOptions = [
@@ -41,37 +43,37 @@ const SetPricingScreen = () => {
             {!isEdit && <CircularProgress percentage={80} size={48} strokeWidth={4} />}
           </View>
 
-          <AppText text="Set your pricing" fontSize={32} type="Bold" mt={30} />
+          <AppText text={t('app.set_pricing.title')} fontSize={32} type="Bold" mt={30} />
           <AppText
-            text="Base price is set by the platform. Set a markup for each platform individually."
+            text={t('app.set_pricing.subtitle')}
             fontSize={14}
             color="#6B6B6B"
             mt={10}
           />
 
           <View style={styles.formGroup}>
-            <DropdownField name="currency" label="Select Money Currency" control={control as any} errors={errors} data={currencyOptions} disabled />
+            <DropdownField name="currency" label={t('app.set_pricing.currency_label')} control={control as any} errors={errors} data={currencyOptions} disabled />
             <View style={styles.fieldGap} />
-            <InputField name="weekday_price" label="Weekday Base Price" control={control as any} errors={errors} placeholder="500 SAR" keyboardType="numeric" />
+            <InputField name="weekday_price" label={t('app.set_pricing.weekday_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.price_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
-            <InputField name="weekend_price" label="Weekend Base Price" control={control as any} errors={errors} placeholder="500 SAR" keyboardType="numeric" />
+            <InputField name="weekend_price" label={t('app.set_pricing.weekend_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.price_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
-            <InputField name="tax_vat" label="Tax (Vat)" control={control as any} errors={errors} placeholder="2.0%" keyboardType="numeric" />
+            <InputField name="tax_vat" label={t('app.set_pricing.tax_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.percent_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
-            <InputField name="airbnb_markup" label="Airbnb Markup Price" control={control as any} errors={errors} placeholder="2.0%" keyboardType="numeric" />
+            <InputField name="airbnb_markup" label={t('app.set_pricing.airbnb_markup_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.percent_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
-            <InputField name="gathern_markup" label="Gathern Markup Price" control={control as any} errors={errors} placeholder="2.0%" keyboardType="numeric" />
+            <InputField name="gathern_markup" label={t('app.set_pricing.gathern_markup_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.percent_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
-            <InputField name="booking_com_markup" label="Booking.com Markup Price" control={control as any} errors={errors} placeholder="2.0%" keyboardType="numeric" />
+            <InputField name="booking_com_markup" label={t('app.set_pricing.bookingcom_markup_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.percent_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
-            <InputField name="extra_guest_fee" label="Extra Guest Fee" control={control as any} errors={errors} placeholder="200 SAR" keyboardType="numeric" />
+            <InputField name="extra_guest_fee" label={t('app.set_pricing.extra_guest_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.extra_guest_placeholder')} keyboardType="numeric" />
           </View>
         </KeyboardAwareScrollView>
 
         <View style={styles.footer}>
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.set_pricing.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -79,14 +81,14 @@ const SetPricingScreen = () => {
           )}
           {!isEdit && ( // ✅ create mode mein Next show hoga
             <AppButton
-              title="Next"
+              title={t('app.set_pricing.next')}
               variant="secondary"
               onPress={handleSubmit((d) => onSubmit(d, false))}
               loading={isLoading}
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.set_pricing.save_exit')}
             mt={!isEdit ? 12 : 0}
             onPress={handleSubmit((d) => onSubmit(d, true))}
             disabled={isLoading}
@@ -101,17 +103,17 @@ const SetPricingScreen = () => {
       >
         <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
           <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-            <AppText text="Select OTA Account" fontSize={18} type="SemiBold" mb={20} />
+            <AppText text={t('app.set_pricing.select_ota')} fontSize={18} type="SemiBold" mb={20} />
             <DropdownField
               name="ota_account"
               control={otaControl}
               errors={otaErrors}
               data={listingOptions}
-              placeholder="Select Account"
+              placeholder={t('app.set_pricing.select_account')}
             />
 
             <AppButton
-              title="Export"
+              title={t('app.set_pricing.export')}
               onPress={handleOtaSubmit(handleExportSubmit)}
               loading={isExporting}
               mt={20}

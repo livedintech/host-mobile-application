@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import {
   View,
@@ -21,6 +22,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 
 const StatisticsScreen = () => {
+  const { t } = useTranslation();
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   const {
@@ -92,7 +94,7 @@ const StatisticsScreen = () => {
           }
         >
           <AppText
-            text="Statistics"
+            text={t('app.analytics.statistics')}
             type="Medium"
             fontSize={26}
             textAlign="left"
@@ -103,28 +105,28 @@ const StatisticsScreen = () => {
 
           <View style={styles.grid}>
             <StatCard
-              title="Rental Revenue"
+              title={t('app.analytics.rental_revenue')}
               value={`SAR ${revenue.value}`}
               subText="vs last month"
               trend={revenue.delta_pct}
               icon="walletIcon"
             />
             <StatCard
-              title="Occupancy"
+              title={t('app.analytics.occupancy')}
               value={`${occupancy.value}%`}
               subText="vs last 30 days"
               trend={occupancy.delta_pct}
               icon="occupancy"
             />
             <StatCard
-              title="Avg Stay Revenue"
+              title={t('app.analytics.avg_stay_revenue')}
               value={`SAR ${avgStay.value}`}
               subText="vs last 30 days"
               trend={avgStay.delta_pct}
               icon="avg_stay_revenue"
             />
             <StatCard
-              title="Avg Length of Stay"
+              title={t('app.analytics.avg_length_stay')}
               value={`${stayLength.value} Nights`}
               subText="vs last 30 days"
               trend={stayLength.delta_pct}

@@ -22,10 +22,12 @@ import useHubspotDetailFormContainer, {
   COUNTRIES,
   COUNTRY_FLAGS,
 } from './HubspotDetailFormContainer';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
 
 const HubspotDetailFormScreen = () => {
+  const { t } = useTranslation();
   const {
     control,
     errors,
@@ -59,13 +61,13 @@ const HubspotDetailFormScreen = () => {
               {/* --- Header Section --- */}
               <View style={styles.headerSection}>
                 <AppText type="Bold" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                  Please enter your {'\n'}
+                  {t('auth.hubspot_form.title_1')}{'\n'}
                   <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>
-                    Information
+                    {t('auth.hubspot_form.title_highlight')}
                   </AppText>
                 </AppText>
                 <AppText
-                  text="Welcome to livedin. Let's build a brighter hosting journey together."
+                  text={t('auth.hubspot_form.subtitle')}
                   fontSize={16}
                   color={Colors.BLACK}
                   mt={vs(10)}
@@ -79,16 +81,16 @@ const HubspotDetailFormScreen = () => {
                   name="fullName"
                   control={control}
                   errors={errors}
-                  label="Full Name *"
-                  placeholder="Enter Legal Name"
+                  label={t('auth.hubspot_form.full_name_label')}
+                  placeholder={t('auth.hubspot_form.full_name_placeholder')}
                 />
 
                 <InputField
                   name="email"
                   control={control}
                   errors={errors}
-                  label="Email *"
-                  placeholder="example@email.com"
+                  label={t('auth.hubspot_form.email_label')}
+                  placeholder={t('auth.hubspot_form.email_placeholder')}
                   keyboardType="email-address"
                 />
 
@@ -99,8 +101,8 @@ const HubspotDetailFormScreen = () => {
                       name="country"
                       control={control}
                       errors={errors}
-                      label="Country *"
-                      placeholder="Select Country"
+                      label={t('auth.hubspot_form.country_label')}
+                      placeholder={t('auth.hubspot_form.country_placeholder')}
                       editable={false}
                       leftIcon={
                         selectedCountry ? (
@@ -114,15 +116,15 @@ const HubspotDetailFormScreen = () => {
                 {/* City Picker Trigger */}
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => (selectedCountry ? setPickerType('city') : Alert.alert('Error', 'Select country first'))}
+                  onPress={() => (selectedCountry ? setPickerType('city') : Alert.alert(t('auth.hubspot_form.error'), t('auth.hubspot_form.error_select_country')))}
                 >
                   <View pointerEvents="none">
                     <InputField
                       name="city"
                       control={control}
                       errors={errors}
-                      label="City *"
-                      placeholder="Select City"
+                      label={t('auth.hubspot_form.city_label')}
+                      placeholder={t('auth.hubspot_form.city_placeholder')}
                       editable={false}
                     />
                   </View>
@@ -134,23 +136,23 @@ const HubspotDetailFormScreen = () => {
                     name="otherCity"
                     control={control}
                     errors={errors}
-                    label="Specify City *"
-                    placeholder="Enter your city name"
+                    label={t('auth.hubspot_form.specify_city_label')}
+                    placeholder={t('auth.hubspot_form.specify_city_placeholder')}
                   />
                 )}
 
                 {/* District Picker Trigger */}
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => (selectedCity ? setPickerType('district') : Alert.alert('Error', 'Select city first'))}
+                  onPress={() => (selectedCity ? setPickerType('district') : Alert.alert(t('auth.hubspot_form.error'), t('auth.hubspot_form.error_select_city')))}
                 >
                   <View pointerEvents="none">
                     <InputField
                       name="district"
                       control={control}
                       errors={errors}
-                      label="District *"
-                      placeholder="Select District"
+                      label={t('auth.hubspot_form.district_label')}
+                      placeholder={t('auth.hubspot_form.district_placeholder')}
                       editable={false}
                     />
                   </View>
@@ -162,8 +164,8 @@ const HubspotDetailFormScreen = () => {
                     name="otherDistrict"
                     control={control}
                     errors={errors}
-                    label="Specify District *"
-                    placeholder="Enter your district name"
+                    label={t('auth.hubspot_form.specify_district_label')}
+                    placeholder={t('auth.hubspot_form.specify_district_placeholder')}
                   />
                 )}
               </View>
@@ -171,7 +173,7 @@ const HubspotDetailFormScreen = () => {
               {/* Next Button Section */}
               <View style={styles.btnWrapper}>
                 <AppButton
-                  title="Next"
+                  title={t('auth.hubspot_form.next')}
                   onPress={handleSubmit(onSubmit)}
                   backgroundColor={FIGMA_TEAL}
                   color={Colors.WHITE}
@@ -191,9 +193,9 @@ const HubspotDetailFormScreen = () => {
             <View style={styles.pickerSheet}>
               <View style={styles.pickerHandle} />
               <View style={styles.pickerHeader}>
-                <AppText text={`Select ${pickerType.charAt(0).toUpperCase() + pickerType.slice(1)}`} fontSize={17} type="Bold" />
+                <AppText text={t('auth.hubspot_form.select_picker', { type: pickerType.charAt(0).toUpperCase() + pickerType.slice(1) })} fontSize={17} type="Bold" />
                 <TouchableOpacity onPress={() => setPickerType(null)}>
-                  <AppText text="Done" fontSize={16} color={FIGMA_TEAL} type="Bold" />
+                  <AppText text={t('auth.hubspot_form.done')} fontSize={16} color={FIGMA_TEAL} type="Bold" />
                 </TouchableOpacity>
               </View>
               <ScrollView>

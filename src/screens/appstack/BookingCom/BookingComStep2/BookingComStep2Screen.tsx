@@ -9,8 +9,10 @@ import { Colors } from '@/theme/colors';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import useBookingComStep2Container from './BookingComStep2Container';
+import { useTranslation } from 'react-i18next';
 
 const BookingComStep2Screen = () => {
+    const { t } = useTranslation();
     const { control, bookingRooms, listingOptions, handleNext, errors } = useBookingComStep2Container();
 
     return (
@@ -18,26 +20,26 @@ const BookingComStep2Screen = () => {
             <View style={styles.mainContainer}>
                 <RefreshableScrollView style={styles.scrollContainer}>
                     <View style={styles.headerContainer}>
-                        <AppText text="Booking.com" type="Bold" fontSize={32} color={Colors.BLACK} />
-                        <AppText text="Listings" type="Bold" fontSize={32} color={Colors.BLACK} />
+                        <AppText text={t('app.booking_com_step2.title_1')} type="Bold" fontSize={32} color={Colors.BLACK} />
+                        <AppText text={t('app.booking_com_step2.title_2')} type="Bold" fontSize={32} color={Colors.BLACK} />
                     </View>
 
                     {bookingRooms.map((room) => (
                         <View key={room.id} style={styles.cardContainer}>
                             <View style={styles.infoRow}>
-                                <AppText text="Booking.com ID:" type="Regular" fontSize={14} color={Colors.BLACK} style={{flex: 1}}/>
+                                <AppText text={t('app.booking_com_step2.booking_id')} type="Regular" fontSize={14} color={Colors.BLACK} style={{flex: 1}}/>
                                 <AppText text={room.id} type="Bold" fontSize={14} color={Colors.BLACK} style={{flex: 1}}/>
                                 <View style={styles.logoBox}><Svgicons path='bookingCom'/></View>
                             </View>
 
                             <View style={styles.dropdownSection}>
-                                <AppText text="Existing Listing:" type="Regular" fontSize={14} color={Colors.BLACK} mb={8} />
+                                <AppText text={t('app.booking_com_step2.existing_listing')} type="Regular" fontSize={14} color={Colors.BLACK} mb={8} />
                                 <DropdownField
                                     name={`listing_${room.id}`}
                                     control={control}
                                     errors={errors}
                                     data={listingOptions}
-                                    placeholder="None"
+                                    placeholder={t('app.booking_com_step2.none')}
                                     label=''
                                 />
                             </View>
@@ -45,7 +47,7 @@ const BookingComStep2Screen = () => {
                     ))}
                 </RefreshableScrollView>
                 <View style={styles.footer}>
-                    <AppButton title="Next" onPress={handleNext} />
+                    <AppButton title={t('app.booking_com_step2.next')} onPress={handleNext} />
                 </View>
             </View>
         </BGImage>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ScrollView, Platform,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 import { goBack } from '@/services/navigationService';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -272,7 +273,7 @@ const RateYourGuestScreen = ({ route }: any) => {
                 style={styles.buttonInner}
               >
                 <AppText
-                  text="Back"
+                  text={t('app.rate_guest.back')}
                   fontSize={16}
                   type="Medium"
                   color={Colors.BLACK}
@@ -283,7 +284,7 @@ const RateYourGuestScreen = ({ route }: any) => {
             <View style={styles.btnStyle}>
               {isLastStep ? (
                 <AppButton
-                  title="Submit"
+                  title={t('app.rate_guest.submit')}
                   onPress={handleSubmit(handleFinalSubmit)}
                   loading={isSubmitting}
                   variant="primary"
@@ -298,7 +299,7 @@ const RateYourGuestScreen = ({ route }: any) => {
                   style={styles.buttonInner}
                 >
                   <AppText
-                    text="Next"
+                    text={t('app.rate_guest.next')}
                     fontSize={16}
                     type="Medium"
                     color={Colors.BLACK}
@@ -309,7 +310,7 @@ const RateYourGuestScreen = ({ route }: any) => {
           </View>
         ) : (
           <AppButton
-            title="Next"
+            title={t('app.rate_guest.next')}
             onPress={() => saveAndNavigate(1)}
             color={Colors.WHITE}
             backgroundColor={Colors.BOTTLE_GREEN}
@@ -318,7 +319,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         )}
 
         <AppButton
-          title="Save & Exit"
+          title={t('app.rate_guest.save_exit')}
           onPress={handleSaveAndExit}
           color={Colors.WHITE}
           backgroundColor={Colors.BOTTLE_GREEN}
@@ -346,7 +347,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               color={Colors.BLACK}
             />
             <AppText
-              text="Your feedback helps other hosts manage better experiences."
+              text={t('app.rate_guest.feedback_desc')}
               fontSize={16}
               color={Colors.DARK_CHARCOAL_OPACITY}
               mt={10}
@@ -359,7 +360,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         const config = [
           {
             title: `How clean did ${guestName} leave your place?`,
-            sub: `We’ll share this with ${guestName} and other hosts.`,
+            sub: `We'll share this with ${guestName} and other hosts.`,
             field: 'cleanliness' as const,
             tagsField: 'clean_tags' as const,
             icon: 'cleanWaterIcon',
@@ -447,7 +448,7 @@ const RateYourGuestScreen = ({ route }: any) => {
             {ratingValue > 0 && ratingValue < 5 && (
               <View style={styles.tagSection}>
                 <AppText
-                  text="Tell us what happened"
+                  text={t('app.rate_guest.tell_what_happened')}
                   type="Bold"
                   fontSize={22}
                   mt={25}
@@ -485,14 +486,14 @@ const RateYourGuestScreen = ({ route }: any) => {
               <Svgicons path="editIcon" size={32} color={Colors.BLACK} />
             </View>
             <AppText
-              text="Write a public review"
+              text={t('app.rate_guest.write_review')}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
               mt={20}
             />
             <AppText
-              text={`We’ll share this with ${guestName} and other hosts.`}
+              text={`We'll share this with ${guestName} and other hosts.`}
               fontSize={16}
               color={Colors.DARK_CHARCOAL_OPACITY_74}
               mt={10}
@@ -541,7 +542,7 @@ const RateYourGuestScreen = ({ route }: any) => {
                   onPress={() => setValue('recommend', true)}
                   style={styles.choiceInner}
                 >
-                  <AppText text="Yes" type="Medium" color={Colors.BLACK} />
+                  <AppText text={t('app.rate_guest.yes')} type="Medium" color={Colors.BLACK} />
                 </ButtonView>
               </GradientBorder>
               <GradientBorder
@@ -557,7 +558,7 @@ const RateYourGuestScreen = ({ route }: any) => {
                   onPress={() => setValue('recommend', false)}
                   style={styles.choiceInner}
                 >
-                  <AppText text="No" type="Medium" color={Colors.BLACK} />
+                  <AppText text={t('app.rate_guest.no')} type="Medium" color={Colors.BLACK} />
                 </ButtonView>
               </GradientBorder>
             </View>
@@ -574,7 +575,7 @@ const RateYourGuestScreen = ({ route }: any) => {
                   name="feedback"
                   control={control}
                   errors={{}}
-                  placeholder="Tell us more (Private feedback)"
+                  placeholder={t('app.rate_guest.private_feedback_placeholder')}
                   multiline
                 />
               </View>

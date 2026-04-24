@@ -13,6 +13,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Metrics from '@/utility/Metrics';
 import DropdownField from '@/components/molecules/Input/DropdownField';
+import { useTranslation } from 'react-i18next';
 
 const DescribeHouseScreen = () => {
   const {
@@ -37,6 +38,7 @@ const DescribeHouseScreen = () => {
     listingOptions,
     isPendingExporting,
   } = useDescribeHouseContainer();
+  const { t } = useTranslation();
 
   const showTitle       = !editType || editType === 'title';
   const showDescription = !editType || editType === 'description';
@@ -61,9 +63,9 @@ const DescribeHouseScreen = () => {
             {!isEdit && <CircularProgress percentage={40} size={48} strokeWidth={4} />}
           </View>
 
-          <AppText text="Describe your property" fontSize={32} type="Bold" mt={35} mb={28} pr={60} />
+          <AppText text={t('app.describe_house.title')} fontSize={32} type="Bold" mt={35} mb={28} pr={60} />
           <AppText
-            text="Short descriptions work best. You can always change it later"
+            text={t('app.describe_house.subtitle')}
             fontSize={12}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={12}
@@ -75,8 +77,8 @@ const DescribeHouseScreen = () => {
               name="name"
               control={control}
               errors={errors}
-              label="Property Title *"
-              placeholder='"Cozy Villa with Pool in Riyadh"'
+              label={t('app.describe_house.title_label')}
+              placeholder={t('app.describe_house.title_placeholder')}
               multiline={true}
               numberOfLines={2}
               wordLimit={50}
@@ -92,8 +94,8 @@ const DescribeHouseScreen = () => {
                 name="listing_descriptions"
                 control={control}
                 errors={errors}
-                label="Property Description *"
-                placeholder='"Kick back and relax in this calm and stylish space."'
+                label={t('app.describe_house.description_label')}
+                placeholder={t('app.describe_house.description_placeholder')}
                 multiline={true}
                 numberOfLines={6}
                 wordLimit={500}
@@ -109,14 +111,14 @@ const DescribeHouseScreen = () => {
           {!isEdit && (
             <>
               <AppButton
-                title="Next"
+                title={t('app.describe_house.next')}
                 onPress={handleSubmit(onNext)}
                 loading={isLoading}
                 variant='secondary'
                 backgroundColor={Colors.WHITE}
               />
               <AppButton
-                title="Save & Exit"
+                title={t('app.describe_house.save_exit')}
                 onPress={handleSubmit(onSaveExit)}
                 mt={15}
                 disabled={isLoading}
@@ -128,14 +130,14 @@ const DescribeHouseScreen = () => {
             <>
               {/* ✅ Export button — sirf edit mode mein */}
               <AppButton
-                title="Export"
+                title={t('app.describe_house.export')}
                 onPress={handleExport}
                 variant='secondary'
                 mb={12}
                 disabled={isLoading}
               />
               <AppButton
-                title="Save & Exit"
+                title={t('app.describe_house.save_exit')}
                 onPress={handleSubmit(onSaveExit)}
                 loading={isLoading}
               />
@@ -154,7 +156,7 @@ const DescribeHouseScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.describe_house.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -167,12 +169,12 @@ const DescribeHouseScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.describe_house.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.describe_house.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

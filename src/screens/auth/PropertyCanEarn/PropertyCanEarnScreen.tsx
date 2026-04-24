@@ -16,8 +16,10 @@ import Metrics from '@/utility/Metrics';
 import { bedroomOptions } from '@/constants/dropdownOptions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 const PropertyCanEarnScreen = () => {
+  const { t } = useTranslation();
   const {
     control, errors, handleSubmit, showResults, isLoading,
     availableCityItems, availableDistrictItems, goToConnectAccountIntro,
@@ -38,7 +40,7 @@ const PropertyCanEarnScreen = () => {
           {/* TITLE SECTION */}
           <View style={styles.titleSection}>
             <AppText
-              text="See what your"
+              text={t('auth.property_can_earn.title_1')}
               fontSize={30}
               textAlign="left"
               color={Colors.BLACK}
@@ -47,24 +49,24 @@ const PropertyCanEarnScreen = () => {
 
             <View style={styles.titleRow}>
               <AppText
-                text="Property "
+                text={t('auth.property_can_earn.title_2') + ' '}
                 fontSize={30}
                 color={Colors.PRIMARY_TEAL}
                 type="Bold"
               />
               <AppText
-                text="can earn"
+                text={t('auth.property_can_earn.title_3')}
                 fontSize={30}
                 color={Colors.BLACK}
               />
             </View>
 
             <AppText
-              text="Calculate your estimated monthly revenue with Livedin versus standard listings."
+              text={t('auth.property_can_earn.description')}
               textAlign="left"
               color={"#1C1C1C"}
               mt={vs(29)}
-              mb={vs(25)} // Reduced from 40
+              mb={vs(25)}
               fontSize={15}
               lineHeight={22}
             />
@@ -75,7 +77,7 @@ const PropertyCanEarnScreen = () => {
             {!showResults ? (
               <View>
                 <AppText
-                  text="Where is your property located?"
+                  text={t('auth.property_can_earn.where_located')}
                   fontSize={18}
                   type="Medium"
                   color="#000000"
@@ -84,46 +86,46 @@ const PropertyCanEarnScreen = () => {
                 />
 
                 <View style={styles.inputGap}>
-                  <AppText text="City" type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
+                  <AppText text={t('auth.property_can_earn.city')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
                   <DropdownField
                     name="city"
                     label=""
                     control={control}
                     errors={errors}
                     data={availableCityItems}
-                    placeholder="Select your city"
+                    placeholder={t('auth.property_can_earn.city_placeholder')}
                   />
                 </View>
 
                 <View style={styles.inputGap}>
-                  <AppText text="District" type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
+                  <AppText text={t('auth.property_can_earn.district')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
                   <DropdownField
                     name="district"
                     label=""
                     control={control}
                     errors={errors}
                     data={availableDistrictItems}
-                    placeholder="Select your District"
+                    placeholder={t('auth.property_can_earn.district_placeholder')}
                     disabled={!selectedcity?.length}
                   />
                 </View>
 
                 <View style={styles.inputGap}>
-                  <AppText text="Number of Bedrooms" type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
+                  <AppText text={t('auth.property_can_earn.bedrooms')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
                   <DropdownField
                     name="bedrooms"
                     label=""
                     control={control}
                     errors={errors}
                     data={bedroomOptions}
-                    placeholder="Select number"
+                    placeholder={t('auth.property_can_earn.bedrooms_placeholder')}
                   />
                 </View>
 
                 <AppButton
                   type='Bold'
                   onPress={handleSubmit}
-                  title="Next"
+                  title={t('auth.property_can_earn.next')}
                   loading={isLoading}
                   style={styles.nextBtn}
                   color="#FFFFFF"
@@ -131,14 +133,14 @@ const PropertyCanEarnScreen = () => {
               </View>
             ) : (
               <View style={styles.resultContainer}>
-                <AppText text="Your Estimate Earnings" fontSize={20} textAlign="center" color={Colors.BLACK} type='Medium'/>
+                <AppText text={t('auth.property_can_earn.estimate_earnings')} fontSize={20} textAlign="center" color={Colors.BLACK} type='Medium'/>
                 <View style={styles.statsRow}>
                   <View style={styles.statBox}>
-                    <AppText text="Monthly Income" fontSize={12} color={Colors.BLACK} />
+                    <AppText text={t('auth.property_can_earn.monthly_income')} fontSize={12} color={Colors.BLACK} />
                     <AppText text={`SAR ${chartData?.data?.monthly}`}  color={Colors.BLACK}/>
                   </View>
                   <View style={styles.statBox}>
-                    <AppText text="Yearly Income" fontSize={12} color={Colors.BLACK} />
+                    <AppText text={t('auth.property_can_earn.yearly_income')} fontSize={12} color={Colors.BLACK} />
                     <AppText text={`SAR ${chartData?.data?.yearly}`} color={Colors.BLACK} />
                   </View>
                 </View>
@@ -151,7 +153,7 @@ const PropertyCanEarnScreen = () => {
                 />
 
                 <AppButton
-                  title="Unlock this revenue"
+                  title={t('auth.property_can_earn.unlock')}
                   style={styles.unlockBtn}
                   textStyle={{ color: '#FFFFFF' }}
                   onPress={goToConnectAccountIntro}

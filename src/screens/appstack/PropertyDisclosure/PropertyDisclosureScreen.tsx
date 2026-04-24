@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Modal, Pressable } from 'react-native';
 import usePropertyDisclosureContainer from './PropertyDisclosureContainer';
+import { useTranslation } from 'react-i18next';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -18,6 +19,7 @@ const AddPropertyDisclosureScreen = () => {
     handleExport, handleExportSubmit, bottomSheetVisible, setBottomSheetVisible,
     otaControl, otaErrors, handleOtaSubmit, listingOptions, isPendingExporting,
   } = usePropertyDisclosureContainer();
+  const { t } = useTranslation();
 
   const options = [
     { label: 'Yes', value: 'Yes' },
@@ -39,25 +41,25 @@ const AddPropertyDisclosureScreen = () => {
           </View>
 
           <AppText
-            text={isEdit ? 'Property disclosure details' : 'Add property disclosure details'}
+            text={isEdit ? t('app.property_disclosure.title_edit') : t('app.property_disclosure.title_new')}
             fontSize={28}
             type="SemiBold"
             mt={40}
             pr={40}
           />
           <AppText
-            text="Select the disclosure details for this property."
+            text={t('app.property_disclosure.subtitle')}
             fontSize={12}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={29}
           />
 
           <View style={styles.formGroup}>
-            <DropdownField name="securityCameras" label="Exterior Security Cameras Present" control={control as any} errors={errors} placeholder="Select" data={options} />
+            <DropdownField name="securityCameras" label={t('app.property_disclosure.cameras_label')} control={control as any} errors={errors} placeholder={t('app.property_disclosure.select_placeholder')} data={options} />
             <View style={styles.fieldGap} />
-            <DropdownField name="noiseMonitor" label="Noise Decibel Monitor" control={control as any} errors={errors} placeholder="Select" data={options} />
+            <DropdownField name="noiseMonitor" label={t('app.property_disclosure.noise_label')} control={control as any} errors={errors} placeholder={t('app.property_disclosure.select_placeholder')} data={options} />
             <View style={styles.fieldGap} />
-            <DropdownField name="weaponsOnProperty" label="Weapons on Property" control={control as any} errors={errors} placeholder="Select" data={options} />
+            <DropdownField name="weaponsOnProperty" label={t('app.property_disclosure.weapons_label')} control={control as any} errors={errors} placeholder={t('app.property_disclosure.select_placeholder')} data={options} />
           </View>
         </ScrollView>
 
@@ -65,7 +67,7 @@ const AddPropertyDisclosureScreen = () => {
         <View style={styles.footer}>
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.property_disclosure.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -73,7 +75,7 @@ const AddPropertyDisclosureScreen = () => {
           )}
           {!isEdit && (
             <AppButton
-              title="Next"
+              title={t('app.property_disclosure.next')}
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
@@ -81,7 +83,7 @@ const AddPropertyDisclosureScreen = () => {
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.property_disclosure.save_exit')}
             mt={12}
             onPress={handleSubmit(onSaveExit)}
             disabled={isLoading}
@@ -98,7 +100,7 @@ const AddPropertyDisclosureScreen = () => {
           <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
-              <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+              <AppText text={t('app.property_disclosure.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
                 <DropdownField
                   name="ota_account"
@@ -106,12 +108,12 @@ const AddPropertyDisclosureScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.property_disclosure.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.property_disclosure.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

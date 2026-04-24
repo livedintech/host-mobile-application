@@ -7,6 +7,7 @@ import AppText from '@/components/molecules/AppText/AppText';
 import ReservationCard from '@/components/molecules/ReservationCard/ReservationCard';
 import { getOtaConfig } from '@/constants/ota_config';
 import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isVisible: boolean;
@@ -16,7 +17,8 @@ interface Props {
 }
 
 export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress }: Props) => {
-  
+  const { t } = useTranslation();
+
   // Fetch data only when modal is visible and bookingId exists
   const { data: apiData, isLoading, isError } = useQuery({
     queryKey: ['BOOKING_DETAILS', bookingId],
@@ -31,7 +33,7 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
     <Modal visible={isVisible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <AppText text="Reservation Details" type="Bold" fontSize={18} color="#000000" />
+          <AppText text={t('app.booking_details.title')} type="Bold" fontSize={18} color="#000000" />
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <X size={ms(24)} color="#000000" />
           </TouchableOpacity>
@@ -40,13 +42,13 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
         {isLoading ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" color="#000000" />
-            <AppText text="Fetching details..." mt={10} color="#666" />
+            <AppText text={t('app.booking_details.fetching')} mt={10} color="#666" />
           </View>
         ) : isError ? (
           <View style={styles.center}>
-            <AppText text="Failed to load booking details." color="red" />
+            <AppText text={t('app.booking_details.failed')} color="red" />
             <TouchableOpacity onPress={onClose} style={styles.retryBtn}>
-              <AppText text="Close" color="#000000" />
+              <AppText text={t('app.booking_details.close')} color="#000000" />
             </TouchableOpacity>
           </View>
         ) : (
@@ -79,7 +81,7 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
               })
             ) : (
               <View style={styles.empty}>
-                <AppText text="No booking information available." color="#666" />
+                <AppText text={t('app.booking_details.empty')} color="#666" />
               </View>
             )}
           </ScrollView>

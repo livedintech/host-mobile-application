@@ -22,6 +22,7 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { useTranslation } from 'react-i18next';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const { width, height } = Dimensions.get('window');
@@ -31,6 +32,7 @@ interface ImageSource {
 }
 
 const EditTaskScreen = () => {
+  const { t } = useTranslation();
   const {
     taskDetail,
     isLoadingTaskDetail,
@@ -109,7 +111,7 @@ const EditTaskScreen = () => {
 
         <View style={styles.infoSection}>
           <AppText
-            text="Task Description:"
+            text={t('app.task_management.task_description')}
             fontSize={14}
             type="Medium"
             color={Colors.PINE_FOREST}
@@ -122,7 +124,7 @@ const EditTaskScreen = () => {
             mb={28}
           />
           <AppText
-            text="Property:"
+            text={t('app.task_management.property')}
             fontSize={14}
             type="Medium"
             color={Colors.PINE_FOREST}
@@ -137,7 +139,7 @@ const EditTaskScreen = () => {
 
           <View>
             <AppText
-              text="Task Assigned:"
+              text={t('app.task_management.task_assigned')}
               fontSize={14}
               type="Medium"
               color={Colors.PINE_FOREST}
@@ -154,7 +156,7 @@ const EditTaskScreen = () => {
 
         <View style={styles.checklistTitleRow}>
           <AppText
-            text="Pre Activity Preview"
+            text={t('app.task_management.pre_activity')}
             fontSize={23}
             type="Bold"
             color={Colors.PINE_FOREST}
@@ -175,7 +177,7 @@ const EditTaskScreen = () => {
               <View style={styles.row}>
                 <Svgicons path={'bedroom'} size={24} mr={12} />
                 <AppText
-                  text="View Images/Video"
+                  text={t('app.task_management.view_images')}
                   fontSize={18}
                   type="Bold"
                   color={Colors.PINE_FOREST}
@@ -218,7 +220,7 @@ const EditTaskScreen = () => {
                               >
                                 <Svgicons path="webcampIcon" size={30} />
                                 <AppText
-                                  text="Video"
+                                  text={t('app.task_management.video')}
                                   fontSize={10}
                                   color={Colors.PINE_FOREST}
                                   mt={4}
@@ -240,7 +242,7 @@ const EditTaskScreen = () => {
                   /* --- This is the empty state message --- */
                   <View style={styles.emptyMediaContainer}>
                     <AppText
-                      text="No images or videos available for this task."
+                      text={t('app.task_management.no_media')}
                       fontSize={14}
                       color={Colors.BRUNSWICK_GREEN}
                       style={{ textAlign: 'center' }}
@@ -373,7 +375,7 @@ const EditTaskScreen = () => {
                                           size={24}
                                         />
                                         <AppText
-                                          text="Video"
+                                          text={t('app.task_management.video')}
                                           fontSize={9}
                                           color={Colors.PINE_FOREST}
                                         />
@@ -432,7 +434,7 @@ const EditTaskScreen = () => {
         <View style={styles.taskCompleted}>
           <Svgicons path="taskCompletedIcon" size={24} />
           <AppText
-            text="Task Completed Successfully"
+            text={t('app.task_management.task_completed')}
             color={Colors.BRUNSWICK_GREEN}
           />
         </View>

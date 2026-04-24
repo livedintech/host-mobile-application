@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { AreaChart, YAxis, XAxis } from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
@@ -8,6 +9,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 
 const ConservativeChart = () => {
+  const { t } = useTranslation();
   // Sample data points for the curve (April to June)
   const data = [100, 150, 200, 280, 350, 420];
   const xAxisLabels = ['April', '', 'May', '', 'June', ''];
@@ -35,7 +37,7 @@ const ConservativeChart = () => {
 
   return (
     <View style={styles.chartWrapper}>
-      <AppText text="Result:" fontSize={14} color="#6B6B6B" mb={15} />
+      <AppText text={t('app.conservative_chart.result')} fontSize={14} color="#6B6B6B" mb={15} />
 
       <View style={styles.chartAreaRow}>
         {/* Chart */}
@@ -74,7 +76,7 @@ const ConservativeChart = () => {
 
         <View style={styles.propertyLegend}>
           <View style={styles.legendDot} />
-          <AppText text="Property" fontSize={14} color={Colors.BLACK} />
+          <AppText text={t('app.task_management.property')} fontSize={14} color={Colors.BLACK} />
         </View>
       </View>
     </View>

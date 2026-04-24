@@ -11,9 +11,11 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import useDiscountsContainer from './DiscountsContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 
 const AddDiscountsScreen = () => {
     const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit } = useDiscountsContainer();
+    const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -33,16 +35,16 @@ const AddDiscountsScreen = () => {
                         {!isEdit && <CircularProgress percentage={85} size={48} strokeWidth={4} />}
                     </View>
 
-                    <AppText text={isEdit ? "Discounts" : "Add discounts"} fontSize={32} type="Bold" mt={30} />
-                    <AppText text="Create discounts to attract more bookings and offer special pricing for specific situations like last-minute stays or longer reservations." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mt={10} mb={15} pr={40} />
+                    <AppText text={isEdit ? t('app.discounts.title_edit') : t('app.discounts.title_new')} fontSize={32} type="Bold" mt={30} />
+                    <AppText text={t('app.discounts.subtitle')} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mt={10} mb={15} pr={40} />
 
                     <View style={styles.formGroup}>
-                        <InputField name="weekly_discount" label="Weekly Discounts" control={control as any} errors={errors} placeholder="4%" keyboardType="numeric"/>
+                        <InputField name="weekly_discount" label={t('app.discounts.weekly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.weekly_placeholder')} keyboardType="numeric"/>
                         <View style={styles.gap} />
-                        <InputField name="monthly_discount" label="Monthly Discounts" control={control as any} errors={errors} placeholder="4%" keyboardType="numeric"/>
+                        <InputField name="monthly_discount" label={t('app.discounts.monthly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.monthly_placeholder')} keyboardType="numeric"/>
                         <View style={styles.gap} />
-                        <InputField name="last_minute_discount" label="Last Minute Discount" control={control as any} errors={errors} placeholder="10%" keyboardType="numeric"/>
-                        <InputField name="early_bird_price_change" label="Early Bird Price Change" control={control as any} errors={errors} placeholder="10%" keyboardType="numeric"/>
+                        <InputField name="last_minute_discount" label={t('app.discounts.last_minute_label')} control={control as any} errors={errors} placeholder={t('app.discounts.last_minute_placeholder')} keyboardType="numeric"/>
+                        <InputField name="early_bird_price_change" label={t('app.discounts.early_bird_label')} control={control as any} errors={errors} placeholder={t('app.discounts.early_bird_placeholder')} keyboardType="numeric"/>
 
                     </View>
                 </KeyboardAwareScrollView>
@@ -50,14 +52,14 @@ const AddDiscountsScreen = () => {
                 <View style={styles.footer}>
                     {!isEdit && (
                         <AppButton
-                            title="Next"
+                            title={t('app.discounts.next')}
                             variant="secondary"
                             onPress={handleSubmit((d) => onSubmit(d, false))}
                             loading={isLoading}
                         />
                     )}
                     <AppButton
-                        title="Save & Exit"
+                        title={t('app.discounts.save_exit')}
                         mt={!isEdit ? 12 : 0}
                         onPress={handleSubmit((d) => onSubmit(d, true))}
                         disabled={isLoading}
@@ -69,7 +71,7 @@ const AddDiscountsScreen = () => {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
-                                <AppText text="Add Discount" fontSize={24} type="Bold" />
+                                <AppText text={t('app.discounts.add_discount_title')} fontSize={24} type="Bold" />
                                 <TouchableOpacity onPress={() => setModalVisible(false)}>
                                     <Svgicons path="closeIcon" size={24} />
                                 </TouchableOpacity>
@@ -77,12 +79,12 @@ const AddDiscountsScreen = () => {
                             <DropdownField
                                 errors={errors}
                                 name="temp_discount"
-                                label="Select Discount"
+                                label={t('app.discounts.select_discount_label')}
                                 control={control as any}
-                                data={[{ label: 'Last Minute Discount', value: 'lmd' }]}
-                                placeholder="Last Minute Discount"
+                                data={[{ label: t('app.discounts.last_minute_option'), value: 'lmd' }]}
+                                placeholder={t('app.discounts.last_minute_option')}
                             />
-                            <AppButton title="Save" mt={30} onPress={() => setModalVisible(false)} />
+                            <AppButton title={t('app.discounts.save')} mt={30} onPress={() => setModalVisible(false)} />
                         </View>
                     </View>
                 </Modal>

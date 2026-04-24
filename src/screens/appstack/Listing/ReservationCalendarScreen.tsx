@@ -16,9 +16,11 @@ import { Colors } from '@/theme/colors';
 import { getOtaConfig } from '@/constants/ota_config';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const ReservationCalendarScreen = () => {
   const route = useRoute<any>();
+  const { t } = useTranslation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<
     string[]
@@ -58,14 +60,14 @@ const ReservationCalendarScreen = () => {
       <View style={styles.headerFixed}>
         <View style={styles.headerRow}>
           <AppText
-            text="Guest Bookings"
+            text={t('app.reservation_calendar.title')}
             fontSize={26}
             type="Medium"
             color={Colors.BLACK}
           />
           <ButtonView style={styles.toggleButton} onPress={() => goBack()}>
             <AppText
-              text="Calendar"
+              text={t('app.reservation_calendar.calendar_btn')}
               color={Colors.WHITE}
               fontSize={10}
               type="SemiBold"
@@ -96,7 +98,7 @@ const ReservationCalendarScreen = () => {
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <View style={styles.centerContainer}>
-                <AppText text="No reservations found" color="#999" />
+                <AppText text={t('app.reservation_calendar.empty')} color="#999" />
               </View>
             }
             renderItem={({ item }) => {

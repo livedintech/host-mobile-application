@@ -7,12 +7,14 @@ import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 interface NoAiAutoReplyScreenProps {
     onCreatePress: () => void;
 }
 
 const NoAiAutoReplyScreen = ({ onCreatePress }: NoAiAutoReplyScreenProps) => {
+    const { t } = useTranslation();
     return (
             <View style={styles.container}>
              
@@ -21,17 +23,17 @@ const NoAiAutoReplyScreen = ({ onCreatePress }: NoAiAutoReplyScreenProps) => {
                 <View style={styles.content}>
                     <Svgicons path="noAiAutoReplyIcon" size={Metrics.scale(320)} />
                     
-                    <AppText 
-                        text="No AI Auto Reply Found" 
-                        fontSize={28} 
-                        type="Bold" 
-                        color={Colors.BLACK} 
+                    <AppText
+                        text={t('app.no_ai_auto_reply.title')}
+                        fontSize={28}
+                        type="Bold"
+                        color={Colors.BLACK}
                         textAlign="center"
                         style={styles.title}
                     />
-                    
-                    <AppText 
-                        text="Create one to automatically respond to guest messages." 
+
+                    <AppText
+                        text={t('app.no_ai_auto_reply.description')}
                         fontSize={14} 
                         color={Colors.DARK_CHARCOAL_OPACITY} 
                         textAlign="center"

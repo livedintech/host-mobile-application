@@ -12,6 +12,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const AboutThePlaceScreen = () => {
   const {
@@ -29,6 +30,7 @@ const AboutThePlaceScreen = () => {
     listingOptions,
     isPendingExporting,
   } = useAboutThePlaceContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -43,15 +45,15 @@ const AboutThePlaceScreen = () => {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <AppText text="Add information about your property" fontSize={28} type="Bold" mb={30} />
+          <AppText text={t('app.about_place.title')} fontSize={28} type="Bold" mb={30} />
 
           <View style={styles.inputWrapper}>
             <InputField
               name="size_sqm"
-              label="Property Size (SQM)"
+              label={t('app.about_place.size_label')}
               control={control}
               errors={errors}
-              placeholder="500 Square Metres"
+              placeholder={t('app.about_place.size_placeholder')}
               keyboardType="numeric"
             />
           </View>
@@ -59,33 +61,33 @@ const AboutThePlaceScreen = () => {
           <View style={styles.card}>
             <View style={styles.iconRow}>
               <Svgicons path="guestIcon" size={20} />
-              <AppText text="Number of Guests" ml={10} fontSize={14} type="Medium" />
+              <AppText text={t('app.about_place.guests')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="guest_limit" control={control} errors={errors} data={numberOptions} placeholder="3" />
+            <DropdownField label="" name="guest_limit" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.guests_placeholder')} />
           </View>
 
           <View style={styles.card}>
             <View style={styles.iconRow}>
               <Svgicons path="bedroomIcon" size={20} />
-              <AppText text="Number of Bedrooms" ml={10} fontSize={14} type="Medium" />
+              <AppText text={t('app.about_place.bedrooms')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="bedrooms" control={control} errors={errors} data={numberOptions} placeholder="4 Bedrooms" />
+            <DropdownField label="" name="bedrooms" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.bedrooms_placeholder')} />
           </View>
 
           <View style={styles.card}>
             <View style={styles.iconRow}>
               <Svgicons path="bedroom" size={20} />
-              <AppText text="Number of Beds" ml={10} fontSize={14} type="Medium" />
+              <AppText text={t('app.about_place.beds')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="beds" control={control} errors={errors} data={numberOptions} placeholder="4 Beds" />
+            <DropdownField label="" name="beds" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.beds_placeholder')} />
           </View>
 
           <View style={styles.card}>
             <View style={styles.iconRow}>
               <Svgicons path="bathroom" size={20} />
-              <AppText text="Number of Bathrooms" ml={10} fontSize={14} type="Medium" />
+              <AppText text={t('app.about_place.bathrooms')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="bathrooms" control={control} errors={errors} data={numberOptions} placeholder="3" />
+            <DropdownField label="" name="bathrooms" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.bathrooms_placeholder')} />
           </View>
         </ScrollView>
 
@@ -94,7 +96,7 @@ const AboutThePlaceScreen = () => {
           {/* ✅ Export — sirf edit mode mein */}
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.about_place.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -102,14 +104,14 @@ const AboutThePlaceScreen = () => {
           )}
           {!isEdit && (
             <AppButton
-              title="Next"
+              title={t('app.about_place.next')}
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.about_place.save_exit')}
             mt={!isEdit ? 15 : 0}
             onPress={handleSubmit(onSaveExit)}
             loading={isLoading}
@@ -128,7 +130,7 @@ const AboutThePlaceScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.about_place.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -141,12 +143,12 @@ const AboutThePlaceScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.about_place.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.about_place.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

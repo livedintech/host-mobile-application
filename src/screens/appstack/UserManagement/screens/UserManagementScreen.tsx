@@ -10,8 +10,10 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import NoUserScreen from './NoUserScreen';
+import { useTranslation } from 'react-i18next';
 
 const UserManagementScreen = () => {
+  const { t } = useTranslation();
   const {
     handleCreateUser,
     handleEditUser,
@@ -26,11 +28,11 @@ const UserManagementScreen = () => {
   // Logic to show "All Listings" or specific names
   const renderListingAccess = (item: any) => {
     if (item.is_all_listing) {
-      return 'All Listings';
+      return t('app.user_management.all_listings');
     }
 
     const ids = item.listing_scope?.listing_ids || [];
-    if (ids.length === 0) return 'No Access';
+    if (ids.length === 0) return t('app.user_management.no_access');
 
     // Map IDs to Names from the listings query data
     const names = listings
@@ -56,7 +58,7 @@ const UserManagementScreen = () => {
             color={Colors.BLACK}
           />
           <AppText
-            text={item.role_namwe || 'User'}
+            text={item.role_namwe || t('app.user_management.default_role')}
             fontSize={12}
             color={Colors.BLACK}
           />
@@ -83,7 +85,7 @@ const UserManagementScreen = () => {
 
       <View style={styles.listingSection}>
         <AppText
-          text="Listing Access"
+          text={t('app.user_management.listing_access')}
           fontSize={12}
           type="Bold"
           color={Colors.BLACK}
@@ -110,14 +112,14 @@ const UserManagementScreen = () => {
           data={userManagement}
           isLoading={isLoading}
           renderItem={renderUser}
-          listEmptyText="No users found"
+          listEmptyText={t('app.user_management.empty_text')}
           onRefresh={refetch}
           keyExtractor={item => item?.id?.toString()}
           contentContainerStyle={styles.scrollContent}
           HeaderComponent={
             <View style={styles.headerContainer}>
               <AppText
-                text="User Management"
+                text={t('app.user_management.title')}
                 fontSize={28}
                 type="Bold"
                 color={Colors.BLACK}
@@ -128,7 +130,7 @@ const UserManagementScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Create New User"
+            title={t('app.user_management.create_user')}
             onPress={handleCreateUser}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}

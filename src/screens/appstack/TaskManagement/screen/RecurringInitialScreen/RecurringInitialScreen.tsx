@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { StyleSheet, View, SafeAreaView, TouchableOpacity } from 'react-native';
 import Metrics from '@/utility/Metrics';
@@ -12,6 +13,7 @@ import { useTaskStore } from '@/store/taskStore';
 
 const RecurringInitialScreen = () => {
   const { resetTaskStore } = useTaskStore();
+  const { t } = useTranslation();
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
@@ -24,7 +26,7 @@ const RecurringInitialScreen = () => {
           {/* Text Content Section */}
           <View style={styles.textContent}>
             <AppText
-              text="Set up a recurring cleaning schedule for your property."
+              text={t('app.task_management.recurring_desc')}
               fontSize={28}
               type="Bold"
               lineHeight={33}

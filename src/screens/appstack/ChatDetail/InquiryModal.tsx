@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
 import useInquiryModalContainer from './useInquiryModalContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props) => {
+  const { t } = useTranslation();
     const {
         viewState,
         control,
@@ -78,7 +80,7 @@ const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props)
                             )}
                         </View>
                         {/* <ButtonView onPress={() => console.log('View Details')}>
-                            <AppText text="View Details" fontSize={14} type="SemiBold" color={Colors.BLACK} style={{ textDecorationLine: 'underline' }} />
+                            <AppText text={t('app.inquiry_modal.view_details')} fontSize={14} type="SemiBold" color={Colors.BLACK} style={{ textDecorationLine: 'underline' }} />
                         </ButtonView> */}
                     </View>
 
@@ -86,7 +88,7 @@ const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props)
 
                     <View style={styles.buttonRow}>
                         <AppButton
-                            title="Special Offer"
+                            title={t('app.inquiry_modal.special_offer_btn')}
                             onPress={handleSpecialOfferClick}
                             backgroundColor={Colors.WHITE}
                             color={Colors.INDIAN_RED}
@@ -98,7 +100,7 @@ const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props)
                         />
                         <View style={{ width: 10 }} />
                         <AppButton
-                            title="Pre-approve"
+                            title={t('app.inquiry_modal.pre_approve_btn')}
                             onPress={handlePreApproveClick}
                             backgroundColor={Colors.TEAL_PRIMARY_ALT}
                             color={Colors.WHITE}
@@ -118,35 +120,35 @@ const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props)
                         <ButtonView onPress={handleBackToActions} style={styles.backBtn}>
                             <Svgicons path="back" size={30} color={Colors.BLACK} />
                         </ButtonView>
-                        <AppText text="Make Special Offer" fontSize={18} type="Bold" color={Colors.BLACK} />
+                        <AppText text={t('app.inquiry_modal.make_offer_title')} fontSize={18} type="Bold" color={Colors.BLACK} />
                         <View style={{ width: 20 }} />
                     </View>
 
                     <View style={styles.formContent}>
                         <InputField
-                            label="Offer Amount (SAR)"
+                            label={t('app.inquiry_modal.offer_amount_label')}
                             name="offerAmount"
                             control={control}
                             errors={errors}
-                            placeholder="Enter amount"
+                            placeholder={t('app.inquiry_modal.offer_amount_placeholder')}
                             keyboardType="numeric"
                             containerStyle={{
                                 borderColor: Colors.CHARCOAL
                             }}
                         />
                         <InputField
-                            label="Message"
+                            label={t('app.inquiry_modal.message_label')}
                             name="message"
                             control={control}
                             errors={errors}
-                            placeholder="Type your message..."
+                            placeholder={t('app.inquiry_modal.message_placeholder')}
                             containerStyle={{
                                 borderColor: Colors.CHARCOAL
                             }}
                         />
                         <AppButton
                             fontSize={14}
-                            title="Send Offer"
+                            title={t('app.inquiry_modal.send_offer')}
                             onPress={handleSubmitForm}
                             loading={isLoading}
                             disabled={isLoading}
@@ -166,23 +168,23 @@ const InquiryModal = ({ visible, onClose, inquiryId, name, description }: Props)
                         <ButtonView onPress={handleBackToActions} style={styles.backBtn}>
                             <Svgicons path="back" size={30} color={Colors.BLACK} />
                         </ButtonView>
-                        <AppText text="Pre-Approve Inquiry" fontSize={18} type="Bold" color={Colors.BLACK} />
+                        <AppText text={t('app.inquiry_modal.pre_approve_title')} fontSize={18} type="Bold" color={Colors.BLACK} />
                         <View style={{ width: 20 }} />
                     </View>
 
                     <View style={styles.formContent}>
                         <InputField
-                            label="Message"
+                            label={t('app.inquiry_modal.message_label')}
                             name="message"
                             control={control}
                             errors={errors}
-                            placeholder="Type your pre-approval message..."
+                            placeholder={t('app.inquiry_modal.pre_approve_placeholder')}
                             containerStyle={{
                                 borderColor: Colors.CHARCOAL
                             }}
                         />
                         <AppButton
-                            title="Send Approval"
+                            title={t('app.inquiry_modal.send_approval')}
                             onPress={handleSubmitForm}
                             loading={isLoading}
                             disabled={isLoading}

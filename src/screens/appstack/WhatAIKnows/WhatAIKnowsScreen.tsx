@@ -7,6 +7,7 @@ import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const KNOWLEDGE_DATA = [
     {
@@ -14,8 +15,8 @@ const KNOWLEDGE_DATA = [
         items: [
             'Listing allows same-day check-in on the guest departure (check-out) date',
             'Listing allows same-day check-out on the guest arrival (check-in) date',
-            'Listing is available one day before guest’s arrival date',
-            'Listing is available on the guest’s departure date',
+            "Listing is available one day before guest's arrival date",
+            "Listing is available on the guest's departure date",
         ],
     },
     {
@@ -54,6 +55,7 @@ const KNOWLEDGE_DATA = [
 ];
 
 const WhatAIKnowsScreen = () => {
+    const { t } = useTranslation();
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
@@ -65,7 +67,7 @@ const WhatAIKnowsScreen = () => {
                 >
                     <View style={styles.titleSection}>
                         <AppText 
-                            text="What AI Already Knows" 
+                            text={t('app.what_ai_knows.title')}
                             fontSize={28} 
                             type="Bold" 
                             color={Colors.BLACK} 

@@ -13,6 +13,7 @@ import AppButton from '../AppButton/AppButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import PhoneInputField from '../Input/PhoneInputField';
 import ButtonView from '../AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isLoading?: boolean;
@@ -47,6 +48,7 @@ export const CreateBookingSheet = ({
 }: Props) => {
   const today = new Date();
   // Watch fields for real-time calculation
+  const { t } = useTranslation();
   const startDateValue = useWatch({ control, name: 'start_date' });
   const endDateValue = useWatch({ control, name: 'end_date' });
   const rateValue = useWatch({
@@ -194,13 +196,13 @@ export const CreateBookingSheet = ({
             />
             <View style={styles.pricingInfoContainer}>
               <AppText
-                text="SR499 - SR500 depending on promotions"
+                text={t('app.create_booking_sheet.price_hint')}
                 fontSize={13}
                 color={Colors.DRAVIT_GREY}
               />
               <TouchableOpacity activeOpacity={0.7}>
                 <AppText
-                  text="Similar listings SR86 - SR129"
+                  text={t('app.create_booking_sheet.similar_listings')}
                   fontSize={13}
                   color={Colors.DRAVIT_GREY}
                   style={styles.underline}

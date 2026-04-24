@@ -10,6 +10,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const CreateListingStepOneScreen = ({ navigation }: any) => {
   const {
@@ -22,6 +23,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
     isChannelMissing,
     isPropertySelected
   } = useCreateListingStepOneContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
@@ -30,7 +32,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.titleSection}>
             <AppText
-              text="Step 1"
+              text={t('app.create_listing_step1.step_label')}
               fontSize={18}
               type="Medium"
               color={Colors.BLACK}
@@ -38,7 +40,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
             />
 
             <AppText
-              text="Tell us about your property"
+              text={t('app.create_listing_step1.title')}
               fontSize={32}
               type="Bold"
               color={Colors.BLACK}
@@ -51,7 +53,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
           <GlassCard width={'100%'} style={styles.cardContainer}>
             <View style={styles.cardHeader}>
               <AppText
-                text="Select Property Type"
+                text={t('app.create_listing_step1.select_type')}
                 fontSize={18}
                 type="SemiBold"
                 color={Colors.BLACK}
@@ -104,7 +106,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Next"
+            title={t('app.create_listing_step1.next')}
             onPress={handleSubmit(onNext)}
             fontSize={16}
             mb={15}
@@ -114,7 +116,7 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
           />
 
           <AppButton
-            title="Save & Exit"
+            title={t('app.create_listing_step1.save_exit')}
             onPress={onSaveExit}
             fontSize={16}
             disabled={isLoading || isChannelMissing || !isPropertySelected}

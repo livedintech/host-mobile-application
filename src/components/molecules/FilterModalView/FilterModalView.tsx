@@ -11,6 +11,7 @@ import AppButton from '../AppButton/AppButton';
 import ButtonView from '../AppButton/ButtonView';
 import DropdownField from '../Input/DropdownField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isVisible: boolean;
@@ -28,6 +29,7 @@ export const FilterModalView = ({
   actualProperties,
   initialSelectedValues,
 }: Props) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [localSelected, setLocalSelected] = useState<string[]>(
     initialSelectedValues,
@@ -82,7 +84,7 @@ export const FilterModalView = ({
       >
         {/* Header */}
         <View style={styles.header}>
-          <AppText text="Apply Filter" type="Bold" fontSize={ms(20)} color="#000" />
+          <AppText text={t('app.filter_modal_view.apply_filter')} type="Bold" fontSize={ms(20)} color="#000" />
           <ButtonView onPress={onClose} style={styles.closeCircle}>
             <X size={ms(18)} color="#000" />
           </ButtonView>
@@ -92,7 +94,7 @@ export const FilterModalView = ({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <AppText text="Select Property" type="Medium" fontSize={ms(15)} mb={vs(10)} color="#000" />
+          <AppText text={t('app.filter_modal_view.select_property')} type="Medium" fontSize={ms(15)} mb={vs(10)} color="#000" />
 
           {/* DROPDOWN BOX */}
           <View style={[styles.dropdownBox, isPropertyOpen && styles.activeBorder]}>

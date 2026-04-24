@@ -5,8 +5,10 @@ import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useGathrenPMSIdContainer from './GathrenPmsidContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { useTranslation } from 'react-i18next';
 
 const PMSIdScreen = () => {
+  const { t } = useTranslation();
   const { control, errors, handleSubmit, onNext, onCreateAccount,isLoading } = useGathrenPMSIdContainer();
 
   return (
@@ -17,12 +19,12 @@ const PMSIdScreen = () => {
       <View style={styles.content}>
         {/* Title */}
         <View style={styles.titleSection}>
-          <AppText text="Enter your PMS ID" fontSize={32} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
+          <AppText text={t('app.gathren_pms.title')} fontSize={32} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
         </View>
 
         {/* Input Field Section */}
         <View style={styles.formSection}>
-          <AppText text="PMS id*" fontSize={16} type="SemiBold" color={Colors.BRUNSWICK_GREEN} mb={8} />
+          <AppText text={t('app.gathren_pms.pms_label')} fontSize={16} type="SemiBold" color={Colors.BRUNSWICK_GREEN} mb={8} />
 
           <Controller
             control={control}
@@ -44,7 +46,7 @@ const PMSIdScreen = () => {
           {/* Instruction Note */}
           <AppText
             mt={16}
-            text="You can find your PMS ID on the Gathern platform by opening your profile settings. Your PMS ID is listed under your linked accounts or account details section."
+            text={t('app.gathren_pms.description')}
             fontSize={10}
             color={Colors.PINE_FOREST}
           />
@@ -52,8 +54,8 @@ const PMSIdScreen = () => {
 
         {/* Bottom Buttons */}
         <View style={styles.footer}>
-<AppButton loading={isLoading} onPress={handleSubmit(onNext)} title='Next' mb={10}/>
-          <AppButton disabled={isLoading} onPress={onCreateAccount} title='Create New Account' />
+<AppButton loading={isLoading} onPress={handleSubmit(onNext)} title={t('app.gathren_pms.next')} mb={10}/>
+          <AppButton disabled={isLoading} onPress={onCreateAccount} title={t('app.gathren_pms.create_account')} />
         </View>
       </View>
     </View>

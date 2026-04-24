@@ -11,6 +11,7 @@ import { useWatch, Controller } from 'react-hook-form';
 import useUserManagementContainer from '../containers/UserManagementContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Checkbox from '@/components/molecules/Input/CheckBox';
+import { useTranslation } from 'react-i18next';
 
 const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
   const {
@@ -19,6 +20,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
     permissionToEditPhoneNumber
   } = useUserManagementContainer(mode);
 
+  const { t } = useTranslation();
   const isEdit = mode === 'edit';
   const assignAll = useWatch({ control, name: 'assignAllProperties' });
   const selectedRoleId = useWatch({ control, name: 'role' });
@@ -32,15 +34,15 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <AppText text={isEdit ? 'Edit User' : 'Create New User'} fontSize={28} type="Bold" />
+            <AppText text={isEdit ? t('app.user_form.title_edit') : t('app.user_form.title_create')} fontSize={28} type="Bold" />
           </View>
-            <AppText text={isEdit ? '' : 'Create and manage users for your property. Add users to assign tasks and control access. Once a user is created, you can easily assign responsibilities and manage their roles.'} fontSize={12} type="Bold" color = {"#333333A6"} type="Regular" mb={40}/>
+            <AppText text={isEdit ? '' : t('app.user_form.subtitle_create')} fontSize={12} color={"#333333A6"} type="Regular" mb={40}/>
 
           <View style={styles.formContainer}>
-            <InputField name="name" label="Name" control={control} errors={errors} placeholder="Ahmed" />
+            <InputField name="name" label={t('app.user_form.name_label')} control={control} errors={errors} placeholder={t('app.user_form.name_placeholder')} />
             
             <PhoneInputField
-              label="Phone Number*"
+              label={t('app.user_form.phone_label')}
               control={control}
               errors={errors}
               countryFieldName="country"
@@ -48,38 +50,38 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
               disabled={permissionToEditPhoneNumber}
             />
 
-            <InputField name="email" label="Email" control={control} errors={errors} placeholder="ahmed@example.com" 
+            <InputField name="email" label={t('app.user_form.email_label')} control={control} errors={errors} placeholder={t('app.user_form.email_placeholder')}
             // editable={!isEdit} 
             />
 
             <DropdownField 
               name="role" 
-              label="Role Assignment" 
-              control={control} 
-              errors={errors} 
-              data={rolesOptions} 
-              placeholder="Select Role" 
+              label={t('app.user_form.role_label')}
+              control={control}
+              errors={errors}
+              data={rolesOptions}
+              placeholder={t('app.user_form.role_placeholder')}
             />
 
             {/* NEW: Staff Role Type Dropdown - Only shows if role is Operator */}
             {isOperator && (
               <MultiSelectDropdownField 
                 name="staffRoleType" 
-                label="Staff Role Type" 
-                control={control} 
-                errors={errors} 
-                data={staffRoleTypeOptions} 
-                placeholder="Select Staff Type" 
+                label={t('app.user_form.staff_type_label')}
+                control={control}
+                errors={errors}
+                data={staffRoleTypeOptions}
+                placeholder={t('app.user_form.staff_type_placeholder')}
               />
             )}
 
             {isOperator && (
               <InputField 
                 name="password" 
-                label="Password" 
-                control={control} 
-                errors={errors} 
-                placeholder="********" 
+                label={t('app.user_form.password_label')}
+                control={control}
+                errors={errors}
+                placeholder="********"
                 // secureTextEntry 
               />
             )}
@@ -87,11 +89,11 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
             {!assignAll && (
               <MultiSelectDropdownField
                 name="listings"
-                label="Select Property"
+                label={t('app.user_form.property_label')}
                 control={control}
                 errors={errors}
                 data={listingOptions}
-                placeholder="Select Multiple Options"
+                placeholder={t('app.user_form.property_placeholder')}
               />
             )}
 
@@ -103,14 +105,14 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
                   <Checkbox isChecked={value} onPress={() => onChange(!value)} />
                 )}
               />
-              <AppText text="Assign this user all properties" fontSize={14} ml={10} />
+              <AppText text={t('app.user_form.assign_all')} fontSize={14} ml={10} />
             </View>
           </View>
         </ScrollView>
 
         <View style={styles.footer}>
           <AppButton
-            title={isEdit ? 'Save & Exit' : 'Create New User'}
+            title={isEdit ? t('app.user_form.save_exit') : t('app.user_form.title_create')}
             onPress={handleSubmit(onFormSubmit)}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}

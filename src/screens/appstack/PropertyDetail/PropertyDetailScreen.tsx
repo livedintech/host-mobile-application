@@ -9,6 +9,7 @@ import {
 } from 'react-native-popup-menu';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import usePropertyDetailContainer from './PropertyDetailContainer';
 import Metrics from '@/utility/Metrics';
@@ -22,6 +23,7 @@ import { goBack } from '@/services/navigationService';
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const PropertyDetailScreen = () => {
+  const { t } = useTranslation();
   const {
     propertyData,
     handleEditSection,
@@ -128,12 +130,12 @@ const PropertyDetailScreen = () => {
                 onSelect={() => handleMenuAction('channel')}
                 style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
               >
-                <AppText text="Channel" fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                <AppText text={t('app.property_detail.channel')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="channelIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
               </MenuOption>
 
               <MenuOption onSelect={() => handleMenuAction('task')} style={styles.menuItem}>
-                <AppText text="Task" fontSize={16} color={Colors.BLACK} style={styles.menuText} />
+                <AppText text={t('app.property_detail.task')} fontSize={16} color={Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="taskIcon" size={20} />
               </MenuOption>
 
@@ -142,7 +144,7 @@ const PropertyDetailScreen = () => {
                 onSelect={() => handleMenuAction('calendar')}
                 style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
               >
-                <AppText text="Calendar" fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                <AppText text={t('app.property_detail.calendar')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="calendarGridIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BRUNSWICK_GREEN} />
               </MenuOption>
 
@@ -151,7 +153,7 @@ const PropertyDetailScreen = () => {
                 onSelect={() => handleMenuAction('delete')}
                 style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
               >
-                <AppText text="Delete Listing" fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                <AppText text={t('app.property_detail.delete_listing')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="TrashFull" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
               </MenuOption>
             </MenuOptions>
@@ -160,7 +162,7 @@ const PropertyDetailScreen = () => {
 
         {/* Title */}
         <View style={styles.titleSection}>
-          <AppText text="Listing Editor" fontSize={32} type="Bold" color={Colors.BLACK} />
+          <AppText text={t('app.property_detail.listing_editor')} fontSize={32} type="Bold" color={Colors.BLACK} />
         </View>
 
         {/* Tab Switcher */}
@@ -179,7 +181,7 @@ const PropertyDetailScreen = () => {
                 size={16}
                 stroke={activeTab === 'Your Space' ? Colors.WHITE : Colors.BLACK}
               />
-              <AppText text="Your Space" fontSize={14} type="Medium" color={activeTab === 'Your Space' ? Colors.WHITE : Colors.BLACK} ml={8} />
+              <AppText text={t('app.property_detail.your_space')} fontSize={14} type="Medium" color={activeTab === 'Your Space' ? Colors.WHITE : Colors.BLACK} ml={8} />
             </ButtonView>
 
             <ButtonView
@@ -195,7 +197,7 @@ const PropertyDetailScreen = () => {
                 size={16}
                 stroke={activeTab === 'Pricing' ? Colors.WHITE : Colors.BLACK}
               />
-              <AppText text="Pricing" fontSize={14} type="Medium" color={activeTab === 'Pricing' ? Colors.WHITE : Colors.BLACK} ml={8} />
+              <AppText text={t('app.property_detail.pricing')} fontSize={14} type="Medium" color={activeTab === 'Pricing' ? Colors.WHITE : Colors.BLACK} ml={8} />
             </ButtonView>
           </GlassCard>
         </View>
@@ -210,7 +212,7 @@ const PropertyDetailScreen = () => {
           {activeTab === 'Your Space' ? (
             <>
               <AppText
-                text="Export your listing to automatically sync and apply all updates across your connected OTA platforms."
+                text={t('app.property_detail.export_desc')}
                 fontSize={12}
                 color={Colors.DARK_CHARCOAL_OPACITY}
                 lineHeight={22}
@@ -224,7 +226,7 @@ const PropertyDetailScreen = () => {
                   borderRadius={10}
                   fontSize={14}
                   style={styles.exportPill}
-                  title="Export"
+                  title={t('app.property_detail.export')}
                   variant="primary"
                   onPress={handleExport}
                   disabled={isSupervisor}
@@ -232,7 +234,7 @@ const PropertyDetailScreen = () => {
               </View>
 
               {/* Property Tour */}
-              <BasicCard title="Property Tour" onPress={() => handleEditPhotosVideos()}>
+              <BasicCard title={t('app.property_detail.property_tour')} onPress={() => handleEditPhotosVideos()}>
                 <View style={{ marginBottom: 15 }}>
                   <OverlappingImages images={firstCategoryImages} />
                 </View>
@@ -241,20 +243,20 @@ const PropertyDetailScreen = () => {
 
               {/* Property Title */}
               <BasicCard
-                title="Property Title"
+                title={t('app.property_detail.property_title')}
                 subtitle={propertyData.title || 'Untitled'}
                 onPress={() => handleEditSection('HouseDetails', 'title')} // ✅
               />
 
               {/* Property Description */}
               <BasicCard
-                title="Property Description"
+                title={t('app.property_detail.property_description')}
                 subtitle={propertyData.houseDetails?.description || 'No description provided.'}
                 onPress={() => handleEditSection('HouseDetails', 'description')} // ✅
               />
 
               {/* Location */}
-              <BasicCard title="Location" onPress={() => handleEditSection('Location')}>
+              <BasicCard title={t('app.property_detail.location')} onPress={() => handleEditSection('Location')}>
                 <View style={styles.mapContainer} pointerEvents="none">
                   <MapView
                     provider={Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE}
@@ -279,7 +281,7 @@ const PropertyDetailScreen = () => {
 
               {/* Property Information */}
               <IconCard
-                title="Property Information"
+                title={t('app.property_detail.property_info')}
                 subtitle={(() => {
                   const parts = [
                     propertyData.placeInfo?.size && `${propertyData.placeInfo.size} SQM`,
@@ -298,7 +300,7 @@ const PropertyDetailScreen = () => {
 
               {/* Amenities */}
               <IconCard
-                title="Amenities"
+                title={t('app.property_detail.amenities')}
                 subtitle={getAmenitiesPreview() || 'None added'}
                 icon="heart"
                 onPress={() => handleEditSection('Amenities')} // ✅
@@ -306,15 +308,15 @@ const PropertyDetailScreen = () => {
 
               {/* Property Policies */}
               <IconCard
-                title="Property Policies"
-                subtitle="Smoking, Parties, +2 More"
+                title={t('app.property_detail.property_policies')}
+                subtitle={t('app.property_detail.policies_subtitle')}
                 icon="alarmLight"
                 onPress={() => handleEditSection('Policies')} // ✅
               />
 
               {/* Arrival Guide */}
               <IconCard
-                title="Arrival Guide"
+                title={t('app.property_detail.arrival_guide')}
                 subtitle={propertyData.guidelines?.arrivalGuide || 'Not provided'}
                 icon="wavingHand"
                 onPress={() => handleEditSection('Guidelines')}
@@ -322,15 +324,15 @@ const PropertyDetailScreen = () => {
 
               {/* Property Guidelines */}
               <IconCard
-                title="Property Guidelines"
-                subtitle="House Rules, Check-out Instructions"
+                title={t('app.property_detail.property_guidelines')}
+                subtitle={t('app.property_detail.guidelines_subtitle')}
                 icon="clipboardCheck"
                 onPress={() => handleEditSection('Guidelines')}
               />
 
               {/* Booking Details */}
               <IconCard
-                title="Booking Details"
+                title={t('app.property_detail.booking_details')}
                 subtitle={`Booking Type: ${propertyData.bookingDetails?.bookingType || 'N/A'}, Check-in: ${propertyData.bookingDetails?.checkIn || 'N/A'}`}
                 icon="calendarDate"
                 onPress={() => handleEditSection('BookingDetails')}
@@ -338,7 +340,7 @@ const PropertyDetailScreen = () => {
 
               {/* Booking Rules */}
               <IconCard
-                title="Booking Rules"
+                title={t('app.property_detail.booking_rules')}
                 subtitle={`Min Nights: ${propertyData.placeInfo?.minNights || 'N/A'}`}
                 icon="direct"
                 onPress={() => handleEditSection('BookingRules')} // ✅
@@ -346,7 +348,7 @@ const PropertyDetailScreen = () => {
 
               {/* Cancel Policies */}
               <IconCard
-                title="Cancel Policies"
+                title={t('app.property_detail.cancel_policies')}
                 subtitle={
                   [
                     propertyData.cancelPolicies?.airbnb && 'Airbnb',
@@ -360,23 +362,23 @@ const PropertyDetailScreen = () => {
 
               {/* Wifi & Door Lock */}
               <IconCard
-                title="Wifi & Door Lock"
-                subtitle="Wifi Details, Smart Door Lock"
+                title={t('app.property_detail.wifi_door_lock')}
+                subtitle={t('app.property_detail.wifi_subtitle')}
                 icon="deviceDatabaseEncryption"
                 onPress={() => handleEditSection('WifiAndDoorLock')}
               />
 
               {/* Property Disclosure */}
               <IconCard
-                title="Property Disclosure Details"
-                subtitle="Exterior Security Camera, + 2 More"
+                title={t('app.property_detail.disclosure_title')}
+                subtitle={t('app.property_detail.disclosure_subtitle')}
                 icon="cctvCamera"
                 onPress={() => handleEditSection('Disclosure')}
               />
 
               {/* Documents ✅ dynamic subtitle */}
               <IconCard
-                title="Ownership License Documents"
+                title={t('app.property_detail.ownership_title')}
                 subtitle={
                   [
                     propertyData.documents?.ownership && 'Ownership',
@@ -393,14 +395,14 @@ const PropertyDetailScreen = () => {
               {/* Pricing */}
               <IconCard
                 title="Pricing"
-                subtitle="Weekday, Weekend Base, + 3 More"
+                subtitle={t('app.property_detail.pricing_subtitle')}
                 icon="adr"
                 onPress={() => handleEditSection('Pricing')}
               />
 
               {/* Discounts */}
               <IconCard
-                title="Discounts"
+                title={t('app.property_detail.discounts')}
                 subtitle={
                   propertyData?.pricing?.weekday
                     ? 'Weekly, Monthly, + 2 More '
@@ -423,7 +425,7 @@ const PropertyDetailScreen = () => {
           <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
-              <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+              <AppText text={t('app.property_detail.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
                 <DropdownField
                   name="ota_account"
@@ -431,12 +433,12 @@ const PropertyDetailScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.property_detail.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.property_detail.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

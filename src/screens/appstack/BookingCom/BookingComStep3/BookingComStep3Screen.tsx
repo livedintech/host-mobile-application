@@ -8,8 +8,10 @@ import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import useBookingComStep3Container from './BookingComStep3Container';
+import { useTranslation } from 'react-i18next';
 
 const BookingComStep3Screen = () => {
+    const { t } = useTranslation();
     const { control, errors, handleContinue, hasListing, isSubmitting } = useBookingComStep3Container();
 
     return (
@@ -17,26 +19,25 @@ const BookingComStep3Screen = () => {
             <View style={styles.mainContainer}>
                 <RefreshableScrollView style={styles.container}>
                     <View style={styles.contentContainer}>
-                        <AppText text="Please set a name for your " type="Regular" fontSize={32} color={Colors.BLACK} style={{ lineHeight: 40 }}>
-                            <AppText text="Booking.com" type="Bold" fontSize={32} color={Colors.TEAL_PRIMARY_ALT} />
-                            <AppText text=" listing" type="Regular" fontSize={32} />
+                        <AppText text={t('app.booking_com_step3.title_prefix')} type="Regular" fontSize={32} color={Colors.BLACK} style={{ lineHeight: 40 }}>
+                            <AppText text={t('app.booking_com_step3.title_highlight')} type="Bold" fontSize={32} color={Colors.TEAL_PRIMARY_ALT} />
                         </AppText>
 
                         <View style={styles.inputWrapper}>
-                            <InputField label="Enter Name *" name="title" control={control} errors={errors} placeholder="E.g. My Luxury Apartment" />
+                            <InputField label={t('app.booking_com_step3.name_label')} name="title" control={control} errors={errors} placeholder={t('app.booking_com_step3.name_placeholder')} />
 
                             {!hasListing && (
                                 <View style={{ marginTop: 20 }}>
-                                    <InputField label="Rate (SAR) *" name="rate" control={control} errors={errors} placeholder="Enter price per night" keyboardType="numeric" />
+                                    <InputField label={t('app.booking_com_step3.rate_label')} name="rate" control={control} errors={errors} placeholder={t('app.booking_com_step3.rate_placeholder')} keyboardType="numeric" />
                                 </View>
                             )}
 
-                            <AppText text="Set a name for this listing so it’s easy to identify and manage when syncing and representing your OTA listings." type="Regular" fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} mt={15} style={{ lineHeight: 20 }} />
+                            <AppText text={t('app.booking_com_step3.description')} type="Regular" fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} mt={15} style={{ lineHeight: 20 }} />
                         </View>
                     </View>
                 </RefreshableScrollView>
                 <View style={styles.footer}>
-                    <AppButton title="Continue" onPress={handleContinue} loading={isSubmitting} />
+                    <AppButton title={t('app.booking_com_step3.continue')} onPress={handleContinue} loading={isSubmitting} />
                 </View>
             </View>
         </BGImage>

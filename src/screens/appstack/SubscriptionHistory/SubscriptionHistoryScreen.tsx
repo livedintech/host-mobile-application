@@ -9,6 +9,7 @@ import Metrics from '@/utility/Metrics';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 const SubscriptionHistoryScreen = () => {
   const {
@@ -22,6 +23,7 @@ const SubscriptionHistoryScreen = () => {
     refetch,
     getSubscrptionUserPlan,
   } = useSubscriptionHistoryContainer();
+  const { t } = useTranslation();
 
   const pricePerListing = parseFloat(getSubscrptionUserPlan?.data?.subscription?.price ?? '0') || 0;
   const listingCount = listings?.length ?? 0;
@@ -42,7 +44,7 @@ const SubscriptionHistoryScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <AppText
-          text="Listing Cost"
+          text={t('app.subscription.title')}
           fontSize={24}
           type="Medium"
           color={Colors.BRUNSWICK_GREEN}
@@ -58,7 +60,7 @@ const SubscriptionHistoryScreen = () => {
             ) : hasSubscription ? (
               <>
                 <AppText
-                  text="Monthly"
+                  text={t('app.subscription.monthly')}
                   fontSize={14}
                   color={Colors.BRUNSWICK_GREEN}
                   type="Bold"
@@ -71,7 +73,7 @@ const SubscriptionHistoryScreen = () => {
                     color={Colors.BRUNSWICK_GREEN}
                   />
                   <AppText
-                    text=" /per listing"
+                    text={t('app.subscription.per_listing')}
                     fontSize={14}
                     color={Colors.BRUNSWICK_GREEN}
                   />
@@ -80,7 +82,7 @@ const SubscriptionHistoryScreen = () => {
             ) : (
               <View style={styles.emptyState}>
                 <AppText
-                  text="No active subscription"
+                  text={t('app.subscription.no_subscription')}
                   fontSize={14}
                   color={Colors.PINE_FOREST}
                   mt={8}
@@ -111,7 +113,7 @@ const SubscriptionHistoryScreen = () => {
         </GradientBorder>
 
         <AppText
-          text="Your Listings"
+          text={t('app.subscription.your_listings')}
           fontSize={24}
           type="Medium"
           color={Colors.BRUNSWICK_GREEN}
@@ -128,14 +130,14 @@ const SubscriptionHistoryScreen = () => {
             <View style={[styles.innerCard, styles.emptyListingsBox]}>
               <Svgicons path="listingIcon" size={48} />
               <AppText
-                text="No listings yet"
+                text={t('app.subscription.no_listings')}
                 fontSize={16}
                 type="Medium"
                 color={Colors.BRUNSWICK_GREEN}
                 mt={10}
               />
               <AppText
-                text="Your active listings will appear here"
+                text={t('app.subscription.no_listings_desc')}
                 fontSize={12}
                 color={Colors.PINE_FOREST}
                 mt={4}
@@ -199,7 +201,7 @@ const SubscriptionHistoryScreen = () => {
             <GradientBorder borderRadius={24} style={styles.cancelBtnGradient}>
               <View style={[styles.innerCard, styles.cancelBtn]}>
                 <AppText
-                  text="Cancel Subscription"
+                  text={t('app.subscription.cancel')}
                   fontSize={22}
                   type="Medium"
                   color={Colors.BRUNSWICK_GREEN}
@@ -218,10 +220,10 @@ const SubscriptionHistoryScreen = () => {
       {/* ConfirmAction sheet */}
       <ConfirmAction
         ref={removeSheetRef}
-        title="Cancel Subscription"
-        content="Are you sure you want to cancel your subscription?"
-        confirmText="Yes, Cancel"
-        closeText="No"
+        title={t('app.subscription.cancel')}
+        content={t('app.subscription.cancel_confirm')}
+        confirmText={t('app.subscription.yes_cancel')}
+        closeText={t('app.subscription.no')}
         onConfirm={closeSheet} // TODO: replace closeSheet with actual cancel API call
       />
     </View>

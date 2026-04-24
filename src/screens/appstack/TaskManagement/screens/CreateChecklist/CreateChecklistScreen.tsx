@@ -15,6 +15,7 @@ import { getTaskChecklistDetail } from '@/services/TaskManagementApi';
 import { useTaskDraftStore } from '@/store/taskDraftStore';
 import CreateChecklistContainer from '../../containers/CreateChecklist/CreateChecklistContainer';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const ChecklistItemsList = ({
   sectionId,
@@ -63,13 +64,14 @@ const ChecklistItemsList = ({
         style={styles.addItemBtn}
         onPress={() => toggleModal(sectionId)}
       >
-        <AppText text="Add Item" color={Colors.PINE_FOREST} type="Medium" />
+        <AppText text={t('app.task_management.add_item')} color={Colors.PINE_FOREST} type="Medium" />
       </ButtonView>
     </View>
   );
 };
 
 const CreateChecklistScreen = () => {
+  const { t } = useTranslation();
   const {
     data,
     expandedSections,
@@ -93,7 +95,7 @@ const CreateChecklistScreen = () => {
     <View style={styles.topHeader}>
       <View style={styles.titleRow}>
         <AppText
-          text="Check-list Management"
+          text={t('app.task_management.checklist_title')}
           type="Bold"
           fontSize={24}
           color={Colors.PINE_FOREST}
@@ -101,14 +103,14 @@ const CreateChecklistScreen = () => {
         <Svgicons path="File_Document" size={30} />
       </View>
       <AppText
-        text="Please select what you require for this checklist."
+        text={t('app.task_management.checklist_subtitle')}
         fontSize={14}
         color={Colors.TRANSLUCENT_NAVY}
         style={styles.subtitle}
       />
       <ButtonView style={styles.addSectionBtn} onPress={() => toggleModal()}>
         <AppText
-          text="Add Section"
+          text={t('app.task_management.add_section')}
           fontSize={14}
           type="Medium"
           color={Colors.PINE_FOREST}
@@ -194,7 +196,7 @@ const CreateChecklistScreen = () => {
 
           {!activeSectionId && (
             <InputField
-              label="Section Name:"
+              label={t('app.task_management.section_name')}
               name="sectionName"
               control={control}
               errors={errors}
@@ -216,7 +218,7 @@ const CreateChecklistScreen = () => {
                   name={fieldName}
                   control={control}
                   errors={{ [fieldName]: itemError }}
-                  placeholder="Item name"
+                  placeholder={t('app.task_management.item_name_placeholder')}
                   rules={{ required: 'Item name is required' }}
                 />
               );
@@ -224,12 +226,12 @@ const CreateChecklistScreen = () => {
           />
 
           <ButtonView style={styles.addMoreBtn} onPress={addChecklistField}>
-            <AppText text="Add More" color={Colors.PINE_FOREST} type="Medium" />
+            <AppText text={t('app.task_management.add_more')} color={Colors.PINE_FOREST} type="Medium" />
           </ButtonView>
 
           <View style={styles.modalFooter}>
             <ButtonView style={styles.cancelBtn} onPress={() => toggleModal()}>
-              <AppText text="Cancel" color={Colors.PINE_FOREST} type="Bold" />
+              <AppText text={t('app.task_management.cancel')} color={Colors.PINE_FOREST} type="Bold" />
             </ButtonView>
             <ButtonView
               style={styles.confirmBtn}
@@ -240,7 +242,7 @@ const CreateChecklistScreen = () => {
                 <ActivityIndicator size="small" />
               ) : (
                 <AppText
-                  text="Confirm"
+                  text={t('app.task_management.confirm')}
                   type="Bold"
                   color={Colors.PINE_FOREST}
                 />
@@ -252,7 +254,7 @@ const CreateChecklistScreen = () => {
 
       <View style={styles.footer}>
         <AppButton
-          title="Create Task"
+          title={t('app.task_management.create_task')}
           onPress={onCreateTask}
           loading={isLoading}
           color={Colors.PINE_FOREST}

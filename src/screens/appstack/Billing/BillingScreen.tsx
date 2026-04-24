@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -7,6 +8,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
 const BillingScreen = () => {
+  const { t } = useTranslation();
   const { goToTransactionHistory, goToSubscriptionHistory,goToPaymentMethod } = useBillingContainer();
 
   const BillingOption = ({ title, onPress }: { title: string, onPress?: () => void }) => (
@@ -28,15 +30,15 @@ const BillingScreen = () => {
 
         {/* Billing Label with Icon */}
         <View style={styles.billingHeader}>
-          <AppText text="Billing" fontSize={32} type="Bold" color={Colors.PINE_FOREST} pr={10}/>
+          <AppText text={t('app.billing.title')} fontSize={32} type="Bold" color={Colors.PINE_FOREST} pr={10}/>
           <Svgicons path='cardIcon' size={70}/>
         </View>
 
         {/* Options List */}
         <View style={styles.listContainer}>
-          <BillingOption title="Payment Method" onPress={goToPaymentMethod}/>
-          <BillingOption title="Subscription" onPress={goToSubscriptionHistory}/>
-          <BillingOption title="Transaction History" onPress={goToTransactionHistory}/>
+          <BillingOption title={t('app.billing.payment_method')} onPress={goToPaymentMethod}/>
+          <BillingOption title={t('app.billing.subscription')} onPress={goToSubscriptionHistory}/>
+          <BillingOption title={t('app.billing.transaction_history')} onPress={goToTransactionHistory}/>
         </View>
 
       </ScrollView>

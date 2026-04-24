@@ -12,6 +12,8 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
+
 
 // ==========================================
 // Reusable Components
@@ -57,12 +59,14 @@ const OldLayout = ({
   incomplete_listings,
   unexported_listings,
   handleListingNavigation,
+  t
 }: any) => (
   <View>
     <View style={styles.greetingContainer}>
       <Text style={styles.greetingText}>
-        Hi <Text style={styles.greetingName}>{user?.name},</Text> let’s begin
-        setting up everything you need!
+        {t('app.home.greeting_hi')}{' '}
+        <Text style={styles.greetingName}>{user?.name},</Text>
+        {' '}{t('app.home.greeting_old_end')}
       </Text>
     </View>
 
@@ -121,7 +125,7 @@ const OldLayout = ({
         onPress={() =>
           handleListingNavigation(incomplete_listings, 'incomplete')
         }
-        text="Complete your pending listing form"
+        text={t('app.home.pending_incomplete')}
       />
     )}
 
@@ -131,7 +135,7 @@ const OldLayout = ({
         onPress={() =>
           handleListingNavigation(unexported_listings, 'unexported')
         }
-        text="Export your pending listing"
+        text={t('app.home.export_pending')}
       />
     )}
   </View>
@@ -142,18 +146,20 @@ const NewLayout = ({
   recommendedNextItems,
   updatesItems,
   onNavigate,
+  t,
 }: any) => (
   <View>
     <View style={styles.newGreetingContainer}>
       <Text style={styles.newGreetingText}>
-        Hi <Text style={styles.newGreetingName}>{user?.name || 'Tooba'},</Text>{' '}
-        here's what needs your attention today!
+        {t('app.home.greeting_hi')}{' '}
+        <Text style={styles.newGreetingName}>{user?.name || 'Tooba'},</Text>
+        {' '}{t('app.home.greeting_new_end')}
       </Text>
     </View>
 
     <GlassCard width="100%" style={styles.sectionCard}>
       <AppText
-        text="Recommended Next"
+        text={t('app.home.recommended_next')}
         fontSize={18}
         type="Bold"
         color={Colors.BLACK}
@@ -192,7 +198,7 @@ const NewLayout = ({
 
     <GlassCard width="100%" style={styles.sectionCard}>
       <AppText
-        text="Your Updates"
+        text={t('app.home.your_updates')}
         fontSize={18}
         type="Bold"
         color={Colors.BLACK}
@@ -236,6 +242,7 @@ const NewLayout = ({
 // ==========================================
 
 const HomeScreen = ({ navigation }: any) => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const {
     onConnect,
@@ -264,48 +271,36 @@ const HomeScreen = ({ navigation }: any) => {
 
   const allRecommendedItems = [
     {
-      id: 'has_staff', // Map ID to the key in UserPermission.recommendations
+      id: 'has_staff',
       icon: 'airbnb',
-      title: 'Create Staff User',
-      subtitle: 'Assign staff to cleaning tasks',
+      title: t('app.home.create_staff'),
+      subtitle: t('app.home.create_staff_sub'),
       route: NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM,
     },
     {
       id: 'has_ttlock_connected',
       icon: 'lockIcon',
-      title: 'Connect Smart TT Lock',
-      subtitle: 'Generate codes for staff & guest',
+      title: t('app.home.connect_ttlock'),
+      subtitle: t('app.home.connect_ttlock_sub'),
       route: NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS,
     },
     {
       id: 'has_recurring_cleaning',
       icon: 'cleaning_sanitization',
-      title: 'Create Cleaning Schedule',
+      title: t('app.home.create_cleaning'),
       subtitle: (() => {
         const recommendations = UserPermission?.recommendations;
         const count = recommendations?.remaining_count ?? 0;
-
-        // 1. If exactly 1 property, show the specific title from API
-        if (count === 1 && recommendations?.remaining_title) {
-          return recommendations.remaining_title;
-        }
-
-        // 2. If 2 or more properties, show "For X+ properties"
-        if (count > 1) {
-          return `For ${count}+ properties`;
-        }
-
-        // Default fallback if no properties or loading
-        // return 'Set up recurring cleanings';
+        if (count === 1 && recommendations?.remaining_title) return recommendations.remaining_title;
+        if (count > 1) return t('app.home.for_properties', { count });
       })(),
-      // subtitle: 'For property – Al Riyadh',
       route: NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN,
     },
     {
-      id: 'manage_listings', // Optional: if you want a flag for this too
+      id: 'manage_listings',
       icon: 'direct',
-      title: 'Manage Listings',
-      subtitle: 'Create/Add new listings',
+      title: t('app.home.manage_listings'),
+      subtitle: t('app.home.manage_listings_sub'),
       route: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
     },
   ];
@@ -374,59 +369,14 @@ const HomeScreen = ({ navigation }: any) => {
   // ];
 
   const updatesItems = [
-    {
-      id: 1,
-      icon: 'chatBubble', // or 'messages' based on your SVG names
-      title: 'Inbox',
-      subtitle: `${UserPermission?.dashboard_counts?.unread_messages} messages`,
-      route: NavigationRoutes.APP_STACK.CHAT, // Replace with your actual route name
-    },
-    {
-      id: 2,
-      icon: 'direct',
-      title: 'Total Check-ins',
-      subtitle: `${UserPermission?.dashboard_counts?.checkins_today} check-ins`,
-      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
-      params: { activeFilter: 'today' },
-    },
-    {
-      id: 3,
-      icon: 'direct',
-      title: 'Property Tasks',
-      subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
-      route: NavigationRoutes.APP_STACK.TASK,
-    },
-    // {
-    //   id: 3,
-    //   icon: 'direct',
-    //   title: 'Property Tasks',
-    //   subtitle: `${UserPermission?.dashboard_counts?.tasks} tasks in action`,
-    //   route: NavigationRoutes.APP_STACK.TASKS,
-    // },
-    {
-      id: 4,
-      icon: 'direct',
-      title: 'Total Check-outs',
-      subtitle: `${UserPermission?.dashboard_counts?.checkouts_today} check-outs`,
-      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
-      params: { activeFilter: 'today' },
-    },
-    {
-      id: 5,
-      icon: 'direct',
-      title: 'Booking Requests',
-      subtitle: `${UserPermission?.dashboard_counts?.reservation_requests} Pending Requests`,
-      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
-      params: { activeFilter: 'booking_request' },
-    },
-    {
-      id: 6,
-      icon: 'direct',
-      title: 'Analytics',
-      subtitle: `${UserPermission?.occupancy?.last_7_days_percentage}% occupancy this week`,
-      route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN,
-    },
+    { id: 1, icon: 'chatBubble', title: t('app.home.inbox'), subtitle: t('app.home.inbox_sub', { count: UserPermission?.dashboard_counts?.unread_messages }), route: NavigationRoutes.APP_STACK.CHAT },
+    { id: 2, icon: 'direct', title: t('app.home.checkins'), subtitle: t('app.home.checkins_sub', { count: UserPermission?.dashboard_counts?.checkins_today }), route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, params: { activeFilter: 'today' } },
+    { id: 3, icon: 'direct', title: t('app.home.tasks'), subtitle: t('app.home.tasks_sub', { count: UserPermission?.dashboard_counts?.tasks }), route: NavigationRoutes.APP_STACK.TASK },
+    { id: 4, icon: 'direct', title: t('app.home.checkouts'), subtitle: t('app.home.checkouts_sub', { count: UserPermission?.dashboard_counts?.checkouts_today }), route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, params: { activeFilter: 'today' } },
+    { id: 5, icon: 'direct', title: t('app.home.booking_requests'), subtitle: t('app.home.booking_requests_sub', { count: UserPermission?.dashboard_counts?.reservation_requests }), route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, params: { activeFilter: 'booking_request' } },
+    { id: 6, icon: 'direct', title: t('app.home.analytics'), subtitle: t('app.home.analytics_sub', { count: UserPermission?.occupancy?.last_7_days_percentage }), route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN },
   ];
+
 
   return (
     <BGImage
@@ -438,8 +388,8 @@ const HomeScreen = ({ navigation }: any) => {
         {/* {showBanner && (
           <View style={styles.banner}>
             <Text style={styles.bannerText}>
-              Trial ends in <Text style={styles.bannerBold}>8 days</Text>{' '}
-              <Text style={styles.bannerLink}>subscribe now</Text>
+              {t('app.home.banner_trial')} <Text style={styles.bannerBold}>{t('app.home.banner_days', { count: 8 })}</Text>{' '}
+              <Text style={styles.bannerLink}>t('app.home.banner_subscribe')</Text>
             </Text>
             <ButtonView
               style={styles.closeIcon}
@@ -461,31 +411,7 @@ const HomeScreen = ({ navigation }: any) => {
             onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}
             activeOpacity={0.7}
           >
-            <GlassCard width="auto" style={styles.profilePill}>
-              {user?.profile_picture ? (
-                <Image
-                  source={{ uri: user.profile_picture }}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <View style={styles.placeholderIcon}>
-                  <Svgicons path="imageUploadIcon" size={25} />
-                </View>
-              )}
-              <View>
-                <AppText
-                  text={`Hello ${user?.name || 'Tooba'}!`}
-                  fontSize={12}
-                  color={Colors.PINE_FOREST}
-                />
-                <AppText
-                  text="Good Morning"
-                  fontSize={14}
-                  type="SemiBold"
-                  color={Colors.BLACK}
-                />
-              </View>
-            </GlassCard>
+
 
             <View style={styles.headerRight}>
               <ButtonView>
@@ -514,6 +440,7 @@ const HomeScreen = ({ navigation }: any) => {
               recommendedNextItems={recommendedNextItems}
               updatesItems={updatesItems}
               onNavigate={handleNavigation}
+              t={t}
             />
           ) : (
             <OldLayout
@@ -526,6 +453,7 @@ const HomeScreen = ({ navigation }: any) => {
               incomplete_listings={incomplete_listings}
               unexported_listings={unexported_listings}
               handleListingNavigation={handleListingNavigation}
+              t={t}
             />
           )}
         </RefreshableScrollView>

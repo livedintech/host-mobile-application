@@ -5,12 +5,14 @@ import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 interface NoUserScreenProps {
   onCreateUser: () => void;
 }
 
 const NoUserScreen = ({ onCreateUser }: NoUserScreenProps) => {
+  const { t } = useTranslation();
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
@@ -18,7 +20,7 @@ const NoUserScreen = ({ onCreateUser }: NoUserScreenProps) => {
           <Svgicons path="noUserFound" size={280} />
           
           <AppText 
-            text="No User Found" 
+            text={t('app.no_user.title')}
             fontSize={28} 
             type="Bold" 
             color={Colors.BLACK} 
@@ -26,7 +28,7 @@ const NoUserScreen = ({ onCreateUser }: NoUserScreenProps) => {
           />
           
           <AppText 
-            text="No users have been created in the app for this account yet. To assign tasks, you'll first need to add a user. Once a user is created, you can easily assign tasks to them."
+            text={t('app.no_user.description')}
             fontSize={14}
             color={Colors.DARK_CHARCOAL_OPACITY}
             style={styles.description}
@@ -35,7 +37,7 @@ const NoUserScreen = ({ onCreateUser }: NoUserScreenProps) => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Create New User"
+            title={t('app.no_user.create_user')}
             onPress={onCreateUser}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}

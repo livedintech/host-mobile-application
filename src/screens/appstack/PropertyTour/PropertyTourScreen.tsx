@@ -10,6 +10,7 @@ import usePropertyTourContainer from './PropertyTourContainer';
 import Metrics from '@/utility/Metrics';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import DropdownField from '@/components/molecules/Input/DropdownField';
+import { useTranslation } from 'react-i18next';
 
 const PropertyTourScreen = () => {
   const {
@@ -27,15 +28,16 @@ const PropertyTourScreen = () => {
     listingOptions,
     isPendingExporting,
   } = usePropertyTourContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
       <View style={styles.container}>
 
         <View style={styles.titleSection}>
-          <AppText text="Property Tour" fontSize={28} type="Bold" color={Colors.BLACK} />
+          <AppText text={t('app.property_tour.title')} fontSize={28} type="Bold" color={Colors.BLACK} />
           <AppText
-            text="Manage your listing photos here. Upload, organize, and update the images that will be showcased to guests on your listing."
+            text={t('app.property_tour.description')}
             fontSize={12}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={12}
@@ -72,7 +74,7 @@ const PropertyTourScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Export"
+            title={t('app.property_tour.export')}
             onPress={handleExport}
             backgroundColor="#00A68A"
             borderColor="transparent"
@@ -92,7 +94,7 @@ const PropertyTourScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.property_tour.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -105,12 +107,12 @@ const PropertyTourScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.property_tour.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.property_tour.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

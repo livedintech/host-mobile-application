@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { vs, s } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 import AppText from '@/components/molecules/AppText/AppText';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { Colors } from '@/theme/colors';
@@ -132,6 +133,7 @@ const reasons = [
 ];
 
 const StepOne = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { bookingData } = route.params;
@@ -157,9 +159,9 @@ const StepOne = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <AppText text="Cancelling may lead to consequences" type="Bold" fontSize={24} mb={vs(10)} />
-        <AppText 
-          text="In the next step, we'll ask why you're cancelling. If the reason isn't valid, a cancellation fee may apply. Frequent cancellations may affect your Superhost eligibility could lead to listing suspension." 
+        <AppText text={t('app.cancel_reservation.step1_title')} type="Bold" fontSize={24} mb={vs(10)} />
+        <AppText
+          text={t('app.cancel_reservation.step1_description')}
           fontSize={13} 
           lineHeight={18}
           color={Colors.DARK_CHARCOAL_OPACITY_74} 

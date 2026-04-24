@@ -11,6 +11,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import useBookingDetailsContainer from './CreateEditBookingDetailsContainer';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 
 const AddBookingDetailsScreen = () => {
@@ -19,6 +20,7 @@ const AddBookingDetailsScreen = () => {
     handleExport, handleExportSubmit, bottomSheetVisible, setBottomSheetVisible,
     otaControl, otaErrors, handleOtaSubmit, listingOptions, isPendingExporting,
   } = useBookingDetailsContainer();
+  const { t } = useTranslation();
 
   const yesNoOptions      = [{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }];
   const bookingTypeOptions = [{ label: 'Instant', value: 'Instant' }, { label: 'Manual', value: 'Manual' }];
@@ -39,24 +41,24 @@ const AddBookingDetailsScreen = () => {
           </View>
 
           {isEdit ? (
-            <AppText text="Booking Details" fontSize={32} type="Bold" mt={20} pr={80} />
+            <AppText text={t('app.booking_details_edit.title_edit')} fontSize={32} type="Bold" mt={20} pr={80} />
           ) : (
             <>
-              <AppText text="Step 3" fontSize={18} type="Medium" mt={20} />
-              <AppText text="Add booking details" fontSize={32} type="Bold" mt={5} pr={80} />
+              <AppText text={t('app.booking_details_edit.step_label')} fontSize={18} type="Medium" mt={20} />
+              <AppText text={t('app.booking_details_edit.title_new')} fontSize={32} type="Bold" mt={5} pr={80} />
             </>
           )}
 
           <View style={styles.formGroup}>
-            <DropdownField name="booking_type" label="Booking Type" control={control as any} errors={errors} data={bookingTypeOptions} />
+            <DropdownField name="booking_type" label={t('app.booking_details_edit.booking_type')} control={control as any} errors={errors} data={bookingTypeOptions} />
             <View style={styles.fieldGap} />
-            <DropdownField name="guest_eligibility" label="Guest Eligibility" control={control as any} errors={errors} data={yesNoOptions} />
+            <DropdownField name="guest_eligibility" label={t('app.booking_details_edit.guest_eligibility')} control={control as any} errors={errors} data={yesNoOptions} />
             <View style={styles.fieldGap} />
-            <DateTimeInputField name="check_in_time" label="Check-in Time" control={control as any} errors={errors} mode="time" placeholder="09:00" />
-            <DateTimeInputField name="check_out_time" label="Check-out Time" control={control as any} errors={errors} mode="time" placeholder="23:00" />
-            <DropdownField name="allow_same_day" label="Allow Same-day Booking.com Bookings" control={control as any} errors={errors} data={yesNoOptions} />
+            <DateTimeInputField name="check_in_time" label={t('app.booking_details_edit.checkin_label')} control={control as any} errors={errors} mode="time" placeholder="09:00" />
+            <DateTimeInputField name="check_out_time" label={t('app.booking_details_edit.checkout_label')} control={control as any} errors={errors} mode="time" placeholder="23:00" />
+            <DropdownField name="allow_same_day" label={t('app.booking_details_edit.same_day_label')} control={control as any} errors={errors} data={yesNoOptions} />
             <View style={styles.fieldGap} />
-            <DropdownField name="cleanliness_status" label="Listing's Cleanliness Status" control={control as any} errors={errors} data={cleanlinessOptions} placeholder="Cleaning Status" />
+            <DropdownField name="cleanliness_status" label={t('app.booking_details_edit.cleanliness_label')} control={control as any} errors={errors} data={cleanlinessOptions} placeholder={t('app.booking_details_edit.cleanliness_placeholder')} />
           </View>
         </ScrollView>
 
@@ -65,7 +67,7 @@ const AddBookingDetailsScreen = () => {
           {/* ✅ Export — sirf edit mode mein */}
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.booking_details_edit.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -74,7 +76,7 @@ const AddBookingDetailsScreen = () => {
           )}
           {!isEdit && (
             <AppButton
-              title="Next"
+              title={t('app.booking_details_edit.next')}
               variant="secondary"
               backgroundColor={Colors.WHITE}
               onPress={handleSubmit(onNext)}
@@ -82,7 +84,7 @@ const AddBookingDetailsScreen = () => {
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.booking_details_edit.save_exit')}
             mt={12}
             onPress={handleSubmit(onSaveExit)}
             disabled={isLoading}
@@ -99,7 +101,7 @@ const AddBookingDetailsScreen = () => {
           <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
-              <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+              <AppText text={t('app.booking_details_edit.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
                 <DropdownField
                   name="ota_account"
@@ -107,12 +109,12 @@ const AddBookingDetailsScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.booking_details_edit.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.booking_details_edit.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

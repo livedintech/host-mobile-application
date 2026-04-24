@@ -8,6 +8,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import PhoneInputField from '@/components/molecules/Input/PhoneInputField';
 import useGathrenCreateAccountContainer from './GathrenCreateAccountContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const GENDER_OPTIONS = [
   { label: 'Male', value: 'male' },
@@ -15,6 +16,7 @@ const GENDER_OPTIONS = [
 ];
 
 const GathrenCreateAccountScreen = () => {
+  const { t } = useTranslation();
   const { control, errors, handleSubmit, onNext, onCreateAccount, isLoading } =
     useGathrenCreateAccountContainer();
 
@@ -30,7 +32,7 @@ const GathrenCreateAccountScreen = () => {
       >
         <View style={styles.titleSection}>
           <AppText
-            text="Create Gathern Account"
+            text={t('app.gathren_create_account.title')}
             fontSize={32}
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}
@@ -45,8 +47,8 @@ const GathrenCreateAccountScreen = () => {
             name="gender"
             control={control}
             errors={errors}
-            label="Gender*"
-            placeholder="Select Gender"
+            label={t('app.gathren_create_account.gender_label')}
+            placeholder={t('app.gathren_create_account.gender_placeholder')}
             data={GENDER_OPTIONS}
             rules={{ required: 'Gender is required' }}
           />
@@ -56,8 +58,8 @@ const GathrenCreateAccountScreen = () => {
             name="firstname"
             control={control}
             errors={errors}
-            label="First Name*"
-            placeholder="Enter First Name"
+            label={t('app.gathren_create_account.first_name_label')}
+            placeholder={t('app.gathren_create_account.first_name_placeholder')}
             rules={{ required: 'First name is required' }}
           />
 
@@ -66,8 +68,8 @@ const GathrenCreateAccountScreen = () => {
             name="lastname"
             control={control}
             errors={errors}
-            label="Last Name*"
-            placeholder="Enter Last Name"
+            label={t('app.gathren_create_account.last_name_label')}
+            placeholder={t('app.gathren_create_account.last_name_placeholder')}
             rules={{ required: 'Last name is required' }}
           />
 
@@ -76,8 +78,8 @@ const GathrenCreateAccountScreen = () => {
             name="username"
             control={control}
             errors={errors}
-            label="Username*"
-            placeholder="Enter Username"
+            label={t('app.gathren_create_account.username_label')}
+            placeholder={t('app.gathren_create_account.username_placeholder')}
             rules={{ required: 'Username is required' }}
           />
 
@@ -86,8 +88,8 @@ const GathrenCreateAccountScreen = () => {
             name="email"
             control={control}
             errors={errors}
-            label="Email*"
-            placeholder="Enter Email"
+            label={t('app.gathren_create_account.email_label')}
+            placeholder={t('app.gathren_create_account.email_placeholder')}
             keyboardType="email-address"
             rules={{
               required: 'Email is required',
@@ -102,7 +104,7 @@ const GathrenCreateAccountScreen = () => {
           <PhoneInputField
             control={control}
             errors={errors}
-            label="Mobile*"
+            label={t('app.gathren_create_account.mobile_label')}
             countryFieldName="country"
             phoneFieldName="mobile"
           />
@@ -110,8 +112,8 @@ const GathrenCreateAccountScreen = () => {
   name="platform_user_id"
   control={control}
   errors={errors}
-  label="Platform User ID*"
-  placeholder="Enter Platform User ID"
+  label={t('app.gathren_create_account.platform_id_label')}
+  placeholder={t('app.gathren_create_account.platform_id_placeholder')}
   rules={{ required: 'Platform User ID is required' }}
 />
 
@@ -121,13 +123,13 @@ const GathrenCreateAccountScreen = () => {
           <AppButton
             loading={isLoading}
             onPress={handleSubmit(onNext)}
-            title="Next"
+            title={t('app.gathren_create_account.next')}
             mb={10}
           />
           <AppButton
             disabled={isLoading}
             onPress={onCreateAccount}
-            title="Create New Account"
+            title={t('app.gathren_create_account.create_btn')}
           />
         </View>
       </ScrollView>

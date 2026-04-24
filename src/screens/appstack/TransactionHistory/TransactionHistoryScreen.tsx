@@ -4,8 +4,10 @@ import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useTransactionHistoryContainer from './TransactionHistoryContainer';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import { useTranslation } from 'react-i18next';
 
 const TransactionHistoryScreen = () => {
+  const { t } = useTranslation();
   const { transactions, isLoading, refetch } = useTransactionHistoryContainer();
 
   const renderItem = ({ item }: any) => (
@@ -61,7 +63,7 @@ const TransactionHistoryScreen = () => {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <AppText
-            text="Latest Transaction"
+            text={t('app.transaction_history.title')}
             fontSize={26}
             type="Medium"
             color={Colors.BRUNSWICK_GREEN}

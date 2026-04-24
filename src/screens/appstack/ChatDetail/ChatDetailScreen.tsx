@@ -112,6 +112,7 @@ const processMessagesWithTimeLabels = (
   });
 };
 const ChatScreen = () => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const route = useRoute();
   const params = route?.params as
@@ -318,7 +319,7 @@ const ChatScreen = () => {
               ]}
             >
               <AppText
-                text="Automated Message"
+                text={t('app.chat_detail.automated_message')}
                 fontSize={10}
                 color={Colors.GREY_SHADOW}
               />
@@ -511,7 +512,7 @@ const ChatScreen = () => {
                         }
                       >
                         <AppText
-                          text="Reservation Details"
+                          text={t('app.chat_detail.reservation_details')}
                           fontSize={14}
                           color={Colors.BLACK}
                         />
@@ -532,7 +533,7 @@ const ChatScreen = () => {
                     }}
                   >
                     <AppText
-                      text="View Calendar"
+                      text={t('app.chat_detail.view_calendar')}
                       fontSize={14}
                       color={Colors.BLACK}
                     />
@@ -644,7 +645,7 @@ const ChatScreen = () => {
                     }}
                   >
                     <View style={styles.menuTextContainer}>
-                      <AppText text="Reply" fontSize={13} />
+                      <AppText text={t('app.chat_detail.reply')} fontSize={13} />
                     </View>
                     <Svgicons path="chatIcon" size={16} />
                   </Pressable>
@@ -659,7 +660,7 @@ const ChatScreen = () => {
                     }}
                   >
                     <View style={styles.menuTextContainer}>
-                      <AppText text="Copy" fontSize={13} />
+                      <AppText text={t('app.chat_detail.copy')} fontSize={13} />
                     </View>
                     <Svgicons path="docIcon" size={16} />
                   </Pressable>
@@ -681,7 +682,7 @@ const ChatScreen = () => {
                     }}
                   >
                     <View style={styles.menuTextContainer}>
-                      <AppText text="Create Task" fontSize={13} />
+                      <AppText text={t('app.chat_detail.create_task')} fontSize={13} />
                     </View>
                     <Svgicons path="taskIcon" size={16} />
                   </Pressable>
@@ -698,7 +699,7 @@ const ChatScreen = () => {
                     >
                       <View style={styles.menuTextContainer}>
                         <AppText
-                          text="Delete"
+                          text={t('app.chat_detail.delete')}
                           fontSize={13}
                           color={Colors.INDIAN_RED}
                         />
@@ -716,7 +717,7 @@ const ChatScreen = () => {
               false && (
                 <View style={styles.aiWrapper}>
                   <AppText
-                    text="A.I Suggestions"
+                    text={t('app.chat_detail.ai_suggestions')}
                     fontSize={11}
                     color={Colors.GREY_SHADOW}
                     mb={8}
@@ -744,7 +745,7 @@ const ChatScreen = () => {
                         }}
                       >
                         <AppText
-                          text="Edit"
+                          text={t('app.chat_detail.edit')}
                           fontSize={12}
                           type="Bold"
                           color={Colors.PINE_FOREST}
@@ -752,7 +753,7 @@ const ChatScreen = () => {
                       </Pressable>
                       <Pressable onPress={sendAiSuggestion}>
                         <AppText
-                          text="Send Now"
+                          text={t('app.chat_detail.send_now')}
                           fontSize={12}
                           type="Bold"
                           ml={15}
@@ -823,7 +824,7 @@ const ChatScreen = () => {
                 <TextInput
                   value={inputText}
                   onChangeText={setInputText}
-                  placeholder="Write Your Message"
+                  placeholder={t('app.chat_detail.write_message')}
                   placeholderTextColor={Colors.SECRET_CHOCOLATE}
                   style={styles.input}
                   multiline
@@ -853,7 +854,7 @@ const ChatScreen = () => {
             {showSavedReplies && inputText.length === 0 && (
               <View style={styles.savedRepliesWrapper}>
                 <AppText
-                  text="Saved Replies"
+                  text={t('app.chat_detail.saved_replies')}
                   type="Bold"
                   mb={16}
                   color={Colors.BLACK}
@@ -900,7 +901,7 @@ const ChatScreen = () => {
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="cameraIcon" size={20} />
                   </View>
-                  <AppText text="Camera" fontSize={13} />
+                  <AppText text={t('app.chat_detail.camera')} fontSize={13} />
                 </Pressable>
 
                 <Pressable
@@ -910,7 +911,7 @@ const ChatScreen = () => {
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="videoIcon" size={20} />
                   </View>
-                  <AppText text="Video" fontSize={13} />
+                  <AppText text={t('app.chat_detail.video')} fontSize={13} />
                 </Pressable>
 
                 <Pressable
@@ -920,7 +921,7 @@ const ChatScreen = () => {
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="imageIcon" size={20} />
                   </View>
-                  <AppText text="Gallery" fontSize={13} />
+                  <AppText text={t('app.chat_detail.gallery')} fontSize={13} />
                 </Pressable>
 
                 <Pressable
@@ -930,7 +931,7 @@ const ChatScreen = () => {
                   <View style={styles.attachmentIconWrapper}>
                     <Svgicons path="docIcon" size={20} />
                   </View>
-                  <AppText text="Document" fontSize={13} />
+                  <AppText text={t('app.chat_detail.document')} fontSize={13} />
                 </Pressable>
               </View>
             )}

@@ -13,6 +13,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
 import NoSavedRepliesScreen from '../NoSavedRepliesScreen/NoSavedRepliesScreen';
+import { useTranslation } from 'react-i18next';
 
 const SavedRepliesScreen = () => {
   const {
@@ -30,6 +31,7 @@ const SavedRepliesScreen = () => {
     Item,
     isLoadingStatus,
   } = useSavedRepliesContainer();
+  const { t } = useTranslation();
 
   const renderItem = ({ item }: { item: any }) => {
     return (
@@ -62,9 +64,9 @@ const SavedRepliesScreen = () => {
 
             <View style={styles.detailsRow}>
               <View style={styles.textDetails}>
-                <AppText text="Listing Access" fontSize={14} type="Bold" color={Colors.BLACK} />
+                <AppText text={t('app.saved_replies.listing_access')} fontSize={14} type="Bold" color={Colors.BLACK} />
                 <AppText 
-                   text={item.listing_label || "All Listings"} 
+                   text={item.listing_label || t('app.saved_replies.all_listings')}
                    fontSize={13} 
                    color={Colors.GREY_SHADOW} 
                    mt={2}
@@ -90,9 +92,9 @@ const SavedRepliesScreen = () => {
 
         {!!data?.length && (
           <View style={styles.topTextSection}>
-            <AppText text="Saved Replies" fontSize={28} type="Bold" color={Colors.BLACK} mb={20} />
+            <AppText text={t('app.saved_replies.title')} fontSize={28} type="Bold" color={Colors.BLACK} mb={20} />
             <AppText
-              text="Create saved replies to reuse common messages. Use shortcuts in chats to quickly insert them."
+              text={t('app.saved_replies.description')}
               fontSize={14}
               color={Colors.GREY_SHADOW}
               lineHeight={20}
@@ -113,7 +115,7 @@ const SavedRepliesScreen = () => {
         <View style={styles.footer}>
           <AppButton
             onPress={createNewReply}
-            title="Create New Saved Reply"
+            title={t('app.saved_replies.create_btn')}
             backgroundColor={Colors.TEAL_PRIMARY_ALT}
             borderColor={Colors.TEAL_PRIMARY_ALT}
           />
@@ -122,9 +124,9 @@ const SavedRepliesScreen = () => {
         <ConfirmAction
           ref={removeSheetRef}
           title={`${Item?.title}`}
-          content="Are you sure you want to delete this reply?"
-          confirmText="Confirm"
-          closeText="Cancel"
+          content={t('app.saved_replies.delete_confirm')}
+          confirmText={t('app.saved_replies.confirm_btn')}
+          closeText={t('app.saved_replies.cancel_btn')}
           onConfirm={confirm}
           isLoading={isLoadingRemoved}
         />

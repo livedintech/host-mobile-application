@@ -6,17 +6,19 @@ import AppText from '@/components/molecules/AppText/AppText';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { Colors } from '@/theme/colors';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onConnect: () => void;
 }
 
 const NoListings = ({ onConnect }: Props) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       {/* 1. Title Above */}
       <AppText 
-        text="No Listings Found" 
+        text={t('app.no_listings.title')}
         type="Bold" 
         fontSize={28} 
         color={Colors.BRUNSWICK_GREEN} 
@@ -44,7 +46,7 @@ const NoListings = ({ onConnect }: Props) => {
                 {/* Text Content Area */}
                 <View style={styles.contentArea}>
                   <View style={styles.headerRow}>
-                    <AppText text="A.LI - Livedin" type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
+                    <AppText text={t('app.ali_widget.agent_name')} type="Bold" color={Colors.BRUNSWICK_GREEN} fontSize={16} />
                     <View style={styles.timeContainer}>
                         <AppText text="9:36 AM" color={Colors.NIGHT_OPACITY} fontSize={12} />
                         <ChevronRight size={ms(16)} color={Colors.NIGHT_OPACITY} style={{ marginLeft: 4 }} />
@@ -52,7 +54,7 @@ const NoListings = ({ onConnect }: Props) => {
                   </View>
                   
                   <AppText
-                    text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+                    text={t('app.ali_widget.connect_prompt')}
                     color={Colors.NIGHT_OPACITY}
                     mt={5}
                     fontSize={14}
@@ -67,7 +69,7 @@ const NoListings = ({ onConnect }: Props) => {
       {/* 3. Button Beneath */}
       <View style={styles.buttonWrapper}>
         <AppButton 
-					title="Connect Account" 
+					title={t('app.ali_widget.connect_account')}
 					onPress={onConnect}
 					backgroundColor={Colors.WHITE}
 					color={Colors.BRUNSWICK_GREEN}  

@@ -10,10 +10,12 @@ import { Colors } from '@/theme/colors';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
 
 const ThankYouScreen = () => {
+  const { t } = useTranslation();
   const handleClose = () => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
   };
@@ -30,16 +32,16 @@ const ThankYouScreen = () => {
           </View>
 
           <AppText type="Bold" fontSize={32} color={Colors.BLACK} textAlign="center" lineHeight={40}>
-            Thank you our agent {'\n'}
-            will <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>contact you</AppText> {'\n'}
-            soon!
+            {t('auth.hubspot_thankyou.message_1')}{'\n'}
+            {t('auth.hubspot_thankyou.will')} <AppText type="Bold" fontSize={32} color={FIGMA_TEAL}>{t('auth.hubspot_thankyou.highlight')}</AppText>{'\n'}
+            {t('auth.hubspot_thankyou.message_2')}
           </AppText>
         </View>
 
         {/* --- Footer Button --- */}
         <View style={styles.btnWrapper}>
           <AppButton
-            title="Close"
+            title={t('auth.hubspot_thankyou.close')}
             onPress={handleClose}
             backgroundColor={FIGMA_TEAL}
             color={Colors.WHITE}

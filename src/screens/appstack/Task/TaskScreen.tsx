@@ -3,11 +3,13 @@ import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const TaskScreen = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
-      <AppText text={'No Task Available'} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mb={40} />
+      <AppText text={t('app.task_screen.no_task')} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mb={40} />
       <View style={styles.infoCard}>
         <View style={styles.row}>
           <View style={styles.activeDot} />
@@ -16,7 +18,7 @@ const TaskScreen = () => {
           </View>
           <View style={{ flex: 1, marginLeft: 15 }}>
             <View style={styles.rowBetween}>
-              <AppText text="A.LI - Livedin" type="Bold" color={Colors.PINE_FOREST} />
+              <AppText text={t('app.ali_widget.agent_name')} type="Bold" color={Colors.PINE_FOREST} />
               <AppText text="9:36 AM" color="#999" fontSize={12} />
             </View>
             <AppText text={'Connect your Airbnb, Gathern, or other platforms to manage all your listings in one place.'} color={Colors.PINE_FOREST} mt={5} lineHeight={20} />
@@ -25,7 +27,7 @@ const TaskScreen = () => {
       </View>
 
       <TouchableOpacity style={styles.connectBtn}>
-        <AppText text="Connect Account" color={Colors.BRUNSWICK_GREEN} type="Medium" />
+        <AppText text={t('app.ali_widget.connect_account')} color={Colors.BRUNSWICK_GREEN} type="Medium" />
       </TouchableOpacity>
     </View>
   );

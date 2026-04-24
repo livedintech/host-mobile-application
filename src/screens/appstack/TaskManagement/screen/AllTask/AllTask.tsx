@@ -28,6 +28,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer';
 import NoTaskScreen from '../NoTaskScreen/NoTaskScreen';
 import { useTaskStore } from '@/store/taskStore';
+import { useTranslation } from 'react-i18next';
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -53,6 +54,8 @@ const AllTask = () => {
     isFetching,
     rawList,
   } = AllTaskContainer();
+    const { t } = useTranslation();
+
   const { resetTaskStore } = useTaskStore();
 
   const filterSheetRef = useRef<BottomSheetModal>(null);
@@ -200,9 +203,9 @@ const AllTask = () => {
     );
   };
 
-  const ListHeader = () => (
+  const ListHeader = ({t}:any) => (
     <View style={styles.header}>
-      <AppText text="Task Management" fontSize={26} type="Medium" mb={24} />
+      <AppText text={t('app.task_management.title')} fontSize={26} type="Medium" mb={24} />
       <View style={styles.filterRow}>
         <View style={styles.tabScrollWrapper}>
           <ScrollView
@@ -247,7 +250,7 @@ const AllTask = () => {
           meta={dataQuery}
           isLoading={isLoading || isFetching}
           renderItem={renderTaskItem}
-          ListHeaderComponent={<ListHeader />}
+          ListHeaderComponent={<ListHeader t={t}/>}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <NoTaskScreen
@@ -289,10 +292,10 @@ const AllTask = () => {
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
-              <AppText text="Apply Filter" fontSize={24} type="Medium" />
+              <AppText text={t('app.task_management.apply_filter')} fontSize={24} type="Medium" />
               <ButtonView onPress={onResetFilter}>
                 {/* <AppText
-                  text="Reset"
+                  text={t('app.task_management.reset')}
                   color={Colors.BLACK}
                   type="Medium"
                 /> */}
@@ -304,7 +307,7 @@ const AllTask = () => {
               <MultiSelectDropdownField
                 name="listings"
                 label="Select Listing"
-                placeholder="Select Multiple Options"
+                placeholder={t('app.task_management.select_multiple')}
                 data={listingOptions}
                 control={control}
                 errors={errors}
@@ -314,7 +317,7 @@ const AllTask = () => {
                 <MultiSelectDropdownField
                   name="assignees"
                   label="Select Task Assignee"
-                  placeholder="Select Multiple Options"
+                  placeholder={t('app.task_management.select_multiple')}
                   data={assigneeOptions}
                   control={control}
                   errors={errors}

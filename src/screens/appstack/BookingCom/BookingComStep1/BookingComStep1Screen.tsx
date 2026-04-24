@@ -9,8 +9,10 @@ import { Colors } from '@/theme/colors'
 import BGImage from '@/components/molecules/BGImage/BGImage'
 import { goBack } from '@/services/navigationService'
 import useBookingComStep1Container from './BookingComStep1Container'
+import { useTranslation } from 'react-i18next'
 
 const BookingComStep1Screen = () => {
+    const { t } = useTranslation()
     const {
         control,
         errors,
@@ -26,23 +28,23 @@ const BookingComStep1Screen = () => {
                 <View style={styles.contentContainer}>
                     {/* Header */}
                     <AppText
-                        text="Enter your "
+                        text={t('app.booking_com_step1.enter_your')}
                         type="Regular"
                         fontSize={32}
                         color={Colors.BLACK}
                     >
                         <AppText
-                            text="Property ID"
+                            text={t('app.booking_com_step1.property_id_highlight')}
                             type="Bold"
                             fontSize={32}
-                            color={Colors.TEAL_PRIMARY_ALT} // Ya jo bhi green shade aap use kar rahe hain
+                            color={Colors.TEAL_PRIMARY_ALT}
                         />
                     </AppText>
 
                     <View style={styles.inputWrapper}>
                         {/* Input Field */}
                         <InputField
-                            label="Property ID*"
+                            label={t('app.booking_com_step1.property_id_label')}
                             name="hotelId"
                             control={control}
                             errors={errors}
@@ -52,7 +54,7 @@ const BookingComStep1Screen = () => {
 
                         {/* Instructional Text */}
                         <AppText
-                            text="Log in to Booking.com → Property tab → Settings → Property details, then copy the Property ID. Paste it in Livedin to connect your listing."
+                            text={t('app.booking_com_step1.description')}
                             type="Regular"
                             fontSize={12}
                             color={Colors.BLACK_53_PERCENT} 
@@ -67,7 +69,7 @@ const BookingComStep1Screen = () => {
             {/* Bottom Button */}
             <View style={styles.footer}>
                 <AppButton
-                    title="Next"
+                    title={t('app.booking_com_step1.next')}
                     onPress={handleNext}
                     loading={isTesting}
                 />

@@ -5,12 +5,14 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 interface NoSavedRepliesProps {
   onCreatePress: () => void;
 }
 
 const NoSavedRepliesScreen = ({ onCreatePress }: NoSavedRepliesProps) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -24,7 +26,7 @@ const NoSavedRepliesScreen = ({ onCreatePress }: NoSavedRepliesProps) => {
 
         {/* Title */}
         <AppText
-          text="No Saved Replies Found"
+          text={t('app.no_saved_replies.title')}
           fontSize={28}
           type="Bold"
           textAlign="center"
@@ -34,7 +36,7 @@ const NoSavedRepliesScreen = ({ onCreatePress }: NoSavedRepliesProps) => {
 
         {/* Description */}
         <AppText
-          text="Create one to quickly reuse messages in chats."
+          text={t('app.no_saved_replies.description')}
           fontSize={16}
           textAlign="center"
           color={Colors.DARK_CHARCOAL_OPACITY}

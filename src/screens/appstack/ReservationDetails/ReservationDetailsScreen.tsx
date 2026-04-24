@@ -5,6 +5,7 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
 import useReservationDetailsContainer from './ReservationDetailsContainer';
+import { useTranslation } from 'react-i18next';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack, navigate } from '@/services/navigationService';
 import {
@@ -16,6 +17,7 @@ import {
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const ReservationDetailsScreen = () => {
+    const { t } = useTranslation();
     const { details } = useReservationDetailsContainer();
 
     return (
@@ -45,7 +47,7 @@ const ReservationDetailsScreen = () => {
                     <MenuOptions customStyles={{ optionsContainer: styles.popupMenu }}>
                         <MenuOption style={styles.menuItem}>
                             <AppText
-                                text="View Listing Calendar"
+                                text={t('app.reservation_details.view_calendar')}
                                 fontSize={14}
                                 color={Colors.CHARCOAL}
                             />
@@ -53,7 +55,7 @@ const ReservationDetailsScreen = () => {
                         </MenuOption>
                         <MenuOption style={styles.menuItem} onSelect={() => navigate(NavigationRoutes.APP_STACK.RESERVATION_DETAILS)}>
                             <AppText
-                                text="Reservation Details"
+                                text={t('app.reservation_details.reservation_details')}
                                 fontSize={14}
                                 color={Colors.CHARCOAL}
                             />
@@ -63,7 +65,7 @@ const ReservationDetailsScreen = () => {
                             navigate(NavigationRoutes.APP_STACK.ASSIGN_CHAT)
                         }}>
                             <AppText
-                                text="Assign Chat To User"
+                                text={t('app.reservation_details.assign_chat')}
                                 fontSize={14}
                                 color={Colors.CHARCOAL}
                             />
@@ -71,7 +73,7 @@ const ReservationDetailsScreen = () => {
                         </MenuOption>
                         <MenuOption style={[styles.menuItem, { borderBottomWidth: 0 }]}>
                             <AppText
-                                text="Add Internal Notes"
+                                text={t('app.reservation_details.add_notes')}
                                 fontSize={14}
                                 color={Colors.CHARCOAL}
                             />
@@ -84,20 +86,20 @@ const ReservationDetailsScreen = () => {
             <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                 {/* Title Section */}
                 <View style={styles.titleWrapper}>
-                    <AppText text="Reservation Details" fontSize={23} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                    <AppText text={t('app.reservation_details.reservation_details')} fontSize={23} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                     <Svgicons path="File_Document" size={24} color={Colors.BRUNSWICK_GREEN} ml={8} />
                 </View>
 
                 {/* Property Name */}
                 <View style={[styles.propertyRow,{marginBottom: Metrics.verticalScale(26)}]}>
-                    <AppText text="Property Name: " fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                    <AppText text={t('app.reservation_details.property_name')} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                     <AppText text={details.propertyName} fontSize={18} color={Colors.BRUNSWICK_GREEN} />
                 </View>
 
                 {/* Address Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <AppText text="Address" fontSize={17} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText text={t('app.reservation_details.address')} fontSize={17} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                         <Svgicons path="pinLocationIcon" size={17} color={Colors.BRUNSWICK_GREEN} ml={8} />
                     </View>
                     <AppText text={details.address} fontSize={14} color={Colors.BRUNSWICK_GREEN} mt={8} style={{ lineHeight: 24 }} />
@@ -105,37 +107,37 @@ const ReservationDetailsScreen = () => {
 
                 {/* Unit Type */}
                 <View style={[styles.propertyRow, { marginVertical: Metrics.verticalScale(15) }]}>
-                    <AppText text="Unit Type: " fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                    <AppText text={t('app.reservation_details.unit_type')} fontSize={18} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                     <AppText text={details.unitType} fontSize={18} color={Colors.BRUNSWICK_GREEN} />
                 </View>
 
                 {/* Guest Details Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <AppText text="Guest Details" fontSize={17} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                        <AppText text={t('app.reservation_details.guest_details')} fontSize={17} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                         <Svgicons path="homeIcon" size={18} color={Colors.BRUNSWICK_GREEN} ml={8} />
                     </View>
 
                     <View style={styles.detailsList}>
-                        <DetailRow label="Guest Email" value={details.guestEmail} />
-                        <DetailRow label="Guest Phone Number" value={details.guestPhone} />
-                        <DetailRow label="Booking Platform" value={details.bookingPlatform} />
+                        <DetailRow label={t('app.reservation_details.guest_email')} value={details.guestEmail} />
+                        <DetailRow label={t('app.reservation_details.guest_phone')} value={details.guestPhone} />
+                        <DetailRow label={t('app.reservation_details.booking_platform')} value={details.bookingPlatform} />
 
                         <View style={styles.spacer} />
 
-                        <DetailRow label="Number of Guests" value={details.numberOfGuests} />
-                        <DetailRow label="Number of Nights" value={details.numberOfNights} />
+                        <DetailRow label={t('app.reservation_details.num_guests')} value={details.numberOfGuests} />
+                        <DetailRow label={t('app.reservation_details.num_nights')} value={details.numberOfNights} />
 
                         <View style={styles.spacer} />
 
-                        <DetailRow label="Check-in Time" value={details.checkInTime} />
-                        <DetailRow label="Check-out Time" value={details.checkOutTime} />
-                        <DetailRow label="Booking Dates" value={details.bookingDates} />
+                        <DetailRow label={t('app.reservation_details.checkin_time')} value={details.checkInTime} />
+                        <DetailRow label={t('app.reservation_details.checkout_time')} value={details.checkOutTime} />
+                        <DetailRow label={t('app.reservation_details.booking_dates')} value={details.bookingDates} />
 
                         <View style={styles.spacer} />
 
                         <View style={styles.row}>
-                            <AppText text="Payment Status: " fontSize={14} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+                            <AppText text={t('app.reservation_details.payment_status')} fontSize={14} type="Bold" color={Colors.BRUNSWICK_GREEN} />
                             <AppText
                                 text={details.paymentStatus}
                                 fontSize={14}

@@ -7,8 +7,10 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import NoTaskContainer from '../../containers/NoTask/NoTaskContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { useTaskStore } from '@/store/taskStore';
+import { useTranslation } from 'react-i18next';
 
 const NoTaskScreen = () => {
+  const { t } = useTranslation();
   const { handleCreateTask } = NoTaskContainer();
 
   return (
@@ -33,7 +35,7 @@ const NoTaskScreen = () => {
           <View style={{ flex: 1, marginLeft: 15 }}>
             <View style={styles.rowBetween}>
               <AppText
-                text="A.LI - Livedin"
+                text={t('app.ali_widget.agent_name')}
                 type="Bold"
                 color={Colors.PINE_FOREST}
               />
@@ -54,7 +56,7 @@ const NoTaskScreen = () => {
 
       {/* <TouchableOpacity style={styles.connectBtn}>
         <AppText
-          text="Create Task"
+          text={t('app.task_management.create_task')}
           color={Colors.BRUNSWICK_GREEN}
           type="Medium"
         />
@@ -62,7 +64,7 @@ const NoTaskScreen = () => {
 
       <View style={styles.footer}>
         <AppButton
-          title="Create Task"
+          title={t('app.task_management.create_task')}
           onPress={handleCreateTask}
           backgroundColor={Colors.WHITE}
           borderColor={Colors.ARGENT}

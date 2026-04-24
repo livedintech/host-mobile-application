@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useRef, useMemo, useCallback } from 'react';
 import {
   StyleSheet,
@@ -136,7 +137,7 @@ const ViewChecklistAll = () => {
         <View style={styles.addSectionContainer}>
           <ButtonView onPress={handleOpenPress}>
             <GlassCard width="auto" style={styles.addSectionBtn}>
-              <AppText text="Add Section" fontSize={14} type="Medium" />
+              <AppText text={t('app.task_management.view_checklist_add_section')} fontSize={14} type="Medium" />
             </GlassCard>
           </ButtonView>
         </View>
@@ -144,6 +145,7 @@ const ViewChecklistAll = () => {
     </View>
   );
 
+  const { t } = useTranslation();
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       {/* Replace SafeAreaView with a standard View + Top Padding */}
@@ -191,7 +193,7 @@ const ViewChecklistAll = () => {
           >
             <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
               <View style={styles.sheetHeader}>
-                <AppText text="Add Section" fontSize={24} type="Medium" />
+                <AppText text={t('app.task_management.view_checklist_add_section')} fontSize={24} type="Medium" />
                 <ButtonView
                   onPress={handleClosePress}
                   style={styles.closeButton}

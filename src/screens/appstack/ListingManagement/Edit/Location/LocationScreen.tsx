@@ -14,8 +14,10 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import Metrics from '@/utility/Metrics';
 import useLocationContainer from './LocationContainer';
+import { useTranslation } from 'react-i18next';
 
 const LocationScreen = () => {
+  const { t } = useTranslation();
   const { params } = useRoute<any>();
   const listing = params?.paramData?.listing;
 
@@ -56,7 +58,7 @@ const LocationScreen = () => {
 
         {/* Title */}
         <AppText
-          text="Location"
+          text={t('app.location_edit.title')}
           fontSize={28}
           type="SemiBold"
           color={Colors.BLACK}
@@ -88,7 +90,7 @@ const LocationScreen = () => {
               <Svgicons path="pinLocationIcon" size={22} color={Colors.BLACK} />
             </View>
             <View style={styles.addressTextCol}>
-              <AppText text="Update Address" fontSize={16} type="Bold" color={Colors.BLACK} mb={6} />
+              <AppText text={t('app.location_edit.update_address')} fontSize={16} type="Bold" color={Colors.BLACK} mb={6} />
               <AppText
                 text={address || 'No address provided'}
                 fontSize={14}
@@ -102,7 +104,7 @@ const LocationScreen = () => {
         {/* ✅ Export Button */}
         <View style={styles.footer}>
           <AppButton
-            title="Export"
+            title={t('app.location_edit.export')}
             onPress={handleExport}
           />
         </View>
@@ -118,7 +120,7 @@ const LocationScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.location_edit.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -131,12 +133,12 @@ const LocationScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.location_edit.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.location_edit.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

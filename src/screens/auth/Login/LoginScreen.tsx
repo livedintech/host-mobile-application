@@ -7,30 +7,32 @@ import PasswordField from '@/components/molecules/Input/PasswordField'
 import AppText from '@/components/molecules/AppText/AppText'
 import AppButton from '@/components/molecules/AppButton/AppButton'
 import Metrics from '@/utility/Metrics'
+import { useTranslation } from 'react-i18next'
 
 const LoginScreen = () => {
   const { control, errors, handleSubmit, isLoading } = useLoginContainer()
+  const { t } = useTranslation()
   return (
     <RefreshableScrollView style={styles.container}>
-        <AppText text='Login to Your Account' type='SemiBold' fontSize={24} mb={5}/>
+        <AppText text={t('auth.login_email.title')} type='SemiBold' fontSize={24} mb={5}/>
       {/* Form Fields */}
         <InputField
-          label='Email address'
+          label={t('auth.login_email.email_label')}
           name="email"
           control={control}
           errors={errors}
-          placeholder="Enter Email"
+          placeholder={t('auth.login_email.email_placeholder')}
           keyboardType={'email-address'}
         />
         <PasswordField
-          label='Password'
+          label={t('auth.login_email.password_label')}
           name="password"
           control={control}
           errors={errors}
-          placeholder="Enter Password"
-          rules={{ required: 'Password is required' }}
+          placeholder={t('auth.login_email.password_placeholder')}
+          rules={{ required: t('auth.update_password.error_required') }}
         />
-        <AppButton onPress={handleSubmit} title='Login' mb={8} loading={isLoading} />
+        <AppButton onPress={handleSubmit} title={t('auth.login_email.login_btn')} mb={8} loading={isLoading} />
     </RefreshableScrollView>
   )
 }
