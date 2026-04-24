@@ -123,6 +123,1230 @@
       "password_label": "Password *",
       "forgot_password": "Forgot password?",
       "continue": "Continue"
+    },
+    "add_new_password": {
+      "title_1": "Please enter your",
+      "title_highlight": "new",
+      "title_end": "password",
+      "new_password_label": "New Password*",
+      "confirm_password_label": "Confirm Password*",
+      "password_hint": "Please choose a stronger password. Try a mix of letters, numbers, and symbols.",
+      "continue": "Continue"
+    },
+    "agent_intro": {
+      "greeting_1": "Hi, I'm ",
+      "agent_name": "Agent A.I.",
+      "subtitle": "Let's get you started.",
+      "description": "I'm your dedicated expert to guide you from scratch; from creating your listing to securing your first booking. No experience needed.",
+      "start_setup": "Start my Setup"
+    },
+    "connect_calendars": {
+      "title_1": "Airbnb. Gathern.",
+      "title_2": "Booking.com. Or just",
+      "title_3": "getting started.",
+      "description": "Connect your calendars in 1 click. Prevent double bookings and sync your rates instantly.",
+      "connect_account": "Connect Account"
+    },
+    "hubspot_calendar": {
+      "title_1": "Please select a ",
+      "title_highlight": "date",
+      "title_2": " so our agent can schedule a meeting with you",
+      "loading_dates": "Loading available dates...",
+      "select_slot": "Select Any One Available Time Slot",
+      "next": "Next",
+      "confirm": "Confirm"
+    },
+    "hubspot_form": {
+      "title_1": "Please enter your",
+      "title_highlight": "Information",
+      "subtitle": "Welcome to livedin. Let's build a brighter hosting journey together.",
+      "full_name_label": "Full Name *",
+      "full_name_placeholder": "Enter Legal Name",
+      "email_label": "Email *",
+      "email_placeholder": "example@email.com",
+      "country_label": "Country *",
+      "country_placeholder": "Select Country",
+      "city_label": "City *",
+      "city_placeholder": "Select City",
+      "specify_city_label": "Specify City *",
+      "specify_city_placeholder": "Enter your city name",
+      "district_label": "District *",
+      "district_placeholder": "Select District",
+      "specify_district_label": "Specify District *",
+      "specify_district_placeholder": "Enter your district name",
+      "next": "Next",
+      "done": "Done",
+      "select_picker": "Select {{type}}",
+      "error": "Error",
+      "error_select_country": "Select country first",
+      "error_select_city": "Select city first"
+    },
+    "hubspot_thankyou": {
+      "message_1": "Thank you our agent",
+      "will": "will",
+      "highlight": "contact you",
+      "message_2": "soon!",
+      "close": "Close"
+    },
+    "login_email": {
+      "title": "Login to Your Account",
+      "email_label": "Email address",
+      "email_placeholder": "Enter Email",
+      "password_label": "Password",
+      "password_placeholder": "Enter Password",
+      "login_btn": "Login"
+    },
+    "property_can_earn": {
+      "title_1": "See what your",
+      "title_2": "Property",
+      "title_3": "can earn",
+      "description": "Calculate your estimated monthly revenue with Livedin versus standard listings.",
+      "where_located": "Where is your property located?",
+      "city": "City",
+      "city_placeholder": "Select your city",
+      "district": "District",
+      "district_placeholder": "Select your District",
+      "bedrooms": "Number of Bedrooms",
+      "bedrooms_placeholder": "Select number",
+      "next": "Next",
+      "estimate_earnings": "Your Estimate Earnings",
+      "monthly_income": "Monthly Income",
+      "yearly_income": "Yearly Income",
+      "unlock": "Unlock this revenue"
+    },
+    "three_plus_listing": {
+      "heading": "Please select a date so our agent can schedule a meeting with you.",
+      "loading": "Loading calendar..."
+    },
+    "update_password": {
+      "title": "Set New Password",
+      "new_password_label": "New Password *",
+      "new_password_placeholder": "Enter new password",
+      "confirm_password_label": "Confirm Password *",
+      "confirm_password_placeholder": "Re-type your password",
+      "update_btn": "Update Password",
+      "error_required": "Password is required",
+      "error_min_length": "Password must be at least 8 characters",
+      "error_confirm_required": "Please confirm your password",
+      "error_no_match": "Passwords do not match"
+    }
+  },
+  "app": {
+    "home": {
+      "hello": "Hello {{name}}!",
+      "good_morning": "Good Morning",
+      "lang_switch": "العربية",
+
+      "greeting_hi": "Hi",
+      "greeting_old_end": "let's begin setting up everything you need!",
+      "greeting_new_end": "here's what needs your attention today!",
+
+      "recommended_next": "Recommended Next",
+      "your_updates": "Your Updates",
+
+      "create_staff": "Create Staff User",
+      "create_staff_sub": "Assign staff to cleaning tasks",
+      "connect_ttlock": "Connect Smart TT Lock",
+      "connect_ttlock_sub": "Generate codes for staff & guest",
+      "create_cleaning": "Create Cleaning Schedule",
+      "for_properties": "For {{count}}+ properties",
+      "manage_listings": "Manage Listings",
+      "manage_listings_sub": "Create/Add new listings",
+
+      "inbox": "Inbox",
+      "inbox_sub": "{{count}} messages",
+      "checkins": "Total Check-ins",
+      "checkins_sub": "{{count}} check-ins",
+      "tasks": "Property Tasks",
+      "tasks_sub": "{{count}} tasks in action",
+      "checkouts": "Total Check-outs",
+      "checkouts_sub": "{{count}} check-outs",
+      "booking_requests": "Booking Requests",
+      "booking_requests_sub": "{{count}} Pending Requests",
+      "analytics": "Analytics",
+      "analytics_sub": "{{count}}% occupancy this week",
+
+      "connect": "Connect {{name}}",
+      "import_listings": "Import listings from {{name}}",
+      "create_listing": "Create Listing",
+      "add_listing_manually": "Add a new listing manually",
+
+      "complete_pending": "Complete your pending listing form",
+      "export_pending": "Export your pending listing"
+    },
+    "ai_auto_reply": {
+      "listing_access": "Listing Access",
+      "all_listings": "All Listings",
+      "title": "AI Auto Reply",
+      "description": "AI auto replies allow you to respond to guests instantly based on the rules and instructions you define.",
+      "knowledge_base": "What AI already knows?",
+      "create_new": "Create New Reply",
+      "delete_confirm": "Are you sure you want to delete this AI rule?",
+      "confirm_btn": "Confirm",
+      "cancel_btn": "Cancel"
+    },
+    "no_ai_auto_reply": {
+      "title": "No AI Auto Reply Found",
+      "description": "Create one to automatically respond to guest messages."
+    },
+    "change_reservation": {
+      "page_title": "What do you want to change?",
+      "change_listing": "Change Listing",
+      "reservation_details": "Reservation Details",
+      "dates": "Dates",
+      "guest_charges": "Guest Charges",
+      "base_price": "Base Price",
+      "send_request": "Send Request",
+      "edit_details_title": "Edit Reservation Details",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "save": "Save",
+      "edit_charges_title": "Edit Guest Charges",
+      "base_price_placeholder": "SAR 500",
+      "price_hint": "SR499 - SR500 depending on promotions",
+      "similar_listings": "Similar listings SR86 - SR129",
+      "date_error": "Start and end date cannot be the same."
+    },
+    "property_step1": {
+      "step_label": "Step 1",
+      "title": "Tell us about your property",
+      "description": "In this step, provide the basic details of your property, including the property type, location, guest capacity, and other key property information to set up your listing.",
+      "next": "Next"
+    },
+    "describe_house": {
+      "title": "Describe your property",
+      "subtitle": "Short descriptions work best. You can always change it later",
+      "title_label": "Property Title *",
+      "title_placeholder": "\"Cozy Villa with Pool in Riyadh\"",
+      "description_label": "Property Description *",
+      "description_placeholder": "\"Kick back and relax in this calm and stylish space.\"",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "export": "Export",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "assign_chat": {
+      "title": "Assign chat to users",
+      "empty_text": "No users found for this listing",
+      "unassign_title": "Unassign User",
+      "assign_title": "Assign this chat to {{name}}?",
+      "unassign_confirm": "Are you sure you want to unassign {{name}} from this task/chat?",
+      "assign_confirm": "Are you sure you want to assign this task/chat to {{name}}?",
+      "cancel": "Cancel",
+      "wait": "Wait...",
+      "unassign": "Unassign",
+      "confirm": "Confirm"
+    },
+    "amenities": {
+      "title": "Tell guest what your property has to offer",
+      "description": "You can add/remove amenities after you publish your listing.",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "booking_cancel_policies": {
+      "title_new": "Add booking cancel policies",
+      "title_edit": "Booking cancel policies",
+      "flexible_placeholder": "Flexible - Guests can cancel at least 24..",
+      "longterm_placeholder": "Long-term with grace period - To recie...",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "property_guidelines": {
+      "title_new": "Add Property Guidelines",
+      "title_edit": "Property Guidelines",
+      "subtitle": "Fill these details so AI Auto Reply can assist guests on your behalf.",
+      "skip": "Skip for now",
+      "arrival_guide_label": "Arrival Guide",
+      "property_rules_label": "Property Rules",
+      "checkout_instructions_label": "Check-out Instructions",
+      "wifi_username_label": "Wifi Username",
+      "wifi_username_placeholder": "Wifi_Us",
+      "wifi_password_label": "Wifi Password",
+      "wifi_password_placeholder": "Wifi123456",
+      "door_lock_label": "Door Lock Code",
+      "door_lock_placeholder": "Select Lock",
+      "lock_hint": "Select a lock to continue. If no lock appears, set up your TTLock in More →",
+      "smart_lock_link": "Smart Lock.",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "export": "Export",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "discounts": {
+      "title_new": "Add discounts",
+      "title_edit": "Discounts",
+      "subtitle": "Create discounts to attract more bookings and offer special pricing for specific situations like last-minute stays or longer reservations.",
+      "weekly_label": "Weekly Discounts",
+      "weekly_placeholder": "4%",
+      "monthly_label": "Monthly Discounts",
+      "monthly_placeholder": "4%",
+      "last_minute_label": "Last Minute Discount",
+      "last_minute_placeholder": "10%",
+      "early_bird_label": "Early Bird Price Change",
+      "early_bird_placeholder": "10%",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "add_discount_title": "Add Discount",
+      "select_discount_label": "Select Discount",
+      "last_minute_option": "Last Minute Discount",
+      "save": "Save"
+    },
+    "wifi_door_lock": {
+      "title": "Wifi & Door Lock",
+      "subtitle": "Fill these details so AI Auto Reply can assist guests on your behalf.",
+      "wifi_username_label": "Wifi Username",
+      "wifi_username_placeholder": "Wifi_Us",
+      "wifi_password_label": "Wifi Password",
+      "wifi_password_placeholder": "Wifi123456",
+      "door_lock_label": "Door Lock Code",
+      "door_lock_placeholder": "Select Lock",
+      "lock_hint": "Select a lock to continue. If no lock appears, set up your TTLock in More →",
+      "smart_lock_link": "Smart Lock.",
+      "export": "Export",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "property_policies": {
+      "title": "Select property policies",
+      "subtitle": "Choose which policies guests are permitted to follow for this listing.",
+      "smoking": "Smoking Allowed",
+      "parties": "Parties Allowed",
+      "pets": "Pets Allowed",
+      "quiet_hours": "Select Quiet Hours",
+      "export": "Export",
+      "save_exit": "Save & Exit",
+      "next": "Next",
+      "select_quiet_hours": "Select Quiet Hours",
+      "start_time": "Start Time",
+      "end_time": "End Time",
+      "save_quiet_hours": "Save Quiet Hours",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "finish_up_step3": {
+      "step_label": "Step 3",
+      "title": "Finish up and go live",
+      "description": "In this step, choose your nightly rate, respond to a few final questions, and publish your property when you're ready.",
+      "next": "Next"
+    },
+    "make_standout": {
+      "step_label": "Step 2",
+      "title": "Make your property stand out",
+      "description": "In this step, upload at least five photos, and create a clear, attractive title and description to showcase your space.",
+      "next": "Next"
+    },
+    "ai_pricing": {
+      "title": "Add AI Pricing",
+      "max_price_label": "Maximum Price",
+      "min_price_label": "Minimum Price",
+      "price_placeholder": "4%",
+      "next": "Next",
+      "save_exit": "Save & Exit"
+    },
+    "booking_rules": {
+      "title_new": "Add booking rules",
+      "title_edit": "Booking rules",
+      "long_term_label": "Long term Stay",
+      "min_gap_label": "Minimum Gap Night",
+      "min_night_label": "Minimum Night Stay",
+      "max_night_label": "Maximum Night Stay",
+      "placeholder_1": "1",
+      "placeholder_2": "2",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "create_listing_step1": {
+      "step_label": "Step 1",
+      "title": "Tell us about your property",
+      "select_type": "Select Property Type",
+      "next": "Next",
+      "save_exit": "Save & Exit"
+    },
+    "location_step": {
+      "loading": "Getting your location...",
+      "search_placeholder": "Search Location",
+      "enter_manually": "Enter Manually",
+      "save_exit": "Save & Exit"
+    },
+    "confirm_address": {
+      "edit_title": "Edit Address",
+      "title": "Confirm Address",
+      "country_label": "Country",
+      "country_placeholder": "Select country",
+      "state_label": "State / Province",
+      "state_placeholder": "Select state",
+      "city_label": "City",
+      "city_placeholder": "Select city",
+      "district_label": "District",
+      "district_placeholder": "Select district",
+      "address_label": "Address",
+      "address_placeholder": "e.g. 123 King Fahad Rd",
+      "postal_label": "Postal Address",
+      "postal_placeholder": "e.g. 12345",
+      "next": "Next",
+      "save_exit": "Save & Exit"
+    },
+    "no_automation": {
+      "title": "No Automation Template Found",
+      "description": "Create a template to start automating messages"
+    },
+    "user_management": {
+      "title": "User Management",
+      "all_listings": "All Listings",
+      "no_access": "No Access",
+      "default_role": "User",
+      "listing_access": "Listing Access",
+      "empty_text": "No users found",
+      "create_user": "Create New User"
+    },
+    "no_user": {
+      "title": "No User Found",
+      "description": "No users have been created in the app for this account yet. To assign tasks, you'll first need to add a user. Once a user is created, you can easily assign tasks to them.",
+      "create_user": "Create New User"
+    },
+    "user_form": {
+      "title_create": "Create New User",
+      "title_edit": "Edit User",
+      "subtitle_create": "Create and manage users for your property. Add users to assign tasks and control access. Once a user is created, you can easily assign responsibilities and manage their roles.",
+      "name_label": "Name",
+      "name_placeholder": "Ahmed",
+      "phone_label": "Phone Number*",
+      "email_label": "Email",
+      "email_placeholder": "ahmed@example.com",
+      "role_label": "Role Assignment",
+      "role_placeholder": "Select Role",
+      "staff_type_label": "Staff Role Type",
+      "staff_type_placeholder": "Select Staff Type",
+      "password_label": "Password",
+      "property_label": "Select Property",
+      "property_placeholder": "Select Multiple Options",
+      "assign_all": "Assign this user all properties",
+      "save_exit": "Save & Exit"
+    },
+    "booking_com_pms": {
+      "title": "Connect OTAS",
+      "title_label": "Title",
+      "title_placeholder": "Enter Title",
+      "apartment_label": "Select Apartment",
+      "rate_label": "Rate",
+      "rate_placeholder": "Enter Rate",
+      "hotel_id_label": "Enter Hotel ID",
+      "test_connection": "Test Connection",
+      "submit": "Submit"
+    },
+    "chat": {
+      "title": "Inbox",
+      "search_placeholder": "Search Guest",
+      "apply_filters": "Apply Filters",
+      "select_property": "Select Property",
+      "reset": "Reset",
+      "apply_filter": "Apply Filter",
+      "no_archived": "No Archived Chats",
+      "no_snoozed": "No Snoozed Chats",
+      "no_unread": "No Unread Chats",
+      "no_messages": "No Messages Found",
+      "no_conversations": "No conversations yet.",
+      "no_listing_message": "Create a new listing or import one from your OTA platform to get started.",
+      "snooze": "Snooze",
+      "unsnoozed": "Unsnoozed",
+      "archive": "Archive",
+      "unarchived": "Unarchived"
+    },
+    "subscription": {
+      "title": "Listing Cost",
+      "monthly": "Monthly",
+      "per_listing": "/per listing",
+      "no_subscription": "No active subscription",
+      "your_listings": "Your Listings",
+      "no_listings": "No listings yet",
+      "no_listings_desc": "Your active listings will appear here",
+      "cancel": "Cancel Subscription",
+      "cancel_confirm": "Are you sure you want to cancel your subscription?",
+      "yes_cancel": "Yes, Cancel",
+      "no": "No"
+    },
+    "smart_lock": {
+      "title": "No Smart Lock Found",
+      "description": "You haven't connected a smart lock yet. Link your TT Smart Lock account to get started.",
+      "connect_btn": "Connect TT Account"
+    },
+    "manage_booking": {
+      "page_title": "Connected\nBooking Platforms",
+      "no_account_title": "No Account Found",
+      "no_account_desc": "Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place.",
+      "connect_accounts": "Connect Accounts",
+      "no_tab_account": "No {{tab}} Account",
+      "add_account": "+ Add Another {{tab}} Account",
+      "connect_account": "Connect {{tab}} Account"
+    },
+    "no_listing_smart_lock": {
+      "title": "No Property Found",
+      "description": "Create a new listing or import one from your OTA platform to get started.",
+      "add_listing": "Add New Listing",
+      "create_listing": "Create New Listing"
+    },
+    "smart_lock_activity": {
+      "title": "Your Activity",
+      "empty": "No activity logs found.",
+      "refresh": "Refresh"
+    },
+    "airbnb_import": {
+      "title": "Airbnb Properties",
+      "airbnb_id": "Airbnb ID:  ",
+      "livedin_id": "Livedin ID:  ",
+      "existing_listing": "Existing Listing:",
+      "none": "None",
+      "import_btn": "Import",
+      "reimport_btn": "Re-import",
+      "next": "Next"
+    },
+    "gathern_import": {
+      "title": "Gathern Properties",
+      "gathern_id": "Gathern ID:  ",
+      "livedin_id": "Livedin ID:  ",
+      "existing_listing": "Existing Listing:",
+      "select_placeholder": "Select..",
+      "rate_label": "Rate",
+      "rate_placeholder": "Enter rate",
+      "map_btn": "Map Listing",
+      "unmap_btn": "Unmapped Listing",
+      "next": "Next"
+    },
+    "about_place": {
+      "title": "Add information about your property",
+      "size_label": "Property Size (SQM)",
+      "size_placeholder": "500 Square Metres",
+      "guests": "Number of Guests",
+      "guests_placeholder": "3",
+      "bedrooms": "Number of Bedrooms",
+      "bedrooms_placeholder": "4 Bedrooms",
+      "beds": "Number of Beds",
+      "beds_placeholder": "4 Beds",
+      "bathrooms": "Number of Bathrooms",
+      "bathrooms_placeholder": "3",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "generate_passcode": {
+      "enter_prefix": "Enter",
+      "enter_your": "Enter your",
+      "passcode": "Passcode",
+      "code": "Code",
+      "details_suffix": "Details",
+      "name_suffix": "Name",
+      "name_label": "Name*",
+      "name_placeholder": "Cleaner Code",
+      "start_date_label": "Select Start Date*",
+      "date_placeholder": "mm/dd/yyyy",
+      "start_time_label": "Select Start time*",
+      "time_placeholder": "-- : --",
+      "end_date_label": "Select End Date*",
+      "end_time_label": "Select End Time*",
+      "generate_btn": "Generate Passcode"
+    },
+    "no_task": {
+      "completed": "No Task Completed",
+      "available": "No Task Available",
+      "no_listings_desc": "Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+    },
+    "header": {
+      "brand": "Livedin",
+      "get_started": "Get Started"
+    },
+    "update_check": {
+      "title": "Update Available",
+      "description": "A new version of Livedin is available. Please update to continue using the app with the latest features and improvements.",
+      "update_btn": "Update Now",
+      "mandatory": "You must update to continue using the app."
+    },
+    "booking_details": {
+      "title": "Reservation Details",
+      "fetching": "Fetching details...",
+      "failed": "Failed to load booking details.",
+      "close": "Close",
+      "empty": "No booking information available."
+    },
+    "location_edit": {
+      "title": "Location",
+      "update_address": "Update Address",
+      "export": "Export",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "set_pricing": {
+      "title": "Set your pricing",
+      "subtitle": "Base price is set by the platform. Set a markup for each platform individually.",
+      "currency_label": "Select Money Currency",
+      "weekday_label": "Weekday Base Price",
+      "weekend_label": "Weekend Base Price",
+      "price_placeholder": "500 SAR",
+      "tax_label": "Tax (Vat)",
+      "percent_placeholder": "2.0%",
+      "airbnb_markup_label": "Airbnb Markup Price",
+      "gathern_markup_label": "Gathern Markup Price",
+      "bookingcom_markup_label": "Booking.com Markup Price",
+      "extra_guest_label": "Extra Guest Fee",
+      "extra_guest_placeholder": "200 SAR",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "gathren_pms": {
+      "title": "Enter your PMS ID",
+      "pms_label": "PMS id*",
+      "description": "You can find your PMS ID on the Gathern platform by opening your profile settings. Your PMS ID is listed under your linked accounts or account details section.",
+      "next": "Next",
+      "create_account": "Create New Account"
+    },
+    "gathren_create_account": {
+      "title": "Create Gathern Account",
+      "gender_label": "Gender*",
+      "gender_placeholder": "Select Gender",
+      "first_name_label": "First Name*",
+      "first_name_placeholder": "Enter First Name",
+      "last_name_label": "Last Name*",
+      "last_name_placeholder": "Enter Last Name",
+      "username_label": "Username*",
+      "username_placeholder": "Enter Username",
+      "email_label": "Email*",
+      "email_placeholder": "Enter Email",
+      "mobile_label": "Mobile*",
+      "platform_id_label": "Platform User ID*",
+      "platform_id_placeholder": "Enter Platform User ID",
+      "next": "Next",
+      "create_btn": "Create New Account"
+    },
+    "booking_details_edit": {
+      "title_edit": "Booking Details",
+      "step_label": "Step 3",
+      "title_new": "Add booking details",
+      "booking_type": "Booking Type",
+      "guest_eligibility": "Guest Eligibility",
+      "checkin_label": "Check-in Time",
+      "checkout_label": "Check-out Time",
+      "same_day_label": "Allow Same-day Booking.com Bookings",
+      "cleanliness_label": "Listing's Cleanliness Status",
+      "cleanliness_placeholder": "Cleaning Status",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "active_codes": {
+      "title": "Active Codes",
+      "passcode_label": "Passcode: ",
+      "status_label": "Code Status: ",
+      "view_logs": "View Logs",
+      "generate_btn": "Generate New Passcode"
+    },
+    "automation_template": {
+      "listing_access": "Listing Access",
+      "all_listings": "All Listings",
+      "title": "Automation Template",
+      "description": "Create automation templates to send messages automatically. Define the trigger, message content, and applicable listings.",
+      "create_btn": "Create New Template"
+    },
+    "property_tour": {
+      "title": "Property Tour",
+      "description": "Manage your listing photos here. Upload, organize, and update the images that will be showcased to guests on your listing.",
+      "export": "Export",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "more": {
+      "account_section": "Account",
+      "analytics_section": "Analytics",
+      "logout": "Logout",
+      "logout_confirm": "Are you sure you want to logout?",
+      "logout_subtitle": "You will need to login again to access your account.",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "pre_activity_screen": {
+      "title": "Pre-activity Preview",
+      "description": "View the uploaded photos to check the condition before the task begins.",
+      "no_media": "No media uploaded for this task."
+    },
+    "checklist_detail": {
+      "add_more": "Add more",
+      "save": "Save",
+      "add_item": "Add Item"
+    },
+    "edit_task_screen": {
+      "assign_task": "Assign Task",
+      "task_date": "Task Date",
+      "start_time": "Start Time",
+      "end_time": "End Time",
+      "save_changes": "Save Changes",
+      "checklist_mgmt": "Checklist Management",
+      "pre_activity": "Pre-activity Preview",
+      "post_activity": "Post Activity Preview"
+    },
+    "no_chat_screen": {
+      "add_listing": "Add New Listing",
+      "create_listing": "Create New Listing"
+    },
+    "analytics": {
+      "listing_performance": "Listing Performance",
+      "statistics": "Statistics",
+      "rental_revenue": "Rental Revenue",
+      "occupancy": "Occupancy",
+      "avg_stay_revenue": "Avg Stay Revenue",
+      "avg_length_stay": "Avg Length of Stay"
+    },
+    "billing": {
+      "title": "Billing",
+      "payment_method": "Payment Method",
+      "subscription": "Subscription",
+      "transaction_history": "Transaction History"
+    },
+    "payment_method_list": {
+      "card_number": "Card Number",
+      "card_type": "Card Type",
+      "set_default": "Set as default",
+      "add_new": "Add New Payment Method"
+    },
+        "task_management": {
+      "create_task_title": "Create New Task",
+      "task_name_label": "Task Name:",
+      "task_name_placeholder": "Enter task name",
+      "task_desc_label": "Task Description",
+      "category_label": "Category",
+      "listing_label": "Listing Selection",
+      "listing_placeholder": "Select Listing",
+      "date_label": "Select Date",
+      "date_placeholder": "Select Date",
+      "start_time_label": "Select Start Time",
+      "start_time_placeholder": "Select Start Time",
+      "end_time_label": "Select End Time",
+      "end_time_placeholder": "Select End Time",
+      "assign_task_label": "Assign Task",
+      "select_user": "Select User",
+      "next": "Next",
+      "task_description": "Task Description:",
+      "property": "Property:",
+      "description_label": "Description: ",
+      "property_label": "Property: ",
+      "assigned_to": "Assigned To: ",
+      "due_date": "Due Date: ",
+      "status": "Status: ",
+      "title": "Task Management",
+      "create_task": "Create Task",
+      "apply_filter": "Apply Filter",
+      "select_listings": "Select Listings",
+      "select_multiple": "Select Multiple Options",
+      "task_assignee": "Task Assignee",
+      "task_status": "Task Status",
+      "reset": "Reset",
+      "task_assigned": "Task Assigned:",
+      "pre_activity": "Pre Activity Preview",
+      "view_images": "View Images/Video",
+      "video": "Video",
+      "no_media": "No images or videos available for this task.",
+      "task_completed": "Task Completed Successfully",
+      "add_item": "Add Item",
+      "checklist_title": "Check-list Management",
+      "checklist_subtitle": "Please select what you require for this checklist.",
+      "add_section": "Add Section",
+      "section_name": "Section Name:",
+      "item_name_placeholder": "Item name",
+      "add_more": "Add More",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "setup_cleaning": "Setup Cleaning Schedule",
+      "your_listings": "Your Listings",
+      "your_listings_desc": "Import a listing from your OTA platform, or create a new one manually if it's not listed elsewhere.",
+      "add_instructions": "Add Instructions for Your Staff",
+      "staff_notes_desc": "Add notes or special instructions for your staff related to this property or task. These notes will help them understand any specific requirements while completing their work.",
+      "recurring_desc": "Set up a recurring cleaning schedule for your property.",
+      "deleting_task": "Deleting task...",
+      "task_details": "Task Details",
+      "task_instructions": "Task Instructions",
+      "door_code": "Door Code",
+      "assign_task": "Assign Task",
+      "task_timeline": "Task Timeline",
+      "task_status_label": "Task Status:",
+      "view_checklist_add_section": "Add Section",
+      "recurring_title": "Set up Recurring Cleaning Schedule",
+      "recurring_body": "Select the listing and assign a team member. This cleaning task is set up once and will automatically appear in task management for every new booking.",
+      "create_non_cleaning_desc": "Create a task for your property. Cleaning tasks are recurring by default. For other tasks, select a date and set the start and end time.",
+      "user_management_link": "User Management."
+    },
+    "listing_screen": {
+      "guest_bookings": "Guest Bookings",
+      "reservations": "Reservations"
+    },
+    "account_screen": {
+      "title": "Account"
+    },
+    "manage_listing_screen": {
+      "listed": "Listed"
+    },
+    "decline_step3_extra": {
+      "what_else": "What else would you like us to know?*"
+    },
+    "conservative_chart": {
+      "result": "Result:"
+    },
+        "chat_detail": {
+      "automated_message": "Automated Message",
+      "reservation_details": "Reservation Details",
+      "view_calendar": "View Calendar",
+      "reply": "Reply",
+      "copy": "Copy",
+      "create_task": "Create Task",
+      "delete": "Delete",
+      "ai_suggestions": "A.I Suggestions",
+      "edit": "Edit",
+      "send_now": "Send Now",
+      "write_message": "Write Your Message",
+      "saved_replies": "Saved Replies",
+      "camera": "Camera",
+      "video": "Video",
+      "gallery": "Gallery",
+      "document": "Document"
+    },
+    "inquiry_modal": {
+      "view_details": "View Details",
+      "special_offer_btn": "Special Offer",
+      "pre_approve_btn": "Pre-approve",
+      "make_offer_title": "Make Special Offer",
+      "offer_amount_label": "Offer Amount (SAR)",
+      "offer_amount_placeholder": "Enter amount",
+      "message_label": "Message",
+      "message_placeholder": "Type your message...",
+      "send_offer": "Send Offer",
+      "pre_approve_title": "Pre-Approve Inquiry",
+      "pre_approve_placeholder": "Type your pre-approval message...",
+      "send_approval": "Send Approval"
+    },
+    "no_review": {
+      "title": "No Reviews Yet",
+      "description": "Reviews will appear here once you start receiving bookings and hosting guests.",
+      "manage_listing": "Manage your listing"
+    },
+    "review_card": {
+      "booking_dates": "Booking Dates",
+      "guest_experience": "Guest Experience Rating",
+      "view_details": "View Details",
+      "talk_to_guest": "Talk To Guest",
+      "no_review_msg": "The guest hasn't submitted a review yet. Reach out via chat.",
+      "request_rating": "Request Rating",
+      "guest_rating_by_you": "Guest Rating - By You",
+      "rate_guest": "Rate Your Guest"
+    },
+    "rate_guest": {
+      "back": "Back",
+      "submit": "Submit",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "feedback_desc": "Your feedback helps other hosts manage better experiences.",
+      "tell_what_happened": "Tell us what happened",
+      "write_review": "Write a public review",
+      "yes": "Yes",
+      "no": "No",
+      "private_feedback_placeholder": "Tell us more (Private feedback)"
+    },
+    "view_review": {
+      "overall_rating": "Overall Rating",
+      "guest_property_ratings": "Guest Property Ratings",
+      "your_reply": "Your Reply",
+      "no_response": "No response yet...",
+      "save_exit": "Save & Exit"
+    },
+    "review_management": {
+      "title_1": "Review",
+      "title_2": "Management"
+    },
+    "review_detail": {
+      "guest_details": "Guest Details",
+      "guest_email": "Guest Email",
+      "guest_contact": "Guest Contact",
+      "guest_rating": "Guest Rating",
+      "checkin_time": "Check-in Time",
+      "checkin_date": "Check-in Date",
+      "checkout_time": "Check-out Time",
+      "checkout_date": "Check-out Date",
+      "property_details": "Property Details",
+      "booking_details": "Booking Details",
+      "date_of_reservation": "Date Of Reservation",
+      "booking_platform": "Booking Platform",
+      "num_nights": "Number Of Nights",
+      "num_guests": "Number Of Guests",
+      "door_code": "Door Code",
+      "ai_chat_summary": "AI Chat Summary",
+      "continue_chat": "Continue Chat",
+      "guest_property_ratings": "Guest Property Ratings",
+      "overall_rating": "Overall Rating",
+      "rate_guest_btn": "Rate Your Guest",
+      "base_price": "Base Price",
+      "payment_breakdown": "Payment Breakdown",
+      "assigned_task": "Assigned Task",
+      "create_task": "Create New Task",
+      "cancellation_policy": "Cancellation Policy"
+    },
+    "booking_com_step1": {
+      "enter_your": "Enter your ",
+      "property_id_highlight": "Property ID",
+      "property_id_label": "Property ID*",
+      "description": "Log in to Booking.com → Property tab → Settings → Property details, then copy the Property ID. Paste it in Livedin to connect your listing.",
+      "next": "Next"
+    },
+    "booking_com_step2": {
+      "title_1": "Booking.com",
+      "title_2": "Listings",
+      "booking_id": "Booking.com ID:",
+      "existing_listing": "Existing Listing:",
+      "none": "None",
+      "next": "Next"
+    },
+    "booking_com_step3": {
+      "title_prefix": "Please set a name for your ",
+      "title_highlight": "Booking.com",
+      "name_label": "Enter Name *",
+      "name_placeholder": "E.g. My Luxury Apartment",
+      "rate_label": "Rate (SAR) *",
+      "rate_placeholder": "Enter price per night",
+      "description": "Set a name for this listing so it's easy to identify and manage when syncing and representing your OTA listings.",
+      "continue": "Continue"
+    },
+    "property_detail": {
+      "channel": "Channel",
+      "task": "Task",
+      "calendar": "Calendar",
+      "delete_listing": "Delete Listing",
+      "listing_editor": "Listing Editor",
+      "your_space": "Your Space",
+      "pricing": "Pricing",
+      "export": "Export",
+      "property_tour": "Property Tour",
+      "property_title": "Property Title",
+      "property_description": "Property Description",
+      "location": "Location",
+      "property_info": "Property Information",
+      "amenities": "Amenities",
+      "property_policies": "Property Policies",
+      "arrival_guide": "Arrival Guide",
+      "property_guidelines": "Property Guidelines",
+      "booking_details": "Booking Details",
+      "booking_rules": "Booking Rules",
+      "cancel_policies": "Cancel Policies",
+      "wifi_door_lock": "Wifi & Door Lock",
+      "select_account": "Select Account",
+      "export_desc": "Export your listing to automatically sync and apply all updates across your connected OTA platforms.",
+      "policies_subtitle": "Smoking, Parties, +2 More",
+      "guidelines_subtitle": "House Rules, Check-out Instructions",
+      "wifi_subtitle": "Wifi Details, Smart Door Lock",
+      "disclosure_title": "Property Disclosure Details",
+      "disclosure_subtitle": "Exterior Security Camera, + 2 More",
+      "ownership_title": "Ownership License Documents",
+      "pricing_subtitle": "Weekday, Weekend Base, + 3 More",
+      "discounts": "Discounts",
+      "select_ota": "Select OTA Account"
+    },
+    "cancel_policies_edit": {
+      "title": "Booking Cancel Policies",
+      "airbnb_label": "Cancel Policy Airbnb",
+      "gathern_label": "Cancel Policy Gathern",
+      "bookingcom_label": "Cancel Policy Booking.com",
+      "flexible_placeholder": "Flexible - Guests can cancel at least 24...",
+      "next": "Next",
+      "save_exit": "Save & Exit"
+    },
+    "account_delete_modal": {
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "right_actions": {
+      "snooze": "Snooze",
+      "archive": "Archive"
+    },
+    "filter_modal_view": {
+      "apply_filter": "Apply Filter",
+      "select_property": "Select Property"
+    },
+    "direct_cancel_modal": {
+      "confirm_text": "Are you sure you want to cancel reservation?",
+      "subtitle": "Once cancelled, this booking will be removed"
+    },
+    "create_booking_sheet": {
+      "price_hint": "SR499 - SR500 depending on promotions",
+      "similar_listings": "Similar listings SR86 - SR129"
+    },
+    "photo_upload": {
+      "loading": "Loading photos...",
+      "format_hint": "Allowed formats: jpg, png, mp4",
+      "size_hint": "Video limit: ≤ 20 MB",
+      "add_photos": "Add Photos & Videos",
+      "take_picture": "Take New Picture",
+      "select_media": "Select Media",
+      "gallery": "Gallery (Photo & Video)",
+      "take_photo": "Take Photo"
+    },
+    "ali_widget": {
+      "agent_name": "A.LI - Livedin",
+      "connect_account": "Connect Account",
+      "connect_prompt": "Connect your Airbnb, Gathern, or other platforms to manage all your listings in one place."
+    },
+    "message_screen": {
+      "no_message": "No Message Found"
+    },
+    "task_screen": {
+      "no_task": "No Task Available"
+    },
+    "more_legacy": {
+      "billing_section": "Billing",
+      "refer_section": "Refer App",
+      "general_section": "General"
+    },
+    "connected_ota": {
+      "title": "Connected OTA Platform",
+      "status_label": "Connection Status: "
+    },
+    "what_ai_knows": {
+      "title": "What AI Already Knows",
+      "availability": "Availability Details",
+      "conversation": "Conversation Messages",
+      "listing": "Listing Details",
+      "reservation": "Reservation Details"
+    },
+    "transaction_history": {
+      "title": "Latest Transaction"
+    },
+    "create_ai_rule": {
+      "title_edit": "Edit AI Auto Reply",
+      "title_create": "Create AI Auto Reply",
+      "desc_edit": "Update triggers, tone, and assigned listings. Changes apply to future replies.",
+      "desc_create": "Create an AI auto reply by defining triggers, tone, and applicable listings.",
+      "name_label": "Rule Name",
+      "name_placeholder": "Wifi Password",
+      "instructions_label": "Define Rule Instructions",
+      "instructions_placeholder": "When a guest has an upcoming check-in, send a friendly reminder including...",
+      "property_label": "Select Property",
+      "property_placeholder": "Select Multiple Options",
+      "auto_create": "Auto-create for all new listings",
+      "save_btn": "Save Changes",
+      "create_btn": "Create Now"
+    },
+    "automation_create_edit": {
+      "title_edit": "Edit Automation Template",
+      "title_create": "Create Automation Template",
+      "desc_edit": "Update the trigger, message content, timing, and assigned listings. Changes apply to all future automated messages.",
+      "desc_create": "Set up an automation by defining the trigger, message content, timing, and applicable listings.",
+      "name_label": "Message Name",
+      "name_placeholder": "Wifi Password",
+      "content_label": "Message Content",
+      "content_placeholder": "Hi Sir, here are your Wi-Fi details...",
+      "event_label": "Event Trigger",
+      "event_placeholder": "Check-in",
+      "property_label": "Select Property",
+      "property_placeholder": "Select Multiple Options",
+      "auto_create": "Auto-create for all new listings",
+      "save_btn": "Save Changes",
+      "create_btn": "Create New Template"
+    },
+    "saved_replies_create_edit": {
+      "title_edit": "Edit Saved Replies",
+      "title_create": "Create Saved Replies",
+      "desc_edit": "Update the name, message content, and assigned listings. Changes will apply wherever this saved reply is used.",
+      "desc_create": "Create a saved reply by adding a name and message content. Assign it to specific listings, or enable auto-create to make it available for all new listings.",
+      "name_label": "Message Name",
+      "name_placeholder": "Wifi Password",
+      "content_label": "Message Content",
+      "content_placeholder": "Hi Sir, here are your Wi-Fi details...",
+      "property_label": "Select Property",
+      "property_placeholder": "Select Multiple Options",
+      "auto_create": "Auto-create for all new listings",
+      "save_btn": "Save Changes",
+      "create_btn": "Create New Saved Reply"
+    },
+    "decline_step2": {
+      "description": "Since those dates aren't available, they'll remain blocked. If your availability info isn't correct, please update your calendar after you decline.",
+      "cancel": "Cancel",
+      "next": "Next"
+    },
+    "no_listings": {
+      "title": "No Listings Found"
+    },
+    "reservation_calendar": {
+      "title": "Guest Bookings",
+      "calendar_btn": "Calendar",
+      "empty": "No reservations found"
+    },
+    "analytics_filter": {
+      "select_placeholder": "Select Listings"
+    },
+    "cancel_reservation": {
+      "step1_title": "Cancelling may lead to consequences",
+      "step1_description": "In the next step, we'll ask why you're cancelling. If the reason isn't valid, a cancellation fee may apply. Frequent cancellations may affect your Superhost eligibility could lead to listing suspension.",
+      "step3_title": "Provide more details",
+      "step3_description": "Tell us about the situation — include specific details about why cancelling is unavoidable. This will only be seen by the support team.",
+      "step3_placeholder": "Provide internal details for support...",
+      "step3_next": "Next",
+      "step4_fee_description": "The fee is typically 25% of the trip total to cover costs of finding guest another place.",
+      "step4_message_label": "Tell {{name}} why you're cancelling",
+      "guest_fallback": "the guest",
+      "step4_placeholder": "I need to cancel your reservation because...",
+      "keep_btn": "Keep Reservation",
+      "cancel_btn": "Cancel Reservation"
+    },
+    "change_password": {
+      "title": "Change Your Password",
+      "old_label": "Old Password *",
+      "old_placeholder": "Enter old password",
+      "new_label": "New Password *",
+      "new_placeholder": "Enter new password",
+      "confirm_label": "Confirm Password *",
+      "confirm_placeholder": "Confirm new password",
+      "submit_btn": "Change Password"
+    },
+    "profile": {
+      "full_name_label": "Full Name",
+      "gender_label": "Gender",
+      "country_label": "Country",
+      "country_placeholder": "Select Country",
+      "select_country_first": "Select Country first",
+      "city_label": "City",
+      "city_placeholder": "Select City",
+      "address_label": "Permanent Address",
+      "phone_label": "Phone Number",
+      "change_password_btn": "Change Password",
+      "delete_account_btn": "Delete Account",
+      "save_changes_btn": "Save Changes",
+      "upload_photo": "Upload Photo",
+      "gallery_btn": "Choose from Gallery",
+      "camera_btn": "Take a Photo",
+      "cancel_btn": "Cancel",
+      "delete_confirm": "Are you sure you want to delete your account?"
+    },
+    "property_disclosure": {
+      "title_edit": "Property disclosure details",
+      "title_new": "Add property disclosure details",
+      "subtitle": "Select the disclosure details for this property.",
+      "cameras_label": "Exterior Security Cameras Present",
+      "noise_label": "Noise Decibel Monitor",
+      "weapons_label": "Weapons on Property",
+      "select_placeholder": "Select",
+      "export": "Export",
+      "next": "Next",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
+    },
+    "your_smart_locks": {
+      "title": "Your Smart Locks",
+      "tt_account": "TT Account: ",
+      "lock_number": "Lock Number: ",
+      "battery_level": "Battery Level: ",
+      "select_property": "Select Property",
+      "assign_listing": "Assign Listing",
+      "connect_btn": "Connect New Account"
+    },
+    "ttlock_credentials": {
+      "enter_your": "Enter your",
+      "tt_lock": "TT Lock",
+      "credentials_suffix": "account credentials",
+      "email_label": "Email*",
+      "password_label": "Password*",
+      "description": "Enter your TTLock account credentials to connect and manage your smart lock. Don't have an account yet? Simply create one using the TTLock Smart Lock app, then return here to sign in and continue.",
+      "connect_btn": "Connect"
+    },
+    "decline_inquiry": {
+      "decline_placeholder": "I'm declining this reservation because...",
+      "cancel_btn": "Cancel",
+      "send_decline_btn": "Send and decline trip"
+    },
+    "reservation_details": {
+      "view_calendar": "View Listing Calendar",
+      "reservation_details": "Reservation Details",
+      "assign_chat": "Assign Chat To User",
+      "add_notes": "Add Internal Notes",
+      "property_name": "Property Name: ",
+      "address": "Address",
+      "unit_type": "Unit Type: ",
+      "guest_details": "Guest Details",
+      "guest_email": "Guest Email",
+      "guest_phone": "Guest Phone Number",
+      "booking_platform": "Booking Platform",
+      "num_guests": "Number of Guests",
+      "num_nights": "Number of Nights",
+      "checkin_time": "Check-in Time",
+      "checkout_time": "Check-out Time",
+      "booking_dates": "Booking Dates",
+      "payment_status": "Payment Status: "
+    },
+    "ai_dynamic_pricing": {
+      "title": "Select AI Dynamic Pricing",
+      "description": "AI Dynamic Pricing adds an intelligent layer on top of automated pricing...",
+      "conservative_mode": "Conservative Mode",
+      "aggressive_mode": "Aggressive Mode",
+      "choose_if": "Choose this if:",
+      "manual_override_title": "Manual Price Override",
+      "manual_override_desc": "Turn this on to edit prices for specific dates manually...",
+      "result": "Result:",
+      "next": "Next",
+      "save_exit": "Save & Exit"
+    },
+    "house_guidelines": {
+      "title": "House Guidelines",
+      "arrival_label": "Arrival Guide",
+      "rules_label": "House Rules",
+      "checkout_label": "Checkout Instructions",
+      "next": "Next",
+      "save_exit": "Save & Exit"
+    },
+    "no_saved_replies": {
+      "title": "No Saved Replies Found",
+      "description": "Create one to quickly reuse messages in chats."
+    },
+    "saved_replies": {
+      "listing_access": "Listing Access",
+      "all_listings": "All Listings",
+      "title": "Saved Replies",
+      "description": "Create saved replies to reuse common messages. Use shortcuts in chats to quickly insert them.",
+      "create_btn": "Create New Saved Reply",
+      "delete_confirm": "Are you sure you want to delete this reply?",
+      "confirm_btn": "Confirm",
+      "cancel_btn": "Cancel"
+    },
+    "booking_request_card": {
+      "platform": "Booking Platform",
+      "guests": "Number Of Guests",
+      "date": "Booking Date",
+      "rate": "Per-Night Rate",
+      "decline": "Decline",
+      "accept": "Accept"
+    },
+    "document_upload": {
+      "title": "Upload ownership licence documents",
+      "format_hint": "• Accepted formats: PDF.",
+      "size_hint": "• File size ≤ 10 MB per document.",
+      "property_ownership_label": "Property Ownership / Rental Documents*",
+      "authority_label": "Authority license",
+      "national_id_label": "Aqama / National ID",
+      "upload_pdf": "Upload PDF",
+      "export": "Export",
+      "save_exit": "Save & Exit",
+      "select_ota": "Select OTA Account",
+      "select_account": "Select Account"
     }
   }
 }

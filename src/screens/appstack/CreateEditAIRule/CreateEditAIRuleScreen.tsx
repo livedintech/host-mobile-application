@@ -14,6 +14,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useRoute } from '@react-navigation/native';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const CreateEditAIRuleScreen = () => {
     const { params } = useRoute() as any;
@@ -27,6 +28,7 @@ const CreateEditAIRuleScreen = () => {
         isEditMode,
         transformedListing,
     } = useCreateEditAIRuleContainer(editData);
+    const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -40,16 +42,14 @@ const CreateEditAIRuleScreen = () => {
                     {/* Title Section */}
                     <View style={styles.topTextSection}>
                         <AppText
-                            text={isEditMode ? "Edit AI Auto Reply" : "Create AI Auto Reply"}
+                            text={isEditMode ? t('app.create_ai_rule.title_edit') : t('app.create_ai_rule.title_create')}
                             fontSize={28}
                             type="Bold"
                             color={Colors.BLACK}
                             mb={10}
                         />
                         <AppText
-                            text={isEditMode 
-                                ? "Update triggers, tone, and assigned listings. Changes apply to future replies." 
-                                : "Create an AI auto reply by defining triggers, tone, and applicable listings."}
+                            text={isEditMode ? t('app.create_ai_rule.desc_edit') : t('app.create_ai_rule.desc_create')}
                             fontSize={14}
                             color={Colors.DARK_CHARCOAL_OPACITY}
                             lineHeight={20}
@@ -59,29 +59,29 @@ const CreateEditAIRuleScreen = () => {
                     {/* Form Fields Section */}
                     <View style={styles.form}>
                         <InputField
-                            label="Rule Name"
+                            label={t('app.create_ai_rule.name_label')}
                             name="name"
                             control={control}
                             errors={errors}
-                            placeholder="Wifi Password"
+                            placeholder={t('app.create_ai_rule.name_placeholder')}
                         />
                         
                         <TextareaField
-                            label="Define Rule Instructions"
+                            label={t('app.create_ai_rule.instructions_label')}
                             name="template"
                             control={control}
                             errors={errors}
-                            placeholder="When a guest has an upcoming check-in, send a friendly reminder including..."
+                            placeholder={t('app.create_ai_rule.instructions_placeholder')}
                             multiline
                         />
 
                         <MultiSelectDropdownField
-                            label="Select Property"
+                            label={t('app.create_ai_rule.property_label')}
                             name="listing_ids"
                             control={control}
                             errors={errors}
                             data={transformedListing || []}
-                            placeholder="Select Multiple Options"
+                            placeholder={t('app.create_ai_rule.property_placeholder')}
                         />
 
                         {/* Auto-Create Toggle */}
@@ -95,7 +95,7 @@ const CreateEditAIRuleScreen = () => {
                                 >
                                     <Checkbox isChecked={value} onPress={() => onChange(!value)} />
                                     <AppText
-                                        text="Auto-create for all new listings"
+                                        text={t('app.create_ai_rule.auto_create')}
                                         ml={Metrics.scale(10)}
                                         color={Colors.BLACK}
                                         fontSize={14}
@@ -107,7 +107,7 @@ const CreateEditAIRuleScreen = () => {
 
                     {/* Submit Button - Styled as Teal Primary */}
                     <AppButton
-                        title={isEditMode ? "Save Changes" : "Create Now"}
+                        title={isEditMode ? t('app.create_ai_rule.save_btn') : t('app.create_ai_rule.create_btn')}
                         onPress={handleSubmit}
                         loading={isLoading}
                         mt={Metrics.verticalScale(40)}

@@ -7,8 +7,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useTranslation } from 'react-i18next';
 
 const FinishUpStep3Screen = () => {
+    const { t } = useTranslation();
 
     const onNext = () => {
         navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_BOOKING_DETAIL);
@@ -38,16 +40,16 @@ const FinishUpStep3Screen = () => {
 
                     {/* Text Content */}
                     <View style={styles.textContainer}>
-                        <AppText text="Step 3" fontSize={20} type="Medium" color={Colors.BLACK} />
+                        <AppText text={t('app.finish_up_step3.step_label')} fontSize={20} type="Medium" color={Colors.BLACK} />
                         <AppText
-                            text="Finish up and go live"
+                            text={t('app.finish_up_step3.title')}
                             fontSize={28}
                             type="Bold"
                             mt={20}
                             pr={90}
                         />
                         <AppText
-                            text="In this step, choose your nightly rate, respond to a few final questions, and publish your property when you're ready."
+                            text={t('app.finish_up_step3.description')}
                             fontSize={12}
                             color={Colors.DARK_CHARCOAL_OPACITY}
                             mt={30}
@@ -58,7 +60,7 @@ const FinishUpStep3Screen = () => {
                 {/* Footer Navigation */}
                 <View style={styles.footer}>
                     <AppButton
-                        title="Next"
+                        title={t('app.finish_up_step3.next')}
                         onPress={onNext}
                     />
                 </View>

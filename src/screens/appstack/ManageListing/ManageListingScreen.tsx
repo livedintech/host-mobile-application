@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View, Pressable, Image } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -12,6 +13,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ManageListingScreen = () => {
+  const { t } = useTranslation();
   const {
     listings,
     onCreateNew,
@@ -55,7 +57,7 @@ const ManageListingScreen = () => {
           {item?.is_local === 0 && (
             <View style={styles.badge}>
               <View style={styles.badgeDot} />
-              <AppText text="Listed" fontSize={12} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
+              <AppText text={t('app.manage_listing_screen.listed')} fontSize={12} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
             </View>
           )}
           {/* Percentage Badge */}
@@ -115,14 +117,14 @@ const ManageListingScreen = () => {
 
         <View style={styles.header}>
           <AppText
-            text="Your Listings"
+            text={t('app.task_management.your_listings')}
             fontSize={32}
             type="Bold"
             color={Colors.BLACK}
             mt={20}
           />
           <AppText
-            text="Import a listing from your OTA platform, or create a new one manually if it's not listed elsewhere."
+            text={t('app.task_management.your_listings_desc')}
             fontSize={14}
             color="#6B6B6B"
             mt={10}

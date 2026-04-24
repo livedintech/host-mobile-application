@@ -9,8 +9,10 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const NoListingScreen = () => {
+  const { t } = useTranslation();
   
   const handleAddListing = () => {
     // Navigate to your Add Listing flow
@@ -40,7 +42,7 @@ const NoListingScreen = () => {
 
           {/* Title */}
           <AppText
-            text="No Property Found"
+            text={t('app.no_listing_smart_lock.title')}
             fontSize={32}
             type="Bold"
             color={Colors.BLACK}
@@ -50,7 +52,7 @@ const NoListingScreen = () => {
 
           {/* Subtitle/Description */}
           <AppText
-            text="Create a new listing or import one from your OTA platform to get started."
+            text={t('app.no_listing_smart_lock.description')}
             fontSize={16}
             color={Colors.SUPER_GREY}
             textAlign="center"
@@ -64,7 +66,7 @@ const NoListingScreen = () => {
           {/* Glassy Secondary Button */}
           <ButtonView style={styles.glassButton} onPress={handleAddListing}>
             <AppText 
-                text="Add New Listing" 
+                text={t('app.no_listing_smart_lock.add_listing')}
                 fontSize={16} 
                 type="Medium" 
                 color={Colors.BLACK} 
@@ -73,7 +75,7 @@ const NoListingScreen = () => {
 
           {/* Solid Teal Primary Button */}
           <AppButton
-            title="Create New Listing"
+            title={t('app.no_listing_smart_lock.create_listing')}
             onPress={handleCreateListing}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}

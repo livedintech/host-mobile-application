@@ -21,6 +21,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useTranslation } from 'react-i18next';
 import {
   cancelDirectBookingApi,
   getBookingDetailsApi,
@@ -41,6 +42,8 @@ const MENU_OPTIONS = [
 ];
 
 const ReviewDetailScreen = ({ route }: any) => {
+    const { t } = useTranslation();
+  
   const initialBookingData = route?.params?.bookingData || {};
   const booking_id = route?.params?.booking_id;
   const [apiData, setApiData] = useState<any>(null);
@@ -350,7 +353,7 @@ const ReviewDetailScreen = ({ route }: any) => {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText
-              text="Guest Details"
+              text={t('app.review_detail.guest_details')}
               type="Medium"
               fontSize={18}
               color={Colors.BLACK}
@@ -367,7 +370,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               </View>
               <View style={styles.infoContent}>
                 <AppText
-                  text="Guest Email"
+                  text={t('app.review_detail.guest_email')}
                   fontSize={13}
                   color={Colors.BLACK}
                   type="Medium"
@@ -389,7 +392,7 @@ const ReviewDetailScreen = ({ route }: any) => {
 
               <View style={styles.infoContent}>
                 <AppText
-                  text="Guest Contact"
+                  text={t('app.review_detail.guest_contact')}
                   fontSize={13}
                   color={Colors.BLACK}
                   type="Medium"
@@ -416,7 +419,7 @@ const ReviewDetailScreen = ({ route }: any) => {
 
               <View style={styles.infoContent}>
                 <AppText
-                  text="Guest Rating"
+                  text={t('app.review_detail.guest_rating')}
                   fontSize={13}
                   color={Colors.BLACK}
                   type="Medium"
@@ -463,7 +466,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               {formatTimeWithPeriod(property?.check_in_time) ? (
                 <>
                   <AppText
-                    text="Check-in Time"
+                    text={t('app.review_detail.checkin_time')}
                     fontSize={12}
                     type="Bold"
                     color={Colors.BLACK}
@@ -482,7 +485,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               {formatDateDisplay(property?.booking_dates?.from) ? (
                 <>
                   <AppText
-                    text="Check-in Date"
+                    text={t('app.review_detail.checkin_date')}
                     fontSize={12}
                     type="Bold"
                     color={Colors.BLACK}
@@ -511,7 +514,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               {formatTimeWithPeriod(property?.check_out_time) ? (
                 <>
                   <AppText
-                    text="Check-out Time"
+                    text={t('app.review_detail.checkout_time')}
                     fontSize={12}
                     type="Bold"
                     color={Colors.BLACK}
@@ -530,7 +533,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               {formatDateDisplay(property?.booking_dates?.to) ? (
                 <>
                   <AppText
-                    text="Check-out Date"
+                    text={t('app.review_detail.checkout_date')}
                     fontSize={12}
                     type="Bold"
                     color={Colors.BLACK}
@@ -552,7 +555,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={{ flex: 1 }}>
               <View style={styles.flexRowTwo}>
                 <AppText
-                  text="Property Details"
+                  text={t('app.review_detail.property_details')}
                   type="Medium"
                   fontSize={18}
                   mb={6}
@@ -609,7 +612,7 @@ const ReviewDetailScreen = ({ route }: any) => {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText
-              text="Booking Details"
+              text={t('app.review_detail.booking_details')}
               type="Medium"
               fontSize={18}
               color={Colors.BLACK}
@@ -633,7 +636,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           <View style={styles.bookingInfoContainer}>
             <View style={styles.bookingRow}>
               <AppText
-                text="Date Of Reservation"
+                text={t('app.review_detail.date_of_reservation')}
                 fontSize={14}
                 color={Colors.BLACK}
               />
@@ -647,7 +650,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             {property?.booking_platform ? (
               <View style={styles.bookingRow}>
                 <AppText
-                  text="Booking Platform"
+                  text={t('app.review_detail.booking_platform')}
                   fontSize={14}
                   color={Colors.BLACK}
                 />
@@ -668,7 +671,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             {property?.number_of_nights ? (
               <View style={styles.bookingRow}>
                 <AppText
-                  text="Number Of Nights"
+                  text={t('app.review_detail.num_nights')}
                   fontSize={14}
                   color={Colors.BLACK}
                 />
@@ -685,7 +688,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             property?.number_of_guests ? (
               <View style={styles.bookingRow}>
                 <AppText
-                  text="Number Of Guests"
+                  text={t('app.review_detail.num_guests')}
                   fontSize={14}
                   color={Colors.BLACK}
                 />
@@ -700,7 +703,7 @@ const ReviewDetailScreen = ({ route }: any) => {
 
             {property?.door_code ? (
               <View style={styles.bookingRow}>
-                <AppText text="Door Code" fontSize={14} color={Colors.BLACK} />
+                <AppText text={t('app.review_detail.door_code')} fontSize={14} color={Colors.BLACK} />
                 <AppText
                   text={property.door_code}
                   fontSize={13}
@@ -715,7 +718,7 @@ const ReviewDetailScreen = ({ route }: any) => {
         {property?.booking_platform !== 'host_booking' && (
           <View style={[styles.card, { display: 'none' }]}>
             <View style={styles.cardHeader}>
-              <AppText text="AI Chat Summary" type="Bold" fontSize={18} />
+              <AppText text={t('app.review_detail.ai_chat_summary')} type="Bold" fontSize={18} />
               <View style={[styles.iconCircle, { backgroundColor: '#F0F7F6' }]}>
                 <Svgicons path="aiChat" size={20} />
               </View>
@@ -739,7 +742,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               }
             >
               <AppText
-                text="Continue Chat"
+                text={t('app.review_detail.continue_chat')}
                 type="Bold"
                 fontSize={14}
                 color={Colors.BLACK}
@@ -752,7 +755,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <AppText
-                text="Guest Property Ratings"
+                text={t('app.review_detail.guest_property_ratings')}
                 type="Medium"
                 fontSize={18}
                 color={Colors.BLACK}
@@ -768,7 +771,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                 </View>
                 <View style={styles.progressContainer}>
                   <AppText
-                    text="Overall Rating"
+                    text={t('app.review_detail.overall_rating')}
                     fontSize={14}
                     color={Colors.BLACK}
                     type="Medium"
@@ -899,7 +902,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   <AppButton
                     disabled={!isCheckedOut}
                     fontSize={14}
-                    title="Rate Your Guest"
+                    title={t('app.review_detail.rate_guest_btn')}
                     backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
                     color={isCheckedOut ? Colors.WHITE : ''}
                     style={[
@@ -924,7 +927,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <AppText
-                text="Base Price"
+                text={t('app.review_detail.base_price')}
                 type="Bold"
                 fontSize={18}
                 color={Colors.BLACK}
@@ -944,7 +947,7 @@ const ReviewDetailScreen = ({ route }: any) => {
         {property?.booking_platform !== 'host_booking' && (
           <View style={[styles.card, { paddingBottom: vs(10) }]}>
             <View style={styles.cardHeader}>
-              <AppText text="Payment Breakdown" type="Medium" fontSize={18} />
+              <AppText text={t('app.review_detail.payment_breakdown')} type="Medium" fontSize={18} />
               <View style={styles.iconCircle}>
                 <Svgicons path="paymentIconNew2" size={24} />
               </View>
@@ -995,7 +998,7 @@ const ReviewDetailScreen = ({ route }: any) => {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <AppText
-              text="Assigned Task"
+              text={t('app.review_detail.assigned_task')}
               type="Medium"
               fontSize={18}
               color={Colors.BLACK}
@@ -1068,7 +1071,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   </View>
 
                   <AppButton
-                    title="Create New Task"
+                    title={t('app.review_detail.create_task')}
                     backgroundColor="transparent"
                     variant="secondary"
                     borderColor={Colors.SMOOTH_GREY}
@@ -1119,7 +1122,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={styles.cardHeader}>
               <View style={styles.headerTextContainer}>
                 <AppText
-                  text="Cancellation Policy"
+                  text={t('app.review_detail.cancellation_policy')}
                   type="Medium"
                   fontSize={18}
                   color={Colors.BLACK}

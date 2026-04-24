@@ -8,8 +8,10 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const SmartLockScreen = () => {
+  const { t } = useTranslation();
   const handleConnectAccount = () => {
     navigate(NavigationRoutes.APP_STACK.TT_LOCK_CREDENTIALS);
   };
@@ -25,7 +27,7 @@ const SmartLockScreen = () => {
 
           {/* Title - Updated to Black per design */}
           <AppText
-            text="No Smart Lock Found"
+            text={t('app.smart_lock.title')}
             fontSize={32}
             type="Bold"
             color={Colors.BLACK}
@@ -35,7 +37,7 @@ const SmartLockScreen = () => {
 
           {/* Subtitle - Grayish text with specific line height */}
           <AppText
-            text="You haven’t connected a smart lock yet. Link your TT Smart Lock account to get started."
+            text={t('app.smart_lock.description')}
             fontSize={16}
             color={Colors.SUPER_GREY}
             textAlign="center"
@@ -47,7 +49,7 @@ const SmartLockScreen = () => {
         {/* Footer Button - Fixed at bottom */}
         <View style={styles.footer}>
           <AppButton
-            title="Connect TT Account"
+            title={t('app.smart_lock.connect_btn')}
             onPress={handleConnectAccount}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}

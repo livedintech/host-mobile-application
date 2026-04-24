@@ -5,6 +5,7 @@ import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '../AppButton/ButtonView';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import { useTranslation } from 'react-i18next';
 
 interface BookingRequestCardProps {
   id: string | number;
@@ -37,6 +38,8 @@ const BookingRequestCard = ({
   onPress,
   isLoading,
 }: BookingRequestCardProps) => {
+  const { t } = useTranslation();
+
   const getPlatformIcon = (platformName: string) => {
     const normalized = platformName.toLowerCase();
     if (normalized.includes('livedin')) return 'reservationlivedin';
@@ -99,14 +102,14 @@ const BookingRequestCard = ({
         {/* Info Rows */}
         <InfoRow
           icon={getPlatformIcon(platform)}
-          label="Booking Platform"
+          label={t('app.booking_request_card.platform')}
           value={platform}
           valueColor={platformColor}
         />
 
         <InfoRow
           icon="reservationguests"
-          label="Number Of Guests"
+          label={t('app.booking_request_card.guests')}
           value={
             guests !== undefined
               ? `${guests} Guest${guests !== 1 ? 's' : ''}`
@@ -116,13 +119,13 @@ const BookingRequestCard = ({
 
         <InfoRow
           icon="reservationcheckin"
-          label="Booking Date"
+          label={t('app.booking_request_card.date')}
           value={formatDateRange(startDate, endDate)}
         />
 
         <InfoRow
           icon="reservationcheckin"
-          label="Per-Night Rate"
+          label={t('app.booking_request_card.rate')}
           value={
             perNightRate !== undefined ? `${currency} ${perNightRate}` : '—'
           }
@@ -137,7 +140,7 @@ const BookingRequestCard = ({
               activeOpacity={isLoading ? 1 : 0.75}
             >
               <AppText
-                text="Decline"
+                text={t('app.booking_request_card.decline')}
                 fontSize={14}
                 type="SemiBold"
                 color={isLoading ? '#A0A0A0' : '#E05C5C'} // Change color if loading
@@ -152,7 +155,7 @@ const BookingRequestCard = ({
               activeOpacity={isLoading ? 1 : 0.75}
             >
               <AppText
-                text="Accept"
+                text={t('app.booking_request_card.accept')}
                 fontSize={14}
                 type="SemiBold"
                 color={isLoading ? '#A0A0A0' : '#21AA8F'} 

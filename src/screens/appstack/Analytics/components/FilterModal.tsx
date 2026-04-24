@@ -8,6 +8,7 @@ import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
+import { useTranslation } from 'react-i18next';
 
 const FilterModal = ({
   isVisible,
@@ -20,6 +21,7 @@ const FilterModal = ({
   filters,
 }: any) => {
 
+  const { t } = useTranslation();
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: filters,
   });
@@ -70,7 +72,7 @@ const FilterModal = ({
           control={control}
           errors={errors}
           data={listingOptions}
-          placeholder="Select Listings"
+          placeholder={t('app.analytics_filter.select_placeholder')}
         />
 
 

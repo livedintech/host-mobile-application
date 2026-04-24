@@ -16,11 +16,13 @@ import { Colors } from '@/theme/colors';
 import useAddNewPasswordContainer from './AddNewPasswordContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 
 const FIGMA_TEAL = '#09A389';
 
 const AddNewPasswordScreen = () => {
   const { isLoading, control, errors, handleSubmit } = useAddNewPasswordContainer();
+  const { t } = useTranslation();
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -34,12 +36,12 @@ const AddNewPasswordScreen = () => {
             {/* Title Section - Left Aligned Pattern */}
             <View style={styles.headerSection}>
               <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                Please enter your
+                {t('auth.add_new_password.title_1')}
               </AppText>
               <AppText type="Bold" fontSize={32} color={FIGMA_TEAL} lineHeight={40}>
-                new{' '}
+                {t('auth.add_new_password.title_highlight')}{' '}
                 <AppText type="Regular" fontSize={32} color={Colors.BLACK}>
-                  password
+                  {t('auth.add_new_password.title_end')}
                 </AppText>
               </AppText>
             </View>
@@ -47,7 +49,7 @@ const AddNewPasswordScreen = () => {
             {/* Form Fields */}
             <View style={styles.form}>
               <PasswordField
-                label="New Password*"
+                label={t('auth.add_new_password.new_password_label')}
                 name="password"
                 control={control}
                 errors={errors}
@@ -56,7 +58,7 @@ const AddNewPasswordScreen = () => {
 
               <View style={{ marginTop: vs(20) }}>
                 <PasswordField
-                  label="Confirm Password*"
+                  label={t('auth.add_new_password.confirm_password_label')}
                   name="confirmPassword"
                   control={control}
                   errors={errors}
@@ -66,7 +68,7 @@ const AddNewPasswordScreen = () => {
 
               {/* Password Strength Hint */}
               <AppText
-                text="Please choose a stronger password. Try a mix of letters, numbers, and symbols."
+                text={t('auth.add_new_password.password_hint')}
                 fontSize={13}
                 color="#707070"
                 mt={vs(15)}
@@ -79,7 +81,7 @@ const AddNewPasswordScreen = () => {
               <AppButton
                 loading={isLoading}
                 onPress={handleSubmit}
-                title="Continue"
+                title={t('auth.add_new_password.continue')}
                 backgroundColor={FIGMA_TEAL}
                 color={Colors.WHITE}
                 borderRadius={100}

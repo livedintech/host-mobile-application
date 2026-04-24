@@ -11,6 +11,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const AddBookingRulesScreen = () => {
   const {
@@ -18,6 +19,7 @@ const AddBookingRulesScreen = () => {
     handleExport, handleExportSubmit, bottomSheetVisible, setBottomSheetVisible,
     otaControl, otaErrors, handleOtaSubmit, listingOptions, isPendingExporting,
   } = useBookingRulesContainer();
+  const { t } = useTranslation();
 
   const yesNoOptions = [{ label: 'Yes', value: 1 }, { label: 'No', value: 0 }];
   const numberOptions = Array.from({ length: 365 }, (_, i) => ({ label: String(i + 1), value: String(i + 1) }));
@@ -37,16 +39,16 @@ const AddBookingRulesScreen = () => {
             {!isEdit && <CircularProgress percentage={65} size={48} strokeWidth={4} />}
           </View>
 
-          <AppText text={isEdit ? "Booking rules" : "Add booking rules"} fontSize={28} type="Bold" mt={30} />
+          <AppText text={isEdit ? t('app.booking_rules.title_edit') : t('app.booking_rules.title_new')} fontSize={28} type="Bold" mt={30} />
 
           <View style={styles.formGroup}>
-            <DropdownField name="long_term_stay" label="Long term Stay" control={control as any} errors={errors} data={yesNoOptions} />
+            <DropdownField name="long_term_stay" label={t('app.booking_rules.long_term_label')} control={control as any} errors={errors} data={yesNoOptions} />
             <View style={styles.fieldGap} />
-            <DropdownField name="min_gap_night" label="Minimum Gap Night" control={control as any} errors={errors} data={gapNightOptions} placeholder="1" />
+            <DropdownField name="min_gap_night" label={t('app.booking_rules.min_gap_label')} control={control as any} errors={errors} data={gapNightOptions} placeholder={t('app.booking_rules.placeholder_1')} />
             <View style={styles.fieldGap} />
-            <DropdownField name="min_night_stay" label="Minimum Night Stay" control={control as any} errors={errors} data={numberOptions} placeholder="2" />
+            <DropdownField name="min_night_stay" label={t('app.booking_rules.min_night_label')} control={control as any} errors={errors} data={numberOptions} placeholder={t('app.booking_rules.placeholder_2')} />
             <View style={styles.fieldGap} />
-            <DropdownField name="max_night_stay" label="Maximum Night Stay" control={control as any} errors={errors} data={numberOptions} placeholder="2" />
+            <DropdownField name="max_night_stay" label={t('app.booking_rules.max_night_label')} control={control as any} errors={errors} data={numberOptions} placeholder={t('app.booking_rules.placeholder_2')} />
           </View>
         </ScrollView>
 
@@ -62,7 +64,7 @@ const AddBookingRulesScreen = () => {
           <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
-              <AppText text="Select OTA Account" fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
+              <AppText text={t('app.booking_rules.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
                 <DropdownField
                   name="ota_account"
@@ -70,12 +72,12 @@ const AddBookingRulesScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.booking_rules.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.booking_rules.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}
@@ -93,7 +95,7 @@ const AddBookingRulesScreen = () => {
           {/* ✅ Export — sirf edit mode mein */}
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.booking_rules.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -101,7 +103,7 @@ const AddBookingRulesScreen = () => {
           )}
           {!isEdit && (
             <AppButton
-              title="Next"
+              title={t('app.booking_rules.next')}
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
@@ -109,7 +111,7 @@ const AddBookingRulesScreen = () => {
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.booking_rules.save_exit')}
             mt={12}
             onPress={handleSubmit(onSaveExit)}
             disabled={isLoading}

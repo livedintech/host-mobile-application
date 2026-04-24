@@ -13,6 +13,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import Metrics from '@/utility/Metrics';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import { useTranslation } from 'react-i18next';
 
 const AMENITY_ICON_MAP: Record<string, string> = {
   ac: 'airConditioner', pool: 'pool', tv: 'tv', oven: 'oven',
@@ -54,6 +55,7 @@ const AmenitiesScreen = () => {
     isPendingExporting,
     isLoadingAmenities
   } = useAmenitiesContainer();
+  const { t } = useTranslation();
 
   const renderAmenity = ({ item }: any) => {
     const isSelected = selectedAmenities.includes(item.key);
@@ -87,9 +89,9 @@ const AmenitiesScreen = () => {
         </View>
 
         <View style={styles.content}>
-          <AppText text="Tell guest what your property has to offer" fontSize={26} type="Bold" />
+          <AppText text={t('app.amenities.title')} fontSize={26} type="Bold" />
           <AppText
-            text="You can add/remove amenities after you publish your listing."
+            text={t('app.amenities.description')}
             fontSize={14}
             color="#6B6B6B"
             mt={10}
@@ -112,7 +114,7 @@ const AmenitiesScreen = () => {
           {/* ✅ Export — sirf edit mode mein */}
           {isEdit && (
             <AppButton
-              title="Export"
+              title={t('app.amenities.export')}
               onPress={handleExport}
               variant='secondary'
               mb={12}
@@ -121,7 +123,7 @@ const AmenitiesScreen = () => {
           )}
           {!isEdit && (
             <AppButton
-              title="Next"
+              title={t('app.amenities.next')}
               onPress={onNext}
               loading={isLoading}
               disabled={isLoading || selectedAmenities.length === 0}
@@ -130,7 +132,7 @@ const AmenitiesScreen = () => {
             />
           )}
           <AppButton
-            title="Save & Exit"
+            title={t('app.amenities.save_exit')}
             mt={!isEdit ? 15 : 0}
             onPress={onSaveExit}
             loading={false}
@@ -149,7 +151,7 @@ const AmenitiesScreen = () => {
             <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
-                text="Select OTA Account"
+                text={t('app.amenities.select_ota')}
                 fontSize={20}
                 type="SemiBold"
                 color={Colors.PINE_FOREST}
@@ -162,12 +164,12 @@ const AmenitiesScreen = () => {
                   errors={otaErrors}
                   label=""
                   data={listingOptions}
-                  placeholder="Select Account"
+                  placeholder={t('app.amenities.select_account')}
                   dropdownPosition="top"
                 />
               </View>
               <AppButton
-                title="Export"
+                title={t('app.amenities.export')}
                 onPress={handleOtaSubmit(handleExportSubmit)}
                 mt={20}
                 loading={isPendingExporting}

@@ -21,8 +21,10 @@ import CreateTaskContainer from '../../containers/CreateTask/CreateTaskContainer
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
 
 const CreateTaskScreen = () => {
+  const { t } = useTranslation();
   const route = useRoute<any>();
   // Extract the listing_id from the navigation params
   console.log("tetstbbhjs", route.params)
@@ -48,7 +50,7 @@ const CreateTaskScreen = () => {
     >
       <View style={styles.header}>
         <AppText
-          text="Create New Task"
+          text={t('app.task_management.create_task_title')}
           fontSize={24}
           type="Bold"
           color={Colors.PINE_FOREST}
@@ -60,8 +62,8 @@ const CreateTaskScreen = () => {
         name="title"
         control={control}
         errors={errors}
-        label="Task Name:"
-        placeholder="Enter task name"
+        label={t('app.task_management.task_name_label')}
+        placeholder={t('app.task_management.task_name_placeholder')}
         rules={{
           required: 'Task name is required', // This is your appropriate error message
           minLength: {
@@ -75,7 +77,7 @@ const CreateTaskScreen = () => {
         name="description"
         control={control}
         errors={errors}
-        label="Task Description"
+        label={t('app.task_management.task_desc_label')}
         descriptionLength={wordCount}
         wordLimit={250}
         sparkleIcon
@@ -93,7 +95,7 @@ const CreateTaskScreen = () => {
         name="task_type_id"
         control={control}
         errors={errors}
-        label="Category"
+        label={t('app.task_management.category_label')}
         data={categoryOptions}
         rules={{ required: 'Please select a task category' }}
       />
@@ -103,9 +105,9 @@ const CreateTaskScreen = () => {
         name="listing_id"
         control={control}
         errors={errors}
-        label="Listing Selection"
+        label={t('app.task_management.listing_label')}
         data={listingOptions}
-        placeholder="Select Listing"
+        placeholder={t('app.task_management.listing_placeholder')}
         rules={{ required: 'Please select a listing' }}
       />
 
@@ -115,8 +117,8 @@ const CreateTaskScreen = () => {
             name="start_date"
             control={control}
             errors={errors}
-            label="Select Date"
-            placeholder="Select Date"
+            label={t('app.task_management.date_label')}
+            placeholder={t('app.task_management.date_placeholder')}
             mode="date"
             rules={{ required: 'Date is required' }}
           />
@@ -124,8 +126,8 @@ const CreateTaskScreen = () => {
             name="start_time"
             control={control}
             errors={errors}
-            label="Select Start Time"
-            placeholder="Select Start Time"
+            label={t('app.task_management.start_time_label')}
+            placeholder={t('app.task_management.start_time_placeholder')}
             mode="time"
             rules={{ required: 'Start time is required' }}
           />
@@ -133,8 +135,8 @@ const CreateTaskScreen = () => {
             name="end_time"
             control={control}
             errors={errors}
-            label="Select End Time"
-            placeholder="Select End Time"
+            label={t('app.task_management.end_time_label')}
+            placeholder={t('app.task_management.end_time_placeholder')}
             mode="time"
             rules={{ required: 'End time is required' }}
           />
@@ -146,15 +148,15 @@ const CreateTaskScreen = () => {
           name="vendor_id"
           control={control}
           errors={errors}
-          label="Assign Task"
-          placeholder="Select User"
+          label={t('app.task_management.assign_task_label')}
+          placeholder={t('app.task_management.select_user')}
           data={userOptions}
           rules={{ required: 'Please assign this task to a vendor' }}
         />
       </View>
 
       <AppButton
-        title="Next"
+        title={t('app.task_management.next')}
         onPress={onSubmitForm}
         loading={isPending}
         disabled={isPending}

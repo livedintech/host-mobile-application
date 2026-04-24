@@ -15,8 +15,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import useCreateListingStepOneLocationContainer from './CreateListingStepOneLocationContainer';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const CreateListingStepOneLocationScreen = () => {
+  const { t } = useTranslation();
   const {
     region,
     mapRef,
@@ -39,7 +41,7 @@ const CreateListingStepOneLocationScreen = () => {
     return (
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-        <Text style={styles.loaderText}>Getting your location...</Text>
+        <Text style={styles.loaderText}>{t('app.location_step.loading')}</Text>
       </View>
     );
   }
@@ -70,7 +72,7 @@ const CreateListingStepOneLocationScreen = () => {
         <View style={styles.header}>
           <GooglePlacesAutocomplete
             ref={placesRef}
-            placeholder="Search Location"
+            placeholder={t('app.location_step.search_placeholder')}
             onPress={(_data, details = null) => {
               if (details) handlePlaceSelect(details);
             }}
@@ -115,7 +117,7 @@ const CreateListingStepOneLocationScreen = () => {
           <View style={styles.footerBtn}>
             <AppButton
               disabled={isGeocoding || isLocating || !hasUserLocation}
-              title="Enter Manually"
+              title={t('app.location_step.enter_manually')}
               onPress={handleConfirm}
               mb={12}
               variant={!isEdit ? 'secondary' : 'primary'}
@@ -125,7 +127,7 @@ const CreateListingStepOneLocationScreen = () => {
             {!isEdit && (
               <AppButton
                 disabled={isLocating || !hasUserLocation}
-                title="Save & Exit"
+                title={t('app.location_step.save_exit')}
                 onPress={handleSetManually}
                 mb={18}
               />

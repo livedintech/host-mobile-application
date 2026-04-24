@@ -10,6 +10,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import { goBack } from '@/services/navigationService';
 import useCreateEditListingCancelPoliciesContainer from './CreateEditListingCancelPoliciesContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const CreateEditListingCancelPoliciesScreen = () => {
   const {
@@ -22,6 +23,7 @@ const CreateEditListingCancelPoliciesScreen = () => {
     isLoading,
     cancelPolicyOptions,
   } = useCreateEditListingCancelPoliciesContainer();
+  const { t } = useTranslation();
 
   return (
      <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -40,7 +42,7 @@ const CreateEditListingCancelPoliciesScreen = () => {
 
         {/* Title */}
         <View style={styles.titleRow}>
-          <AppText text="Booking Cancel Policies" fontSize={26} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
+          <AppText text={t('app.cancel_policies_edit.title')} fontSize={26} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
           <Svgicons path="clipboardIcon" size={24} />
         </View>
 
@@ -50,31 +52,31 @@ const CreateEditListingCancelPoliciesScreen = () => {
           {/* Cancel Policy Airbnb */}
           <DropdownField
             name="cancel_policy_airbnb"
-            label="Cancel Policy Airbnb"
+            label={t('app.cancel_policies_edit.airbnb_label')}
             control={control}
             errors={errors}
             data={cancelPolicyOptions}
-            placeholder="Flexible - Guests can cancel at least 24..."
+            placeholder={t('app.cancel_policies_edit.flexible_placeholder')}
           />
 
           {/* Cancel Policy Gathern */}
           <DropdownField
             name="cancel_policy_gathern"
-            label="Cancel Policy Gathern"
+            label={t('app.cancel_policies_edit.gathern_label')}
             control={control}
             errors={errors}
             data={cancelPolicyOptions}
-            placeholder="Flexible - Guests can cancel at least 24..."
+            placeholder={t('app.cancel_policies_edit.flexible_placeholder')}
           />
 
           {/* Cancel Policy Booking.com */}
           <DropdownField
             name="cancel_policy_booking"
-            label="Cancel Policy Booking.com"
+            label={t('app.cancel_policies_edit.bookingcom_label')}
             control={control}
             errors={errors}
             data={cancelPolicyOptions}
-            placeholder="Flexible - Guests can cancel at least 24..."
+            placeholder={t('app.cancel_policies_edit.flexible_placeholder')}
           />
 
         </View>
@@ -84,12 +86,12 @@ const CreateEditListingCancelPoliciesScreen = () => {
           {!isEdit && (
             <>
               <AppButton
-                title="Next"
+                title={t('app.cancel_policies_edit.next')}
                 onPress={handleSubmit(onNext)}
                 loading={isLoading}
               />
               <AppButton
-                title="Save & Exit"
+                title={t('app.cancel_policies_edit.save_exit')}
                 onPress={handleSubmit(onSaveExit)}
                 mt={15}
                 disabled={isLoading}
@@ -99,7 +101,7 @@ const CreateEditListingCancelPoliciesScreen = () => {
 
           {isEdit && (
             <AppButton
-              title="Save & Exit"
+              title={t('app.cancel_policies_edit.save_exit')}
               onPress={handleSubmit(onSaveExit)}
               loading={isLoading}
             />

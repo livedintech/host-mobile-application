@@ -16,8 +16,10 @@ import Metrics from '@/utility/Metrics';
 import RefreshableScrollView from '../organisms/RefreshableScrollView/RefreshableScrollView';
 import ImageViewing from 'react-native-image-viewing';
 import ButtonView from '../molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 const PhotoUploadTemplate = (props: any) => {
+  const { t } = useTranslation();
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
   const [showOptions, setShowOptions] = useState(false);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
@@ -78,7 +80,7 @@ const PhotoUploadTemplate = (props: any) => {
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
           <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-          <AppText text="Loading photos..." mt={15} fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} />
+          <AppText text={t('app.photo_upload.loading')} mt={15} fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} />
         </View>
       </BGImage>
     );
@@ -114,8 +116,8 @@ const PhotoUploadTemplate = (props: any) => {
 
           <View style={styles.infoSection}>
             <AppText text={`Upload up to ${props.maxImages} images and ${props.maxVideos} video per section.`} fontSize={14} color="#6B6B6B" />
-            <AppText text="Allowed formats: jpg, png, mp4" fontSize={14} color="#6B6B6B" />
-            <AppText text="Video limit: ≤ 20 MB" fontSize={14} color="#6B6B6B" />
+            <AppText text={t('app.photo_upload.format_hint')} fontSize={14} color="#6B6B6B" />
+            <AppText text={t('app.photo_upload.size_hint')} fontSize={14} color="#6B6B6B" />
           </View>
 
           <AppText text={props.sectionTitle} fontSize={22} type="Bold" mt={30} mb={15} />
@@ -124,11 +126,11 @@ const PhotoUploadTemplate = (props: any) => {
             <View>
               <ButtonView activeOpacity={0.8} style={styles.glassCard} onPress={() => handlePick()}>
                 <Svgicons path="plusIcon" size={24} />
-                <AppText text="Add Photos & Videos" ml={15} fontSize={16} type="Medium" />
+                <AppText text={t('app.photo_upload.add_photos')} ml={15} fontSize={16} type="Medium" />
               </ButtonView>
               <ButtonView activeOpacity={0.8} style={styles.glassCard} onPress={() => uploadActions.takePhoto()}>
                 <Svgicons path="cameraIcon" size={24} />
-                <AppText text="Take New Picture" ml={15} fontSize={16} type="Medium" />
+                <AppText text={t('app.photo_upload.take_picture')} ml={15} fontSize={16} type="Medium" />
               </ButtonView>
             </View>
           ) : (
@@ -201,14 +203,14 @@ const PhotoUploadTemplate = (props: any) => {
           <ButtonView style={styles.modalOverlay} activeOpacity={1} onPress={() => setPopupVisible(false)}>
             <View style={styles.modalContent}>
               <View style={styles.modalIndicator} />
-              <AppText text="Select Media" type="Bold" fontSize={18} mb={20} textAlign="center" />
+              <AppText text={t('app.photo_upload.select_media')} type="Bold" fontSize={18} mb={20} textAlign="center" />
               <ButtonView style={styles.optionRow} onPress={uploadActions.fromGallery}>
                 <Svgicons path="imageIcon" size={24} color={Colors.BLACK} />
-                <AppText text="Gallery (Photo & Video)" ml={15} fontSize={16} />
+                <AppText text={t('app.photo_upload.gallery')} ml={15} fontSize={16} />
               </ButtonView>
               <ButtonView style={styles.optionRow} onPress={uploadActions.takePhoto}>
                 <Svgicons path="cameraIcon" size={24} color={Colors.BLACK} />
-                <AppText text="Take Photo" ml={15} fontSize={16} />
+                <AppText text={t('app.photo_upload.take_photo')} ml={15} fontSize={16} />
               </ButtonView>
               <AppButton title="Cancel" mt={20} onPress={() => setPopupVisible(false)} />
             </View>

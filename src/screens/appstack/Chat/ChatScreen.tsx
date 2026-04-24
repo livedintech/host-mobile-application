@@ -42,6 +42,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
+import { useTranslation } from 'react-i18next';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -53,6 +54,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const ChatScreen = () => {
+  const { t } = useTranslation();
   const {
     activeTab,
     setActiveTab,
@@ -154,7 +156,7 @@ const ChatScreen = () => {
           >
             <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
             <AppText
-              text={item?.is_mute ? 'Unsnoozed' : 'Snooze'}
+              text={item?.is_mute ? t('app.chat.unsnoozed') : t('app.chat.snooze')}
               color={Colors.WHITE}
               fontSize={12}
               mt={5}
@@ -167,7 +169,7 @@ const ChatScreen = () => {
           >
             <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
             <AppText
-              text={item?.is_archived ? 'Unarchived' : 'Archive'}
+              text={item?.is_archived ? t('app.chat.unarchived') : t('app.chat.archive')}
               color={Colors.WHITE}
               fontSize={12}
               mt={5}
@@ -258,7 +260,7 @@ const ChatScreen = () => {
             <View style={styles.header}>
               {/* <View style={styles.headerLeft} /> */}
               <AppText
-                text="Inbox"
+                text={t('app.chat.title')}
                 type="Bold"
                 fontSize={28}
                 color={Colors.MIDNIGHT}
@@ -303,7 +305,7 @@ const ChatScreen = () => {
                   color={Colors.GREY_SHADOW}
                 />
                 <TextInput
-                  placeholder="Search Guest"
+                  placeholder={t('app.chat.search_placeholder')}
                   style={styles.searchInput}
                   placeholderTextColor={Colors.GREY_SHADOW}
                   value={search}
@@ -362,19 +364,19 @@ const ChatScreen = () => {
                   <NoChatScreen
                     headingText={
                       activeTab === 'Archived'
-                        ? 'No Archived Chats'
+                        ? t('app.chat.no_archived')
                         : activeTab === 'Snoozed'
-                        ? 'No Snoozed Chats'
+                        ? t('app.chat.no_snoozed')
                         : activeTab === 'Unread'
-                        ? 'No Unread Chats'
-                        : 'No Messages Found'
+                        ? t('app.chat.no_unread')
+                        : t('app.chat.no_messages')
                     }
                     descriptionText={
                       activeTab === 'Archived' ||
                       activeTab === 'Snoozed' ||
                       activeTab === 'Unread'
-                        ? 'No conversations yet.'
-                        : 'Create a new listing or import one from your OTA platform to get started.'
+                        ? t('app.chat.no_conversations')
+                        : t('app.chat.no_listing_message')
                     }
                     showFirstButton={activeTab === 'All'}
                     showSecondButton={activeTab === 'All'}
@@ -406,7 +408,7 @@ const ChatScreen = () => {
                 {/* Header */}
                 <View style={styles.sheetHeader}>
                   <AppText
-                    text="Apply Filters"
+                    text={t('app.chat.apply_filters')}
                     fontSize={20}
                     type="Medium"
                     color={Colors.BLACK}
@@ -425,7 +427,7 @@ const ChatScreen = () => {
                   name="listings"
                   control={control}
                   errors={errors}
-                  label="Select Property"
+                  label={t('app.chat.select_property')}
                   data={transformedListings}
                 />
 
@@ -433,12 +435,12 @@ const ChatScreen = () => {
                 <View style={styles.modalFooter}>
                   <AppButton
                     onPress={handleResetAll}
-                    title="Reset"
+                    title={t('app.chat.reset')}
                     style={styles.flex}
                   />
                   <AppButton
                     onPress={handleCloseFilter}
-                    title="Apply Filter"
+                    title={t('app.chat.apply_filter')}
                     style={styles.flex}
                   />
                 </View>

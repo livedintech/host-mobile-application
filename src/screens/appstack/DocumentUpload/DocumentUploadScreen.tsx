@@ -12,6 +12,7 @@ import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import useDocumentUploadContainer from './DocumentUploadContainer';
+import { useTranslation } from 'react-i18next';
 
 const DocumentUploadScreen = () => {
   const {
@@ -37,6 +38,7 @@ const DocumentUploadScreen = () => {
     isLoadingChannelList,
     isCreating,
   } = useDocumentUploadContainer();
+  const { t } = useTranslation();
 
   const renderUploadButton = (
     label: string,
@@ -52,7 +54,7 @@ const DocumentUploadScreen = () => {
         activeOpacity={0.7}
       >
         <Svgicons path="attachmentIcon" size={24} />
-        <AppText text="Upload PDF" fontSize={16} />
+        <AppText text={t('app.document_upload.upload_pdf')} fontSize={16} />
       </TouchableOpacity>
 
       {document && (
@@ -101,7 +103,7 @@ const DocumentUploadScreen = () => {
 
           {/* Title */}
           <AppText
-            text="Upload ownership licence documents"
+            text={t('app.document_upload.title')}
             fontSize={26}
             type="SemiBold"
             mb={30}
@@ -110,28 +112,28 @@ const DocumentUploadScreen = () => {
 
           {/* Info */}
           <View style={styles.infoBox}>
-            <AppText text="• Accepted formats: PDF." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mb={4} />
-            <AppText text="• File size ≤ 10 MB per document." fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} />
+            <AppText text={t('app.document_upload.format_hint')} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mb={4} />
+            <AppText text={t('app.document_upload.size_hint')} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} />
           </View>
 
           {/* Upload Sections */}
-          {renderUploadButton('Property Ownership / Rental Documents*', 'propertyOwnership', propertyOwnershipDoc)}
-          {renderUploadButton('Authority license', 'authorityLicense', authorityLicenseDoc)}
-          {renderUploadButton('Aqama / National ID', 'nationalId', nationalIdDoc)}
+          {renderUploadButton(t('app.document_upload.property_ownership_label'), 'propertyOwnership', propertyOwnershipDoc)}
+          {renderUploadButton(t('app.document_upload.authority_label'), 'authorityLicense', authorityLicenseDoc)}
+          {renderUploadButton(t('app.document_upload.national_id_label'), 'nationalId', nationalIdDoc)}
 
           {/* Footer */}
       {/* Footer */}
 <View style={styles.footer}>
   {/* ✅ Export — hamesha show karo, create + edit dono mein */}
   <AppButton
-    title="Export"
+    title={t('app.document_upload.export')}
     variant='secondary'
     onPress={handleExport}
     disabled={isLoading}
     mb={12}
   />
   <AppButton
-    title="Save & Exit"
+    title={t('app.document_upload.save_exit')}
     onPress={handleSubmit(onSaveExit)}
     loading={isLoading}
   />
@@ -152,7 +154,7 @@ const DocumentUploadScreen = () => {
                 <View style={styles.handleBar} />
 
                 <AppText
-                  text="Select OTA Account"
+                  text={t('app.document_upload.select_ota')}
                   fontSize={20}
                   type="SemiBold"
                   color={Colors.PINE_FOREST}
@@ -166,13 +168,13 @@ const DocumentUploadScreen = () => {
                     errors={otaErrors}
                     label=""
                     data={listingOptions}
-                    placeholder="Select Account"
+                    placeholder={t('app.document_upload.select_account')}
                     dropdownPosition="top"
                   />
                 </View>
 
                 <AppButton
-                  title="Export"
+                  title={t('app.document_upload.export')}
                   onPress={handleOtaSubmit(handleExportSubmit)}
                   mt={20}
                   loading={isLoadingChannelList || isCreating}

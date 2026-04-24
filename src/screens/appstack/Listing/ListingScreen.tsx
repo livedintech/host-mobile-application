@@ -15,8 +15,10 @@ import NoListing from './NoListing';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
 
 const ListingScreen = () => {
+  const { t } = useTranslation();
   const authStore = useAuthStore();
   const user = authStore?.user;
   const route = useRoute<any>();
@@ -103,9 +105,9 @@ const ListingScreen = () => {
 
       <View style={styles.headerFixed}>
         <View style={styles.headerRow}>
-          <AppText text="Guest Bookings" fontSize={26} type="Medium" color={Colors.BLACK} />
+          <AppText text={t('app.listing_screen.guest_bookings')} fontSize={26} type="Medium" color={Colors.BLACK} />
           <ButtonView style={styles.toggleButton} onPress={handleToggleToReservations}>
-            <AppText text="Reservations" color={Colors.WHITE} fontSize={10} type="SemiBold" />
+            <AppText text={t('app.listing_screen.reservations')} color={Colors.WHITE} fontSize={10} type="SemiBold" />
           </ButtonView>
         </View>
       </View>

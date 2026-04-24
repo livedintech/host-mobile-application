@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useRef, useMemo, useCallback, useState } from 'react';
 import {
   StyleSheet,
@@ -36,6 +37,7 @@ import { useTaskStore } from '@/store/taskStore';
 const { width, height } = Dimensions.get('window');
 
 const ChecklistDetail = ({ route }: any) => {
+  const { t } = useTranslation();
   const { taskId: storeTaskId, taskStatus } = useTaskStore();
   // console.log("storeTaskStatus",storeTaskStatus);
   // console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' )
@@ -231,7 +233,7 @@ const ChecklistDetail = ({ route }: any) => {
                           {/* <View style={styles.addMoreInner}> */}
 
                           <AppText
-                            text="Add more"
+                            text={t('app.checklist_detail.add_more')}
                             fontSize={12}
                             type="Medium"
                           />
@@ -250,7 +252,7 @@ const ChecklistDetail = ({ route }: any) => {
           {taskStatus !== 'completed' && (
             <View style={styles.footer}>
               <AppButton
-                title="Save"
+                title={t('app.checklist_detail.save')}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
@@ -334,7 +336,7 @@ const ChecklistDetail = ({ route }: any) => {
               <View style={styles.inputWrapper}>
                 <InputField
                   name="itemName"
-                  label="Add Item"
+                  label={t('app.checklist_detail.add_item')}
                   control={control}
                   errors={errors}
                   placeholder="e.g. Clean the windows"

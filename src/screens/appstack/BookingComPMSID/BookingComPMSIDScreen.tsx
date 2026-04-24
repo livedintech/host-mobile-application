@@ -9,8 +9,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton'
 import Metrics from '@/utility/Metrics'
 import { Colors } from '@/theme/colors'
 import BGImage from '@/components/molecules/BGImage/BGImage'
+import { useTranslation } from 'react-i18next'
 
 const BookingComPMSIDScreen = () => {
+    const { t } = useTranslation()
     const {
         control,
         errors,
@@ -29,7 +31,7 @@ const BookingComPMSIDScreen = () => {
 
                 {/* Header */}
                 <AppText
-                    text="Connect OTAS"
+                    text={t('app.booking_com_pms.title')}
                     type="Bold"
                     fontSize={32}
                     color={Colors.BRUNSWICK_GREEN}
@@ -42,32 +44,32 @@ const BookingComPMSIDScreen = () => {
                     {/* Row 1: Title + Select Apartment */}
                     <View style={styles.halfCol}>
                         <InputField
-                            label="Title"
+                            label={t('app.booking_com_pms.title_label')}
                             name="roomId"
                             control={control}
                             errors={errors}
-                            placeholder="Enter Title"
+                            placeholder={t('app.booking_com_pms.title_placeholder')}
                         />
                     </View>
 
                     <View style={styles.halfCol}>
                         <DropdownField
-                            label="Select Apartment"
+                            label={t('app.booking_com_pms.apartment_label')}
                             name="apartmentId"
                             control={control}
                             errors={errors}
-                            placeholder="Select Apartment"
+                            placeholder={t('app.booking_com_pms.apartment_label')}
                             data={listingOptions}
                         />
                     </View>
                     {!hasApartment ? (
                         <View style={styles.halfCol}>
                             <InputField
-                                label="Rate"
+                                label={t('app.booking_com_pms.rate_label')}
                                 name="rate"
                                 control={control}
                                 errors={errors}
-                                placeholder="Enter Rate"
+                                placeholder={t('app.booking_com_pms.rate_placeholder')}
                             />
                         </View>
                     ) : null}
@@ -75,23 +77,23 @@ const BookingComPMSIDScreen = () => {
                     {/* Row 2: Hotel ID — half width */}
                     <View style={styles.halfCol}>
                         <InputField
-                            label="Enter Hotel ID"
+                            label={t('app.booking_com_pms.hotel_id_label')}
                             name="hotelId"
                             control={control}
                             errors={errors}
-                            placeholder="Enter Hotel ID"
+                            placeholder={t('app.booking_com_pms.hotel_id_label')}
                         />
                     </View>
 
                     {/* Buttons */}
                     <AppButton
-                        title="Test Connection"
+                        title={t('app.booking_com_pms.test_connection')}
                         onPress={handleTestConnection}
                         loading={isTesting}
                         mb={10}
                     />
                     <AppButton
-                        title="Submit"
+                        title={t('app.booking_com_pms.submit')}
                         onPress={handleSubmit}
                         loading={isSubmitting}
                         disabled={!isTestSuccess || isTesting}

@@ -10,6 +10,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTaskStore } from '@/store/taskStore';
+import { useTranslation } from 'react-i18next';
 
 interface NoTaskProps {
   activeTab?: string;
@@ -17,8 +18,9 @@ interface NoTaskProps {
 }
 
 const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
+  const { t } = useTranslation();
   const emptyText =
-    activeTab === 'Complete' ? 'No Task Completed' : 'No Task Available';
+    activeTab === 'Complete' ? t('app.no_task.completed') : t('app.no_task.available');
   const { resetTaskStore } = useTaskStore();
   return (
     // <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -27,7 +29,7 @@ const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
         {/* Header */}
         {/* <View style={styles.header}>
             <AppText
-              text="Task Management"
+              text={t('app.task_management.title')}
               fontSize={24}
               type="Medium"
               color={Colors.BLACK}
@@ -50,7 +52,7 @@ const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
 
           {!hasListings && (
             <AppText
-              text="Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place."
+              text={t('app.no_task.no_listings_desc')}
               fontSize={16}
               textAlign="center"
               color={Colors.DARK_CHARCOAL_OPACITY}

@@ -4,12 +4,14 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { vs, s } from 'react-native-size-matters';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import AppText from '@/components/molecules/AppText/AppText';
+import { useTranslation } from 'react-i18next';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const StepThree = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { bookingData, parentReason, subReasonValue } = route.params || {};
@@ -29,9 +31,9 @@ const StepThree = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.mainContainer}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <AppText text="Provide more details" type="Bold" fontSize={26} mb={vs(10)} />
-          <AppText 
-            text="Tell us about the situation — include specific details about why cancelling is unavoidable. This will only be seen by the support team." 
+          <AppText text={t('app.cancel_reservation.step3_title')} type="Bold" fontSize={26} mb={vs(10)} />
+          <AppText
+            text={t('app.cancel_reservation.step3_description')}
             fontSize={14} 
             lineHeight={20}
             color={Colors.DARK_CHARCOAL_OPACITY_74} 
@@ -41,7 +43,7 @@ const StepThree = () => {
           <GlassCard style={styles.inputCard}>
             <TextInput
               multiline
-              placeholder="Provide internal details for support..."
+              placeholder={t('app.cancel_reservation.step3_placeholder')}
               placeholderTextColor={Colors.DARK_CHARCOAL_OPACITY_74}
               style={styles.textInput}
               value={internalNote}
@@ -54,7 +56,7 @@ const StepThree = () => {
 
         <View style={styles.footer}>
           <AppButton 
-            title="Next" 
+            title={t('app.cancel_reservation.step3_next')}
             backgroundColor={Colors.PRIMARY_TEAL} 
             onPress={handleNext}
             disabled={internalNote.length < 5} 

@@ -14,6 +14,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import Checkbox from '@/components/molecules/Input/CheckBox';
 import { Controller } from 'react-hook-form';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const CreateAutomationTemplateScreen = () => {
     const {
@@ -26,6 +27,7 @@ const CreateAutomationTemplateScreen = () => {
         transformedMessageVariables,
         transformedEvents
     } = useAutomationTemplateCreateEditContainer();
+    const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -37,17 +39,14 @@ const CreateAutomationTemplateScreen = () => {
                     {/* Title & Description */}
                     <View style={styles.topTextSection}>
                         <AppText
-                            text={isEditMode ? "Edit Automation Template" : "Create Automation Template"}
+                            text={isEditMode ? t('app.automation_create_edit.title_edit') : t('app.automation_create_edit.title_create')}
                             fontSize={28}
                             type="Bold"
                             color={Colors.BLACK}
                             mb={10}
                         />
                         <AppText
-                            text={isEditMode
-                                ? "Update the trigger, message content, timing, and assigned listings. Changes apply to all future automated messages."
-                                : "Set up an automation by defining the trigger, message content, timing, and applicable listings."
-                            }
+                            text={isEditMode ? t('app.automation_create_edit.desc_edit') : t('app.automation_create_edit.desc_create')}
                             fontSize={14}
                             color={Colors.DARK_CHARCOAL_OPACITY}
                             lineHeight={20}
@@ -56,41 +55,41 @@ const CreateAutomationTemplateScreen = () => {
 
                     <View style={styles.form}>
                         <InputField
-                            label="Message Name"
+                            label={t('app.automation_create_edit.name_label')}
                             name="name"
                             control={control}
                             errors={errors}
-                            placeholder="Wifi Password"
+                            placeholder={t('app.automation_create_edit.name_placeholder')}
                         // labelStyle={styles.labelStyle}
                         />
 
                         <MentionTextarea
-                            label="Message Content"
+                            label={t('app.automation_create_edit.content_label')}
                             name="body"
                             control={control}
                             errors={errors}
                             variables={transformedMessageVariables}
-                            placeholder="Hi Sir, here are your Wi-Fi details..."
+                            placeholder={t('app.automation_create_edit.content_placeholder')}
                         // labelStyle={styles.labelStyle}
                         />
 
                         <DropdownField
-                            label="Event Trigger"
+                            label={t('app.automation_create_edit.event_label')}
                             name="event"
                             control={control}
                             errors={errors}
                             data={transformedEvents}
-                            placeholder="Check-in"
+                            placeholder={t('app.automation_create_edit.event_placeholder')}
                         // labelStyle={styles.labelStyle}
                         />
 
                         <MultiSelectDropdownField
-                            label="Select Property"
+                            label={t('app.automation_create_edit.property_label')}
                             name="listing_ids"
                             control={control}
                             errors={errors}
                             data={transformedListing || []}
-                            placeholder="Select Multiple Options"
+                            placeholder={t('app.automation_create_edit.property_placeholder')}
                             labelStyle={styles.labelStyle}
                         />
 
@@ -104,7 +103,7 @@ const CreateAutomationTemplateScreen = () => {
                                 >
                                     <Checkbox isChecked={value} onPress={() => onChange(!value)} />
                                     <AppText
-                                        text="Auto-create for all new listings"
+                                        text={t('app.automation_create_edit.auto_create')}
                                         ml={10}
                                         color={Colors.MIDNIGHT}
                                         fontSize={14}
@@ -117,7 +116,7 @@ const CreateAutomationTemplateScreen = () => {
 
                     {/* Submit Button */}
                     <AppButton
-                        title={isEditMode ? "Save Changes" : "Create New Saved Reply"}
+                        title={isEditMode ? t('app.automation_create_edit.save_btn') : t('app.automation_create_edit.create_btn')}
                         onPress={handleSubmit}
                         loading={isLoading}
                         mt={40}

@@ -29,7 +29,7 @@ const StepOne = () => {
     { label: 'Issue with trip dates, length or price', value: 'dates_not_available' },
     { label: 'Request goes against my house rules', value: 'not_a_good_fit' },
     { label: 'Waiting for a better reservation', value: 'waiting_for_better_reservation' },
-    { label: 'I’m not comfortable with this guest', value: 'not_comfortabl' },
+    { label: `I'm not comfortable with this guest`, value: 'not_comfortabl' },
     { label: 'Other reason not listed above', value: 'other' },
   ];
 
@@ -56,7 +56,7 @@ const StepOne = () => {
           showsVerticalScrollIndicator={false}
         >
           <AppText
-            text={`Let us know why you can’t host ${guestName || 'Abdul'}’s tip`}
+            text={`Let us know why you can't host ${guestName || 'Abdul'}'s tip`}
             fontSize={28}
             type="Bold"
             lineHeight={36}

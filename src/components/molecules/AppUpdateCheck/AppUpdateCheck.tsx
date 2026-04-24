@@ -7,9 +7,10 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
-
+import { useTranslation } from 'react-i18next';
 
 const AppUpdateCheck = () => {
+    const { t } = useTranslation();
     const [isUpdateRequired, setIsUpdateRequired] = useState(false);
     const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -115,7 +116,7 @@ const AppUpdateCheck = () => {
                          <UpdateIcon />
                     </View>
                 <AppText
-                    text="Update Available"
+                    text={t('app.update_check.title')}
                     fontSize={24}
                     type="Bold"
                     color={Colors.BLACK}
@@ -124,7 +125,7 @@ const AppUpdateCheck = () => {
                 />
 
                 <AppText
-                    text="A new version of Livedin is available. Please update to continue using the app with the latest features and improvements."
+                    text={t('app.update_check.description')}
                     fontSize={14}
                     color={Colors.DARK_CHARCOAL_OPACITY}
                     textAlign="center"
@@ -134,7 +135,7 @@ const AppUpdateCheck = () => {
                 />
 
                 <AppButton
-                    title="Update Now"
+                    title={t('app.update_check.update_btn')}
                     onPress={handleUpdate}
                     backgroundColor={Colors.TEAL_PRIMARY_ALT}
                     borderColor="transparent"
@@ -144,7 +145,7 @@ const AppUpdateCheck = () => {
                 />
 
                 <AppText
-                    text="You must update to continue using the app."
+                    text={t('app.update_check.mandatory')}
                     fontSize={12}
                     color={Colors.DARK_CHARCOAL_OPACITY}
                     textAlign="center"

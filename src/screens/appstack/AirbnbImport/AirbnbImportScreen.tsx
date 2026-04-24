@@ -15,6 +15,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 const PropertyCard = ({
   id,
@@ -25,6 +26,7 @@ const PropertyCard = ({
   handleIndividualImport,
   watch,
 }: any) => {
+  const { t } = useTranslation();
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
   const isMatch = String(selectedLivedinId) === String(id);
@@ -48,12 +50,12 @@ const PropertyCard = ({
 
       <View style={styles.infoSection}>
         <View style={styles.infoRow}>
-          <AppText text="Airbnb ID:  " type="Regular" color={Colors.BLACK} fontSize={14} />
+          <AppText text={t('app.airbnb_import.airbnb_id')} type="Regular" color={Colors.BLACK} fontSize={14} />
           <AppText text={String(id)} type="Bold" color={Colors.BLACK} fontSize={14} />
         </View>
 
         <View style={styles.infoRow}>
-          <AppText text="Livedin ID:  " type="Regular" color={Colors.BLACK} fontSize={14} />
+          <AppText text={t('app.airbnb_import.livedin_id')} type="Regular" color={Colors.BLACK} fontSize={14} />
           <AppText
             text={selectedLivedinId ? String(selectedLivedinId) : '-'}
             type="Bold"
@@ -69,14 +71,14 @@ const PropertyCard = ({
           name={fieldName}
           control={control}
           errors={errors}
-          label="Existing Listing:"
+          label={t('app.airbnb_import.existing_listing')}
           data={listingOptions}
-          placeholder="None"
+          placeholder={t('app.airbnb_import.none')}
         />
       </View>
 
       <AppButton
-        title={!isMatch ? 'Import' : 'Re-import'}
+        title={!isMatch ? t('app.airbnb_import.import_btn') : t('app.airbnb_import.reimport_btn')}
         onPress={() => handleIndividualImport(fieldName, id, isMatch)}
         backgroundColor="rgba(255, 255, 255, 0.4)"
         borderColor="rgba(255, 255, 255, 0.9)"
@@ -89,6 +91,7 @@ const PropertyCard = ({
 };
 
 const AirbnbImportScreen = () => {
+  const { t } = useTranslation();
   const {
     control,
     errors,
@@ -137,7 +140,7 @@ const AirbnbImportScreen = () => {
 
         <View style={styles.header}>
           <AppText
-            text="Airbnb Properties"
+            text={t('app.airbnb_import.title')}
             fontSize={28}
             type="Bold"
             color={Colors.BLACK}
@@ -159,7 +162,7 @@ const AirbnbImportScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Next"
+            title={t('app.airbnb_import.next')}
             onPress={handleSubmit(onNext)}
             color={Colors.WHITE}
             fontSize={16}

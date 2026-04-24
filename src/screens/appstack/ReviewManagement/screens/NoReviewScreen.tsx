@@ -5,6 +5,7 @@ import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { useTranslation } from 'react-i18next';
 
 interface NoReviewScreenProps {
   onManageListing?: () => void;
@@ -13,6 +14,7 @@ interface NoReviewScreenProps {
 const NoReviewScreen = ({
   onManageListing = () => {},
 }: NoReviewScreenProps) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -22,7 +24,7 @@ const NoReviewScreen = ({
         </View>
 
         <AppText
-          text="No Reviews Yet"
+          text={t('app.no_review.title')}
           fontSize={28}
           type="Bold"
           color={Colors.BLACK}
@@ -31,7 +33,7 @@ const NoReviewScreen = ({
         />
 
         <AppText
-          text="Reviews will appear here once you start receiving bookings and hosting guests."
+          text={t('app.no_review.description')}
           fontSize={14}
           color={Colors.DARK_CHARCOAL_OPACITY}
           textAlign="center"
@@ -40,7 +42,7 @@ const NoReviewScreen = ({
       </View>
 
       <AppButton
-        title="Manage your listing"
+        title={t('app.no_review.manage_listing')}
         backgroundColor={Colors.PRIMARY_TEAL}
         borderColor={Colors.PRIMARY_TEAL}
         color={Colors.WHITE}

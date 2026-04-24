@@ -15,6 +15,7 @@ import { goBack } from '@/services/navigationService';
 import NoAutomationScreen from '../NoAutomationScreen/NoAutomationScreen';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
+import { useTranslation } from 'react-i18next';
 
 const AutomationTemplatesScreen = () => {
   const {
@@ -32,6 +33,7 @@ const AutomationTemplatesScreen = () => {
     Item,
     isLoadingStatus,
   } = useAutomationTemplateContainer();
+  const { t } = useTranslation();
 
 
   if (isLoading) {
@@ -87,13 +89,13 @@ const AutomationTemplatesScreen = () => {
           <View style={styles.cardFooter}>
             <View style={{ flex: 1 }}>
               <AppText
-                text="Listing Access"
+                text={t('app.automation_template.listing_access')}
                 fontSize={14}
                 type="Bold"
                 color={Colors.BLACK}
               />
               <AppText
-                text={item.listing_label || 'All Listings'}
+                text={item.listing_label || t('app.automation_template.all_listings')}
                 fontSize={13}
                 color={Colors.GREY_SHADOW}
                 mt={2}
@@ -119,14 +121,14 @@ const AutomationTemplatesScreen = () => {
         {!!data?.length && (
           <View style={styles.topTextSection}>
             <AppText
-              text="Automation Template"
+              text={t('app.automation_template.title')}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
               mb={12}
             />
             <AppText
-              text="Create automation templates to send messages automatically. Define the trigger, message content, and applicable listings."
+              text={t('app.automation_template.description')}
               fontSize={14}
               color={Colors.GREY_SHADOW}
               lineHeight={20}
@@ -150,7 +152,7 @@ const AutomationTemplatesScreen = () => {
         <View style={styles.footer}>
           <AppButton
             loading={isLoadingRemoved || isLoadingStatus}
-            title="Create New Template"
+            title={t('app.automation_template.create_btn')}
             onPress={createNewTemplate}
             backgroundColor={Colors.TEAL_PRIMARY_ALT}
             borderColor={Colors.TEAL_PRIMARY_ALT}

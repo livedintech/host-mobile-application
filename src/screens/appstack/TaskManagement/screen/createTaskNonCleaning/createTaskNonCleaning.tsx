@@ -13,6 +13,7 @@ import { goBack, navigate } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import CreateTaskContainer from '../../container/CreateTaskContainer/CreateTaskContainer';
+import { useTranslation } from 'react-i18next';
 
 const VALIDATION_RULES = {
   LISTING: { required: 'Please select a listing' },
@@ -24,6 +25,7 @@ const VALIDATION_RULES = {
 };
 
 const CreateTaskNonCleaning = () => {
+  const { t } = useTranslation();
   const {
     transformedListing,
     transformedVendor,
@@ -63,9 +65,9 @@ const CreateTaskNonCleaning = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <AppText text="Create New Task" fontSize={32} type="Bold" mb={12} />
+          <AppText text={t('app.task_management.create_task_title')} fontSize={32} type="Bold" mb={12} />
           <AppText
-            text="Create a task for your property. Cleaning tasks are recurring by default. For other tasks, select a date and set the start and end time."
+            text={t('app.task_management.create_non_cleaning_desc')}
             fontSize={14}
             color={Colors.DARK_CHARCOAL_OPACITY}
             lineHeight={20}
@@ -78,7 +80,7 @@ const CreateTaskNonCleaning = () => {
               name="listing"
               control={control}
               data={transformedListing}
-              placeholder="Select Listing"
+              placeholder={t('app.task_management.listing_placeholder')}
               errors={errors}
               rules={VALIDATION_RULES.LISTING}
             />
@@ -88,7 +90,7 @@ const CreateTaskNonCleaning = () => {
               name="category"
               control={control}
               data={transformedCategory}
-              placeholder="Select Category"
+              placeholder={t('app.task_management.category_label')}
               errors={errors}
               rules={VALIDATION_RULES.CATEGORY}
             />
@@ -134,7 +136,7 @@ const CreateTaskNonCleaning = () => {
               name="assignUser"
               control={control}
               data={transformedVendor}
-              placeholder="Select User"
+              placeholder={t('app.task_management.select_user')}
               errors={errors}
               rules={VALIDATION_RULES.USER}
             />

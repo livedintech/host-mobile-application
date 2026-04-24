@@ -8,8 +8,10 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useTranslation } from 'react-i18next';
 
 const PropertyStep1Welcome = () => {
+    const { t } = useTranslation();
     const onCreateNew = useCallback(() => {
         navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE)
     }, []);
@@ -20,7 +22,7 @@ const PropertyStep1Welcome = () => {
                     <Svgicons path='houseIllustration' size={326} />
                     <View style={styles.textWrapper}>
                         <AppText
-                            text="Step 1"
+                            text={t('app.property_step1.step_label')}
                             fontSize={20}
                             type="Medium"
                             color={Colors.BLACK}
@@ -28,7 +30,7 @@ const PropertyStep1Welcome = () => {
                         />
 
                         <AppText
-                            text="Tell us about your property"
+                            text={t('app.property_step1.title')}
                             fontSize={32}
                             type="Bold"
                             color={Colors.BLACK}
@@ -37,7 +39,7 @@ const PropertyStep1Welcome = () => {
                         />
 
                         <AppText
-                            text="In this step, provide the basic details of your property, including the property type, location, guest capacity, and other key property information to set up your listing."
+                            text={t('app.property_step1.description')}
                             fontSize={14}
                             type="Regular"
                             color="#6B6B6B"
@@ -48,7 +50,7 @@ const PropertyStep1Welcome = () => {
 
                 <View style={styles.footer}>
                     <AppButton
-                        title="Next"
+                        title={t('app.property_step1.next')}
                         color={Colors.WHITE}
                         fontSize={16}
                         onPress={onCreateNew}

@@ -7,12 +7,14 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 interface NoAutomationProps {
   onCreatePress: () => void;
 }
 
 const NoAutomationScreen = ({ onCreatePress }: NoAutomationProps) => {
+  const { t } = useTranslation();
   return (
       <View style={styles.container}>
         {/* Centered Content Area */}
@@ -26,7 +28,7 @@ const NoAutomationScreen = ({ onCreatePress }: NoAutomationProps) => {
           <View style={styles.textContent}>
           {/* Title - Increased size for Bold Fallback style */}
           <AppText
-            text="No Automation Template Found"
+            text={t('app.no_automation.title')}
             fontSize={28}
             type="SemiBold"
             textAlign="center"
@@ -36,7 +38,7 @@ const NoAutomationScreen = ({ onCreatePress }: NoAutomationProps) => {
 
           {/* Description */}
           <AppText
-            text="Create a template to start automating messages"
+            text={t('app.no_automation.description')}
             fontSize={12}
             textAlign="center"
             color={Colors.DARK_CHARCOAL_OPACITY}

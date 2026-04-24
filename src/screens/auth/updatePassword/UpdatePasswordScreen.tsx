@@ -8,8 +8,10 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import UpdatePasswordContainer from './UpdatePasswordContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const UpdatePasswordScreen = () => {
+  const { t } = useTranslation();
   const { control, errors, handleSubmit, isLoading, watch } = UpdatePasswordContainer();
   
   // We "watch" the password field to compare it with the confirm field
@@ -21,40 +23,40 @@ const UpdatePasswordScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={styles.titleSection}>
-          <AppText text="Set New Password" fontSize={28} textAlign="center" type="Bold" />
+          <AppText text={t('auth.update_password.title')} fontSize={28} textAlign="center" type="Bold" />
         </View>
 
         <View style={styles.form}>
           <PasswordField
-            label="New Password *"
+            label={t('auth.update_password.new_password_label')}
             name="password"
             control={control}
             errors={errors}
-            placeholder="Enter new password"
+            placeholder={t('auth.update_password.new_password_placeholder')}
             rules={{
-              required: "Password is required",
-              minLength: { value: 8, message: "Password must be at least 8 characters" }
+              required: t('auth.update_password.error_required'),
+              minLength: { value: 8, message: t('auth.update_password.error_min_length') }
             }}
           />
 
           <View style={{ marginTop: 20 }}>
             <PasswordField
-              label="Confirm Password *"
+              label={t('auth.update_password.confirm_password_label')}
               name="confirmPassword"
               control={control}
               errors={errors}
-              placeholder="Re-type your password"
+              placeholder={t('auth.update_password.confirm_password_placeholder')}
               rules={{
-                required: "Please confirm your password",
-                validate: (value: string) => 
-                  value === password || "Passwords do not match"
+                required: t('auth.update_password.error_confirm_required'),
+                validate: (value: string) =>
+                  value === password || t('auth.update_password.error_no_match')
               }}
             />
           </View>
         </View>
 
         <View style={styles.bottomSec}>
-          <AppButton loading={isLoading} onPress={handleSubmit} title="Update Password" />
+          <AppButton loading={isLoading} onPress={handleSubmit} title={t('auth.update_password.update_btn')} />
         </View>
       </ScrollView>
     </SafeAreaView>

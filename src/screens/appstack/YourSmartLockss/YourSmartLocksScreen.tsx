@@ -12,6 +12,7 @@ import SmartLockScreen from '../SmartLock/SmartLockScreen';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const YourSmartLocksScreen = () => {
   const {
@@ -27,6 +28,7 @@ const YourSmartLocksScreen = () => {
     getOptionsForLock,
     handleSelect,
   } = useYourSmartLockssContainer();
+  const { t } = useTranslation();
 
   const hasListings = listingsData && listingsData.length > 0;
   const hasLocks = locksData && locksData.length > 0;
@@ -52,15 +54,15 @@ const YourSmartLocksScreen = () => {
           <AppText text={item.alias} fontSize={18} type="Medium" color={Colors.BLACK} mb={8} />
           <View style={styles.infoSection}>
             <View style={styles.rowSmall}>
-              <AppText text="TT Account: " fontSize={12} color={Colors.BLACK} />
+              <AppText text={t('app.your_smart_locks.tt_account')} fontSize={12} color={Colors.BLACK} />
               <AppText text={item.username} fontSize={12} color={Colors.BLACK} />
             </View>
             <View style={styles.rowSmall}>
-              <AppText text="Lock Number: " fontSize={12} color={Colors.BLACK} />
+              <AppText text={t('app.your_smart_locks.lock_number')} fontSize={12} color={Colors.BLACK} />
               <AppText text={item.lock_id.toString()} fontSize={12} color={Colors.BLACK} />
             </View>
             <View style={styles.rowSmall}>
-              <AppText text="Battery Level: " fontSize={12} color={Colors.BLACK} />
+              <AppText text={t('app.your_smart_locks.battery_level')} fontSize={12} color={Colors.BLACK} />
               <AppText text={item.battery_percentage} fontSize={12} type="Regular" color={getBatteryColor(batteryValue)} />
             </View>
           </View>
@@ -71,10 +73,10 @@ const YourSmartLocksScreen = () => {
             control={control}
             errors={errors}
             data={dynamicOptions}
-            placeholder="Select Property"
+            placeholder={t('app.your_smart_locks.select_property')}
             // Pass the whole 'item' to handleSelect for internal checks
             onSelect={value => handleSelect(value?.value, item)}
-            label="Assign Listing"
+            label={t('app.your_smart_locks.assign_listing')}
           />
         </View>
       </GlassCard>
@@ -86,7 +88,7 @@ const YourSmartLocksScreen = () => {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <View style={styles.titleContainer}>
-            <AppText text="Your Smart Locks" fontSize={28} type="SemiBold" color={Colors.BLACK} />
+            <AppText text={t('app.your_smart_locks.title')} fontSize={28} type="SemiBold" color={Colors.BLACK} />
           </View>
           <FlatListSimpleHandler
             data={locksData}
@@ -100,7 +102,7 @@ const YourSmartLocksScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Connect New Account"
+            title={t('app.your_smart_locks.connect_btn')}
             onPress={handleConnectNewAccount}
             backgroundColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}

@@ -10,9 +10,11 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 const MoreScreen = () => {
 
+  const { t } = useTranslation();
   const { logout,user } = useAuthStore();
   const goToBilling = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.BILLING);
@@ -76,21 +78,21 @@ const MoreScreen = () => {
 
       <View style={styles.grid}>
         <MenuCard
-          title="Account"
+          title={t('app.more.account_section')}
           items={['Profile Settings', 'Manage Listings', 'User Management']}
           icon={'userIcon'}
           onPress={goToAccount}
         />
         <MenuCard
-          title="Analytics"
+          title={t('app.more.analytics_section')}
           items={['Statistics', 'Listing Performance', 'Channel Performance']}
           icon={'analyticsIcon'}
           onPress={goToAnalytics}
         />
-        <MenuCard title="Billing" items={['Payment Method', 'Subscription', 'Transaction History']} icon={'cardIcon'} onPress={goToBilling} />
+        <MenuCard title={t('app.more_legacy.billing_section')} items={['Payment Method', 'Subscription', 'Transaction History']} icon={'cardIcon'} onPress={goToBilling} />
        
         <MenuCard
-          title="Refer App"
+          title={t('app.more_legacy.refer_section')}
           items={['Refer App', 'To Another', 'Host']}
           icon={'heartIcon'}
           onPress={referComingSoon}
@@ -99,7 +101,7 @@ const MoreScreen = () => {
       <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
         <Pressable style={styles.logoutBtn} onPress={() => null}>
           <AppText
-            text="General"
+            text={t('app.more_legacy.general_section')}
             fontSize={24}
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}
@@ -118,7 +120,7 @@ const MoreScreen = () => {
       <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
         <Pressable style={styles.logoutBtn} onPress={() => logout()}>
           <AppText
-            text="Logout"
+            text={t('app.more.logout')}
             fontSize={24}
             type="Bold"
             color={Colors.BRUNSWICK_GREEN}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
@@ -146,7 +147,7 @@ const EditTask = ({ route }: any) => {
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
-          {isDeleting && <AppText text="Deleting task..." mt={10} />}
+          {isDeleting && <AppText text={t('app.task_management.deleting_task')} mt={10} />}
         </View>
       </BGImage>
     );
@@ -166,7 +167,7 @@ const EditTask = ({ route }: any) => {
 
           <GlassCard width="100%" style={styles.glassCard}>
             <View style={styles.cardHeader}>
-              <AppText text="Task Details" fontSize={18} type="Medium" />
+              <AppText text={t('app.task_management.task_details')} fontSize={18} type="Medium" />
               {isEditable && (
                 <TouchableOpacity onPress={isEditMode ? handleCancel : () => setIsEditMode(true)}>
                   <GlassCard width={44} style={styles.editGlassIcon}>
@@ -177,7 +178,7 @@ const EditTask = ({ route }: any) => {
             </View>
 
             <View style={styles.detailSection}>
-              <AppText text="Task Instructions" fontSize={14} type="Bold" mb={8} />
+              <AppText text={t('app.task_management.task_instructions')} fontSize={14} type="Bold" mb={8} />
               {isEditMode ? (
                 <Controller
                   control={control}
@@ -197,16 +198,16 @@ const EditTask = ({ route }: any) => {
                 <AppText text={task?.description || 'No instructions provided.'} fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
               )}
 
-              <AppText text="Door Code" fontSize={14} type="Bold" mb={4} />
+              <AppText text={t('app.task_management.door_code')} fontSize={14} type="Bold" mb={4} />
               <AppText text={task?.key_code } fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
-              <AppText text="Property" fontSize={14} type="Bold" mb={4} />
+              <AppText text={t('app.task_management.property')} fontSize={14} type="Bold" mb={4} />
               <AppText text={task?.listing_title || 'Address not available'} fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
 
               {isEditMode || isEditable ? (
-                <DropdownField name="assignee" label="Assign Task" control={control} errors={errors} data={assigneeOptions} />
+                <DropdownField name="assignee" label={t('app.edit_task_screen.assign_task')} control={control} errors={errors} data={assigneeOptions} />
               ) : (
                 <View>
-                  <AppText text="Assign Task" fontSize={14} type="Bold" mb={8} />
+                  <AppText text={t('app.task_management.assign_task')} fontSize={14} type="Bold" mb={8} />
                   <View style={styles.readOnlyBox}>
                     <AppText text={task?.assigned_user?.name || 'Unassigned'} fontSize={14} color={Colors.DARK_CHARCOAL} />
                   </View>
@@ -218,28 +219,28 @@ const EditTask = ({ route }: any) => {
           {task.status !== 'template' && (
             <GlassCard width="100%" style={styles.glassCard}>
               <View style={styles.cardHeader}>
-                <AppText text="Task Timeline" fontSize={18} type="Medium" />
+                <AppText text={t('app.task_management.task_timeline')} fontSize={18} type="Medium" />
                 <Svgicons path="taskTimeline" size={24} />
               </View>
 
               {isEditMode ? (
                 <View>
-                  <DateTimeInputField name="task_date" control={control} errors={errors} label="Task Date" mode="date" />
-                  <DateTimeInputField name="start_time" control={control} errors={errors} label="Start Time" mode="time" />
-                  <DateTimeInputField name="end_time" control={control} errors={errors} label="End Time" mode="time" />
+                  <DateTimeInputField name="task_date" control={control} errors={errors} label={t('app.edit_task_screen.task_date')} mode="date" />
+                  <DateTimeInputField name="start_time" control={control} errors={errors} label={t('app.edit_task_screen.start_time')} mode="time" />
+                  <DateTimeInputField name="end_time" control={control} errors={errors} label={t('app.edit_task_screen.end_time')} mode="time" />
                 </View>
               ) : (
                 <View>
-                  <TimelineItem icon="taskCalendar" label="Task Date" value={formatDateDisplay(task?.start_date)} />
-                  <TimelineItem icon="taskStartDate" label="Start Time" value={task?.start_time || '--'} />
-                  <TimelineItem icon="taskEndDate" label="End Time" value={task?.end_time || '--'} />
+                  <TimelineItem icon="taskCalendar" label={t('app.edit_task_screen.task_date')} value={formatDateDisplay(task?.start_date)} />
+                  <TimelineItem icon="taskStartDate" label={t('app.edit_task_screen.start_time')} value={task?.start_time || '--'} />
+                  <TimelineItem icon="taskEndDate" label={t('app.edit_task_screen.end_time')} value={task?.end_time || '--'} />
                 </View>
               )}
 
               <View style={styles.timelineRow}>
                 <View style={styles.iconCircle}><Svgicons path="taskStar" size={18} /></View>
                 <View>
-                  <AppText text="Task Status:" fontSize={14} type="Medium" />
+                  <AppText text={t('app.task_management.task_status_label')} fontSize={14} type="Medium" />
                   <AppText text={statusDisplay} fontSize={13} type="Bold" color={apiStatus === 'todo' ? Colors.ERROR_RED : apiStatus === 'inprogress' ? Colors.GOLDEN_AMBER : Colors.PRIMARY_TEAL} />
                 </View>
               </View>
@@ -249,10 +250,10 @@ const EditTask = ({ route }: any) => {
 
         {/* <View style={styles.footer}>
           {isEditMode ? (
-            <AppButton title="Save Changes" backgroundColor={Colors.PRIMARY_TEAL} color={Colors.WHITE} onPress={handleSave} />
+            <AppButton title={t('app.edit_task_screen.save_changes')} backgroundColor={Colors.PRIMARY_TEAL} color={Colors.WHITE} onPress={handleSave} />
           ) : (
             <GradientBorder borderRadius={14} borderWidth={1} colors={['rgba(128, 128, 128, 0.66)', 'rgba(255, 255, 255, 0.66)', 'rgba(128, 128, 128, 0.66)']} locations={[0, 0.5356, 1]} style={styles.gradientMargin}>
-              <AppButton title="Checklist Management" style={styles.outlineBtn} color={Colors.BLACK} onPress={() => navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, { taskId, fromEdit: true })} />
+              <AppButton title={t('app.edit_task_screen.checklist_mgmt')} style={styles.outlineBtn} color={Colors.BLACK} onPress={() => navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL, { taskId, fromEdit: true })} />
             </GradientBorder>
           )}
         </View> */}
@@ -261,7 +262,7 @@ const EditTask = ({ route }: any) => {
           {isCompleted ? (
             <>
               <AppButton
-                title="Pre-activity Preview"
+                title={t('app.edit_task_screen.pre_activity')}
                 backgroundColor={Colors.WHITE}
                 borderColor={Colors.SMOOTH_GREY}
                 color={Colors.BLACK}
@@ -273,7 +274,7 @@ const EditTask = ({ route }: any) => {
                 }
               />
               <AppButton
-                title="Post Activity Preview"
+                title={t('app.edit_task_screen.post_activity')}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
@@ -299,7 +300,7 @@ const EditTask = ({ route }: any) => {
                 style={styles.gradientMargin}
               >
                 <AppButton
-                  title="Checklist Management"
+                  title={t('app.edit_task_screen.checklist_mgmt')}
                   style={styles.outlineBtn}
                   color={Colors.BLACK}
                   onPress={() =>
@@ -311,7 +312,7 @@ const EditTask = ({ route }: any) => {
                 />
               </GradientBorder>
               <AppButton
-                title="Save Changes"
+                title={t('app.edit_task_screen.save_changes')}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
                 // onPress={() => goBack()}

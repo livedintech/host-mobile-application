@@ -22,6 +22,7 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import { useTranslation } from 'react-i18next';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const { width, height } = Dimensions.get('window');
@@ -31,6 +32,7 @@ interface ImageSource {
 }
 
 const EditTaskScreen = () => {
+  const { t } = useTranslation();
   const {
     taskDetail,
     isLoadingTaskDetail,
@@ -108,7 +110,7 @@ const EditTaskScreen = () => {
 
         <View style={styles.infoSection}>
           <AppText
-            text="Task Description:"
+            text={t('app.task_management.task_description')}
             fontSize={14}
             type="Medium"
             color={Colors.PINE_FOREST}
@@ -121,7 +123,7 @@ const EditTaskScreen = () => {
             mb={28}
           />
           <AppText
-            text="Property:"
+            text={t('app.task_management.property')}
             fontSize={14}
             type="Medium"
             color={Colors.PINE_FOREST}
@@ -136,7 +138,7 @@ const EditTaskScreen = () => {
 
             <DropdownField
               name="assignTask"
-              label="Assign Task"
+              label={t('app.task_management.assign_task_label')}
               control={control}
               errors={errors}
               data={vendorDropdown}
@@ -282,7 +284,7 @@ const EditTaskScreen = () => {
                                           size={24}
                                         />
                                         <AppText
-                                          text="Video"
+                                          text={t('app.task_management.video')}
                                           fontSize={9}
                                           color={Colors.PINE_FOREST}
                                         />

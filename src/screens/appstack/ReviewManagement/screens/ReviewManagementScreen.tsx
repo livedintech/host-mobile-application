@@ -11,8 +11,10 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import AppText from '@/components/molecules/AppText/AppText';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import NoReviewScreen from './NoReviewScreen';
+import { useTranslation } from 'react-i18next';
 
 const ReviewManagementScreen = () => {
+  const { t } = useTranslation();
   const { allReviews, allReviewsLoading, refreshReviews } = useFetchReviews();
 
   const reviewsData = allReviews?.reviews || [];
@@ -60,13 +62,13 @@ const ReviewManagementScreen = () => {
         {!allReviewsLoading && reviewsData.length > 0 && (
           <View style={styles.header}>
             <AppText
-              text="Review"
+              text={t('app.review_management.title_1')}
               fontSize={32}
               type="Bold"
               color={Colors.BLACK}
             />
             <AppText
-              text="Management"
+              text={t('app.review_management.title_2')}
               fontSize={32}
               type="Bold"
               color={Colors.BLACK}

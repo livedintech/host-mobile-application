@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useEffect } from 'react';
 import { StyleSheet, View,Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useForm } from 'react-hook-form';
@@ -33,6 +34,7 @@ const StaffNotes = () => {
     }
   }, [taskDescription, setValue]);
 
+  const { t } = useTranslation();
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -40,7 +42,7 @@ const StaffNotes = () => {
       <View style={styles.safeArea}>
         <View style={styles.container}>
           <AppText
-            text="Add Instructions for Your Staff"
+            text={t('app.task_management.add_instructions')}
             fontSize={28}
             type="Bold"
             lineHeight={32}
@@ -49,7 +51,7 @@ const StaffNotes = () => {
           />
 
           <AppText
-            text="Add notes or special instructions for your staff related to this property or task. These notes will help them understand any specific requirements while completing their work."
+            text={t('app.task_management.staff_notes_desc')}
             fontSize={14}
             color={Colors.DARK_CHARCOAL_OPACITY}
             lineHeight={20}

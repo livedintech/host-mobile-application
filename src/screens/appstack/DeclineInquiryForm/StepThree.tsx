@@ -15,10 +15,12 @@ import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 import { submitBookingRequestApi } from '@/services/calendarBookingManagement';
 import TextareaField from '@/components/molecules/Input/TextareaField';
 
 const StepThree = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { id, reason, guestName } = route.params || {};
@@ -80,7 +82,7 @@ const StepThree = () => {
         >
           {/* Section 1: Private message to Airbnb */}
           <AppText
-            text="What else would you like us to know?*"
+            text={t('app.decline_step3_extra.what_else')}
             fontSize={28}
             type="Bold"
             mb={4}
@@ -91,7 +93,7 @@ const StepThree = () => {
             control={control as any}
             errors={errors}
             multiline
-            placeholder="I'm declining this reservation because..."
+            placeholder={t('app.decline_inquiry.decline_placeholder')}
             rules={{
               required: 'This field is required',
               minLength: {
@@ -115,7 +117,7 @@ const StepThree = () => {
             control={control as any}
             errors={errors}
             multiline
-            placeholder="I'm declining this reservation because..."
+            placeholder={t('app.decline_inquiry.decline_placeholder')}
             rules={{
               required: 'This field is required',
               minLength: {
@@ -129,13 +131,13 @@ const StepThree = () => {
         {/* Footer: Fixed at the bottom */}
         <View style={styles.footer}>
           <AppButton
-            title="Cancel"
+            title={t('app.decline_inquiry.cancel_btn')}
             variant="secondary"
             onPress={() => navigation.goBack()}
             mb={12}
           />
           <AppButton
-            title="Send and decline trip"
+            title={t('app.decline_inquiry.send_decline_btn')}
             loading={loading}
             backgroundColor="#21AA8F"
             onPress={handleSubmit(onDeclineSubmit)}
