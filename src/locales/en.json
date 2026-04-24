@@ -810,7 +810,9 @@
       "rental_revenue": "Rental Revenue",
       "occupancy": "Occupancy",
       "avg_stay_revenue": "Avg Stay Revenue",
-      "avg_length_stay": "Avg Length of Stay"
+      "avg_length_stay": "Avg Length of Stay",
+      "avg_daily_rate": "Avg Daily Rate",
+      "revPar":"RevPAR"
     },
     "billing": {
       "title": "Billing",

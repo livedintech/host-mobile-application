@@ -809,7 +809,9 @@
       "rental_revenue": "عائد الإيجار",
       "occupancy": "نسبة الإشغال",
       "avg_stay_revenue": "متوسط عائد الإقامة",
-      "avg_length_stay": "متوسط مدة الإقامة"
+      "avg_length_stay": "متوسط مدة الإقامة",
+      "avg_daily_rate": "متوسط السعر اليومي",
+      "revPar": "الإيراد لكل غرفة متاحة"
     },
     "billing": {
       "title": "الفواتير",

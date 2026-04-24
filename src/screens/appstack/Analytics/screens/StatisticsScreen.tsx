@@ -34,6 +34,8 @@ const StatisticsScreen = () => {
     applyFilters,
     resetFilters,
     filters,
+    refetchSummary,
+    formatNumber,
   } = AnalyticContainers();
 
   const getStatData = (key: string) => {
@@ -48,15 +50,16 @@ const StatisticsScreen = () => {
 
   const revenue = getStatData('rental_revenue');
   const occupancy = getStatData('occupancy');
-  const avgStay = getStatData('avg_stay_revenue');
+  const adr = getStatData('adr');
   const stayLength = getStatData('avg_length_of_stay');
+  const revpar = getStatData('revpar');
 
   // Logic for pull-to-refresh
   const [isRefreshing, setIsRefreshing] = useState(false);
   const onHandleRefresh = async () => {
     setIsRefreshing(true);
     // Trigger any refetch logic here if available in your container
-    // await refetchAnalytics();
+    await refetchSummary();
     setTimeout(() => setIsRefreshing(false), 2000);
   };
 
@@ -106,7 +109,7 @@ const StatisticsScreen = () => {
           <View style={styles.grid}>
             <StatCard
               title={t('app.analytics.rental_revenue')}
-              value={`SAR ${revenue.value}`}
+              value={`SAR ${formatNumber(revenue.value)}`}
               subText="vs last month"
               trend={revenue.delta_pct}
               icon="walletIcon"
@@ -114,22 +117,29 @@ const StatisticsScreen = () => {
             <StatCard
               title={t('app.analytics.occupancy')}
               value={`${occupancy.value}%`}
-              subText="vs last 30 days"
+              subText="vs last month"
               trend={occupancy.delta_pct}
               icon="occupancy"
             />
             <StatCard
-              title={t('app.analytics.avg_stay_revenue')}
-              value={`SAR ${avgStay.value}`}
-              subText="vs last 30 days"
-              trend={avgStay.delta_pct}
+              title={t('app.analytics.avg_daily_rate')}
+              value={`SAR ${formatNumber(adr.value)}`}
+              subText="vs last month"
+              trend={adr.delta_pct}
               icon="avg_stay_revenue"
             />
             <StatCard
               title={t('app.analytics.avg_length_stay')}
               value={`${stayLength.value} Nights`}
-              subText="vs last 30 days"
+              subText="vs last month"
               trend={stayLength.delta_pct}
+              icon="avg_length_of_stay"
+            />
+            <StatCard
+              title={t('app.analytics.revPar')}
+              value={`SAR ${formatNumber(revpar.value)}`}
+              subText="vs last month"
+              trend={revpar.delta_pct}
               icon="avg_length_of_stay"
             />
           </View>

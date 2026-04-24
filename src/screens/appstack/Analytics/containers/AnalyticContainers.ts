@@ -32,6 +32,7 @@ const AnalyticContainers = () => {
     { label: 'Airbnb', value: 'airbnb' },
     { label: 'Booking.com', value: 'bcom' },
     { label: 'Gathern', value: 'gathern' },
+    { label: 'Direct', value: 'dashboard' },
   ];
 
   const dateOptions = [
@@ -74,6 +75,16 @@ const AnalyticContainers = () => {
     }),
   });
 
+
+  const formatNumber = (num: number | string) => {
+  const value = typeof num === 'string' ? parseFloat(num) : num;
+  if (isNaN(value)) return '0.00';
+  
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
   console.log("AnalyticChannelChartDatadatabbb",AnalyticChannelChartData)
 
   return {
@@ -93,7 +104,8 @@ const AnalyticContainers = () => {
     AnalyticChannelChartData,
     isLoadingAnalyticsChannelChart,
     listingsLoading,
-    refetchPerformance
+    refetchPerformance,
+    formatNumber
   };
 };
 
