@@ -47,9 +47,10 @@ const ReservationCard = ({
   const InfoRow = ({ icon, label, value, valueColor = '#4A4A4A' }: any) => {
     // Check if it's the booking icon to apply a smaller scale
     const isPlatformIcon =
-      icon === 'bookingCom' ||
-      icon === 'reservationlivedin' ||
-      icon === 'reservationairbnb';
+      icon === 'bookingCom' 
+      // ||
+      // icon === 'reservationlivedin' ||
+      // icon === 'reservationairbnb';
 
     return (
       <View style={styles.infoRowContainer}>
@@ -58,7 +59,7 @@ const ReservationCard = ({
             path={icon}
             // If it's a platform logo, make it smaller (e.g., 20)
             // so it doesn't touch the edges of the 34px box
-            size={isPlatformIcon ? ms(32) : ms(32)}
+            size={isPlatformIcon ? ms(16) : ms(32)}
           />
         </View>
         <View style={styles.textContainer}>

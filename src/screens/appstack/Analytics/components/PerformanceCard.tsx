@@ -81,7 +81,7 @@ const PerformanceCard = ({ data }: any) => {
         </GlassCard>
       </View>
 
-      <View style={styles.bottomRow}>
+      {/* <View style={styles.bottomRow}>
         <GlassCard
           width="auto"
           style={[styles.assessmentGlass, { backgroundColor: style.bg }]}
@@ -112,7 +112,7 @@ const PerformanceCard = ({ data }: any) => {
             />
           </View>
         </GlassCard>
-      </View>
+      </View> */}
     </GlassCard>
   );
 };

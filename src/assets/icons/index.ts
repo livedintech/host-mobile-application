@@ -308,6 +308,7 @@ import trendUp from './trendUp.svg';
 import trendDown from './trendDown.svg';
 import towerBuilding from './towerBuilding.svg';
 import noAccountFound from './noAccountFound.svg';
+import channelPerformanceIcon from './channelPerformanceIcon.svg';
 
 export const icons = {
   noAccountFound,
@@ -624,5 +625,6 @@ export const icons = {
   cleanliness,
   comfort,
   facilities,
-  staff
+  staff,
+  channelPerformanceIcon
 };

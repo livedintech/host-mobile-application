@@ -86,14 +86,14 @@ const FilterModal = ({
         />
 
 
-        <MultiSelectDropdownField
+        {/* <MultiSelectDropdownField
           label="Date Range"
           name="date"
           control={control}
           errors={errors}
           data={dateOptions}
           placeholder="Select Date"
-        />
+        /> */}
 
         <View style={styles.buttonRow}>
           <AppButton

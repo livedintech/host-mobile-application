@@ -42,8 +42,8 @@ const MENU_OPTIONS = [
 ];
 
 const ReviewDetailScreen = ({ route }: any) => {
-    const { t } = useTranslation();
-  
+  const { t } = useTranslation();
+
   const initialBookingData = route?.params?.bookingData || {};
   const booking_id = route?.params?.booking_id;
   const [apiData, setApiData] = useState<any>(null);
@@ -703,7 +703,11 @@ const ReviewDetailScreen = ({ route }: any) => {
 
             {property?.door_code ? (
               <View style={styles.bookingRow}>
-                <AppText text={t('app.review_detail.door_code')} fontSize={14} color={Colors.BLACK} />
+                <AppText
+                  text={t('app.review_detail.door_code')}
+                  fontSize={14}
+                  color={Colors.BLACK}
+                />
                 <AppText
                   text={property.door_code}
                   fontSize={13}
@@ -718,7 +722,11 @@ const ReviewDetailScreen = ({ route }: any) => {
         {property?.booking_platform !== 'host_booking' && (
           <View style={[styles.card, { display: 'none' }]}>
             <View style={styles.cardHeader}>
-              <AppText text={t('app.review_detail.ai_chat_summary')} type="Bold" fontSize={18} />
+              <AppText
+                text={t('app.review_detail.ai_chat_summary')}
+                type="Bold"
+                fontSize={18}
+              />
               <View style={[styles.iconCircle, { backgroundColor: '#F0F7F6' }]}>
                 <Svgicons path="aiChat" size={20} />
               </View>
@@ -848,61 +856,21 @@ const ReviewDetailScreen = ({ route }: any) => {
                 </View>
               )}
               <View style={styles.buttonRow}>
-                {/* <AppButton
-                  disabled={!isCheckedOut}
-                  title={showDetails ? 'Hide Details' : 'View Details'}
-                  fontSize={14}
-                  onPress={() => setShowDetails(!showDetails)}
-                  backgroundColor={
-                    isCheckedOut ? 'rgba(255, 255, 255, 0.6)' : ''
-                  }
-                  color={isCheckedOut ? Colors.BLACK : ''}
-                  style={[
-                    styles.rateGuestBtn,
-                    {
-                      borderWidth: 1,
-                      borderColor: isCheckedOut
-                        ? '#E0E0E0'
-                        : Colors.SMOOTH_GREY,
-                    },
-                    // !isCheckedOut && styles.disabledBtn,
-                  ]}
-                  borderRadius={100}
-                /> */}
-
-                <AppButton
-                  // disabled={guest?.rating == 0}
-                  disabled={!isCheckedOut}
-                  title={'View Details'}
-                  fontSize={14}
-                  onPress={() =>
-                    navigate(
-                      NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_VIEW_SCREEN,
-                      {
-                        id: guest.review_id,
-                      },
-                    )
-                  }
-                  backgroundColor={
-                     'rgba(255, 255, 255, 0.6)'
-                  }
-                  color={ Colors.BLACK }
-                  style={{width:'100%'}}
-                  // style={[
-                  //   styles.rateGuestBtn,
-                  //   {
-                  //     borderWidth: 1,
-                  //     borderColor:  '#E0E0E0'
-                  //   },
-                  //   !isCheckedOut && styles.disabledBtn,
-                  // ]}
-                  borderRadius={100}
-                />
-                {property.booking_platform !== 'bookingcom' && guest?.host_review?.total_rating==0 && (
+                <View style={{ flex: 1 }}>
                   <AppButton
+                    // disabled={guest?.rating == 0}
                     disabled={!isCheckedOut}
+                    title={'View Details'}
                     fontSize={14}
-                    title={t('app.review_detail.rate_guest_btn')}
+                    onPress={() =>
+                      navigate(
+                        NavigationRoutes.APP_STACK
+                          .REVIEW_MANAGEMENT_VIEW_SCREEN,
+                        {
+                          id: guest.review_id,
+                        },
+                      )
+                    }
                     backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
                     color={isCheckedOut ? Colors.WHITE : ''}
                     style={[
@@ -910,14 +878,29 @@ const ReviewDetailScreen = ({ route }: any) => {
                       !isCheckedOut && styles.disabledBtn,
                     ]}
                     borderRadius={100}
-                    onPress={() =>
-                      navigate(
-                        NavigationRoutes.APP_STACK
-                          .REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
-                      )
-                    }
                   />
-                )}
+                </View>
+                {property.booking_platform !== 'bookingcom' &&
+                  guest?.host_review?.total_rating == 0 && (
+                    <AppButton
+                      disabled={!isCheckedOut}
+                      fontSize={14}
+                      title={t('app.review_detail.rate_guest_btn')}
+                      backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
+                      color={isCheckedOut ? Colors.WHITE : ''}
+                      style={[
+                        styles.rateGuestBtn,
+                        !isCheckedOut && styles.disabledBtn,
+                      ]}
+                      borderRadius={100}
+                      onPress={() =>
+                        navigate(
+                          NavigationRoutes.APP_STACK
+                            .REVIEW_MANAGEMENT_GUEST_RATE_SCREEN,
+                        )
+                      }
+                    />
+                  )}
               </View>
             </View>
           </View>
@@ -947,7 +930,11 @@ const ReviewDetailScreen = ({ route }: any) => {
         {property?.booking_platform !== 'host_booking' && (
           <View style={[styles.card, { paddingBottom: vs(10) }]}>
             <View style={styles.cardHeader}>
-              <AppText text={t('app.review_detail.payment_breakdown')} type="Medium" fontSize={18} />
+              <AppText
+                text={t('app.review_detail.payment_breakdown')}
+                type="Medium"
+                fontSize={18}
+              />
               <View style={styles.iconCircle}>
                 <Svgicons path="paymentIconNew2" size={24} />
               </View>
