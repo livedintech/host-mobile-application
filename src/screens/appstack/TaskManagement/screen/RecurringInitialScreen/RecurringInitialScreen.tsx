@@ -55,7 +55,7 @@ const RecurringInitialScreen = () => {
           {/* Action Button */}
           <View style={styles.footer}>
             <AppButton
-              title="Next"
+              title={t('app.task_management.next')}
               backgroundColor={Colors.PRIMARY_TEAL}
               borderColor={Colors.PRIMARY_TEAL}
               color={Colors.WHITE}

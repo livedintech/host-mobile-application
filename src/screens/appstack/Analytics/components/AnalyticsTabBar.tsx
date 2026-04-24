@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Colors } from '@/theme/colors';
@@ -19,13 +20,14 @@ const AnalyticsTabBar = ({
   control,
   errors,
 }: any) => {
+  const { t } = useTranslation();
   if (!control) return null;
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <AppText
-          text="Channel Performance"
+          text={t('app.analytics.channel_performance')}
           fontSize={26}
           type="Bold"
           color={Colors.BLACK}

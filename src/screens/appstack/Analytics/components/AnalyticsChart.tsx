@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
@@ -7,6 +8,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
 const AnalyticsChart = ({ activeTab, data, total }: any) => {
+  const { t } = useTranslation();
   const isReservation = activeTab === 'reservation';
   console.log("data::",data)
 
@@ -47,7 +49,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                 donut radius={55} innerRadius={42}
                 centerLabelComponent={() => (
                   <View style={{ alignItems: 'center' }}>
-                    <AppText text="Total" fontSize={11} color={Colors.DIM_GREY} />
+                    <AppText text={t('app.analytics.total')} fontSize={11} color={Colors.DIM_GREY} />
                     <AppText text={total.toString()} type="Bold" fontSize={18} color={Colors.BLACK} />
                   </View>
                 )}

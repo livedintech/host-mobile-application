@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -11,6 +12,7 @@ import { ListingOption } from '@/types/api/AnalyticsTypes';
 
 
 const AnalyticsHeader = (props: any) => {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
 
   console.log("modalVisible",modalVisible)
@@ -19,7 +21,7 @@ const AnalyticsHeader = (props: any) => {
     <View style={styles.row}>
       <View style={styles.titleGroup}>
         <AppText
-          text="Analytics"
+          text={t('app.analytics.statistics')}
           fontSize={28}
           type="Bold"
           color={Colors.BRUNSWICK_GREEN}
@@ -32,7 +34,7 @@ const AnalyticsHeader = (props: any) => {
         onPress={() => setModalVisible(true)}
       >
         <AppText
-          text="Filter"
+          text={t('app.analytics.filter')}
           fontSize={14}
           type="Medium"
           color={Colors.BRUNSWICK_GREEN}

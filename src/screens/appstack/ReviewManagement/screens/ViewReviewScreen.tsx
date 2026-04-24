@@ -195,7 +195,7 @@ const ViewReviewScreen = () => {
       {isBookingCom &&  <View style={{ marginBottom: 20 }}>
           {/* Positive Section */}
           <AppText
-            text="What a guest likes about us?"
+            text={t('app.view_review.likes_label')}
             fontSize={16}
             type="Bold"
             color={Colors.BLACK}
@@ -215,7 +215,7 @@ const ViewReviewScreen = () => {
 
           {/* Negative Section */}
           <AppText
-            text="What a guest doesn’t like about us?"
+            text={t('app.view_review.dislikes_label')}
             fontSize={16}
             type="Bold"
             color={Colors.BLACK}

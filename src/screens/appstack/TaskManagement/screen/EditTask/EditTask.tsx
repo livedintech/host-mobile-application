@@ -67,6 +67,8 @@ const formatDateDisplay = (dateString: string) => {
   }
 };
 const EditTask = ({ route }: any) => {
+    const { t } = useTranslation();
+  
   const { onDeleteTask, isDeleting, assigneeOptions, onUpdateAssignee } = EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
   const [isEditMode, setIsEditMode] = useState(false);

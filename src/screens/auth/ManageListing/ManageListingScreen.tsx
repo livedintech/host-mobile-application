@@ -49,8 +49,8 @@ const ManageListingScreen = () => {
             {/* Main Title */}
             <View style={styles.titleSection}>
               <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
-                {t('auth.manage_listing.title_1')}{' '}
-                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>{t('auth.manage_listing.title_2')}</AppText> {t('auth.manage_listing.title_3')}
+                {t('auth.manage_listing.title_1')}
+                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>{t('auth.manage_listing.title_2')}</AppText>{t('auth.manage_listing.title_3')}
               </AppText>
             </View>
 

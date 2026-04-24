@@ -263,7 +263,7 @@ const AllTask = () => {
         <View style={styles.actionFooter}>
           <AppButton
             variant='secondary'
-            title="Setup Cleaning Schedule"
+            title={t('app.task_management.setup_cleaning')}
             onPress={() => {
               resetTaskStore();
               navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
@@ -273,7 +273,7 @@ const AllTask = () => {
           />
 
           <AppButton
-            title="Create Task"
+            title={t('app.task_management.create_task')}
             onPress={() => {
               resetTaskStore();
               navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING);
@@ -325,7 +325,7 @@ const AllTask = () => {
               </View>
 
               <AppButton
-                title="Apply"
+                title={t('app.task_management.apply')}
                 mt={30}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}

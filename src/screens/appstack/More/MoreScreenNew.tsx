@@ -66,11 +66,11 @@ const MoreScreen = () => {
           title={t('app.more.account_section')}
           headerIcon="userOutline"
           items={[
-            { title: 'Listing Management', icon: 'direct', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS) },
-            { title: 'Booking Platform Management', icon: 'bookingIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING) },
-            { title: 'User Management', icon: 'userManagementIconNew', onPress: () => navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT) },
-            { title: 'Review Management', icon: 'reviewManagementIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT) },
-            { title: 'Smart Lock Management', icon: 'lockIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS) },
+            { title: t('app.more.listing_management'), icon: 'direct', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS) },
+            { title: t('app.more.booking_platform'), icon: 'bookingIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING) },
+            { title: t('app.more.user_management'), icon: 'userManagementIconNew', onPress: () => navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT) },
+            { title: t('app.more.review_management'), icon: 'reviewManagementIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT) },
+            { title: t('app.more.smart_lock'), icon: 'lockIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS) },
           ]}
         />
 
@@ -78,9 +78,9 @@ const MoreScreen = () => {
           title={t('app.more.analytics_section')}
           headerIcon="analyticsOutline"
           items={[
-            { title: 'Statistics', icon: 'statsIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN) },
-            { title: 'Listing Performance', icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE) },
-            { title: 'Channel Performance', icon: 'channelPerformanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE) },
+            { title: t('app.more.statistics'), icon: 'statsIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN) },
+            { title: t('app.more.listing_performance'), icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE) },
+            { title: t('app.more.channel_performance'), icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE) },
           ]}
         />
 

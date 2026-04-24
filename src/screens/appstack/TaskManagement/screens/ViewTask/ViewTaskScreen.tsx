@@ -256,7 +256,7 @@ const EditTaskScreen = () => {
 
         <View style={styles.checklistTitleRow}>
           <AppText
-            text={'Post Activity Preview'}
+            text={t('app.edit_task_screen.post_activity')}
             fontSize={23}
             type="Bold"
             color={Colors.PINE_FOREST}

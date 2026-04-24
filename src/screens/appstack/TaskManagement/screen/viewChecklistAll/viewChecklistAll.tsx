@@ -169,7 +169,7 @@ const ViewChecklistAll = () => {
           {buttonStatus && (
             <View style={[styles.footer, { marginBottom: insets.bottom || 20 }]}>
               <AppButton
-                title="Next"
+                title={t('app.task_management.next')}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 color={Colors.WHITE}
                 borderColor={Colors.PRIMARY_TEAL}
@@ -219,7 +219,7 @@ const ViewChecklistAll = () => {
               </View>
 
               <AppButton
-                title="Add"
+                title={t('app.task_management.add')}
                 mt={25}
                 backgroundColor={Colors.PRIMARY_TEAL}
                 borderColor={Colors.PRIMARY_TEAL}

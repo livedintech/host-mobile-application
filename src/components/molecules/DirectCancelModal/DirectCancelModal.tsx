@@ -56,7 +56,7 @@ const DirectCancelModal = ({
 
           <View style={styles.buttonRow}>
             <AppButton
-              title="Cancel"
+              title={t('app.direct_cancel_modal.cancel_btn')}
               // variant="secondary"
               onPress={onClose}
               style={styles.flexButton}
@@ -67,7 +67,7 @@ const DirectCancelModal = ({
             <View style={{ width: s(12) }} />
 
             <AppButton
-              title="Yes, Cancel"
+              title={t('app.direct_cancel_modal.yes_cancel')}
               backgroundColor="#09A289" // Error red
               onPress={onConfirm}
               loading={isLoading}

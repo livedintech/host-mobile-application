@@ -19,6 +19,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import DeviceInfo from 'react-native-device-info';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
+import Metrics from '@/utility/Metrics';
 
 
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
@@ -36,115 +37,105 @@ const LoginWithPhoneScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-        <KeyboardAwareScrollView
-          style={styles.keyboardAvoidingView}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.content}>
-            <View style={styles.headerSection}>
-              <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
-                {t('auth.login.title_1')}
-              </AppText>
-              <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
-                {t('auth.login.title_2')}
-              </AppText>
-              <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL} lineHeight={40}>
-               {t('auth.login.title_3')}
-              </AppText>
-            </View>
+      <KeyboardAwareScrollView
+        style={{ flex: 1,  }}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.container}>
+          <View style={styles.headerSection}>
+            <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
+              {t('auth.login.title_1')}
+            </AppText>
+            <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
+              {t('auth.login.title_2')}
+            </AppText>
+            <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL} lineHeight={40}>
+              {t('auth.login.title_3')}
+            </AppText>
+          </View>
 
-            <View style={styles.inputWrapper}>
-              <PhoneInputField
-                label={t('auth.login.phone_label')}
-                control={control}
-                errors={errors}
-                countryFieldName="country"
-                phoneFieldName="phoneNumber"
-              />
-            </View>
-
-            <View style={styles.rememberMeRow}>
-              <View style={styles.rememberMeContainer}>
-                <Checkbox
-                  isChecked={rememberMe}
-                  onPress={() => setRememberMe(!rememberMe)}
-                />
-                <AppText
-                  text={t('auth.login.remember_me')}
-                  color={Colors.DARK_1C}
-                  type="Medium"
-                  fontSize={12}
-                  ml={s(8)}
-                />
-              </View>
-            </View>
-
-            <AppButton
-              title={t('auth.login.next')}
-              onPress={handleSubmit(onSubmit)}
-              loading={isLoading}
-              backgroundColor={FIGMA_TEAL}
-              color={Colors.WHITE}
-              borderRadius={100}
-              mt={vs(30)}
-              mb={vs(30)}
-              fontSize={16}
-              type="Regular"
+          <View style={styles.inputWrapper}>
+            <PhoneInputField
+              label={t('auth.login.phone_label')}
+              control={control}
+              errors={errors}
+              countryFieldName="country"
+              phoneFieldName="phoneNumber"
             />
+          </View>
 
-            <View style={styles.separatorRow}>
-              <View style={styles.line} />
-              <AppText text={t('common.or')} fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
-              <View style={styles.line} />
-            </View>
-
-            <View style={styles.socialWrapper}>
-              <ButtonView
-                style={styles.socialButton}
-                onPress={handleGoogleSignIn}
-                activeOpacity={0.8}
-                mb={vs(12)}
-              >
-                <Svgicons path="google" size={18} />
-                <AppText text={t('auth.login.continue_google')} fontSize={14} ml={10} color={Colors.BLACK} />
-              </ButtonView>
-              {Platform.OS === 'ios' && (
-                <ButtonView
-                  style={styles.socialButton}
-                  onPress={handleAppleSignIn}
-                  activeOpacity={0.8}>
-                  <Svgicons path="apple" size={14} />
-                  <AppText text={t('auth.login.continue_apple')} fontSize={14} ml={10} color={Colors.BLACK} />
-                </ButtonView>
-              )}
+          <View style={styles.rememberMeRow}>
+            <View style={styles.rememberMeContainer}>
+              <Checkbox
+                isChecked={rememberMe}
+                onPress={() => setRememberMe(!rememberMe)}
+              />
+              <AppText
+                text={t('auth.login.remember_me')}
+                color={Colors.DARK_1C}
+                type="Medium"
+                fontSize={12}
+                ml={s(8)}
+              />
             </View>
           </View>
 
-          <AppText
-            textAlign='center'
-            style={styles.versionText}
-            text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`}
+          <AppButton
+            title={t('auth.login.next')}
+            onPress={handleSubmit(onSubmit)}
+            loading={isLoading}
+            backgroundColor={FIGMA_TEAL}
+            color={Colors.WHITE}
+            borderRadius={100}
+            mt={vs(30)}
+            mb={vs(30)}
+            fontSize={16}
+            type="Regular"
           />
 
-        </KeyboardAwareScrollView>
-      </SafeAreaView>
+          <View style={styles.separatorRow}>
+            <View style={styles.line} />
+            <AppText text={t('common.or')} fontSize={14} color={Colors.NIGHT_OPACITY} mx={15} />
+            <View style={styles.line} />
+          </View>
+
+          <View style={styles.socialWrapper}>
+            <ButtonView
+              style={styles.socialButton}
+              onPress={handleGoogleSignIn}
+              activeOpacity={0.8}
+              mb={vs(12)}
+            >
+              <Svgicons path="google" size={18} />
+              <AppText text={t('auth.login.continue_google')} fontSize={14} ml={10} color={Colors.BLACK} />
+            </ButtonView>
+            {Platform.OS === 'ios' && (
+              <ButtonView
+                style={styles.socialButton}
+                onPress={handleAppleSignIn}
+                activeOpacity={0.8}>
+                <Svgicons path="apple" size={14} />
+                <AppText text={t('auth.login.continue_apple')} fontSize={14} ml={10} color={Colors.BLACK} />
+              </ButtonView>
+            )}
+          </View>
+        </View>
+
+        <AppText
+          textAlign='center'
+          style={styles.versionText}
+          text={`v${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`}
+        />
+      </KeyboardAwareScrollView>
+
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  keyboardAvoidingView: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
-  content: {
-    flex: 1,
-    paddingHorizontal: s(24),
-    paddingBottom: vs(10),
-    paddingTop: vs(80)
-  },
+  container: { flex: 1, paddingHorizontal: Metrics.baseMargin, paddingTop: Platform.OS === 'ios' ? vs(60) : vs(40), },
   headerSection: {
     marginBottom: vs(25)
   },

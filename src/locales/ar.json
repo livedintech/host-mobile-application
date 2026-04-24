@@ -1,8 +1,16 @@
 {
   "common": {
     "lang_switch": "English",
-    "or": "Or"
+    "or": "Or",
+    "tab": {
+      "home": "الرئيسية",
+      "calendar": "التقويم",
+      "inbox": "الرسائل",
+      "tasks": "المهام",
+      "more": "المزيد"
+    }
   },
+
   "auth": {
     "login": {
       "title_1": "يرجى إدخال رقم هاتفك",
@@ -236,11 +244,9 @@
       "hello": "مرحباً {{name}}!",
       "good_morning": "صباح الخير",
       "lang_switch": "English",
-
       "greeting_hi": "مرحباً",
       "greeting_old_end": "لنبدأ بإعداد كل ما تحتاجه",
       "greeting_new_end": "هذه أهم الأمور التي تحتاج انتباهك اليوم",
-
       "recommended_next": "المقترحات التالية",
       "your_updates": "تحديثاتك",
       "create_staff": "إضافة مستخدم للموظفين",
@@ -251,7 +257,6 @@
       "for_properties": "لـ {{count}}+ عقارات",
       "manage_listings": "إدارة العقارات",
       "manage_listings_sub": "إنشاء / إضافة عقارات جديدة",
-
       "inbox": "الرسائل",
       "inbox_sub": "{{count}} رسائل",
       "checkins": "إجمالي تسجيلات الدخول",
@@ -264,12 +269,10 @@
       "booking_requests_sub": "{{count}} طلبات قيد الانتظار",
       "analytics": "التحليلات",
       "analytics_sub": "نسبة الإشغال هذا الأسبوع {{count}}%",
-
       "connect": "ربط {{name}}",
       "import_listings": "استيراد العقارات من {{name}}",
       "create_listing": "إضافة عقار",
       "add_listing_manually": "إضافة عقار جديد يدوياً",
-
       "complete_pending": "أكمل نموذج العقار المعلق",
       "export_pending": "صدّر عقارك المعلق"
     },
@@ -281,8 +284,7 @@
       "knowledge_base": "ماذا يعرف الذكاء الاصطناعي بالفعل؟",
       "create_new": "إنشاء رد جديد",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف هذه القاعدة؟",
-      "confirm_btn": "تأكيد",
-      "cancel_btn": "إلغاء"
+      "confirm_btn": "تأكيد"
     },
     "no_ai_auto_reply": {
       "title": "لم يتم العثور على رد آلي",
@@ -777,7 +779,15 @@
       "logout_confirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
       "logout_subtitle": "ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى حسابك.",
       "cancel": "إلغاء",
-      "confirm": "تأكيد"
+      "confirm": "تأكيد",
+      "listing_management": "إدارة العقارات",
+      "booking_platform": "إدارة منصات الحجز",
+      "user_management": "إدارة المستخدمين",
+      "review_management": "إدارة التقييمات",
+      "smart_lock": "إدارة الأقفال الذكية",
+      "statistics": "الإحصائيات",
+      "listing_performance": "أداء العقار",
+      "channel_performance": "أداء القناة"
     },
     "pre_activity_screen": {
       "title": "معاينة النشاط المسبق",
@@ -804,6 +814,15 @@
       "create_listing": "إنشاء عقار جديد"
     },
     "analytics": {
+      "filter": "فلتر",
+      "ai_insights": "رؤى الذكاء الاصطناعي: ",
+      "channel_performance": "أداء القناة",
+      "revenue": "الإيراد",
+      "adr": "متوسط سعر الغرفة",
+      "total": "الإجمالي",
+      "apply": "تطبيق",
+      "reset": "إعادة تعيين",
+      "apply_filter": "تطبيق الفلتر",
       "listing_performance": "أداء العقار",
       "statistics": "الإحصائيات",
       "rental_revenue": "عائد الإيجار",
@@ -825,7 +844,7 @@
       "set_default": "تعيين كافتراضي",
       "add_new": "إضافة طريقة دفع جديدة"
     },
-        "task_management": {
+    "task_management": {
       "create_task_title": "إنشاء مهمة جديدة",
       "task_name_label": "اسم المهمة:",
       "task_name_placeholder": "أدخل اسم المهمة",
@@ -889,6 +908,8 @@
       "recurring_title": "إعداد جدول تنظيف متكرر",
       "recurring_body": "اختر العقار وعيّن عضو الفريق. يُعدّ جدول المهام هذا مرة واحدة وسيظهر تلقائياً لكل حجز جديد.",
       "create_non_cleaning_desc": "أنشئ مهمة لعقارك. مهام التنظيف متكررة بشكل افتراضي. للمهام الأخرى، اختر تاريخاً وحدد وقت البدء والانتهاء.",
+      "add": "إضافة",
+      "apply": "تطبيق",
       "user_management_link": "إدارة المستخدمين."
     },
     "listing_screen": {
@@ -899,6 +920,8 @@
       "title": "الحساب"
     },
     "manage_listing_screen": {
+      "add_listing": "إضافة عقار جديد",
+      "create_listing": "إنشاء عقار جديد",
       "listed": "منشور"
     },
     "decline_step3_extra": {
@@ -907,7 +930,7 @@
     "conservative_chart": {
       "result": "النتيجة:"
     },
-        "chat_detail": {
+    "chat_detail": {
       "automated_message": "رسالة آلية",
       "reservation_details": "تفاصيل الحجز",
       "view_calendar": "عرض التقويم",
@@ -969,6 +992,8 @@
     "view_review": {
       "overall_rating": "التقييم الإجمالي",
       "guest_property_ratings": "تقييمات الضيف للعقار",
+      "likes_label": "ما الذي يعجب الضيف فينا؟",
+      "dislikes_label": "ما الذي لا يعجب الضيف فينا؟",
       "your_reply": "ردّك",
       "no_response": "لا يوجد رد حتى الآن...",
       "save_exit": "حفظ والخروج"
@@ -1086,6 +1111,8 @@
     },
     "direct_cancel_modal": {
       "confirm_text": "هل أنت متأكد أنك تريد إلغاء الحجز؟",
+      "cancel_btn": "إلغاء",
+      "yes_cancel": "نعم، إلغاء",
       "subtitle": "بمجرد الإلغاء، سيتم حذف هذا الحجز"
     },
     "create_booking_sheet": {
@@ -1100,6 +1127,10 @@
       "take_picture": "التقاط صورة جديدة",
       "select_media": "اختر وسائط",
       "gallery": "المعرض (صور وفيديو)",
+      "add_more": "إضافة المزيد",
+      "set_cover": "اجعل هذه الصورة صورة الغلاف",
+      "delete_picture": "حذف الصورة",
+      "cancel": "إلغاء",
       "take_photo": "التقاط صورة"
     },
     "ali_widget": {
@@ -1206,8 +1237,7 @@
       "step4_message_label": "أخبر {{name}} لماذا تلغي",
       "guest_fallback": "الضيف",
       "step4_placeholder": "أحتاج إلى إلغاء حجزك لأن...",
-      "keep_btn": "الاحتفاظ بالحجز",
-      "cancel_btn": "إلغاء الحجز"
+      "keep_btn": "الاحتفاظ بالحجز"
     },
     "change_password": {
       "title": "تغيير كلمة المرور",
@@ -1235,7 +1265,6 @@
       "upload_photo": "رفع صورة",
       "gallery_btn": "اختر من المعرض",
       "camera_btn": "التقط صورة",
-      "cancel_btn": "إلغاء",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف حسابك؟"
     },
     "property_disclosure": {
@@ -1272,7 +1301,6 @@
     },
     "decline_inquiry": {
       "decline_placeholder": "أنا أرفض هذا الحجز لأن...",
-      "cancel_btn": "إلغاء",
       "send_decline_btn": "إرسال ورفض الطلب"
     },
     "reservation_details": {
@@ -1325,8 +1353,7 @@
       "description": "أنشئ ردوداً محفوظة لإعادة استخدام الرسائل الشائعة. استخدم الاختصارات في المحادثات لإدراجها بسرعة.",
       "create_btn": "إنشاء رد محفوظ جديد",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف هذا الرد؟",
-      "confirm_btn": "تأكيد",
-      "cancel_btn": "إلغاء"
+      "confirm_btn": "تأكيد"
     },
     "booking_request_card": {
       "platform": "منصة الحجز",

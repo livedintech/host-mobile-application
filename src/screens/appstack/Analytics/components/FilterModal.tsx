@@ -64,7 +64,7 @@ const FilterModal = ({
       style={styles.centeredModal}
     >
       <View style={styles.modalContent}>
-        <AppText text="Apply Filter" fontSize={22} type="Bold" textAlign="center" mb={20} color={Colors.PINE_FOREST} />
+        <AppText text={t('app.analytics.apply_filter')} fontSize={22} type="Bold" textAlign="center" mb={20} color={Colors.PINE_FOREST} />
 
         <MultiSelectDropdownField
           label="Listings"
@@ -97,7 +97,7 @@ const FilterModal = ({
 
         <View style={styles.buttonRow}>
           <AppButton
-            title="Reset"
+            title={t('app.analytics.reset')}
             onPress={onReset}
             style={{ flex: 1, marginRight: 10 }}
             backgroundColor={Colors.WHITE}
@@ -106,7 +106,7 @@ const FilterModal = ({
           />
 
           <AppButton
-            title="Apply Filter"
+            title={t('app.analytics.apply_filter')}
             onPress={handleSubmit(onApply)}
             style={{ flex: 1,  }}
             backgroundColor={Colors.PRIMARY_TEAL}

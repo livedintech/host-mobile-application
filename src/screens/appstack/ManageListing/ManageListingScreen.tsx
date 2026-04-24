@@ -144,7 +144,7 @@ const ManageListingScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            title="Add New Listing"
+            title={t('app.manage_listing_screen.add_listing')}
             onPress={onCreateNewListing}
             disabled={isSupervisor}
             fontSize={16}
@@ -152,7 +152,7 @@ const ManageListingScreen = () => {
             variant='secondary'
           />
           <AppButton
-            title="Create New Listing"
+            title={t('app.manage_listing_screen.create_listing')}
             onPress={onCreateNew}
             disabled={isSupervisor}
             fontSize={16}
