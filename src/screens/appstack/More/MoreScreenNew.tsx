@@ -80,7 +80,7 @@ const MoreScreen = () => {
           items={[
             { title: 'Statistics', icon: 'statsIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN) },
             { title: 'Listing Performance', icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE) },
-            { title: 'Channel Performance', icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE) },
+            { title: 'Channel Performance', icon: 'channelPerformanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE) },
           ]}
         />
 

@@ -22,7 +22,7 @@ const StatCard = ({ title, value, subText, trend, icon }: StatCardProps) => {
     : 'graphBarDecreaseIcon';
 
   return (
-    <GlassCard>
+    <GlassCard style={{padding:20}}>
       {/* Header Section */}
       <View style={styles.headerRow}>
         <Svgicons path={icon} size={18} mr={6} />
@@ -45,7 +45,7 @@ const StatCard = ({ title, value, subText, trend, icon }: StatCardProps) => {
       </View>
 
       {/* Trend Badge - Now wrapped in GlassCard for the layered effect */}
-      <GlassCard width="auto" style={styles.badgeGlassContainer}>
+      {/* <GlassCard width="auto" style={styles.badgeGlassContainer}>
         <View style={styles.badgeContent}>
           <Svgicons
             path={isPositive ? 'trendUp' : 'trendDown'}
@@ -55,14 +55,13 @@ const StatCard = ({ title, value, subText, trend, icon }: StatCardProps) => {
           />
 
           <AppText
-            /* Logic: Adds + if positive, - if negative, then shows absolute value */
             text={`${isPositive ? '+' : '-'}${Math.abs(trend)}%`}
             fontSize={11}
             type="Bold"
             color={trendColor}
           />
         </View>
-      </GlassCard>
+      </GlassCard> */}
     </GlassCard>
   );
 };

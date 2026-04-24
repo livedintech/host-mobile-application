@@ -312,10 +312,7 @@ import facilities from './facilities.svg';
 import staff from './staff.svg';
 import towerBuilding from './towerBuilding.svg';
 import noAccountFound from './noAccountFound.svg';
-import cleanliness from './cleanliness.svg';
-import comfort from './comfort.svg';
-import facilities from './facilities.svg';
-import staff from './staff.svg';
+import channelPerformanceIcon from './channelPerformanceIcon.svg';
 
 export const icons = {
   noAccountFound,
@@ -632,5 +629,6 @@ export const icons = {
   cleanliness,
   comfort,
   facilities,
-  staff
+  staff,
+  channelPerformanceIcon
 };
