@@ -622,9 +622,5 @@ export const icons = {
   checkedCheckbox,
   trendUp,
   trendDown,
-  cleanliness,
-  comfort,
-  facilities,
-  staff,
   channelPerformanceIcon
 };
