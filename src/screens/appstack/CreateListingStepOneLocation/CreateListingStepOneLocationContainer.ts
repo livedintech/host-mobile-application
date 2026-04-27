@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // useCreateListingStepOneLocationContainer.ts
 import { useState, useRef, useEffect } from 'react';
 import { Region } from 'react-native-maps';
@@ -116,11 +117,11 @@ export default function useCreateListingStepOneLocationContainer() {
     if (!ok) {
       setIsInitializing(false);
       Alert.alert(
-        'Location Required',
-        'To create a listing, please enable location permission.',
+        i18n.t('app.location_step.location_permission_title'),
+        i18n.t('app.location_step.location_permission_message'),
         [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: i18n.t('common.cancel'), style: 'cancel' },
+          { text: i18n.t('common.toast.open_settings'), onPress: () => Linking.openSettings() },
         ]
       );
       return;
@@ -150,14 +151,14 @@ export default function useCreateListingStepOneLocationContainer() {
         setHasUserLocation(true);
         Toast.show({
           type: 'info',
-          text1: 'Using approximate location',
-          text2: 'Could not get exact location. You can search manually.',
+          text1: i18n.t('common.toast.approximate_location'),
+          text2: i18n.t('app.location_step.approximate_location_desc'),
         });
       },
       {
         enableHighAccuracy: true,
         timeout: 20000,
-        maximumAge: 10000, 
+        maximumAge: 10000,
         distanceFilter: 0,
       }
     );
@@ -168,11 +169,11 @@ export default function useCreateListingStepOneLocationContainer() {
     const ok = await requestPermission();
     if (!ok) {
       Alert.alert(
-        'Permission Denied',
-        'Enable location permission in Settings.',
+        i18n.t('app.location_step.permission_denied_title'),
+        i18n.t('app.location_step.permission_denied_message'),
         [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: i18n.t('common.cancel'), style: 'cancel' },
+          { text: i18n.t('common.toast.open_settings'), onPress: () => Linking.openSettings() },
         ]
       );
       return;
@@ -196,7 +197,7 @@ export default function useCreateListingStepOneLocationContainer() {
       error => {
         console.error('GPS error:', error);
         setIsLocating(false);
-        Alert.alert('Error', 'Unable to get current location. Check GPS settings.');
+        Alert.alert(i18n.t('common.toast.error'), i18n.t('app.location_step.gps_error'));
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
@@ -235,13 +236,13 @@ export default function useCreateListingStepOneLocationContainer() {
     if (!hasUserLocation) {
       Toast.show({
         type: 'error',
-        text1: 'Location required',
-        text2: 'Please allow location access or pick a location to continue.',
+        text1: i18n.t('common.toast.location_required'),
+text2: i18n.t('app.location_step.location_required_desc'),
       });
       return;
     }
     if (!currentAddress) {
-      Toast.show({ type: 'error', text1: 'Please wait for address to resolve.' });
+      Toast.show({ type: 'error',text1: i18n.t('app.location_step.address_wait') });
       return;
     }
     updateListing({ lat: region.latitude, lng: region.longitude });
@@ -256,8 +257,8 @@ export default function useCreateListingStepOneLocationContainer() {
     if (!hasUserLocation) {
       Toast.show({
         type: 'error',
-        text1: 'Location required',
-        text2: 'Please allow location access or pick a location to continue.',
+        text1: i18n.t('common.toast.location_required'),
+        text2: i18n.t('app.location_step.location_required_desc'),
       });
       return;
     }

@@ -7,10 +7,10 @@ import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDr
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
-const tabs = [
-  { id: 'reservation', label: 'Reservation' },
-  { id: 'revenue', label: 'Revenue' },
-  { id: 'nights', label: 'Nights' },
+const getTabs = (t: (key: string) => string) => [
+  { id: 'reservation', label: t('app.analytics.tab_reservation') },
+  { id: 'revenue', label: t('app.analytics.tab_revenue') },
+  { id: 'nights', label: t('app.analytics.tab_nights') },
 ];
 
 const AnalyticsTabBar = ({
@@ -21,6 +21,7 @@ const AnalyticsTabBar = ({
   errors,
 }: any) => {
   const { t } = useTranslation();
+  const tabs = getTabs(t);
   if (!control) return null;
 
   return (
@@ -69,9 +70,9 @@ const AnalyticsTabBar = ({
           name="listings"
           control={control}
           data={ListingOptions || []}
-          placeholder="Al Riyadh Apartment"
+          placeholder={t('app.analytics_filter.select_placeholder')}
           errors={errors || {}}
-          label="Select Listing"
+          label={t('app.analytics.select_listing_label')}
           labelStyle={{ color: Colors.BLACK, marginBottom: 8 }}
         />
       </View>

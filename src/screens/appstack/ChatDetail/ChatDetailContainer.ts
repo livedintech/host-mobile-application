@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // ChatContainer.tsx - Complete Code with improved scroll management
 import { useState, useCallback, useEffect, useRef } from 'react';
 import ImageCropPicker from 'react-native-image-crop-picker';
@@ -215,7 +216,7 @@ export const useChatContainer = () => {
     onError: error => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Something went wrong',
+        text1: error.message || i18n.t('common.toast.something_went_wrong'),
       });
     },
   });
@@ -239,13 +240,13 @@ export const useChatContainer = () => {
       });
       Toast.show({
         type: 'success',
-        text1: 'Message deleted successfully',
+        text1: i18n.t('app.chat_detail.message_deleted'),
       });
     },
     onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Failed to delete message',
+        text1: error.message || i18n.t('app.chat_detail.delete_failed'),
       });
       // Optional: refetch to sync UI if optimistic update failed
       refetch();

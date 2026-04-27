@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -55,12 +56,12 @@ export default function useLoginWithPhoneContainer() {
     onSuccess: () => {
       // Navigate ONLY after the OTP has been successfully sent
 
-     navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
-  isLoginScreen: false,
-  country_code: countryCca2,
-  phone_number: phoneNo,
-  phone_with_code: countryCallingCode,
-});
+      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
+        isLoginScreen: false,
+        country_code: countryCca2,
+        phone_number: phoneNo,
+        phone_with_code: countryCallingCode,
+      });
     },
     onError: (error: any) => {
       Toast.show({
@@ -79,10 +80,10 @@ export default function useLoginWithPhoneContainer() {
     mutationFn: CheckUserApi,
     onSuccess: () => {
       navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, {
-  country_code: countryCca2,
-  phone_number: phoneNo,
-  phone_with_code: countryCallingCode,
-});
+        country_code: countryCca2,
+        phone_number: phoneNo,
+        phone_with_code: countryCallingCode,
+      });
     },
     onError: error => {
       if (error?.message === 'User not found') {
@@ -97,7 +98,7 @@ export default function useLoginWithPhoneContainer() {
       } else {
         Toast.show({
           type: 'error',
-          text1: error.message || 'Something went wrong',
+          text1: error.message || i18n.t('common.toast.something_went_wrong'),
         });
       }
     },
@@ -112,10 +113,10 @@ export default function useLoginWithPhoneContainer() {
     setphoneNumber(fullPhone);
 
     checkUserPayload({
-  country_code: countryCca2,
-  phone_number: phoneNo,
-  phone_with_code: countryCallingCode,
-});
+      country_code: countryCca2,
+      phone_number: phoneNo,
+      phone_with_code: countryCallingCode,
+    });
   };
 
   // ----------------- Google Sign In -----------------

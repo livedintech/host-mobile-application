@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { processColor, Linking } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -123,8 +124,8 @@ export default function useAddNewPaymentMethodContainer() {
     onSuccess: () => {
       Toast.show({
         type: 'success',
-        text1: 'Payment Successful',
-        text2: 'Your payment has been processed successfully',
+        text1: i18n.t('common.toast.payment_successful'),
+        text2: i18n.t('common.toast.payment_processed'),
       });
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.SAVED_CARDS] });
       if (isAuthFlow) {
@@ -136,8 +137,8 @@ export default function useAddNewPaymentMethodContainer() {
     onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: 'Payment Save Failed',
-        text2: error?.message || 'Failed to save payment information',
+        text1: i18n.t('common.toast.payment_save_failed'),
+        text2: error?.message || i18n.t('common.toast.failed_save_payment'),
       });
     },
   });
@@ -290,8 +291,8 @@ export default function useAddNewPaymentMethodContainer() {
       console.log('🔴 Error string:', String(error));
       Toast.show({
         type: 'error',
-        text1: 'Payment Error',
-        text2: error?.message || JSON.stringify(error) || 'Unknown error',
+        text1: i18n.t('common.toast.payment_error'),
+        text2: error?.message || JSON.stringify(error) || i18n.t('common.toast.unknown_error'),
       });
     } finally {
       setIsProcessingPayment(false);
@@ -317,8 +318,8 @@ export default function useAddNewPaymentMethodContainer() {
       console.log('🔴 Error string:', String(error));
       Toast.show({
         type: 'error',
-        text1: 'Payment Error',
-        text2: error?.message || JSON.stringify(error) || 'Unknown error',
+        text1: i18n.t('common.toast.payment_error'),
+        text2: error?.message || JSON.stringify(error) || i18n.t('common.toast.unknown_error'),
       });
     } finally {
       setIsProcessingPayment(false);

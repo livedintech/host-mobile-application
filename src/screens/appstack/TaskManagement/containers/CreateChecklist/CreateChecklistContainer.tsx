@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import Toast from 'react-native-toast-message';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -78,7 +79,7 @@ const CreateChecklistContainer = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['taskChecklist', taskId] });
       toggleModal();
-      Toast.show({ type: 'success', text1: 'Section added successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('app.task_management.section_added') });
     },
     onError: (err: any) =>
       Toast.show({ type: 'error', text1: err.message || 'Failed' }),
@@ -96,7 +97,7 @@ const CreateChecklistContainer = () => {
         queryKey: ['checklistDetails', vars.sectionId],
       });
       toggleModal();
-      Toast.show({ type: 'success', text1: 'Items added successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('app.task_management.item_added') });
     },
   });
 
@@ -149,7 +150,7 @@ const CreateChecklistContainer = () => {
       console.log('conversationId', conversationId);
 
       clearDraft();
-      Toast.show({ type: 'success', text1: 'Task created successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('app.task_management.task_created_success') });
 
       if (isFromChat && conversationId) {
         // 🔹 NAVIGATE TO CHAT

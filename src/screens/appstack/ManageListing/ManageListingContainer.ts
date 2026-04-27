@@ -4,7 +4,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
-import { getManageYourListings } from '@/services/ createListingService';
+import { getManageYourListings, getManageYourListingsProperties } from '@/services/ createListingService';
 import { ManageListingItem, ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { getUser } from '@/services/UserPermission';
@@ -16,7 +16,7 @@ export default function useManageListingContainer() {
   const { data, refetch, isLoading } = useQuery<ManageListingsResponse>({
     queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS, user?.id],
     queryFn: () =>
-      getManageYourListings({
+      getManageYourListingsProperties({
         user: user?.id!,
       }),
     enabled: Boolean(user?.id),

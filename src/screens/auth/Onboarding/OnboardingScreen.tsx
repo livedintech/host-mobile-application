@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, ImageBackground } from 'react-native';
+import { View, StyleSheet, FlatList, ImageBackground, I18nManager } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
@@ -26,9 +26,7 @@ const OnboardingScreen = () => {
 
         return (
             <ImageBackground style={styles.slide} source={bgImage} resizeMode='cover'>
-                {/* Dark overlay for text legibility if needed */}
                 <View style={styles.overlay} />
-
                 <View style={styles.contentContainer}>
                     <View style={styles.textSection}>
                         <AppText
@@ -51,7 +49,7 @@ const OnboardingScreen = () => {
                     </View>
                 </View>
             </ImageBackground>
-        )
+        );
     };
 
     return (
@@ -69,15 +67,21 @@ const OnboardingScreen = () => {
 
             {/* Pagination Dots */}
             <View style={styles.pagination}>
-                {onboardingData.map((_, i) => (
-                    <View
-                        key={i}
-                        style={[
-                            styles.dot,
-                            activeIndex === i ? styles.activeDot : styles.inactiveDot
-                        ]}
-                    />
-                ))}
+                {onboardingData.map((_, i) => {
+                    const displayIndex = I18nManager.isRTL
+                        ? onboardingData.length - 1 - activeIndex
+                        : activeIndex;
+
+                    return (
+                        <View
+                            key={i}
+                            style={[
+                                styles.dot,
+                                displayIndex === i ? styles.activeDot : styles.inactiveDot
+                            ]}
+                        />
+                    );
+                })}
             </View>
 
             {/* Action Buttons */}
@@ -113,7 +117,7 @@ const styles = StyleSheet.create({
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.2)', // Subtle dimming for text clarity
+        backgroundColor: 'rgba(0,0,0,0.2)',
     },
     contentContainer: {
         flex: 1,
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
     pagination: {
         flexDirection: 'row',
         position: 'absolute',
-        bottom: Metrics.verticalScale(195), // Adjusted to sit above buttons
+        bottom: Metrics.verticalScale(195),
         alignSelf: 'center',
     },
     dot: {
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)', // Darker glass for skip
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.2)',
     },

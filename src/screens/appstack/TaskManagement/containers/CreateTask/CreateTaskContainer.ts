@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { queryClient } from '@/services/api';
@@ -154,7 +155,7 @@ const CreateTaskContainer = (preSelectedListingId?: string | number, routeParams
           conversation_id: routeParams?.conversation_id || null,
         });
       } catch (error: any) {
-        Toast.show({ type: 'error', text1: 'Checklist fetch failed' });
+        Toast.show({ type: 'error', text1: i18n.t('app.task_management.checklist_fetch_failed') });
       }
       navigate(NavigationRoutes.APP_STACK.CREATE_CHECKLIST);
     },

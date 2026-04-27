@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -16,17 +17,17 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const bookingDetailsSchema = yup.object().shape({
-  booking_type:       yup.string().required('Booking type is required'),
-  guest_eligibility:  yup.string().required('Guest eligibility is required'),
-  check_in_time:      yup.string().required('Check-in time is required'),
-  check_out_time:     yup.string().required('Check-out time is required'),
-  allow_same_day:     yup.string().required('This field is required'),
-  cleanliness_status: yup.string().required('Cleanliness status is required'),
+  booking_type:       yup.string().required(i18n.t('app.validation.booking_type_required')),
+  guest_eligibility:  yup.string().required(i18n.t('app.validation.guest_eligibility_required')),
+  check_in_time:      yup.string().required(i18n.t('app.validation.checkin_time_required')),
+  check_out_time:     yup.string().required(i18n.t('app.validation.checkout_time_required')),
+  allow_same_day:     yup.string().required(i18n.t('app.validation.field_required')),
+  cleanliness_status: yup.string().required(i18n.t('app.validation.cleanliness_required')),
 });
 
 export type BookingDetailsFormValues = yup.InferType<typeof bookingDetailsSchema>;
@@ -73,10 +74,10 @@ export default function useBookingDetailsContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -128,7 +129,7 @@ export default function useBookingDetailsContainer() {
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -138,11 +139,11 @@ export default function useBookingDetailsContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const onNext = (data: BookingDetailsFormValues) => {

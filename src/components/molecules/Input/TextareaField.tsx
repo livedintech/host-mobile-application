@@ -5,6 +5,7 @@ import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { useTranslation } from 'react-i18next';
 
 interface TextareaFieldProps extends TextInputProps {
   name: string;
@@ -37,6 +38,8 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
   ...props
 }) => {
   const error = errors[name]?.message as string;
+  const { t } = useTranslation();
+
 
   return (
     <View style={[styles.mainWrapper, wrapperStyle]}>
@@ -97,7 +100,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
       >
         {wordLimit !== undefined && (
           <AppText
-            text={`${descriptionLength || 0}/${wordLimit} Words`}
+           text={t('app.textarea.word_count', { current: descriptionLength || 0, limit: wordLimit })}
             fontSize={11}
             color={Colors.DARK_CHARCOAL}
           />

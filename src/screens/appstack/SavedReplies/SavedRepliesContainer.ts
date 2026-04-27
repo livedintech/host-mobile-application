@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import STORAGE_CONST from '@/constants/storage';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
@@ -69,7 +70,7 @@ export const useSavedRepliesContainer = () => {
     onError: error => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Something went wrong',
+        text1: error.message || i18n.t('common.toast.something_went_wrong'),
       });
     },
   });
@@ -86,7 +87,7 @@ export const useSavedRepliesContainer = () => {
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_SAVED_REPLIES] });
     },
     onError: error => {
-      Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+      Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
     },
   });
 

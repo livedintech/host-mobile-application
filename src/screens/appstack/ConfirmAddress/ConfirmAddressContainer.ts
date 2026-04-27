@@ -1,5 +1,6 @@
 // useConfirmAddressContainer.ts
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation, useRoute, StackActions } from '@react-navigation/native';
 import { addressSchema, AddressFormValues } from '@/validation/auth/createListingSchemas';
@@ -39,7 +40,7 @@ export default function useConfirmAddressContainer() {
   } = useForm<AddressFormValues>({
     resolver: yupResolver(addressSchema),
     defaultValues: {
-      name:          listing?.name || 'New Listing',
+      name:          listing?.name || i18n.t('common.new_listing'),
       country_code:  listing?.country?.id  ?? undefined,
       state:         listing?.state?.id    ?? undefined,
       city:          listing?.city?.id     ?? undefined,
@@ -105,7 +106,7 @@ export default function useConfirmAddressContainer() {
       listing_id:    String(listing_id),
       save_and_exit: isSaveAndExit ? 1 : 0,
       listing: {
-        name:         propertyDetail?.name || 'New Listing',
+        name:         propertyDetail?.name || i18n.t('common.new_listing'),
         street:       data.address,
         apt:          data.postalAddress,
         zipcode:      data.postalAddress,
@@ -124,11 +125,11 @@ export default function useConfirmAddressContainer() {
     useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
       mutationFn: createListingDetailsApi,
       onSuccess: ({ message }) => {
-        Toast.show({ type: 'success', text1: message || 'Created successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.created') });
         navigate(NavigationRoutes.APP_STACK.ABOUT_THE_PLACE);
       },
       onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+        Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
       },
     });
 
@@ -140,7 +141,7 @@ export default function useConfirmAddressContainer() {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
-        Toast.show({ type: 'success', text1: message || 'Saved successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.saved') });
 
         // ✅ PROPERTY_DETAIL tak pop karo — dono paths work karenge
         // 1. Direct:       Main → ConfirmAddress (edit) → pops 1 screen
@@ -150,7 +151,7 @@ export default function useConfirmAddressContainer() {
         );
       },
       onError: (error) => {
-        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+        Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
       },
     });
 

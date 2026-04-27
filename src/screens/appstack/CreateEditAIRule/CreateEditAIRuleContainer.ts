@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,13 +13,13 @@ import { getManageYourListings } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const aiRuleSchema = yup.object().shape({
-    name: yup.string().required('Rule name is required'),
+    name: yup.string().required(i18n.t('app.validation.rule_name_required')),
     // listing_ids: yup.array().optional(),
      listing_ids: yup
         .array()
-        .min(1, 'Please select at least one property')
-        .required('Property is required'),
-    template: yup.string().required('Template is required'),
+        .min(1, i18n.t('app.automation_create_edit.validation_property_min'))
+        .required(i18n.t('app.validation.field_required')),
+    template: yup.string().required(i18n.t('app.validation.template_required')),
     auto_send: yup.boolean().default(false),
     is_enabled: yup.boolean().default(true),
 });
@@ -57,7 +58,7 @@ export default function useCreateEditAIRuleContainer(editData?: any) {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
@@ -82,7 +83,7 @@ export default function useCreateEditAIRuleContainer(editData?: any) {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });

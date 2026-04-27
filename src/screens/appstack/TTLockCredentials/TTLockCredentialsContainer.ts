@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import DeviceInfo from 'react-native-device-info';
@@ -13,11 +14,11 @@ import {
 } from '@/types/api/smartLockTypes';
 
 const ttLockSchema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+  username: yup.string().required(i18n.t('app.validation.username_required')),
   password: yup
     .string()
     .min(6, 'Password too short')
-    .required('Password is required'),
+    .required(i18n.t('app.validation.field_required')),
 });
 
 export default function useTTLockCredentialsContainer() {
@@ -50,7 +51,7 @@ export default function useTTLockCredentialsContainer() {
       onError: error => {
         Toast.show({
           type: 'error',
-          text1: error.message || 'Something went wrong',
+          text1: error.message || i18n.t('common.toast.something_went_wrong'),
         });
       },
     },

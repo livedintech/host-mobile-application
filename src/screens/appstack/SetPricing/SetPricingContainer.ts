@@ -1,5 +1,6 @@
 // useSetPricingContainer.ts
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -17,9 +18,9 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const pricingSchema = yup.object().shape({
-  currency: yup.string().required('Currency is required'),
-  weekday_price: yup.string().required('Weekday base price is required'),
-  weekend_price: yup.string().required('Weekend base price is required'),
+  currency: yup.string().required(i18n.t('app.set_pricing.validation_currency_required')),
+  weekday_price: yup.string().required(i18n.t('app.set_pricing.validation_weekday_required')),
+  weekend_price: yup.string().required(i18n.t('app.set_pricing.validation_weekend_required')),
   tax_vat: yup.string().optional(),
   airbnb_markup: yup.string().optional(),
   gathern_markup: yup.string().optional(),
@@ -114,10 +115,10 @@ const listingOptions = connectedAccounts
   mutationFn: createListingExportApi,
   onSuccess: () => {
     setBottomSheetVisible(false);
-    Toast.show({ type: 'success', text1: 'Exported successfully' });
+    Toast.show({ type: 'success', text1: i18n.t('common.toast.exported') });
   },
   onError: (err: any) =>
-    Toast.show({ type: 'error', text1: err.message || 'Export failed' }),
+    Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.export_failed') }),
 });
 
 const handleExport = () => {
@@ -183,7 +184,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
   const { mutate: handlePricingApi, isPending } = useMutation({
     mutationFn: createListingPricingApi, // ✅ correct API
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Handler ───────────────────────────────────────────────────────────────
@@ -204,7 +205,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
-        Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+        Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
         if (isSaveAndExit) {
           isEdit

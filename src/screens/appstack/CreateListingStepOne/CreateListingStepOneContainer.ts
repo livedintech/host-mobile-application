@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { StepOneFormValues, stepOneSchema } from '@/validation/auth/createListingSchemas';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -15,9 +16,9 @@ export default function useCreateListingStepOneContainer() {
   const { user } = useAuthStore();
   const { updateListing, setListingId, setChannelId } = useCreateListingStore();
 
-  const propertyOptions = [
-    { label: 'Flat/Apartment', value: 'apartment', icon: 'property' },
-  ];
+ const propertyOptions = [
+  { label: i18n.t('app.create_listing_step1.property_flat_apartment'), value: 'apartment', icon: 'property' },
+];
 
   const {
     control,
@@ -51,7 +52,7 @@ export default function useCreateListingStepOneContainer() {
     onSuccess: ({ message, data }) => {
       Toast.show({
         type: 'success',
-        text1: message || 'Listing created successfully',
+        text1: message || i18n.t('common.toast.listing_created'),
       });
       setListingId(data?.listing_id);
       navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE_SET_LOCATION);
@@ -59,7 +60,7 @@ export default function useCreateListingStepOneContainer() {
     onError: error => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Something went wrong',
+        text1: error.message || i18n.t('common.toast.something_went_wrong'),
       });
     },
   });
@@ -81,7 +82,7 @@ export default function useCreateListingStepOneContainer() {
       payload: {
         listing: {
           property_type_category: data?.propertyType,
-          name: 'New Listing',
+          name: i18n.t('common.new_listing'),
         },
       },
     };
@@ -103,7 +104,7 @@ export default function useCreateListingStepOneContainer() {
       payload: {
         listing: {
           property_type_category: data?.propertyType,
-          name: 'New Listing',
+          name: i18n.t('common.new_listing'),
         },
       },
     };
@@ -112,7 +113,7 @@ export default function useCreateListingStepOneContainer() {
       onSuccess: ({ message, data }) => {
         Toast.show({
           type: 'success',
-          text1: message || 'Listing saved successfully',
+          text1: message || i18n.t('common.toast.listing_saved'),
         });
 
         setListingId(data?.listing_id);

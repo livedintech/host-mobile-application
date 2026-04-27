@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -15,29 +16,29 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 const schema = yup.object().shape({
-    name: yup.string().required('Name is required'),
+    name: yup.string().required(i18n.t('app.validation.name_required')),
 
     startDate: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('Start date required'),
+        then: s => s.required(i18n.t('app.validation.start_date_required')),
         otherwise: s => s.notRequired()
     }),
 
     startTime: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('Start time required'),
+        then: s => s.required(i18n.t('app.validation.start_time_required')),
         otherwise: s => s.notRequired()
     }),
 
     endDate: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('End date required'),
+        then: s => s.required(i18n.t('app.validation.end_date_required')),
         otherwise: s => s.notRequired()
     }),
 
     endTime: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('End time required'),
+        then: s => s.required(i18n.t('app.validation.end_time_required')),
         otherwise: s => s.notRequired()
     }),
 });
@@ -63,7 +64,7 @@ export default function useGeneratePasscodeContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });

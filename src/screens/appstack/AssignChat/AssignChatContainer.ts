@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // import { useRef, useState } from 'react';
 // import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 // import Toast from 'react-native-toast-message';
@@ -51,7 +52,7 @@
 //             goBack(2);
 //         },
 //         onError: error => {
-//             Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+//             Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
 //         },
 //     });
 
@@ -152,7 +153,7 @@ export default function useAssignChatContainer() {
             goBack(2);
         },
         onError: error => {
-            Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+            Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
         },
     });
 
@@ -160,8 +161,8 @@ const handleAssignUser = (selectedItem: ChatUser) => {
     if (user?.role_key === 'supervisor') {
         Toast.show({
             type: 'error',
-            text1: 'Access Denied',
-            text2: 'Supervisors cannot modify assignments.'
+            text1: i18n.t('app.assign_chat.access_denied'),
+            text2: i18n.t('app.assign_chat.supervisors_cannot_assign')
         });
         return;
     }

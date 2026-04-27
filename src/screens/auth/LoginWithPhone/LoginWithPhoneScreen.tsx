@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  StyleSheet, Platform
+  StyleSheet, Platform,
+  I18nManager
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -38,7 +39,7 @@ const LoginWithPhoneScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <KeyboardAwareScrollView
-        style={{ flex: 1,  }}
+        style={{ flex: 1, }}
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -109,7 +110,10 @@ const LoginWithPhoneScreen = () => {
               mb={vs(12)}
             >
               <Svgicons path="google" size={18} />
-              <AppText text={t('auth.login.continue_google')} fontSize={14} ml={10} color={Colors.BLACK} />
+              <AppText text={t('auth.login.continue_google')} fontSize={14} style={{
+                marginLeft: I18nManager.isRTL ? 0 : 10,
+                marginRight: I18nManager.isRTL ? 10 : 0,
+              }} color={Colors.BLACK} />
             </ButtonView>
             {Platform.OS === 'ios' && (
               <ButtonView
@@ -117,7 +121,10 @@ const LoginWithPhoneScreen = () => {
                 onPress={handleAppleSignIn}
                 activeOpacity={0.8}>
                 <Svgicons path="apple" size={14} />
-                <AppText text={t('auth.login.continue_apple')} fontSize={14} ml={10} color={Colors.BLACK} />
+                <AppText text={t('auth.login.continue_apple')} fontSize={14} style={{
+                  marginLeft: I18nManager.isRTL ? 0 : 10,
+                  marginRight: I18nManager.isRTL ? 10 : 0,
+                }} color={Colors.BLACK} />
               </ButtonView>
             )}
           </View>
@@ -160,7 +167,7 @@ const styles = StyleSheet.create({
   line: { flex: 1, height: 1, backgroundColor: '#EAEAEA' },
   socialWrapper: { width: '100%' },
   socialButton: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'center',
     height: vs(48),

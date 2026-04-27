@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRoute } from '@react-navigation/native';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -17,14 +18,14 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-    ota_account: yup.string().required('Please select an OTA account'),
+    ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const wifiAndDoorLockSchema = yup.object().shape({
-    wifi_username: yup.string().required('Wifi username is required'),
-    wifi_password: yup.string().required('Wifi password is required'),
-    door_lock_code: yup.string().required('Door lock code is required'),
+    wifi_username: yup.string().required(i18n.t('app.validation.wifi_username_required')),
+    wifi_password: yup.string().required(i18n.t('app.validation.wifi_password_required')),
+    door_lock_code: yup.string().required(i18n.t('app.validation.door_lock_code_required')),
 });
 
 export type WifiAndDoorLockFormValues = yup.InferType<typeof wifiAndDoorLockSchema>;
@@ -70,10 +71,10 @@ export default function useWifiAndDoorLockContainer() {
             onSuccess: ({ message }: any) => {
                 setBottomSheetVisible(false);
                 queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-                Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+                Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
             },
             onError: (err: any) =>
-                Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+                Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
         });
 
     const handleExport = () => setBottomSheetVisible(true);
@@ -113,7 +114,7 @@ export default function useWifiAndDoorLockContainer() {
         listing_id: String(listing_id),
         save_and_exit: 1,
         listing: {
-            name: propertyDetail?.name || 'New Listing',
+            name: propertyDetail?.name || i18n.t('common.new_listing'),
             wifi_network: data.wifi_username,
             wifi_password: data.wifi_password,
             door_lock_code: String(data.door_lock_code),
@@ -128,11 +129,11 @@ export default function useWifiAndDoorLockContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
             });
-            Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+            Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
             goBack();
         },
         onError: (err: any) =>
-            Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+            Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
     const onSaveExit = (data: WifiAndDoorLockFormValues) => {

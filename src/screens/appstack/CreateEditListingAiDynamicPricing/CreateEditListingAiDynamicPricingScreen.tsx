@@ -46,9 +46,9 @@ const AIDynamicPricingScreen = () => {
                  <View style={[styles.graphLine, type === 'aggressive' && styles.aggressiveLine]} />
               </View>
               <View style={styles.graphLabels}>
-                 <AppText text="April" fontSize={10} />
-                 <AppText text="May" fontSize={10} />
-                 <AppText text="June" fontSize={10} />
+                 <AppText text={t('app.ai_dynamic_pricing.month_april')} fontSize={10} />
+                 <AppText text={t('app.ai_dynamic_pricing.month_may')} fontSize={10} />
+                 <AppText text={t('app.ai_dynamic_pricing.month_june')} fontSize={10} />
               </View>
            </View>
         )}
@@ -74,16 +74,16 @@ const AIDynamicPricingScreen = () => {
           />
 
           <View style={styles.cardsWrapper}>
-            <ModeCard 
+            <ModeCard
               title={t('app.ai_dynamic_pricing.conservative_mode')}
-              type="conservative" 
-              points={["You prefer consistent income", "Your listing competes on market price", "Stronger ranking on Airbnb & Gathern"]} 
+              type="conservative"
+              points={[t('app.ai_dynamic_pricing.conservative_point_1'), t('app.ai_dynamic_pricing.conservative_point_2'), t('app.ai_dynamic_pricing.conservative_point_3')]}
             />
-            
-            <ModeCard 
+
+            <ModeCard
               title={t('app.ai_dynamic_pricing.aggressive_mode')}
-              type="aggressive" 
-              points={["Your property is high-end", "You have strong reviews", "You're comfortable with empty nights"]} 
+              type="aggressive"
+              points={[t('app.ai_dynamic_pricing.aggressive_point_1'), t('app.ai_dynamic_pricing.aggressive_point_2'), t('app.ai_dynamic_pricing.aggressive_point_3')]}
             />
           </View>
 

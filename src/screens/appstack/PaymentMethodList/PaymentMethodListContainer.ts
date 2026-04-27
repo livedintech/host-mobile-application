@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import STORAGE_CONST from "@/constants/storage";
 import NavigationRoutes from "@/navigation/NavigationRoutes";
 import { queryClient } from "@/services/api";
@@ -40,8 +41,8 @@ export default function usePaymentMethodListContainer() {
     onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: 'Payment Save Failed',
-        text2: error?.message || 'Failed to save payment information',
+        text1: i18n.t('common.toast.payment_save_failed'),
+        text2: error?.message || i18n.t('common.toast.failed_save_payment'),
       });
     },
   });

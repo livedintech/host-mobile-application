@@ -7,6 +7,7 @@ import MultiChannelCalendar from '@/components/molecules/MultiChannelCalendar/Mu
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import { RawBookingData } from '@/types/api/bookingTypes';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   control: any;
@@ -34,6 +35,8 @@ export const CalendarSection = ({
   isLoading,
   onRefresh,
 }: Props) => {
+    const { t } = useTranslation();
+  
   console.log("markedDates",markedDates);
   console.log("bookingsTest",bookings)
   return (
@@ -46,9 +49,9 @@ export const CalendarSection = ({
         name="listing_selection"
         control={control}
         errors={errors}
-        label="Select Listing"
+        label={t('app.listing_screen.select_listing')}
         data={listingOptions}
-        placeholder="All Listings"
+        placeholder={t('app.listing_screen.all_listings')}
       />
       <View style={{marginTop:30}}>
         {selectedListingId ? (

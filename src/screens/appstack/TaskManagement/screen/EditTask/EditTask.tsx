@@ -145,7 +145,7 @@ const EditTask = ({ route }: any) => {
     const formData = getValues();
 
     if (!formData.assignee) {
-      Toast.show({ type: 'error', text1: 'Please select a vendor.' });
+      Toast.show({ type: 'error', text1: t('app.task_management.select_vendor') });
       return;
     }
 

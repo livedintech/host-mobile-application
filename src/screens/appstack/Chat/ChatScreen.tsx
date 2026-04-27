@@ -103,8 +103,12 @@ const ChatScreen = () => {
   const ACTION_WIDTH = Metrics.scale(80);
   const TOTAL_ACTION_WIDTH = ACTION_WIDTH * 2;
 
-  const TABS: ChatStatus[] = ['All', 'Archived', 'Snoozed', 'Unread'];
-
+const TABS: { id: ChatStatus; label: string }[] = [
+  { id: 'All', label: t('app.chat.tab_all') },
+  { id: 'Archived', label: t('app.chat.tab_archived') },
+  { id: 'Snoozed', label: t('app.chat.tab_snoozed') },
+  { id: 'Unread', label: t('app.chat.tab_unread') },
+];
   if (isLoading) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -211,7 +215,7 @@ const ChatScreen = () => {
                 text={
                   item.last_message_date
                     ? dayjs.utc(item.created_at).local().format('MM/DD/YY')
-                    : 'N/A'
+                    : t('app.chat.not_available')
                 }
                 fontSize={12}
                 color={Colors.GREY_SHADOW}
@@ -219,7 +223,7 @@ const ChatScreen = () => {
             </View>
             <View style={styles.infoBottom}>
               <AppText
-                text={item.last_message || 'No message'}
+                text={item.last_message || t('app.chat.no_message_preview')}
                 fontSize={13}
                 color={Colors.GREY_SHADOW}
                 numberOfLines={1}
@@ -282,7 +286,7 @@ const ChatScreen = () => {
                     <MenuOption
                       key={item.label}
                       style={styles.menuItem}
-                      onSelect={() => handlePopupMenu(item.label)}
+                      onSelect={() => handlePopupMenu(item.id)}
                     >
                       <AppText
                         text={item.label}
@@ -330,16 +334,16 @@ const ChatScreen = () => {
                 showsHorizontalScrollIndicator={false}
                 data={TABS}
                 contentContainerStyle={styles.tabsList}
-                keyExtractor={item => item}
+                keyExtractor={item => item.id}
                 renderItem={({ item }) => {
-                  const isActive = activeTab === item;
+            const isActive = activeTab === item.id;
                   return (
                     <Pressable
                       style={[styles.tab, isActive && styles.activeTab]}
-                      onPress={() => setActiveTab(item)}
+                      onPress={() => setActiveTab(item.id)}
                     >
                       <AppText
-                        text={item}
+                        text={item?.label}
                         fontSize={14}
                         type={isActive ? 'SemiBold' : 'Regular'}
                         color={

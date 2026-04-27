@@ -50,6 +50,18 @@ export const getManageYourListings = async (payload: getUserListingsByUserID) =>
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+export const getManageYourListingsProperties = async (payload: getUserListingsByUserID) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.GET_MANAGE_YOUR_LISTINGS_PROPERTIES,
+        { user: payload.user },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
 
 // Subscription User Plan
 export const getSubscrptionUserPlanApi = async (payload: getChannelsUserIdPayload) => {

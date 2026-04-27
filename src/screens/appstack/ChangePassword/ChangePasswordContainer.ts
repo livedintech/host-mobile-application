@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
@@ -30,12 +31,12 @@ export default function useChangePasswordContainer() {
     onSuccess: (data) => {
       Toast.show({
         type: 'success',
-        text1: data?.message || 'Password updated successfully',
+        text1: data?.message || i18n.t('common.toast.password_updated'),
       });
       logout();
     },
     onError: (error: any) => {
-      Toast.show({ type: 'error', text1: error.message || 'Failed to change password' });
+      Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.failed_change_password') });
     }
   });
 
