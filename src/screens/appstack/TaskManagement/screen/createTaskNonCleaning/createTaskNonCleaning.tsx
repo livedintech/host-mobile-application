@@ -147,10 +147,9 @@ const CreateTaskNonCleaning = () => {
                 color={Colors.DARK_CHARCOAL_OPACITY}
                 lineHeight={18}
               >
-                Select a user to continue. If you can't find the user, either
-                create one or assign property to an existing user in More →{' '}
+                {t('app.task_management.select_user_hint_extended')}{' '}
                 <AppText
-                  text="User Management."
+                  text={t('app.task_management.user_management_link')}
                   fontSize={12}
                   color={Colors.PRIMARY_TEAL}
                   type="Bold"

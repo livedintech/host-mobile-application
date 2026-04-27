@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
@@ -21,8 +22,8 @@ import { usePhoneStore } from '@/store/usePhoneStore';
 const signInSchema = yup.object().shape({
   password: yup
     .string()
-    .required('Password is required')
-    .min(6, 'Minimum 6 characters'),
+    .required(i18n.t('auth.enter_password.validation_password_required'))
+    .min(6, i18n.t('auth.enter_password.validation_password_min')),
   rememberMe: yup.boolean().default(false),
 });
 
@@ -90,7 +91,7 @@ export default function useEnterPasswordContainer() {
       Toast.show({ type: 'success', text1: message });
     },
     onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
+      Toast.show({ type: 'error', text1: message || i18n.t('auth.enter_password.login_failed') });
     },
   });
 
@@ -112,7 +113,7 @@ export default function useEnterPasswordContainer() {
 
     },
     onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
+      Toast.show({ type: 'error', text1: message || i18n.t('auth.enter_password.login_failed') });
     },
   });
 

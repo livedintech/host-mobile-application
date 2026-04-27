@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,9 +14,9 @@ const DEFAULT_LIST: any[] = [];
 const DEFAULT_CHART = { data: { monthly: '0', yearly: '0', months: [] as number[] } };
 
 const homeSchema = yup.object().shape({
-  city: yup.string().required('City is required'),
-  district: yup.string().required('District is required'),
-  bedrooms: yup.string().required('Number of bedrooms is required'),
+  city: yup.string().required(i18n.t('auth.property_can_earn.validation_city_required')),
+  district: yup.string().required(i18n.t('auth.property_can_earn.validation_district_required')),
+  bedrooms: yup.string().required(i18n.t('auth.property_can_earn.validation_bedrooms_required')),
 });
 // AuthTack.CONNECT_CALENDARS_INTRO
 export default function usePropertyCanEarnContainer() {

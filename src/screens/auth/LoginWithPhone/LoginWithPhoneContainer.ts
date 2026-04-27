@@ -138,12 +138,12 @@ export default function useLoginWithPhoneContainer() {
         setUser(result?.user);
         Toast.show({
           type: 'success',
-          text1: result?.message || 'Logged in successfully',
+          text1: result?.message || i18n.t('auth.login.logged_in_success'),
         });
       }
     } catch (error: any) {
       if (error.code !== statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert('Google Sign-In error', error.message);
+        Alert.alert(i18n.t('auth.login.google_signin_error'), error.message);
       }
     }
   };
@@ -152,7 +152,7 @@ export default function useLoginWithPhoneContainer() {
   const handleAppleSignIn = async () => {
     try {
       if (!appleAuth.isSupported) {
-        Alert.alert('Apple Sign-In', 'Apple Sign-In is not supported on this device.');
+        Alert.alert(i18n.t('auth.login.apple_signin_title'), i18n.t('auth.login.apple_signin_unsupported'));
         return;
       }
 
@@ -169,7 +169,7 @@ export default function useLoginWithPhoneContainer() {
       );
 
       if (credentialState !== appleAuth.State.AUTHORIZED) {
-        Alert.alert('Apple Sign-In', 'Authorization failed. Please try again.');
+        Alert.alert(i18n.t('auth.login.apple_signin_title'), i18n.t('auth.login.apple_signin_auth_failed'));
         return;
       }
 
@@ -193,8 +193,8 @@ export default function useLoginWithPhoneContainer() {
 
       if (!email) {
         Alert.alert(
-          'Apple Sign-In',
-          'Could not retrieve your email. Please sign out of Apple ID in device Settings and try again.',
+          i18n.t('auth.login.apple_signin_title'),
+          i18n.t('auth.login.apple_signin_no_email'),
         );
         return;
       }
@@ -210,12 +210,12 @@ export default function useLoginWithPhoneContainer() {
       setUser(result?.user);
       Toast.show({
         type: 'success',
-        text1: result?.message || 'Logged in successfully',
+        text1: result?.message || i18n.t('auth.login.logged_in_success'),
       });
 
     } catch (error: any) {
       if (error.code === '1000' || error.code === 'ERR_CANCELED') return;
-      Alert.alert('Apple Sign-In Error', error?.message || 'Something went wrong');
+      Alert.alert(i18n.t('auth.login.apple_signin_error_title'), error?.message || i18n.t('common.toast.something_went_wrong'));
     }
   };
 
