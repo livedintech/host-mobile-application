@@ -59,6 +59,16 @@ const ChannelPerformanceScreen = () => {
   const maxVal = values.length > 0 ? Math.max(...values) : 1;
   const safeMaxVal = maxVal <= 0 ? 1 : maxVal;
 
+    const totalValue = rawList.reduce((acc: number, curr: any) => {
+    const val =
+      activeTab === 'revenue'
+        ? curr?.revenue
+        : activeTab === 'nights'
+        ? curr?.nights
+        : curr?.reservations;
+    return acc + (Number(val) || 0);
+  }, 0);
+
   const chartData = rawList.map((item: any) => {
     let displayValue = 0;
     if (activeTab === 'reservation') displayValue = item?.reservations || 0;
@@ -87,20 +97,12 @@ const ChannelPerformanceScreen = () => {
       count: item?.reservations || 0,
       label: displayTitle, // Used for text
       svgPath: svgPath, // Used for the SVG
-      percentage: (displayValue / safeMaxVal) * 100,
+      percentage: (displayValue / totalValue) * 100,
       color: barColor,
     };
   });
 
-  const totalValue = rawList.reduce((acc: number, curr: any) => {
-    const val =
-      activeTab === 'revenue'
-        ? curr?.revenue
-        : activeTab === 'nights'
-        ? curr?.nights
-        : curr?.reservations;
-    return acc + (Number(val) || 0);
-  }, 0);
+
 
   return (
     <ImageBackground
