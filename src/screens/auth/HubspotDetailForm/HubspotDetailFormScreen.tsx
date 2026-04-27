@@ -96,7 +96,7 @@ const HubspotDetailFormScreen = () => {
                   errors={errors}
                   label={t('auth.hubspot_form.country_label')}
                   placeholder={t('auth.hubspot_form.country_placeholder')}
-                  onSelect={(country) => onCountrySelect(country.name)}
+                 onSelect={(country) => onCountrySelect(country)}
                 />
 
                 <DropdownField
@@ -109,6 +109,7 @@ const HubspotDetailFormScreen = () => {
                   data={cityData}
                   disabled={!selectedCountry}
                   onSelect={(item) => onCitySelect(item.value)}
+                  dropdownPosition='top'
                 />
 
                 {selectedCity === 'Other' && (
@@ -130,6 +131,7 @@ const HubspotDetailFormScreen = () => {
                   placeholder={t('auth.hubspot_form.district_placeholder')}
                   data={districtData}
                   disabled={!selectedCity}
+                  dropdownPosition='top'
                 />
 
                 {selectedDistrict === 'Other' && (
