@@ -33,15 +33,15 @@ import Toast from 'react-native-toast-message';
 // Helper to convert "09:00 pm" to "21:00" or just strip "pm/am"
 const convertTo24Hour = (timeStr: string) => {
   if (!timeStr) return '';
-  
+
   // Clean the string and lower case it
   const time = timeStr.toLowerCase().trim();
   const isPm = time.includes('pm');
   const isAm = time.includes('am');
-  
+
   // Remove am/pm and keep only the numbers part
   let [hoursStr, minutesStr] = time.replace(/[ap]m/g, '').trim().split(':');
-  
+
   let hours = parseInt(hoursStr, 10);
   const minutes = minutesStr ? minutesStr.padStart(2, '0') : '00';
 
@@ -67,32 +67,50 @@ const formatDateDisplay = (dateString: string) => {
   }
 };
 const EditTask = ({ route }: any) => {
-    const { t } = useTranslation();
-  
-  const { onDeleteTask, isDeleting, assigneeOptions, onUpdateAssignee } = EditTaskContainer();
+  const { t } = useTranslation();
+
+  const { onDeleteTask, isDeleting, assigneeOptions, onUpdateAssignee } =
+    EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const { data: task, isLoading, refetch } = useQuery({
+  const {
+    data: task,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: [STORAGE_CONST.GET_TASK_DETAIL, taskId],
     queryFn: () => getTaskDetail(taskId, taskType),
     enabled: !!taskId,
   });
 
   const apiStatus = task?.status || 'todo';
-  const isEditable = ['todo', 'inprogress', 'pending', 'template', 'resume'].includes(apiStatus);
+  const isEditable = [
+    'todo',
+    'inprogress',
+    'pending',
+    'template',
+    'resume',
+  ].includes(apiStatus);
   const isCompleted = apiStatus === 'completed';
 
-  const statusDisplay = {
-    todo: 'To do',
-    inprogress: 'In Progress',
-    pending: 'Pending',
-    completed: 'Completed',
-    template: 'Template',
-    resume: 'Resume',
-  }[apiStatus as string] || 'To do';
+  const statusDisplay =
+    {
+      todo: 'To do',
+      inprogress: 'In Progress',
+      pending: 'Pending',
+      completed: 'Completed',
+      template: 'Template',
+      resume: 'Resume',
+    }[apiStatus as string] || 'To do';
 
-  const { control, getValues, setValue, reset, formState: { errors } } = useForm({
+  const {
+    control,
+    getValues,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       assignee: '',
       instructions: '',
@@ -149,7 +167,9 @@ const EditTask = ({ route }: any) => {
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
-          {isDeleting && <AppText text={t('app.task_management.deleting_task')} mt={10} />}
+          {isDeleting && (
+            <AppText text={t('app.task_management.deleting_task')} mt={10} />
+          )}
         </View>
       </BGImage>
     );
@@ -159,28 +179,58 @@ const EditTask = ({ route }: any) => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <ButtonView onPress={() => onDeleteTask(taskId)} style={styles.iconBtn}>
+          <ButtonView
+            onPress={() => onDeleteTask(taskId)}
+            style={styles.iconBtn}
+          >
             <Svgicons path="deleteTask" size={24} />
           </ButtonView>
         </View>
 
-        <RefreshableScrollView contentContainerStyle={styles.scrollContent} onRefresh={refetch}>
-          <AppText text={`${task?.task_type_key?.charAt(0).toUpperCase()}${task?.task_type_key?.slice(1)} Task`} fontSize={28} type="Bold" mb={30} mt={20} />
+        <RefreshableScrollView
+          contentContainerStyle={styles.scrollContent}
+          onRefresh={refetch}
+        >
+          <AppText
+            text={`${task?.task_type_key
+              ?.charAt(0)
+              .toUpperCase()}${task?.task_type_key?.slice(1)} Task`}
+            fontSize={28}
+            type="Bold"
+            mb={30}
+            mt={20}
+          />
 
           <GlassCard width="100%" style={styles.glassCard}>
             <View style={styles.cardHeader}>
-              <AppText text={t('app.task_management.task_details')} fontSize={18} type="Medium" />
+              <AppText
+                text={t('app.task_management.task_details')}
+                fontSize={18}
+                type="Medium"
+              />
               {isEditable && (
-                <TouchableOpacity onPress={isEditMode ? handleCancel : () => setIsEditMode(true)}>
+                <TouchableOpacity
+                  onPress={
+                    isEditMode ? handleCancel : () => setIsEditMode(true)
+                  }
+                >
                   <GlassCard width={44} style={styles.editGlassIcon}>
-                    <Svgicons path={isEditMode ? 'crossIcon' : 'edit_pencil_icon'} size={24} />
+                    <Svgicons
+                      path={isEditMode ? 'crossIcon' : 'edit_pencil_icon'}
+                      size={24}
+                    />
                   </GlassCard>
                 </TouchableOpacity>
               )}
             </View>
 
             <View style={styles.detailSection}>
-              <AppText text={t('app.task_management.task_instructions')} fontSize={14} type="Bold" mb={8} />
+              <AppText
+                text={t('app.task_management.task_instructions')}
+                fontSize={14}
+                type="Bold"
+                mb={8}
+              />
               {isEditMode ? (
                 <Controller
                   control={control}
@@ -197,21 +247,66 @@ const EditTask = ({ route }: any) => {
                   )}
                 />
               ) : (
-                <AppText text={task?.description || 'No instructions provided.'} fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
+                <AppText
+                  text={task?.description || 'No instructions provided.'}
+                  fontSize={14}
+                  color={Colors.DARK_CHARCOAL}
+                  mb={20}
+                />
               )}
 
-              <AppText text={t('app.task_management.door_code')} fontSize={14} type="Bold" mb={4} />
-              <AppText text={task?.key_code } fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
-              <AppText text={t('app.task_management.property')} fontSize={14} type="Bold" mb={4} />
-              <AppText text={task?.listing_title || 'Address not available'} fontSize={14} color={Colors.DARK_CHARCOAL} mb={20} />
+              {task?.key_code && (
+                <>
+                  {' '}
+                  <AppText
+                    text={t('app.task_management.door_code')}
+                    fontSize={14}
+                    type="Bold"
+                    mb={4}
+                  />
+                  <AppText
+                    text={task?.key_code}
+                    fontSize={14}
+                    color={Colors.DARK_CHARCOAL}
+                    mb={20}
+                  />{' '}
+                </>
+              )}
+              <AppText
+                text={t('app.task_management.property')}
+                fontSize={14}
+                type="Bold"
+                mb={4}
+              />
+              <AppText
+                text={task?.listing_title || 'Address not available'}
+                fontSize={14}
+                color={Colors.DARK_CHARCOAL}
+                mb={20}
+              />
 
               {isEditMode || isEditable ? (
-                <DropdownField name="assignee" label={t('app.edit_task_screen.assign_task')} control={control} errors={errors} data={assigneeOptions} />
+                <DropdownField
+                  name="assignee"
+                  label={t('app.edit_task_screen.assign_task')}
+                  control={control}
+                  errors={errors}
+                  data={assigneeOptions}
+                />
               ) : (
                 <View>
-                  <AppText text={t('app.task_management.assign_task')} fontSize={14} type="Bold" mb={8} />
+                  <AppText
+                    text={t('app.task_management.assign_task')}
+                    fontSize={14}
+                    type="Bold"
+                    mb={8}
+                  />
                   <View style={styles.readOnlyBox}>
-                    <AppText text={task?.assigned_user?.name || 'Unassigned'} fontSize={14} color={Colors.DARK_CHARCOAL} />
+                    <AppText
+                      text={task?.assigned_user?.name || 'Unassigned'}
+                      fontSize={14}
+                      color={Colors.DARK_CHARCOAL}
+                    />
                   </View>
                 </View>
               )}
@@ -221,29 +316,80 @@ const EditTask = ({ route }: any) => {
           {task.status !== 'template' && (
             <GlassCard width="100%" style={styles.glassCard}>
               <View style={styles.cardHeader}>
-                <AppText text={t('app.task_management.task_timeline')} fontSize={18} type="Medium" />
+                <AppText
+                  text={t('app.task_management.task_timeline')}
+                  fontSize={18}
+                  type="Medium"
+                />
                 <Svgicons path="taskTimeline" size={24} />
               </View>
 
               {isEditMode ? (
                 <View>
-                  <DateTimeInputField name="task_date" control={control} errors={errors} label={t('app.edit_task_screen.task_date')} mode="date" />
-                  <DateTimeInputField name="start_time" control={control} errors={errors} label={t('app.edit_task_screen.start_time')} mode="time" />
-                  <DateTimeInputField name="end_time" control={control} errors={errors} label={t('app.edit_task_screen.end_time')} mode="time" />
+                  <DateTimeInputField
+                    name="task_date"
+                    control={control}
+                    errors={errors}
+                    label={t('app.edit_task_screen.task_date')}
+                    mode="date"
+                  />
+                  <DateTimeInputField
+                    name="start_time"
+                    control={control}
+                    errors={errors}
+                    label={t('app.edit_task_screen.start_time')}
+                    mode="time"
+                  />
+                  <DateTimeInputField
+                    name="end_time"
+                    control={control}
+                    errors={errors}
+                    label={t('app.edit_task_screen.end_time')}
+                    mode="time"
+                  />
                 </View>
               ) : (
                 <View>
-                  <TimelineItem icon="taskCalendar" label={t('app.edit_task_screen.task_date')} value={formatDateDisplay(task?.start_date)} />
-                  <TimelineItem icon="taskStartDate" label={t('app.edit_task_screen.start_time')} value={task?.start_time || '--'} />
-                  <TimelineItem icon="taskEndDate" label={t('app.edit_task_screen.end_time')} value={task?.end_time || '--'} />
+                  <TimelineItem
+                    icon="taskCalendar"
+                    label={t('app.edit_task_screen.task_date')}
+                    value={formatDateDisplay(task?.start_date)}
+                  />
+                  <TimelineItem
+                    icon="taskStartDate"
+                    label={t('app.edit_task_screen.start_time')}
+                    value={task?.start_time || '--'}
+                  />
+                  <TimelineItem
+                    icon="taskEndDate"
+                    label={t('app.edit_task_screen.end_time')}
+                    value={task?.end_time || '--'}
+                  />
                 </View>
               )}
 
               <View style={styles.timelineRow}>
-                <View style={styles.iconCircle}><Svgicons path="taskStar" size={18} /></View>
+                <View style={styles.iconCircle}>
+                  <Svgicons path="taskStar" size={18} />
+                </View>
                 <View>
-                  <AppText text={t('app.task_management.task_status_label')} fontSize={14} type="Medium" />
-                  <AppText text={statusDisplay} fontSize={13} type="Bold" color={apiStatus === 'todo' ? Colors.ERROR_RED : apiStatus === 'inprogress' ? Colors.GOLDEN_AMBER : Colors.PRIMARY_TEAL} />
+                  <AppText
+                    text={t('app.task_management.task_status_label')}
+                    fontSize={14}
+                    type="Medium"
+                  />
+                  <AppText
+                    text={statusDisplay}
+                    fontSize={13}
+                    type="Bold"
+                    color={
+                      apiStatus === 'todo'
+                        ? Colors.ERROR_RED
+                        : apiStatus === 'inprogress'
+                        ? Colors.GOLDEN_AMBER
+                        : Colors.PRIMARY_TEAL
+                    }
+                  />
                 </View>
               </View>
             </GlassCard>
@@ -260,7 +406,7 @@ const EditTask = ({ route }: any) => {
           )}
         </View> */}
 
-            <View style={styles.footer}>
+        <View style={styles.footer}>
           {isCompleted ? (
             <>
               <AppButton
@@ -330,26 +476,84 @@ const EditTask = ({ route }: any) => {
 
 const TimelineItem = ({ icon, label, value }: any) => (
   <View style={styles.timelineRow}>
-    <View style={styles.iconCircle}><Svgicons path={icon} size={22} /></View>
-    <View><AppText text={label} fontSize={14} type="Medium" /><AppText text={value} fontSize={13} color={Colors.DARK_CHARCOAL} /></View>
+    <View style={styles.iconCircle}>
+      <Svgicons path={icon} size={22} />
+    </View>
+    <View>
+      <AppText text={label} fontSize={14} type="Medium" />
+      <AppText text={value} fontSize={13} color={Colors.DARK_CHARCOAL} />
+    </View>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 25 },
-  header: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' },
-  iconBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scrollContent: { paddingBottom: Metrics.verticalScale(160) },
   glassCard: { padding: 20, marginBottom: 20 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   detailSection: { marginTop: 10 },
-  editGlassIcon: { height: 44, borderRadius: 18, justifyContent: 'center', alignItems: 'center', borderWidth: 1, backgroundColor: 'rgba(255, 255, 255, 0.4)', borderColor: 'rgba(255, 255, 255, 0.6)' },
-  instructionInput: { backgroundColor: 'rgba(255, 255, 255, 0.3)', borderRadius: 12, padding: 16, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.5)', color: Colors.BLACK, fontSize: 14, minHeight: 100, textAlignVertical: 'top', marginBottom: 20 },
-  readOnlyBox: { backgroundColor: 'rgba(255, 255, 255, 0.4)', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.5)', marginBottom: 20 },
+  editGlassIcon: {
+    height: 44,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+  },
+  instructionInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    color: Colors.BLACK,
+    fontSize: 14,
+    minHeight: 100,
+    textAlignVertical: 'top',
+    marginBottom: 20,
+  },
+  readOnlyBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    marginBottom: 20,
+  },
   timelineRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  iconCircle: { width: 36, height: 36, borderRadius: 10, backgroundColor: 'rgba(255, 255, 255, 0.5)', justifyContent: 'center', alignItems: 'center', marginRight: 15 },
-  footer: { position: 'absolute', bottom: Platform.OS === 'ios' ? 40 : 20, left: 25, right: 25 },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 40 : 20,
+    left: 25,
+    right: 25,
+  },
   gradientMargin: { marginBottom: 12 },
   outlineBtn: { backgroundColor: '#fff', borderRadius: 13, borderWidth: 0 },
 });
