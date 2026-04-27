@@ -168,7 +168,7 @@ const StepOne = () => {
           mb={vs(30)} 
         />
 
-        <AppText text={`Why can't you host ${bookingData?.guest_name || 'this guest'}?`} type="Bold" fontSize={22} mb={vs(20)} />
+        <AppText text={t('app.shared.step1_cant_host', { name: bookingData?.guest_name || t('app.shared.this_guest') })} type="Bold" fontSize={22} mb={vs(20)} />
 
         {reasons.map((item) => (
           <ButtonView key={item.id} onPress={() => handleSelectReason(item)}>

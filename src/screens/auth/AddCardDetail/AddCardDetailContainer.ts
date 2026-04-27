@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { processColor } from 'react-native';
 import { useRoute } from '@react-navigation/native';
@@ -88,16 +89,16 @@ export default function useAddCardDetailContainer() {
     onSuccess: () => {
       Toast.show({ 
         type: 'success', 
-        text1: 'Payment Successful',
-        text2: 'Your payment has been processed successfully'
+        text1: i18n.t('common.toast.payment_successful'),
+        text2: i18n.t('common.toast.payment_processed')
       });
       reset(NavigationRoutes.AUTH_STACK.TRIAL_SUCCESS, { plan });
     },
     onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: 'Payment Save Failed',
-        text2: error?.message || 'Failed to save payment information',
+        text1: i18n.t('common.toast.payment_save_failed'),
+        text2: error?.message || i18n.t('common.toast.failed_save_payment'),
       });
     },
   });
@@ -359,7 +360,7 @@ export default function useAddCardDetailContainer() {
       
       Toast.show({
         type: 'error',
-        text1: 'Payment Error',
+        text1: i18n.t('common.toast.payment_error'),
         text2: displayMessage,
       });
     } finally {

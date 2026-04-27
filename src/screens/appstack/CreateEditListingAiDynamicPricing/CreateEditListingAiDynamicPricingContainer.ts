@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // useAIDynamicPricingContainer.ts
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -49,7 +50,7 @@ export default function useAIDynamicPricingContainer() {
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -59,11 +60,11 @@ export default function useAIDynamicPricingContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: res?.message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Handler ───────────────────────────────────────────────────────────────
@@ -79,7 +80,7 @@ export default function useAIDynamicPricingContainer() {
       createDetails(buildPayload(isSaveAndExit) as any, {
         onSuccess: (res: any) => {
           queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-          Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+          Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
           if (isSaveAndExit) {
             navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);

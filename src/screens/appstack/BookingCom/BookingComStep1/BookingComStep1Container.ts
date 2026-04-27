@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,7 +22,7 @@ export default function useBookingComStep1Container() {
     const { mutate: testConnection, isPending: isTesting } = useMutation({
         mutationFn: bookingcomTestConnectionApi,
         onSuccess: (variables) => {
-            Toast.show({ type: 'success', text1: 'Connection Successful' });
+            Toast.show({ type: 'success', text1: i18n.t('common.toast.connection_successful') });
             navigate(NavigationRoutes.APP_STACK.BOOKING_COM_STEP_2, { hotelId: hotelId });
         },
         onError: (error: any) => {

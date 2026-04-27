@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -71,10 +72,10 @@ export default function useBookingRulesContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -106,7 +107,7 @@ export default function useBookingRulesContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:           propertyDetail?.name || 'New Listing',
+      name:           propertyDetail?.name || i18n.t('common.new_listing'),
       long_term_stay: data.long_term_stay === 1 || data.long_term_stay === '1',
       min_gap_night:  Number(data.min_gap_night),
       min_nights:     Number(data.min_night_stay),
@@ -117,7 +118,7 @@ export default function useBookingRulesContainer() {
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -127,11 +128,11 @@ export default function useBookingRulesContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const onNext = (data: BookingRulesFormValues) => {

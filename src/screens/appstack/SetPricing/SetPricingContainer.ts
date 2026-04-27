@@ -1,5 +1,6 @@
 // useSetPricingContainer.ts
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -114,10 +115,10 @@ const listingOptions = connectedAccounts
   mutationFn: createListingExportApi,
   onSuccess: () => {
     setBottomSheetVisible(false);
-    Toast.show({ type: 'success', text1: 'Exported successfully' });
+    Toast.show({ type: 'success', text1: i18n.t('common.toast.exported') });
   },
   onError: (err: any) =>
-    Toast.show({ type: 'error', text1: err.message || 'Export failed' }),
+    Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.export_failed') }),
 });
 
 const handleExport = () => {
@@ -183,7 +184,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
   const { mutate: handlePricingApi, isPending } = useMutation({
     mutationFn: createListingPricingApi, // ✅ correct API
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Handler ───────────────────────────────────────────────────────────────
@@ -204,7 +205,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
-        Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+        Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
         if (isSaveAndExit) {
           isEdit

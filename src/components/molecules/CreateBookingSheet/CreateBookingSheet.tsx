@@ -95,8 +95,8 @@ export const CreateBookingSheet = ({
           <AppText
             text={
               bookingType === 'direct'
-                ? 'Create Direct Booking'
-                : 'Manage Pricing'
+                ? t('app.listing_screen.create_direct_booking')
+                : t('app.listing_screen.set_pricing')
             }
             type="Bold"
             fontSize={22}
@@ -125,7 +125,7 @@ export const CreateBookingSheet = ({
                 {bookingType === type && <View style={styles.radioInner} />}
               </View>
               <AppText
-                text={type === 'direct' ? 'Direct Booking' : 'Pricing'}
+                text={type === 'direct' ? t('app.listing_screen.direct_booking')  : t('app.listing_screen.pricing')}
               />
             </Pressable>
           ))}
@@ -136,8 +136,8 @@ export const CreateBookingSheet = ({
             name="listing_id"
             control={control}
             errors={errors}
-            label="Property Listing"
-            placeholder="Select a property"
+            label={t('app.listing_screen.select_listing')}
+            placeholder={t('app.listing_screen.all_listings')}
             data={listingOptions.filter(
               (o: any) =>
                 o.value !== '' && !o.label.toLowerCase().includes('all'),
@@ -151,8 +151,8 @@ export const CreateBookingSheet = ({
               name="booking_type"
               control={control}
               errors={errors}
-              label="Stay Type"
-              placeholder="Select stay type"
+              label={t('app.listing_screen.select_stay_type')}
+              placeholder={t('app.listing_screen.select_stay_type')}
               data={[
                 { label: 'Guest Stay', value: 'guest_stay' },
                 { label: 'Self Stay', value: 'self_stay' },
@@ -162,21 +162,21 @@ export const CreateBookingSheet = ({
               name="name"
               control={control}
               errors={errors}
-              label="Guest Name"
-              placeholder="Enter guest name"
+              label={t('app.listing_screen.guest_name')}
+              placeholder={t('app.listing_screen.guest_name_placeholder')}
             />
             {/* <InputField name="per_night_price" control={control} errors={errors} label="Per Night Pricing" placeholder="" /> */}
             <InputField
               name="email"
               control={control}
               errors={errors}
-              label="Email"
-              placeholder="guest@example.com"
+              label={t('app.listing_screen.email')}
+              placeholder={t('app.listing_screen.email_placeholder')}
               keyboardType="email-address"
             />
             <View style={{ marginBottom: vs(10) }}>
               <PhoneInputField
-                label="Phone Number*"
+                label={t('app.listing_screen.phone_number')}
                 control={control}
                 errors={errors}
                 countryFieldName="country"
@@ -190,19 +190,19 @@ export const CreateBookingSheet = ({
               name="rate"
               control={control}
               errors={errors}
-              label="Base Price"
-              placeholder="SAR 500"
+              label={t('app.listing_screen.base_price')}
+              placeholder={t('app.listing_screen.base_price_placeholder')}
               keyboardType="numeric"
             />
             <View style={styles.pricingInfoContainer}>
               <AppText
-                text={t('app.create_booking_sheet.price_hint')}
+                text={t('app.listing_screen.price_hint')}
                 fontSize={13}
                 color={Colors.DRAVIT_GREY}
               />
               <TouchableOpacity activeOpacity={0.7}>
                 <AppText
-                  text={t('app.create_booking_sheet.similar_listings')}
+                  text={t('app.listing_screen.similar_listings')}
                   fontSize={13}
                   color={Colors.DRAVIT_GREY}
                   style={styles.underline}
@@ -216,11 +216,11 @@ export const CreateBookingSheet = ({
           name="start_date"
           control={control}
           errors={errors}
-          label="Start Date"
-          placeholder="MM/DD/YY"
+          label={t('app.listing_screen.start_date')}
+          placeholder={t('app.listing_screen.date_placeholder')}
           mode="date"
           minimumDate={minStartDate}
-          rules={{ required: 'Check-in date is required' }}
+          rules={{ required: t('app.listing_screen.check_in_required') }}
           rightIcon={
             <Svgicons
               path="Calendar_Days"
@@ -234,11 +234,11 @@ export const CreateBookingSheet = ({
           name="end_date"
           control={control}
           errors={errors}
-          label="End Date"
-          placeholder="MM/DD/YY"
+          label={t('app.listing_screen.end_date')}
+          placeholder={t('app.listing_screen.date_placeholder')}
           mode="date"
           minimumDate={minEndDate}
-          rules={{ required: 'Check-out date is required' }}
+          rules={{ required: t('app.listing_screen.check_out_required') }}
           rightIcon={
             <Svgicons
               path="Calendar_Days"
@@ -253,7 +253,7 @@ export const CreateBookingSheet = ({
           <View style={styles.totalContainer}>
             <ButtonView activeOpacity={0.7}>
               <AppText
-                text={`Guest total SAR ${guestTotal}`}
+                text={`${t('app.listing_screen.guest_total')} ${guestTotal}`}
                 fontSize={14}
                 color={Colors.DRAVIT_GREY}
                 style={styles.underline}
@@ -266,7 +266,7 @@ export const CreateBookingSheet = ({
         <View style={styles.buttonContainer}>
           <AppButton
             title={
-              bookingType === 'direct' ? 'Create Direct Booking' : 'Set Pricing'
+              bookingType === 'direct' ? t('app.listing_screen.create_direct_booking') : t('app.listing_screen.set_pricing')
             }
             onPress={handleSubmit(onSubmit)}
             loading={isLoading}

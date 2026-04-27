@@ -8,9 +8,58 @@
       "inbox": "الرسائل",
       "tasks": "المهام",
       "more": "المزيد"
+    },
+    "toast": {
+      "exported": "تم التصدير بنجاح",
+      "updated": "تم التحديث بنجاح",
+      "saved": "تم الحفظ بنجاح",
+      "created": "تم الإنشاء بنجاح",
+      "request_sent": "تم إرسال الطلب بنجاح",
+      "logs_updated": "تم تحديث السجلات",
+      "missing_fields": "حقول مفقودة",
+      "listing_exported": "تم تصدير العقار بنجاح",
+      "listing_created": "تم إنشاء العقار بنجاح",
+      "listing_saved": "تم حفظ العقار بنجاح",
+      "something_went_wrong": "حدث خطأ ما",
+      "export_failed": "فشل التصدير",
+      "connection_successful": "تم الاتصال بنجاح",
+      "connection_failed": "فشل الاتصال",
+      "submit_failed": "فشل الإرسال",
+      "upload_ownership": "يرجى رفع وثيقة ملكية العقار",
+      "upload_authority": "يرجى رفع وثيقة ترخيص الهيئة",
+      "trip_declined": "تم رفض الرحلة بنجاح",
+      "error_declining": "خطأ في رفض الرحلة",
+      "reservation_cancelled": "تم إلغاء الحجز بنجاح",
+      "cancellation_failed": "فشل الإلغاء",
+      "open_settings": "فتح الإعدادات",
+      "approximate_location": "استخدام الموقع التقريبي",
+      "location_required": "الموقع مطلوب",
+      "coming_soon": "قريباً",
+      "password_updated": "تم تحديث كلمة المرور بنجاح",
+      "failed_change_password": "فشل تغيير كلمة المرور",
+      "failed_update_profile": "فشل تحديث الملف الشخصي",
+      "account_deleted": "تم حذف الحساب بنجاح",
+      "failed_delete_account": "فشل حذف الحساب",
+      "failed_upload_photo": "فشل رفع الصورة",
+      "failed_remove_photo": "فشل إزالة الصورة",
+      "payment_successful": "تمت عملية الدفع",
+      "payment_processed": "تمت معالجة دفعتك بنجاح",
+      "payment_save_failed": "فشل حفظ معلومات الدفع",
+      "failed_save_payment": "فشل في حفظ معلومات الدفع",
+      "payment_error": "خطأ في الدفع",
+      "unknown_error": "خطأ غير معروف",
+      "special_offer_sent": "تم إرسال العرض الخاص بنجاح",
+      "error": "خطأ"
+    },
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "new_listing": "عقار جديد",
+    "dropdown": {
+      "apartment": "شقة",
+      "saved_replies": "الردود المحفوظة",
+      "automation_template": "قالب الأتمتة"
     }
   },
-
   "auth": {
     "login": {
       "title_1": "يرجى إدخال رقم هاتفك",
@@ -240,6 +289,9 @@
     }
   },
   "app": {
+    "textarea": {
+      "word_count": "{{current}}/{{limit}} كلمة"
+    },
     "home": {
       "hello": "مرحباً {{name}}!",
       "good_morning": "صباح الخير",
@@ -473,13 +525,23 @@
       "title": "أخبرنا عن عقارك",
       "select_type": "اختر نوع العقار",
       "next": "التالي",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "property_flat_apartment": "شقة/بناية"
     },
     "location_step": {
       "loading": "جاري تحديد موقعك...",
       "search_placeholder": "ابحث عن الموقع",
       "enter_manually": "أدخل يدوياً",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "location_permission_title": "إذن الموقع",
+      "location_permission_message": "يحتاج هذا التطبيق إلى موقعك لتحديد عنوان العقار.",
+      "ask_later": "اسألني لاحقاً",
+      "permission_denied_title": "تم رفض الإذن",
+      "permission_denied_message": "قم بتفعيل إذن الموقع في الإعدادات.",
+      "address_wait": "يرجى الانتظار حتى يتم تحديد العنوان.",
+      "approximate_location_desc": "تعذّر الحصول على الموقع الدقيق. يمكنك البحث يدوياً.",
+      "location_required_desc": "يرجى السماح بالوصول إلى الموقع أو اختيار موقع للمتابعة.",
+      "gps_error": "تعذّر الحصول على الموقع الحالي. تحقق من إعدادات GPS."
     },
     "confirm_address": {
       "edit_title": "تعديل العنوان",
@@ -563,7 +625,14 @@
       "snooze": "تأجيل",
       "unsnoozed": "إلغاء التأجيل",
       "archive": "أرشفة",
-      "unarchived": "إلغاء الأرشفة"
+      "unarchived": "إلغاء الأرشفة",
+      "tab_all": "الكل",
+      "tab_archived": "المؤرشفة",
+      "tab_snoozed": "المؤجلة",
+      "tab_unread": "غير المقروءة",
+      "unknown_guest": "غير معروف",
+      "no_message_preview": "لا توجد رسالة",
+      "not_available": "غير متاح"
     },
     "subscription": {
       "title": "تكلفة العقار",
@@ -590,7 +659,20 @@
       "connect_accounts": "ربط الحسابات",
       "no_tab_account": "لا يوجد حساب {{tab}}",
       "add_account": "+ إضافة حساب {{tab}} آخر",
-      "connect_account": "ربط حساب {{tab}}"
+      "connect_account": "ربط حساب {{tab}}",
+      "livedin_name": "اسم ليفدين",
+      "total_property": "إجمالي عدد العقارات",
+      "connection_status": "حالة الاتصال",
+      "connection_active": "نشط",
+      "property_name": "اسم العقار",
+      "existing_listing": "العقار الموجود:",
+      "none_placeholder": "لا يوجد",
+      "airbnb_connected": "Airbnb متصل بالفعل",
+      "airbnb_connected_desc": "حساب Airbnb الخاص بك متصل بالفعل.",
+      "gathern_connected": "Gathern متصل بالفعل",
+      "gathern_connected_desc": "حساب Gathern الخاص بك متصل بالفعل.",
+      "bookingcom_connected": "Booking.com متصل بالفعل",
+      "bookingcom_connected_desc": "حساب Booking.com الخاص بك متصل بالفعل."
     },
     "no_listing_smart_lock": {
       "title": "لم يتم العثور على عقار",
@@ -845,6 +927,17 @@
       "add_new": "إضافة طريقة دفع جديدة"
     },
     "task_management": {
+      "post_activity_preview": "معاينة النشاط اللاحق",
+      "checklist_management": "إدارة قائمة المراجعة",
+      "checklist_click_hint": "انقر على كل قسم لعرض الصور ولكل قسم والتحقق من الحالة بعد اكتمال المهمة.",
+      "section_name_label": "اسم القسم",
+      "section_name_placeholder": "المطبخ",
+      "section_required": "مطلوب",
+      "section_added": "تمت إضافة القسم بنجاح",
+      "section_add_failed": "فشل إضافة القسم",
+      "listing_selection_label": "اختيار العقار",
+      "assign_user_label": "تعيين مستخدم",
+      "select_user_hint": "اختر مستخدماً للمتابعة. إذا لم تجد المستخدم، أنشئ واحداً من المزيد ←",
       "create_task_title": "إنشاء مهمة جديدة",
       "task_name_label": "اسم المهمة:",
       "task_name_placeholder": "أدخل اسم المهمة",
@@ -913,8 +1006,38 @@
       "user_management_link": "إدارة المستخدمين."
     },
     "listing_screen": {
+      "booking_created": "تم إنشاء الحجز",
+      "pricing_updated": "تم تحديث التسعير",
+      "fetch_booking_error": "تعذّر جلب معلومات الحجز",
+      "booking_accepted": "تم قبول الحجز",
+      "booking_accepted_desc": "لقد قبلت طلب {{name}} بنجاح.",
+      "action_failed": "فشل الإجراء",
+      "accept_request_failed": "فشل قبول الطلب",
       "guest_bookings": "حجوزات الضيوف",
-      "reservations": "الحجوزات"
+      "reservations": "الحجوزات",
+      "select_listing": "اختر العقار",
+      "all_listings": "جميع العقارات",
+      "create_direct_booking": "إنشاء حجز مباشر",
+      "direct_booking": "حجز مباشر",
+      "pricing": "التسعير",
+      "select_stay_type": "اختر نوع الإقامة",
+      "guest_name": "اسم الضيف",
+      "phone_number": "رقم الهاتف",
+      "start_date": "تاريخ البداية",
+      "end_date": "تاريخ النهاية",
+      "guest_total": "إجمالي الضيف بالريال",
+      "email": "البريد الإلكتروني",
+      "base_price": "السعر الأساسي",
+      "manage_pricing": "إدارة التسعير",
+      "guest_name_placeholder": "أدخل اسم الضيف",
+      "email_placeholder": "أدخل البريد الإلكتروني",
+      "base_price_placeholder": "أدخل السعر الأساسي",
+      "price_hint": "SR499 - SR500 حسب العروض",
+      "similar_listings": "عقارات مماثلة SR86 - SR129",
+      "date_placeholder": "يي/شش/سس",
+      "check_in_required": "تاريخ الوصول مطلوب",
+      "check_out_required": "تاريخ المغادرة مطلوب",
+      "set_pricing": "تحديد السعر"
     },
     "account_screen": {
       "title": "الحساب"
@@ -1131,7 +1254,31 @@
       "set_cover": "اجعل هذه الصورة صورة الغلاف",
       "delete_picture": "حذف الصورة",
       "cancel": "إلغاء",
-      "take_photo": "التقاط صورة"
+      "take_photo": "التقاط صورة",
+      "photos_uploaded": "تم رفع الصور بنجاح",
+      "photo_deleted": "تم حذف الصورة بنجاح",
+      "cover_photo_set": "تم تعيين صورة الغلاف بنجاح",
+      "cannot_delete": "لا يمكن حذف هذه الصورة",
+      "not_uploaded_yet": "لم يتم رفع الصورة بعد",
+      "cover_photo_failed": "فشل تعيين صورة الغلاف",
+      "delete_failed": "فشل الحذف",
+      "upload_error_title": "خطأ في الرفع",
+      "upload_required": "مطلوب",
+      "upload_required_desc": "يرجى رفع صورة واحدة على الأقل لـ {{category}}.",
+      "interior_title": "إضافة صور ومقاطع فيديو",
+      "interior_section": "صور ومقاطع الداخل",
+      "next": "التالي",
+      "step_2": "الخطوة 2",
+      "step_3": "الخطوة 3",
+      "exterior_title": "إضافة صور ومقاطع فيديو",
+      "exterior_section": "صور ومقاطع الخارج",
+      "step_4": "الخطوة 4",
+      "bathroom_section": "صور ومقاطع الحمام",
+      "step_5": "الخطوة 5",
+      "other_title": "إضافة صور\nومقاطع فيديو",
+      "other_section": "صور ومقاطع {{category}}",
+      "upload_limit": "ارفع حتى {{maxImages}} صورة و{{maxVideos}} فيديو لكل قسم.",
+      "save_exit": "حفظ والخروج"
     },
     "ali_widget": {
       "agent_name": "A.LI - Livedin",
@@ -1363,6 +1510,20 @@
       "decline": "رفض",
       "accept": "قبول"
     },
+    "reservation_card": {
+      "booking_platform": "منصة الحجز",
+      "property_name": "اسم العقار",
+      "check_in_time": "وقت تسجيل الوصول",
+      "check_out_time": "وقت تسجيل المغادرة",
+      "checked_out_date": "تاريخ المغادرة",
+      "number_of_guests": "عدد الضيوف"
+    },
+    "reservation_header": {
+      "search_placeholder": "ابحث عن ضيف",
+      "filter_today": "اليوم",
+      "filter_booking_request": "طلبات الحجز",
+      "filter_upcoming": "الحجوزات القادمة"
+    },
     "document_upload": {
       "title": "رفع وثائق ملكية الترخيص",
       "format_hint": "• الصيغ المقبولة: PDF.",
@@ -1375,6 +1536,32 @@
       "save_exit": "حفظ والخروج",
       "select_ota": "اختر حساب OTA",
       "select_account": "اختر الحساب"
+    },
+    "shared": {
+      "connected_booking_platforms": "منصات الحجز\nالمتصلة",
+      "connect_ota_title": "ربط منصات\nالحجز OTA",
+      "connect_ota_desc": "اربط حسابات Airbnb أو Gathern أو منصات الحجز الأخرى لإدارة جميع عقاراتك في مكان واحد.",
+      "step4_deduction": "سيتم خصم SR187.50 من دفعتك التالية",
+      "step1_cant_host": "لماذا لا يمكنك استضافة {{name}}؟",
+      "this_guest": "هذا الضيف",
+      "decline_step1_title": "أخبرنا لماذا لا يمكنك استضافة رحلة {{name}}",
+      "decline_step2_blocked": "ستبقى {{range}} محجوزة",
+      "decline_step3_guest_msg": "أخبر {{name}} لماذا لا يمكنك الاستضافة",
+      "replying_to": "الرد على {{name}}",
+      "write_review_for": "اكتب تقييماً لـ\n{{name}}",
+      "share_with_hosts": "سنشارك هذا مع {{name}} والمضيفين الآخرين.",
+      "recommend_guest": "هل توصي بـ {{name}}؟",
+      "dont_recommend": "لماذا لا توصي بـ {{name}}؟",
+      "nights": "ليالٍ",
+      "guests": "ضيوف",
+      "assigned_to": "معين إلى {{name}}",
+      "total_reservations": "إجمالي {{count}} حجز",
+      "create_it_once": "أنشئه مرة واحدة",
+      "recurring_cleaning_prefix": "تحتاج فقط إلى",
+      "recurring_cleaning_suffix": "، في كل مرة يكون هناك حجز جديد، ستظهر مهمة التنظيف تلقائياً في إدارة مهامك لعضو الفريق المعين.",
+      "unassigned": "غير معين",
+      "chars_of_1000": "/1000 حرف",
+      "booking_code": "رمز الحجز"
     }
   }
 }

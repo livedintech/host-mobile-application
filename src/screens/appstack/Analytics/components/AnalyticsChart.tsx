@@ -16,7 +16,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
     <View style={styles.cardHeader}>
       <View>
         <AppText text={title} type="Bold" fontSize={18} color={Colors.BLACK} />
-        {isReservation && <AppText text={`Total ${total} reservations`} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />}
+        {isReservation && <AppText text={t('app.shared.total_reservations', { count: total })} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />}
       </View>
       <GlassCard width={48} style={styles.iconGlass}>
         <Svgicons path="moneyBagIcon" size={30} />

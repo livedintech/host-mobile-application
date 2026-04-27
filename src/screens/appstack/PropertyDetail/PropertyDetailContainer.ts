@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // PropertyDetailContainer.ts
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -83,11 +84,11 @@ export default function usePropertyDetailContainer() {
           (item: any) => item.ch_channel_id === ota_Account,
         );
         const otaName = selectedAccount?.connection_type || 'OTA Platform';
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
         // navigate(NavigationRoutes.APP_STACK.LISTING_EXPORT_SUCCESS, { otaName });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExportSubmit = (data: OtaAccountFormValues) => {
@@ -113,7 +114,7 @@ export default function usePropertyDetailContainer() {
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Data Mapping ──────────────────────────────────────────────────────────

@@ -5,9 +5,12 @@ import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useTranslation } from 'react-i18next';
 
 const OtherPhotosScreen = () => {
   const route = useRoute<any>();
+  const { t } = useTranslation();
+
   const { listing_id, listing } = useCreateListingStore();
 
   const isEdit = route.params?.isEdit;
@@ -36,19 +39,19 @@ const OtherPhotosScreen = () => {
 
   return (
     <PhotoUploadTemplate
-      step={!isEdit ? 'Step 5' : undefined}
-      screenTitle={`Add Photos & \nVideos`}
-      sectionTitle={`${category} Photos & Videos`}
+step={!isEdit ? t('app.photo_upload.step_5') : undefined}
+      screenTitle={t('app.photo_upload.other_title')}
+      sectionTitle={t('app.photo_upload.other_section', { category })}
       maxImages={10}
       maxVideos={1}
       mediaList={mediaList}
       onDelete={deletePhoto}
       onSetCover={setCoverPhoto}
       isFetching={isFetching}
-      primaryBtnTitle={!isEdit ? 'Next' : undefined}
+      primaryBtnTitle={!isEdit ? t('app.photo_upload.next') : undefined}
       onPrimaryPress={handleNext}
       primaryLoading={isLoading}
-      secondaryBtnTitle="Save & Exit"
+      secondaryBtnTitle={t('app.photo_upload.save_exit')}
       onSecondaryPress={handleSaveAndExit}
       secondaryLoading={isLoading}
       onMediaChange={uploadNewPhotos}

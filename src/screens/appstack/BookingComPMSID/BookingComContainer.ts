@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import Toast from 'react-native-toast-message'
@@ -55,7 +56,7 @@ export default function useBookingComContainer() {
             setIsTestSuccess(true) // ✅ Success pe enable karo
             Toast.show({
                 type: 'success',
-                text1: 'Connection Successful',
+                text1: i18n.t('common.toast.connection_successful'),
                 text2: 'Booking.com connection is valid.',
             })
         },
@@ -63,7 +64,7 @@ export default function useBookingComContainer() {
             setIsTestSuccess(false) // ✅ Fail pe dobara disable
             Toast.show({
                 type: 'error',
-                text1: 'Connection Failed',
+                text1: i18n.t('common.toast.connection_failed'),
                 text2: error?.message || 'Please check your Room ID and Hotel ID.',
             })
         },
@@ -86,7 +87,7 @@ export default function useBookingComContainer() {
         onError: (error: any) => {
             Toast.show({
                 type: 'error',
-                text1: 'Submit Failed',
+                text1: i18n.t('common.toast.submit_failed'),
                 text2: error?.message || 'Something went wrong. Please try again.',
             })
         },
@@ -115,7 +116,7 @@ export default function useBookingComContainer() {
         if (!roomId || !hotelId) {
             Toast.show({
                 type: 'error',
-                text1: 'Missing Fields',
+                text1: i18n.t('common.toast.missing_fields'),
                 text2: 'Please fill Room ID and Hotel ID first.',
             })
             return

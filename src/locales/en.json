@@ -2,15 +2,64 @@
   "common": {
     "lang_switch": "العربية",
     "or": "Or",
-     "tab": {
+    "tab": {
       "home": "Home",
       "calendar": "Calendar",
       "inbox": "Inbox",
       "tasks": "Tasks",
       "more": "More"
+    },
+    "toast": {
+      "exported": "Exported successfully",
+      "updated": "Updated successfully",
+      "saved": "Saved successfully",
+      "created": "Created successfully",
+      "request_sent": "Request sent successfully",
+      "logs_updated": "Logs Updated",
+      "missing_fields": "Missing Fields",
+      "listing_exported": "Listing exported successfully",
+      "listing_created": "Listing created successfully",
+      "listing_saved": "Listing saved successfully",
+      "something_went_wrong": "Something went wrong",
+      "export_failed": "Export failed",
+      "connection_successful": "Connection Successful",
+      "connection_failed": "Connection Failed",
+      "submit_failed": "Submit Failed",
+      "upload_ownership": "Please upload Property Ownership document",
+      "upload_authority": "Please upload Authority License document",
+      "trip_declined": "Trip Declined Successfully",
+      "error_declining": "Error declining trip",
+      "reservation_cancelled": "Reservation cancelled successfully",
+      "cancellation_failed": "Cancellation failed",
+      "open_settings": "Open Settings",
+      "approximate_location": "Using approximate location",
+      "location_required": "Location required",
+      "coming_soon": "Coming soon",
+      "password_updated": "Password updated successfully",
+      "failed_change_password": "Failed to change password",
+      "failed_update_profile": "Failed to update profile",
+      "account_deleted": "Account deleted successfully",
+      "failed_delete_account": "Failed to delete account",
+      "failed_upload_photo": "Failed to upload photo",
+      "failed_remove_photo": "Failed to remove photo",
+      "payment_successful": "Payment Successful",
+      "payment_processed": "Your payment has been processed successfully",
+      "payment_save_failed": "Payment Save Failed",
+      "failed_save_payment": "Failed to save payment information",
+      "payment_error": "Payment Error",
+      "unknown_error": "Unknown error",
+      "special_offer_sent": "Special offer sent successfully",
+      "error": "Error"
+    },
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "new_listing": "New Listing",
+    "dropdown": {
+      "apartment": "Apartment",
+      "saved_replies": "Saved Replies",
+      "automation_template": "Automation Template"
     }
   },
-
   "auth": {
     "login": {
       "title_1": "Please enter your",
@@ -240,6 +289,9 @@
     }
   },
   "app": {
+    "textarea": {
+      "word_count": "{{current}}/{{limit}} Words"
+    },
     "home": {
       "hello": "Hello {{name}}!",
       "good_morning": "Good Morning",
@@ -473,13 +525,23 @@
       "title": "Tell us about your property",
       "select_type": "Select Property Type",
       "next": "Next",
-      "save_exit": "Save & Exit"
+      "save_exit": "Save & Exit",
+      "property_flat_apartment": "Flat/Apartment"
     },
     "location_step": {
       "loading": "Getting your location...",
       "search_placeholder": "Search Location",
       "enter_manually": "Enter Manually",
-      "save_exit": "Save & Exit"
+      "save_exit": "Save & Exit",
+      "location_permission_title": "Location Permission",
+      "location_permission_message": "This app needs your location to set the listing address.",
+      "ask_later": "Ask Me Later",
+      "permission_denied_title": "Permission Denied",
+      "permission_denied_message": "Enable location permission in Settings.",
+      "address_wait": "Please wait for address to resolve.",
+      "approximate_location_desc": "Could not get exact location. You can search manually.",
+      "location_required_desc": "Please allow location access or pick a location to continue.",
+      "gps_error": "Unable to get current location. Check GPS settings."
     },
     "confirm_address": {
       "edit_title": "Edit Address",
@@ -563,7 +625,14 @@
       "snooze": "Snooze",
       "unsnoozed": "Unsnoozed",
       "archive": "Archive",
-      "unarchived": "Unarchived"
+      "unarchived": "Unarchived",
+      "tab_all": "All",
+      "tab_archived": "Archived",
+      "tab_snoozed": "Snoozed",
+      "tab_unread": "Unread",
+      "unknown_guest": "Unknown",
+      "no_message_preview": "No message",
+      "not_available": "N/A"
     },
     "subscription": {
       "title": "Listing Cost",
@@ -590,7 +659,20 @@
       "connect_accounts": "Connect Accounts",
       "no_tab_account": "No {{tab}} Account",
       "add_account": "+ Add Another {{tab}} Account",
-      "connect_account": "Connect {{tab}} Account"
+      "connect_account": "Connect {{tab}} Account",
+      "livedin_name": "Livedin Name",
+      "total_property": "Total Property Count",
+      "connection_status": "Connection Status",
+      "connection_active": "Active",
+      "property_name": "Property Name",
+      "existing_listing": "Existing Listing:",
+      "none_placeholder": "None",
+      "airbnb_connected": "Airbnb Already Connected",
+      "airbnb_connected_desc": "Your Airbnb account is already connected.",
+      "gathern_connected": "Gathern Already Connected",
+      "gathern_connected_desc": "Your Gathern account is already connected.",
+      "bookingcom_connected": "Booking.com Already Connected",
+      "bookingcom_connected_desc": "Your Booking.com account is already connected."
     },
     "no_listing_smart_lock": {
       "title": "No Property Found",
@@ -830,7 +912,7 @@
       "avg_stay_revenue": "Avg Stay Revenue",
       "avg_length_stay": "Avg Length of Stay",
       "avg_daily_rate": "Avg Daily Rate",
-      "revPar":"RevPAR"
+      "revPar": "RevPAR"
     },
     "billing": {
       "title": "Billing",
@@ -845,6 +927,17 @@
       "add_new": "Add New Payment Method"
     },
     "task_management": {
+      "post_activity_preview": "Post-activity Preview",
+      "checklist_management": "Checklist Management",
+      "checklist_click_hint": "Click on each section to view images section-wise and verify the condition after the task is completed.",
+      "section_name_label": "Section Name",
+      "section_name_placeholder": "Kitchen",
+      "section_required": "Required",
+      "section_added": "Section added successfully",
+      "section_add_failed": "Failed to add section",
+      "listing_selection_label": "Listing Selection",
+      "assign_user_label": "Assign User",
+      "select_user_hint": "Select a user to continue. If you can't find the user, create one in More →",
       "create_task_title": "Create New Task",
       "task_name_label": "Task Name:",
       "task_name_placeholder": "Enter task name",
@@ -913,8 +1006,38 @@
       "user_management_link": "User Management."
     },
     "listing_screen": {
+      "booking_created": "Booking created",
+      "pricing_updated": "Pricing updated",
+      "fetch_booking_error": "Could not fetch booking info",
+      "booking_accepted": "Booking Accepted",
+      "booking_accepted_desc": "You have successfully accepted {{name}}'s request.",
+      "action_failed": "Action Failed",
+      "accept_request_failed": "Failed to accept request",
       "guest_bookings": "Guest Bookings",
-      "reservations": "Reservations"
+      "reservations": "Reservations",
+      "select_listing": "Select Listing",
+      "all_listings": "All Listings",
+      "create_direct_booking": "Create Direct Booking",
+      "direct_booking": "Direct Booking",
+      "pricing": "Pricing",
+      "select_stay_type": "Select stay type",
+      "guest_name": "Guest Name",
+      "phone_number": "Phone Number",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "guest_total": "Guest total SAR",
+      "email": "Email",
+      "base_price": "Base Price",
+      "manage_pricing": "Manage Pricing",
+      "guest_name_placeholder": "Enter guest name",
+      "email_placeholder": "Enter email address",
+      "base_price_placeholder": "Enter base price",
+      "price_hint": "SR499 - SR500 depending on promotions",
+      "similar_listings": "Similar listings SR86 - SR129",
+      "date_placeholder": "mm/dd/yy",
+      "check_in_required": "Check-in date is required",
+      "check_out_required": "Check-out date is required",
+      "set_pricing": "Set Pricing"
     },
     "account_screen": {
       "title": "Account"
@@ -1131,7 +1254,31 @@
       "set_cover": "Make this picture the cover photo",
       "delete_picture": "Delete picture",
       "cancel": "Cancel",
-      "take_photo": "Take Photo"
+      "take_photo": "Take Photo",
+      "photos_uploaded": "Photos uploaded successfully",
+      "photo_deleted": "Photo deleted successfully",
+      "cover_photo_set": "Cover photo set successfully",
+      "cannot_delete": "Cannot delete this photo",
+      "not_uploaded_yet": "Photo not uploaded yet",
+      "cover_photo_failed": "Failed to set cover photo",
+      "delete_failed": "Delete failed",
+      "upload_error_title": "Upload Error",
+      "upload_required": "Required",
+      "upload_required_desc": "Please upload at least one {{category}} photo.",
+      "interior_title": "Add photos & videos",
+      "interior_section": "Interior Photos & Videos",
+      "next": "Next",
+      "step_2": "Step 2",
+      "step_3": "Step 3",
+      "exterior_title": "Add Photos & Videos",
+      "exterior_section": "Exterior Photos & Videos",
+      "step_4": "Step 4",
+      "bathroom_section": "Bathroom Photos & Videos",
+      "step_5": "Step 5",
+      "other_title": "Add Photos & \nVideos",
+      "other_section": "{{category}} Photos & Videos",
+      "upload_limit": "Upload up to {{maxImages}} images and {{maxVideos}} video per section.",
+      "save_exit": "Save & Exit"
     },
     "ali_widget": {
       "agent_name": "A.LI - Livedin",
@@ -1363,6 +1510,20 @@
       "decline": "Decline",
       "accept": "Accept"
     },
+    "reservation_card": {
+      "booking_platform": "Booking Platform",
+      "property_name": "Property Name",
+      "check_in_time": "Check-in Time",
+      "check_out_time": "Check-out Time",
+      "checked_out_date": "Checked-out Date",
+      "number_of_guests": "Number of Guests"
+    },
+    "reservation_header": {
+      "search_placeholder": "Search Guest",
+      "filter_today": "Today",
+      "filter_booking_request": "Booking Requests",
+      "filter_upcoming": "Upcoming Bookings"
+    },
     "document_upload": {
       "title": "Upload ownership licence documents",
       "format_hint": "• Accepted formats: PDF.",
@@ -1375,6 +1536,32 @@
       "save_exit": "Save & Exit",
       "select_ota": "Select OTA Account",
       "select_account": "Select Account"
+    },
+    "shared": {
+      "connected_booking_platforms": "Connected\nBooking Platforms",
+      "connect_ota_title": "Connect OTA\nBooking Platforms",
+      "connect_ota_desc": "Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place.",
+      "step4_deduction": "SR187.50 will be deducted from your next payout",
+      "step1_cant_host": "Why can't you host {{name}}?",
+      "this_guest": "this guest",
+      "decline_step1_title": "Let us know why you can't host {{name}}'s trip",
+      "decline_step2_blocked": "{{range}} will remain blocked",
+      "decline_step3_guest_msg": "Let {{name}} know why you're unable to host",
+      "replying_to": "Replying to {{name}}",
+      "write_review_for": "Write a review for\n{{name}}",
+      "share_with_hosts": "We'll share this with {{name}} and other hosts.",
+      "recommend_guest": "Would you recommend {{name}}?",
+      "dont_recommend": "Why don't you recommend {{name}}?",
+      "nights": "Nights",
+      "guests": "Guests",
+      "assigned_to": "Assigned to {{name}}",
+      "total_reservations": "Total {{count}} reservations",
+      "create_it_once": "create it once",
+      "recurring_cleaning_prefix": "You only need to",
+      "recurring_cleaning_suffix": ", every time there is a new booking, the cleaning task will automatically appear in your task management for the assigned team member.",
+      "unassigned": "Unassigned",
+      "chars_of_1000": "/1000 characters",
+      "booking_code": "Booking Code"
     }
   }
 }

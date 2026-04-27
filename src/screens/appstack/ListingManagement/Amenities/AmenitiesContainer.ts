@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -71,10 +72,10 @@ export default function useAmenitiesContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -109,7 +110,7 @@ export default function useAmenitiesContainer() {
   const { mutate: syncAmenities, isPending } = useMutation({
     mutationFn: CreateUpdateAmenitiesApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err?.response?.data?.message || err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err?.response?.data?.message || err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const onNext = () => {

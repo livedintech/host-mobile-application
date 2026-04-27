@@ -343,7 +343,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               style={{ alignSelf: 'center', marginVertical: 30 }}
             />
             <AppText
-              text={`Write a review for\n${guestName}`}
+              text={t('app.shared.write_review_for', { name: guestName })}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
@@ -495,7 +495,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               mt={20}
             />
             <AppText
-              text={`We'll share this with ${guestName} and other hosts.`}
+              text={t('app.shared.share_with_hosts', { name: guestName })}
               fontSize={16}
               color={Colors.DARK_CHARCOAL_OPACITY_74}
               mt={10}
@@ -510,9 +510,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               maxLength={1000}
             />
             <AppText
-              text={`${
-                currentValues.public_review?.length || 0
-              }/1000 characters`}
+              text={`${currentValues.public_review?.length || 0}${t('app.shared.chars_of_1000')}`}
               fontSize={12}
               color={Colors.SUPER_GREY}
               mt={Metrics.verticalScale(-10)}
@@ -523,7 +521,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         return (
           <View style={styles.stepContainer}>
             <AppText
-              text={`Would you recommend ${guestName}?`}
+              text={t('app.shared.recommend_guest', { name: guestName })}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
@@ -567,7 +565,7 @@ const RateYourGuestScreen = ({ route }: any) => {
             {currentValues.recommend === false && (
               <View style={styles.textAreaBox}>
                 <AppText
-                  text={`Why don't you recommend ${guestName}?`}
+                  text={t('app.shared.dont_recommend', { name: guestName })}
                   fontSize={22}
                   type="Bold"
                   mt={30}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ActivityIndicator, GestureResponderEvent } from 'react-native';
+import { StyleSheet, ActivityIndicator, GestureResponderEvent, I18nManager } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import ButtonView from '../AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
+
 
 interface CustomSwitchProps {
   value?: boolean;
@@ -20,13 +21,22 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
   isLoading = false,
   ...props
 }) => {
+  const isRTL = I18nManager.isRTL;
+
+const getPosition = (isOn: boolean) => {
+  if (isRTL) {
+    return isOn ? -Metrics.scale(3) : -Metrics.scale(28);
+  }
+  return isOn ? Metrics.scale(28) : Metrics.scale(3);
+};
+
+  
   const [localValue, setLocalValue] = useState(false);
   const sharedValue = value !== undefined ? value : localValue;
-
-  const switchX = useSharedValue(sharedValue ? Metrics.scale(28) : Metrics.scale(3));
+  const switchX = useSharedValue(getPosition(sharedValue));
 
   useEffect(() => {
-    switchX.value = withSpring(sharedValue ? Metrics.scale(28) : Metrics.scale(3), {
+    switchX.value = withSpring(getPosition(sharedValue), {
       damping: 10,
       stiffness: 200,
       mass: 1,

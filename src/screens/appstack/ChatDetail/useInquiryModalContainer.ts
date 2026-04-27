@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -42,17 +43,17 @@ export default function useInquiryModalContainer({ onClose, inquiryId }: Props) 
             Toast.show({ type: 'success', text1: 'Inquiry Pre-approved successfully' });
             resetState();
         },
-        onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || 'Error' })
+        onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || i18n.t('common.toast.error') })
     });
 
     // --- Mutation 2: Special Offer API ---
     const { mutate: sendOffer, isPending: isSendingOffer } = useMutation({
         mutationFn: inquirySpecialOfferApi,
         onSuccess: () => {
-            Toast.show({ type: 'success', text1: 'Special offer sent successfully' });
+            Toast.show({ type: 'success', text1: i18n.t('common.toast.special_offer_sent') });
             resetState();
         },
-        onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || 'Error' })
+        onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || i18n.t('common.toast.error') })
     });
 
     const resetState = () => {

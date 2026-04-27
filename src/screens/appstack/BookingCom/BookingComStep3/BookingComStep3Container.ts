@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
@@ -31,7 +32,7 @@ export default function useBookingComStep3Container() {
             navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
         },
         onError: (error: any) => {
-            Toast.show({ type: 'error', text1: 'Submit Failed', text2: error?.message });
+            Toast.show({ type: 'error', text1: i18n.t('common.toast.submit_failed'), text2: error?.message });
         }
     });
 

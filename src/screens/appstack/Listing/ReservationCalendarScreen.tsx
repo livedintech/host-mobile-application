@@ -150,6 +150,7 @@ const ReservationCalendarScreen = () => {
                   checkedoutDate={item?.end_date || ''}
                   platformColor={config.color}
                   onPress={handleReservationPress}
+                  t={t}
                 />
               );
             }}

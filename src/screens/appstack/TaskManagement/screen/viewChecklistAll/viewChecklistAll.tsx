@@ -117,16 +117,15 @@ const ViewChecklistAll = () => {
       {/* HEADER SECTION WITH BACK BUTTON */}
 
       <AppText
-        text={fromEdit ? 'Post-activity Preview' : 'Checklist Management'}
+        // text={fromEdit ? 'Post-activity Preview' : 'Checklist Management'}
+        text={fromEdit ? t('app.task_management.post_activity_preview') : t('app.task_management.checklist_management')}
         fontSize={28}
         type="Bold"
         // mt={10}
         mb={20}
       />
       <AppText
-        text={
-          'Click on each section to view images section-wise and verify the condition after the task is completed.'
-        }
+        text={t('app.task_management.checklist_click_hint')}
         color={Colors.DARK_CHARCOAL_OPACITY}
         fontSize={14}
         type="Regular"
@@ -210,11 +209,11 @@ const ViewChecklistAll = () => {
               <View style={styles.inputWrapper}>
                 <InputField
                   name="sectionName"
-                  label="Section Name"
+                  label={t('app.task_management.section_name_label')}
                   control={control}
                   errors={errors}
-                  placeholder="Kitchen"
-                  rules={{ required: 'Required' }}
+                  placeholder={t('app.task_management.section_name_placeholder')}
+                  rules={{ required: t('app.task_management.section_required') }}
                 />
               </View>
 

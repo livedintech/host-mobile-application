@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -72,10 +73,10 @@ export default function usePoliciesContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -143,7 +144,7 @@ export default function usePoliciesContainer() {
   const { mutate: createListingDetailsPayload, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
@@ -153,11 +154,11 @@ export default function usePoliciesContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const onNext = (data: PoliciesFormValues) => {

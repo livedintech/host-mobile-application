@@ -1,5 +1,6 @@
 // useCreateEditListingDocumentUploadContainer.ts
 import { useState } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -220,7 +221,7 @@ export default function useDocumentUploadContainer() {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
-        Toast.show({ type: 'success', text1: result?.message || 'Saved successfully' });
+        Toast.show({ type: 'success', text1: result?.message || i18n.t('common.toast.saved') });
         if (isEdit) {
           goBack();
         } else {
@@ -241,7 +242,7 @@ export default function useDocumentUploadContainer() {
     mutationFn: createListingExportApi,
     onSuccess: () => {
       setBottomSheetVisible(false);
-      Toast.show({ type: 'success', text1: 'Listing exported successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.listing_exported') });
       navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
     },
     onError: (err: any) =>
@@ -250,11 +251,11 @@ export default function useDocumentUploadContainer() {
 
   const handleExport = () => {
     if (!propertyOwnershipDoc) {
-      Toast.show({ type: 'error', text1: 'Please upload Property Ownership document' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.upload_ownership') });
       return;
     }
     if (!authorityLicenseDoc) {
-      Toast.show({ type: 'error', text1: 'Please upload Authority License document' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.upload_authority') });
       return;
     }
     if (!nationalIdDoc) {

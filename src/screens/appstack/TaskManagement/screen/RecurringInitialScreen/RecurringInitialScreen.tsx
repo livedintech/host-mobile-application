@@ -39,16 +39,14 @@ const RecurringInitialScreen = () => {
               color={Colors.DARK_CHARCOAL_OPACITY}
               lineHeight={20}
             >
-              You only need to{' '}
+              {t('app.shared.recurring_cleaning_prefix')}{' '}
               <AppText
-                text="create it once"
+                text={t('app.shared.create_it_once')}
                 fontSize={16}
                 color={Colors.PRIMARY_TEAL}
                 type="Bold"
               />
-              , every time there is a new booking, the cleaning task will
-              automatically appear in your task management for the assigned team
-              member.
+              {t('app.shared.recurring_cleaning_suffix')}
             </AppText>
           </View>
 

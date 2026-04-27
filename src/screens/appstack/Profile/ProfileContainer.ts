@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
@@ -82,7 +83,7 @@ export default function useProfileContainer() {
     },
     onError: (error: any) => {
       console.log('Profile update error:', JSON.stringify(error));
-      Toast.show({ type: 'error', text1: error?.message || 'Failed to update profile' });
+      Toast.show({ type: 'error', text1: error?.message || i18n.t('common.toast.failed_update_profile') });
     },
   });
 
@@ -110,11 +111,11 @@ export default function useProfileContainer() {
   const { mutate: deleteAccount, isPending: isDeleting } = useMutation({
     mutationFn: deleteAccountApi,
     onSuccess: () => {
-      Toast.show({ type: 'success', text1: 'Account deleted successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.account_deleted') });
       logout();
     },
     onError: (error: any) => {
-      Toast.show({ type: 'error', text1: error?.message || 'Failed to delete account' });
+      Toast.show({ type: 'error', text1: error?.message || i18n.t('common.toast.failed_delete_account') });
     },
   });
 
@@ -138,7 +139,7 @@ export default function useProfileContainer() {
       Toast.show({ type: 'success', text1: 'Photo updated!' });
     },
     onError: () => {
-      Toast.show({ type: 'error', text1: 'Failed to upload photo' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.failed_upload_photo') });
     },
   });
 
@@ -150,7 +151,7 @@ export default function useProfileContainer() {
       Toast.show({ type: 'success', text1: 'Photo removed!' });
     },
     onError: () => {
-      Toast.show({ type: 'error', text1: 'Failed to remove photo' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.failed_remove_photo') });
     },
   });
 

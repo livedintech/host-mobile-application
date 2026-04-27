@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -232,9 +233,9 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
 
   const handleDeleteUser = (id: number) => {
     Alert.alert('Delete User', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
+      { text: i18n.t('common.cancel'), style: 'cancel' },
       {
-        text: 'Delete',
+        text: i18n.t('common.delete'),
         style: 'destructive',
         onPress: () => deleteMutation({ id }),
       },

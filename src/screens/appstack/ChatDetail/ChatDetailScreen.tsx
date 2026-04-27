@@ -772,7 +772,7 @@ const ChatScreen = () => {
               <View style={styles.replyingIndicatorContainer}>
                 <View style={styles.replyingIndicatorContent}>
                   <AppText
-                    text={`Replying to ${replyingToMessage.user.name}`}
+                    text={t('app.shared.replying_to', { name: replyingToMessage.user.name })}
                     fontSize={12}
                     type="Bold"
                     color={Colors.BRUNSWICK_GREEN}

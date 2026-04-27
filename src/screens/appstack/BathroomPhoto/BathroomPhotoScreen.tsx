@@ -5,13 +5,16 @@ import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useRoute } from '@react-navigation/native';
 import { navigate } from '@/services/navigationService';
+import { useTranslation } from 'react-i18next';
 
 const BathroomPhotoScreen = () => {
   const route = useRoute<any>();
+  const { t } = useTranslation();
+
   const { listing_id } = useCreateListingStore();
 
   const paramListing = route.params?.paramData?.listing;
-  const isEdit       = Boolean(paramListing?.listing_id);
+  const isEdit = Boolean(paramListing?.listing_id);
 
   const {
     mediaList,
@@ -27,17 +30,17 @@ const BathroomPhotoScreen = () => {
     uploadNewPhotos,
   } = usePropertyMediaUpload({
     listingId: String(listing_id),
-    category:  'bathroom',
+    category: 'bathroom',
     nextRoute: NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE,
     exitRoute: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
-    mode:      isEdit ? 'edit' : 'create',
+    mode: isEdit ? 'edit' : 'create',
   });
 
   return (
     <PhotoUploadTemplate
-      step={!isEdit ? 'Step 4' : undefined}
-      screenTitle="Add Photos & Videos"
-      sectionTitle="Bathroom Photos & Videos"
+      step={!isEdit ? t('app.photo_upload.step_4') : undefined}
+      screenTitle={t('app.photo_upload.exterior_title')}
+      sectionTitle={t('app.photo_upload.bathroom_section')}
       maxImages={10}
       maxVideos={1}
       percentage={30}
@@ -45,10 +48,10 @@ const BathroomPhotoScreen = () => {
       onDelete={deletePhoto}
       onSetCover={setCoverPhoto}
       isFetching={isFetching}
-      primaryBtnTitle={!isEdit ? 'Next' : undefined}
+      primaryBtnTitle={!isEdit ? t('app.photo_upload.next') : undefined}
       onPrimaryPress={handleNext}
       primaryLoading={isLoading}
-      secondaryBtnTitle="Save & Exit"
+      secondaryBtnTitle={t('app.photo_upload.save_exit')}
       onSecondaryPress={handleSaveAndExit}
       secondaryLoading={isLoading}
       onMediaChange={uploadNewPhotos}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -57,10 +58,10 @@ export default function useLocationContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);

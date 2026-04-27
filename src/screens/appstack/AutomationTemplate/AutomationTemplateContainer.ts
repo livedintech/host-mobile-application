@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
@@ -70,7 +71,7 @@ export default function useAutomationTemplateContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
@@ -87,7 +88,7 @@ export default function useAutomationTemplateContainer() {
             queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE] });
         },
         onError: error => {
-            Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+            Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
         },
     });
 

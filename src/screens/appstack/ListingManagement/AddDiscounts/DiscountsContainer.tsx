@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // useDiscountsContainer.ts
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -72,7 +73,7 @@ export default function useDiscountsContainer() {
   const { mutate: handlePricingApi, isPending } = useMutation({
     mutationFn: createListingPricingApi, // ✅ pricing API
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Handler ───────────────────────────────────────────────────────────────
@@ -90,7 +91,7 @@ export default function useDiscountsContainer() {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
-        Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+        Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
         if (isSaveAndExit) {
           isEdit

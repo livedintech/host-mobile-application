@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -61,7 +62,7 @@ export default function useAutomationTemplateCreateEditContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
@@ -87,7 +88,7 @@ export default function useAutomationTemplateCreateEditContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
