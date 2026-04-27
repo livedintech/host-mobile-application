@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
@@ -16,16 +17,16 @@ import {
 const addNewPasswordSchema = yup.object().shape({
   password: yup
     .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[a-z]/, 'Include at least one lowercase letter')
-    .matches(/[A-Z]/, 'Include at least one uppercase letter')
-    .matches(/[0-9]/, 'Include at least one number')
-    .matches(/[@$!%*?&#]/, 'Include at least one symbol (@$!%*?&#)'),
+    .required(i18n.t('auth.add_new_password.validation_password_required'))
+    .min(8, i18n.t('auth.add_new_password.validation_password_min'))
+    .matches(/[a-z]/, i18n.t('auth.add_new_password.validation_password_lowercase'))
+    .matches(/[A-Z]/, i18n.t('auth.add_new_password.validation_password_uppercase'))
+    .matches(/[0-9]/, i18n.t('auth.add_new_password.validation_password_number'))
+    .matches(/[@$!%*?&#]/, i18n.t('auth.add_new_password.validation_password_symbol')),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Confirm Password is required'),
+    .oneOf([yup.ref('password')], i18n.t('auth.add_new_password.validation_passwords_match'))
+    .required(i18n.t('auth.add_new_password.validation_confirm_required')),
 });
 
 export default function useAddNewPasswordContainer() {
@@ -52,11 +53,11 @@ export default function useAddNewPasswordContainer() {
   } = useMutation<ResetPasswordResponse, Error, ResetPasswordPayload>({
     mutationFn: resetPasswordApi,
     onSuccess: ({}) => {
-      Toast.show({ type: 'success', text1: 'Password updated successfully!' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.password_updated') });
       navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
     },
     onError: (error: any) => {
-      Toast.show({ type: 'error', text1: error.message || 'Update failed' });
+      Toast.show({ type: 'error', text1: error.message || i18n.t('auth.add_new_password.update_failed') });
     },
   });
 

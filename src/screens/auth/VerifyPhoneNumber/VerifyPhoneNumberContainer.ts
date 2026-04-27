@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useEffect, useCallback, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
@@ -13,8 +14,8 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 const otpVerifySchema = yup.object().shape({
   otpCode: yup
     .string()
-    .length(5, 'OTP must be exactly 5 digits')
-    .required('Verification code is required'),
+    .length(5, i18n.t('auth.verify_phone.validation_otp_length'))
+    .required(i18n.t('auth.verify_phone.validation_otp_required')),
 });
 
 const RESEND_TIME_LIMIT = 60; // 60 seconds timer
@@ -71,7 +72,7 @@ export default function useVerifyPhoneNumberContainer() {
     }
   },
   onError: ({ message }) => {
-    Toast.show({ type: 'error', text1: message || 'Login failed' });
+    Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
   },
   });
 
@@ -88,7 +89,7 @@ export default function useVerifyPhoneNumberContainer() {
       setIsResendDisabled(true);
     },
     onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
+      Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
     },
   });
 
