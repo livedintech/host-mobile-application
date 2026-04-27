@@ -49,7 +49,11 @@ const PerformanceCard = ({ data }: any) => {
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
                 <Svgicons path="walletIcon" size={12} mr={4} />
-                <AppText text={t('app.analytics.revenue')} fontSize={10} color={Colors.DIM_GREY} />
+                <AppText
+                  text={t('app.analytics.revenue')}
+                  fontSize={10}
+                  color={Colors.DIM_GREY}
+                />
               </View>
               <AppText text={`SAR ${data.revenue}`} fontSize={11} type="Bold" />
             </View>
@@ -69,7 +73,11 @@ const PerformanceCard = ({ data }: any) => {
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
                 <Svgicons path="adr" size={12} mr={4} />
-                <AppText text={t('app.analytics.adr')} fontSize={10} color={Colors.DIM_GREY} />
+                <AppText
+                  text={t('app.analytics.adr')}
+                  fontSize={10}
+                  color={Colors.DIM_GREY}
+                />
               </View>
               <AppText text={`SAR ${data.adr}`} fontSize={11} type="Bold" />
             </View>
@@ -81,7 +89,7 @@ const PerformanceCard = ({ data }: any) => {
         </GlassCard>
       </View>
 
-      {/* <View style={styles.bottomRow}>
+      <View style={styles.bottomRow}>
         <GlassCard
           width="auto"
           style={[styles.assessmentGlass, { backgroundColor: style.bg }]}
@@ -97,7 +105,7 @@ const PerformanceCard = ({ data }: any) => {
           </View>
         </GlassCard>
 
-        <GlassCard width="auto" style={styles.insightBadge}>
+        {/* <GlassCard width="auto" style={styles.insightBadge}>
           <View style={styles.insightContent}>
             <Svgicons
               path={isPositive ? 'trendUpIcon' : 'trendDownIcon'}
@@ -111,8 +119,8 @@ const PerformanceCard = ({ data }: any) => {
               type="Medium"
             />
           </View>
-        </GlassCard>
-      </View> */}
+        </GlassCard> */}
+      </View>
     </GlassCard>
   );
 };
@@ -122,7 +130,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 32,
     marginBottom: 16,
-    backgroundColor:"#D9D9D900"
+    backgroundColor: '#D9D9D900',
   },
   topRow: {
     flexDirection: 'row',
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap:10
+    gap: 20,
   },
   metricItem: {
     alignItems: 'flex-start',

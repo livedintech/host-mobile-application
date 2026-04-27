@@ -7,14 +7,12 @@ import {
   ImageBackground,
 } from 'react-native';
 import AnalyticContainers from '../containers/AnalyticContainers';
-import { useForm, useWatch } from 'react-hook-form'; 
+import { useForm, useWatch } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
 import AnalyticsChart from '../components/AnalyticsChart';
 
 const BG_IMAGE = require('@/assets/img/background/channelPerformanceBG.png');
-
-
 
 const ChannelPerformanceScreen = () => {
   const [activeTab, setActiveTab] = useState('reservation');
@@ -27,7 +25,11 @@ const ChannelPerformanceScreen = () => {
     chartListingIds,
   } = AnalyticContainers();
 
-  const { control, setValue, formState: { errors } } = useForm({
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm({
     defaultValues: { listings: chartListingIds || [] },
   });
 
@@ -44,7 +46,9 @@ const ChannelPerformanceScreen = () => {
     }
   }, [watchedListings, handleChartListingChange]);
 
-  const rawList = Array.isArray(AnalyticChannelChartData?.data) ? AnalyticChannelChartData.data : [];
+  const rawList = Array.isArray(AnalyticChannelChartData?.data)
+    ? AnalyticChannelChartData.data
+    : [];
 
   // Calculate relative percentages for the bars
   const values = rawList.map((item: any) => {
@@ -55,48 +59,61 @@ const ChannelPerformanceScreen = () => {
   const maxVal = values.length > 0 ? Math.max(...values) : 1;
   const safeMaxVal = maxVal <= 0 ? 1 : maxVal;
 
-const chartData = rawList.map((item: any) => {
+  const chartData = rawList.map((item: any) => {
     let displayValue = 0;
     if (activeTab === 'reservation') displayValue = item?.reservations || 0;
     else if (activeTab === 'revenue') displayValue = item?.revenue || 0;
     else if (activeTab === 'nights') displayValue = item?.nights || 0;
 
-    // 1. Handle the Label (BookingCom)
     const rawChannel = item?.channel?.toLowerCase() || '';
-    const displayLabel = rawChannel === 'bookingcom' 
-      ? 'BookingCom' 
-      : rawChannel.charAt(0).toUpperCase() + rawChannel.slice(1);
 
-    // 2. Handle the Color (#16AEDD for BookingCom)
-    let barColor = '#00A78E'; // Default green
-    if (rawChannel === 'airbnb') {
-      barColor = '#FF0000';
-    } else if (rawChannel === 'gathern') {
-      barColor = '#CE92F3';
-    } else if (rawChannel === 'bookingcom') {
-      barColor = '#16AEDD'; // Your new blue color
-    }
+    // 1. SVG PATH (Keep it simple for the Svgicons component)
+    const svgPath = rawChannel;
 
-    console.log("displayValue,safeMaxVal",displayValue,safeMaxVal)
+    // 2. DISPLAY TITLE (The pretty text)
+    const displayTitle =
+      rawChannel === 'bookingcom'
+        ? 'Booking.com'
+        : rawChannel.charAt(0).toUpperCase() + rawChannel.slice(1);
+
+    // 3. Colors
+    let barColor = '#00A78E';
+    if (rawChannel === 'airbnb') barColor = '#FF0000';
+    else if (rawChannel === 'gathern') barColor = '#CE92F3';
+    else if (rawChannel === 'bookingcom') barColor = '#16AEDD';
 
     return {
       value: displayValue,
       count: item?.reservations || 0,
-      label: displayLabel,
+      label: displayTitle, // Used for text
+      svgPath: svgPath, // Used for the SVG
       percentage: (displayValue / safeMaxVal) * 100,
       color: barColor,
     };
   });
 
   const totalValue = rawList.reduce((acc: number, curr: any) => {
-    const val = activeTab === 'revenue' ? curr?.revenue : activeTab === 'nights' ? curr?.nights : curr?.reservations;
+    const val =
+      activeTab === 'revenue'
+        ? curr?.revenue
+        : activeTab === 'nights'
+        ? curr?.nights
+        : curr?.reservations;
     return acc + (Number(val) || 0);
   }, 0);
 
   return (
-    <ImageBackground source={BG_IMAGE} style={styles.backgroundImage} resizeMode="cover">
+    <ImageBackground
+      source={BG_IMAGE}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
       <View style={styles.safe}>
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+        <ScrollView
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+        >
           <AnalyticsTabBar
             activeTab={activeTab}
             onChange={setActiveTab}
@@ -110,7 +127,11 @@ const chartData = rawList.map((item: any) => {
               <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
             </View>
           ) : (
-            <AnalyticsChart activeTab={activeTab} data={chartData} total={totalValue} />
+            <AnalyticsChart
+              activeTab={activeTab}
+              data={chartData}
+              total={totalValue}
+            />
           )}
         </ScrollView>
       </View>

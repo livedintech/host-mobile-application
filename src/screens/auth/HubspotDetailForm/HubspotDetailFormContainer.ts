@@ -1,46 +1,18 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  MeetingDetailsFormValues,
-  meetingDetailsSchema,
-} from '@/validation/hubspot/hubspotSchemas';
+import { meetingDetailsSchema } from '@/validation/hubspot/hubspotSchemas';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
 
-export const COUNTRIES = [
-  'Saudi Arabia',
-  'UAE',
-  'Pakistan',
-  'India',
-  'United Kingdom',
-  'United States',
-];
-
+// Keys must match exactly what CountryPicker returns
 export const CITIES_BY_COUNTRY: Record<string, string[]> = {
   'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Khobar'],
-  UAE: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
-  Kuwait: ['Kuwait City', 'Hawalli', 'Salmiya', 'Ahmadi'],
-  Qatar: ['Doha', 'Al Wakrah', 'Al Khor'],
-  Bahrain: ['Manama', 'Muharraq', 'Riffa'],
-  Oman: ['Muscat', 'Salalah', 'Sohar'],
-  Pakistan: [
-    'Karachi',
-    'Lahore',
-    'Islamabad',
-    'Rawalpindi',
-    'Faisalabad',
-    'Multan',
-  ],
-  India: ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata'],
-  Egypt: ['Cairo', 'Alexandria', 'Giza'],
-  Jordan: ['Amman', 'Zarqa', 'Irbid'],
-  Lebanon: ['Beirut', 'Tripoli', 'Sidon'],
-  Turkey: ['Istanbul', 'Ankara', 'Izmir'],
+  'United Arab Emirates': ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
+  'Pakistan': ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan'],
+  'India': ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata'],
   'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Leeds'],
   'United States': ['New York', 'Los Angeles', 'Chicago', 'Houston'],
-  Canada: ['Toronto', 'Vancouver', 'Montreal', 'Calgary'],
-  Australia: ['Sydney', 'Melbourne', 'Brisbane', 'Perth'],
 };
 
 export const DISTRICTS_BY_CITY: Record<string, string[]> = {
@@ -49,30 +21,10 @@ export const DISTRICTS_BY_CITY: Record<string, string[]> = {
   Karachi: ['DHA', 'Gulshan', 'Clifton', 'Other'],
 };
 
-export const COUNTRY_FLAGS: Record<string, string> = {
-  'Saudi Arabia': '🇸🇦',
-  UAE: '🇦🇪',
-  Kuwait: '🇰🇼',
-  Qatar: '🇶🇦',
-  Bahrain: '🇧🇭',
-  Oman: '🇴🇲',
-  Pakistan: '🇵🇰',
-  India: '🇮🇳',
-  Egypt: '🇪🇬',
-  Jordan: '🇯🇴',
-  Lebanon: '🇱🇧',
-  Turkey: '🇹🇷',
-  'United Kingdom': '🇬🇧',
-  'United States': '🇺🇸',
-  Canada: '🇨🇦',
-  Australia: '🇦🇺',
-};
-
 export default function useHubspotDetailFormContainer() {
   const route = useRoute<any>();
   const payload = route.params?.payload || {};
-  const incomingPhone =
-    payload?.phone?.actualPhone || payload?.phone?.phone || '';
+  const incomingPhone = payload?.phone?.actualPhone || payload?.phone?.phone || '';
 
   const {
     control,
@@ -81,12 +33,11 @@ export default function useHubspotDetailFormContainer() {
     setValue,
     formState: { errors },
   } = useForm<any>({
-    // Changed to any to allow dynamic 'other' fields if not in schema
     resolver: yupResolver(meetingDetailsSchema) as any,
     defaultValues: {
       fullName: '',
       email: '',
-      country: '',
+      country: null,
       city: '',
       district: '',
       otherCity: '',
@@ -95,44 +46,37 @@ export default function useHubspotDetailFormContainer() {
     },
   });
 
-  const selectedCountry = watch('country');
+  const selectedCountryObj = watch('country');
+  const selectedCountry = selectedCountryObj?.name || '';
   const selectedCity = watch('city');
   const selectedDistrict = watch('district');
 
-  const cities = selectedCountry
-    ? CITIES_BY_COUNTRY[selectedCountry] || ['Other']
-    : [];
-  const districts = selectedCity
-    ? DISTRICTS_BY_CITY[selectedCity] || ['Other']
-    : [];
+  const cities = selectedCountry ? (CITIES_BY_COUNTRY[selectedCountry] || ['Other']) : [];
+  const districts = selectedCity ? (DISTRICTS_BY_CITY[selectedCity] || ['Other']) : [];
 
-  const onCountrySelect = (country: string) => {
-    setValue('country', country, { shouldValidate: true });
+  const onCountrySelect = (countryName: string) => {
     setValue('city', '');
     setValue('district', '');
+    setValue('otherCity', '');
+    setValue('otherDistrict', '');
   };
 
   const onCitySelect = (city: string) => {
-    setValue('city', city, { shouldValidate: true });
     setValue('district', '');
-  };
-
-  const onDistrictSelect = (district: string) => {
-    setValue('district', district, { shouldValidate: true });
+    setValue('otherDistrict', '');
   };
 
   const onSubmit = (data: any) => {
-    // Determine final values
+    const finalCountry = data.country?.name || '';
     const finalCity = data.city === 'Other' ? data.otherCity : data.city;
-    const finalDistrict =
-      data.district === 'Other' ? data.otherDistrict : data.district;
+    const finalDistrict = data.district === 'Other' ? data.otherDistrict : data.district;
 
     const formattedUserInfo = {
       ...payload,
       ...data,
+      country: finalCountry,
       city: finalCity,
       district: finalDistrict,
-      // Map manual district to city_if_other as requested
       city_if_other: data.district === 'Other' ? data.otherDistrict : '',
       email: data.email.toLowerCase(),
       phone: data.phone?.phone,
@@ -155,6 +99,5 @@ export default function useHubspotDetailFormContainer() {
     districts,
     onCountrySelect,
     onCitySelect,
-    onDistrictSelect,
   };
 }

@@ -73,6 +73,7 @@ const FilterModal = ({
           errors={errors}
           data={listingOptions}
           placeholder={t('app.analytics_filter.select_placeholder')}
+          dropdownPosition='top'
         />
 
 
@@ -83,6 +84,7 @@ const FilterModal = ({
           errors={errors}
           data={channelOptions}
           placeholder="Select Channels"
+          dropdownPosition='top'
         />
 
 
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32, 
     borderTopRightRadius: 32, 
     width: '100%',
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24
+    paddingBottom: Platform.OS === 'ios' ? 60 : 50
   },
   buttonRow: { flexDirection: 'row', marginTop: 30 },
 });
