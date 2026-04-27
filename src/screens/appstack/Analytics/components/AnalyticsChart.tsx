@@ -10,7 +10,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 const AnalyticsChart = ({ activeTab, data, total }: any) => {
   const { t } = useTranslation();
   const isReservation = activeTab === 'reservation';
-  console.log("data::",data)
+  console.log('data::', data);
 
   const renderHeader = (title: string) => (
     <View style={styles.cardHeader}>
@@ -33,9 +33,13 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
             <View style={styles.contentRow}>
               <View style={styles.legendWrapper}>
                 {data.map((item: any, index: number) => (
-                  <GlassCard key={index} width="100%" style={styles.subGlassCard}>
+                  <GlassCard
+                    key={index}
+                    width="100%"
+                    style={styles.subGlassCard}
+                  >
                     <View style={styles.legendRowItem}>
-                      <Svgicons path={item.label.toLowerCase()} size={22} />
+                      <Svgicons path={item.svgPath.toLowerCase()} size={22} />
                       <View style={styles.legendText}>
                         <AppText text={`${item.label} (${item.percentage.toFixed(0)}%)`} fontSize={12} color={Colors.BLACK} />
                         <AppText text={t('app.analytics.reservations_count', { count: item.count })} fontSize={13} type="Bold" color={item.color} />
@@ -45,12 +49,26 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                 ))}
               </View>
               <PieChart
-                data={data.map((d: any) => ({ value: d.value, color: d.color }))}
-                donut radius={55} innerRadius={42}
+                data={data.map((d: any) => ({
+                  value: d.value,
+                  color: d.color,
+                }))}
+                donut
+                radius={55}
+                innerRadius={42}
                 centerLabelComponent={() => (
                   <View style={{ alignItems: 'center' }}>
-                    <AppText text={t('app.analytics.total')} fontSize={11} color={Colors.DIM_GREY} />
-                    <AppText text={total.toString()} type="Bold" fontSize={18} color={Colors.BLACK} />
+                    <AppText
+                      text={t('app.analytics.total')}
+                      fontSize={11}
+                      color={Colors.DIM_GREY}
+                    />
+                    <AppText
+                      text={total.toString()}
+                      type="Bold"
+                      fontSize={18}
+                      color={Colors.BLACK}
+                    />
                   </View>
                 )}
               />
@@ -62,9 +80,23 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
             <View style={styles.barList}>
               {data.map((item: any, index: number) => (
                 <View key={index} style={styles.barRow}>
-                  <AppText text={item.label} fontSize={14} color={item.color} style={{ width: 65 }} />
+                  <AppText
+                    text={item.label}
+                    fontSize={14}
+                    color={item.color}
+                    style={styles.barLabel}
+                    numberOfLines={1}
+                  />
                   <View style={styles.barBackground}>
-                    <View style={[styles.barFill, { width: `${item.percentage}%`, backgroundColor: item.color }]} />
+                    <View
+                      style={[
+                        styles.barFill,
+                        {
+                          width: `${item.percentage}%`,
+                          backgroundColor: item.color,
+                        },
+                      ]}
+                    />
                   </View>
                   <AppText text={activeTab === 'revenue' ? t('app.analytics.sar_value', { value: item.value }) : t('app.analytics.nights_count', { count: item.value })} fontSize={13} ml={10} type="Bold" />
                 </View>
@@ -78,18 +110,55 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
 };
 
 const styles = StyleSheet.create({
-  mainGlass: { backgroundColor: 'transparent', borderRadius: 32, padding: 20, marginBottom: 20, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.8)' },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
-  iconGlass: { height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center', padding: 0, marginBottom: 0, backgroundColor: 'rgba(255,255,255,0.3)' },
-  contentRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  mainGlass: {
+    backgroundColor: 'transparent',
+    borderRadius: 32,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.8)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 25,
+  },
+  iconGlass: {
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0,
+    marginBottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   legendWrapper: { flex: 1, marginRight: 15 },
-  subGlassCard: { backgroundColor: 'rgba(203, 206, 205, 0.15)', padding: 10, borderRadius: 18, marginBottom: 12, borderWidth: 1, borderColor: '#fff' },
+  subGlassCard: {
+    backgroundColor: 'rgba(203, 206, 205, 0.15)',
+    padding: 10,
+    borderRadius: 18,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#fff',
+  },
   legendRowItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   legendText: { flex: 1 },
   barList: { marginTop: 10 },
-  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 25 },
-  barBackground: { flex: 1, height: 10, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 10, overflow: 'hidden' },
-  barFill: { height: '100%', borderRadius: 10 }
+  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 25 ,gap:10},
+  barBackground: {
+    flex: 1,
+    height: 10,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  barFill: { height: '100%', borderRadius: 10 },
+  barLabel: { width: 90 },
 });
 
 export default AnalyticsChart;
