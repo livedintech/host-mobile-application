@@ -57,7 +57,7 @@ export default function useBookingComContainer() {
             Toast.show({
                 type: 'success',
                 text1: i18n.t('common.toast.connection_successful'),
-                text2: i18n.t('app.booking_com_pms.connection_valid'),
+                text2: 'Booking.com connection is valid.',
             })
         },
         onError: (error: any) => {
@@ -65,7 +65,7 @@ export default function useBookingComContainer() {
             Toast.show({
                 type: 'error',
                 text1: i18n.t('common.toast.connection_failed'),
-                text2: error?.message || i18n.t('app.booking_com_pms.check_room_hotel_id'),
+                text2: error?.message || 'Please check your Room ID and Hotel ID.',
             })
         },
     })
