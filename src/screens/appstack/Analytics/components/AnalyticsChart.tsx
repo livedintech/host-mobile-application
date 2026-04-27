@@ -41,8 +41,19 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                     <View style={styles.legendRowItem}>
                       <Svgicons path={item.svgPath.toLowerCase()} size={22} />
                       <View style={styles.legendText}>
-                        <AppText text={`${item.label} (${item.percentage.toFixed(0)}%)`} fontSize={12} color={Colors.BLACK} />
-                        <AppText text={t('app.analytics.reservations_count', { count: item.count })} fontSize={13} type="Bold" color={item.color} />
+                        <AppText
+                          text={`${item.label} (${item.percentage.toFixed(
+                            2,
+                          )}%)`}
+                          fontSize={12}
+                          color={Colors.BLACK}
+                        />
+                        <AppText
+                          text={t('app.analytics.reservations_count', { count: item.count })}
+                          fontSize={13}
+                          type="Bold"
+                          color={item.color}
+                        />
                       </View>
                     </View>
                   </GlassCard>
