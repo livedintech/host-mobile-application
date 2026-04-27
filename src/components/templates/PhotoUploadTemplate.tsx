@@ -115,7 +115,7 @@ const PhotoUploadTemplate = (props: any) => {
           <AppText text={props.screenTitle} fontSize={32} type="Bold" />
 
           <View style={styles.infoSection}>
-            <AppText text={`Upload up to ${props.maxImages} images and ${props.maxVideos} video per section.`} fontSize={14} color="#6B6B6B" />
+           <AppText text={t('app.photo_upload.upload_limit', { maxImages: props.maxImages, maxVideos: props.maxVideos })} fontSize={14} color="#6B6B6B" />
             <AppText text={t('app.photo_upload.format_hint')} fontSize={14} color="#6B6B6B" />
             <AppText text={t('app.photo_upload.size_hint')} fontSize={14} color="#6B6B6B" />
           </View>

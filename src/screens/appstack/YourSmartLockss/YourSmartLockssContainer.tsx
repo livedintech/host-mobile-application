@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 // import { useForm } from 'react-hook-form';
 // import { navigate } from '@/services/navigationService';
 // import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -95,7 +96,7 @@
 //     onError: error => {
 //       Toast.show({
 //         type: 'error',
-//         text1: error.message || 'Something went wrong',
+//         text1: error.message || i18n.t('common.toast.something_went_wrong'),
 //       });
 //     },
 //   });

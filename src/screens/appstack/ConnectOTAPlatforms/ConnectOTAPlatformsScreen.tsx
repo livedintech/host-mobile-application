@@ -10,6 +10,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import useManageBookingContainer from '../ManageBooking/ManageBookingContainer';
 import Metrics from '@/utility/Metrics';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const PLATFORMS = [
   { key: 'Airbnb',       icon: 'airbnb',     label: 'Connect Airbnb'      },
@@ -18,6 +19,7 @@ const PLATFORMS = [
 ] as const;
 
 const ConnectOTAPlatformsScreen = () => {
+  const { t } = useTranslation();
   const { handleConnect, isPending, refetch, connectedAccounts } = useManageBookingContainer();
 
   // ✅ Screen focus hone par refetch — agar connect ho gaya to wapas jao
@@ -53,13 +55,13 @@ const ConnectOTAPlatformsScreen = () => {
         {/* Title */}
         <View style={styles.titleSection}>
           <AppText
-            text={`Connect OTA \n Booking Platforms`}
+            text={t('app.shared.connect_ota_title')}
             fontSize={28}
             type="Bold"
             color={Colors.BLACK}
           />
           <AppText
-            text={`Connect your Airbnb, Gathern, or other \nbooking platforms to manage all your \nlistings in one place.`}
+            text={t('app.shared.connect_ota_desc')}
             fontSize={14}
             color={Colors.DARK_CHARCOAL_OPACITY}
             mt={12}

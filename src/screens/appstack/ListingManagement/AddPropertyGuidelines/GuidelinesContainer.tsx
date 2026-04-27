@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -16,7 +17,7 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
@@ -63,10 +64,10 @@ export default function useGuidelinesContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -80,12 +81,12 @@ export default function useGuidelinesContainer() {
 
   // ── Schema ────────────────────────────────────────────────────────────────
   const guidelinesSchema = yup.object().shape({
-    arrival_guide:         yup.string().required('Arrival guide is required'),
-    property_rules:        yup.string().required('Property rules are required'),
-    checkout_instructions: yup.string().required('Check-out instructions are required'),
-    wifi_username:  hideWifiFields ? yup.string() : yup.string().required('Wifi username is required'),
-    wifi_password:  hideWifiFields ? yup.string() : yup.string().required('Wifi password is required'),
-    door_lock_code: hideWifiFields ? yup.string() : yup.string().required('Please select a door lock'),
+    arrival_guide:         yup.string().required(i18n.t('app.validation.arrival_guide_required')),
+    property_rules:        yup.string().required(i18n.t('app.validation.property_rules_required')),
+    checkout_instructions: yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
+    wifi_username:  hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_username_required')),
+    wifi_password:  hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_password_required')),
+    door_lock_code: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.door_lock_required')),
   });
 
   type GuidelinesFormValues = yup.InferType<typeof guidelinesSchema>;
@@ -140,7 +141,7 @@ export default function useGuidelinesContainer() {
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -150,11 +151,11 @@ export default function useGuidelinesContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Handlers ──────────────────────────────────────────────────────────────

@@ -1,5 +1,6 @@
 // useCreateEditListingDocumentUploadContainer.ts
 import { useState } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -29,7 +30,7 @@ import { Control, FieldValues } from 'react-hook-form';
 const BASE_URL = BASE_URL_DEV;
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 
 type OtaAccountFormValues = { ota_account: string };
@@ -139,7 +140,7 @@ export default function useDocumentUploadContainer() {
       }
 
       if (file.size && file.size > 10 * 1024 * 1024) {
-        Toast.show({ type: 'error', text1: 'File size must be ≤ 10 MB' });
+        Toast.show({ type: 'error', text1: i18n.t('app.document_upload.file_size_limit') });
         return;
       }
 
@@ -158,7 +159,7 @@ export default function useDocumentUploadContainer() {
       // ✅ Cancel silently handle karo
       if (isErrorWithCode(err) && err.code === errorCodes.OPERATION_CANCELED) return;
       console.log('Picker error:', err);
-      Toast.show({ type: 'error', text1: 'Document pick karne mein masla aaya.' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.something_went_wrong') });
     }
   };
 
@@ -220,7 +221,7 @@ export default function useDocumentUploadContainer() {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
         });
-        Toast.show({ type: 'success', text1: result?.message || 'Saved successfully' });
+        Toast.show({ type: 'success', text1: result?.message || i18n.t('common.toast.saved') });
         if (isEdit) {
           goBack();
         } else {
@@ -241,7 +242,7 @@ export default function useDocumentUploadContainer() {
     mutationFn: createListingExportApi,
     onSuccess: () => {
       setBottomSheetVisible(false);
-      Toast.show({ type: 'success', text1: 'Listing exported successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.listing_exported') });
       navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
     },
     onError: (err: any) =>
@@ -250,15 +251,15 @@ export default function useDocumentUploadContainer() {
 
   const handleExport = () => {
     if (!propertyOwnershipDoc) {
-      Toast.show({ type: 'error', text1: 'Please upload Property Ownership document' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.upload_ownership') });
       return;
     }
     if (!authorityLicenseDoc) {
-      Toast.show({ type: 'error', text1: 'Please upload Authority License document' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.upload_authority') });
       return;
     }
     if (!nationalIdDoc) {
-      Toast.show({ type: 'error', text1: 'Please upload Aqama / National ID document' });
+      Toast.show({ type: 'error', text1: i18n.t('app.document_upload.upload_national_id') });
       return;
     }
     setBottomSheetVisible(true);

@@ -231,9 +231,9 @@ const CustomCalendar = ({
         )}
         renderArrow={(dir: any) =>
           dir === 'left' ? (
-            <ChevronLeft size={ms(22)} color="#A0A0A0" />
+            <ChevronRight size={ms(22)} color="#A0A0A0" />
           ) : (
-            <ChevronRight size={ms(22)} color="#000000" />
+            <ChevronLeft size={ms(22)} color="#000000" />
           )
         }
         style={{ backgroundColor: 'transparent' }}

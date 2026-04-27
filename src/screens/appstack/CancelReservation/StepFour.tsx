@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, TextInput } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -35,14 +36,14 @@ const StepFour = () => {
         message_to_airbnb: messageToAirbnb,
       }),
     onSuccess: () => {
-      Toast.show({ type: 'success', text1: 'Reservation cancelled successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.reservation_cancelled') });
       navigation.popToTop();
     },
     onError: (error: any) => {
       Toast.show({ 
         type: 'error', 
-        text1: 'Cancellation failed', 
-        text2: error?.message || 'Something went wrong' 
+        text1: i18n.t('common.toast.cancellation_failed'), 
+        text2: error?.message || i18n.t('common.toast.something_went_wrong') 
       });
     },
   });
@@ -51,7 +52,7 @@ const StepFour = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.mainContainer}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <AppText text="SR187.50 will be deducted from your next payout" type="Bold" fontSize={24} mb={vs(10)} />
+          <AppText text={t('app.shared.step4_deduction')} type="Bold" fontSize={24} mb={vs(10)} />
           <AppText
             text={t('app.cancel_reservation.step4_fee_description')}
             fontSize={13} 
@@ -71,7 +72,7 @@ const StepFour = () => {
               maxLength={240}
             />
           </GlassCard>
-          <AppText text={`${guestMessage.length}/240 characters`} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY_74} mt={vs(5)} />
+          <AppText text={t('app.cancel_reservation.chars_counter', { count: guestMessage.length })} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY_74} mt={vs(5)} />
         </ScrollView>
 
         <View style={styles.footer}>

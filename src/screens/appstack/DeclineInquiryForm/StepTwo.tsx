@@ -34,7 +34,7 @@ const StepTwo = () => {
         <View style={styles.content}>
           {/* Dynamically display the date range */}
           <AppText 
-            text={`${displayRange} will remain blocked`} 
+            text={t('app.shared.decline_step2_blocked', { range: displayRange })}
             fontSize={28} 
             type="Bold" 
             mb={20} 

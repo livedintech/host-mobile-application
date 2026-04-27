@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { useQuery } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { useRoute } from '@react-navigation/native';
@@ -36,7 +37,7 @@ export default function useSmartLockActivityLogContainer() {
         await refetch();
         Toast.show({
             type: 'success',
-            text1: 'Logs Updated',
+            text1: i18n.t('common.toast.logs_updated'),
             position: 'top'
         });
     };

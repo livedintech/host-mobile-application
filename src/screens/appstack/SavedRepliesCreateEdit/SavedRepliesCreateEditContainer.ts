@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -20,8 +21,8 @@ interface SavedReply {
 }
 
 const savedReplySchema = yup.object().shape({
-    title: yup.string().required('Message Name is required'),
-    body: yup.string().required('Message Content is required'),
+    title: yup.string().required(i18n.t('app.validation.message_name_required')),
+    body: yup.string().required(i18n.t('app.validation.message_content_required')),
     listing_ids: yup.array().optional(),
     auto_apply_new_listings: yup.boolean().default(false),
 });
@@ -70,7 +71,7 @@ export default function useSavedRepliesCreateEditContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
@@ -95,7 +96,7 @@ export default function useSavedRepliesCreateEditContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
@@ -133,6 +134,9 @@ export default function useSavedRepliesCreateEditContainer() {
         label: item.title,
         value: item.id,
       }));
+
+      console.log('listing::',listing);
+      
 
 
     return {

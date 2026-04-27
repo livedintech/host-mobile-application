@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import Toast from 'react-native-toast-message'
@@ -55,16 +56,16 @@ export default function useBookingComContainer() {
             setIsTestSuccess(true) // ✅ Success pe enable karo
             Toast.show({
                 type: 'success',
-                text1: 'Connection Successful',
-                text2: 'Booking.com connection is valid.',
+                text1: i18n.t('common.toast.connection_successful'),
+                text2: i18n.t('app.booking_com_pms.connection_valid'),
             })
         },
         onError: (error: any) => {
             setIsTestSuccess(false) // ✅ Fail pe dobara disable
             Toast.show({
                 type: 'error',
-                text1: 'Connection Failed',
-                text2: error?.message || 'Please check your Room ID and Hotel ID.',
+                text1: i18n.t('common.toast.connection_failed'),
+                text2: error?.message || i18n.t('app.booking_com_pms.check_room_hotel_id'),
             })
         },
     })
@@ -78,16 +79,16 @@ export default function useBookingComContainer() {
             });
             Toast.show({
                 type: 'success',
-                text1: 'Connected!',
-                text2: 'Booking.com has been connected successfully.',
+                text1: i18n.t('app.booking_com_pms.connected'),
+                text2: i18n.t('app.booking_com_pms.connected_success'),
             })
             goBack()
         },
         onError: (error: any) => {
             Toast.show({
                 type: 'error',
-                text1: 'Submit Failed',
-                text2: error?.message || 'Something went wrong. Please try again.',
+                text1: i18n.t('common.toast.submit_failed'),
+                text2: error?.message || i18n.t('app.booking_com_pms.try_again'),
             })
         },
     });
@@ -115,8 +116,8 @@ export default function useBookingComContainer() {
         if (!roomId || !hotelId) {
             Toast.show({
                 type: 'error',
-                text1: 'Missing Fields',
-                text2: 'Please fill Room ID and Hotel ID first.',
+                text1: i18n.t('common.toast.missing_fields'),
+                text2: i18n.t('app.booking_com_pms.fill_room_hotel_id'),
             })
             return
         }

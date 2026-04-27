@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRoute } from '@react-navigation/native';
@@ -17,13 +18,13 @@ import { CreateListingDetailsPayload, CreateListingDetailsResponse, CreateListin
 import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.describe_house.validation_ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const describeHouseSchema = yup.object().shape({
-  name:                 yup.string().required('Property title is required'),
-  listing_descriptions: yup.string().required('Description is required'),
+  name:                 yup.string().required(i18n.t('app.describe_house.validation_title_required')),
+  listing_descriptions: yup.string().required(i18n.t('app.describe_house.validation_description_required')),
 });
 
 export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
@@ -89,10 +90,10 @@ export default function useDescribeHouseContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -135,7 +136,7 @@ export default function useDescribeHouseContainer() {
   const { mutate: createListingDetailsPayload, isPending } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
@@ -145,11 +146,11 @@ export default function useDescribeHouseContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const onNext = (data: DescribeHouseFormValues) => {

@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,15 +14,15 @@ import { ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const automationSchema = yup.object().shape({
-    name: yup.string().required('Template name is required'),
-    body: yup.string().required('Content is required'),
-    event: yup.string().required('Please select an event trigger'),
+    name: yup.string().required(i18n.t('app.automation_create_edit.validation_name_required')),
+    body: yup.string().required(i18n.t('app.automation_create_edit.validation_body_required')),
+    event: yup.string().required(i18n.t('app.automation_create_edit.validation_event_required')),
     listing_ids: yup
     .array()
-    .min(1, 'Please select at least one property')
-    .required('Property is required'),
+    .min(1, i18n.t('app.automation_create_edit.validation_property_min'))
+    .required(i18n.t('app.automation_create_edit.validation_property_required')),
     is_active: yup.boolean().default(false),
-    
+
 });
 
 export default function useAutomationTemplateCreateEditContainer() {
@@ -61,7 +62,7 @@ export default function useAutomationTemplateCreateEditContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });
@@ -87,7 +88,7 @@ export default function useAutomationTemplateCreateEditContainer() {
         onError: error => {
             Toast.show({
                 type: 'error',
-                text1: error.message || 'Something went wrong',
+                text1: error.message || i18n.t('common.toast.something_went_wrong'),
             });
         },
     });

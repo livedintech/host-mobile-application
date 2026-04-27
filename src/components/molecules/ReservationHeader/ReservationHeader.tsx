@@ -3,11 +3,11 @@ import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { Search, Filter as FilterIcon } from 'lucide-react-native';
 import FilterChipBar from '@/components/molecules/FilterChipBar/FilterChipBar';
-import { FILTER_OPTIONS } from '@/constants/dropdownOptions';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import ButtonView from '../AppButton/ButtonView';
 import GlassCard from '../GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   searchQuery: string;
@@ -23,32 +23,41 @@ export const ReservationHeader = ({
   onFilterPress,
   activeFilter,
   setActiveFilter,
-}: Props) => (
-  <View style={styles.reservationHeader}>
-    <View style={styles.searchRow}>
-      <View style={styles.searchContainer}>
-        <Search size={ms(18)} color="#555" style={styles.searchIcon} />
-        <TextInput
-          placeholder="Search Guest"
-          placeholderTextColor="#A0A0A0"
-          style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+}: Props) => {
+  const { t } = useTranslation();
+    const FILTER_OPTIONS = [
+    { id: 'today', label: t('app.reservation_header.filter_today') },
+    { id: 'booking_request', label: t('app.reservation_header.filter_booking_request') },
+    { id: 'upcoming', label: t('app.reservation_header.filter_upcoming') },
+  ];
+
+  return (
+    <View style={styles.reservationHeader}>
+      <View style={styles.searchRow}>
+        <View style={styles.searchContainer}>
+          <Search size={ms(18)} color="#555" style={styles.searchIcon} />
+          <TextInput
+            placeholder={t('app.reservation_header.search_placeholder')}
+            placeholderTextColor="#A0A0A0"
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+        <ButtonView style={styles.filterIconButton} onPress={onFilterPress}>
+          <GlassCard width={40} style={styles.iconCircle}>
+            <Svgicons path="filterIcon" />
+          </GlassCard>
+        </ButtonView>
       </View>
-      <ButtonView style={styles.filterIconButton} onPress={onFilterPress}>
-        <GlassCard width={40} style={styles.iconCircle}>
-          <Svgicons path="filterIcon" />
-        </GlassCard>
-      </ButtonView>
+      <FilterChipBar
+        options={FILTER_OPTIONS}
+        selectedId={activeFilter}
+        onSelect={setActiveFilter}
+      />
     </View>
-    <FilterChipBar
-      options={FILTER_OPTIONS}
-      selectedId={activeFilter}
-      onSelect={setActiveFilter}
-    />
-  </View>
-);
+  )
+};
 
 const styles = StyleSheet.create({
   reservationHeader: { marginBottom: vs(10) },

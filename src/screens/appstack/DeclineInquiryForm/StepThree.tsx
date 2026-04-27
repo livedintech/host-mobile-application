@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import React, { useState } from 'react';
 import {
   View,
@@ -56,13 +57,13 @@ const StepThree = () => {
 
       await submitBookingRequestApi(payload);
 
-      Toast.show({ type: 'success', text1: 'Trip Declined Successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.trip_declined') });
       navigation.popToTop();
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Error declining trip',
-        text2: error?.message || 'Something went wrong',
+        text1: i18n.t('common.toast.error_declining'),
+        text2: error?.message || i18n.t('common.toast.something_went_wrong'),
       });
     } finally {
       setLoading(false);
@@ -105,7 +106,7 @@ const StepThree = () => {
 
           {/* Section 2: Public message to Guest */}
           <AppText
-            text={`Let ${guestName} know why you're unable to host`}
+            text={t('app.shared.decline_step3_guest_msg', { name: guestName })}
             fontSize={28}
             type="Bold"
             mt={24}

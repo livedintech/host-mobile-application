@@ -47,7 +47,7 @@ const InfoRow = ({ icon, label, value, valueColor }: any) => (
   </View>
 );
 
-const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions }: any) => {
+const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions,t }: any) => {
   const { control, formState: { errors }, setValue } = useForm();
   useEffect(() => {
     if (account?.listings?.[0]?.id) {
@@ -69,13 +69,13 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
       />
       <InfoRow
         icon="businessCard"
-        label="Livedin Name"
+        label={t('app.manage_booking.livedin_name')}
         value={user?.name}
         valueColor={Colors.BLACK}
       />
       <InfoRow
         icon="towerBuilding"
-        label="Total Property Count"
+        label={t('app.manage_booking.total_property')}
         value="01"
         valueColor={Colors.BLACK}
       />
@@ -83,8 +83,8 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
       {selectedTab !== 'Booking.com' && (
         <InfoRow
           icon="database_check"
-          label="Connection Status"
-          value="Active"
+          label={t('app.manage_booking.connection_status')}
+          value={t('app.manage_booking.connection_active')}
           valueColor={Colors.TEAL_PRIMARY_ALT}
         />
       )}
@@ -93,20 +93,20 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
         <View>
           <InfoRow
             icon={TAB_ICON_MAP[selectedTab as TabType]}
-            label="Property Name"
+            label={t('app.manage_booking.property_name')}
             value={account?.listings?.[0]?.title}
             valueColor={Colors.BLACK}
           />
           <InfoRow
             icon={TAB_ICON_MAP[selectedTab as TabType]}
-            label="Total Property Count"
+            label={t('app.manage_booking.total_property')}
             value="01"
             valueColor={Colors.BLACK}
           />
           <InfoRow
             icon="database_check"
-            label="Connection Status"
-            value="Active"
+            label={t('app.manage_booking.connection_status')}
+            value={t('app.manage_booking.connection_active')}
             valueColor={Colors.TEAL_PRIMARY_ALT}
           />
           {account?.listings?.[0]?.listing_relation && (
@@ -114,9 +114,9 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
               name="listing_id"
               control={control}
               errors={errors}
-              label="Existing Listing:"
+              label={t('app.manage_booking.existing_listing')}
               data={listingOptions}
-              placeholder="None"
+              placeholder={t('app.manage_booking.none_placeholder')}
               disabled={true}
             />
           )}
@@ -162,7 +162,7 @@ const ManageBookingScreen = () => {
         <View style={styles.container}>
           <View style={styles.header}>
             <AppText
-              text={`Connected\nBooking Platforms`}
+              text={t('app.manage_booking.page_title')}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
@@ -212,7 +212,7 @@ const ManageBookingScreen = () => {
         {/* HEADER */}
         <View style={styles.header}>
           <AppText
-            text={`Connected\nBooking Platforms`}
+            text={t('app.manage_booking.page_title')}
             fontSize={28}
             type="Bold"
             color={Colors.BLACK}
@@ -260,6 +260,7 @@ const ManageBookingScreen = () => {
                     onExport={goToListing}
                     listingOptions={listingOptions}
                     user={user}
+                     t={t}
                   />
                 </View>
               )}

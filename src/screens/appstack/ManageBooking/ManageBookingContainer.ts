@@ -8,10 +8,9 @@ import {
 } from '@/services/bookingManagementApi';
 import { navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Linking, Alert } from 'react-native';
+import { Linking } from 'react-native';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import Toast from 'react-native-toast-message';
-import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
@@ -31,20 +30,20 @@ export default function useManageBookingContainer() {
   const PLATFORM_CONFIG = {
     Airbnb: {
       key: 'Airbnb',
-      alreadyMsg: 'Airbnb Already Connected',
-      alreadyDesc: 'Your Airbnb account is already connected.',
+      alreadyMsg: i18n.t('app.manage_booking.airbnb_connected'),
+      alreadyDesc: i18n.t('app.manage_booking.airbnb_connected_desc'),
       action: () => createChannexAccount(),
     },
     Gathern: {
       key: 'Gathern',
-      alreadyMsg: 'Gathern Already Connected',
-      alreadyDesc: 'Your Gathern account is already connected.',
+      alreadyMsg: i18n.t('app.manage_booking.gathern_connected'),
+      alreadyDesc: i18n.t('app.manage_booking.gathern_connected_desc'),
       action: () => navigate(NavigationRoutes.APP_STACK.GATHREN_PMSID),
     },
     'Booking.com': {
-      key: 'Bookings.com', // ⚠️ API key different
-      alreadyMsg: 'Booking.com Already Connected',
-      alreadyDesc: 'Your Booking.com account is already connected.',
+      key: 'Bookings.com',
+      alreadyMsg: i18n.t('app.manage_booking.bookingcom_connected'),
+      alreadyDesc: i18n.t('app.manage_booking.bookingcom_connected_desc'),
       action: () => navigate(NavigationRoutes.APP_STACK.BOOKING_COM_STEP_1),
     },
   };

@@ -16,14 +16,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
     <View style={styles.cardHeader}>
       <View>
         <AppText text={title} type="Bold" fontSize={18} color={Colors.BLACK} />
-        {isReservation && (
-          <AppText
-            text={`Total ${total} reservations`}
-            fontSize={13}
-            color={Colors.DARK_CHARCOAL}
-            mt={2}
-          />
-        )}
+        {isReservation && <AppText text={t('app.shared.total_reservations', { count: total })} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />}
       </View>
       <GlassCard width={48} style={styles.iconGlass}>
         <Svgicons path="moneyBagIcon" size={30} />
@@ -36,7 +29,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
       <GlassCard width="100%" style={styles.mainGlass}>
         {isReservation ? (
           <View>
-            {renderHeader('Reservations Per Channel')}
+            {renderHeader(t('app.analytics.reservations_per_channel'))}
             <View style={styles.contentRow}>
               <View style={styles.legendWrapper}>
                 {data.map((item: any, index: number) => (
@@ -48,19 +41,8 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                     <View style={styles.legendRowItem}>
                       <Svgicons path={item.svgPath.toLowerCase()} size={22} />
                       <View style={styles.legendText}>
-                        <AppText
-                          text={`${item.label} (${item.percentage.toFixed(
-                            0,
-                          )}%)`}
-                          fontSize={12}
-                          color={Colors.BLACK}
-                        />
-                        <AppText
-                          text={`${item.count} Reservations`}
-                          fontSize={13}
-                          type="Bold"
-                          color={item.color}
-                        />
+                        <AppText text={`${item.label} (${item.percentage.toFixed(0)}%)`} fontSize={12} color={Colors.BLACK} />
+                        <AppText text={t('app.analytics.reservations_count', { count: item.count })} fontSize={13} type="Bold" color={item.color} />
                       </View>
                     </View>
                   </GlassCard>
@@ -94,11 +76,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
           </View>
         ) : (
           <View>
-            {renderHeader(
-              `${
-                activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
-              } Per Channel`,
-            )}
+            {renderHeader(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} ${t('app.analytics.per_channel_suffix')}`)}
             <View style={styles.barList}>
               {data.map((item: any, index: number) => (
                 <View key={index} style={styles.barRow}>
@@ -120,16 +98,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                       ]}
                     />
                   </View>
-                  <AppText
-                    text={
-                      activeTab === 'revenue'
-                        ? `SAR ${item.value}`
-                        : `${item.value} Nights`
-                    }
-                    fontSize={13}
-                    ml={10}
-                    type="Bold"
-                  />
+                  <AppText text={activeTab === 'revenue' ? t('app.analytics.sar_value', { value: item.value }) : t('app.analytics.nights_count', { count: item.value })} fontSize={13} ml={10} type="Bold" />
                 </View>
               ))}
             </View>

@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
@@ -212,15 +213,15 @@ const ReviewDetailScreen = ({ route }: any) => {
 
       Toast.show({
         type: 'success',
-        text1: 'Direct booking cancelled successfully',
+        text1: i18n.t('app.review_detail.booking_cancelled'),
       });
       setShowDirectCancelModal(false);
       goBack();
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to cancel',
-        text2: error?.message || 'Something went wrong',
+        text1: i18n.t('app.review_detail.cancel_failed'),
+        text2: error?.message || i18n.t('common.toast.something_went_wrong'),
       });
     } finally {
       setIsCancelling(false);
@@ -587,9 +588,7 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={styles.cardHeader}>
               <View>
                 <AppText
-                  text={`${getPlatformLabel(
-                    property?.booking_platform,
-                  )} Booking Code`}
+                  text={`${getPlatformLabel(property?.booking_platform)} ${t('app.shared.booking_code')}`}
                   type="Medium"
                   fontSize={18}
                   mb={4}
@@ -676,7 +675,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   color={Colors.BLACK}
                 />
                 <AppText
-                  text={`${property.number_of_nights} Nights`}
+                  text={`${property.number_of_nights} ${t('app.shared.nights')}`}
                   fontSize={13}
                   color={Colors.DARK_CHARCOAL}
                   mt={2}
@@ -693,7 +692,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   color={Colors.BLACK}
                 />
                 <AppText
-                  text={`${property.number_of_guests} Guests`}
+                  text={`${property.number_of_guests} ${t('app.shared.guests')}`}
                   fontSize={13}
                   color={Colors.DARK_CHARCOAL}
                   mt={2}
@@ -1036,9 +1035,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                       fill={Colors.DARK_CHARCOAL}
                     />
                     <AppText
-                      text={`Assigned to ${
-                        item.assigned_user_name || 'Unassigned'
-                      }`}
+                      text={t('app.shared.assigned_to', { name: item.assigned_user_name || t('app.shared.unassigned') })}
                       fontSize={13}
                       color={Colors.DARK_CHARCOAL}
                     />

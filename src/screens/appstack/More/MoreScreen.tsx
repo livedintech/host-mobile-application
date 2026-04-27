@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import React, { useCallback } from 'react';
 import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -32,7 +33,7 @@ const MoreScreen = () => {
   const referComingSoon = () => {
     Toast.show({
       type: 'success',
-      text1: 'Coming soon',
+      text1: i18n.t('common.toast.coming_soon'),
     });
   };
 

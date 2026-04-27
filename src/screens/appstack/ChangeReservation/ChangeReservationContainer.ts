@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import i18n from '@/locales/i18n/i18n';
 import {
   changeReservationApi,
   getListing,
@@ -43,7 +44,7 @@ const ChangeReservationContainer = () => {
   const { mutate, isPending: isUpdating } = useMutation({
     mutationFn: changeReservationApi,
     onSuccess: data => {
-      Toast.show({ type: 'success', text1: 'Request sent successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.request_sent') });
       // Invalidate queries to refresh data on previous screens
       //   queryClient.invalidateQueries([STORAGE_CONST.GET_BOOKING_DETAILS]);
       navigation.goBack();

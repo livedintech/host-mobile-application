@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useEffect } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
@@ -132,7 +133,7 @@ export default function useGathernImportContainer() {
     onError: (error) => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Something went wrong',
+        text1: error.message || i18n.t('common.toast.something_went_wrong'),
       });
       console.log('error', error);
 

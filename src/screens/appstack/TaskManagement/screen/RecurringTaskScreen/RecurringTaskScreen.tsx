@@ -15,13 +15,13 @@ import { useTranslation } from 'react-i18next';
 
 const RecurringTaskScreen = () => {
   const { t } = useTranslation();
-  const { 
-    transformedListingCleaning, 
-    transformedVendor, 
-    onNextStep, 
-    isLoadingCleaning, 
-    isRefreshingCleaning, 
-    onRefresh 
+  const {
+    transformedListingCleaning,
+    transformedVendor,
+    onNextStep,
+    isLoadingCleaning,
+    isRefreshingCleaning,
+    onRefresh
   } = CreateTaskContainer();
 
   const {
@@ -39,9 +39,9 @@ const RecurringTaskScreen = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
         <RefreshableScrollView
-            contentContainerStyle={styles.scrollContent}
-            onRefresh={onRefresh}
-            refreshing={isRefreshingCleaning}
+          contentContainerStyle={styles.scrollContent}
+          onRefresh={onRefresh}
+          refreshing={isRefreshingCleaning}
         >
           <View style={styles.titleContainer}>
             <AppText
@@ -66,7 +66,7 @@ const RecurringTaskScreen = () => {
               name="listing"
               control={control}
               errors={errors}
-              label="Listing Selection"
+              label={t('app.task_management.listing_selection_label')}
               data={transformedListingCleaning}
               placeholder={t('app.task_management.listing_placeholder')}
               rules={{ required: 'Please select a listing' }}
@@ -74,7 +74,7 @@ const RecurringTaskScreen = () => {
 
             <DropdownField
               name="assignUser"
-              label="Assign User"
+              label={t('app.task_management.assign_user_label')}
               control={control}
               errors={errors}
               data={transformedVendor}
@@ -89,10 +89,9 @@ const RecurringTaskScreen = () => {
                 color={Colors.DARK_CHARCOAL_OPACITY_80}
                 lineHeight={18}
               >
-                Select a user to continue. If you can't find the user, create
-                one in More →{' '}
+                {t('app.task_management.select_user_hint')}{' '}
                 <AppText
-                  text="User Management."
+                  text={t('app.task_management.user_management_link')}
                   fontSize={13}
                   color={Colors.PRIMARY_TEAL}
                   type="Bold"

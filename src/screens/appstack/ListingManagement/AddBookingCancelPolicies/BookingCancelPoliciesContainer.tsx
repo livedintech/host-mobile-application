@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -16,15 +17,15 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const cancelPoliciesSchema = yup.object().shape({
-  airbnb_policy:          yup.string().required('Airbnb policy is required'),
-  airbnb_longterm_policy: yup.string().required('Airbnb long-term policy is required'),
-  gathern_policy:         yup.string().required('Gathern policy is required'),
-  booking_com_policy:     yup.string().required('Booking.com policy is required'),
+  airbnb_policy:          yup.string().required(i18n.t('app.validation.airbnb_policy_required')),
+  airbnb_longterm_policy: yup.string().required(i18n.t('app.validation.airbnb_longterm_required')),
+  gathern_policy:         yup.string().required(i18n.t('app.validation.gathern_policy_required')),
+  booking_com_policy:     yup.string().required(i18n.t('app.validation.bookingcom_policy_required')),
 });
 
 export type CancelPoliciesValues = yup.InferType<typeof cancelPoliciesSchema>;
@@ -71,10 +72,10 @@ export default function useBookingCancelPoliciesContainer() {
       onSuccess: ({ message }: any) => {
         setBottomSheetVisible(false);
         queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || 'Exported successfully' });
+        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
       },
       onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
     });
 
   const handleExport = () => setBottomSheetVisible(true);
@@ -134,7 +135,7 @@ export default function useBookingCancelPoliciesContainer() {
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -144,11 +145,11 @@ export default function useBookingCancelPoliciesContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const onNext = (data: CancelPoliciesValues) => {

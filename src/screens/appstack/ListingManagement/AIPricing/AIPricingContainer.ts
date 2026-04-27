@@ -1,5 +1,6 @@
 // useAIPricingContainer.ts
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
@@ -15,8 +16,8 @@ import { queryClient } from '@/services/api';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const aiPricingSchema = yup.object().shape({
-  maximum_price: yup.string().required('Maximum price is required'), // 🆕 NEW
-  minimum_price: yup.string().required('Minimum price is required'), // 🆕 NEW
+  maximum_price: yup.string().required(i18n.t('app.validation.max_price_required')),
+  minimum_price: yup.string().required(i18n.t('app.validation.min_price_required')),
 });
 
 export type AIPricingFormValues = yup.InferType<typeof aiPricingSchema>;
@@ -46,7 +47,7 @@ export default function useAIPricingContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:          propertyDetail?.name || 'New Listing',
+      name:          propertyDetail?.name || i18n.t('common.new_listing'),
       maximum_price: Number(data.maximum_price), // 🆕 NEW
       minimum_price: Number(data.minimum_price), // 🆕 NEW
     },
@@ -56,7 +57,7 @@ export default function useAIPricingContainer() {
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -66,11 +67,11 @@ export default function useAIPricingContainer() {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
       });
-      Toast.show({ type: 'success', text1: res?.message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || 'Something went wrong' }),
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
   // ── Handler ───────────────────────────────────────────────────────────────
@@ -86,7 +87,7 @@ export default function useAIPricingContainer() {
       createDetails(buildPayload(data, isSaveAndExit) as any, {
         onSuccess: (res: any) => {
           queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-          Toast.show({ type: 'success', text1: res?.message || 'Saved successfully' });
+          Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
           if (isSaveAndExit) {
             navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);

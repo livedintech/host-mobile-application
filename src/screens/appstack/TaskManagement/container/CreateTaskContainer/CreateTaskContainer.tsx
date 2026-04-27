@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import STORAGE_CONST from '@/constants/storage';
 import {
@@ -53,7 +54,7 @@ const CreateTaskContainer = () => {
         setCreatedTask(id, task_type, checklistRes.data.tasks);
         navigate(NavigationRoutes.APP_STACK.VIEW_CHECKLIST_ALL);
       } catch (error) {
-        Toast.show({ type: 'error', text1: 'Failed to fetch checklist' });
+        Toast.show({ type: 'error', text1: i18n.t('app.task_management.checklist_fetch_failed') });
       }
     },
     onError: (error: any) => {

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
@@ -21,6 +22,7 @@ id: string | number;
 };
 
 const StepOne = () => {
+  const { t } = useTranslation();
   const route = useRoute<RouteProp<ParamList, 'StepOne'>>();
   const { guestName, id,  } = route.params || {};
   const navigation = useNavigation<any>();
@@ -56,7 +58,7 @@ const StepOne = () => {
           showsVerticalScrollIndicator={false}
         >
           <AppText
-            text={`Let us know why you can't host ${guestName || 'Abdul'}'s tip`}
+            text={t('app.shared.decline_step1_title', { name: guestName || 'Abdul' })}
             fontSize={28}
             type="Bold"
             lineHeight={36}

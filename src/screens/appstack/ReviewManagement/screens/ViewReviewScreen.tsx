@@ -60,10 +60,10 @@ const ViewReviewScreen = () => {
         onSuccess: () =>
           Toast.show({
             type: 'success',
-            text1: 'Reply submitted successfully',
+            text1: t('app.view_review.reply_submitted'),
           }),
         onError: () =>
-          Toast.show({ type: 'error', text1: 'Failed to Submit Reply' }),
+          Toast.show({ type: 'error', text1: t('app.view_review.reply_submit_failed') }),
       },
     );
   };

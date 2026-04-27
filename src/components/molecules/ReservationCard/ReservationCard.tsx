@@ -19,6 +19,7 @@ interface ReservationCardProps {
   platformColor: string;
   guests?: number;
   onPress?: (id: string | number) => void;
+  t: any
 }
 
 const ReservationCard = ({
@@ -32,6 +33,7 @@ const ReservationCard = ({
   platformColor,
   guests,
   onPress,
+  t,
 }: ReservationCardProps) => {
   console.log('platform', platform);
 
@@ -92,38 +94,38 @@ const ReservationCard = ({
         {/* Compact Info Rows */}
         <InfoRow
           icon={getPlatformIcon(platform)}
-          label="Booking Platform"
+          label={t('app.reservation_card.booking_platform')}
           value={platform}
           valueColor={platformColor}
         />
 
         <InfoRow
           icon="reservationaddress"
-          label="Property Name"
+          label={t('app.reservation_card.property_name')}
           value={property}
         />
 
         <InfoRow
           icon="reservationcheckin"
-          label="Check-in Time"
+          label={t('app.reservation_card.check_in_time')}
           value={checkIn}
         />
 
         <InfoRow
           icon="reservationcheckin"
-          label="Check-out Time"
+          label={t('app.reservation_card.check_out_time')}
           value={checkOut}
         />
         <InfoRow
           icon="reservationcheckin"
-          label="Checked-out Date"
+          label={t('app.reservation_card.checked_out_date')}
           value={checkedoutDate}
         />
 
         {!platform?.toLowerCase().includes('livedin') && (
           <InfoRow
             icon="reservationguests"
-            label="Number of Guests"
+            label={t('app.reservation_card.number_of_guests')}
             value={guests}
           />
         )}

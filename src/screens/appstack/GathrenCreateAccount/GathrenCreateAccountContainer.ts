@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { queryClient } from '@/services/api';
@@ -61,7 +62,7 @@ export default function useGathrenCreateAccountContainer() {
             Toast.show({ type: 'success', text1: message });
         },
         onError: (error) => {
-            Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+            Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
         },
     });
 

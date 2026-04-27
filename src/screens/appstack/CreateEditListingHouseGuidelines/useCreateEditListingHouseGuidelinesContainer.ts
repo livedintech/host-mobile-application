@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HouseGuidelinesFormValues, houseGuidelinesSchema } from '@/validation/auth/createListingSchemas';
@@ -38,7 +39,7 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
     useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
       mutationFn: createListingDetailsApi,
       onError: error => {
-        Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+        Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
       },
     });
 
@@ -51,11 +52,11 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
       });
-      Toast.show({ type: 'success', text1: message || 'Updated successfully' });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
       goBack();
     },
     onError: error => {
-      Toast.show({ type: 'error', text1: error.message || 'Something went wrong' });
+      Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
     },
   });
 

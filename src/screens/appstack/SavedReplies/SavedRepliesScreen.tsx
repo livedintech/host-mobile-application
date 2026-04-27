@@ -38,13 +38,13 @@ const SavedRepliesScreen = () => {
       <GlassCard width="100%" style={styles.glassCardOverride}>
         <View style={styles.cardContent}>
           <View style={styles.infoSection}>
-            <View style={styles.titleRow}>
+           <View style={styles.titleRow}>
               <AppText
                 text={item.title}
                 fontSize={18}
                 type="Bold"
                 color={Colors.BLACK}
-                style={{ flex: 1 }}
+              style={{ flex: 1 }}
               />
               {/* Updated Action Icons with GlassCards */}
               <View style={styles.actionIcons}>
@@ -62,7 +62,7 @@ const SavedRepliesScreen = () => {
               </View>
             </View>
 
-            <View style={styles.detailsRow}>
+           <View style={[styles.detailsRow]}>
               <View style={styles.textDetails}>
                 <AppText text={t('app.saved_replies.listing_access')} fontSize={14} type="Bold" color={Colors.BLACK} />
                 <AppText 
@@ -72,12 +72,14 @@ const SavedRepliesScreen = () => {
                    mt={2}
                 />
               </View>
-              <CustomSwitch
-                onToggle={() => toggleSwitch(item)}
-                value={item.is_active}
-                disabled={isLoadingStatus}
-                isLoading={item?.id === Item?.id ? isLoadingStatus : false}
-              />
+              <View style={{ alignItems: 'flex-end' }}>
+  <CustomSwitch
+    onToggle={() => toggleSwitch(item)}
+    value={item.is_active}
+    disabled={isLoadingStatus}
+    isLoading={item?.id === Item?.id ? isLoadingStatus : false}
+  />
+</View>
             </View>
           </View>
         </View>
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
   detailsRow: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
-    alignItems: 'flex-end' 
+   alignItems: 'center',
   },
   textDetails: { flex: 1 },
   footer: {

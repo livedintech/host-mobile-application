@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import { useForm } from 'react-hook-form';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
@@ -266,24 +267,14 @@ export const useChatContainer = () => {
     })) || [];
 
   const transformedApartmentTypes = [
-    { label: 'Apartment', value: 'apartment' },
+    { label: i18n.t('common.dropdown.apartment'), value: 'apartment' },
   ];
 
   // MENU OPTIONS
-  const MENU_OPTIONS = [
-    {
-      label: 'Saved Replies',
-      icon: 'expandIcon',
-    },
-    {
-      label: 'Automation Template',
-      icon: 'automationTemplateIcon',
-    },
-    // {
-    //   label: 'AI Auto Reply',
-    //   icon: 'aiAutoReplyIcon',
-    // },
-  ];
+const MENU_OPTIONS = [
+  { id: 'saved_replies', label: i18n.t('common.dropdown.saved_replies'), icon: 'expandIcon' },
+  { id: 'automation_template', label: i18n.t('common.dropdown.automation_template'), icon: 'automationTemplateIcon' },
+];
 
   const handleOpenFilter = () => {
     bottomSheetRef.current?.present();
@@ -297,7 +288,15 @@ export const useChatContainer = () => {
 
   /* -------------------------------- RETURN -------------------------------- */
 
-  const handlePopupMenu = (selected: string) => { if (selected === 'Saved Replies') { navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES) } else if (selected === 'Automation Template') { navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE) } else if (selected === 'AI Auto Reply') { navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY) } }
+const handlePopupMenu = (selectedId: string) => {
+  if (selectedId === 'saved_replies') {
+    navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES);
+  } else if (selectedId === 'automation_template') {
+    navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE);
+  } else if (selectedId === 'ai_auto_reply') {
+    navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY);
+  }
+};
 
   return {
     data,

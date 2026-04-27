@@ -21,6 +21,7 @@ import {
 } from '@/validation/booking/bookingSchemas';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { getOtaConfig } from '@/constants/ota_config';
+import { useTranslation } from 'react-i18next';
 
 export default function useListingContainer(
   listingIdFromParams: any,
@@ -30,6 +31,8 @@ export default function useListingContainer(
   const queryClient = useQueryClient();
   const navigation = useNavigation<any>();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const { t } = useTranslation();
+
 
   // UI State
   const [searchQuery, setSearchQuery] = useState('');
@@ -241,8 +244,8 @@ export default function useListingContainer(
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Could not fetch booking info',
+        text1: t('common.toast.error'),
+        text2: t('listing_screen.fetch_booking_error'),
       });
     } finally {
       setIsFetchingDetails(false);
@@ -263,9 +266,8 @@ export default function useListingContainer(
       };
 
       // Combine phone
-      const fullPhone = `${formData.country?.callingCode || ''}${
-        formData.phoneNumber || ''
-      }`;
+      const fullPhone = `${formData.country?.callingCode || ''}${formData.phoneNumber || ''
+        }`;
 
       const rateValue = Number(formData?.rate || 0);
 
@@ -298,21 +300,21 @@ export default function useListingContainer(
 
       delete payload.country;
       delete payload.phoneNumber;
-      console.log("bookingType",bookingType)
+      console.log("bookingType", bookingType)
 
       const res =
         bookingType === 'direct'
           ? await createDirectBookingApi(payload)
           : await updateCalendarPricingApi({
-              ...payload,
-              price: formData.rate || '',
-            });
-console.log("respp",res)
+            ...payload,
+            price: formData.rate || '',
+          });
+      console.log("respp", res)
       if (res) {
         Toast.show({
           type: 'success',
           text1:
-            bookingType === 'direct' ? 'Booking created' : 'Pricing updated',
+           bookingType === 'direct' ? t('listing_screen.booking_created') : t('listing_screen.pricing_updated'),
         });
 
         reset();
@@ -322,26 +324,26 @@ console.log("respp",res)
 
         return true;
       }
-    }catch (error: any) {
-  console.log('FULL ERROR:', error);
+    } catch (error: any) {
+      console.log('FULL ERROR:', error);
 
-  const validationErrors = error?.data?.errors;
+      const validationErrors = error?.data?.errors;
 
-  if (validationErrors) {
-    const firstKey = Object.keys(validationErrors)[0];
-    Toast.show({
-      type: 'error',
-      text1: validationErrors[firstKey][0],
-    });
-    return;
-  }
+      if (validationErrors) {
+        const firstKey = Object.keys(validationErrors)[0];
+        Toast.show({
+          type: 'error',
+          text1: validationErrors[firstKey][0],
+        });
+        return;
+      }
 
-  Toast.show({
-    type: 'error',
-    text1: error?.data?.message || error?.message || 'Something went wrong',
-  });
-}
-finally {
+      Toast.show({
+        type: 'error',
+        text1: error?.data?.message || error?.message || t('common.toast.something_went_wrong'),
+      });
+    }
+    finally {
       setisLoading(false);
     }
 
@@ -437,16 +439,16 @@ finally {
 
       Toast.show({
         type: 'success',
-        text1: 'Booking Accepted',
-        text2: `You have successfully accepted ${guestName}'s request.`,
+        text1: t('listing_screen.booking_accepted'),
+        text2:t('listing_screen.booking_accepted_desc', { name: guestName }),
       });
 
       await handleRefresh();
     } catch (error: any) {
-      const message = error?.data?.message || 'Failed to accept request';
+      const message = error?.data?.message || t('listing_screen.accept_request_failed');
       Toast.show({
         type: 'error',
-        text1: 'Action Failed',
+        text1: t('listing_screen.action_failed'),
         text2: message,
       });
     } finally {

@@ -103,7 +103,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.cleanliness === 0) {
           Toast.show({
             type: 'error',
-            text1: 'Please select a cleanliness rating',
+            text1: t('app.rate_guest.select_cleanliness_rating'),
           });
           return false;
         }
@@ -114,7 +114,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please select at least one tag',
+            text1: t('app.rate_guest.select_tag'),
           });
           return false;
         }
@@ -123,7 +123,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.communication === 0) {
           Toast.show({
             type: 'error',
-            text1: 'Please select a communication rating',
+            text1: t('app.rate_guest.select_communication_rating'),
           });
           return false;
         }
@@ -134,7 +134,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please select at least one tag',
+            text1: t('app.rate_guest.select_tag'),
           });
           return false;
         }
@@ -143,7 +143,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.respect_house_rules === 0) {
           Toast.show({
             type: 'error',
-            text1: 'Please select a house rules rating',
+            text1: t('app.rate_guest.select_house_rules_rating'),
           });
           return false;
         }
@@ -154,7 +154,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please select at least one tag',
+            text1: t('app.rate_guest.select_tag'),
           });
           return false;
         }
@@ -166,7 +166,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please write at least 10 characters for the review',
+            text1: t('app.rate_guest.write_at_least_10_chars'),
           });
           return false;
         }
@@ -175,7 +175,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.recommend === null) {
           Toast.show({
             type: 'error',
-            text1: 'Please choose if you recommend the guest',
+            text1: t('app.rate_guest.choose_recommend'),
           });
           return false;
         }
@@ -185,7 +185,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please provide feedback for not recommending',
+            text1: t('app.rate_guest.provide_feedback'),
           });
           return false;
         }
@@ -238,7 +238,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         // 1. Show Success Toast
         Toast.show({
           type: 'success',
-          text1: 'Review submitted successfully!',
+          text1: t('app.rate_guest.review_submitted'),
           visibilityTime: 3000,
         });
 
@@ -343,7 +343,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               style={{ alignSelf: 'center', marginVertical: 30 }}
             />
             <AppText
-              text={`Write a review for\n${guestName}`}
+              text={t('app.shared.write_review_for', { name: guestName })}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
@@ -495,7 +495,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               mt={20}
             />
             <AppText
-              text={`We'll share this with ${guestName} and other hosts.`}
+              text={t('app.shared.share_with_hosts', { name: guestName })}
               fontSize={16}
               color={Colors.DARK_CHARCOAL_OPACITY_74}
               mt={10}
@@ -510,9 +510,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               maxLength={1000}
             />
             <AppText
-              text={`${
-                currentValues.public_review?.length || 0
-              }/1000 characters`}
+              text={`${currentValues.public_review?.length || 0}${t('app.shared.chars_of_1000')}`}
               fontSize={12}
               color={Colors.SUPER_GREY}
               mt={Metrics.verticalScale(-10)}
@@ -523,7 +521,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         return (
           <View style={styles.stepContainer}>
             <AppText
-              text={`Would you recommend ${guestName}?`}
+              text={t('app.shared.recommend_guest', { name: guestName })}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
@@ -567,7 +565,7 @@ const RateYourGuestScreen = ({ route }: any) => {
             {currentValues.recommend === false && (
               <View style={styles.textAreaBox}>
                 <AppText
-                  text={`Why don't you recommend ${guestName}?`}
+                  text={t('app.shared.dont_recommend', { name: guestName })}
                   fontSize={22}
                   type="Bold"
                   mt={30}

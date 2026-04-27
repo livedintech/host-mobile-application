@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import i18n from '@/locales/i18n/i18n';
 import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -61,17 +62,17 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
 
   // 2. Validation Schema
   const userManagementSchema = yup.object({
-    name: yup.string().required('Name is required'),
+    name: yup.string().required(i18n.t('app.validation.name_required')),
     phoneNumber: yup
       .string()
-      .required('Phone number is required')
+      .required(i18n.t('app.validation.phone_required'))
       .min(7, 'Invalid phone number'),
     country: yup.object().required(),
     email: yup
       .string()
-      .required('Email is required')
+      .required(i18n.t('app.validation.email_required'))
       .email('Invalid email address'),
-    role: yup.string().required('Role is required'),
+    role: yup.string().required(i18n.t('app.validation.role_required')),
 
     // Conditional Validation for Staff Role Type
     staffRoleType: yup.array().when('role', {
@@ -81,7 +82,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         );
         return selectedRole?.role_type === 'operator';
       },
-      then: schema => schema.min(1, 'Staff role type is required').required(),
+      then: schema => schema.min(1, i18n.t('app.validation.staff_role_required')).required(),
       otherwise: schema => schema.optional().nullable(),
     }),
 
@@ -101,7 +102,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         );
         return selectedRole?.role_type === 'operator' && mode === 'create';
       },
-      then: schema => schema.required('Password is required'),
+      then: schema => schema.required(i18n.t('app.validation.password_required')),
       otherwise: schema => schema.optional().nullable(),
     }),
   });
@@ -232,9 +233,9 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
 
   const handleDeleteUser = (id: number) => {
     Alert.alert('Delete User', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
+      { text: i18n.t('common.cancel'), style: 'cancel' },
       {
-        text: 'Delete',
+        text: i18n.t('common.delete'),
         style: 'destructive',
         onPress: () => deleteMutation({ id }),
       },

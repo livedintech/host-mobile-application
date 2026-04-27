@@ -8,9 +8,58 @@
       "inbox": "الرسائل",
       "tasks": "المهام",
       "more": "المزيد"
+    },
+    "toast": {
+      "exported": "تم التصدير بنجاح",
+      "updated": "تم التحديث بنجاح",
+      "saved": "تم الحفظ بنجاح",
+      "created": "تم الإنشاء بنجاح",
+      "request_sent": "تم إرسال الطلب بنجاح",
+      "logs_updated": "تم تحديث السجلات",
+      "missing_fields": "حقول مفقودة",
+      "listing_exported": "تم تصدير العقار بنجاح",
+      "listing_created": "تم إنشاء العقار بنجاح",
+      "listing_saved": "تم حفظ العقار بنجاح",
+      "something_went_wrong": "حدث خطأ ما",
+      "export_failed": "فشل التصدير",
+      "connection_successful": "تم الاتصال بنجاح",
+      "connection_failed": "فشل الاتصال",
+      "submit_failed": "فشل الإرسال",
+      "upload_ownership": "يرجى رفع وثيقة ملكية العقار",
+      "upload_authority": "يرجى رفع وثيقة ترخيص الهيئة",
+      "trip_declined": "تم رفض الرحلة بنجاح",
+      "error_declining": "خطأ في رفض الرحلة",
+      "reservation_cancelled": "تم إلغاء الحجز بنجاح",
+      "cancellation_failed": "فشل الإلغاء",
+      "open_settings": "فتح الإعدادات",
+      "approximate_location": "استخدام الموقع التقريبي",
+      "location_required": "الموقع مطلوب",
+      "coming_soon": "قريباً",
+      "password_updated": "تم تحديث كلمة المرور بنجاح",
+      "failed_change_password": "فشل تغيير كلمة المرور",
+      "failed_update_profile": "فشل تحديث الملف الشخصي",
+      "account_deleted": "تم حذف الحساب بنجاح",
+      "failed_delete_account": "فشل حذف الحساب",
+      "failed_upload_photo": "فشل رفع الصورة",
+      "failed_remove_photo": "فشل إزالة الصورة",
+      "payment_successful": "تمت عملية الدفع",
+      "payment_processed": "تمت معالجة دفعتك بنجاح",
+      "payment_save_failed": "فشل حفظ معلومات الدفع",
+      "failed_save_payment": "فشل في حفظ معلومات الدفع",
+      "payment_error": "خطأ في الدفع",
+      "unknown_error": "خطأ غير معروف",
+      "special_offer_sent": "تم إرسال العرض الخاص بنجاح",
+      "error": "خطأ"
+    },
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "new_listing": "عقار جديد",
+    "dropdown": {
+      "apartment": "شقة",
+      "saved_replies": "الردود المحفوظة",
+      "automation_template": "قالب الأتمتة"
     }
   },
-
   "auth": {
     "login": {
       "title_1": "يرجى إدخال رقم هاتفك",
@@ -240,6 +289,49 @@
     }
   },
   "app": {
+    "textarea": {
+      "word_count": "{{current}}/{{limit}} كلمة"
+    },
+    "validation": {
+      "ota_required": "يرجى اختيار حساب OTA",
+      "field_required": "هذا الحقل مطلوب",
+      "name_required": "الاسم مطلوب",
+      "role_required": "الدور مطلوب",
+      "username_required": "اسم المستخدم مطلوب",
+      "rule_name_required": "اسم القاعدة مطلوب",
+      "template_required": "القالب مطلوب",
+      "message_required": "الرسالة مطلوبة",
+      "message_name_required": "اسم الرسالة مطلوب",
+      "message_content_required": "محتوى الرسالة مطلوب",
+      "required": "مطلوب",
+      "airbnb_policy_required": "سياسة Airbnb مطلوبة",
+      "airbnb_longterm_required": "سياسة Airbnb للإقامة الطويلة مطلوبة",
+      "gathern_policy_required": "سياسة Gathern مطلوبة",
+      "bookingcom_policy_required": "سياسة Booking.com مطلوبة",
+      "arrival_guide_required": "دليل الوصول مطلوب",
+      "property_rules_required": "قواعد العقار مطلوبة",
+      "checkout_instructions_required": "تعليمات المغادرة مطلوبة",
+      "wifi_username_required": "اسم مستخدم الواي فاي مطلوب",
+      "wifi_password_required": "كلمة مرور الواي فاي مطلوبة",
+      "door_lock_required": "يرجى اختيار قفل الباب",
+      "door_lock_code_required": "رمز قفل الباب مطلوب",
+      "max_price_required": "الحد الأقصى للسعر مطلوب",
+      "min_price_required": "الحد الأدنى للسعر مطلوب",
+      "booking_type_required": "نوع الحجز مطلوب",
+      "guest_eligibility_required": "شروط استحقاق الضيف مطلوبة",
+      "checkin_time_required": "وقت تسجيل الوصول مطلوب",
+      "checkout_time_required": "وقت تسجيل المغادرة مطلوب",
+      "cleanliness_required": "حالة النظافة مطلوبة",
+      "phone_required": "رقم الهاتف مطلوب",
+      "email_required": "البريد الإلكتروني مطلوب",
+      "password_required": "كلمة المرور مطلوبة",
+      "start_date_required": "تاريخ البدء مطلوب",
+      "start_time_required": "وقت البدء مطلوب",
+      "end_date_required": "تاريخ الانتهاء مطلوب",
+      "end_time_required": "وقت الانتهاء مطلوب",
+      "offer_amount_required": "مبلغ العرض مطلوب",
+      "staff_role_required": "نوع دور الموظف مطلوب"
+    },
     "home": {
       "hello": "مرحباً {{name}}!",
       "good_morning": "صباح الخير",
@@ -284,7 +376,8 @@
       "knowledge_base": "ماذا يعرف الذكاء الاصطناعي بالفعل؟",
       "create_new": "إنشاء رد جديد",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف هذه القاعدة؟",
-      "confirm_btn": "تأكيد"
+      "confirm_btn": "تأكيد",
+      "cancel_btn": "إلغاء"
     },
     "no_ai_auto_reply": {
       "title": "لم يتم العثور على رد آلي",
@@ -325,7 +418,10 @@
       "save_exit": "حفظ والخروج",
       "export": "تصدير",
       "select_ota": "اختر حساب OTA",
-      "select_account": "اختر الحساب"
+      "select_account": "اختر الحساب",
+      "validation_ota_required": "يرجى اختيار حساب OTA",
+      "validation_title_required": "عنوان العقار مطلوب",
+      "validation_description_required": "الوصف مطلوب"
     },
     "assign_chat": {
       "title": "تعيين المحادثة للمستخدمين",
@@ -337,7 +433,9 @@
       "cancel": "إلغاء",
       "wait": "انتظر...",
       "unassign": "إلغاء التعيين",
-      "confirm": "تأكيد"
+      "confirm": "تأكيد",
+      "access_denied": "رفض الوصول",
+      "supervisors_cannot_assign": "لا يمكن للمشرفين تعديل التعيينات."
     },
     "amenities": {
       "title": "أخبر الضيوف بما يتميز به عقارك",
@@ -473,13 +571,23 @@
       "title": "أخبرنا عن عقارك",
       "select_type": "اختر نوع العقار",
       "next": "التالي",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "property_flat_apartment": "شقة/بناية"
     },
     "location_step": {
       "loading": "جاري تحديد موقعك...",
       "search_placeholder": "ابحث عن الموقع",
       "enter_manually": "أدخل يدوياً",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "location_permission_title": "إذن الموقع",
+      "location_permission_message": "يحتاج هذا التطبيق إلى موقعك لتحديد عنوان العقار.",
+      "ask_later": "اسألني لاحقاً",
+      "permission_denied_title": "تم رفض الإذن",
+      "permission_denied_message": "قم بتفعيل إذن الموقع في الإعدادات.",
+      "address_wait": "يرجى الانتظار حتى يتم تحديد العنوان.",
+      "approximate_location_desc": "تعذّر الحصول على الموقع الدقيق. يمكنك البحث يدوياً.",
+      "location_required_desc": "يرجى السماح بالوصول إلى الموقع أو اختيار موقع للمتابعة.",
+      "gps_error": "تعذّر الحصول على الموقع الحالي. تحقق من إعدادات GPS."
     },
     "confirm_address": {
       "edit_title": "تعديل العنوان",
@@ -545,7 +653,13 @@
       "rate_placeholder": "أدخل السعر",
       "hotel_id_label": "أدخل معرف الفندق",
       "test_connection": "اختبار الاتصال",
-      "submit": "إرسال"
+      "submit": "إرسال",
+      "connection_valid": "اتصال Booking.com صالح.",
+      "check_room_hotel_id": "يرجى التحقق من معرف الغرفة ومعرف الفندق.",
+      "fill_room_hotel_id": "يرجى ملء معرف الغرفة ومعرف الفندق أولاً.",
+      "connected": "تم الاتصال!",
+      "connected_success": "تم الاتصال بـ Booking.com بنجاح.",
+      "try_again": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     },
     "chat": {
       "title": "الرسائل",
@@ -563,7 +677,14 @@
       "snooze": "تأجيل",
       "unsnoozed": "إلغاء التأجيل",
       "archive": "أرشفة",
-      "unarchived": "إلغاء الأرشفة"
+      "unarchived": "إلغاء الأرشفة",
+      "tab_all": "الكل",
+      "tab_archived": "المؤرشفة",
+      "tab_snoozed": "المؤجلة",
+      "tab_unread": "غير المقروءة",
+      "unknown_guest": "غير معروف",
+      "no_message_preview": "لا توجد رسالة",
+      "not_available": "غير متاح"
     },
     "subscription": {
       "title": "تكلفة العقار",
@@ -590,7 +711,20 @@
       "connect_accounts": "ربط الحسابات",
       "no_tab_account": "لا يوجد حساب {{tab}}",
       "add_account": "+ إضافة حساب {{tab}} آخر",
-      "connect_account": "ربط حساب {{tab}}"
+      "connect_account": "ربط حساب {{tab}}",
+      "livedin_name": "اسم ليفدين",
+      "total_property": "إجمالي عدد العقارات",
+      "connection_status": "حالة الاتصال",
+      "connection_active": "نشط",
+      "property_name": "اسم العقار",
+      "existing_listing": "العقار الموجود:",
+      "none_placeholder": "لا يوجد",
+      "airbnb_connected": "Airbnb متصل بالفعل",
+      "airbnb_connected_desc": "حساب Airbnb الخاص بك متصل بالفعل.",
+      "gathern_connected": "Gathern متصل بالفعل",
+      "gathern_connected_desc": "حساب Gathern الخاص بك متصل بالفعل.",
+      "bookingcom_connected": "Booking.com متصل بالفعل",
+      "bookingcom_connected_desc": "حساب Booking.com الخاص بك متصل بالفعل."
     },
     "no_listing_smart_lock": {
       "title": "لم يتم العثور على عقار",
@@ -641,7 +775,14 @@
       "next": "التالي",
       "save_exit": "حفظ والخروج",
       "select_ota": "اختر حساب OTA",
-      "select_account": "اختر الحساب"
+      "select_account": "اختر الحساب",
+      "validation_ota_required": "يرجى اختيار حساب OTA",
+      "validation_size_type": "يجب أن تكون مساحة العقار رقماً",
+      "validation_size_required": "مساحة العقار مطلوبة",
+      "validation_guests_required": "عدد الضيوف مطلوب",
+      "validation_bedrooms_required": "عدد غرف النوم مطلوب",
+      "validation_beds_required": "عدد الأسرّة مطلوب",
+      "validation_bathrooms_required": "عدد الحمامات مطلوب"
     },
     "generate_passcode": {
       "enter_prefix": "أدخل",
@@ -707,7 +848,10 @@
       "next": "التالي",
       "save_exit": "حفظ والخروج",
       "select_ota": "اختر حساب OTA",
-      "select_account": "اختر الحساب"
+      "select_account": "اختر الحساب",
+      "validation_currency_required": "العملة مطلوبة",
+      "validation_weekday_required": "سعر أيام الأسبوع الأساسي مطلوب",
+      "validation_weekend_required": "سعر عطلة نهاية الأسبوع الأساسي مطلوب"
     },
     "gathren_pms": {
       "title": "أدخل رقم PMS الخاص بك",
@@ -805,6 +949,7 @@
       "start_time": "وقت البدء",
       "end_time": "وقت الانتهاء",
       "save_changes": "حفظ التغييرات",
+      "changes_saved": "تم حفظ التغييرات بنجاح",
       "checklist_mgmt": "إدارة قائمة المراجعة",
       "pre_activity": "معاينة النشاط المسبق",
       "post_activity": "معاينة النشاط اللاحق"
@@ -830,7 +975,19 @@
       "avg_stay_revenue": "متوسط عائد الإقامة",
       "avg_length_stay": "متوسط مدة الإقامة",
       "avg_daily_rate": "متوسط السعر اليومي",
-      "revPar": "الإيراد لكل غرفة متاحة"
+      "revPar": "الإيراد لكل غرفة متاحة",
+      "reservations_per_channel": "الحجوزات حسب القناة",
+      "per_channel_suffix": "حسب القناة",
+      "reservations_count": "{{count}} حجز",
+      "nights_count": "{{count}} ليلة",
+      "sar_value": "{{value}} ريال",
+      "listings_label": "العقارات",
+      "channel_label": "القناة",
+      "select_channels_placeholder": "اختر القنوات",
+      "select_listing_label": "اختر العقار",
+      "tab_reservation": "الحجوزات",
+      "tab_revenue": "الإيرادات",
+      "tab_nights": "الليالي"
     },
     "billing": {
       "title": "الفواتير",
@@ -845,6 +1002,17 @@
       "add_new": "إضافة طريقة دفع جديدة"
     },
     "task_management": {
+      "post_activity_preview": "معاينة النشاط اللاحق",
+      "checklist_management": "إدارة قائمة المراجعة",
+      "checklist_click_hint": "انقر على كل قسم لعرض الصور ولكل قسم والتحقق من الحالة بعد اكتمال المهمة.",
+      "section_name_label": "اسم القسم",
+      "section_name_placeholder": "المطبخ",
+      "section_required": "مطلوب",
+      "section_added": "تمت إضافة القسم بنجاح",
+      "section_add_failed": "فشل إضافة القسم",
+      "listing_selection_label": "اختيار العقار",
+      "assign_user_label": "تعيين مستخدم",
+      "select_user_hint": "اختر مستخدماً للمتابعة. إذا لم تجد المستخدم، أنشئ واحداً من المزيد ←",
       "create_task_title": "إنشاء مهمة جديدة",
       "task_name_label": "اسم المهمة:",
       "task_name_placeholder": "أدخل اسم المهمة",
@@ -910,11 +1078,52 @@
       "create_non_cleaning_desc": "أنشئ مهمة لعقارك. مهام التنظيف متكررة بشكل افتراضي. للمهام الأخرى، اختر تاريخاً وحدد وقت البدء والانتهاء.",
       "add": "إضافة",
       "apply": "تطبيق",
-      "user_management_link": "إدارة المستخدمين."
+      "user_management_link": "إدارة المستخدمين.",
+      "item_added": "تمت إضافة العنصر بنجاح",
+      "item_updated": "تم تحديث العنصر بنجاح",
+      "checklist_saved": "تم حفظ قائمة المراجعة",
+      "checklist_save_failed": "فشل حفظ قائمة المراجعة",
+      "add_item_before_saving": "يرجى إضافة عنصر واحد على الأقل قبل الحفظ.",
+      "task_created_success": "تم إنشاء المهمة بنجاح",
+      "checklist_fetch_failed": "فشل جلب قائمة المراجعة",
+      "select_vendor": "يرجى اختيار مورد.",
+      "no_instructions": "لا توجد تعليمات.",
+      "address_not_available": "العنوان غير متوفر",
+      "enter_instructions": "أدخل التعليمات..."
     },
     "listing_screen": {
+      "booking_created": "تم إنشاء الحجز",
+      "pricing_updated": "تم تحديث التسعير",
+      "fetch_booking_error": "تعذّر جلب معلومات الحجز",
+      "booking_accepted": "تم قبول الحجز",
+      "booking_accepted_desc": "لقد قبلت طلب {{name}} بنجاح.",
+      "action_failed": "فشل الإجراء",
+      "accept_request_failed": "فشل قبول الطلب",
       "guest_bookings": "حجوزات الضيوف",
-      "reservations": "الحجوزات"
+      "reservations": "الحجوزات",
+      "select_listing": "اختر العقار",
+      "all_listings": "جميع العقارات",
+      "create_direct_booking": "إنشاء حجز مباشر",
+      "direct_booking": "حجز مباشر",
+      "pricing": "التسعير",
+      "select_stay_type": "اختر نوع الإقامة",
+      "guest_name": "اسم الضيف",
+      "phone_number": "رقم الهاتف",
+      "start_date": "تاريخ البداية",
+      "end_date": "تاريخ النهاية",
+      "guest_total": "إجمالي الضيف بالريال",
+      "email": "البريد الإلكتروني",
+      "base_price": "السعر الأساسي",
+      "manage_pricing": "إدارة التسعير",
+      "guest_name_placeholder": "أدخل اسم الضيف",
+      "email_placeholder": "أدخل البريد الإلكتروني",
+      "base_price_placeholder": "أدخل السعر الأساسي",
+      "price_hint": "SR499 - SR500 حسب العروض",
+      "similar_listings": "عقارات مماثلة SR86 - SR129",
+      "date_placeholder": "يي/شش/سس",
+      "check_in_required": "تاريخ الوصول مطلوب",
+      "check_out_required": "تاريخ المغادرة مطلوب",
+      "set_pricing": "تحديد السعر"
     },
     "account_screen": {
       "title": "الحساب"
@@ -922,7 +1131,10 @@
     "manage_listing_screen": {
       "add_listing": "إضافة عقار جديد",
       "create_listing": "إنشاء عقار جديد",
-      "listed": "منشور"
+      "listed": "منشور",
+      "no_image": "لا توجد صورة",
+      "no_listings": "لا توجد قوائم",
+      "completed_percentage": "مكتمل {{percentage}}٪"
     },
     "decline_step3_extra": {
       "what_else": "ماذا تريد أن نعرف أيضاً؟*"
@@ -946,7 +1158,9 @@
       "camera": "الكاميرا",
       "video": "فيديو",
       "gallery": "المعرض",
-      "document": "مستند"
+      "document": "مستند",
+      "message_deleted": "تم حذف الرسالة بنجاح",
+      "delete_failed": "فشل حذف الرسالة"
     },
     "inquiry_modal": {
       "view_details": "عرض التفاصيل",
@@ -960,7 +1174,8 @@
       "send_offer": "إرسال العرض",
       "pre_approve_title": "موافقة مسبقة على الاستفسار",
       "pre_approve_placeholder": "اكتب رسالة الموافقة المسبقة...",
-      "send_approval": "إرسال الموافقة"
+      "send_approval": "إرسال الموافقة",
+      "pre_approved_success": "تمت الموافقة المسبقة على الاستفسار بنجاح"
     },
     "no_review": {
       "title": "لا توجد تقييمات بعد",
@@ -987,7 +1202,15 @@
       "write_review": "اكتب تقييماً عاماً",
       "yes": "نعم",
       "no": "لا",
-      "private_feedback_placeholder": "أخبرنا بالمزيد (ملاحظات خاصة)"
+      "private_feedback_placeholder": "أخبرنا بالمزيد (ملاحظات خاصة)",
+      "select_cleanliness_rating": "يرجى اختيار تقييم النظافة",
+      "select_tag": "يرجى اختيار وسم واحد على الأقل",
+      "select_communication_rating": "يرجى اختيار تقييم التواصل",
+      "select_house_rules_rating": "يرجى اختيار تقييم قواعد المنزل",
+      "write_at_least_10_chars": "يرجى كتابة 10 أحرف على الأقل للتقييم",
+      "choose_recommend": "يرجى الاختيار إذا كنت توصي بالضيف",
+      "provide_feedback": "يرجى تقديم ملاحظاتك بشأن عدم التوصية",
+      "review_submitted": "تم إرسال التقييم بنجاح!"
     },
     "view_review": {
       "overall_rating": "التقييم الإجمالي",
@@ -996,7 +1219,9 @@
       "dislikes_label": "ما الذي لا يعجب الضيف فينا؟",
       "your_reply": "ردّك",
       "no_response": "لا يوجد رد حتى الآن...",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "reply_submitted": "تم إرسال الرد بنجاح",
+      "reply_submit_failed": "فشل إرسال الرد"
     },
     "review_management": {
       "title_1": "إدارة",
@@ -1027,14 +1252,18 @@
       "payment_breakdown": "تفاصيل الدفع",
       "assigned_task": "المهمة المعينة",
       "create_task": "إنشاء مهمة جديدة",
-      "cancellation_policy": "سياسة الإلغاء"
+      "cancellation_policy": "سياسة الإلغاء",
+      "booking_cancelled": "تم إلغاء الحجز المباشر بنجاح",
+      "cancel_failed": "فشل الإلغاء"
     },
     "booking_com_step1": {
       "enter_your": "أدخل ",
       "property_id_highlight": "معرف العقار",
       "property_id_label": "معرف العقار*",
       "description": "سجّل الدخول إلى Booking.com ← علامة العقار ← الإعدادات ← تفاصيل العقار، ثم انسخ معرف العقار والصقه في Livedin لربط قائمتك.",
-      "next": "التالي"
+      "next": "التالي",
+      "validation_property_id_required": "معرف العقار مطلوب",
+      "invalid_property_id": "معرف العقار غير صالح"
     },
     "booking_com_step2": {
       "title_1": "Booking.com",
@@ -1052,7 +1281,8 @@
       "rate_label": "السعر (ريال) *",
       "rate_placeholder": "أدخل السعر الليلي",
       "description": "عيّن اسماً لهذا العقار ليسهل تعرّفه وإدارته عند مزامنة قوائمك.",
-      "continue": "متابعة"
+      "continue": "متابعة",
+      "success_connected": "تم الاتصال بنجاح!"
     },
     "property_detail": {
       "channel": "القناة",
@@ -1131,7 +1361,31 @@
       "set_cover": "اجعل هذه الصورة صورة الغلاف",
       "delete_picture": "حذف الصورة",
       "cancel": "إلغاء",
-      "take_photo": "التقاط صورة"
+      "take_photo": "التقاط صورة",
+      "photos_uploaded": "تم رفع الصور بنجاح",
+      "photo_deleted": "تم حذف الصورة بنجاح",
+      "cover_photo_set": "تم تعيين صورة الغلاف بنجاح",
+      "cannot_delete": "لا يمكن حذف هذه الصورة",
+      "not_uploaded_yet": "لم يتم رفع الصورة بعد",
+      "cover_photo_failed": "فشل تعيين صورة الغلاف",
+      "delete_failed": "فشل الحذف",
+      "upload_error_title": "خطأ في الرفع",
+      "upload_required": "مطلوب",
+      "upload_required_desc": "يرجى رفع صورة واحدة على الأقل لـ {{category}}.",
+      "interior_title": "إضافة صور ومقاطع فيديو",
+      "interior_section": "صور ومقاطع الداخل",
+      "next": "التالي",
+      "step_2": "الخطوة 2",
+      "step_3": "الخطوة 3",
+      "exterior_title": "إضافة صور ومقاطع فيديو",
+      "exterior_section": "صور ومقاطع الخارج",
+      "step_4": "الخطوة 4",
+      "bathroom_section": "صور ومقاطع الحمام",
+      "step_5": "الخطوة 5",
+      "other_title": "إضافة صور\nومقاطع فيديو",
+      "other_section": "صور ومقاطع {{category}}",
+      "upload_limit": "ارفع حتى {{maxImages}} صورة و{{maxVideos}} فيديو لكل قسم.",
+      "save_exit": "حفظ والخروج"
     },
     "ali_widget": {
       "agent_name": "A.LI - Livedin",
@@ -1193,7 +1447,12 @@
       "property_placeholder": "اختر خيارات متعددة",
       "auto_create": "تطبيق تلقائي على جميع العقارات الجديدة",
       "save_btn": "حفظ التغييرات",
-      "create_btn": "إنشاء قالب جديد"
+      "create_btn": "إنشاء قالب جديد",
+      "validation_name_required": "اسم القالب مطلوب",
+      "validation_body_required": "المحتوى مطلوب",
+      "validation_event_required": "يرجى اختيار مشغّل الحدث",
+      "validation_property_min": "يرجى اختيار عقار واحد على الأقل",
+      "validation_property_required": "العقار مطلوب"
     },
     "saved_replies_create_edit": {
       "title_edit": "تعديل الردود المحفوظة",
@@ -1237,7 +1496,9 @@
       "step4_message_label": "أخبر {{name}} لماذا تلغي",
       "guest_fallback": "الضيف",
       "step4_placeholder": "أحتاج إلى إلغاء حجزك لأن...",
-      "keep_btn": "الاحتفاظ بالحجز"
+      "keep_btn": "الاحتفاظ بالحجز",
+      "cancel_btn": "إلغاء الحجز",
+      "chars_counter": "{{count}}/240 حرف"
     },
     "change_password": {
       "title": "تغيير كلمة المرور",
@@ -1265,7 +1526,9 @@
       "upload_photo": "رفع صورة",
       "gallery_btn": "اختر من المعرض",
       "camera_btn": "التقط صورة",
-      "delete_confirm": "هل أنت متأكد أنك تريد حذف حسابك؟"
+      "delete_confirm": "هل أنت متأكد أنك تريد حذف حسابك؟",
+      "photo_updated": "تم تحديث الصورة!",
+      "photo_removed": "تم إزالة الصورة!"
     },
     "property_disclosure": {
       "title_edit": "تفاصيل الإفصاح عن العقار",
@@ -1332,7 +1595,16 @@
       "manual_override_desc": "فعّل هذا لتعديل الأسعار لتواريخ محددة يدوياً...",
       "result": "النتيجة:",
       "next": "التالي",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "conservative_point_1": "تفضل الدخل الثابت",
+      "conservative_point_2": "يتنافس عقارك بسعر السوق",
+      "conservative_point_3": "ترتيب أقوى على Airbnb و Gathern",
+      "aggressive_point_1": "عقارك راقٍ وفاخر",
+      "aggressive_point_2": "لديك تقييمات قوية",
+      "aggressive_point_3": "لا تمانع وجود ليالٍ فارغة",
+      "month_april": "أبريل",
+      "month_may": "مايو",
+      "month_june": "يونيو"
     },
     "house_guidelines": {
       "title": "إرشادات المنزل",
@@ -1340,7 +1612,10 @@
       "rules_label": "قواعد المنزل",
       "checkout_label": "تعليمات المغادرة",
       "next": "التالي",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "arrival_placeholder": "اسم العقار: أوليف ريزيدنسي\nالعنوان: مبنى 12، شارع النور، وسط المدينة\nرقم الشقة: وحدة 504\nطريقة الدخول: تسجيل وصول ذاتي عبر القفل الذكي.\nرمز الدخول: سيتم مشاركة رمزك الفريد قبل الوصول.\nمواقف السيارات: مكان واحد محجوز متاح للضيوف.\nالواي فاي: إنترنت عالي السرعة متاح داخل الشقة.",
+      "rules_placeholder": "يرجى الحفاظ على مستوى صوت منخفض في جميع الأوقات.\nيرجى إبقاء الشقة نظيفة ومرتبة.\nلا تتلف أو تزيل أي أغراض من الشقة.\nالتدخين ممنوع داخل الشقة.\nالحيوانات الأليفة غير مسموح بها إلا بموافقة مسبقة.\nيُسمح فقط للضيوف المسجلين بالإقامة في الشقة.",
+      "checkout_placeholder": "يرجى ترك الشقة في حالة معقولة عند المغادرة.\nأطفئ جميع الأضواء والمكيفات والأجهزة الكهربائية.\nضع المناشف المستخدمة في الحمام أو سلة الغسيل.\nاترك بياضات السرير المستخدمة على السرير.\nلا تترك أطعمة مكشوفة أو غير مغطاة.\nأبلغ فوراً عن أي انسكابات أو بقع أو أضرار."
     },
     "no_saved_replies": {
       "title": "لم يتم العثور على ردود محفوظة",
@@ -1363,6 +1638,20 @@
       "decline": "رفض",
       "accept": "قبول"
     },
+    "reservation_card": {
+      "booking_platform": "منصة الحجز",
+      "property_name": "اسم العقار",
+      "check_in_time": "وقت تسجيل الوصول",
+      "check_out_time": "وقت تسجيل المغادرة",
+      "checked_out_date": "تاريخ المغادرة",
+      "number_of_guests": "عدد الضيوف"
+    },
+    "reservation_header": {
+      "search_placeholder": "ابحث عن ضيف",
+      "filter_today": "اليوم",
+      "filter_booking_request": "طلبات الحجز",
+      "filter_upcoming": "الحجوزات القادمة"
+    },
     "document_upload": {
       "title": "رفع وثائق ملكية الترخيص",
       "format_hint": "• الصيغ المقبولة: PDF.",
@@ -1374,7 +1663,35 @@
       "export": "تصدير",
       "save_exit": "حفظ والخروج",
       "select_ota": "اختر حساب OTA",
-      "select_account": "اختر الحساب"
+      "select_account": "اختر الحساب",
+      "file_size_limit": "حجم الملف يجب أن يكون ≤ 10 ميغابايت",
+      "upload_national_id": "يرجى رفع وثيقة الإقامة / الهوية الوطنية"
+    },
+    "shared": {
+      "connected_booking_platforms": "منصات الحجز\nالمتصلة",
+      "connect_ota_title": "ربط منصات\nالحجز OTA",
+      "connect_ota_desc": "اربط حسابات Airbnb أو Gathern أو منصات الحجز الأخرى لإدارة جميع عقاراتك في مكان واحد.",
+      "step4_deduction": "سيتم خصم SR187.50 من دفعتك التالية",
+      "step1_cant_host": "لماذا لا يمكنك استضافة {{name}}؟",
+      "this_guest": "هذا الضيف",
+      "decline_step1_title": "أخبرنا لماذا لا يمكنك استضافة رحلة {{name}}",
+      "decline_step2_blocked": "ستبقى {{range}} محجوزة",
+      "decline_step3_guest_msg": "أخبر {{name}} لماذا لا يمكنك الاستضافة",
+      "replying_to": "الرد على {{name}}",
+      "write_review_for": "اكتب تقييماً لـ\n{{name}}",
+      "share_with_hosts": "سنشارك هذا مع {{name}} والمضيفين الآخرين.",
+      "recommend_guest": "هل توصي بـ {{name}}؟",
+      "dont_recommend": "لماذا لا توصي بـ {{name}}؟",
+      "nights": "ليالٍ",
+      "guests": "ضيوف",
+      "assigned_to": "معين إلى {{name}}",
+      "total_reservations": "إجمالي {{count}} حجز",
+      "create_it_once": "أنشئه مرة واحدة",
+      "recurring_cleaning_prefix": "تحتاج فقط إلى",
+      "recurring_cleaning_suffix": "، في كل مرة يكون هناك حجز جديد، ستظهر مهمة التنظيف تلقائياً في إدارة مهامك لعضو الفريق المعين.",
+      "unassigned": "غير معين",
+      "chars_of_1000": "/1000 حرف",
+      "booking_code": "رمز الحجز"
     }
   }
 }
