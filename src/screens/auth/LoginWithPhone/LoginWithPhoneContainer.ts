@@ -56,12 +56,12 @@ export default function useLoginWithPhoneContainer() {
     onSuccess: () => {
       // Navigate ONLY after the OTP has been successfully sent
 
-     navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
-  isLoginScreen: false,
-  country_code: countryCca2,
-  phone_number: phoneNo,
-  phone_with_code: countryCallingCode,
-});
+      navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
+        isLoginScreen: false,
+        country_code: countryCca2,
+        phone_number: phoneNo,
+        phone_with_code: countryCallingCode,
+      });
     },
     onError: (error: any) => {
       Toast.show({
@@ -80,10 +80,10 @@ export default function useLoginWithPhoneContainer() {
     mutationFn: CheckUserApi,
     onSuccess: () => {
       navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, {
-  country_code: countryCca2,
-  phone_number: phoneNo,
-  phone_with_code: countryCallingCode,
-});
+        country_code: countryCca2,
+        phone_number: phoneNo,
+        phone_with_code: countryCallingCode,
+      });
     },
     onError: error => {
       if (error?.message === 'User not found') {
@@ -113,10 +113,10 @@ export default function useLoginWithPhoneContainer() {
     setphoneNumber(fullPhone);
 
     checkUserPayload({
-  country_code: countryCca2,
-  phone_number: phoneNo,
-  phone_with_code: countryCallingCode,
-});
+      country_code: countryCca2,
+      phone_number: phoneNo,
+      phone_with_code: countryCallingCode,
+    });
   };
 
   // ----------------- Google Sign In -----------------

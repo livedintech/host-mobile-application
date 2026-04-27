@@ -49,7 +49,11 @@ const ManageListingScreen = () => {
             />
           ) : (
             <View style={styles.noImg}>
-              <AppText text='No Image Found' textAlign='center' type='Bold' />
+              <AppText
+                text={t('app.manage_listing_screen.no_image')}
+                textAlign='center'
+                type='Bold'
+              />
             </View>
           )}
 
@@ -64,7 +68,9 @@ const ManageListingScreen = () => {
           {item?.listing_steps !== 'completed' && (
             <GlassCard style={styles.percentageBadge}>
               <AppText
-                text={`${item?.completion_percentage}% Completed`}
+                text={t('app.manage_listing_screen.completed_percentage', {
+                  percentage: item?.completion_percentage,
+                })}
                 fontSize={10}
                 type="Bold"
                 color={Colors.BRUNSWICK_GREEN}
@@ -136,7 +142,7 @@ const ManageListingScreen = () => {
           data={data}
           isLoading={isLoading}
           renderItem={renderProperty}
-          listEmptyText="No listings found"
+          listEmptyText={t('app.manage_listing_screen.no_listings')}
           onRefresh={refetch}
           keyExtractor={(item: any) => item.id?.toString()}
           contentContainerStyle={[styles.scrollContent, data.length === 0 && { flex: 1 }]}

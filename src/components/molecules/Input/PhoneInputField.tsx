@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, TextInput, Animated } from 'react-native';
+import { View, StyleSheet, TextInput, Animated, I18nManager } from 'react-native';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import CountryPicker, {
   Country,
@@ -121,7 +121,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                   fontSize={14}
                 />
                 {!disabled && (
-                  <View style={{ marginLeft: 4 }}>
+                  <View style={{ marginLeft: I18nManager.isRTL ? 0 : 4, marginRight: I18nManager.isRTL ? 4 : 0 }}>
                     <Svgicons path="ChevronDownIcon" size={10} />
                   </View>
                 )}
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerButton: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
     height: '100%',
@@ -208,6 +208,8 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     flex: 1,
     paddingLeft: 10,
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
+
   },
   errorText: {
     marginTop: 5,

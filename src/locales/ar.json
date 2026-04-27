@@ -1131,7 +1131,10 @@
     "manage_listing_screen": {
       "add_listing": "إضافة عقار جديد",
       "create_listing": "إنشاء عقار جديد",
-      "listed": "منشور"
+      "listed": "منشور",
+      "no_image": "لا توجد صورة",
+      "no_listings": "لا توجد قوائم",
+      "completed_percentage": "مكتمل {{percentage}}٪"
     },
     "decline_step3_extra": {
       "what_else": "ماذا تريد أن نعرف أيضاً؟*"
