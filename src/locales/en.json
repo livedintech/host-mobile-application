@@ -975,6 +975,7 @@
       "avg_stay_revenue": "Avg Stay Revenue",
       "avg_length_stay": "Avg Length of Stay",
       "avg_daily_rate": "Avg Daily Rate",
+      "revPar": "RevPAR",
       "reservations_per_channel": "Reservations Per Channel",
       "per_channel_suffix": "Per Channel",
       "reservations_count": "{{count}} Reservations",
@@ -986,8 +987,7 @@
       "select_listing_label": "Select Listing",
       "tab_reservation": "Reservation",
       "tab_revenue": "Revenue",
-      "tab_nights": "Nights",
-      "revPar": "RevPAR"
+      "tab_nights": "Nights"
     },
     "billing": {
       "title": "Billing",

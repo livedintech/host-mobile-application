@@ -36,13 +36,13 @@ const FilterModal = ({
     if (typeof requestIdleCallback !== 'undefined') {
       requestIdleCallback(() => task());
     } else {
-      setTimeout(task, 16); 
+      setTimeout(task, 16);
     }
   };
 
   const onApply = (values: any) => {
-    onClose(); 
-    runWhenIdle(() => applyFilters(values)); 
+    onClose();
+    runWhenIdle(() => applyFilters(values));
   };
 
   const onReset = () => {
@@ -54,13 +54,13 @@ const FilterModal = ({
     <Modal
       isVisible={isVisible}
       onBackdropPress={onClose}
-      onBackButtonPress={onClose} 
+      onBackButtonPress={onClose}
       backdropOpacity={0.4}
-      useNativeDriver={true} 
+      useNativeDriver={true}
       useNativeDriverForBackdrop={true}
       animationIn="slideInUp"
       animationOut="slideOutDown"
-      hideModalContentWhileAnimating={true} 
+      hideModalContentWhileAnimating={true}
       style={styles.centeredModal}
     >
       <View style={styles.modalContent}>
@@ -84,6 +84,7 @@ const FilterModal = ({
           errors={errors}
           data={channelOptions}
           placeholder={t('app.analytics.select_channels_placeholder')}
+          dropdownPosition='top'
         />
 
 
@@ -109,7 +110,7 @@ const FilterModal = ({
           <AppButton
             title={t('app.analytics.apply_filter')}
             onPress={handleSubmit(onApply)}
-            style={{ flex: 1,  }}
+            style={{ flex: 1, }}
             backgroundColor={Colors.PRIMARY_TEAL}
             borderColor={Colors.PRIMARY_TEAL}
             color={Colors.WHITE}
@@ -121,12 +122,12 @@ const FilterModal = ({
 };
 
 const styles = StyleSheet.create({
-  centeredModal: { justifyContent: 'flex-end', margin: 0,  },
-  modalContent: { 
-    backgroundColor: '#FDFDFDBD', 
-    padding: 24, 
-    borderTopLeftRadius: 32, 
-    borderTopRightRadius: 32, 
+  centeredModal: { justifyContent: 'flex-end', margin: 0, },
+  modalContent: {
+    backgroundColor: '#FDFDFDBD',
+    padding: 24,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     width: '100%',
     paddingBottom: Platform.OS === 'ios' ? 60 : 50
   },
