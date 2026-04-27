@@ -49,7 +49,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                           color={Colors.BLACK}
                         />
                         <AppText
-                         text={t('app.analytics.reservations_count', { count: item.count })}
+                          text={t('app.analytics.reservations_count', { count: item.count })}
                           fontSize={13}
                           type="Bold"
                           color={item.color}

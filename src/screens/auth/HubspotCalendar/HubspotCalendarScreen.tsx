@@ -202,7 +202,9 @@ const CalendarScreen = ({ route }: any) => {
           />
         </View>
 
-        {/* ── Time slot bottom sheet ── */}
+       
+      </SafeAreaView>
+       {/* ── Time slot bottom sheet ── */}
         <Modal
           animationType="none"
           transparent={true}
@@ -217,6 +219,7 @@ const CalendarScreen = ({ route }: any) => {
             />
 
             <Animated.View
+            pointerEvents="box-none"
               style={[
                 styles.sheetContent,
                 { transform: [{ translateY: panY }] },
@@ -247,7 +250,7 @@ const CalendarScreen = ({ route }: any) => {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.innerContent}>
+              <View style={styles.innerContent} pointerEvents="auto">
                 {loadingSlots ? (
                   <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color={FIGMA_TEAL} />
@@ -292,7 +295,6 @@ const CalendarScreen = ({ route }: any) => {
             </Animated.View>
           </View>
         </Modal>
-      </SafeAreaView>
     </BGImage>
   );
 };

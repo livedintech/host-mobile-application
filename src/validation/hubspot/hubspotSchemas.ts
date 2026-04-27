@@ -37,6 +37,10 @@ export const meetingDetailsSchema = yup.object({
   }).notRequired(),
 
   email: yup.string().required('Email is required').email('Enter a valid email address'),
-  country: yup.string().required('Please select a country'),
+country: yup.object({
+  cca2: yup.string().required(),
+  name: yup.string().required(),
+  callingCode: yup.string().required(),
+}).required('Please select a country'),
   city: yup.string().required('Please select a city'),
 });

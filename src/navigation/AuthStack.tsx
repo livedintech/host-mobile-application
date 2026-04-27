@@ -19,7 +19,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang/> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE}
         getComponent={() =>
           require('@/screens/auth/LoginWithPhone/LoginWithPhoneScreen').default
@@ -34,7 +34,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted/> }}
+        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted /> }}
         name={NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO}
         getComponent={() =>
           require('@/screens/auth/ConnectCalendarsIntro/ConnectCalendarsIntroScreen')
@@ -42,7 +42,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted/> }}
+        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted /> }}
         name={NavigationRoutes.AUTH_STACK.AGENT_INTRO}
         getComponent={() =>
           require('@/screens/auth/AgentIntro/AgentIntroScreen')
@@ -50,7 +50,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER}
         getComponent={() =>
           require('@/screens/auth/VerifyPhoneNumber/VerifyPhoneNumberScreen')
@@ -58,7 +58,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo/> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.MANAGE_LISTING}
         getComponent={() =>
           require('@/screens/auth/ManageListing/ManageListingScreen')
@@ -66,7 +66,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang />,gestureEnabled: false, }}
         name={NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT}
         getComponent={() =>
           require('@/screens/auth/CreateAccount/CreateAccountScreen')
@@ -74,7 +74,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.ENTER_PASSWORD}
         getComponent={() =>
           require('@/screens/auth/EnterPassword/EnterPasswordScreen')
@@ -82,7 +82,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD}
         getComponent={() =>
           require('@/screens/auth/AddNewPassword/AddNewPasswordScreen').default
@@ -96,7 +96,7 @@ const AuthStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD}
         getComponent={() =>
           require('@/screens/appstack/SelectPayment/SelectPaymentScreen')
@@ -104,7 +104,7 @@ const AuthStack = () => {
         }
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBackAfterLogo /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.ADD_NEW_PAYMENT_METHOD}
         getComponent={() =>
           require('@/screens/appstack/AddNewPaymentMethod/AddNewPaymentMethodScreen')
@@ -112,7 +112,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.ADD_CARD_DETAIL}
         getComponent={() =>
           require('@/screens/auth/AddCardDetail/AddCardDetailScreen').default
@@ -133,14 +133,14 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM}
         getComponent={() =>
           require('@/screens/auth/HubspotDetailForm/HubspotDetailFormScreen').default
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={{ header: () => <HeaderApp isGoBack isLang /> }}
         name={NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR}
         getComponent={() =>
           require('@/screens/auth/HubspotCalendar/HubspotCalendarScreen').default

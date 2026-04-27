@@ -38,7 +38,7 @@ export interface LeadInfo {
   country: string;
   city: string;
   language?: string;
-  potentialUnits?: string;
+  potentialUnits?: number;
   meetingDate?: string;
 }
 

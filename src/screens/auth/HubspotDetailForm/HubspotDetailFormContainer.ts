@@ -31,6 +31,7 @@ export default function useHubspotDetailFormContainer() {
     handleSubmit,
     watch,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<any>({
     resolver: yupResolver(meetingDetailsSchema) as any,
@@ -54,7 +55,19 @@ export default function useHubspotDetailFormContainer() {
   const cities = selectedCountry ? (CITIES_BY_COUNTRY[selectedCountry] || ['Other']) : [];
   const districts = selectedCity ? (DISTRICTS_BY_CITY[selectedCity] || ['Other']) : [];
 
-  const onCountrySelect = (countryName: string) => {
+  const onCountrySelect = (country: any) => {
+    console.log('country', country);
+
+  setValue('country', {
+  cca2: country.cca2,
+  name: country.name,
+  callingCode: country.callingCode?.[0] || '',
+}, {
+  shouldValidate: true,
+  shouldDirty: true,
+});
+
+clearErrors('country');
     setValue('city', '');
     setValue('district', '');
     setValue('otherCity', '');
@@ -68,6 +81,7 @@ export default function useHubspotDetailFormContainer() {
 
   const onSubmit = (data: any) => {
     const finalCountry = data.country?.name || '';
+    const countryCode = data.country?.callingCode || '';
     const finalCity = data.city === 'Other' ? data.otherCity : data.city;
     const finalDistrict = data.district === 'Other' ? data.otherDistrict : data.district;
 
@@ -75,6 +89,7 @@ export default function useHubspotDetailFormContainer() {
       ...payload,
       ...data,
       country: finalCountry,
+      country_code: countryCode,
       city: finalCity,
       district: finalDistrict,
       city_if_other: data.district === 'Other' ? data.otherDistrict : '',

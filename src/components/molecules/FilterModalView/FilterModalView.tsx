@@ -12,6 +12,7 @@ import ButtonView from '../AppButton/ButtonView';
 import DropdownField from '../Input/DropdownField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useTranslation } from 'react-i18next';
+import Metrics from '@/utility/Metrics';
 
 interface Props {
   isVisible: boolean;
@@ -75,7 +76,7 @@ export const FilterModalView = ({
   };
 
   return (
-    <BottomSheetComponent isVisible={isVisible} onClose={onClose}>
+    <BottomSheetComponent isVisible={isVisible} onClose={onClose} customHeight={Metrics.screenHeight * 0.70}>
       <View
         style={[
           styles.container,
