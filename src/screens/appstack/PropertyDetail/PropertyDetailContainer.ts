@@ -28,7 +28,7 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 dayjs.extend(customParseFormat);
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 
 type OtaAccountFormValues = { ota_account: string };

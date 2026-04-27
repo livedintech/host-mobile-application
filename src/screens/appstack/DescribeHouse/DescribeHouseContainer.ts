@@ -18,13 +18,13 @@ import { CreateListingDetailsPayload, CreateListingDetailsResponse, CreateListin
 import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.describe_house.validation_ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const describeHouseSchema = yup.object().shape({
-  name:                 yup.string().required('Property title is required'),
-  listing_descriptions: yup.string().required('Description is required'),
+  name:                 yup.string().required(i18n.t('app.describe_house.validation_title_required')),
+  listing_descriptions: yup.string().required(i18n.t('app.describe_house.validation_description_required')),
 });
 
 export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;

@@ -103,7 +103,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.cleanliness === 0) {
           Toast.show({
             type: 'error',
-            text1: 'Please select a cleanliness rating',
+            text1: t('app.rate_guest.select_cleanliness_rating'),
           });
           return false;
         }
@@ -114,7 +114,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please select at least one tag',
+            text1: t('app.rate_guest.select_tag'),
           });
           return false;
         }
@@ -123,7 +123,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.communication === 0) {
           Toast.show({
             type: 'error',
-            text1: 'Please select a communication rating',
+            text1: t('app.rate_guest.select_communication_rating'),
           });
           return false;
         }
@@ -134,7 +134,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please select at least one tag',
+            text1: t('app.rate_guest.select_tag'),
           });
           return false;
         }
@@ -143,7 +143,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.respect_house_rules === 0) {
           Toast.show({
             type: 'error',
-            text1: 'Please select a house rules rating',
+            text1: t('app.rate_guest.select_house_rules_rating'),
           });
           return false;
         }
@@ -154,7 +154,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please select at least one tag',
+            text1: t('app.rate_guest.select_tag'),
           });
           return false;
         }
@@ -166,7 +166,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please write at least 10 characters for the review',
+            text1: t('app.rate_guest.write_at_least_10_chars'),
           });
           return false;
         }
@@ -175,7 +175,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         if (currentValues.recommend === null) {
           Toast.show({
             type: 'error',
-            text1: 'Please choose if you recommend the guest',
+            text1: t('app.rate_guest.choose_recommend'),
           });
           return false;
         }
@@ -185,7 +185,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         ) {
           Toast.show({
             type: 'error',
-            text1: 'Please provide feedback for not recommending',
+            text1: t('app.rate_guest.provide_feedback'),
           });
           return false;
         }
@@ -238,7 +238,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         // 1. Show Success Toast
         Toast.show({
           type: 'success',
-          text1: 'Review submitted successfully!',
+          text1: t('app.rate_guest.review_submitted'),
           visibilityTime: 3000,
         });
 

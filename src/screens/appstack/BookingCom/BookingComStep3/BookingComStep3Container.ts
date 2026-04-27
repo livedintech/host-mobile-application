@@ -28,7 +28,7 @@ export default function useBookingComStep3Container() {
         mutationFn: bookingcomConnectionApi,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id] });
-            Toast.show({ type: 'success', text1: 'Successfully Connected!' });
+            Toast.show({ type: 'success', text1: i18n.t('app.booking_com_step3.success_connected') });
             navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
         },
         onError: (error: any) => {

@@ -18,14 +18,14 @@ import { CreateListingDetailsPayload, CreateListingDetailsResponse, CreateListin
 import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const disclosureSchema = yup.object().shape({
-  securityCameras:   yup.string().required('Required'),
-  noiseMonitor:      yup.string().required('Required'),
-  weaponsOnProperty: yup.string().required('Required'),
+  securityCameras:   yup.string().required(i18n.t('app.validation.required')),
+  noiseMonitor:      yup.string().required(i18n.t('app.validation.required')),
+  weaponsOnProperty: yup.string().required(i18n.t('app.validation.required')),
 });
 
 export type DisclosureFormValues = yup.InferType<typeof disclosureSchema>;

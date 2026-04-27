@@ -16,29 +16,29 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 const schema = yup.object().shape({
-    name: yup.string().required('Name is required'),
+    name: yup.string().required(i18n.t('app.validation.name_required')),
 
     startDate: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('Start date required'),
+        then: s => s.required(i18n.t('app.validation.start_date_required')),
         otherwise: s => s.notRequired()
     }),
 
     startTime: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('Start time required'),
+        then: s => s.required(i18n.t('app.validation.start_time_required')),
         otherwise: s => s.notRequired()
     }),
 
     endDate: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('End date required'),
+        then: s => s.required(i18n.t('app.validation.end_date_required')),
         otherwise: s => s.notRequired()
     }),
 
     endTime: yup.string().when('type', {
         is: 'Timed',
-        then: s => s.required('End time required'),
+        then: s => s.required(i18n.t('app.validation.end_time_required')),
         otherwise: s => s.notRequired()
     }),
 });

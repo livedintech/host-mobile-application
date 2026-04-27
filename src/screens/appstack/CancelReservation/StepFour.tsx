@@ -72,7 +72,7 @@ const StepFour = () => {
               maxLength={240}
             />
           </GlassCard>
-          <AppText text={`${guestMessage.length}/240 characters`} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY_74} mt={vs(5)} />
+          <AppText text={t('app.cancel_reservation.chars_counter', { count: guestMessage.length })} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY_74} mt={vs(5)} />
         </ScrollView>
 
         <View style={styles.footer}>

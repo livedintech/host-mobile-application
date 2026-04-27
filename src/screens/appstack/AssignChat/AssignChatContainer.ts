@@ -161,8 +161,8 @@ const handleAssignUser = (selectedItem: ChatUser) => {
     if (user?.role_key === 'supervisor') {
         Toast.show({
             type: 'error',
-            text1: 'Access Denied',
-            text2: 'Supervisors cannot modify assignments.'
+            text1: i18n.t('app.assign_chat.access_denied'),
+            text2: i18n.t('app.assign_chat.supervisors_cannot_assign')
         });
         return;
     }

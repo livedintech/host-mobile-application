@@ -14,11 +14,11 @@ import {
 } from '@/types/api/smartLockTypes';
 
 const ttLockSchema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+  username: yup.string().required(i18n.t('app.validation.username_required')),
   password: yup
     .string()
     .min(6, 'Password too short')
-    .required('Password is required'),
+    .required(i18n.t('app.validation.field_required')),
 });
 
 export default function useTTLockCredentialsContainer() {

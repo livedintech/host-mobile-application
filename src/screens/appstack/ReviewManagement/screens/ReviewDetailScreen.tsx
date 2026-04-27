@@ -213,14 +213,14 @@ const ReviewDetailScreen = ({ route }: any) => {
 
       Toast.show({
         type: 'success',
-        text1: 'Direct booking cancelled successfully',
+        text1: i18n.t('app.review_detail.booking_cancelled'),
       });
       setShowDirectCancelModal(false);
       goBack();
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to cancel',
+        text1: i18n.t('app.review_detail.cancel_failed'),
         text2: error?.message || i18n.t('common.toast.something_went_wrong'),
       });
     } finally {

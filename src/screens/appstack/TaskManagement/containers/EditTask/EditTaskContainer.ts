@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -189,7 +190,7 @@ const EditTaskContainer = () => {
     // Show success message
     Toast.show({
       type: 'success',
-      text1: 'Changes saved successfully',
+      text1: i18n.t('app.edit_task_screen.changes_saved'),
     });
 
     // Finally, navigate back

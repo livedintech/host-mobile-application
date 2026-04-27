@@ -18,9 +18,9 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const pricingSchema = yup.object().shape({
-  currency: yup.string().required('Currency is required'),
-  weekday_price: yup.string().required('Weekday base price is required'),
-  weekend_price: yup.string().required('Weekend base price is required'),
+  currency: yup.string().required(i18n.t('app.set_pricing.validation_currency_required')),
+  weekday_price: yup.string().required(i18n.t('app.set_pricing.validation_weekday_required')),
+  weekend_price: yup.string().required(i18n.t('app.set_pricing.validation_weekend_required')),
   tax_vat: yup.string().optional(),
   airbnb_markup: yup.string().optional(),
   gathern_markup: yup.string().optional(),

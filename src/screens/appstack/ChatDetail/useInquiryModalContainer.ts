@@ -10,10 +10,10 @@ import { inquiryPreApproveApi, inquirySpecialOfferApi } from '@/services/chatApi
 // Dynamic Validation Schema
 const schema = yup.object().shape({
     formType: yup.string(),
-    message: yup.string().required('Message is required'), // Message donu mein zaroori hai
+    message: yup.string().required(i18n.t('app.validation.message_required')),
     offerAmount: yup.string().when('formType', {
         is: 'specialOffer',
-        then: (s) => s.required('Offer amount is required'), // Amount sirf Special Offer mein zaroori hai
+        then: (s) => s.required(i18n.t('app.validation.offer_amount_required')),
         otherwise: (s) => s.notRequired(),
     }),
 });
@@ -40,7 +40,7 @@ export default function useInquiryModalContainer({ onClose, inquiryId }: Props) 
     const { mutate: preApprove, isPending: isApproving } = useMutation({
         mutationFn: inquiryPreApproveApi,
         onSuccess: () => {
-            Toast.show({ type: 'success', text1: 'Inquiry Pre-approved successfully' });
+            Toast.show({ type: 'success', text1: i18n.t('app.inquiry_modal.pre_approved_success') });
             resetState();
         },
         onError: (error: any) => Toast.show({ type: 'error', text1: error?.message || i18n.t('common.toast.error') })

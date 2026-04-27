@@ -30,7 +30,7 @@ import { Control, FieldValues } from 'react-hook-form';
 const BASE_URL = BASE_URL_DEV;
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 
 type OtaAccountFormValues = { ota_account: string };
@@ -140,7 +140,7 @@ export default function useDocumentUploadContainer() {
       }
 
       if (file.size && file.size > 10 * 1024 * 1024) {
-        Toast.show({ type: 'error', text1: 'File size must be ≤ 10 MB' });
+        Toast.show({ type: 'error', text1: i18n.t('app.document_upload.file_size_limit') });
         return;
       }
 
@@ -159,7 +159,7 @@ export default function useDocumentUploadContainer() {
       // ✅ Cancel silently handle karo
       if (isErrorWithCode(err) && err.code === errorCodes.OPERATION_CANCELED) return;
       console.log('Picker error:', err);
-      Toast.show({ type: 'error', text1: 'Document pick karne mein masla aaya.' });
+      Toast.show({ type: 'error', text1: i18n.t('common.toast.something_went_wrong') });
     }
   };
 
@@ -259,7 +259,7 @@ export default function useDocumentUploadContainer() {
       return;
     }
     if (!nationalIdDoc) {
-      Toast.show({ type: 'error', text1: 'Please upload Aqama / National ID document' });
+      Toast.show({ type: 'error', text1: i18n.t('app.document_upload.upload_national_id') });
       return;
     }
     setBottomSheetVisible(true);

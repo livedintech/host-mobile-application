@@ -14,15 +14,15 @@ import { ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const automationSchema = yup.object().shape({
-    name: yup.string().required('Template name is required'),
-    body: yup.string().required('Content is required'),
-    event: yup.string().required('Please select an event trigger'),
+    name: yup.string().required(i18n.t('app.automation_create_edit.validation_name_required')),
+    body: yup.string().required(i18n.t('app.automation_create_edit.validation_body_required')),
+    event: yup.string().required(i18n.t('app.automation_create_edit.validation_event_required')),
     listing_ids: yup
     .array()
-    .min(1, 'Please select at least one property')
-    .required('Property is required'),
+    .min(1, i18n.t('app.automation_create_edit.validation_property_min'))
+    .required(i18n.t('app.automation_create_edit.validation_property_required')),
     is_active: yup.boolean().default(false),
-    
+
 });
 
 export default function useAutomationTemplateCreateEditContainer() {

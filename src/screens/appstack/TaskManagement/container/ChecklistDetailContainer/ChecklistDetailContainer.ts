@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import i18n from '@/locales/i18n/i18n';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getTaskChecklistDetail,
@@ -63,7 +64,7 @@ const useChecklistDetailContainer = (
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
       });
-      Toast.show({ type: 'success', text1: 'Item added successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('app.task_management.item_added') });
     },
   });
 
@@ -86,7 +87,7 @@ const useChecklistDetailContainer = (
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
       });
-      Toast.show({ type: 'success', text1: 'Item updated successfully' });
+      Toast.show({ type: 'success', text1: i18n.t('app.task_management.item_updated') });
     },
   });
   // 5. Mutation: Save Selection
@@ -101,12 +102,12 @@ const useChecklistDetailContainer = (
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST_DETAIL],
       });
-      Toast.show({ type: 'success', text1: 'Checklist saved' });
+      Toast.show({ type: 'success', text1: i18n.t('app.task_management.checklist_saved') });
       goBack();
     },
     onError: error => {
       console.error('Filter Mutation Error:', error);
-      Toast.show({ type: 'error', text1: 'Failed to save checklist' });
+      Toast.show({ type: 'error', text1: i18n.t('app.task_management.checklist_save_failed') });
     },
   });
 
@@ -126,8 +127,7 @@ const useChecklistDetailContainer = (
     if (selectedIds.length === 0) {
       Toast.show({
         type: 'error',
-        // text1: 'Selection Required',
-        text1: 'Please add at least one item before saving.',
+        text1: i18n.t('app.task_management.add_item_before_saving'),
       });
       return;
     }

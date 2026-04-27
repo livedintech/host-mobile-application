@@ -18,14 +18,14 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-    ota_account: yup.string().required('Please select an OTA account'),
+    ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const wifiAndDoorLockSchema = yup.object().shape({
-    wifi_username: yup.string().required('Wifi username is required'),
-    wifi_password: yup.string().required('Wifi password is required'),
-    door_lock_code: yup.string().required('Door lock code is required'),
+    wifi_username: yup.string().required(i18n.t('app.validation.wifi_username_required')),
+    wifi_password: yup.string().required(i18n.t('app.validation.wifi_password_required')),
+    door_lock_code: yup.string().required(i18n.t('app.validation.door_lock_code_required')),
 });
 
 export type WifiAndDoorLockFormValues = yup.InferType<typeof wifiAndDoorLockSchema>;

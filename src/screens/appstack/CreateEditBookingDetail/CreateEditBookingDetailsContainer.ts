@@ -17,17 +17,17 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const bookingDetailsSchema = yup.object().shape({
-  booking_type:       yup.string().required('Booking type is required'),
-  guest_eligibility:  yup.string().required('Guest eligibility is required'),
-  check_in_time:      yup.string().required('Check-in time is required'),
-  check_out_time:     yup.string().required('Check-out time is required'),
-  allow_same_day:     yup.string().required('This field is required'),
-  cleanliness_status: yup.string().required('Cleanliness status is required'),
+  booking_type:       yup.string().required(i18n.t('app.validation.booking_type_required')),
+  guest_eligibility:  yup.string().required(i18n.t('app.validation.guest_eligibility_required')),
+  check_in_time:      yup.string().required(i18n.t('app.validation.checkin_time_required')),
+  check_out_time:     yup.string().required(i18n.t('app.validation.checkout_time_required')),
+  allow_same_day:     yup.string().required(i18n.t('app.validation.field_required')),
+  cleanliness_status: yup.string().required(i18n.t('app.validation.cleanliness_required')),
 });
 
 export type BookingDetailsFormValues = yup.InferType<typeof bookingDetailsSchema>;

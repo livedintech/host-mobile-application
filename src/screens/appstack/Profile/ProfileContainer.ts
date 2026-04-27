@@ -136,7 +136,7 @@ export default function useProfileContainer() {
     onSuccess: (data) => {
       if (data?.data) setUser(data.data);
       setSelectedImage(null);
-      Toast.show({ type: 'success', text1: 'Photo updated!' });
+      Toast.show({ type: 'success', text1: i18n.t('app.profile.photo_updated') });
     },
     onError: () => {
       Toast.show({ type: 'error', text1: i18n.t('common.toast.failed_upload_photo') });
@@ -148,7 +148,7 @@ export default function useProfileContainer() {
     mutationFn: removeProfilePictureApi,
     onSuccess: (data) => {
       if (data?.data) setUser(data.data);
-      Toast.show({ type: 'success', text1: 'Photo removed!' });
+      Toast.show({ type: 'success', text1: i18n.t('app.profile.photo_removed') });
     },
     onError: () => {
       Toast.show({ type: 'error', text1: i18n.t('common.toast.failed_remove_photo') });

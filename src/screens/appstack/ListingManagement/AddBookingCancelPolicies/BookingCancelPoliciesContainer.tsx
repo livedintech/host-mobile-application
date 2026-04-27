@@ -17,15 +17,15 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const cancelPoliciesSchema = yup.object().shape({
-  airbnb_policy:          yup.string().required('Airbnb policy is required'),
-  airbnb_longterm_policy: yup.string().required('Airbnb long-term policy is required'),
-  gathern_policy:         yup.string().required('Gathern policy is required'),
-  booking_com_policy:     yup.string().required('Booking.com policy is required'),
+  airbnb_policy:          yup.string().required(i18n.t('app.validation.airbnb_policy_required')),
+  airbnb_longterm_policy: yup.string().required(i18n.t('app.validation.airbnb_longterm_required')),
+  gathern_policy:         yup.string().required(i18n.t('app.validation.gathern_policy_required')),
+  booking_com_policy:     yup.string().required(i18n.t('app.validation.bookingcom_policy_required')),
 });
 
 export type CancelPoliciesValues = yup.InferType<typeof cancelPoliciesSchema>;

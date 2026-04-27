@@ -16,8 +16,8 @@ import { queryClient } from '@/services/api';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const aiPricingSchema = yup.object().shape({
-  maximum_price: yup.string().required('Maximum price is required'), // 🆕 NEW
-  minimum_price: yup.string().required('Minimum price is required'), // 🆕 NEW
+  maximum_price: yup.string().required(i18n.t('app.validation.max_price_required')),
+  minimum_price: yup.string().required(i18n.t('app.validation.min_price_required')),
 });
 
 export type AIPricingFormValues = yup.InferType<typeof aiPricingSchema>;

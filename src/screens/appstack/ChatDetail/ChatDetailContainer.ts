@@ -240,13 +240,13 @@ export const useChatContainer = () => {
       });
       Toast.show({
         type: 'success',
-        text1: 'Message deleted successfully',
+        text1: i18n.t('app.chat_detail.message_deleted'),
       });
     },
     onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: error.message || 'Failed to delete message',
+        text1: error.message || i18n.t('app.chat_detail.delete_failed'),
       });
       // Optional: refetch to sync UI if optimistic update failed
       refetch();

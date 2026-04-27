@@ -17,15 +17,15 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const bookingRulesSchema = yup.object().shape({
-  long_term_stay: yup.mixed().required('This field is required'),
-  min_gap_night:  yup.string().required('This field is required'),
-  min_night_stay: yup.string().required('This field is required'),
-  max_night_stay: yup.string().required('This field is required'),
+  long_term_stay: yup.mixed().required(i18n.t('app.validation.field_required')),
+  min_gap_night:  yup.string().required(i18n.t('app.validation.field_required')),
+  min_night_stay: yup.string().required(i18n.t('app.validation.field_required')),
+  max_night_stay: yup.string().required(i18n.t('app.validation.field_required')),
 });
 
 export type BookingRulesFormValues = yup.InferType<typeof bookingRulesSchema>;

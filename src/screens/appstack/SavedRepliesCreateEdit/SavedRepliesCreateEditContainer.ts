@@ -21,8 +21,8 @@ interface SavedReply {
 }
 
 const savedReplySchema = yup.object().shape({
-    title: yup.string().required('Message Name is required'),
-    body: yup.string().required('Message Content is required'),
+    title: yup.string().required(i18n.t('app.validation.message_name_required')),
+    body: yup.string().required(i18n.t('app.validation.message_content_required')),
     listing_ids: yup.array().optional(),
     auto_apply_new_listings: yup.boolean().default(false),
 });

@@ -14,7 +14,7 @@ import STORAGE_CONST from '@/constants/storage';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 

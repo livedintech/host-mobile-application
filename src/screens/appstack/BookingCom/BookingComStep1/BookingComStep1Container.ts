@@ -9,7 +9,7 @@ import { bookingcomTestConnectionApi } from '@/services/bookingManagementApi';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const step1Schema = yup.object().shape({
-    hotelId: yup.string().required('Property ID is required'),
+    hotelId: yup.string().required(i18n.t('app.booking_com_step1.validation_property_id_required')),
 });
 
 export default function useBookingComStep1Container() {
@@ -28,7 +28,7 @@ export default function useBookingComStep1Container() {
         onError: (error: any) => {
             console.log('error',error?.message);
             
-            Toast.show({ type: 'error', text1: error?.message|| 'Invalid Property ID' });
+            Toast.show({ type: 'error', text1: error?.message || i18n.t('app.booking_com_step1.invalid_property_id') });
         },
     });
 

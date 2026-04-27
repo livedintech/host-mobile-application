@@ -57,7 +57,7 @@ export default function useBookingComContainer() {
             Toast.show({
                 type: 'success',
                 text1: i18n.t('common.toast.connection_successful'),
-                text2: 'Booking.com connection is valid.',
+                text2: i18n.t('app.booking_com_pms.connection_valid'),
             })
         },
         onError: (error: any) => {
@@ -65,7 +65,7 @@ export default function useBookingComContainer() {
             Toast.show({
                 type: 'error',
                 text1: i18n.t('common.toast.connection_failed'),
-                text2: error?.message || 'Please check your Room ID and Hotel ID.',
+                text2: error?.message || i18n.t('app.booking_com_pms.check_room_hotel_id'),
             })
         },
     })
@@ -79,8 +79,8 @@ export default function useBookingComContainer() {
             });
             Toast.show({
                 type: 'success',
-                text1: 'Connected!',
-                text2: 'Booking.com has been connected successfully.',
+                text1: i18n.t('app.booking_com_pms.connected'),
+                text2: i18n.t('app.booking_com_pms.connected_success'),
             })
             goBack()
         },
@@ -88,7 +88,7 @@ export default function useBookingComContainer() {
             Toast.show({
                 type: 'error',
                 text1: i18n.t('common.toast.submit_failed'),
-                text2: error?.message || 'Something went wrong. Please try again.',
+                text2: error?.message || i18n.t('app.booking_com_pms.try_again'),
             })
         },
     });
@@ -117,7 +117,7 @@ export default function useBookingComContainer() {
             Toast.show({
                 type: 'error',
                 text1: i18n.t('common.toast.missing_fields'),
-                text2: 'Please fill Room ID and Hotel ID first.',
+                text2: i18n.t('app.booking_com_pms.fill_room_hotel_id'),
             })
             return
         }

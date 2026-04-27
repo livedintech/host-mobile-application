@@ -67,7 +67,7 @@ const FilterModal = ({
         <AppText text={t('app.analytics.apply_filter')} fontSize={22} type="Bold" textAlign="center" mb={20} color={Colors.PINE_FOREST} />
 
         <MultiSelectDropdownField
-          label="Listings"
+          label={t('app.analytics.listings_label')}
           name="listings"
           control={control}
           errors={errors}
@@ -77,12 +77,12 @@ const FilterModal = ({
 
 
         <MultiSelectDropdownField
-          label="Channel"
+          label={t('app.analytics.channel_label')}
           name="channel"
           control={control}
           errors={errors}
           data={channelOptions}
-          placeholder="Select Channels"
+          placeholder={t('app.analytics.select_channels_placeholder')}
         />
 
 

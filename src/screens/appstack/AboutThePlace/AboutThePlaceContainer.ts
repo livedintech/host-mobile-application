@@ -17,16 +17,16 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
 
 const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
+  ota_account: yup.string().required(i18n.t('app.about_place.validation_ota_required')),
 });
 type OtaAccountFormValues = { ota_account: string };
 
 export const aboutThePlaceSchema = yup.object().shape({
-  size_sqm:    yup.string().typeError('Property size must be a number').required('Property size is required'),
-  guest_limit: yup.string().required('Number of guests is required'),
-  bedrooms:    yup.string().required('Number of bedrooms is required'),
-  beds:        yup.string().required('Number of beds is required'),
-  bathrooms:   yup.string().required('Number of bathrooms is required'),
+  size_sqm:    yup.string().typeError(i18n.t('app.about_place.validation_size_type')).required(i18n.t('app.about_place.validation_size_required')),
+  guest_limit: yup.string().required(i18n.t('app.about_place.validation_guests_required')),
+  bedrooms:    yup.string().required(i18n.t('app.about_place.validation_bedrooms_required')),
+  beds:        yup.string().required(i18n.t('app.about_place.validation_beds_required')),
+  bathrooms:   yup.string().required(i18n.t('app.about_place.validation_bathrooms_required')),
 });
 
 export type AboutThePlaceFormValues = yup.InferType<typeof aboutThePlaceSchema>;
