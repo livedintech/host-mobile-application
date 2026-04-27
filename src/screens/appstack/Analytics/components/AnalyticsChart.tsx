@@ -50,7 +50,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                       <View style={styles.legendText}>
                         <AppText
                           text={`${item.label} (${item.percentage.toFixed(
-                            0,
+                            2,
                           )}%)`}
                           fontSize={12}
                           color={Colors.BLACK}
