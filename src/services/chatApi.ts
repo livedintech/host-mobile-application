@@ -131,6 +131,33 @@ export const ChatMessageSendApi = async (payload: sendMessagePayloadType) => {
     throw response;
 };
 
+// Chat Detail Send Message with Media (image/video)
+export const ChatMessageSendWithMediaApi = async (payload: {
+    conversation_id: string;
+    media: { uri: string; type: string; name: string };
+    reply_to?: string | number;
+}) => {
+    const formData = new FormData();
+    formData.append('conversation_id', payload.conversation_id);
+    if (payload.reply_to) {
+        formData.append('reply_to', String(payload.reply_to));
+    }
+    formData.append('media', {
+        uri: payload.media.uri,
+        type: payload.media.type,
+        name: payload.media.name,
+    } as any);
+
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.GET_CHAT_DETAIL_SEMD_MESSAGE,
+        formData,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
 
 //Get Users 
 export const GetAssignChatToUserApi = async () => {

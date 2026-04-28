@@ -103,7 +103,7 @@ const processMessagesWithTimeLabels = (
     const showLabel =
       !olderMessage ||
       dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
-        dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
+      dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
 
     return {
       ...message,
@@ -551,7 +551,7 @@ const ChatScreen = () => {
                           assigned_to_ids: assigned_to_ids,
                           listing_id:
                             conversationData?.listing_id || listing_id,
-                            propertyName : conversationData?.listing.be_listing_name
+                          propertyName: conversationData?.listing.be_listing_name
                         });
                       }}
                     >
@@ -796,29 +796,29 @@ const ChatScreen = () => {
 
             {/* Input Area */}
             <View style={styles.inputArea}>
-            <Pressable
-    onPress={() => {
-      Keyboard.dismiss();
-      setShowSavedReplies(!showSavedReplies);
-    }}
-    style={[
-      styles.plusAction,
-      {
-        /* UPDATED LOGIC HERE */
-        backgroundColor: (showSavedReplies && inputText.length === 0)
-          ? Colors.TEAL_PRIMARY_ALT 
-          : Colors.TRANSPARENT,
-      },
-    ]}
-  >
-    <GlassCard style={styles.plusAction}>
-      <Svgicons
-        /* UPDATED LOGIC HERE AS WELL */
-        path={(showSavedReplies && inputText.length === 0) ? 'chatIconWhite' : 'chatIcon'}
-        size={20}
-      />
-    </GlassCard>
-  </Pressable>
+              <Pressable
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setShowSavedReplies(!showSavedReplies);
+                }}
+                style={[
+                  styles.plusAction,
+                  {
+                    /* UPDATED LOGIC HERE */
+                    backgroundColor: (showSavedReplies && inputText.length === 0)
+                      ? Colors.TEAL_PRIMARY_ALT
+                      : Colors.TRANSPARENT,
+                  },
+                ]}
+              >
+                <GlassCard style={styles.plusAction}>
+                  <Svgicons
+                    /* UPDATED LOGIC HERE AS WELL */
+                    path={(showSavedReplies && inputText.length === 0) ? 'chatIconWhite' : 'chatIcon'}
+                    size={20}
+                  />
+                </GlassCard>
+              </Pressable>
 
               {/* <View style={styles.combinedInputContainer}> */}
               <GlassCard style={styles.mainCardItem}>
@@ -830,6 +830,9 @@ const ChatScreen = () => {
                   style={styles.input}
                   multiline
                 />
+                {/* <Svgicons path='attachmentIcon' onPress={()=>{
+                  setShowAttachmentMenu(!showAttachmentMenu);
+                }}/> */}
               </GlassCard>
               {/* </View> */}
 
@@ -861,34 +864,34 @@ const ChatScreen = () => {
                   color={Colors.BLACK}
                   fontSize={18}
                 />
-              <View style={styles.repliesGrid}>
-      {SAVED_REPLIES.map(
-        (reply: { id: number; body: string; title: string }) => (
-          <GlassCard
-            key={reply?.id}
-            width="31%"
-            style={styles.replyGlassCard}
-          >
-            <Pressable
-              onPress={() => {
-                setInputText(reply?.body);
-                // Optional: Hide replies after selecting one
-                setShowSavedReplies(false); 
-              }}
-              style={styles.replyPressable}
-            >
-              <AppText
-                text={reply?.title}
-                fontSize={12}
-                color={Colors.BLACK}
-                style={{ textAlign: 'center' }}
-                numberOfLines={1}
-              />
-            </Pressable>
-          </GlassCard>
-        ),
-      )}
-    </View>
+                <View style={styles.repliesGrid}>
+                  {SAVED_REPLIES.map(
+                    (reply: { id: number; body: string; title: string }) => (
+                      <GlassCard
+                        key={reply?.id}
+                        width="31%"
+                        style={styles.replyGlassCard}
+                      >
+                        <Pressable
+                          onPress={() => {
+                            setInputText(reply?.body);
+                            // Optional: Hide replies after selecting one
+                            setShowSavedReplies(false);
+                          }}
+                          style={styles.replyPressable}
+                        >
+                          <AppText
+                            text={reply?.title}
+                            fontSize={12}
+                            color={Colors.BLACK}
+                            style={{ textAlign: 'center' }}
+                            numberOfLines={1}
+                          />
+                        </Pressable>
+                      </GlassCard>
+                    ),
+                  )}
+                </View>
               </View>
             )}
 
@@ -925,7 +928,7 @@ const ChatScreen = () => {
                   <AppText text={t('app.chat_detail.gallery')} fontSize={13} />
                 </Pressable>
 
-                <Pressable
+                {/* <Pressable
                   style={[styles.attachmentOption, { borderBottomWidth: 0 }]}
                   onPress={handleDocument}
                 >
@@ -933,7 +936,7 @@ const ChatScreen = () => {
                     <Svgicons path="docIcon" size={20} />
                   </View>
                   <AppText text={t('app.chat_detail.document')} fontSize={13} />
-                </Pressable>
+                </Pressable> */}
               </View>
             )}
 

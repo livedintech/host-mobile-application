@@ -6,8 +6,10 @@ import { GetSubscriptionUserPlanResponse, ManageListingsResponse } from '@/types
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function useSubscriptionHistoryContainer() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigation = useNavigation();
   const removeSheetRef = useRef<ConfirmActionRef>(null);
@@ -42,10 +44,10 @@ export default function useSubscriptionHistoryContainer() {
   });
 
   const features = [
-    { id: 1, label: '24/7 Guest\nCommunication', icon: 'phoneIcon' },
-    { id: 2, label: '10 Revenue\nManagement', icon: 'percentIcon' },
-    { id: 3, label: 'Task\nManagement', icon: 'briefcaseIcon' },
-    { id: 4, label: 'Multi-\ncalendar', icon: 'calendarGridIcon' },
+    { id: 1, label: t('app.subscription.feature_guest_communication'), icon: 'phoneIcon' },
+    { id: 2, label: t('app.subscription.feature_revenue_management'), icon: 'percentIcon' },
+    { id: 3, label: t('app.subscription.feature_task_management'), icon: 'briefcaseIcon' },
+    { id: 4, label: t('app.subscription.feature_multi_calendar'), icon: 'calendarGridIcon' },
   ];
 
   const openSheet = () => {

@@ -168,8 +168,8 @@ export const FilterModalView = ({
               errors={errors}
               placeholder="Select Multiple Options"
               data={[
-                { label: 'Checked-in', value: 'today' },
-                { label: 'Checked-out', value: 'checkedout' },
+                { label: t('app.filter_modal_view.checked_in'), value: 'today' },
+                { label: t('app.filter_modal_view.checked_out'), value: 'checkedout' },
               ]}
             />
           </View>

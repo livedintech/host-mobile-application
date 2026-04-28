@@ -136,7 +136,7 @@ const ProfileScreen = () => {
           {/* Form */}
           <View style={styles.form}>
             <InputField name="full_name" label={t('app.profile.full_name_label')} control={control} errors={errors} placeholder="Tooba J" />
-            <DropdownField name="gender" control={control} errors={errors} label={t('app.profile.gender_label')} data={[{ label: 'Female', value: 'Female' }, { label: 'Male', value: 'Male' }]} />
+            <DropdownField name="gender" control={control} errors={errors} label={t('app.profile.gender_label')} data={[{ label: t('app.profile.female'), value: 'Female' }, { label: t('app.profile.male'), value: 'Male' }]} />
             <DropdownField
               name="country"
               control={control}

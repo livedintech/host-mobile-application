@@ -199,9 +199,9 @@ const TaskListScreen: React.FC = () => {
               control={control}
               errors={errors}
               data={[
-                { label: 'Todo', value: 'todo' },
-                { label: 'In Progress', value: 'inprogress' },
-                { label: 'Completed', value: 'completed' },
+                { label: t('app.task_management.status_todo'), value: 'todo' },
+                { label: t('app.task_management.status_in_progress'), value: 'inprogress' },
+                { label: t('app.task_management.status_completed'), value: 'completed' },
               ]}
               placeholder={t('app.task_management.select_multiple')}
             />

@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
+
 const useReservationAnalytics = () => {
+  const { t } = useTranslation();
   const data = {
     summary: [
       {
-        label: 'Occupancy',
+        label: t('app.analytics.occupancy'),
         value: '68%',
         change: '+8%',
         duration: 'vs last 30 days',
@@ -10,7 +13,7 @@ const useReservationAnalytics = () => {
         isUp: true,
       },
       {
-        label: 'Average Daily Rate',
+        label: t('app.analytics.avg_daily_rate'),
         value: 'SAR 590',
         change: '+6%',
         duration: 'vs last 30 days',
@@ -18,7 +21,7 @@ const useReservationAnalytics = () => {
         isUp: true,
       },
       {
-        label: 'Avg Stay Revenue',
+        label: t('app.analytics.avg_stay_revenue'),
         value: 'SAR 2,950',
         change: '+4%',
         duration: 'vs last 30 days',
@@ -26,7 +29,7 @@ const useReservationAnalytics = () => {
         isUp: true,
       },
       {
-        label: 'Avg Length of Stay',
+        label: t('app.analytics.avg_length_stay'),
         value: '4.2 Nights',
         change: '-0%',
         duration: 'vs last 30 days',
@@ -37,8 +40,8 @@ const useReservationAnalytics = () => {
 
     chart: [
       { value: 60, color: '#ED0509', label: 'Airbnb', percentage: '60%', count: '18' },
-      { value: 30, color: '#8C05ED', label: 'Gathem', percentage: '30%', count: '09' },
-      { value: 10, color: '#0D4036', label: 'Direct', percentage: '10%', count: '03' },
+      { value: 30, color: '#8C05ED', label: 'Gathern', percentage: '30%', count: '09' },
+      { value: 10, color: '#0D4036', label: t('app.analytics.channel_direct'), percentage: '10%', count: '03' },
     ],
 
     total: 30,

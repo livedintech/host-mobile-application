@@ -21,7 +21,7 @@ const AddBookingRulesScreen = () => {
   } = useBookingRulesContainer();
   const { t } = useTranslation();
 
-  const yesNoOptions = [{ label: 'Yes', value: 1 }, { label: 'No', value: 0 }];
+  const yesNoOptions = [{ label: t('common.yes'), value: 1 }, { label: t('common.no'), value: 0 }];
   const numberOptions = Array.from({ length: 365 }, (_, i) => ({ label: String(i + 1), value: String(i + 1) }));
   const gapNightOptions = Array.from({ length: 30 }, (_, i) => ({ label: String(i + 1), value: String(i + 1) }));
 
