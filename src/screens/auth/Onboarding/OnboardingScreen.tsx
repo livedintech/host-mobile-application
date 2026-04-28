@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, ImageBackground, I18nManager } from 'react-native';
+import { View, StyleSheet, FlatList, Image, Text, I18nManager } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import useOnboardingContainer from './OnboardingContainer';
-import i18n from '@/locales/i18n/i18n';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import AppButton from '@/components/molecules/AppButton/AppButton';
+
+const TEAL = '#09A389';
+const BG_COLOR = '#EEF5F3';
 
 const OnboardingScreen = () => {
     const {
@@ -20,40 +23,45 @@ const OnboardingScreen = () => {
     } = useOnboardingContainer();
 
     const isLastSlide = activeIndex === onboardingData.length - 1;
+    const currentSlide = onboardingData[activeIndex];
 
-    const renderItem = ({ item }: any) => {
-        const bgImage = i18n.language === 'ar' ? item.bgAr : item.bg;
+    const renderMixedTitle = (item: typeof onboardingData[0]) => {
+        const { title, titleHighlight, isHighlightItalic } = item;
+        const parts = title.split(titleHighlight);
 
         return (
-            <ImageBackground style={styles.slide} source={bgImage} resizeMode='cover'>
-                <View style={styles.overlay} />
-                <View style={styles.contentContainer}>
-                    <View style={styles.textSection}>
-                        <AppText
-                            text={item.title}
-                            textAlign='center'
-                            fontSize={26}
-                            color={Colors.WHITE}
-                            type='Bold'
-                            lineHeight={34}
-                            mb={11}
-                        />
-                        <AppText
-                            text={item.subtitle}
-                            textAlign='center'
-                            fontSize={14}
-                            color={Colors.WHITE}
-                            style={styles.description}
-                            type='Medium'
-                        />
-                    </View>
-                </View>
-            </ImageBackground>
+            <Text style={styles.title}>
+                {parts[0]}
+                <Text style={[styles.titleHighlight, isHighlightItalic && styles.titleItalic]}>
+                    {titleHighlight}
+                </Text>
+                {parts[1] ?? ''}
+            </Text>
         );
     };
 
+    const renderItem = ({ item }: { item: typeof onboardingData[0] }) => (
+        <View style={styles.slide}>
+            <View style={styles.textContainer}>
+                {renderMixedTitle(item)}
+                <AppText
+                    text={item.subtitle}
+                    textAlign='center'
+                    fontSize={14}
+                    color={Colors.EERIE_BLACK}
+                    type='Regular'
+                    lineHeight={22}
+                    style={styles.subtitle}
+                />
+            </View>
+            <View style={styles.imageContainer}>
+                <Image source={item.bg} style={styles.image} resizeMode='contain' />
+            </View>
+        </View>
+    );
+
     return (
-        <View style={styles.container}>
+        <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
             <FlatList
                 ref={flatListRef}
                 data={onboardingData}
@@ -63,6 +71,7 @@ const OnboardingScreen = () => {
                 showsHorizontalScrollIndicator={false}
                 onMomentumScrollEnd={handleMomentumScrollEnd}
                 keyExtractor={(item) => item.id}
+                scrollEventThrottle={16}
             />
 
             {/* Pagination Dots */}
@@ -86,21 +95,36 @@ const OnboardingScreen = () => {
 
             {/* Action Buttons */}
             <View style={styles.footer}>
-                <ButtonView
-                    style={styles.glassButton}
-                    onPress={isLastSlide ? handleGetStarted : handleContinue}
-                >
-                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.WHITE} type='Regular' fontSize={14} />
-                </ButtonView>
-
-                <ButtonView
-                    style={styles.glassButtonSecondary}
+                {/* Top outline button: Skip / Explore First */}
+                {/* <ButtonView
+                    style={styles.outlineButton}
                     onPress={isLastSlide ? loginWithPhone : handleSkip}
                 >
-                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.WHITE} type='Regular' fontSize={14} />
-                </ButtonView>
+                    <AppText
+                        text={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn}
+                        color='#1A2421'
+                        type='Regular'
+                        fontSize={15}
+                    />
+                </ButtonView> */}
+                <AppButton onPress={isLastSlide ? loginWithPhone : handleSkip} title={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn} variant='secondary' type='Regular' />
+
+                {/* Bottom teal button: Continue / Get Started */}
+                {/* <ButtonView
+                    style={styles.tealButton}
+                    onPress={isLastSlide ? handleGetStarted : handleContinue}
+                >
+                    <AppText
+                        text={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn}
+                        color={Colors.WHITE}
+                        type='Regular'
+                        fontSize={15}
+                    />
+                </ButtonView> */}
+                <AppButton onPress={isLastSlide ? handleGetStarted : handleContinue} title={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn} variant='primary' type='Regular' />
+
             </View>
-        </View>
+        </BGImage>
     );
 };
 
@@ -109,32 +133,50 @@ export default OnboardingScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        backgroundColor: BG_COLOR,
     },
     slide: {
         width: Metrics.screenWidth,
         height: Metrics.screenHeight,
+        paddingBottom: Metrics.verticalScale(220),
     },
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.2)',
-    },
-    contentContainer: {
-        flex: 1,
-        paddingTop: Metrics.verticalScale(100),
-        paddingHorizontal: Metrics.scale(40),
-    },
-    textSection: {
+    textContainer: {
+        paddingTop: Metrics.verticalScale(72),
+        paddingHorizontal: Metrics.scale(32),
         alignItems: 'center',
     },
-    description: {
-        marginTop: Metrics.verticalScale(12),
-        opacity: 0.9,
+    title: {
+        fontFamily: 'RethinkSans-Bold',
+        fontSize: Metrics.scale(28),
+        lineHeight: Metrics.scale(38),
+        color: '#1A2421',
+        textAlign: 'center',
+        marginBottom: Metrics.verticalScale(12),
+    },
+    titleHighlight: {
+        fontFamily: 'RethinkSans-Bold',
+        color: TEAL,
+    },
+    titleItalic: {
+        fontFamily: 'RethinkSans-BoldItalic',
+    },
+    subtitle: {
+        marginTop: Metrics.verticalScale(4),
+    },
+    imageContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: Metrics.scale(20),
+    },
+    image: {
+        width: Metrics.screenWidth * 0.72,
+        height: Metrics.verticalScale(360),
     },
     pagination: {
         flexDirection: 'row',
         position: 'absolute',
-        bottom: Metrics.verticalScale(195),
+        bottom: Metrics.verticalScale(178),
         alignSelf: 'center',
     },
     dot: {
@@ -144,35 +186,32 @@ const styles = StyleSheet.create({
     },
     activeDot: {
         width: Metrics.scale(40),
-        backgroundColor: '#09A389',
+        backgroundColor: TEAL,
     },
     inactiveDot: {
         width: Metrics.scale(10),
-        backgroundColor: 'rgba(255,255,255,0.4)',
+        backgroundColor: 'rgba(9, 163, 137, 0.25)',
     },
     footer: {
         position: 'absolute',
-        bottom: Metrics.verticalScale(50),
+        bottom: Metrics.verticalScale(40),
         width: '100%',
-        paddingHorizontal: Metrics.scale(30),
+        paddingHorizontal: Metrics.scale(24),
+        gap: Metrics.verticalScale(12),
     },
-    glassButton: {
+    outlineButton: {
         height: Metrics.verticalScale(56),
         borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: Metrics.verticalScale(12),
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.3)',
+        borderColor: 'rgba(26, 36, 33, 0.15)',
     },
-    glassButtonSecondary: {
+    tealButton: {
         height: Metrics.verticalScale(56),
         borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: TEAL,
     },
 });

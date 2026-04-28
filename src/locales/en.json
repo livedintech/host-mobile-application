@@ -86,18 +86,21 @@
     "onboarding": {
       "slide1": {
         "title": "Unlock Higher Returns From Your Property",
+        "title_highlight": "Higher Returns",
         "subtitle": "Powered by intelligent automation",
         "primary_btn": "Continue",
         "secondary_btn": "Skip"
       },
       "slide2": {
         "title": "One Intelligent Control\nfor Every Channel",
+        "title_highlight": "Intelligent Control",
         "subtitle": "Agent ALI works across all channels so that you don't have to",
         "primary_btn": "Continue",
         "secondary_btn": "Skip"
       },
       "slide3": {
         "title": "Total Control. Zero\nHeavy Lifting.",
+        "title_highlight": "Total Control.",
         "subtitle": "Agent ALI does the work. You stay in charge.",
         "primary_btn": "Explore First",
         "secondary_btn": "Get Started"

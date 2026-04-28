@@ -86,18 +86,21 @@
     "onboarding": {
       "slide1": {
         "title": "حقق عوائد أعلى من عقارك",
+        "title_highlight": "عوائد أعلى",
         "subtitle": "مدعوم بالأنظمة الذكية",
         "primary_btn": "متابعة",
         "secondary_btn": "تخطى"
       },
       "slide2": {
         "title": "تحكم ذكي موحّد لكل القنوات",
+        "title_highlight": "ذكي موحّد",
         "subtitle": "الذكاء الاصطناعي يعمل عبر جميع القنوات لتوفير وقتك وجهدك",
         "primary_btn": "متابعة",
         "secondary_btn": "تخطى"
       },
       "slide3": {
         "title": "تحكم كامل. بدون أي مجهود",
+        "title_highlight": "تحكم كامل.",
         "subtitle": "الذكاء الاصطناعي يقوم بالعمل، وأنت تبقى المتحكم",
         "primary_btn": "استكشف أولاً",
         "secondary_btn": "ابدأ الآن"
