@@ -55,7 +55,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
 
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.BRUNSWICK_GREEN, Colors.BRUNSWICK_GREEN],
+    outputRange: [Colors.WHITE_OPACITY_60, Colors.WHITE_OPACITY_60],
   });
 
   return (
@@ -74,9 +74,9 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
                 styles.container,
                 {
                   borderColor: errors[name] ? Colors.INDIAN_RED : animatedBorderColor,
-                  backgroundColor: Colors.WHITE,
+                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
                 },
-                disabled && { backgroundColor: Colors.ANTI_FLASH_WHITE }
+                disabled && { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
               ]}
             >
               <TouchableOpacity
@@ -140,7 +140,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
 const styles = StyleSheet.create({
   wrapper: { marginBottom: Metrics.verticalScale(18) },
   label: { color: Colors.BLACK, marginBottom: 8, fontSize: Metrics.generatedFontSize(14) },
-  container: { borderWidth: 1, borderRadius: 12, height: Metrics.verticalScale(50), justifyContent: 'center' },
+  container: { borderWidth: 1.5, borderRadius: 10, height: Metrics.verticalScale(54), justifyContent: 'center' },
   pickerButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, flex: 1 },
   text: { color: Colors.BLACK, fontSize: Metrics.generatedFontSize(14), flex: 1, marginLeft: 10 },
   errorText: { marginTop: Metrics.verticalScale(5), fontSize: Metrics.generatedFontSize(12), marginLeft: Metrics.scale(4) },
