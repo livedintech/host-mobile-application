@@ -22,8 +22,8 @@ const AddPropertyDisclosureScreen = () => {
   const { t } = useTranslation();
 
   const options = [
-    { label: 'Yes', value: 'Yes' },
-    { label: 'No',  value: 'No'  },
+    { label: t('common.yes'), value: 'Yes' },
+    { label: t('common.no'),  value: 'No'  },
   ];
 
   return (

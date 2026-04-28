@@ -51,13 +51,18 @@
       "special_offer_sent": "تم إرسال العرض الخاص بنجاح",
       "error": "خطأ"
     },
+    "yes": "نعم",
+    "no": "لا",
+    "male": "ذكر",
+    "female": "أنثى",
     "cancel": "إلغاء",
     "delete": "حذف",
     "new_listing": "عقار جديد",
     "dropdown": {
       "apartment": "شقة",
       "saved_replies": "الردود المحفوظة",
-      "automation_template": "قالب الأتمتة"
+      "automation_template": "قالب الأتمتة",
+      "ai_auto_reply": "الردود الآلية بالذكاء الاصطناعي"
     }
   },
   "auth": {
@@ -727,7 +732,11 @@
       "cancel": "إلغاء الاشتراك",
       "cancel_confirm": "هل أنت متأكد أنك تريد إلغاء اشتراكك؟",
       "yes_cancel": "نعم، إلغاء",
-      "no": "لا"
+      "no": "لا",
+      "feature_guest_communication": "تواصل الضيوف\n24/7",
+      "feature_revenue_management": "10 إدارة\nالإيرادات",
+      "feature_task_management": "إدارة\nالمهام",
+      "feature_multi_calendar": "تقويم\nمتعدد"
     },
     "smart_lock": {
       "title": "لم يتم العثور على قفل ذكي",
@@ -881,7 +890,8 @@
       "select_account": "اختر الحساب",
       "validation_currency_required": "العملة مطلوبة",
       "validation_weekday_required": "سعر أيام الأسبوع الأساسي مطلوب",
-      "validation_weekend_required": "سعر عطلة نهاية الأسبوع الأساسي مطلوب"
+      "validation_weekend_required": "سعر عطلة نهاية الأسبوع الأساسي مطلوب",
+      "riyal_sar": "ريال (ر.س)"
     },
     "gathren_pms": {
       "title": "أدخل رقم PMS الخاص بك",
@@ -906,7 +916,9 @@
       "platform_id_label": "معرف المستخدم في المنصة*",
       "platform_id_placeholder": "أدخل معرف المستخدم في المنصة",
       "next": "التالي",
-      "create_btn": "إنشاء حساب جديد"
+      "create_btn": "إنشاء حساب جديد",
+      "male": "ذكر",
+      "female": "أنثى"
     },
     "booking_details_edit": {
       "title_edit": "تفاصيل الحجز",
@@ -919,6 +931,10 @@
       "same_day_label": "السماح بحجوزات Booking.com في نفس اليوم",
       "cleanliness_label": "حالة نظافة العقار",
       "cleanliness_placeholder": "حالة التنظيف",
+      "instant": "فوري",
+      "manual": "يدوي",
+      "clean": "نظيف",
+      "dirty": "متسخ",
       "export": "تصدير",
       "next": "التالي",
       "save_exit": "حفظ والخروج",
@@ -1017,7 +1033,11 @@
       "select_listing_label": "اختر العقار",
       "tab_reservation": "الحجوزات",
       "tab_revenue": "الإيرادات",
-      "tab_nights": "الليالي"
+      "tab_nights": "الليالي",
+      "channel_direct": "مباشر",
+      "date_today": "اليوم",
+      "date_last_7_days": "آخر 7 أيام",
+      "date_last_30_days": "آخر 30 يوم"
     },
     "billing": {
       "title": "الفواتير",
@@ -1120,7 +1140,10 @@
       "no_instructions": "لا توجد تعليمات.",
       "address_not_available": "العنوان غير متوفر",
       "enter_instructions": "أدخل التعليمات...",
-      "select_user_hint_extended": "اختر مستخدماً للمتابعة. إذا لم تجد المستخدم، يمكنك إنشاء مستخدم جديد أو تعيين العقار لمستخدم موجود من المزيد ←"
+      "select_user_hint_extended": "اختر مستخدماً للمتابعة. إذا لم تجد المستخدم، يمكنك إنشاء مستخدم جديد أو تعيين العقار لمستخدم موجود من المزيد ←",
+      "status_todo": "للقيام",
+      "status_in_progress": "قيد التنفيذ",
+      "status_completed": "مكتمل"
     },
     "listing_screen": {
       "booking_created": "تم إنشاء الحجز",
@@ -1154,7 +1177,9 @@
       "date_placeholder": "يي/شش/سس",
       "check_in_required": "تاريخ الوصول مطلوب",
       "check_out_required": "تاريخ المغادرة مطلوب",
-      "set_pricing": "تحديد السعر"
+      "set_pricing": "تحديد السعر",
+      "guest_stay": "إقامة ضيف",
+      "self_stay": "إقامة شخصية"
     },
     "account_screen": {
       "title": "الحساب"
@@ -1285,7 +1310,23 @@
       "create_task": "إنشاء مهمة جديدة",
       "cancellation_policy": "سياسة الإلغاء",
       "booking_cancelled": "تم إلغاء الحجز المباشر بنجاح",
-      "cancel_failed": "فشل الإلغاء"
+      "cancel_failed": "فشل الإلغاء",
+      "change_reservation": "تغيير الحجز",
+      "cancel_reservation": "إلغاء الحجز",
+      "cleanliness": "النظافة",
+      "accuracy": "الدقة",
+      "communication": "التواصل",
+      "location_rating": "الموقع",
+      "checkin_rating": "تسجيل الوصول",
+      "value": "القيمة",
+      "booking_cost": "تكلفة الحجز:",
+      "discount": "الخصم:",
+      "guest_paid_amount": "المبلغ المدفوع من الضيف:",
+      "cleaning_fee": "رسوم التنظيف:",
+      "host_share": "حصة المضيف:",
+      "ota_share": "حصة المنصة:",
+      "view_details": "عرض التفاصيل",
+      "create_new_task": "إنشاء مهمة جديدة"
     },
     "booking_com_step1": {
       "enter_your": "أدخل ",
@@ -1369,7 +1410,9 @@
     },
     "filter_modal_view": {
       "apply_filter": "تطبيق الفلتر",
-      "select_property": "اختر العقار"
+      "select_property": "اختر العقار",
+      "checked_in": "تسجيل الوصول",
+      "checked_out": "تسجيل المغادرة"
     },
     "direct_cancel_modal": {
       "confirm_text": "هل أنت متأكد أنك تريد إلغاء الحجز؟",
@@ -1379,7 +1422,9 @@
     },
     "create_booking_sheet": {
       "price_hint": "SR499 - SR500 حسب العروض",
-      "similar_listings": "عقارات مماثلة SR86 - SR129"
+      "similar_listings": "عقارات مماثلة SR86 - SR129",
+      "guest_stay": "إقامة ضيف",
+      "self_stay": "إقامة شخصية"
     },
     "photo_upload": {
       "loading": "جاري تحميل الصور...",
@@ -1506,6 +1551,18 @@
       "cancel": "إلغاء",
       "next": "التالي"
     },
+    "connect_ota": {
+      "connect_airbnb": "ربط Airbnb",
+      "connect_gathern": "ربط Gathern",
+      "connect_bookingcom": "ربط Booking.com"
+    },
+    "decline_step1": {
+      "option_dates": "مشكلة في تواريخ أو مدة أو سعر الرحلة",
+      "option_house_rules": "الطلب يتعارض مع قواعد المنزل",
+      "option_better_reservation": "في انتظار حجز أفضل",
+      "option_uncomfortable": "لست مرتاحاً مع هذا الضيف",
+      "option_other": "سبب آخر غير مدرج"
+    },
     "no_listings": {
       "title": "لم يتم العثور على عقارات"
     },
@@ -1560,7 +1617,9 @@
       "camera_btn": "التقط صورة",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف حسابك؟",
       "photo_updated": "تم تحديث الصورة!",
-      "photo_removed": "تم إزالة الصورة!"
+      "photo_removed": "تم إزالة الصورة!",
+      "male": "ذكر",
+      "female": "أنثى"
     },
     "property_disclosure": {
       "title_edit": "تفاصيل الإفصاح عن العقار",

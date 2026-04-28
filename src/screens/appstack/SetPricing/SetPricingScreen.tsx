@@ -21,7 +21,7 @@ const SetPricingScreen = () => {
   const { control, errors, handleSubmit, onSubmit, isLoading, isEdit, bottomSheetVisible, handleExport, handleExportSubmit, handleOtaSubmit, isExporting, listingOptions, otaControl, otaErrors, setBottomSheetVisible, } = usePricingContainer();
 
   const currencyOptions = [
-    { label: 'Riyal (SAR)', value: 'SAR' },
+    { label: t('app.set_pricing.riyal_sar'), value: 'SAR' },
   ];
 
   return (

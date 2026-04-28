@@ -13,9 +13,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 
 const PLATFORMS = [
-  { key: 'Airbnb',       icon: 'airbnb',     label: 'Connect Airbnb'      },
-  { key: 'Gathern',      icon: 'gathern',    label: 'Connect Gathern'     },
-  { key: 'Booking.com',  icon: 'bookingCom', label: 'Connect Booking.com' },
+  { key: 'Airbnb',       icon: 'airbnb',     labelKey: 'connect_airbnb'      },
+  { key: 'Gathern',      icon: 'gathern',    labelKey: 'connect_gathern'     },
+  { key: 'Booking.com',  icon: 'bookingCom', labelKey: 'connect_bookingcom'  },
 ] as const;
 
 const ConnectOTAPlatformsScreen = () => {
@@ -81,7 +81,7 @@ const ConnectOTAPlatformsScreen = () => {
               <GlassCard width="100%" style={styles.platformCard}>
                 <Svgicons path={platform.icon} size={28} />
                 <AppText
-                  text={platform.label}
+                  text={t(`app.connect_ota.${platform.labelKey}`)}
                   fontSize={16}
                   type="Medium"
                   color={Colors.BLACK}

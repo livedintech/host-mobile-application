@@ -9,6 +9,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import STORAGE_CONST from '@/constants/storage';
 import {
   ChatMessageSendApi,
+  ChatMessageSendWithMediaApi,
   getChatDetailApi,
   getChatDetailSavedRepliesApi,
   deleteChatMessageApi,
@@ -191,10 +192,8 @@ export const useChatContainer = () => {
     queryKey: [STORAGE_CONST.GET_CHAT_DETAIL_SAVED_REPLIES, listing_id],
     queryFn: () =>
       getChatDetailSavedRepliesApi({
-        listing_id,
+        listing_id: listing_id ?? '',
         is_active: true,
-        offset: 0,
-        limit: 0,
       }),
   });
 

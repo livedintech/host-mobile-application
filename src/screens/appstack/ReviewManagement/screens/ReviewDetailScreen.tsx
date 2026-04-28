@@ -37,9 +37,14 @@ import Toast from 'react-native-toast-message';
 import DirectCancelModal from '@/components/molecules/DirectCancelModal/DirectCancelModal';
 const FIGMA_TEAL = '#21AA8F';
 
+const MENU_OPTION_KEYS = {
+  CHANGE: 'change_reservation',
+  CANCEL: 'cancel_reservation',
+} as const;
+
 const MENU_OPTIONS = [
-  { label: 'Change Reservation', icon: 'pencil' },
-  { label: 'Cancel Reservation', icon: 'crossIcon2' },
+  { key: MENU_OPTION_KEYS.CHANGE, icon: 'pencil' },
+  { key: MENU_OPTION_KEYS.CANCEL, icon: 'crossIcon2' },
 ];
 
 const ReviewDetailScreen = ({ route }: any) => {
@@ -153,18 +158,18 @@ const ReviewDetailScreen = ({ route }: any) => {
       : '0.0';
 
   const ratingItems = [
-    { label: 'Overall Rating', value: overallRating, icon: 'overallRating' },
-    { label: 'Cleanliness', value: cleanliness, icon: 'starIcon' },
-    { label: 'Accuracy', value: accuracy, icon: 'starIcon' },
-    { label: 'Communication', value: communication, icon: 'starIcon' },
-    { label: 'Location', value: location, icon: 'starIcon' },
-    { label: 'Check-in', value: checkin, icon: 'starIcon' },
-    { label: 'Value', value: value, icon: 'starIcon' },
+    { label: t('app.review_detail.overall_rating'), value: overallRating, icon: 'overallRating', isOverall: true },
+    { label: t('app.review_detail.cleanliness'), value: cleanliness, icon: 'starIcon' },
+    { label: t('app.review_detail.accuracy'), value: accuracy, icon: 'starIcon' },
+    { label: t('app.review_detail.communication'), value: communication, icon: 'starIcon' },
+    { label: t('app.review_detail.location_rating'), value: location, icon: 'starIcon' },
+    { label: t('app.review_detail.checkin_rating'), value: checkin, icon: 'starIcon' },
+    { label: t('app.review_detail.value'), value: value, icon: 'starIcon' },
   ];
 
   const isCheckedOut = property?.status === 'checkedout';
 
-  const handlePopupMenu = (label: string) => {
+  const handlePopupMenu = (key: string) => {
     const platform = property?.booking_platform;
     const isDirect =
       platform === 'host' ||
@@ -178,8 +183,7 @@ const ReviewDetailScreen = ({ route }: any) => {
       platform: platform,
     };
 
-    // 1. HANDLE CHANGE RESERVATION
-    if (label === 'Change Reservation') {
+    if (key === MENU_OPTION_KEYS.CHANGE) {
       navigate(NavigationRoutes.APP_STACK.CHANGE_RESERVATION_SCREEN, {
         bookingData: {
           ...commonData,
@@ -189,10 +193,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           basePrice: payment_breakdown?.booking_cost,
         },
       });
-    }
-
-    // 2. HANDLE CANCEL RESERVATION
-    else if (label === 'Cancel Reservation') {
+    } else if (key === MENU_OPTION_KEYS.CANCEL) {
       if (isDirect) {
         setShowDirectCancelModal(true);
       } else {
@@ -281,23 +282,19 @@ const ReviewDetailScreen = ({ route }: any) => {
 
             // --- Logic for filtering menu options ---
             const filteredOptions = MENU_OPTIONS.filter(item => {
-              // Case 1: Direct booking + previous date = Hide everything
               if (isDirectBooking && isPreviousDate) {
                 return false;
               }
 
-              // Case 2: OTA booking + (previous date OR today) = Hide everything
               if (isOTABooking && (isPreviousDate || isToday)) {
                 return false;
               }
 
-              // Existing "Change Reservation" Logic
-              if (item.label === 'Change Reservation') {
+              if (item.key === MENU_OPTION_KEYS.CHANGE) {
                 return isDirectBooking;
               }
 
-              // Existing "Cancel Reservation" Logic
-              if (item.label === 'Cancel Reservation') {
+              if (item.key === MENU_OPTION_KEYS.CANCEL) {
                 return platform !== 'bookingcom';
               }
 
@@ -324,12 +321,12 @@ const ReviewDetailScreen = ({ route }: any) => {
                 >
                   {filteredOptions.map(item => (
                     <MenuOption
-                      key={item.label}
+                      key={item.key}
                       style={styles.menuItem}
-                      onSelect={() => handlePopupMenu(item.label)}
+                      onSelect={() => handlePopupMenu(item.key)}
                     >
                       <AppText
-                        text={item.label}
+                        text={t(`app.review_detail.${item.key}`)}
                         fontSize={14}
                         color={Colors.CHARCOAL}
                       />
@@ -813,7 +810,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               {showDetails && (
                 <View style={{ marginTop: vs(10) }}>
                   {ratingItems
-                    .filter(item => item.label !== 'Overall Rating')
+                    .filter(item => !item.isOverall)
                     .map((item, index) => (
                       <View
                         key={index}
@@ -859,7 +856,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                   <AppButton
                     // disabled={guest?.rating == 0}
                     disabled={!isCheckedOut}
-                    title={'View Details'}
+                    title={t('app.review_detail.view_details')}
                     fontSize={14}
                     onPress={() =>
                       navigate(
@@ -941,25 +938,24 @@ const ReviewDetailScreen = ({ route }: any) => {
             <View style={styles.paymentGrid}>
               {[
                 {
-                  label: 'Booking Cost:',
+                  label: t('app.review_detail.booking_cost'),
                   value: payment_breakdown?.booking_cost,
                 },
                 {
-                  label: 'Discount:',
+                  label: t('app.review_detail.discount'),
                   value: payment_breakdown?.discount,
                 },
                 {
-                  label: 'Guest Paid Amount:',
+                  label: t('app.review_detail.guest_paid_amount'),
                   value: payment_breakdown?.guest_paid_amount,
                 },
                 {
-                  label: 'Cleaning Fee:',
+                  label: t('app.review_detail.cleaning_fee'),
                   value: payment_breakdown?.cleaning_fee,
                 },
-                { label: 'Host Share:', value: payment_breakdown?.host_share },
-
+                { label: t('app.review_detail.host_share'), value: payment_breakdown?.host_share },
                 {
-                  label: 'OTA Share:',
+                  label: t('app.review_detail.ota_share'),
                   value: payment_breakdown?.ota_share,
                 },
               ].map((item, index) => (
@@ -1080,7 +1076,7 @@ const ReviewDetailScreen = ({ route }: any) => {
               // />
 
               <AppButton
-                title={'Create New Task'}
+                title={t('app.review_detail.create_new_task')}
                 fontSize={14}
                 backgroundColor={'rgba(255, 255, 255, 0.6)'}
                 color={Colors.BLACK}

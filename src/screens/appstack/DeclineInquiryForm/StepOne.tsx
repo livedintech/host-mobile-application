@@ -28,11 +28,11 @@ const StepOne = () => {
   const navigation = useNavigation<any>();
 
   const options = [
-    { label: 'Issue with trip dates, length or price', value: 'dates_not_available' },
-    { label: 'Request goes against my house rules', value: 'not_a_good_fit' },
-    { label: 'Waiting for a better reservation', value: 'waiting_for_better_reservation' },
-    { label: `I'm not comfortable with this guest`, value: 'not_comfortabl' },
-    { label: 'Other reason not listed above', value: 'other' },
+    { label: t('app.decline_step1.option_dates'), value: 'dates_not_available' },
+    { label: t('app.decline_step1.option_house_rules'), value: 'not_a_good_fit' },
+    { label: t('app.decline_step1.option_better_reservation'), value: 'waiting_for_better_reservation' },
+    { label: t('app.decline_step1.option_uncomfortable'), value: 'not_comfortabl' },
+    { label: t('app.decline_step1.option_other'), value: 'other' },
   ];
 
   const handleReasonSelection = (reasonValue: string) => {

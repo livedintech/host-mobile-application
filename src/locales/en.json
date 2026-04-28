@@ -51,13 +51,18 @@
       "special_offer_sent": "Special offer sent successfully",
       "error": "Error"
     },
+    "yes": "Yes",
+    "no": "No",
+    "male": "Male",
+    "female": "Female",
     "cancel": "Cancel",
     "delete": "Delete",
     "new_listing": "New Listing",
     "dropdown": {
       "apartment": "Apartment",
       "saved_replies": "Saved Replies",
-      "automation_template": "Automation Template"
+      "automation_template": "Automation Template",
+      "ai_auto_reply": "AI Auto Replies"
     }
   },
   "auth": {
@@ -727,7 +732,11 @@
       "cancel": "Cancel Subscription",
       "cancel_confirm": "Are you sure you want to cancel your subscription?",
       "yes_cancel": "Yes, Cancel",
-      "no": "No"
+      "no": "No",
+      "feature_guest_communication": "24/7 Guest\nCommunication",
+      "feature_revenue_management": "10 Revenue\nManagement",
+      "feature_task_management": "Task\nManagement",
+      "feature_multi_calendar": "Multi-\ncalendar"
     },
     "smart_lock": {
       "title": "No Smart Lock Found",
@@ -881,7 +890,8 @@
       "select_account": "Select Account",
       "validation_currency_required": "Currency is required",
       "validation_weekday_required": "Weekday base price is required",
-      "validation_weekend_required": "Weekend base price is required"
+      "validation_weekend_required": "Weekend base price is required",
+      "riyal_sar": "Riyal (SAR)"
     },
     "gathren_pms": {
       "title": "Enter your PMS ID",
@@ -906,7 +916,9 @@
       "platform_id_label": "Platform User ID*",
       "platform_id_placeholder": "Enter Platform User ID",
       "next": "Next",
-      "create_btn": "Create New Account"
+      "create_btn": "Create New Account",
+      "male": "Male",
+      "female": "Female"
     },
     "booking_details_edit": {
       "title_edit": "Booking Details",
@@ -919,6 +931,10 @@
       "same_day_label": "Allow Same-day Booking.com Bookings",
       "cleanliness_label": "Listing's Cleanliness Status",
       "cleanliness_placeholder": "Cleaning Status",
+      "instant": "Instant",
+      "manual": "Manual",
+      "clean": "Clean",
+      "dirty": "Dirty",
       "export": "Export",
       "next": "Next",
       "save_exit": "Save & Exit",
@@ -1017,7 +1033,11 @@
       "select_listing_label": "Select Listing",
       "tab_reservation": "Reservation",
       "tab_revenue": "Revenue",
-      "tab_nights": "Nights"
+      "tab_nights": "Nights",
+      "channel_direct": "Direct",
+      "date_today": "Today",
+      "date_last_7_days": "Last 7 Days",
+      "date_last_30_days": "Last 30 Days"
     },
     "billing": {
       "title": "Billing",
@@ -1120,7 +1140,10 @@
       "no_instructions": "No instructions provided.",
       "address_not_available": "Address not available",
       "enter_instructions": "Enter instructions...",
-      "select_user_hint_extended": "Select a user to continue. If you can't find the user, either create one or assign property to an existing user in More →"
+      "select_user_hint_extended": "Select a user to continue. If you can't find the user, either create one or assign property to an existing user in More →",
+      "status_todo": "Todo",
+      "status_in_progress": "In Progress",
+      "status_completed": "Completed"
     },
     "listing_screen": {
       "booking_created": "Booking created",
@@ -1184,7 +1207,7 @@
       "ai_suggestions": "A.I Suggestions",
       "edit": "Edit",
       "send_now": "Send Now",
-      "write_message": "Write Your Message",
+      "write_message": "Ask me any question",
       "saved_replies": "Saved Replies",
       "camera": "Camera",
       "video": "Video",
@@ -1285,7 +1308,23 @@
       "create_task": "Create New Task",
       "cancellation_policy": "Cancellation Policy",
       "booking_cancelled": "Direct booking cancelled successfully",
-      "cancel_failed": "Failed to cancel"
+      "cancel_failed": "Failed to cancel",
+      "change_reservation": "Change Reservation",
+      "cancel_reservation": "Cancel Reservation",
+      "cleanliness": "Cleanliness",
+      "accuracy": "Accuracy",
+      "communication": "Communication",
+      "location_rating": "Location",
+      "checkin_rating": "Check-in",
+      "value": "Value",
+      "booking_cost": "Booking Cost:",
+      "discount": "Discount:",
+      "guest_paid_amount": "Guest Paid Amount:",
+      "cleaning_fee": "Cleaning Fee:",
+      "host_share": "Host Share:",
+      "ota_share": "OTA Share:",
+      "view_details": "View Details",
+      "create_new_task": "Create New Task"
     },
     "booking_com_step1": {
       "enter_your": "Enter your ",
@@ -1369,7 +1408,9 @@
     },
     "filter_modal_view": {
       "apply_filter": "Apply Filter",
-      "select_property": "Select Property"
+      "select_property": "Select Property",
+      "checked_in": "Checked-in",
+      "checked_out": "Checked-out"
     },
     "direct_cancel_modal": {
       "confirm_text": "Are you sure you want to cancel reservation?",
@@ -1379,7 +1420,9 @@
     },
     "create_booking_sheet": {
       "price_hint": "SR499 - SR500 depending on promotions",
-      "similar_listings": "Similar listings SR86 - SR129"
+      "similar_listings": "Similar listings SR86 - SR129",
+      "guest_stay": "Guest Stay",
+      "self_stay": "Self Stay"
     },
     "photo_upload": {
       "loading": "Loading photos...",
@@ -1506,6 +1549,18 @@
       "cancel": "Cancel",
       "next": "Next"
     },
+    "connect_ota": {
+      "connect_airbnb": "Connect Airbnb",
+      "connect_gathern": "Connect Gathern",
+      "connect_bookingcom": "Connect Booking.com"
+    },
+    "decline_step1": {
+      "option_dates": "Issue with trip dates, length or price",
+      "option_house_rules": "Request goes against my house rules",
+      "option_better_reservation": "Waiting for a better reservation",
+      "option_uncomfortable": "I'm not comfortable with this guest",
+      "option_other": "Other reason not listed above"
+    },
     "no_listings": {
       "title": "No Listings Found"
     },
@@ -1560,7 +1615,9 @@
       "camera_btn": "Take a Photo",
       "delete_confirm": "Are you sure you want to delete your account?",
       "photo_updated": "Photo updated!",
-      "photo_removed": "Photo removed!"
+      "photo_removed": "Photo removed!",
+      "male": "Male",
+      "female": "Female"
     },
     "property_disclosure": {
       "title_edit": "Property disclosure details",

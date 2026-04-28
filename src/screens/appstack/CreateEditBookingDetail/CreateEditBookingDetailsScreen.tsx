@@ -22,9 +22,9 @@ const AddBookingDetailsScreen = () => {
   } = useBookingDetailsContainer();
   const { t } = useTranslation();
 
-  const yesNoOptions      = [{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }];
-  const bookingTypeOptions = [{ label: 'Instant', value: 'Instant' }, { label: 'Manual', value: 'Manual' }];
-  const cleanlinessOptions = [{ label: 'Clean', value: 'Clean' }, { label: 'Dirty', value: 'Dirty' }];
+  const yesNoOptions      = [{ label: t('common.yes'), value: 'Yes' }, { label: t('common.no'), value: 'No' }];
+  const bookingTypeOptions = [{ label: t('app.booking_details_edit.instant'), value: 'Instant' }, { label: t('app.booking_details_edit.manual'), value: 'Manual' }];
+  const cleanlinessOptions = [{ label: t('app.booking_details_edit.clean'), value: 'Clean' }, { label: t('app.booking_details_edit.dirty'), value: 'Dirty' }];
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
