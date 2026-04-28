@@ -24,7 +24,8 @@ const ListingPerformanceScreen = () => {
     applyFilters,
     resetFilters,
     filters,
-    refetchPerformance
+    refetchPerformance,
+    formatNumber
   } = AnalyticContainers();
 
   // Ensure we have an array
@@ -62,7 +63,7 @@ const ListingPerformanceScreen = () => {
           HeaderComponent={ListHeader}
           keyExtractor={(item) => item.listing_internal_id?.toString()}
           renderItem={({ item }) => (
-            <PerformanceCard data={item} />
+            <PerformanceCard data={item} formatNumber={formatNumber} />
           )}
           onRefresh={async () => await refetchPerformance()} 
         />
