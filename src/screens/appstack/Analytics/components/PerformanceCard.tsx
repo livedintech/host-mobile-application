@@ -6,7 +6,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
-const PerformanceCard = ({ data }: any) => {
+const PerformanceCard = ({ data , formatNumber}: any) => {
   const { t } = useTranslation();
   const getAssessmentStyle = (type: string) => {
     switch (type?.toLowerCase()) {
@@ -55,7 +55,7 @@ const PerformanceCard = ({ data }: any) => {
                   color={Colors.DIM_GREY}
                 />
               </View>
-              <AppText text={`SAR ${data.revenue}`} fontSize={11} type="Bold" />
+              <AppText text={`SAR ${formatNumber(data.revenue)}`} fontSize={11} type="Bold" />
             </View>
 
             <View style={styles.metricItem}>
