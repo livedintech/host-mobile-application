@@ -121,7 +121,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingHorizontal: Metrics.scale(25),
-    marginBottom: Metrics.verticalScale(40),
+    marginBottom: Metrics.verticalScale(100),
+
   },
   glassButton: {
     height: 55,
