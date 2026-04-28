@@ -69,7 +69,14 @@
       "remember_me": "تذكرني",
       "next": "التالي",
       "continue_google": "المتابعة باستخدام",
-      "continue_apple": "المتابعة باستخدام"
+      "continue_apple": "المتابعة باستخدام",
+      "google_signin_error": "خطأ في تسجيل الدخول بجوجل",
+      "apple_signin_title": "تسجيل الدخول بأبل",
+      "apple_signin_unsupported": "تسجيل الدخول بأبل غير مدعوم على هذا الجهاز.",
+      "apple_signin_auth_failed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
+      "apple_signin_no_email": "تعذر استرداد بريدك الإلكتروني. يرجى تسجيل الخروج من Apple ID في إعدادات الجهاز والمحاولة مرة أخرى.",
+      "apple_signin_error_title": "خطأ في تسجيل الدخول بأبل",
+      "logged_in_success": "تم تسجيل الدخول بنجاح"
     },
     "onboarding": {
       "slide1": {
@@ -98,7 +105,10 @@
       "didnt_receive": "لم تستلم الرمز؟ ",
       "resend_here": "أعد الإرسال",
       "resend_in": "إعادة الإرسال خلال",
-      "next": "التالي"
+      "next": "التالي",
+      "validation_otp_length": "يجب أن يكون رمز OTP 5 أرقام بالضبط",
+      "validation_otp_required": "رمز التحقق مطلوب",
+      "login_failed": "فشل تسجيل الدخول"
     },
     "manage_listing": {
       "title_1": "كم عدد ",
@@ -118,7 +128,12 @@
       "terms_and_conditions": "الشروط والأحكام",
       "terms_2": " و",
       "privacy_policy": "سياسة الخصوصية",
-      "next": "التالي"
+      "next": "التالي",
+      "validation_name_required": "الاسم الكامل مطلوب",
+      "validation_password_required": "كلمة المرور مطلوبة",
+      "validation_password_min": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "validation_password_letters": "يجب أن تحتوي كلمة المرور على أحرف",
+      "validation_password_numbers": "يجب أن تحتوي كلمة المرور على أرقام"
     },
     "payment": {
       "title": "الدفع",
@@ -179,7 +194,10 @@
       "title_3": "للمتابعة",
       "password_label": "كلمة المرور*",
       "forgot_password": "هل نسيت كلمة المرور؟",
-      "continue": "التالي"
+      "continue": "التالي",
+      "validation_password_required": "كلمة المرور مطلوبة",
+      "validation_password_min": "6 أحرف على الأقل",
+      "login_failed": "فشل تسجيل الدخول"
     },
     "add_new_password": {
       "title_1": "يرجى إدخال",
@@ -188,7 +206,16 @@
       "new_password_label": "كلمة المرور الجديدة*",
       "confirm_password_label": "تأكيد كلمة المرور*",
       "password_hint": "يرجى اختيار كلمة مرور أقوى. استخدم مزيجاً من الأحرف والأرقام والرموز",
-      "continue": "متابعة"
+      "continue": "متابعة",
+      "validation_password_required": "كلمة المرور مطلوبة",
+      "validation_password_min": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "validation_password_lowercase": "أضف حرفاً صغيراً واحداً على الأقل",
+      "validation_password_uppercase": "أضف حرفاً كبيراً واحداً على الأقل",
+      "validation_password_number": "أضف رقماً واحداً على الأقل",
+      "validation_password_symbol": "أضف رمزاً واحداً على الأقل (@$!%*?&#)",
+      "validation_confirm_required": "تأكيد كلمة المرور مطلوب",
+      "validation_passwords_match": "كلمتا المرور غير متطابقتين",
+      "update_failed": "فشل التحديث"
     },
     "agent_intro": {
       "greeting_1": "مرحباً، أنا ",
@@ -269,7 +296,10 @@
       "estimate_earnings": "أرباحك المقدرة",
       "monthly_income": "الدخل الشهري",
       "yearly_income": "الدخل السنوي",
-      "unlock": "افتح هذا العائد"
+      "unlock": "افتح هذا العائد",
+      "validation_city_required": "المدينة مطلوبة",
+      "validation_district_required": "الحي مطلوب",
+      "validation_bedrooms_required": "عدد غرف النوم مطلوب"
     },
     "three_plus_listing": {
       "heading": "يرجى اختيار تاريخ حتى يتمكن وكيلنا من جدولة اجتماع معك.",
@@ -1089,7 +1119,8 @@
       "select_vendor": "يرجى اختيار مورد.",
       "no_instructions": "لا توجد تعليمات.",
       "address_not_available": "العنوان غير متوفر",
-      "enter_instructions": "أدخل التعليمات..."
+      "enter_instructions": "أدخل التعليمات...",
+      "select_user_hint_extended": "اختر مستخدماً للمتابعة. إذا لم تجد المستخدم، يمكنك إنشاء مستخدم جديد أو تعيين العقار لمستخدم موجود من المزيد ←"
     },
     "listing_screen": {
       "booking_created": "تم إنشاء الحجز",
@@ -1289,6 +1320,7 @@
       "task": "المهمة",
       "calendar": "التقويم",
       "delete_listing": "حذف العقار",
+      "delete_confirm_message": "هل أنت متأكد أنك تريد حذف هذا العقار؟",
       "listing_editor": "محرر العقارات",
       "your_space": "مساحتك",
       "pricing": "التسعير",

@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -15,13 +16,13 @@ import { useCallback, useState, useEffect, useRef } from 'react'; // Added useEf
 
 // SignUp Schema
 const signUpSchema = yup.object().shape({
-  fullName: yup.string().required('Full Name is required'),
+  fullName: yup.string().required(i18n.t('auth.create_account.validation_name_required')),
   password: yup
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[a-zA-Z]/, 'Password must contain letters')
-    .matches(/[0-9]/, 'Password must contain numbers')
-    .required('Password is required'),
+    .min(8, i18n.t('auth.create_account.validation_password_min'))
+    .matches(/[a-zA-Z]/, i18n.t('auth.create_account.validation_password_letters'))
+    .matches(/[0-9]/, i18n.t('auth.create_account.validation_password_numbers'))
+    .required(i18n.t('auth.create_account.validation_password_required')),
 });
 
 export default function useCreateAccountContainer() {

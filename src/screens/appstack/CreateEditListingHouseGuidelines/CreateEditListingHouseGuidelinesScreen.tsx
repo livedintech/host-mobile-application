@@ -55,7 +55,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
             control={control}
             errors={errors}
             label={t('app.house_guidelines.arrival_label')}
-            placeholder="Property Name: Olive Residency&#10;Address: Building 12, Al Noor Street, City Center&#10;Apartment Number: Unit 504&#10;Entry Access: Self check-in via smart lock.&#10;Access Code: Your unique access code will be shared before arrival.&#10;Parking: One reserved parking space is available for guests.&#10;Wi-Fi: High-speed internet is available inside the apartment."
+            placeholder={t('app.house_guidelines.arrival_placeholder')}
             multiline={true}
             numberOfLines={8}
             descriptionLength={arrivalGuideLength}
@@ -69,7 +69,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
             control={control}
             errors={errors}
             label={t('app.house_guidelines.rules_label')}
-            placeholder="Please maintain a low noise level at all times.&#10;Please keep the apartment clean and tidy.&#10;Do not damage or remove any items from the apartment.&#10;Smoking is not allowed inside the apartment.&#10;Pets are not allowed unless approved in advance.&#10;Only registered guests are allowed to stay in the apartment."
+            placeholder={t('app.house_guidelines.rules_placeholder')}
             multiline={true}
             numberOfLines={8}
             descriptionLength={houseRulesLength}
@@ -83,7 +83,7 @@ const CreateEditListingHouseGuidelinesScreen = () => {
             control={control}
             errors={errors}
             label={t('app.house_guidelines.checkout_label')}
-            placeholder="Please leave the apartment in a reasonable condition at check-out.&#10;Turn off all lights, air conditioning, and electrical appliances.&#10;Place used towels in the bathroom or laundry basket.&#10;Leave used bed linens on the bed.&#10;Do not leave food items open or uncovered.&#10;Report any spills, stains, or damages immediately."
+            placeholder={t('app.house_guidelines.checkout_placeholder')}
             multiline={true}
             numberOfLines={8}
             descriptionLength={checkoutInstructionsLength}

@@ -309,12 +309,12 @@ export default function usePropertyDetailContainer() {
         break;
       case 'delete':
         Alert.alert(
-          'Delete Property',
-          'Are you sure you want to delete this listing?',
+          i18n.t('app.property_detail.delete_listing'),
+          i18n.t('app.property_detail.delete_confirm_message'),
           [
-            { text: 'Cancel', style: 'cancel' },
+            { text: i18n.t('common.cancel'), style: 'cancel' },
             {
-              text: 'Delete',
+              text: i18n.t('common.delete'),
               style: 'destructive',
               onPress: () =>
                 deletePropertyPayload({

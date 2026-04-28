@@ -241,14 +241,14 @@ const EditTask = ({ route }: any) => {
                       multiline
                       value={value}
                       onChangeText={onChange}
-                      placeholder="Enter instructions..."
+                      placeholder={t('app.task_management.enter_instructions')}
                       placeholderTextColor={Colors.DARK_CHARCOAL}
                     />
                   )}
                 />
               ) : (
                 <AppText
-                  text={task?.description || 'No instructions provided.'}
+                  text={task?.description || t('app.task_management.no_instructions')}
                   fontSize={14}
                   color={Colors.DARK_CHARCOAL}
                   mb={20}
@@ -279,7 +279,7 @@ const EditTask = ({ route }: any) => {
                 mb={4}
               />
               <AppText
-                text={task?.listing_title || 'Address not available'}
+                text={task?.listing_title || t('app.task_management.address_not_available')}
                 fontSize={14}
                 color={Colors.DARK_CHARCOAL}
                 mb={20}
@@ -303,7 +303,7 @@ const EditTask = ({ route }: any) => {
                   />
                   <View style={styles.readOnlyBox}>
                     <AppText
-                      text={task?.assigned_user?.name || 'Unassigned'}
+                      text={task?.assigned_user?.name || t('app.shared.unassigned')}
                       fontSize={14}
                       color={Colors.DARK_CHARCOAL}
                     />

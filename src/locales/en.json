@@ -69,7 +69,14 @@
       "remember_me": "Remember me",
       "next": "Next",
       "continue_google": "Continue with Google",
-      "continue_apple": "Continue with Apple"
+      "continue_apple": "Continue with Apple",
+      "google_signin_error": "Google Sign-In error",
+      "apple_signin_title": "Apple Sign-In",
+      "apple_signin_unsupported": "Apple Sign-In is not supported on this device.",
+      "apple_signin_auth_failed": "Authorization failed. Please try again.",
+      "apple_signin_no_email": "Could not retrieve your email. Please sign out of Apple ID in device Settings and try again.",
+      "apple_signin_error_title": "Apple Sign-In Error",
+      "logged_in_success": "Logged in successfully"
     },
     "onboarding": {
       "slide1": {
@@ -98,7 +105,10 @@
       "didnt_receive": "Didn't receive the code? ",
       "resend_here": "Resend here",
       "resend_in": "Resend in",
-      "next": "Next"
+      "next": "Next",
+      "validation_otp_length": "OTP must be exactly 5 digits",
+      "validation_otp_required": "Verification code is required",
+      "login_failed": "Login failed"
     },
     "manage_listing": {
       "title_1": "How many ",
@@ -118,7 +128,12 @@
       "terms_and_conditions": "terms and conditions",
       "terms_2": " and ",
       "privacy_policy": "privacy policy",
-      "next": "Next"
+      "next": "Next",
+      "validation_name_required": "Full Name is required",
+      "validation_password_required": "Password is required",
+      "validation_password_min": "Password must be at least 8 characters",
+      "validation_password_letters": "Password must contain letters",
+      "validation_password_numbers": "Password must contain numbers"
     },
     "payment": {
       "title": "Payment",
@@ -179,7 +194,10 @@
       "title_3": "continue",
       "password_label": "Password *",
       "forgot_password": "Forgot password?",
-      "continue": "Continue"
+      "continue": "Continue",
+      "validation_password_required": "Password is required",
+      "validation_password_min": "Minimum 6 characters",
+      "login_failed": "Login failed"
     },
     "add_new_password": {
       "title_1": "Please enter your",
@@ -188,7 +206,16 @@
       "new_password_label": "New Password*",
       "confirm_password_label": "Confirm Password*",
       "password_hint": "Please choose a stronger password. Try a mix of letters, numbers, and symbols.",
-      "continue": "Continue"
+      "continue": "Continue",
+      "validation_password_required": "Password is required",
+      "validation_password_min": "Password must be at least 8 characters",
+      "validation_password_lowercase": "Include at least one lowercase letter",
+      "validation_password_uppercase": "Include at least one uppercase letter",
+      "validation_password_number": "Include at least one number",
+      "validation_password_symbol": "Include at least one symbol (@$!%*?&#)",
+      "validation_confirm_required": "Confirm Password is required",
+      "validation_passwords_match": "Passwords must match",
+      "update_failed": "Update failed"
     },
     "agent_intro": {
       "greeting_1": "Hi, I'm ",
@@ -269,7 +296,10 @@
       "estimate_earnings": "Your Estimate Earnings",
       "monthly_income": "Monthly Income",
       "yearly_income": "Yearly Income",
-      "unlock": "Unlock this revenue"
+      "unlock": "Unlock this revenue",
+      "validation_city_required": "City is required",
+      "validation_district_required": "District is required",
+      "validation_bedrooms_required": "Number of bedrooms is required"
     },
     "three_plus_listing": {
       "heading": "Please select a date so our agent can schedule a meeting with you.",
@@ -1089,7 +1119,8 @@
       "select_vendor": "Please select a vendor.",
       "no_instructions": "No instructions provided.",
       "address_not_available": "Address not available",
-      "enter_instructions": "Enter instructions..."
+      "enter_instructions": "Enter instructions...",
+      "select_user_hint_extended": "Select a user to continue. If you can't find the user, either create one or assign property to an existing user in More →"
     },
     "listing_screen": {
       "booking_created": "Booking created",
@@ -1289,6 +1320,7 @@
       "task": "Task",
       "calendar": "Calendar",
       "delete_listing": "Delete Listing",
+      "delete_confirm_message": "Are you sure you want to delete this listing?",
       "listing_editor": "Listing Editor",
       "your_space": "Your Space",
       "pricing": "Pricing",

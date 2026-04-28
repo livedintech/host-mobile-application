@@ -114,7 +114,7 @@ const { mutate: confirmBooking, isPending: isBooking } = useMutation({
         country: userInfo.country,
         city: userInfo.city,
         language: 'English',
-        potentialUnits: String(userInfo.listing_count || '1'), // Using listing_count from log
+        potentialUnits: userInfo.listing_count  === 2 ? 4 : 31, // Using listing_count from log
         meetingDate: new Date(selectedSlot!.startTime).toISOString(),
       },
       selectedSlot!,
