@@ -1,5 +1,6 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Dimensions } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { navigate } from '@/services/navigationService';
@@ -12,11 +13,17 @@ import {
   submitLeadAndBookMeeting,
 } from '@/services/hubspotApi';
 import { MeetingDetailsFormValues } from '@/validation/hubspot/hubspotSchemas';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default function useHubspotCalendarContainer(
   userInfo: MeetingDetailsFormValues
 ) {
   const today = new Date().toISOString().split('T')[0];
+
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => [SCREEN_HEIGHT * 0.85], []);
 
   // ─── Month ────────────────────────────────────────────────────────────────
   const [currentMonth, setCurrentMonth] = useState({
@@ -124,8 +131,10 @@ const { mutate: confirmBooking, isPending: isBooking } = useMutation({
   onSuccess: (result) => {
     if (result.success) {
       navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
+      bottomSheetRef?.current?.dismiss();
     } else {
       Toast.show({ type: 'error', text1: result.error });
+      bottomSheetRef?.current?.dismiss();
     }
   },
 });
@@ -173,6 +182,8 @@ console.log("agentWithSlots",agentWithSlots)
     handleConfirmBooking,
     buildMarkedDates,
     formatTime,
-    refreshDates
+    refreshDates,
+    bottomSheetRef,
+    snapPoints
   };
 }

@@ -1,18 +1,20 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Modal,
-  Animated,
-  PanResponder,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
+import {
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -27,9 +29,7 @@ const FIGMA_TEAL = '#09A389';
 const CalendarScreen = ({ route }: any) => {
   const { t } = useTranslation();
   const userInfo = route?.params?.userInfo!;
-  const panY = useRef(new Animated.Value(vs(500))).current;
 
-  const [isSheetVisible, setIsSheetVisible] = useState(false);
 
   const {
     currentMonth,
@@ -46,48 +46,34 @@ const CalendarScreen = ({ route }: any) => {
     buildMarkedDates,
     formatTime,
     refreshDates,
+    bottomSheetRef,
+    snapPoints
   } = useHubspotCalendarContainer(userInfo);
 
   const openSheet = () => {
     if (!selectedDate) return;
-    setIsSheetVisible(true);
-    Animated.spring(panY, {
-      toValue: 0,
-      useNativeDriver: true,
-      friction: 8,
-    }).start();
+    bottomSheetRef.current?.present();
   };
 
-  const closeSheet = () => {
-    Animated.timing(panY, {
-      toValue: vs(500),
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsSheetVisible(false);
-      handleMonthChange(currentMonth);
-    });
-  };
+  const closeSheet = useCallback(() => {
+    bottomSheetRef.current?.dismiss();
+  }, []);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => gestureState.dy > 5,
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 0) panY.setValue(gestureState.dy);
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy > 120) {
-          closeSheet();
-        } else {
-          Animated.spring(panY, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    }),
-  ).current;
+  const handleSheetDismiss = useCallback(() => {
+    handleMonthChange(currentMonth);
+  }, [currentMonth]);
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -201,100 +187,79 @@ const CalendarScreen = ({ route }: any) => {
             disabled={!selectedDate}
           />
         </View>
-
-       
       </SafeAreaView>
-       {/* ── Time slot bottom sheet ── */}
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={isSheetVisible}
-          onRequestClose={closeSheet}
-        >
-          <View style={styles.modalRoot}>
-            <TouchableOpacity
-              style={styles.modalOverlay}
-              activeOpacity={1}
-              onPress={closeSheet}
+
+      {/* ── Time slot bottom sheet ── */}
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        enableDynamicSizing={false}
+        backdropComponent={renderBackdrop}
+        onDismiss={handleSheetDismiss}
+        handleIndicatorStyle={styles.sheetHandle}
+        backgroundStyle={styles.sheetBackground}
+        enablePanDownToClose
+      >
+        {/* Sheet header */}
+        <View style={styles.sheetHeaderRow}>
+          <View style={styles.headerLeft}>
+            <View style={styles.clockCircle}>
+              <Svgicons path="Clock" size={20} color={Colors.BLACK} />
+            </View>
+            <AppText
+              text={t('auth.hubspot_calendar.select_slot')}
+              type="Bold"
+              fontSize={14}
+              color="#333"
+              ml={10}
             />
-
-            <Animated.View
-            pointerEvents="box-none"
-              style={[
-                styles.sheetContent,
-                { transform: [{ translateY: panY }] },
-              ]}
-            >
-              <View style={styles.handleWrapper} {...panResponder.panHandlers}>
-                <View style={styles.sheetHandle} />
-              </View>
-
-              <View style={styles.sheetHeaderRow}>
-                <View style={styles.headerLeft}>
-                  <View style={styles.clockCircle}>
-                    <Svgicons path="Clock" size={20} color={Colors.BLACK} />
-                  </View>
-                  <AppText
-                    text={t('auth.hubspot_calendar.select_slot')}
-                    type="Bold"
-                    fontSize={14}
-                    color="#333"
-                    ml={10}
-                  />
-                </View>
-                <TouchableOpacity
-                  onPress={closeSheet}
-                  style={styles.closeCircle}
-                >
-                  <Svgicons path="closeIcon" size={14} color={Colors.BLACK} />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.innerContent} pointerEvents="auto">
-                {loadingSlots ? (
-                  <View style={styles.loaderContainer}>
-                    <ActivityIndicator size="large" color={FIGMA_TEAL} />
-                  </View>
-                ) : (
-                  <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.slotsGrid}
-                  >
-                    {agentWithSlots?.slots.map((slot, idx) => (
-                      <TouchableOpacity
-                        key={idx}
-                        style={[
-                          styles.slotBtn,
-                          selectedSlot === slot && styles.slotBtnSelected,
-                        ]}
-                        onPress={() => setSelectedSlot(slot)}
-                      >
-                        <AppText
-                          text={formatTime(slot.startTime)} // Only show start time (e.g., 11:00 AM)
-                          fontSize={12}
-                          type="Bold"
-                          color={
-                            selectedSlot === slot ? Colors.WHITE : FIGMA_TEAL
-                          }
-                        />
-                      </TouchableOpacity>
-                    ))}
-                    <View style={{ height: vs(40) }} />
-                  </ScrollView>
-                )}
-              </View>
-
-              <View style={styles.sheetFooter}>
-                <AppButton
-                  title={t('auth.hubspot_calendar.confirm')}
-                  onPress={handleConfirmBooking}
-                  loading={isBooking}
-                  disabled={!selectedSlot}
-                />
-              </View>
-            </Animated.View>
           </View>
-        </Modal>
+          <TouchableOpacity onPress={closeSheet} style={styles.closeCircle}>
+            <Svgicons path="closeIcon" size={14} color={Colors.BLACK} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Slots */}
+        {loadingSlots ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color={FIGMA_TEAL} />
+          </View>
+        ) : (
+          <BottomSheetScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={[styles.slotsGrid, { paddingHorizontal: s(20) }]}
+          >
+            {agentWithSlots?.slots.map((slot, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={[
+                  styles.slotBtn,
+                  selectedSlot === slot && styles.slotBtnSelected,
+                ]}
+                onPress={() => setSelectedSlot(slot)}
+              >
+                <AppText
+                  text={formatTime(slot.startTime)}
+                  fontSize={12}
+                  type="Bold"
+                  color={selectedSlot === slot ? Colors.WHITE : FIGMA_TEAL}
+                />
+              </TouchableOpacity>
+            ))}
+            <View style={{ height: vs(20) }} />
+          </BottomSheetScrollView>
+        )}
+
+        {/* Sheet footer */}
+        <View style={styles.sheetFooter}>
+          <AppButton
+            title={t('auth.hubspot_calendar.confirm')}
+            onPress={handleConfirmBooking}
+            loading={isBooking}
+            disabled={!selectedSlot}
+          />
+        </View>
+      </BottomSheetModal>
     </BGImage>
   );
 };
@@ -333,19 +298,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: ms(8),
   },
-  modalRoot: { flex: 1, justifyContent: 'flex-end' },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  sheetContent: {
-    backgroundColor: '#FFF',
+  sheetBackground: {
     borderTopLeftRadius: ms(30),
     borderTopRightRadius: ms(30),
-    height: vs(480),
-    width: '100%',
   },
-  handleWrapper: { alignItems: 'center', paddingVertical: vs(12) },
   sheetHandle: {
     width: s(45),
     height: vs(5),
@@ -381,8 +337,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  innerContent: { flex: 1, paddingHorizontal: s(20) },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: vs(150) },
   slotsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   slotBtn: {
     width: '23%',

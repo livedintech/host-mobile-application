@@ -11,7 +11,6 @@ import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import GlassCard from '../GlassCard/GlassCard';
 
 interface DropdownItem {
   label: string;
@@ -62,55 +61,52 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           type="Medium"
         />
       )}
-      <GlassCard style={styles.wrapper}>
-        <Controller
-          control={control}
-          name={name}
-          rules={rules}
-          render={({ field: { onChange, value } }) => (
-            <Dropdown
-              dropdownPosition={dropdownPosition}
-              inputSearchStyle={styles.inputSearchStyle}
-              search
-              style={[
-                styles.dropdown,
-                !!error && styles.errorBorder,
-                disabled && styles.disabled,
-              ]}
-              // This styles the actual popup menu
-              containerStyle={styles.popupListContainer}
-              placeholderStyle={[
-                styles.placeholderStyle,
-                placeholderColor ? { color: placeholderColor } : {},
-              ]}
-              selectedTextStyle={styles.selectedTextStyle}
-              itemTextStyle={styles.itemTextStyle}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder={placeholder}
-              value={value}
-              onChange={item => {
-                onChange(item.value);
-                if (onSelect) {
-                  onSelect(item);
-                }
-              }}
-              disable={disabled}
-              renderRightIcon={() => (
-                <Svgicons
-                  path="ChevronDownIcon"
-                  width={15}
-                  height={15}
-                  color="#2D3142"
-                />
-              )}
-              autoScroll={false}
-              searchPlaceholder="Search..."
-            />
-          )}
-        />
-      </GlassCard>
+      <Controller
+        control={control}
+        name={name}
+        rules={rules}
+        render={({ field: { onChange, value } }) => (
+          <Dropdown
+            dropdownPosition={dropdownPosition}
+            inputSearchStyle={styles.inputSearchStyle}
+            search
+            style={[
+              styles.dropdown,
+              !!error && styles.errorBorder,
+              disabled && styles.disabled,
+            ]}
+            containerStyle={styles.popupListContainer}
+            placeholderStyle={[
+              styles.placeholderStyle,
+              placeholderColor ? { color: placeholderColor } : {},
+            ]}
+            selectedTextStyle={styles.selectedTextStyle}
+            itemTextStyle={styles.itemTextStyle}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder={placeholder}
+            value={value}
+            onChange={item => {
+              onChange(item.value);
+              if (onSelect) {
+                onSelect(item);
+              }
+            }}
+            disable={disabled}
+            renderRightIcon={() => (
+              <Svgicons
+                path="ChevronDownIcon"
+                width={15}
+                height={15}
+                color="#2D3142"
+              />
+            )}
+            autoScroll={false}
+            searchPlaceholder="Search..."
+          />
+        )}
+      />
       {error && (
         <AppText
           text={error}
@@ -125,19 +121,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    marginBottom: Metrics.verticalScale(0),
-    zIndex: 9999,
-    overflow: 'visible',
-    // flex:1,
-    width: '100%',
-    padding: 0,
-    borderRadius: 12,
-  },
   dropdown: {
     height: Metrics.verticalScale(54),
-    // --- GLASS STYLING ---
-    backgroundColor: 'rgba(255, 255, 255, 0.25)', // Translucent fill
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 10,
     paddingHorizontal: 16,
     borderWidth: 1.5,
@@ -156,6 +142,7 @@ const styles = StyleSheet.create({
   },
   disabled: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.WHITE_OPACITY_60,
   },
   errorBorder: {
     borderColor: Colors.INDIAN_RED,
