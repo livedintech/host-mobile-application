@@ -17,13 +17,14 @@ end
 target 'HostMobileApp' do
   config = use_native_modules!
 
-rn_maps_path = '../node_modules/react-native-maps'
-pod 'GoogleMaps'
-pod 'react-native-maps', :path => rn_maps_path
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'GoogleMaps'
+  pod 'react-native-maps', :path => rn_maps_path
+
+  pod 'GoogleUtilities', :modular_headers => true  # ← Fix for FirebaseCoreInternal
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
@@ -32,7 +33,6 @@ pod 'react-native-maps', :path => rn_maps_path
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
     )
   end
 end

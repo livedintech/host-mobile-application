@@ -314,7 +314,7 @@ export default function useListingContainer(
         Toast.show({
           type: 'success',
           text1:
-           bookingType === 'direct' ? t('listing_screen.booking_created') : t('listing_screen.pricing_updated'),
+           bookingType === 'direct' ? t('app.listing_screen.booking_created') : t('app.listing_screen.pricing_updated'),
         });
 
         reset();
@@ -439,16 +439,16 @@ export default function useListingContainer(
 
       Toast.show({
         type: 'success',
-        text1: t('listing_screen.booking_accepted'),
-        text2:t('listing_screen.booking_accepted_desc', { name: guestName }),
+        text1: t('app.listing_screen.booking_accepted'),
+        text2:t('app.listing_screen.booking_accepted_desc', { name: guestName }),
       });
 
       await handleRefresh();
     } catch (error: any) {
-      const message = error?.data?.message || t('listing_screen.accept_request_failed');
+      const message = error?.data?.message || t('app.listing_screen.accept_request_failed');
       Toast.show({
         type: 'error',
-        text1: t('listing_screen.action_failed'),
+        text1: t('app.listing_screen.action_failed'),
         text2: message,
       });
     } finally {
