@@ -404,7 +404,11 @@
       "create_listing": "Create Listing",
       "add_listing_manually": "Add a new listing manually",
       "complete_pending": "Complete your pending listing form",
-      "export_pending": "Export your pending listing"
+      "export_pending": "Export your pending listing",
+      "pending_incomplete": "Complete your pending listing",
+      "banner_trial": "Your free trial ends in",
+      "banner_days": "{{count}} days",
+      "banner_subscribe": "Subscribe"
     },
     "ai_auto_reply": {
       "listing_access": "Listing Access",
@@ -1620,7 +1624,8 @@
       "photo_updated": "Photo updated!",
       "photo_removed": "Photo removed!",
       "male": "Male",
-      "female": "Female"
+      "female": "Female",
+      "cancel_btn": "Cancel"
     },
     "property_disclosure": {
       "title_edit": "Property disclosure details",
@@ -1656,7 +1661,8 @@
     },
     "decline_inquiry": {
       "decline_placeholder": "I'm declining this reservation because...",
-      "send_decline_btn": "Send and decline trip"
+      "send_decline_btn": "Send and decline trip",
+      "cancel_btn": "Cancel"
     },
     "reservation_details": {
       "view_calendar": "View Listing Calendar",
@@ -1720,7 +1726,8 @@
       "description": "Create saved replies to reuse common messages. Use shortcuts in chats to quickly insert them.",
       "create_btn": "Create New Saved Reply",
       "delete_confirm": "Are you sure you want to delete this reply?",
-      "confirm_btn": "Confirm"
+      "confirm_btn": "Confirm",
+      "cancel_btn": "Cancel"
     },
     "booking_request_card": {
       "platform": "Booking Platform",

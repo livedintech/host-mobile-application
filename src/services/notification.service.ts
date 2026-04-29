@@ -140,6 +140,8 @@ export class NotificationService {
     remoteMessage: FirebaseMessagingTypes.RemoteMessage | null,
   ): void {
     if (!remoteMessage?.data) return;
+    console.log('remoteMessage',remoteMessage);
+    
 
     const { type, id, otaName } = remoteMessage.data as Record<string, string>;
 
