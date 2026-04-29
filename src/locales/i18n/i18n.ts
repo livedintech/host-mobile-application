@@ -10,9 +10,9 @@ const LANGUAGE_KEY = 'APP_LANGUAGE';
 export const getStoredLanguage = (): string => {
   try {
     const lang = storage.getString(LANGUAGE_KEY);
-    return lang || 'en';
+    return lang || 'ar';
   } catch {
-    return 'en';
+    return 'ar';
   }
 };
 
@@ -30,6 +30,7 @@ export const changeLanguage = async (lang: string) => {
 };
 
 const savedLang = getStoredLanguage();
+I18nManager.forceRTL(savedLang === 'ar');
 
 i18n
   .use(initReactI18next)

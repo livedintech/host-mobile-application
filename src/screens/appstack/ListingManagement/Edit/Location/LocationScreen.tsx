@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { Platform, Pressable, StyleSheet, View, Modal } from 'react-native';
+import { Platform, StyleSheet, View, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -51,9 +52,9 @@ const LocationScreen = () => {
 
         {/* Header */}
         <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-          <Pressable style={styles.backBtnWrapper} onPress={() => goBack()}>
+          <AppPressable style={styles.backBtnWrapper} onPress={() => goBack()}>
             <Svgicons path='arrowLeftIcon' size={24} />
-          </Pressable>
+          </AppPressable>
         </GradientBorder>
 
         {/* Title */}
@@ -116,8 +117,8 @@ const LocationScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
                 text={t('app.location_edit.select_ota')}
@@ -146,8 +147,8 @@ const LocationScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

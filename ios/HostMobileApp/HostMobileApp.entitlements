@@ -6,6 +6,9 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<!-- Push Notifications: development ke liye "development", App Store ke liye "production" -->
+	<key>aps-environment</key>
+	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:app.livedin.co</string>

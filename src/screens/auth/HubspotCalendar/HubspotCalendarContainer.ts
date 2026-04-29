@@ -137,6 +137,11 @@ const { mutate: confirmBooking, isPending: isBooking } = useMutation({
       bottomSheetRef?.current?.dismiss();
     }
   },
+  onError: (error) => {
+    console.error('[confirmBooking] Mutation error:', error);
+    Toast.show({ type: 'error', text1: 'Something went wrong. Please try again.' });
+    bottomSheetRef?.current?.dismiss();
+  },
 });
 
   const handleConfirmBooking = () => {

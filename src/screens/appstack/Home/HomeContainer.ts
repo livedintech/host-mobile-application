@@ -29,7 +29,6 @@ export default function useHomeContainer() {
       setUser(UserPermission);
     }
   }, [UserPermission]);
-  console.log('UserPermission', UserPermission);
 
   const channels = UserPermission?.channels || {};
   const unexported_listings = UserPermission?.unexported_listings || [];

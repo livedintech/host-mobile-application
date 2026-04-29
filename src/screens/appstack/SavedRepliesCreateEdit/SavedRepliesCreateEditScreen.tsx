@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';

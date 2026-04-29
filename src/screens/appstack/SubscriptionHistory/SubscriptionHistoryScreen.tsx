@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useSubscriptionHistoryContainer from './SubscriptionHistoryContainer';
@@ -197,7 +198,7 @@ const SubscriptionHistoryScreen = () => {
 
         {/* Cancel Subscription — only show if subscription is active */}
         {hasSubscription && getSubscrptionUserPlan?.data?.status === 'active' && (
-          <Pressable onPress={openSheet}>
+          <AppPressable onPress={openSheet}>
             <GradientBorder borderRadius={24} style={styles.cancelBtnGradient}>
               <View style={[styles.innerCard, styles.cancelBtn]}>
                 <AppText
@@ -213,7 +214,7 @@ const SubscriptionHistoryScreen = () => {
                 </GradientBorder>
               </View>
             </GradientBorder>
-          </Pressable>
+          </AppPressable>
         )}
       </ScrollView>
 

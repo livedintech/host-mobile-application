@@ -12,10 +12,15 @@ export const AGENTS = [
 const BASE_URL = 'https://api.hubapi.com';
 const APP_TIMEZONE = 'Asia/Baghdad'; 
 
-const getHeaders = () => ({
-  Authorization: `Bearer ${HUBSPOT_ACCESS_TOKEN}`,
-  'Content-Type': 'application/json',
-});
+const getHeaders = () => {
+  if (!HUBSPOT_ACCESS_TOKEN) {
+    console.error('[HubSpot] HUBSPOT_ACCESS_TOKEN is undefined — check your .env file and rebuild');
+  }
+  return {
+    Authorization: `Bearer ${HUBSPOT_ACCESS_TOKEN}`,
+    'Content-Type': 'application/json',
+  };
+};
 
 // ───────────────── TYPES ─────────────────
 
@@ -168,9 +173,13 @@ export const createHubSpotContact = async (lead: LeadInfo, ownerId: string): Pro
 
     const data = await res.json();
     if (res.status === 409) return data?.message?.match(/Existing ID: (\d+)/)?.[1] || null;
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error('[createHubSpotContact] API error:', res.status, JSON.stringify(data));
+      return null;
+    }
     return data.id;
   } catch (error) {
+    console.error('[createHubSpotContact] Exception:', error);
     return null;
   }
 };

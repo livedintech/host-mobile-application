@@ -1,6 +1,9 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import i18n from '@/locales/i18n/i18n';
 import React, { useCallback } from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { userEventService } from '@/services/userEventService';
+import { StyleSheet, View, ScrollView } from 'react-native';
+
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -30,6 +33,11 @@ const MoreScreen = () => {
     navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    await userEventService.logEvent('logout', 'profile');
+    logout();
+  }, [logout]);
+
   const referComingSoon = () => {
     Toast.show({
       type: 'success',
@@ -40,7 +48,7 @@ const MoreScreen = () => {
 
   const MenuCard = ({ title, items, icon, onPress }: any) => (
     <GradientBorder borderRadius={20} style={styles.menuCardWrapper}>
-      <Pressable style={styles.menuCardInner} onPress={onPress}>
+      <AppPressable style={styles.menuCardInner} onPress={onPress}>
         <View style={styles.rowBetween}>
           <AppText text={title} type="Bold" color={Colors.BRUNSWICK_GREEN} />
           <GradientBorder
@@ -48,9 +56,9 @@ const MoreScreen = () => {
             borderWidth={1}
             style={styles.arrowCircleInner}
           >
-            <Pressable onPress={onPress} style={styles.arrowCircleInner}>
+            <AppPressable onPress={onPress} style={styles.arrowCircleInner}>
               <Svgicons path="ArrowUpRightIcon" size={21} />
-            </Pressable>
+            </AppPressable>
           </GradientBorder>
         </View>
         <Svgicons path={icon} style={styles.centerIcon} size={59} />
@@ -60,7 +68,7 @@ const MoreScreen = () => {
           color="#666"
           lineHeight={20}
         />
-      </Pressable>
+      </AppPressable>
     </GradientBorder>
   );
 
@@ -100,7 +108,7 @@ const MoreScreen = () => {
         />
       </View>
       <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
-        <Pressable style={styles.logoutBtn} onPress={() => null}>
+        <AppPressable style={styles.logoutBtn} onPress={() => null}>
           <AppText
             text={t('app.more_legacy.general_section')}
             fontSize={24}
@@ -116,10 +124,10 @@ const MoreScreen = () => {
               <Svgicons path="ArrowUpRightIcon" size={21} />
             </View>
           </GradientBorder>
-        </Pressable>
+        </AppPressable>
       </GradientBorder>
       <GradientBorder borderRadius={20} style={styles.logoutWrapper}>
-        <Pressable style={styles.logoutBtn} onPress={() => logout()}>
+        <AppPressable style={styles.logoutBtn} onPress={handleLogout}>
           <AppText
             text={t('app.more.logout')}
             fontSize={24}
@@ -135,7 +143,7 @@ const MoreScreen = () => {
               <Svgicons path="ArrowUpRightIcon" size={21} />
             </View>
           </GradientBorder>
-        </Pressable>
+        </AppPressable>
       </GradientBorder>
     </ScrollView>
   );

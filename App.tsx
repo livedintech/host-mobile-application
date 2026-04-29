@@ -28,6 +28,8 @@ import SpinnerLoader from '@/components/molecules/SmallLoader';
 import AppUpdateCheck from '@/components/molecules/AppUpdateCheck/AppUpdateCheck';
 import i18n, { changeLanguage, getStoredLanguage } from '@/locales/i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
+import { NotificationService } from '@/services/notification.service';
+import { userEventService } from '@/services/userEventService';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -40,7 +42,16 @@ const App = () => {
 
     initializeApp();
     configureGoogleSignIn();
+    setupNotifications();
+    
   }, []);
+
+  const setupNotifications = async () => {
+    await NotificationService.requestUserPermission();
+    await NotificationService.createNotificationListeners();
+      const token = await NotificationService.getToken();
+  console.log('🔔 FCM Token:', token);
+  };
 
   const getActiveRouteName = (state: any): string => {
     const route = state.routes[state.index];
@@ -63,6 +74,10 @@ const App = () => {
       } else {
         setSafeAreaBg(Colors.WHITE);
       }
+
+      if (currentRouteName) {
+        userEventService.logEvent('screen_view', currentRouteName);
+      }
     } catch (e) { }
   };
 
@@ -75,6 +90,7 @@ const App = () => {
         throw new Error(`Configuration Error: ${errors.join(', ')}`);
       }
 
+      await userEventService.init();
       await configureMyFatoorah();
       await setUpActionBar();
 

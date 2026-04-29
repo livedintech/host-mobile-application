@@ -327,7 +327,6 @@ const HomeScreen = ({ navigation }: any) => {
     return !isCompleted;
   });
 
-  console.log('recommendedNextItems', recommendedNextItems);
 
   // const updatesItems = [
   //   {

@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -29,9 +30,9 @@ const ReservationDetailsScreen = () => {
                     borderWidth={1}
                     style={styles.arrowCircleInner}
                 >
-                    <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+                    <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
                         <Svgicons path="arrowLeftIcon" size={26} />
-                    </Pressable>
+                    </AppPressable>
                 </GradientBorder>
                 <AppText
                     text="Abdulrahman Al Hassan"
