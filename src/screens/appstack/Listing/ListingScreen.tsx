@@ -16,6 +16,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
+import NoListingScreen from '../NoListingScreen/NoListingScreen';
 
 const ListingScreen = () => {
   const { t } = useTranslation();
@@ -55,11 +56,7 @@ const ListingScreen = () => {
   };
 
   if (!user?.has_listing) {
-    return (
-      <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <NoListing onConnect={() => navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING)} />
-      </BGImage>
-    );
+    return <NoListingScreen />;
   }
 
   const handleDayPress = (day: any) => {
