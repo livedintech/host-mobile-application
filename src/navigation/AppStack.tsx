@@ -865,6 +865,14 @@ const AppStack = () => {
         }
       />
       {/* CANCEL RESERVATION END */}
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.NOTIFIATION}
+        getComponent={() =>
+          require('@/screens/appstack/Notificaiton/NotificaitonScreen')
+            .default
+        }
+      />
     </Stack.Navigator>
   );
 };

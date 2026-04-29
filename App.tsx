@@ -37,13 +37,12 @@ const App = () => {
   const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK); // Splash/Onboarding ke liye pehle BLACK
 
   useEffect(() => {
-   const savedLang = getStoredLanguage();
-  changeLanguage(savedLang);
+    const savedLang = getStoredLanguage();
+    changeLanguage(savedLang);
 
     initializeApp();
     configureGoogleSignIn();
     setupNotifications();
-    
   }, []);
 
   const setupNotifications = async () => {
@@ -180,7 +179,7 @@ const App = () => {
                 ref={navigationRef}
                 theme={MyTheme}
                 linking={linking}
-                onStateChange={handleNavigationStateChange} // ✅ route change listener
+                onStateChange={handleNavigationStateChange}
               >
                 <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
                   <StatusBar

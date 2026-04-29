@@ -14,7 +14,9 @@ export function navigate<K extends keyof any>(
     route: string,
     params?: object | any[K],
 ) {
-    navigationRef.current!.navigate(route, params)
+    if (navigationRef.current?.isReady()) {
+        navigationRef.current.navigate(route, params)
+    }
 }
 
 export function replace(route: string, params?: object) {
