@@ -1,6 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 // PropertyDetailScreen.tsx
 import React, { useState } from 'react';
-import { Modal, Pressable, StyleSheet, View, Image, Platform } from 'react-native';
+import { Modal, StyleSheet, View, Image, Platform } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -422,8 +423,8 @@ const PropertyDetailScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText text={t('app.property_detail.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
@@ -446,8 +447,8 @@ const PropertyDetailScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

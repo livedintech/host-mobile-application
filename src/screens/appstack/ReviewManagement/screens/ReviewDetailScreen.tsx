@@ -1,12 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import i18n from '@/locales/i18n/i18n';
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  TouchableOpacity,
-  Pressable,
-} from 'react-native';
+import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import {
   Menu,
@@ -254,9 +249,9 @@ const ReviewDetailScreen = ({ route }: any) => {
       >
         <View style={styles.styleRow}>
           <View style={styles.arrowCircleInner}>
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
-            </Pressable>
+            </AppPressable>
           </View>
           {/* 1. Calculate filtered options before rendering */}
           {(() => {

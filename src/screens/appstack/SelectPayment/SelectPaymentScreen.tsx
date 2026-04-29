@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useSelectPaymentContainer from './SelectPaymentContainer';
@@ -57,7 +58,7 @@ const SelectPaymentScreen = () => {
 
 
             {paymentMethods.map((item) => (
-              <Pressable
+              <AppPressable
                 key={item.id}
                 onPress={() => onSelect(item.id)} // ✅ Pass ID instead of name
               >
@@ -73,7 +74,7 @@ const SelectPaymentScreen = () => {
                       />
                     </View>
                 </GlassCard>
-              </Pressable>
+              </AppPressable>
             ))}
           </GlassCard>
 

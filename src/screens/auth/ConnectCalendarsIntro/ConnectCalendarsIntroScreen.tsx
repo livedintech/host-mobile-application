@@ -1,3 +1,4 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 // // import React from 'react';
 // // import { StyleSheet, View, ScrollView, Image, KeyboardAvoidingView, Platform } from 'react-native';
 // // import AppText from '@/components/molecules/AppText/AppText';
@@ -122,7 +123,7 @@
 // // export default ConnectCalendarsIntroScreen;
 
 // import React, { useCallback } from 'react';
-// import { StyleSheet, View, ScrollView, Image, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+// import { StyleSheet, View, ScrollView, Image, KeyboardAvoidingView, Platform } from 'react-native';
 // import AppText from '@/components/molecules/AppText/AppText';
 // import AppButton from '@/components/molecules/AppButton/AppButton';
 // import Pagination from '@/components/molecules/Pagination/Pagination';
@@ -150,9 +151,9 @@
 //           {/* --- ADDED BACK BUTTON --- */}
 //           <View style={styles.headerRow}>
 //             <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
-//               <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+//               <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
 //                 <Svgicons path='arrowLeftIcon' size={24} />
-//               </Pressable>
+//               </AppPressable>
 //             </GradientBorder>
 //           </View>
 //           {/* ------------------------ */}
@@ -266,7 +267,7 @@
 // export default ConnectCalendarsIntroScreen;
 
 import React, { useCallback } from 'react';
-import { StyleSheet, View, Image, Pressable } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';

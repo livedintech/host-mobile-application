@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -29,9 +30,9 @@ const NoListingScreen = () => {
       <View style={styles.container}>
         {/* Header with Back Button */}
         {/* <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => goBack()}>
+          <AppPressable style={styles.backBtn} onPress={() => goBack()}>
             <Svgicons path="backIcon" size={20} color={Colors.BLACK} />
-          </Pressable>
+          </AppPressable>
         </View> */}
 
         <View style={styles.content}>

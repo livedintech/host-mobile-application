@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Pressable, Modal } from 'react-native';
+import { StyleSheet, View, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -56,9 +57,9 @@ const DescribeHouseScreen = () => {
           {/* Header Row */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <Pressable style={styles.backBtnWrapper} onPress={() => goBack()}>
+              <AppPressable style={styles.backBtnWrapper} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
-              </Pressable>
+              </AppPressable>
             </GradientBorder>
             {!isEdit && <CircularProgress percentage={40} size={48} strokeWidth={4} />}
           </View>
@@ -152,8 +153,8 @@ const DescribeHouseScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
                 text={t('app.describe_house.select_ota')}
@@ -182,8 +183,8 @@ const DescribeHouseScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

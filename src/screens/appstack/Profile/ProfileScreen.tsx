@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useState } from 'react';
-import { StyleSheet, View, Pressable, Image, Modal } from 'react-native';
+import { StyleSheet, View, Image, Modal } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'; import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -89,12 +90,12 @@ const ProfileScreen = () => {
           >
             <View style={styles.avatarInner}>
               {displayImage ? (
-                <Pressable onPress={() => setFullViewVisible(true)} style={{ width: '100%', height: '100%' }}>
+                <AppPressable onPress={() => setFullViewVisible(true)} style={{ width: '100%', height: '100%' }}>
                   <Image
                     source={{ uri: displayImage }}
                     style={{ width: '100%', height: '100%', borderRadius: 100 }}
                   />
-                </Pressable>
+                </AppPressable>
               ) : (
                 <View style={styles.placeholderBox}>
                   <Svgicons path="imageUploadIcon" size={40} />
@@ -111,15 +112,15 @@ const ProfileScreen = () => {
 
               {/* ✅ Edit badge */}
               {!isUploading && (
-                <Pressable style={styles.editBadge} onPress={() => !isUploading && setImageModalVisible(true)}>
+                <AppPressable style={styles.editBadge} onPress={() => !isUploading && setImageModalVisible(true)}>
                   <Svgicons path="editIcon" size={12} />
-                </Pressable>
+                </AppPressable>
               )}
             </View>
 
             {/* ✅ Remove button — sirf tab dikhao jab image ho */}
             {/* {displayImage && !isUploading && (
-            <Pressable
+            <AppPressable
               onPress={() => removeImage()}
               style={styles.removeBtn}
               hitSlop={10}
@@ -129,7 +130,7 @@ const ProfileScreen = () => {
               ) : (
                 <AppText text="✕" color={Colors.WHITE} fontSize={10} />
               )}
-            </Pressable>
+            </AppPressable>
           )} */}
           </View>
 

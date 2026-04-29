@@ -21,7 +21,8 @@ target 'HostMobileApp' do
   pod 'GoogleMaps'
   pod 'react-native-maps', :path => rn_maps_path
 
-  pod 'GoogleUtilities', :modular_headers => true  # ← Fix for FirebaseCoreInternal
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseFirestoreInternal', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],

@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Modal, Pressable } from 'react-native';
+import { StyleSheet, View, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import InputField from '@/components/molecules/Input/InputField';
@@ -106,8 +107,8 @@ const WifiAndDoorLockScreen = () => {
         animationType="fade"
         onRequestClose={() => setBottomSheetVisible(false)}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-          <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+        <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+          <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
             <View style={styles.handleBar} />
             <AppText text={t('app.wifi_door_lock.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
             <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
@@ -130,8 +131,8 @@ const WifiAndDoorLockScreen = () => {
               borderColor="transparent"
               color={Colors.WHITE}
             />
-          </Pressable>
-        </Pressable>
+          </AppPressable>
+        </AppPressable>
       </Modal>
 
     </BGImage>

@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -89,7 +90,7 @@ const CreateEditAIRuleScreen = () => {
                             control={control}
                             name="auto_send"
                             render={({ field: { onChange, value } }) => (
-                                <Pressable
+                                <AppPressable
                                     style={styles.autoCreateRow}
                                     onPress={() => onChange(!value)}
                                 >
@@ -100,7 +101,7 @@ const CreateEditAIRuleScreen = () => {
                                         color={Colors.BLACK}
                                         fontSize={14}
                                     />
-                                </Pressable>
+                                </AppPressable>
                             )}
                         />
                     </View>

@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Image, Pressable } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -23,9 +24,9 @@ const MakePropertyStandOutScreen = () => {
         {/* Header with Back Button */}
         <View style={styles.header}>
           <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtn}>
-            <Pressable style={styles.backBtn} onPress={() => goBack()}>
+            <AppPressable style={styles.backBtn} onPress={() => goBack()}>
               <Svgicons path='arrowLeftIcon' size={24} />
-            </Pressable>
+            </AppPressable>
           </GradientBorder>
         </View>
 

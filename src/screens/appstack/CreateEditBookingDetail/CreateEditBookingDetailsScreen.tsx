@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -98,8 +99,8 @@ const AddBookingDetailsScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText text={t('app.booking_details_edit.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
               <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
@@ -122,8 +123,8 @@ const AddBookingDetailsScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

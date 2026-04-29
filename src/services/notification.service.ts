@@ -1,7 +1,7 @@
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { navigateToRoot } from './navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -131,6 +131,16 @@ export class NotificationService {
     messaging().onMessage(async remoteMessage => {
       await notifee.incrementBadgeCount();
       await localNotification(remoteMessage);
+    });
+
+    // Foreground mein notifee notification tap hone par
+    notifee.onForegroundEvent(({ type, detail }) => {
+      if (type === EventType.PRESS && detail.notification?.data) {
+        console.log('notifee foreground tap data:', detail.notification.data);
+        NotificationService.handleNavigation({
+          data: detail.notification.data as Record<string, string>,
+        } as FirebaseMessagingTypes.RemoteMessage);
+      }
     });
   }
 

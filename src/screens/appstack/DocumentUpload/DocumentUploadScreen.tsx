@@ -1,6 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 // DocumentUploadScreen.tsx
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -94,9 +95,9 @@ const DocumentUploadScreen = () => {
           {/* Header */}
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
                 <Svgicons path="arrowLeftIcon" size={24} />
-              </Pressable>
+              </AppPressable>
             </GradientBorder>
             {!isEdit && <CircularProgress percentage={95} size={48} strokeWidth={4} />}
           </View>
@@ -148,8 +149,8 @@ const DocumentUploadScreen = () => {
             animationType="fade"
             onRequestClose={() => setBottomSheetVisible(false)}
           >
-            <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-              <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+            <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+              <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
 
                 <View style={styles.handleBar} />
 
@@ -179,8 +180,8 @@ const DocumentUploadScreen = () => {
                   mt={20}
                   loading={isLoadingChannelList || isCreating}
                 />
-              </Pressable>
-            </Pressable>
+              </AppPressable>
+            </AppPressable>
           </Modal>
 
       </View>

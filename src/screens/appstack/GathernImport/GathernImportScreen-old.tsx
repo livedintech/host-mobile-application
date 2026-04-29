@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -85,9 +86,9 @@ const GathernImportScreen = () => {
       <View style={styles.fixedHeader}>
         <View style={styles.headerRow}>
           <GradientBorder style={styles.arrowCircleInner} borderRadius={16} borderWidth={1}>
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={28} />
-            </Pressable>
+            </AppPressable>
           </GradientBorder>
 
           <AppButton title="Refresh" onPress={refetch} px={30} />

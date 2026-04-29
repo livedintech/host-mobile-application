@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Pressable, Modal } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Modal } from 'react-native';
 import useGuidelinesContainer from './GuidelinesContainer';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -55,9 +56,9 @@ const AddPropertyGuidelinesScreen = () => {
         >
           <View style={styles.headerRow}>
             <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-              <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
                 <Svgicons path='arrowLeftIcon' size={24} />
-              </Pressable>
+              </AppPressable>
             </GradientBorder>
             {!isEdit && <CircularProgress percentage={45} size={48} strokeWidth={4} />}
           </View>
@@ -174,8 +175,8 @@ const AddPropertyGuidelinesScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
                 text={t('app.property_guidelines.select_ota')}
@@ -204,8 +205,8 @@ const AddPropertyGuidelinesScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

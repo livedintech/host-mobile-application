@@ -123,7 +123,6 @@ export const useChatContainer = () => {
   const { data: rawData, isLoading, isFetching } = dataQuery;
   const data = useInfiniteListData(rawData?.pages);
 
-  console.log("chatList", data)
 
   /* --------------------------------- MUTATIONS --------------------------------- */
 
@@ -251,7 +250,6 @@ export const useChatContainer = () => {
     enabled: !!user?.id,
   });
 
-  console.log("chatlistings", listings)
 
   const transformedCities = citiesData.map(
     (item: { name: string; id: string }) => ({

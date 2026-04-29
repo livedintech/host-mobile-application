@@ -28,6 +28,8 @@ import {
   TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
+import { navigationRef } from '@/services/navigationService';
+import { userEventService } from '@/services/userEventService';
 interface IButtonView extends TouchableOpacityProps {
   backgroundColor?:string;
   style?: StyleProp<ViewStyle>;
@@ -92,7 +94,13 @@ export const ButtonView = ({
     [],
   );
 
-  const _onPress = Utils.debounce(onPress, debounceTime, debounceConfig);
+  const _onPress = Utils.debounce((...args: any[]) => {
+    const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
+    if (currentScreen) {
+      userEventService.logEvent('button_tap', currentScreen);
+    }
+    (onPress as any)(...args);
+  }, debounceTime, debounceConfig);
   const _onLongPress = Utils.debounce(
     onLongPress,
     debounceTime,

@@ -1,17 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useCallback } from 'react';
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  TextInput,
-  Image,
-  Pressable,
-  ListRenderItemInfo,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from 'react-native';
+import { StyleSheet, View, FlatList, TextInput, Image, ListRenderItemInfo, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
   useAnimatedStyle,
@@ -95,7 +84,6 @@ const ChatScreen = () => {
   );
 
   const { user } = useAuthStore();
-  console.log('!user?.has_listing:', user?.has_listing);
 
   if (!user?.has_listing) {
     return <NoListingScreen />;
@@ -141,7 +129,6 @@ const TABS: { id: ChatStatus; label: string }[] = [
   };
 
   const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
-    console.log('itemtestt', item);
     const renderRightActions = (
       _prog: SharedValue<number>,
       drag: SharedValue<number>,
@@ -197,7 +184,7 @@ const TABS: { id: ChatStatus; label: string }[] = [
             style={styles.avatar}
           />
 
-          <Pressable
+          <AppPressable
             style={styles.chatInfo}
             onPress={() => goToChatDetail(item)}
           >
@@ -246,7 +233,7 @@ const TABS: { id: ChatStatus; label: string }[] = [
                 />
               )}
             </View>
-          </Pressable>
+          </AppPressable>
         </View>
       </Swipeable>
     );
@@ -338,7 +325,7 @@ const TABS: { id: ChatStatus; label: string }[] = [
                 renderItem={({ item }) => {
             const isActive = activeTab === item.id;
                   return (
-                    <Pressable
+                    <AppPressable
                       style={[styles.tab, isActive && styles.activeTab]}
                       onPress={() => setActiveTab(item.id)}
                     >
@@ -352,7 +339,7 @@ const TABS: { id: ChatStatus; label: string }[] = [
                             : Colors.DARK_CHARCOAL_OPACITY_80
                         }
                       />
-                    </Pressable>
+                    </AppPressable>
                   );
                 }}
               />

@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image, Text, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, Image, Text } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
@@ -64,13 +65,13 @@ const PaymentScreen = () => {
                         <AppText text="Annual" fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
                         <AppText text="First 14 days free – Then SAR 17000/Year" fontSize={14} color={Colors.PINE_FOREST} mt={6} />
                     </ButtonView> */}
-                        <Pressable
+                        <AppPressable
                             onPress={() => onPlanSelect('monthly')}
                             style={[styles.planCard, selectedPlan === 'monthly' && styles.activeCard, { marginTop: 16 }]}
                         >
                             <AppText text={t('auth.payment.monthly')} fontSize={20} type="Bold" color={Colors.PINE_FOREST} />
                             <AppText text={t('auth.payment.monthly_trial', { price: pricing })} fontSize={13} color={Colors.BLACK} mt={6} />
-                        </Pressable>
+                        </AppPressable>
                     </GlassCard>
                     <GlassCard style={styles.features}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

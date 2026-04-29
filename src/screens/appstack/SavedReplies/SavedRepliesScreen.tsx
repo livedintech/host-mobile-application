@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Pressable, Platform } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -49,15 +50,15 @@ const SavedRepliesScreen = () => {
               {/* Updated Action Icons with GlassCards */}
               <View style={styles.actionIcons}>
                 <GlassCard width={40} style={styles.iconGlassCard}>
-                  <Pressable onPress={() => openRemoveConfirmSheet(item)} style={styles.iconBtn}>
+                  <AppPressable onPress={() => openRemoveConfirmSheet(item)} style={styles.iconBtn}>
                     <Svgicons path="TrashFull" size={20} color={Colors.BLACK} />
-                  </Pressable>
+                  </AppPressable>
                 </GlassCard>
                 
                 <GlassCard width={40} style={styles.iconGlassCard}>
-                  <Pressable onPress={() => editReply(item)} style={styles.iconBtn}>
+                  <AppPressable onPress={() => editReply(item)} style={styles.iconBtn}>
                     <Svgicons path="editIconUserManagement" size={20} color={Colors.BLACK} />
-                  </Pressable>
+                  </AppPressable>
                 </GlassCard>
               </View>
             </View>

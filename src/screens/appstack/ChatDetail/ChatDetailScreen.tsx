@@ -1,16 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Pressable,
-  Keyboard,
-  Image,
-  TextInput,
-  Platform,
-  Animated,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { StyleSheet, View, Keyboard, Image, TextInput, Platform, Animated, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -281,7 +271,7 @@ const ChatScreen = () => {
     if (!replyTo) return null;
 
     return (
-      <Pressable
+      <AppPressable
         onPress={() => handleReplyQuotePress(replyTo._id)}
         style={styles.replyQuoteContainer}
       >
@@ -295,7 +285,7 @@ const ChatScreen = () => {
           color={Colors.DRAVIT_GREY}
           numberOfLines={2}
         />
-      </Pressable>
+      </AppPressable>
     );
   };
 
@@ -335,7 +325,7 @@ const ChatScreen = () => {
             style={isHost ? { textAlign: 'right' } : { textAlign: 'left' }}
           /> */}
 
-          <Pressable
+          <AppPressable
             onLongPress={e => {
               const { pageY } = e.nativeEvent;
               setMenuY(Math.max(10, pageY - 180));
@@ -367,7 +357,7 @@ const ChatScreen = () => {
                     color={isHost ? Colors.WHITE : Colors.BRUNSWICK_GREEN}
                   />
                 </View>
-                <Pressable style={styles.documentInfo}>
+                <AppPressable style={styles.documentInfo}>
                   <AppText
                     text={item.document.name}
                     fontSize={14}
@@ -379,13 +369,13 @@ const ChatScreen = () => {
                     fontSize={11}
                     color={isHost ? Colors.WHITE : Colors.GREY_SHADOW}
                   />
-                </Pressable>
+                </AppPressable>
               </View>
             )}
 
             {/* Image Message with Preview */}
             {item.image && !item.document && (
-              <Pressable
+              <AppPressable
                 onPress={() => {
                   setPreviewImageUri(item.image ?? null);
                   setIsImageViewerVisible(true);
@@ -396,7 +386,7 @@ const ChatScreen = () => {
                   style={styles.messageImage}
                   resizeMode="cover"
                 />
-              </Pressable>
+              </AppPressable>
             )}
 
             {/* Video Message */}
@@ -434,7 +424,7 @@ const ChatScreen = () => {
               }}
               mt={8}
             />
-          </Pressable>
+          </AppPressable>
         </View>
       </View>
     );
@@ -472,12 +462,12 @@ const ChatScreen = () => {
                 borderWidth={1}
                 style={styles.arrowCircleInner}
               >
-                <Pressable
+                <AppPressable
                   style={styles.arrowCircleInner}
                   onPress={() => goBack()}
                 >
                   <Svgicons path="arrowLeftIcon" size={26} />
-                </Pressable>
+                </AppPressable>
               </GradientBorder>
 
               {/* ✅ Dynamic conversation name from API */}
@@ -594,7 +584,7 @@ const ChatScreen = () => {
                   { opacity: scrollButtonOpacity },
                 ]}
               >
-                <Pressable
+                <AppPressable
                   onPress={scrollToBottom}
                   style={styles.scrollButtonInner}
                 >
@@ -613,13 +603,13 @@ const ChatScreen = () => {
                       />
                     </View>
                   )}
-                </Pressable>
+                </AppPressable>
               </Animated.View>
             )}
 
             {/* Context Menu */}
             {selectedMessageId && selectedMessageData && (
-              <Pressable
+              <AppPressable
                 style={styles.menuBackdrop}
                 onPress={() => {
                   setSelectedMessageId(null);
@@ -637,7 +627,7 @@ const ChatScreen = () => {
                   onStartShouldSetResponder={() => true}
                   onTouchEnd={e => e.stopPropagation()}
                 >
-                  <Pressable
+                  <AppPressable
                     style={styles.menuOption}
                     onPress={() => {
                       handleReplyToMessage(selectedMessageData);
@@ -649,8 +639,8 @@ const ChatScreen = () => {
                       <AppText text={t('app.chat_detail.reply')} fontSize={13} />
                     </View>
                     <Svgicons path="chatIcon" size={16} />
-                  </Pressable>
-                  <Pressable
+                  </AppPressable>
+                  <AppPressable
                     style={styles.menuOption}
                     onPress={() => {
                       if (selectedMessageData.text) {
@@ -664,9 +654,9 @@ const ChatScreen = () => {
                       <AppText text={t('app.chat_detail.copy')} fontSize={13} />
                     </View>
                     <Svgicons path="docIcon" size={16} />
-                  </Pressable>
+                  </AppPressable>
 
-                  <Pressable
+                  <AppPressable
                     style={styles.menuOption}
                     onPress={() => {
                       if (selectedMessageData.text) {
@@ -686,11 +676,11 @@ const ChatScreen = () => {
                       <AppText text={t('app.chat_detail.create_task')} fontSize={13} />
                     </View>
                     <Svgicons path="taskIcon" size={16} />
-                  </Pressable>
+                  </AppPressable>
 
                   {/* ✅ Only show delete for logged-in user's messages */}
                   {/* {Number(selectedMessageData.user._id) === Number(user?.id) && (
-                    <Pressable
+                    <AppPressable
                       style={[styles.menuOption, { borderBottomWidth: 0 }]}
                       onPress={() => {
                         handleDeleteMessage(selectedMessageData._id);
@@ -706,10 +696,10 @@ const ChatScreen = () => {
                         />
                       </View>
                       <Svgicons path="deleteIcon" size={16} />
-                    </Pressable>
+                    </AppPressable>
                   )} */}
                 </View>
-              </Pressable>
+              </AppPressable>
             )}
 
             {/* AI Suggestion */}
@@ -724,12 +714,12 @@ const ChatScreen = () => {
                     mb={8}
                   />
                   <View style={styles.aiBubble}>
-                    <Pressable
+                    <AppPressable
                       onPress={() => setShowAiSuggestion(false)}
                       style={styles.aiClose}
                     >
                       <Svgicons path="closeIcon" size={12} />
-                    </Pressable>
+                    </AppPressable>
                     <AppText
                       text="Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival."
                       fontSize={13}
@@ -737,7 +727,7 @@ const ChatScreen = () => {
                       mb={10}
                     />
                     <View style={styles.aiFooter}>
-                      <Pressable
+                      <AppPressable
                         onPress={() => {
                           setShowAiSuggestion(false);
                           setInputText(
@@ -751,8 +741,8 @@ const ChatScreen = () => {
                           type="Bold"
                           color={Colors.PINE_FOREST}
                         />
-                      </Pressable>
-                      <Pressable onPress={sendAiSuggestion}>
+                      </AppPressable>
+                      <AppPressable onPress={sendAiSuggestion}>
                         <AppText
                           text={t('app.chat_detail.send_now')}
                           fontSize={12}
@@ -760,7 +750,7 @@ const ChatScreen = () => {
                           ml={15}
                           color={Colors.PINE_FOREST}
                         />
-                      </Pressable>
+                      </AppPressable>
                     </View>
                   </View>
                 </View>
@@ -784,19 +774,19 @@ const ChatScreen = () => {
                     numberOfLines={1}
                   />
                 </View>
-                <Pressable onPress={cancelReply}>
+                <AppPressable onPress={cancelReply}>
                   <Svgicons
                     path="closeIcon"
                     size={18}
                     color={Colors.GREY_SHADOW}
                   />
-                </Pressable>
+                </AppPressable>
               </View>
             )}
 
             {/* Input Area */}
             <View style={styles.inputArea}>
-              <Pressable
+              <AppPressable
                 onPress={() => {
                   Keyboard.dismiss();
                   setShowSavedReplies(!showSavedReplies);
@@ -818,7 +808,7 @@ const ChatScreen = () => {
                     size={20}
                   />
                 </GlassCard>
-              </Pressable>
+              </AppPressable>
 
               {/* <View style={styles.combinedInputContainer}> */}
               <GlassCard style={styles.mainCardItem}>
@@ -836,7 +826,7 @@ const ChatScreen = () => {
               </GlassCard>
               {/* </View> */}
 
-              <Pressable
+              <AppPressable
                 onPress={sendMessage}
                 disabled={!inputText.trim()}
                 style={[
@@ -851,7 +841,7 @@ const ChatScreen = () => {
                     color={Colors.WHITE}
                   />
                 </GlassCard>
-              </Pressable>
+              </AppPressable>
             </View>
 
             {/* Saved Replies */}
@@ -872,7 +862,7 @@ const ChatScreen = () => {
                         width="31%"
                         style={styles.replyGlassCard}
                       >
-                        <Pressable
+                        <AppPressable
                           onPress={() => {
                             setInputText(reply?.body);
                             // Optional: Hide replies after selecting one
@@ -887,7 +877,7 @@ const ChatScreen = () => {
                             style={{ textAlign: 'center' }}
                             numberOfLines={1}
                           />
-                        </Pressable>
+                        </AppPressable>
                       </GlassCard>
                     ),
                   )}
@@ -898,7 +888,7 @@ const ChatScreen = () => {
             {/* Attachment Menu */}
             {showAttachmentMenu && (
               <View style={styles.attachmentMenu}>
-                <Pressable
+                <AppPressable
                   style={styles.attachmentOption}
                   onPress={handleCamera}
                 >
@@ -906,9 +896,9 @@ const ChatScreen = () => {
                     <Svgicons path="cameraIcon" size={20} />
                   </View>
                   <AppText text={t('app.chat_detail.camera')} fontSize={13} />
-                </Pressable>
+                </AppPressable>
 
-                <Pressable
+                <AppPressable
                   style={styles.attachmentOption}
                   onPress={handleVideo}
                 >
@@ -916,9 +906,9 @@ const ChatScreen = () => {
                     <Svgicons path="videoIcon" size={20} />
                   </View>
                   <AppText text={t('app.chat_detail.video')} fontSize={13} />
-                </Pressable>
+                </AppPressable>
 
-                <Pressable
+                <AppPressable
                   style={styles.attachmentOption}
                   onPress={handleGallery}
                 >
@@ -926,9 +916,9 @@ const ChatScreen = () => {
                     <Svgicons path="imageIcon" size={20} />
                   </View>
                   <AppText text={t('app.chat_detail.gallery')} fontSize={13} />
-                </Pressable>
+                </AppPressable>
 
-                {/* <Pressable
+                {/* <AppPressable
                   style={[styles.attachmentOption, { borderBottomWidth: 0 }]}
                   onPress={handleDocument}
                 >
@@ -936,7 +926,7 @@ const ChatScreen = () => {
                     <Svgicons path="docIcon" size={20} />
                   </View>
                   <AppText text={t('app.chat_detail.document')} fontSize={13} />
-                </Pressable> */}
+                </AppPressable> */}
               </View>
             )}
 
