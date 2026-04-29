@@ -10,13 +10,13 @@ import useGathrenCreateAccountContainer from './GathrenCreateAccountContainer';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTranslation } from 'react-i18next';
 
-const GENDER_OPTIONS = [
-  { label: 'Male', value: 'male' },
-  { label: 'Female', value: 'female' },
-];
-
 const GathrenCreateAccountScreen = () => {
   const { t } = useTranslation();
+
+  const GENDER_OPTIONS = [
+    { label: t('app.gathren_create_account.male'), value: 'male' },
+    { label: t('app.gathren_create_account.female'), value: 'female' },
+  ];
   const { control, errors, handleSubmit, onNext, onCreateAccount, isLoading } =
     useGathrenCreateAccountContainer();
 

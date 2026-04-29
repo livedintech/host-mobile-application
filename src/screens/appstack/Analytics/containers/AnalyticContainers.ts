@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import STORAGE_CONST from '@/constants/storage';
 import { 
   getListings, 
@@ -10,6 +11,7 @@ import { ListingOption } from '@/types/api/AnalyticsTypes';
 import { useQuery } from '@tanstack/react-query';
 
 const AnalyticContainers = () => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     listings: [] as (string | number)[],
     channel: [] as string[],
@@ -32,13 +34,13 @@ const AnalyticContainers = () => {
     { label: 'Airbnb', value: 'airbnb' },
     { label: 'Booking.com', value: 'bcom' },
     { label: 'Gathern', value: 'gathern' },
-    { label: 'Direct', value: 'dashboard' },
+    { label: t('app.analytics.channel_direct'), value: 'dashboard' },
   ];
 
   const dateOptions = [
-    { label: 'Today', value: 'today' },
-    { label: 'Last 7 Days', value: '7days' },
-    { label: 'Last 30 Days', value: '30days' },
+    { label: t('app.analytics.date_today'), value: 'today' },
+    { label: t('app.analytics.date_last_7_days'), value: '7days' },
+    { label: t('app.analytics.date_last_30_days'), value: '30days' },
   ];
 
   // STABLE HANDLERS

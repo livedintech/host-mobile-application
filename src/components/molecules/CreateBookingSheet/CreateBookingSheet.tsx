@@ -154,8 +154,8 @@ export const CreateBookingSheet = ({
               label={t('app.listing_screen.select_stay_type')}
               placeholder={t('app.listing_screen.select_stay_type')}
               data={[
-                { label: 'Guest Stay', value: 'guest_stay' },
-                { label: 'Self Stay', value: 'self_stay' },
+                { label: t('app.create_booking_sheet.guest_stay'), value: 'guest_stay' },
+                { label: t('app.create_booking_sheet.self_stay'), value: 'self_stay' },
               ]}
             />
             <InputField
