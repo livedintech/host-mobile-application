@@ -23,6 +23,7 @@ target 'HostMobileApp' do
 
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseFirestoreInternal', :modular_headers => true
+  pod 'FirebaseFirestore', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -35,5 +36,30 @@ target 'HostMobileApp' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
     )
+    installer.pods_project.targets.each do |target|
+      if target.name == 'FirebaseFirestoreInternal'
+        target.build_configurations.each do |config|
+          config.build_settings['DEFINES_MODULE'] = 'YES'
+        end
+      end
+    end
+
+    # Fix: Xcode 16 explicit module build Firebase ke saath break karta hai
+    installer.pods_project.targets.each do |target|
+      if target.name.start_with?('Firebase') || target.name == 'RNFBFirestore'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_ENABLE_EXPLICIT_MODULES'] = 'NO'
+        end
+      end
+    end
+
+    # Fix: -weak_framework "FirebaseFirestoreInternal" linker error
+    Dir.glob(File.join(installer.sandbox.root.to_s, 'Target Support Files', '**', '*.xcconfig')).each do |path|
+      content = File.read(path)
+      if content.include?('FirebaseFirestoreInternal')
+        fixed = content.gsub(/-weak_framework\s+"?FirebaseFirestoreInternal"?/, '')
+        File.write(path, fixed) if fixed != content
+      end
+    end
   end
 end
