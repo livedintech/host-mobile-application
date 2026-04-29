@@ -1,13 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useState } from 'react'; // Added useState
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  ImageBackground,
-  Image,
-  Pressable,
-  Modal, // Added Modal
-} from 'react-native';
+import { StyleSheet, ScrollView, View, ImageBackground, Image, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
@@ -45,7 +38,7 @@ const MoreScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Profile Header */}
-        <Pressable onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}>
+        <AppPressable onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}>
           <GlassCard width="auto" style={styles.profileCard}>
             <View style={styles.profileInfo}>
               {user?.profile_picture ? (
@@ -59,7 +52,7 @@ const MoreScreen = () => {
               </View>
             </View>
           </GlassCard>
-        </Pressable>
+        </AppPressable>
 
         {/* Sections (Account & Analytics) */}
         <MenuSection
@@ -85,7 +78,7 @@ const MoreScreen = () => {
         />
 
         {/* Logout Trigger */}
-        <Pressable onPress={toggleModal}>
+        <AppPressable onPress={toggleModal}>
           <GlassCard width="100%" style={styles.logoutCard}>
             <View style={styles.logoutContent}>
               <AppText text={t('app.more.logout')} type="Medium" fontSize={16} />
@@ -94,7 +87,7 @@ const MoreScreen = () => {
               </GlassCard>
             </View>
           </GlassCard>
-        </Pressable>
+        </AppPressable>
       </ScrollView>
 
       {/* Logout Confirmation Modal */}
@@ -121,13 +114,13 @@ const MoreScreen = () => {
             />
 
             <View style={styles.modalButtonContainer}>
-              <Pressable style={styles.cancelButton} onPress={toggleModal}>
+              <AppPressable style={styles.cancelButton} onPress={toggleModal}>
                 <AppText text={t('app.more.cancel')} type="Medium" fontSize={16} color="black" />
-              </Pressable>
+              </AppPressable>
 
-              <Pressable style={styles.confirmButton} onPress={handleLogout}>
+              <AppPressable style={styles.confirmButton} onPress={handleLogout}>
                 <AppText text={t('app.more.confirm')} type="Medium" fontSize={16} color="white" />
-              </Pressable>
+              </AppPressable>
             </View>
           </View>
         </View>

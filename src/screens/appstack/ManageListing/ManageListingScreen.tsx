@@ -1,6 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View, Pressable, Image } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -80,7 +81,7 @@ const ManageListingScreen = () => {
         </View>
 
         <GlassCard width={'100%'} style={styles.detailsContainer}>
-          <Pressable
+          <AppPressable
             onPress={() => goToPropertyDetail(item)}
           >
             <View style={styles.titleRow}>
@@ -111,7 +112,7 @@ const ManageListingScreen = () => {
                 />
               </View>
             )}
-          </Pressable>
+          </AppPressable>
         </GlassCard>
       </GlassCard>
     );

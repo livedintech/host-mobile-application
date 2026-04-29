@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -101,8 +102,8 @@ const SetPricingScreen = () => {
         animationType="fade"
         onRequestClose={() => setBottomSheetVisible(false)}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-          <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+        <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+          <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
             <AppText text={t('app.set_pricing.select_ota')} fontSize={18} type="SemiBold" mb={20} />
             <DropdownField
               name="ota_account"
@@ -119,8 +120,8 @@ const SetPricingScreen = () => {
               mt={20}
             />
 
-          </Pressable>
-        </Pressable>
+          </AppPressable>
+        </AppPressable>
       </Modal>
     </BGImage>
   );

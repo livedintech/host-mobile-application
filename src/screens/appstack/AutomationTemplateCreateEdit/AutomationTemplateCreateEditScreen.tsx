@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -97,7 +98,7 @@ const CreateAutomationTemplateScreen = () => {
                             control={control}
                             name="is_active"
                             render={({ field: { onChange, value } }) => (
-                                <Pressable
+                                <AppPressable
                                     style={styles.autoCreateRow}
                                     onPress={() => onChange(!value)}
                                 >
@@ -109,7 +110,7 @@ const CreateAutomationTemplateScreen = () => {
                                         fontSize={14}
                                         type="Medium"
                                     />
-                                </Pressable>
+                                </AppPressable>
                             )}
                         />
                     </View>

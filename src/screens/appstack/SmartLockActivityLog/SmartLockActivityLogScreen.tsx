@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, FlatList, Pressable, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, FlatList, ActivityIndicator } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -50,9 +51,9 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
       <View style={styles.container}>
         {/* Header Section */}
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <AppPressable style={styles.backBtn} onPress={() => navigation.goBack()}>
             <Svgicons path="arrowLeftIcon" size={20} color={Colors.BLACK} />
-          </Pressable>
+          </AppPressable>
 
           <View style={styles.headerRight}>
             <ButtonView

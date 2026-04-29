@@ -1,6 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useBillingContainer from './BillingContainer';
@@ -16,9 +17,9 @@ const BillingScreen = () => {
       <View style={styles.cardInner}>
         <AppText text={title} fontSize={18} type="Medium" color={Colors.PINE_FOREST} />
         <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-          <Pressable style={styles.arrowCircleInner} onPress={onPress}>
+          <AppPressable style={styles.arrowCircleInner} onPress={onPress}>
             <Svgicons path='ArrowUpRightIcon' size={30}/>
-          </Pressable>
+          </AppPressable>
         </GradientBorder>
       </View>
     </GradientBorder>

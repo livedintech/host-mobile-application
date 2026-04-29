@@ -1,6 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator, Pressable } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -50,7 +51,7 @@ const YourSmartLocksScreen = () => {
 
     return (
       <GlassCard width="100%" style={styles.glassCard}>
-        <Pressable onPress={() => goToScreen(item?.lock_id)}>
+        <AppPressable onPress={() => goToScreen(item?.lock_id)}>
           <AppText text={item.alias} fontSize={18} type="Medium" color={Colors.BLACK} mb={8} />
           <View style={styles.infoSection}>
             <View style={styles.rowSmall}>
@@ -66,7 +67,7 @@ const YourSmartLocksScreen = () => {
               <AppText text={item.battery_percentage} fontSize={12} type="Regular" color={getBatteryColor(batteryValue)} />
             </View>
           </View>
-        </Pressable>
+        </AppPressable>
         <View style={{ marginTop: 25 }}>
           <DropdownField
             name={`lock_${item.lock_id}_listing`}

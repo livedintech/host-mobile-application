@@ -1,14 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ImageBackground,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, ImageBackground, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -73,9 +66,9 @@ const StatisticsScreen = () => {
       <View style={{ flex: 1 }}>
         <View style={styles.navBar}>
           <View style={styles.arrowCircleInner}>
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
-            </Pressable>
+            </AppPressable>
           </View>
 
           <ButtonView onPress={() => setIsFilterVisible(true)}>

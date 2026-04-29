@@ -55,3 +55,4 @@ ios/DerivedData/
 # ======================
 .env
 .env.*
+vendor/bundle

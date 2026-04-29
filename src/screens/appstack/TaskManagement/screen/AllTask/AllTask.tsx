@@ -245,7 +245,6 @@ const AllTask = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
         <FlatListHandler
-          bounces={false}
           data={rawList}
           meta={dataQuery}
           isLoading={isLoading || isFetching}

@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, View, Pressable, Platform, Modal } from 'react-native';
+import { StyleSheet, View, Platform, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -66,7 +67,7 @@ const AssignChatScreen = () => {
     const isSupervisor = user?.role_key === 'supervisor';
 
     return (
-      <Pressable
+      <AppPressable
         disabled={isSupervisor}
         onPress={() => onPressUser(item)}
       >
@@ -100,7 +101,7 @@ const AssignChatScreen = () => {
             )}
           </View>
         </GlassCard>
-      </Pressable>
+      </AppPressable>
     );
   };
 
@@ -110,9 +111,9 @@ const AssignChatScreen = () => {
         {/* Header Section */}
         <View style={styles.header}>
           <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={26} />
-            </Pressable>
+            </AppPressable>
           </GradientBorder>
    {/* <AppText
             text={guestName}

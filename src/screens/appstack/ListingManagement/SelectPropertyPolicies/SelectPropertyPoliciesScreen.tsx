@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Modal, ScrollView, Platform, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Modal, ScrollView, Platform } from 'react-native';
 import usePoliciesContainer from './PoliciesContainer';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -169,8 +170,8 @@ const SelectPropertyPoliciesScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.exportModalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.exportModalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
                 text={t('app.property_policies.select_ota')}
@@ -199,8 +200,8 @@ const SelectPropertyPoliciesScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

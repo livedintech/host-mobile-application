@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, FlatList, Pressable, Modal } from 'react-native';
+import { StyleSheet, View, FlatList, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -81,9 +82,9 @@ const AmenitiesScreen = () => {
         {/* Header */}
         <View style={styles.headerRow}>
           <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtn}>
-            <Pressable style={styles.backBtn} onPress={() => goBack()}>
+            <AppPressable style={styles.backBtn} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
-            </Pressable>
+            </AppPressable>
           </GradientBorder>
           {!isEdit && <CircularProgress percentage={30} size={48} strokeWidth={4} />}
         </View>
@@ -147,8 +148,8 @@ const AmenitiesScreen = () => {
           animationType="fade"
           onRequestClose={() => setBottomSheetVisible(false)}
         >
-          <Pressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <Pressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
               <View style={styles.handleBar} />
               <AppText
                 text={t('app.amenities.select_ota')}
@@ -177,8 +178,8 @@ const AmenitiesScreen = () => {
                 borderColor="transparent"
                 color={Colors.WHITE}
               />
-            </Pressable>
-          </Pressable>
+            </AppPressable>
+          </AppPressable>
         </Modal>
 
       </View>

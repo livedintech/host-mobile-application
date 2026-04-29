@@ -1,6 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useAccountContainer from './AccountContainer';
@@ -32,9 +33,9 @@ const AccountScreen = () => {
                 
                 {/* Arrow with gradient */}
                 <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-                  <Pressable onPress={() => handlePress(item?.route)} style={styles.arrowCircleInner}>
+                  <AppPressable onPress={() => handlePress(item?.route)} style={styles.arrowCircleInner}>
                       <Svgicons path='ArrowUpRightIcon' size={30} />
-                  </Pressable>
+                  </AppPressable>
                 </GradientBorder>
               </View>
             </GradientBorder>

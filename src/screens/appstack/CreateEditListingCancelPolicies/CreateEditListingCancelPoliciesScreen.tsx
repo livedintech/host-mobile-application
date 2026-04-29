@@ -1,5 +1,6 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -33,9 +34,9 @@ const CreateEditListingCancelPoliciesScreen = () => {
         {/* Header */}
         <View style={styles.headerRow}>
           <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
-            </Pressable>
+            </AppPressable>
           </GradientBorder>
           <CircularProgress percentage={55} size={48} strokeWidth={4} />
         </View>

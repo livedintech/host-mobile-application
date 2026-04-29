@@ -86,18 +86,21 @@
     "onboarding": {
       "slide1": {
         "title": "حقق عوائد أعلى من عقارك",
+        "title_highlight": "عوائد أعلى",
         "subtitle": "مدعوم بالأنظمة الذكية",
         "primary_btn": "متابعة",
         "secondary_btn": "تخطى"
       },
       "slide2": {
         "title": "تحكم ذكي موحّد لكل القنوات",
+        "title_highlight": "ذكي موحّد",
         "subtitle": "الذكاء الاصطناعي يعمل عبر جميع القنوات لتوفير وقتك وجهدك",
         "primary_btn": "متابعة",
         "secondary_btn": "تخطى"
       },
       "slide3": {
         "title": "تحكم كامل. بدون أي مجهود",
+        "title_highlight": "تحكم كامل.",
         "subtitle": "الذكاء الاصطناعي يقوم بالعمل، وأنت تبقى المتحكم",
         "primary_btn": "استكشف أولاً",
         "secondary_btn": "ابدأ الآن"
@@ -401,7 +404,11 @@
       "create_listing": "إضافة عقار",
       "add_listing_manually": "إضافة عقار جديد يدوياً",
       "complete_pending": "أكمل نموذج العقار المعلق",
-      "export_pending": "صدّر عقارك المعلق"
+      "export_pending": "صدّر عقارك المعلق",
+      "pending_incomplete": "أكمل قائمتك المعلقة",
+      "banner_trial": "تنتهي تجربتك المجانية خلال",
+      "banner_days": "{{count}} أيام",
+      "banner_subscribe": "اشترك الآن"
     },
     "ai_auto_reply": {
       "listing_access": "الوصول للعقار",
@@ -1177,9 +1184,7 @@
       "date_placeholder": "يي/شش/سس",
       "check_in_required": "تاريخ الوصول مطلوب",
       "check_out_required": "تاريخ المغادرة مطلوب",
-      "set_pricing": "تحديد السعر",
-      "guest_stay": "إقامة ضيف",
-      "self_stay": "إقامة شخصية"
+      "set_pricing": "تحديد السعر"
     },
     "account_screen": {
       "title": "الحساب"
@@ -1619,7 +1624,8 @@
       "photo_updated": "تم تحديث الصورة!",
       "photo_removed": "تم إزالة الصورة!",
       "male": "ذكر",
-      "female": "أنثى"
+      "female": "أنثى",
+      "cancel_btn": "إلغاء"
     },
     "property_disclosure": {
       "title_edit": "تفاصيل الإفصاح عن العقار",
@@ -1655,7 +1661,8 @@
     },
     "decline_inquiry": {
       "decline_placeholder": "أنا أرفض هذا الحجز لأن...",
-      "send_decline_btn": "إرسال ورفض الطلب"
+      "send_decline_btn": "إرسال ورفض الطلب",
+      "cancel_btn": "إلغاء"
     },
     "reservation_details": {
       "view_calendar": "عرض تقويم العقار",
@@ -1719,7 +1726,8 @@
       "description": "أنشئ ردوداً محفوظة لإعادة استخدام الرسائل الشائعة. استخدم الاختصارات في المحادثات لإدراجها بسرعة.",
       "create_btn": "إنشاء رد محفوظ جديد",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف هذا الرد؟",
-      "confirm_btn": "تأكيد"
+      "confirm_btn": "تأكيد",
+      "cancel_btn": "إلغاء"
     },
     "booking_request_card": {
       "platform": "منصة الحجز",

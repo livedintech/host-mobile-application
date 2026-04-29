@@ -96,9 +96,6 @@ const ConfirmAction = forwardRef<ConfirmActionRef, IConfirmAction>(
             <AppButton
               title={confirmText}
               onPress={handleOnConfirm}
-              backgroundColor={Colors.TEAL_PRIMARY_ALT}
-              color={Colors.WHITE}
-              borderColor={Colors.TEAL_PRIMARY_ALT}
               style={styles.btn}
               loading={isLoading}
               disabled={isLoading || isCancelLoading}
@@ -106,12 +103,10 @@ const ConfirmAction = forwardRef<ConfirmActionRef, IConfirmAction>(
             <AppButton
               title={closeText}
               onPress={handleOnClose}
-              backgroundColor={Colors.WHITE}
-              borderColor={Colors.BLACK}
-              color={Colors.BLACK}
               style={styles.btn}
               loading={isCancelLoading}
               disabled={isLoading || isCancelLoading}
+              variant='secondary'
             />
           </View>
         </BottomSheetView>
@@ -134,6 +129,6 @@ const styles = StyleSheet.create({
     gap: Metrics.scale(20),
   },
   btn: {
-    flex: 1,
+    width: Metrics.scale(180)
   },
 });
