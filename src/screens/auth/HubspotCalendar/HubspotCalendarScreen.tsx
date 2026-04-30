@@ -60,8 +60,8 @@ const CalendarScreen = ({ route }: any) => {
   }, []);
 
   const handleSheetDismiss = useCallback(() => {
-    handleMonthChange(currentMonth);
-  }, [currentMonth]);
+    setSelectedSlot(null);
+  }, []);
 
   const renderBackdrop = useCallback(
     (props: any) => (

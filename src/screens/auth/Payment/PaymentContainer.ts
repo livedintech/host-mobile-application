@@ -1,72 +1,143 @@
-import STORAGE_CONST from '@/constants/storage';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { getSelectListingApi, getSubscriptionFeaturesApi } from '@/services/authApi';
-import { navigate, reset } from '@/services/navigationService';
-import { useRoute } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import Toast from 'react-native-toast-message';
+import { useQuery } from '@tanstack/react-query';
+import { goBack } from '@/services/navigationService';
+import { subscriptionCalculateApi } from '@/services/paymentService';
+import STORAGE_CONST from '@/constants/storage';
+
+export type PlanType = 'Starter' | 'AI Suite';
+export type BillingCycle = 'Monthly' | 'Yearly';
 
 export default function usePaymentContainer() {
-  const { params } = useRoute();
-  const country_code = params?.country_code;
-const phone_number = params?.phone_number;
-const phone_with_code = params?.phone_with_code;
-const pricing = params?.pricing;
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>('Starter');
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('Monthly');
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('monthly');
+  const planKey = selectedPlan === 'Starter' ? 'starter' : 'ai_suite';
+  const cycle = billingCycle === 'Monthly' ? 'monthly' : 'yearly';
 
-  const onPlanSelect = (plan: 'annual' | 'monthly') => {
-    setSelectedPlan(plan);
-  };
-
-  const handleStartTrial = () => {
-    const days = selectedPlan === 'annual' ? 14 : 14;
-    console.log(`Starting ${days}-day free trial`);
-    navigate(NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD, { 
-  plan: selectedPlan, 
-  country_code, 
-  phone_number, 
-  phone_with_code 
-})
-  };
-
-  const handleSkipThis = () => {
-    reset(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
-    Toast.show({
-      type: 'success',
-      text1: 'Your Account Create Successfully',
-    });
-  }
-
-  //   const { data: data = [] } = useQuery({
-  //   queryKey: [STORAGE_CONST.SUBSCRPTION_FEATURES],
-  //   queryFn: getSubscriptionFeaturesApi({
-  //     subscription_id: 1
-  //   }),
-  // });
-
-  const { data, isLoading,refetch } = useQuery({
-    queryKey: [STORAGE_CONST.SUBSCRPTION_FEATURES],
+  const { data: priceData, isLoading: isLoadingPrice } = useQuery({
+    queryKey: [STORAGE_CONST.SUBSCRIPTION_CALCULATE, planKey, cycle],
     queryFn: () =>
-      getSubscriptionFeaturesApi({subscription_id:1 }),
-    // enabled: !!subscription_id,
+      subscriptionCalculateApi({
+        properties_count: 1,
+        billing_cycle: cycle,
+        plan_key: planKey,
+      }),
   });
 
-  console.log('data::::',data?.addons);
-  
-  const addons = data?.addons || []
-  const base = data?.base || []
+  const plan = priceData?.data?.plans?.[0];
+  const currency = plan?.currency ?? 'SAR';
+  const price = plan ? plan.price_per_property.toFixed(2) : '0.00';
+
+  const starterFeatures = [
+    {
+      title: 'Channel & Sync',
+      items: [
+        'Airbnb integration (2-way sync)',
+        'Booking.com integration (2-way sync)',
+        'Gathern integration (KSA)',
+        'Create & export property (Airbnb + Gathern)',
+        'Reservation details view (all channels)',
+      ],
+    },
+    {
+      title: 'AI Features - Limited Access',
+      items: [
+        'AI Reply: 2 bookings/listing only',
+        'AI Pricing: 1 property (multi-property hosts) or 1 month then discontinued (single-property hosts)',
+      ],
+    },
+    {
+      title: 'Inbox & Communication',
+      items: [
+        'Unified inbox (Airbnb + Booking.com)',
+        'Saved replies / message templates',
+        'Automated message triggers (event-based)',
+        'Direct booking creation',
+        'Multi-language: Arabic + English',
+      ],
+    },
+    {
+      title: 'Calendar',
+      items: ['Calendar management (single + multi-calendar)'],
+    },
+    {
+      title: 'Operations',
+      items: [
+        'Cleaning & task schedule automation',
+        'Create maintenance & other tasks',
+        'Smart lock integration — TT Lock (native)',
+        'Automated lock code per booking & task',
+      ],
+    },
+    {
+      title: 'Analytics',
+      items: [
+        'Airbnb + Booking.com + Gatherin reviews',
+        'Property performance analytics',
+        'Revenue / booking analytics',
+      ],
+    },
+    {
+      title: 'Platform',
+      items: [
+        'Mobile app (iOS + Android)',
+        'Separate staff / operator app',
+        'User roles (Owner/Manager/Supervisor/Staff)',
+        'Self-serve onboarding',
+        'WhatsApp chat support',
+      ],
+    },
+  ];
+
+  const aiSuiteFeatures = [
+    {
+      title: 'AI Communication',
+      items: [
+        'AI Autopilot - True auto-send, no human review required',
+        'Co-pilot / Draft Mode - Review messages before sending',
+        'Policy Enforcement Engine - Auto-guard brand standards & rules',
+        'Custom Tone & Brand Voice - Fully personalised AI responses',
+        'Smart Escalation to Human - Auto-route complex guest queries',
+      ],
+    },
+    {
+      title: 'AI Revenue & Upsells',
+      items: [
+        'AI Dynamic Pricing - Unrestricted across all properties',
+        'Gap Night Upsell Automation - Fill calendar gaps automatically',
+        'Early Check-in / Late Checkout Upsell - Capture ancillary revenue',
+      ],
+    },
+    {
+      title: 'AI Operations',
+      items: [
+        'Maintenance Ticket from Guest Messages - Auto-create from reviews & messages',
+        'Automated Review Requests - Trigger post-checkout review ask',
+        '24/7 Scheduling & Shift Control - Customise AI availability windows',
+      ],
+    },
+    {
+      title: 'Onboarding & Future Feature',
+      items: [
+        'Dedicated Onboarding Support - White-glove setup assistance',
+        'Guest Satisfaction / CSAT Tracking - coming soon',
+        'API Access / Webhooks - coming soon',
+      ],
+    },
+  ];
 
   return {
     selectedPlan,
-    onPlanSelect,
-    handleStartTrial,
-    handleSkipThis,
-    addons,
-    base,
-    pricing,
-    isLoading,
-    refetch
+    setSelectedPlan,
+    billingCycle,
+    setBillingCycle,
+    isExpanded,
+    setIsExpanded,
+    currency,
+    price,
+    isLoadingPrice,
+    features: selectedPlan === 'Starter' ? starterFeatures : aiSuiteFeatures,
+    goBack,
   };
 }
