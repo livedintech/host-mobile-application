@@ -1,6 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -26,14 +27,15 @@ const CreateAutomationTemplateScreen = () => {
         isEditMode,
         transformedListing,
         transformedMessageVariables,
-        transformedEvents
+        transformedEvents,
+        transformedEventTimes,
     } = useAutomationTemplateCreateEditContainer();
     const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView
+                <KeyboardAwareScrollView
                     contentContainerStyle={styles.scrollContainer}
                     showsVerticalScrollIndicator={false}
                 >
@@ -84,6 +86,15 @@ const CreateAutomationTemplateScreen = () => {
                         // labelStyle={styles.labelStyle}
                         />
 
+                        <DropdownField
+                            label={t('app.automation_create_edit.event_time_label')}
+                            name="temp_event_time"
+                            control={control}
+                            errors={errors}
+                            data={transformedEventTimes}
+                            placeholder={t('app.automation_create_edit.event_time_placeholder')}
+                        />
+
                         <MultiSelectDropdownField
                             label={t('app.automation_create_edit.property_label')}
                             name="listing_ids"
@@ -125,7 +136,7 @@ const CreateAutomationTemplateScreen = () => {
                         backgroundColor={Colors.TEAL_PRIMARY_ALT}
                         borderColor={Colors.TEAL_PRIMARY_ALT}
                     />
-                </ScrollView>
+                </KeyboardAwareScrollView>
             </View>
         </BGImage>
     );

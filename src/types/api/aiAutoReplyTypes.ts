@@ -41,3 +41,12 @@ export interface deleteaiAutoReplyTypesApiResponse {
 
     };
 }
+
+export interface aiAllowStatusPayload {
+    is_ai_allow: boolean;
+}
+
+export interface aiAllowStatusResponse {
+    status: string;
+    message: string;
+}

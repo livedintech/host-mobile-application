@@ -55,7 +55,7 @@ const AutomationTemplatesScreen = () => {
           {/* Top Row: Title and Glass Action Icons */}
           <View style={styles.cardHeader}>
             <AppText
-              text={item.name}
+              text={item.temp_name}
               fontSize={18}
               type="Bold"
               color={Colors.BLACK}

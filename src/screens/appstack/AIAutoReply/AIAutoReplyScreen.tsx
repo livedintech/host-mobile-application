@@ -34,6 +34,9 @@ const AIAutoReplyScreen = () => {
     isLoadingRemoved,
     removeSheetRef,
     isLoadingStatus,
+    isAiAllowed,
+    handleToggleAiAllow,
+    isLoadingAiAllow,
   } = useAIAutoReplyContainer();
 
   const renderItem = ({ item }: { item: any }) => {
@@ -105,7 +108,9 @@ const AIAutoReplyScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-      
+
+
+
         <FlatListHandler
           isLoading={isLoading || isFetching}
           data={data}
@@ -121,13 +126,31 @@ const AIAutoReplyScreen = () => {
             <View style={styles.topTextSection}>
               {!!data?.length && (
                 <View>
-                  <AppText
-                    text={t('app.ai_auto_reply.title')}
-                    fontSize={28}
-                    type="Bold"
-                    color={Colors.BLACK}
-                    mb={12}
-                  />
+                  <View style={{
+                    flexDirection: 'row'
+                  }}>
+                    <AppText
+                      text={t('app.ai_auto_reply.title')}
+                      fontSize={28}
+                      type="Bold"
+                      color={Colors.BLACK}
+                      mb={12}
+                    />
+                    <View style={styles.aiAllowRow}>
+                      <CustomSwitch
+                        value={isAiAllowed}
+                        onToggle={handleToggleAiAllow}
+                        isLoading={isLoadingAiAllow}
+                      />
+                      <AppText
+                        text={t('app.ai_auto_reply.ai_allow_label')}
+                        fontSize={14}
+                        type="SemiBold"
+                        color={Colors.BLACK}
+                      />
+                    </View>
+                  </View>
+
 
                   <View style={styles.descriptionWrapper}>
                     <AppText
@@ -221,9 +244,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  actionIcons: { 
+  actionIcons: {
     flexDirection: 'row',
-    gap: 8 
+    gap: 8
   },
   iconGlassCard: {
     height: 40,
@@ -234,16 +257,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0,
   },
-  iconBtn: { 
-    width: '100%', 
-    height: '100%', 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  iconBtn: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+  },
+  aiAllowRow: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+    gap: 10,
+    marginBottom: 8,
   },
   footer: {
     position: 'absolute',

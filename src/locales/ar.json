@@ -398,7 +398,7 @@
       "booking_requests": "طلبات الحجز",
       "booking_requests_sub": "{{count}} طلبات قيد الانتظار",
       "analytics": "التحليلات",
-      "analytics_sub": "نسبة الإشغال هذا الأسبوع {{count}}%",
+      "analytics_sub": "{{count}}% نسبة الإشغال هذا الشهر",
       "connect": "ربط {{name}}",
       "import_listings": "استيراد العقارات من {{name}}",
       "create_listing": "إضافة عقار",
@@ -419,7 +419,8 @@
       "create_new": "إنشاء رد جديد",
       "delete_confirm": "هل أنت متأكد أنك تريد حذف هذه القاعدة؟",
       "confirm_btn": "تأكيد",
-      "cancel_btn": "إلغاء"
+      "cancel_btn": "إلغاء",
+      "ai_allow_label": "تفعيل الرد الآلي بالذكاء الاصطناعي"
     },
     "no_ai_auto_reply": {
       "title": "لم يتم العثور على رد آلي",
@@ -1533,6 +1534,9 @@
       "validation_name_required": "اسم القالب مطلوب",
       "validation_body_required": "المحتوى مطلوب",
       "validation_event_required": "يرجى اختيار مشغّل الحدث",
+      "event_time_label": "أوقات الحدث",
+      "event_time_placeholder": "اختر وقت الحدث",
+      "validation_event_time_required": "يرجى اختيار وقت الحدث",
       "validation_property_min": "يرجى اختيار عقار واحد على الأقل",
       "validation_property_required": "العقار مطلوب"
     },

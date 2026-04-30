@@ -13,6 +13,7 @@ import i18n, { changeLanguage } from '@/locales/i18n/i18n';
 import RNRestart from 'react-native-restart';
 import GlassCard from '../GlassCard/GlassCard';
 import { useAuthStore } from '@/store/useAuthStore';
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 
 interface HeaderApp {
   isGoBack?: boolean;
@@ -22,6 +23,7 @@ interface HeaderApp {
   isLang?: boolean;
   addIconAfterisGoBack?: string;
   isShowProfile?:boolean;
+  isNotification?:boolean
 }
 
 const HeaderApp = ({
@@ -31,7 +33,8 @@ const HeaderApp = ({
   isLang,
   isGoBackAfterLogo,
   addIconAfterisGoBack,
-  isShowProfile
+  isShowProfile,
+  isNotification
 }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
@@ -101,6 +104,16 @@ const HeaderApp = ({
                 <AppText text={t('common.lang_switch')} fontSize={12} type="Medium" />
               </Pressable>
             </GradientBorder>
+          )}
+          {isNotification && (
+            <AppPressable style={{
+              marginLeft: Metrics.scale(5),
+              alignSelf:'center'
+            }} onPress={()=>{
+              navigate(NavigationRoutes.APP_STACK.NOTIFIATION)
+            }}>
+              <Svgicons path='bell' size={25}/>
+            </AppPressable>
           )}
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>

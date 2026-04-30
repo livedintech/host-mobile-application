@@ -19,7 +19,7 @@ const AppStack = () => {
         component={TabStack}
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ header: () => <HeaderApp isLogo isLang isNotification /> }}
         name={NavigationRoutes.APP_STACK.HOME}
         getComponent={() =>
           require('@/screens/appstack/Home/HomeScreen').default

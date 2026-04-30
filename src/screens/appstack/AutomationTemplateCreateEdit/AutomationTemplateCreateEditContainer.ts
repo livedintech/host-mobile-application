@@ -1,11 +1,19 @@
 import i18n from '@/locales/i18n/i18n';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
 import { goBack } from '@/services/navigationService';
-import { createAutomationTemplateApi, editAutomationTemplateApi, getAutomationTemplateEventsApi, getAutomationTemplateVariablesApi } from '@/services/automationTemplateApi';
+import {
+    createAutomationTemplateApi,
+    editAutomationTemplateApi,
+    getAutomationTemplateByIdApi,
+    getAutomationTemplateEventTimesApi,
+    getAutomationTemplateEventsApi,
+    getAutomationTemplateVariablesApi,
+} from '@/services/automationTemplateApi';
 import { AutomationTemplateTypesApiPayload, AutomationTemplateTypesApiResponse } from '@/types/api/automationTemplateTypes';
 import STORAGE_CONST from '@/constants/storage';
 import { useRoute } from '@react-navigation/native';
@@ -17,30 +25,52 @@ const automationSchema = yup.object().shape({
     name: yup.string().required(i18n.t('app.automation_create_edit.validation_name_required')),
     body: yup.string().required(i18n.t('app.automation_create_edit.validation_body_required')),
     event: yup.string().required(i18n.t('app.automation_create_edit.validation_event_required')),
+    temp_event_time: yup.string().required(i18n.t('app.automation_create_edit.validation_event_time_required')),
     listing_ids: yup
     .array()
     .min(1, i18n.t('app.automation_create_edit.validation_property_min'))
     .required(i18n.t('app.automation_create_edit.validation_property_required')),
     is_active: yup.boolean().default(false),
-
 });
 
 export default function useAutomationTemplateCreateEditContainer() {
     const { user } = useAuthStore();
     const route = useRoute<any>();
     const editData = route?.params?.editData as any;
+    const editId = editData?.id;
     const queryClient = useQueryClient();
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(automationSchema),
         defaultValues: {
-            name: editData?.name || '',
-            body: editData?.body || '',
-            event: editData?.event || '',
-            listing_ids: editData?.listing_ids || [],
-            is_active: editData?.is_active || false,
+            name: '',
+            body: '',
+            event: '',
+            temp_event_time: '',
+            listing_ids: [],
+            is_active: false,
         },
     });
+
+    // Fetch full automation data when editing
+    const { data: fetchedAutomation } = useQuery({
+        queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_BY_ID, editId],
+        queryFn: () => getAutomationTemplateByIdApi(editId),
+        enabled: Boolean(editId),
+    });
+
+    useEffect(() => {
+        if (fetchedAutomation) {
+            reset({
+                name: fetchedAutomation.name || '',
+                body: fetchedAutomation.body || '',
+                event: fetchedAutomation.event || '',
+                temp_event_time: fetchedAutomation.temp_event_time || '',
+                listing_ids: fetchedAutomation.listing_ids || [],
+                is_active: fetchedAutomation.is_active ?? false,
+            });
+        }
+    }, [fetchedAutomation]);
 
     // Create
     const {
@@ -66,7 +96,6 @@ export default function useAutomationTemplateCreateEditContainer() {
             });
         },
     });
-
 
     // Edit
     const {
@@ -94,18 +123,13 @@ export default function useAutomationTemplateCreateEditContainer() {
     });
 
     const onSubmit = (data: any) => {
-        if (editData) {
-            const payload = {
-                id: editData.id,
-                ...data,
-            };
-
-            editAutomationTemplatePayload(payload);
+        const payload = {
+            ...data,
+            listing_ids: data.listing_ids.map((id: any) => Number(id)),
+        };
+        if (editId) {
+            editAutomationTemplatePayload({ id: editId, ...payload });
         } else {
-            const payload = {
-                ...data,
-            };
-
             createAutomationTemplatePayload(payload);
         }
     };
@@ -120,10 +144,9 @@ export default function useAutomationTemplateCreateEditContainer() {
         enabled: Boolean(user?.id),
     });
 
-    // Listing
     const transformedListing = listing?.data?.map((item: any) => ({
         label: item.title,
-        value: item.id,
+        value: item.listing_id,
     }));
 
     // Message Variables Api
@@ -131,7 +154,6 @@ export default function useAutomationTemplateCreateEditContainer() {
         queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_MESSAGE_VARIABLES],
         queryFn: getAutomationTemplateVariablesApi,
     });
-    console.log("messageVariables",messageVariables)
 
     const transformedMessageVariables = messageVariables
         ? Object.keys(messageVariables).map(key => ({
@@ -146,23 +168,30 @@ export default function useAutomationTemplateCreateEditContainer() {
         queryFn: getAutomationTemplateEventsApi,
     });
 
-    // Transform events from API to dropdown-friendly format
-const transformedEvents = events
-    ? events.map((item: string) => ({
-        label: item.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), // e.g., "booking_confirmation" -> "Booking Confirmation"
-        value: item, // keep original value for API
-    }))
-    : [];
+    const transformedEvents = events
+        ? events.map((item: string) => ({
+            label: item.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
+            value: item,
+        }))
+        : [];
 
+    // Event Times Api
+    const { data: eventTimes } = useQuery({
+        queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_EVENT_TIMES],
+        queryFn: getAutomationTemplateEventTimesApi,
+    });
+
+    const transformedEventTimes = eventTimes ?? [];
 
     return {
-        control,
+        control: control as any,
         errors,
         handleSubmit: handleSubmit(onSubmit),
         isLoading: isPending && !isIdle || isPendingEditSaveEdit && !isIdleEditSaveEdit,
-        isEditMode: !!editData,
+        isEditMode: Boolean(editId),
         transformedListing,
         transformedMessageVariables,
-        transformedEvents
+        transformedEvents,
+        transformedEventTimes,
     };
 }

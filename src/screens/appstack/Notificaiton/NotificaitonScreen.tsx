@@ -1,193 +1,208 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  FlatList,
-} from 'react-native';
-import BGImage from '@/components/molecules/BGImage/BGImage';
-import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView, Animated } from 'react-native';
+import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import AppText from '@/components/molecules/AppText/AppText';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { Colors } from '@/theme/colors';
-import { goBack } from '@/services/navigationService';
-import Metrics from '@/utility/Metrics';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import useNotificationsContainer, { Notification } from './NotificationsContainer';
 
-interface NotificationItem {
-  id: string;
-  title: string;
-  body: string;
-  time: string;
-  type: string;
-  read: boolean;
-}
-
-const PLACEHOLDER_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: '1',
-    title: 'Booking Cancellation',
-    body: 'A booking has been cancelled. Please review the details.',
-    time: 'Just now',
-    type: 'booking_cancellation',
-    read: false,
-  },
-  {
-    id: '2',
-    title: 'Booking Cancellation',
-    body: 'A reservation was cancelled by the guest.',
-    time: '2 hours ago',
-    type: 'booking_cancellation',
-    read: true,
-  },
-];
-
-const getTypeIcon = (type: string): string => {
-  switch (type) {
-    case 'booking_cancellation':
-      return 'crossIcon2';
-    default:
-      return 'bellIcon';
-  }
+type NotificationItemProps = {
+  item: Notification;
+  onDelete: (id: string) => void;
+  onPress: (item: Notification) => void;
 };
 
-const NotificationCard = ({ item }: { item: NotificationItem }) => (
-  <GlassCard width="100%" style={styles.card}>
-    <View style={styles.cardRow}>
-      <View style={[styles.iconWrap, !item.read && styles.iconWrapUnread]}>
-        <Svgicons path={getTypeIcon(item.type)} size={20} />
+const DeleteAction = ({ dragX, onDelete, id }: { dragX: Animated.AnimatedInterpolation<number>; onDelete: (id: string) => void; id: string }) => {
+  const scale = dragX.interpolate({
+    inputRange: [-80, 0],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+
+  return (
+    <View style={styles.deleteActionContainer}>
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <TouchableOpacity style={styles.deleteCircle} onPress={() => onDelete(id)} activeOpacity={0.8}>
+          <Svgicons path="trashIcon" size={22} color={Colors.BLACK} />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
+  );
+};
+
+const NotificationItem = ({ item, onDelete, onPress }: NotificationItemProps) => (
+  <Swipeable
+    renderRightActions={(_progress, dragX) => <DeleteAction dragX={dragX} onDelete={onDelete} id={item.id} />}
+    friction={2}
+    rightThreshold={40}
+  >
+    <TouchableOpacity
+      style={[styles.card, item.isUnread && styles.unreadCard]}
+      onPress={() => onPress(item)}
+      activeOpacity={0.9}
+    >
+      <View style={styles.iconBox}>
+        <Svgicons path={item.icon as any} size={28} />
       </View>
-      <View style={styles.textWrap}>
+      <View style={styles.contentBox}>
         <View style={styles.titleRow}>
-          <AppText
-            text={item.title}
-            fontSize={14}
-            type="SemiBold"
-            color={Colors.MIDNIGHT}
-          />
-          {!item.read && <View style={styles.unreadDot} />}
+          <AppText text={item.title} fontSize={16} type="SemiBold" />
+          {item.isUnread && <View style={styles.unreadDot} />}
         </View>
         <AppText
-          text={item.body}
-          fontSize={12}
-          color={Colors.STEEL_GREY}
+          text={item.description}
+          fontSize={14}
+          color={Colors.DARK_CHARCOAL_OPACITY}
+          mt={4}
           numberOfLines={2}
         />
-        <AppText
-          text={item.time}
-          fontSize={11}
-          color={Colors.GREY_SHADOW}
-        />
+        <AppText text={item.time} fontSize={12} color={Colors.SMOOTH_GREY} mt={8} textAlign="right" />
       </View>
-    </View>
-  </GlassCard>
+    </TouchableOpacity>
+  </Swipeable>
 );
 
-const NotificaitonScreen = () => {
+const NotificationsScreen = () => {
+  const {
+    todayData,
+    yesterdayData,
+    todayLabel,
+    yesterdayLabel,
+    handleMarkAllRead,
+    handleDeleteNotification,
+    handleNotificationPress,
+    goBack,
+  } = useNotificationsContainer();
+
   return (
-    <BGImage source={require('@/assets/img/background/primaryBG.png')}>
-      {/* Header */}
-      <View style={styles.header}>
-        <GradientBorder
-          borderRadius={16}
-          borderWidth={1}
-          style={styles.backCircle}
-        >
-          <AppPressable style={styles.backCircle} onPress={()=>goBack()}>
-            <Svgicons path="arrowLeftIcon" size={26} />
-          </AppPressable>
-        </GradientBorder>
-
-        <AppText
-          text="Notifications"
-          fontSize={18}
-          type="Bold"
-          color={Colors.MIDNIGHT}
-        />
-
-        <View style={styles.headerPlaceholder} />
-      </View>
-
-      {/* List */}
-      <FlatList
-        data={PLACEHOLDER_NOTIFICATIONS}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <NotificationCard item={item} />}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyWrap}>
-            <Svgicons path="bellIcon" size={48} color={Colors.SMOOTH_GREY} />
-            <AppText
-              text="No notifications yet"
-              fontSize={16}
-              type="SemiBold"
-              color={Colors.GREY_SHADOW}
-            />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => goBack()} style={styles.backCircle}>
+              <Svgicons path="arrowLeftIcon" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.markReadBtn} onPress={handleMarkAllRead}>
+              <AppText text="Mark all as read" fontSize={13} type="Medium" />
+            </TouchableOpacity>
           </View>
-        }
-      />
-    </BGImage>
+
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollBody}>
+            <AppText text="Notifications" fontSize={34} type="Bold" mb={25} />
+
+            {todayData.length > 0 && (
+              <>
+                <AppText text={todayLabel} fontSize={16} type="SemiBold" mb={15} />
+                {todayData.map(item => (
+                  <NotificationItem key={item.id} item={item} onPress={handleNotificationPress} onDelete={handleDeleteNotification} />
+                ))}
+              </>
+            )}
+
+            {yesterdayData.length > 0 && (
+              <>
+                <AppText text={yesterdayLabel} fontSize={16} type="SemiBold" mt={20} mb={15} />
+                {yesterdayData.map(item => (
+                  <NotificationItem key={item.id} item={item} onPress={handleNotificationPress} onDelete={handleDeleteNotification} />
+                ))}
+              </>
+            )}
+          </ScrollView>
+        </SafeAreaView>
+      </BGImage>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Metrics.scale(16),
-    paddingTop: Metrics.verticalScale(16),
-    paddingBottom: Metrics.verticalScale(12),
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   backCircle: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'white',
     justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  headerPlaceholder: {
-    width: 36,
+  markReadBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  listContent: {
-    paddingHorizontal: Metrics.scale(16),
-    paddingBottom: Metrics.verticalScale(24),
-    gap: Metrics.verticalScale(10),
+  scrollBody: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   card: {
-    padding: Metrics.scale(12),
-  },
-  cardRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Metrics.scale(12),
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 28,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.5)',
+    marginBottom: 12,
   },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.GLOSSY_PLATINUM,
-    alignItems: 'center',
+  unreadCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+  },
+  iconBox: {
+    width: 45,
+    height: 45,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  iconWrapUnread: {
-    backgroundColor: Colors.TEAL_20_OPACITY,
-  },
-  textWrap: {
+  contentBox: {
     flex: 1,
-    gap: Metrics.verticalScale(3),
+    marginLeft: 12,
   },
   titleRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: Metrics.scale(6),
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.PRIMARY_TEAL,
+    backgroundColor: '#FF3B30',
+  },
+  deleteActionContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    marginBottom: 12,
+  },
+  deleteCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EEE',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
 });
 
-export default NotificaitonScreen;
+export default NotificationsScreen;
