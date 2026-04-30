@@ -145,8 +145,8 @@ export default function useAutomationTemplateCreateEditContainer() {
     });
 
     const transformedListing = listing?.data?.map((item: any) => ({
-        label: item.title,
-        value: item.listing_id,
+         label: item.title || item.name || '',
+        value: item?.listing_id || item.id,
     }));
 
     // Message Variables Api

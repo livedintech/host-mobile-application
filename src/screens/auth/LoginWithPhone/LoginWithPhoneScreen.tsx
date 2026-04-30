@@ -21,6 +21,8 @@ import DeviceInfo from 'react-native-device-info';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
@@ -127,6 +129,9 @@ const LoginWithPhoneScreen = () => {
                 }} color={Colors.BLACK} />
               </ButtonView>
             )}
+             <AppButton onPress={()=>{
+          navigate(NavigationRoutes.AUTH_STACK.PAYMENT)
+        }} title='Temp'/>
           </View>
         </View>
 

@@ -134,7 +134,7 @@ export class NotificationService {
       switch (type) {
         case 'booking_detail':
           navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: id,
+            booking_id: `O${id}`,
           });
           break;
 
@@ -146,7 +146,7 @@ export class NotificationService {
 
         case 'booking_modification':
           navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: id,
+            booking_id: `O${id}`,
           });
           break;
 
@@ -156,7 +156,7 @@ export class NotificationService {
 
         case 'booking_request':
           navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: id,
+            booking_id: `O${id}`,
           });
           break;
 

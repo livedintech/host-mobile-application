@@ -1,58 +1,212 @@
-import { useMemo, useState } from 'react';
-import { goBack } from '@/services/navigationService';
+import { useMemo, useCallback } from 'react';
+import { useInfiniteQuery, useMutation, useQueryClient, InfiniteData } from '@tanstack/react-query';
+import STORAGE_CONST from '@/constants/storage';
+import { goBack, navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import {
+  getMobileNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  deleteMobileNotification,
+  ApiNotificationItem,
+  ApiNotificationGroup,
+  GetNotificationsResponse,
+} from '@/services/mobileNotificationsApi';
 
-export interface Notification {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  time: string;
-  isUnread: boolean;
-  dateGroup: 'Today' | 'Yesterday';
+export type FlatItem =
+  | { type: 'header'; title: string; key: string; id: string }
+  | { type: 'notification'; data: ApiNotificationItem; key: string; id: string };
+
+export function getIconForType(notificationType: string): string {
+  switch (notificationType) {
+    case 'booking':
+    case 'booking_cancellation':
+    case 'booking_modification':
+    case 'booking_request':
+      return 'bookingIcon';
+    case 'task_update':
+      return 'taskIcon';
+    case 'smart_lock':
+      return 'lockIcon';
+    case 'chats_view':
+      return 'messageIcon';
+    default:
+      return 'bookingIcon';
+  }
 }
 
-const MOCK_DATA: Notification[] = [
-  { id: '1', icon: 'messageIcon', title: 'New Message', description: "You've received a new message from Ahmed Al-Faisal for Oasis Tower", time: '8:28am', isUnread: true, dateGroup: 'Today' },
-  { id: '2', icon: 'airbnbIcon', title: 'Listing Imported', description: 'Al Riyadh Apartment was imported successfully.', time: '8:28am', isUnread: true, dateGroup: 'Today' },
-  { id: '3', icon: 'taskIcon', title: 'New Task Assigned', description: 'You have unread messages from Fatima Al-Zahra', time: '13:01pm', isUnread: true, dateGroup: 'Today' },
-  { id: '4', icon: 'lockIcon', title: 'Unlock Activity', description: 'Lock accessed at Oasis Tower.', time: '8:28am', isUnread: true, dateGroup: 'Today' },
-  { id: '5', icon: 'bookingIcon', title: 'New Booking', description: 'A new reservation has been received for Al Riyadh Apartment', time: '8:28am', isUnread: false, dateGroup: 'Yesterday' },
-];
+export function formatTime(isoDate: string): string {
+  const date = new Date(isoDate);
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
 
-const DAY_MONTH_FORMAT: Intl.DateTimeFormatOptions = { weekday: undefined, month: 'long', day: 'numeric' };
+const QUERY_KEY = [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS];
 
-function formatGroupLabel(group: 'Today' | 'Yesterday'): string {
-  const date = new Date();
-  if (group === 'Yesterday') date.setDate(date.getDate() - 1);
-  return `${group}, ${date.toLocaleDateString('en-US', DAY_MONTH_FORMAT)}`;
+function mergeGroupsFromPages(pages: GetNotificationsResponse[]): ApiNotificationGroup[] {
+  const groupMap = new Map<string, ApiNotificationItem[]>();
+  const groupOrder: string[] = [];
+
+  for (const page of pages) {
+    for (const group of page?.data ?? []) {
+      if (!groupMap.has(group.title)) {
+        groupMap.set(group.title, []);
+        groupOrder.push(group.title);
+      }
+      const existing = groupMap.get(group.title)!;
+      const existingIds = new Set(existing.map(n => n.notification_id));
+      for (const item of group.data) {
+        if (!existingIds.has(item.notification_id)) {
+          existing.push(item);
+        }
+      }
+    }
+  }
+
+  return groupOrder.map(title => ({ title, data: groupMap.get(title)! }));
+}
+
+function groupsToFlatItems(groups: ApiNotificationGroup[]): FlatItem[] {
+  const items: FlatItem[] = [];
+  for (const group of groups) {
+    const headerKey = `header-${group.title}`;
+    items.push({ type: 'header', title: group.title, key: headerKey, id: headerKey });
+    for (const notification of group.data) {
+      const notifKey = `notif-${notification.notification_id}`;
+      items.push({ type: 'notification', data: notification, key: notifKey, id: notifKey });
+    }
+  }
+  return items;
+}
+
+// Immutable updater for the React Query v5 cache (cache is frozen — no direct mutations allowed)
+function updateCacheItems(
+  old: InfiniteData<GetNotificationsResponse> | undefined,
+  updater: (item: ApiNotificationItem) => ApiNotificationItem,
+  filter?: (item: ApiNotificationItem) => boolean,
+): InfiniteData<GetNotificationsResponse> | undefined {
+  if (!old) return old;
+  return {
+    ...old,
+    pages: old.pages.map(page => ({
+      ...page,
+      data: page.data
+        .map(group => ({
+          ...group,
+          data: group.data
+            .map(n => updater(n))
+            .filter(n => (filter ? filter(n) : true)),
+        }))
+        .filter(group => group.data.length > 0),
+    })),
+  };
 }
 
 export default function useNotificationsContainer() {
-  const [notifications, setNotifications] = useState<Notification[]>(MOCK_DATA);
+  const queryClient = useQueryClient();
 
-  const todayData = useMemo(() => notifications.filter(n => n.dateGroup === 'Today'), [notifications]);
-  const yesterdayData = useMemo(() => notifications.filter(n => n.dateGroup === 'Yesterday'), [notifications]);
+  const dataQuery = useInfiniteQuery({
+    queryKey: QUERY_KEY,
+    queryFn: ({ pageParam = 1 }) => getMobileNotifications(pageParam as number),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.meta.current_page < lastPage.meta.last_page
+        ? lastPage.meta.current_page + 1
+        : undefined,
+  });
 
-  const todayLabel = useMemo(() => formatGroupLabel('Today'), []);
-  const yesterdayLabel = useMemo(() => formatGroupLabel('Yesterday'), []);
+  const { isLoading, isFetching } = dataQuery;
 
-  const handleMarkAllRead = () => {
-    setNotifications(prev => prev.map(item => ({ ...item, isUnread: false })));
-  };
+  const flatItems = useMemo(() => {
+    const pages = (dataQuery.data?.pages ?? []) as GetNotificationsResponse[];
+    return groupsToFlatItems(mergeGroupsFromPages(pages));
+  }, [dataQuery.data?.pages]);
 
-  const handleDeleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(item => item.id !== id));
-  };
+  const markReadMutation = useMutation({
+    mutationFn: markNotificationRead,
+    onSuccess: (_, id) => {
+      queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
+        QUERY_KEY,
+        old => updateCacheItems(old, n => n.notification_id === id ? { ...n, status: 'read' } : n),
+      );
+    },
+  });
 
-  const handleNotificationPress = (item: Notification) => {
-    setNotifications(prev => prev.map(n => (n.id === item.id ? { ...n, isUnread: false } : n)));
-  };
+  const markAllReadMutation = useMutation({
+    mutationFn: markAllNotificationsRead,
+    onSuccess: () => {
+      queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
+        QUERY_KEY,
+        old => updateCacheItems(old, n => ({ ...n, status: 'read' })),
+      );
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteMobileNotification,
+    onSuccess: (_, id) => {
+      queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
+        QUERY_KEY,
+        old => updateCacheItems(
+          old,
+          n => n,
+          n => n.notification_id !== id,
+        ),
+      );
+    },
+  });
+
+  const handleNotificationPress = useCallback((item: ApiNotificationItem) => {
+    if (item.status === 'unread') {
+      markReadMutation.mutate(item.notification_id);
+    }
+
+    const { type, id } = item.payload;
+
+    switch (type) {
+      case 'booking':
+      case 'booking_detail':
+      case 'booking_modification':
+      case 'booking_request':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `O${id}` });
+        break;
+      case 'booking_cancellation':
+        break;
+      case 'chats_view':
+        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: id });
+        break;
+      case 'task_update':
+        navigate(NavigationRoutes.APP_STACK.EDIT_TASK, { taskId: id });
+        break;
+      case 'smart_lock':
+        navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES);
+        break;
+      case 'review_recieved':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+          reviewId: id,
+          showActionSheet: true,
+        });
+        break;
+      case 'payment_received':
+        navigate(NavigationRoutes.APP_STACK.BILLING);
+        break;
+      default:
+        break;
+    }
+  }, [markReadMutation]);
+
+  const handleMarkAllRead = useCallback(() => {
+    markAllReadMutation.mutate();
+  }, [markAllReadMutation]);
+
+  const handleDeleteNotification = useCallback((id: number) => {
+    deleteMutation.mutate(id);
+  }, [deleteMutation]);
 
   return {
-    todayData,
-    yesterdayData,
-    todayLabel,
-    yesterdayLabel,
+    flatItems,
+    isLoading,
+    isFetching,
+    dataQuery,
     handleMarkAllRead,
     handleDeleteNotification,
     handleNotificationPress,

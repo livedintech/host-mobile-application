@@ -1,19 +1,35 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView, Animated } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, SafeAreaView, Animated } from 'react-native';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import useNotificationsContainer, { Notification } from './NotificationsContainer';
+import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
+import useNotificationsContainer, {
+  FlatItem,
+  getIconForType,
+  formatTime,
+} from './NotificationsContainer';
+import { ApiNotificationItem } from '@/services/mobileNotificationsApi';
 
 type NotificationItemProps = {
-  item: Notification;
-  onDelete: (id: string) => void;
-  onPress: (item: Notification) => void;
+  item: ApiNotificationItem;
+  icon: string;
+  time: string;
+  onDelete: (id: number) => void;
+  onPress: (item: ApiNotificationItem) => void;
 };
 
-const DeleteAction = ({ dragX, onDelete, id }: { dragX: Animated.AnimatedInterpolation<number>; onDelete: (id: string) => void; id: string }) => {
+const DeleteAction = ({
+  dragX,
+  onDelete,
+  id,
+}: {
+  dragX: Animated.AnimatedInterpolation<number>;
+  onDelete: (id: number) => void;
+  id: number;
+}) => {
   const scale = dragX.interpolate({
     inputRange: [-80, 0],
     outputRange: [1, 0],
@@ -31,33 +47,44 @@ const DeleteAction = ({ dragX, onDelete, id }: { dragX: Animated.AnimatedInterpo
   );
 };
 
-const NotificationItem = ({ item, onDelete, onPress }: NotificationItemProps) => (
+const NotificationItem = ({ item, icon, time, onDelete, onPress }: NotificationItemProps) => (
   <Swipeable
-    renderRightActions={(_progress, dragX) => <DeleteAction dragX={dragX} onDelete={onDelete} id={item.id} />}
+    renderRightActions={(_progress, dragX) => (
+      <DeleteAction dragX={dragX} onDelete={onDelete} id={item.notification_id} />
+    )}
     friction={2}
     rightThreshold={40}
   >
     <TouchableOpacity
-      style={[styles.card, item.isUnread && styles.unreadCard]}
+      style={[styles.card, item.status === 'unread' && styles.unreadCard]}
       onPress={() => onPress(item)}
       activeOpacity={0.9}
     >
       <View style={styles.iconBox}>
-        <Svgicons path={item.icon as any} size={28} />
+        <Svgicons path={icon as any} size={28} />
       </View>
       <View style={styles.contentBox}>
         <View style={styles.titleRow}>
           <AppText text={item.title} fontSize={16} type="SemiBold" />
-          {item.isUnread && <View style={styles.unreadDot} />}
+          {item.status === 'unread' && <View style={styles.unreadDot} />}
         </View>
         <AppText
-          text={item.description}
+          text={item.message}
           fontSize={14}
           color={Colors.DARK_CHARCOAL_OPACITY}
           mt={4}
           numberOfLines={2}
         />
-        <AppText text={item.time} fontSize={12} color={Colors.SMOOTH_GREY} mt={8} textAlign="right" />
+        {item.listing_name ? (
+          <AppText
+            text={item.listing_name}
+            fontSize={12}
+            color={Colors.SMOOTH_GREY}
+            mt={2}
+            numberOfLines={1}
+          />
+        ) : null}
+        <AppText text={time} fontSize={12} color={Colors.SMOOTH_GREY} mt={6} textAlign="right" />
       </View>
     </TouchableOpacity>
   </Swipeable>
@@ -65,15 +92,33 @@ const NotificationItem = ({ item, onDelete, onPress }: NotificationItemProps) =>
 
 const NotificationsScreen = () => {
   const {
-    todayData,
-    yesterdayData,
-    todayLabel,
-    yesterdayLabel,
+    flatItems,
+    isLoading,
+    dataQuery,
     handleMarkAllRead,
     handleDeleteNotification,
     handleNotificationPress,
     goBack,
   } = useNotificationsContainer();
+
+  const renderItem = ({ item }: { item: FlatItem }) => {
+    if (item.type === 'header') {
+      return (
+        <AppText text={item.title} fontSize={16} type="SemiBold" mt={20} mb={15} />
+      );
+    }
+
+    const { data } = item;
+    return (
+      <NotificationItem
+        item={data}
+        icon={getIconForType(data.payload?.notification_type)}
+        time={formatTime(data.created_at)}
+        onPress={handleNotificationPress}
+        onDelete={handleDeleteNotification}
+      />
+    );
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -88,27 +133,19 @@ const NotificationsScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollBody}>
-            <AppText text="Notifications" fontSize={34} type="Bold" mb={25} />
-
-            {todayData.length > 0 && (
-              <>
-                <AppText text={todayLabel} fontSize={16} type="SemiBold" mb={15} />
-                {todayData.map(item => (
-                  <NotificationItem key={item.id} item={item} onPress={handleNotificationPress} onDelete={handleDeleteNotification} />
-                ))}
-              </>
-            )}
-
-            {yesterdayData.length > 0 && (
-              <>
-                <AppText text={yesterdayLabel} fontSize={16} type="SemiBold" mt={20} mb={15} />
-                {yesterdayData.map(item => (
-                  <NotificationItem key={item.id} item={item} onPress={handleNotificationPress} onDelete={handleDeleteNotification} />
-                ))}
-              </>
-            )}
-          </ScrollView>
+          <FlatListHandler
+            data={flatItems}
+            meta={dataQuery}
+            isLoading={isLoading}
+            renderItem={renderItem}
+            keyExtractor={(item: FlatItem) => item.key}
+            style={styles.flatList}
+            contentContainerStyle={styles.scrollBody}
+            contentInsetAdjustmentBehavior="never"
+            ListHeaderComponent={
+              <AppText text="Notifications" fontSize={34} type="Bold" mb={5} />
+            }
+          />
         </SafeAreaView>
       </BGImage>
     </GestureHandlerRootView>
@@ -116,7 +153,7 @@ const NotificationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: 'transparent' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -144,6 +181,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.6)',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+  },
+  flatList: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollBody: {
     paddingHorizontal: 20,
