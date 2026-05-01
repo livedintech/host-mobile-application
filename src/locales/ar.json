@@ -1030,6 +1030,7 @@
       "avg_length_stay": "متوسط مدة الإقامة",
       "avg_daily_rate": "متوسط السعر اليومي",
       "revPar": "الإيراد لكل غرفة متاحة",
+      "vs_last_month": "مقارنة بالشهر السابق",
       "reservations_per_channel": "الحجوزات حسب القناة",
       "per_channel_suffix": "حسب القناة",
       "reservations_count": "{{count}} حجز",
@@ -1042,7 +1043,7 @@
       "tab_reservation": "الحجوزات",
       "tab_revenue": "الإيرادات",
       "tab_nights": "الليالي",
-      "channel_direct": "مباشر",
+      "channel_direct": "الحجوزات المباشرة",
       "date_today": "اليوم",
       "date_last_7_days": "آخر 7 أيام",
       "date_last_30_days": "آخر 30 يوم"

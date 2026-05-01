@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
@@ -16,161 +16,159 @@ import { MeetingDetailsFormValues } from '@/validation/hubspot/hubspotSchemas';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+const today = new Date().toISOString().split('T')[0];
 
-export default function useHubspotCalendarContainer(
-  userInfo: MeetingDetailsFormValues
-) {
-  const today = new Date().toISOString().split('T')[0];
-
-    const bottomSheetRef = useRef<BottomSheetModal>(null);
+export default function useHubspotCalendarContainer(userInfo: MeetingDetailsFormValues) {
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [SCREEN_HEIGHT * 0.85], []);
+  const latestDateRef = useRef<string>('');
+  const pendingNavRef = useRef<(() => void) | null>(null);
+  // Ref mirrors selectedDate state for synchronous reads inside event handlers
+  const selectedDateRef = useRef('');
 
-  // ─── Month ────────────────────────────────────────────────────────────────
   const [currentMonth, setCurrentMonth] = useState({
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
   });
   const [availableDates, setAvailableDates] = useState<Record<string, boolean>>({});
   const [loadingDates, setLoadingDates] = useState(false);
-
-  // ─── Selection ────────────────────────────────────────────────────────────
   const [selectedDate, setSelectedDate] = useState('');
   const [agentWithSlots, setAgentWithSlots] = useState<AgentWithSlots | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<HubSpotSlot | null>(null);
 
-  // ─── Load month dates ─────────────────────────────────────────────────────
-  useEffect(() => {
-    loadMonthDates(currentMonth.year, currentMonth.month);
-  }, [currentMonth]);
-
-  const loadMonthDates = async (year: number, month: number) => {
+  const loadMonthDates = useCallback(async (year: number, month: number) => {
     setLoadingDates(true);
-    // Checks all 4 agents in parallel via HubSpot (which reads Google Calendar)
     const dates = await fetchAllAgentsAvailableDates(year, month);
-    console.log('Dates received by Container:', dates); // Check your debugger!
     setAvailableDates(dates);
     setLoadingDates(false);
-  };
+  }, []);
 
-  // ─── Date tap ─────────────────────────────────────────────────────────────
-  const handleDateSelect = async (dateStr: string) => {
+  useEffect(() => {
+    loadMonthDates(currentMonth.year, currentMonth.month);
+  }, [currentMonth, loadMonthDates]);
+
+  const handleDateSelect = useCallback(async (dateStr: string) => {
     if (!availableDates[dateStr]) return;
+    latestDateRef.current = dateStr;
+    selectedDateRef.current = dateStr;
     setSelectedDate(dateStr);
     setSelectedSlot(null);
     setAgentWithSlots(null);
     setLoadingSlots(true);
-    // Auto-picks first available agent (round-robin: 1 → 2 → 3 → 4)
     const result = await fetchFirstAvailableAgentForDate(dateStr);
-    console.log('Result from API', dateStr, result)
+    if (latestDateRef.current !== dateStr) return;
     setAgentWithSlots(result);
     setLoadingSlots(false);
-  };
+  }, [availableDates]);
 
-  // ─── Month change ─────────────────────────────────────────────────────────
-  const handleMonthChange = (month: { year: number; month: number }) => {
-    setCurrentMonth({ year: month.year, month: month.month });
+  const handleMonthChange = useCallback((month: { year: number; month: number }) => {
+    // Synchronously clear the ref so openSheet guard fires before React re-renders
+    selectedDateRef.current = '';
+    bottomSheetRef.current?.dismiss();
+    setCurrentMonth(prev => {
+      if (prev.year === month.year && prev.month === month.month) return prev;
+      return { year: month.year, month: month.month };
+    });
     setSelectedDate('');
     setAgentWithSlots(null);
     setSelectedSlot(null);
-  };
+  }, []);
 
-  // ─── Calendar marked dates ────────────────────────────────────────────────
- const buildMarkedDates = () => {
-  const marked: Record<string, any> = {};
-  const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
+  // openSheet lives here so it can read selectedDateRef synchronously
+  const openSheet = useCallback(() => {
+    if (!selectedDateRef.current) return;
+    bottomSheetRef.current?.present();
+  }, []);
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const markedDates = useMemo(() => {
+    const marked: Record<string, any> = {};
+    const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
 
-    if (dateStr < today) {
-      // Past dates: disable
-      marked[dateStr] = { disabled: true, disableTouchEvent: true };
-    } else if (availableDates[dateStr]) {
-      // HubSpot ne available bola: enable
-      marked[dateStr] = { disabled: false, disableTouchEvent: false };
-    } else {
-      // HubSpot ne available nahi bola: disable
-      marked[dateStr] = { disabled: true, disableTouchEvent: true };
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      if (dateStr < today) {
+        marked[dateStr] = { disabled: true, disableTouchEvent: true };
+      } else if (availableDates[dateStr]) {
+        marked[dateStr] = { disabled: false, disableTouchEvent: false };
+      } else {
+        marked[dateStr] = { disabled: true, disableTouchEvent: true };
+      }
     }
-  }
 
-  if (selectedDate) {
-    marked[selectedDate] = {
-      ...marked[selectedDate],
-      selected: true,
-      selectedColor: '#09A389',
-      selectedTextColor: '#fff',
-    };
-  }
-
-  return marked;
-};
-console.log("userInfo",userInfo)
-  // ─── Book meeting + create lead ───────────────────────────────────────────
-const { mutate: confirmBooking, isPending: isBooking } = useMutation({
-  mutationFn: () => {
-    // Combine: "966" + "44448881" -> "+96644448881"
-    const fullPhone = `+${userInfo.phone_with_code}${userInfo.phone_number}`;
-
-    return submitLeadAndBookMeeting(
-      {
-        fullName: userInfo.fullName,
-        phone: fullPhone, 
-        email: userInfo.email || '',
-        country: userInfo.country,
-        city: userInfo.city,
-        language: 'English',
-        potentialUnits: userInfo.listing_count  === 2 ? 4 : 31, // Using listing_count from log
-        meetingDate: new Date(selectedSlot!.startTime).toISOString(),
-      },
-      selectedSlot!,
-      agentWithSlots!.agent
-    );
-  },
-  onSuccess: (result) => {
-    if (result.success) {
-      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
-      bottomSheetRef?.current?.dismiss();
-    } else {
-      Toast.show({ type: 'error', text1: result.error });
-      bottomSheetRef?.current?.dismiss();
+    if (selectedDate) {
+      marked[selectedDate] = {
+        ...marked[selectedDate],
+        selected: true,
+        selectedColor: '#09A389',
+        selectedTextColor: '#fff',
+      };
     }
-  },
-  onError: (error) => {
-    console.error('[confirmBooking] Mutation error:', error);
-    Toast.show({ type: 'error', text1: 'Something went wrong. Please try again.' });
-    bottomSheetRef?.current?.dismiss();
-  },
-});
 
-  const handleConfirmBooking = () => {
+    return marked;
+  }, [currentMonth, availableDates, selectedDate]);
+
+  const { mutate: confirmBooking, isPending: isBooking } = useMutation({
+    mutationFn: () => {
+      const fullPhone = `+${userInfo.phone_with_code}${userInfo.phone_number}`;
+      return submitLeadAndBookMeeting(
+        {
+          fullName: userInfo.fullName,
+          phone: fullPhone,
+          email: userInfo.email || '',
+          country: userInfo.country,
+          city: userInfo.city,
+          language: 'English',
+          potentialUnits: userInfo.listing_count === 2 ? 4 : 31,
+          meetingDate: new Date(selectedSlot!.startTime).toISOString(),
+        },
+        selectedSlot!,
+        agentWithSlots!.agent
+      );
+    },
+    onSuccess: (result) => {
+      if (result.success) {
+        pendingNavRef.current = () => navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
+        bottomSheetRef.current?.dismiss();
+      } else {
+        bottomSheetRef.current?.dismiss();
+        Toast.show({ type: 'error', text1: result.error });
+      }
+    },
+    onError: (error) => {
+      console.error('[confirmBooking] Mutation error:', error);
+      Toast.show({ type: 'error', text1: 'Something went wrong. Please try again.' });
+      bottomSheetRef.current?.dismiss();
+    },
+  });
+
+  const handleSheetDismiss = useCallback(() => {
+    if (pendingNavRef.current) {
+      const nav = pendingNavRef.current;
+      pendingNavRef.current = null;
+      setTimeout(nav, 0);
+    }
+  }, []);
+
+  const handleConfirmBooking = useCallback(() => {
     if (!selectedSlot || !agentWithSlots) return;
     confirmBooking();
-  };
+  }, [selectedSlot, agentWithSlots, confirmBooking]);
 
-  // ─── Format time ──────────────────────────────────────────────────────────
-  const formatTime = (ms: number) => {
+  const formatTime = useCallback((ms: number) => {
     const d = new Date(ms);
     let h = d.getHours();
     const m = d.getMinutes();
     const ampm = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
     return `${h}:${String(m).padStart(2, '0')} ${ampm}`;
-  };
+  }, []);
 
-  const selectedDateLabel = selectedDate
-    ? new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-      })
-    : '';
+  const refreshDates = useCallback(() => {
+    loadMonthDates(currentMonth.year, currentMonth.month);
+  }, [currentMonth, loadMonthDates]);
 
-    const refreshDates = () => {
-  loadMonthDates(currentMonth.year, currentMonth.month);
-};
-console.log("agentWithSlots",agentWithSlots)
   return {
     today,
     currentMonth,
@@ -180,15 +178,16 @@ console.log("agentWithSlots",agentWithSlots)
     loadingSlots,
     selectedSlot,
     isBooking,
-    selectedDateLabel,
+    markedDates,
     setSelectedSlot,
     handleDateSelect,
     handleMonthChange,
     handleConfirmBooking,
-    buildMarkedDates,
+    handleSheetDismiss,
+    openSheet,
     formatTime,
     refreshDates,
     bottomSheetRef,
-    snapPoints
+    snapPoints,
   };
 }

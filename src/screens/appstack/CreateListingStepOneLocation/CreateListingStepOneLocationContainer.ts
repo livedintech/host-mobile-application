@@ -108,7 +108,20 @@ export default function useCreateListingStepOneLocationContainer() {
       );
       return result === PermissionsAndroid.RESULTS.GRANTED;
     }
+    // iOS: trigger the system permission prompt via getCurrentPosition's own flow;
+    // we resolve true here and let the error handler catch PERMISSION_DENIED (code 1).
     return true;
+  };
+
+  const showPermissionDeniedAlert = () => {
+    Alert.alert(
+      i18n.t('app.location_step.permission_denied_title'),
+      i18n.t('app.location_step.permission_denied_message'),
+      [
+        { text: i18n.t('common.cancel'), style: 'cancel' },
+        { text: i18n.t('common.toast.open_settings'), onPress: () => Linking.openSettings() },
+      ]
+    );
   };
 
   // ── First mount GPS fetch ─────────────────────────────────────────────────
@@ -116,18 +129,10 @@ export default function useCreateListingStepOneLocationContainer() {
     const ok = await requestPermission();
     if (!ok) {
       setIsInitializing(false);
-      Alert.alert(
-        i18n.t('app.location_step.location_permission_title'),
-        i18n.t('app.location_step.location_permission_message'),
-        [
-          { text: i18n.t('common.cancel'), style: 'cancel' },
-          { text: i18n.t('common.toast.open_settings'), onPress: () => Linking.openSettings() },
-        ]
-      );
+      showPermissionDeniedAlert();
       return;
     }
 
-    // ✅ Pehle low accuracy se try karo (fast) — phir high accuracy
     Geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
@@ -148,18 +153,22 @@ export default function useCreateListingStepOneLocationContainer() {
       error => {
         console.error('GPS error code:', error.code, error.message);
         setIsInitializing(false);
-        setHasUserLocation(true);
-        Toast.show({
-          type: 'info',
-          text1: i18n.t('common.toast.approximate_location'),
-          text2: i18n.t('app.location_step.approximate_location_desc'),
-        });
+        if (error.code === 1) {
+          // PERMISSION_DENIED — don't mark as located, show settings
+          showPermissionDeniedAlert();
+        } else {
+          // Timeout / unavailable — fall back to default region but warn user
+          Toast.show({
+            type: 'info',
+            text1: i18n.t('common.toast.approximate_location'),
+            text2: i18n.t('app.location_step.approximate_location_desc'),
+          });
+        }
       },
       {
         enableHighAccuracy: true,
         timeout: 20000,
-        maximumAge: 10000,
-        distanceFilter: 0,
+        maximumAge: 0,
       }
     );
   };
@@ -195,11 +204,16 @@ export default function useCreateListingStepOneLocationContainer() {
         setIsLocating(false);
       },
       error => {
-        console.error('GPS error:', error);
+        console.error('GPS error:', error.code, error.message);
         setIsLocating(false);
-        Alert.alert(i18n.t('common.toast.error'), i18n.t('app.location_step.gps_error'));
+        if (error.code === 1) {
+          // PERMISSION_DENIED
+          showPermissionDeniedAlert();
+        } else {
+          Alert.alert(i18n.t('common.toast.error'), i18n.t('app.location_step.gps_error'));
+        }
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   };
 

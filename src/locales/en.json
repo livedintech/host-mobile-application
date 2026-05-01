@@ -1030,6 +1030,7 @@
       "avg_length_stay": "Avg Length of Stay",
       "avg_daily_rate": "Avg Daily Rate",
       "revPar": "RevPAR",
+      "vs_last_month": "vs last month",
       "reservations_per_channel": "Reservations Per Channel",
       "per_channel_suffix": "Per Channel",
       "reservations_count": "{{count}} Reservations",

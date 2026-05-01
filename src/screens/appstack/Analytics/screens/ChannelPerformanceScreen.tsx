@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import AnalyticContainers from '../containers/AnalyticContainers';
 import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Colors } from '@/theme/colors';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
 import AnalyticsChart from '../components/AnalyticsChart';
@@ -15,6 +16,7 @@ import AnalyticsChart from '../components/AnalyticsChart';
 const BG_IMAGE = require('@/assets/img/background/channelPerformanceBG.png');
 
 const ChannelPerformanceScreen = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('reservation');
 
   const {
@@ -84,6 +86,8 @@ const ChannelPerformanceScreen = () => {
     const displayTitle =
       rawChannel === 'bookingcom'
         ? 'Booking.com'
+        : rawChannel === 'direct'
+        ? t('app.analytics.channel_direct')
         : rawChannel.charAt(0).toUpperCase() + rawChannel.slice(1);
 
     // 3. Colors
