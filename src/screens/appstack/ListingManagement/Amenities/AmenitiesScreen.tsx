@@ -31,6 +31,7 @@ const AMENITY_ICON_MAP: Record<string, string> = {
   blender: 'chickenGrilledStream', bread_maker: 'chickenGrilledStream',
   refrigerator: 'chickenGrilledStream', dishes_and_silverware: 'chickenGrilledStream',
   wine_glasses: 'chickenGrilledStream', hot_water: 'hotTub',
+  wirelessinternet: 'wirelessinternet',wirelessinternet:'wirelessinternet',
 };
 
 const DEFAULT_ICON = 'heartIcon';
@@ -54,7 +55,8 @@ const AmenitiesScreen = () => {
     handleOtaSubmit,
     listingOptions,
     isPendingExporting,
-    isLoadingAmenities
+    isLoadingAmenities,
+    refetch
   } = useAmenitiesContainer();
   const { t } = useTranslation();
 
@@ -99,6 +101,7 @@ const AmenitiesScreen = () => {
             mb={20}
           />
           <FlatListSimpleHandler
+          onRefresh={refetch}
             isLoading={isLoadingAmenities}
             data={amenitiesList}
             renderItem={renderAmenity}

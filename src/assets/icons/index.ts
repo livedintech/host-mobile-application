@@ -287,6 +287,7 @@ import quietHoursIcon from './quietHoursIcon.svg'
 import house_step3 from './house_step3.svg'
 import greenCross from './greenCross.svg'
 import wifi from './wifi.svg'
+import wirelessinternet from './wirelessinternet.svg'
 import tv from './tv.svg'
 import washingMachine from './washingMachine.svg';
 import oven from './oven.svg';
@@ -311,6 +312,7 @@ import noAccountFound from './noAccountFound.svg';
 import channelPerformanceIcon from './channelPerformanceIcon.svg';
 
 export const icons = {
+  wirelessinternet,
   noAccountFound,
   towerBuilding,
   medicalBag,

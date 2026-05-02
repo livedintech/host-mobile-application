@@ -157,6 +157,7 @@ export const SERVICE_CONFIG_URLS = {
   SET_FEATURED_PHOTO: `${authController}/channelmanagement/listing/{listing_id}/photos/{media_id}/featured`,
   GET_LISTING_PHOTOS: `${authController}/channelmanagement/listing/{listing_id}/photos`,
   GET_MOBILE_NOTIFICATIONS: `${authController}/mobile-notifications`,
+  GET_MOBILE_NOTIFICATIONS_COUNT: `${authController}/mobile-notifications/count`,
   MARK_NOTIFICATION_READ: `${authController}/mobile-notifications/{id}/read`,
   MARK_ALL_NOTIFICATIONS_READ: `${authController}/mobile-notifications/read-all`,
   DELETE_MOBILE_NOTIFICATION: `${authController}/mobile-notifications/{id}`,

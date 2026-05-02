@@ -133,7 +133,6 @@ export default function usePropertyDetailContainer() {
   } else if (typeof rawDescription === 'object' && rawDescription !== null) {
     extractedDescription = rawDescription?.description || '';
   }
-
   const propertyData = {
     title: listing?.name || '',
     discounts: listing?.discounts ? `${listing.discounts}%` : '',
@@ -172,7 +171,7 @@ export default function usePropertyDetailContainer() {
     },
 
     bookingDetails: {
-      bookingType: listing?.instant_booking ? 'Instant' : 'Manual', // ✅ Fix
+      bookingType: listing?.instant_booking === 0 ? 'Instant' : 'Manual', // ✅ Fix
       guestEligibility: listing?.guest_eligibility === 1,
       checkIn: listing?.check_in_time
         ? dayjs(listing.check_in_time, 'HH:mm:ss').format('hh:mm a')
@@ -314,7 +313,7 @@ export default function usePropertyDetailContainer() {
           [
             { text: i18n.t('common.cancel'), style: 'cancel' },
             {
-              text: i18n.t('common.delete'),
+              text: i18n.t('common.remove'),
               style: 'destructive',
               onPress: () =>
                 deletePropertyPayload({

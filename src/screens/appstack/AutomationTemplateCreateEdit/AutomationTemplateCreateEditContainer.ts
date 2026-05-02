@@ -25,11 +25,15 @@ const automationSchema = yup.object().shape({
     name: yup.string().required(i18n.t('app.automation_create_edit.validation_name_required')),
     body: yup.string().required(i18n.t('app.automation_create_edit.validation_body_required')),
     event: yup.string().required(i18n.t('app.automation_create_edit.validation_event_required')),
-    temp_event_time: yup.string().required(i18n.t('app.automation_create_edit.validation_event_time_required')),
+    temp_event_time: yup.string().when('event', {
+        is: (val: string) => val === 'check_in' || val === 'check_out',
+        then: schema => schema.required(i18n.t('app.automation_create_edit.validation_event_time_required')),
+        otherwise: schema => schema.optional(),
+    }),
     listing_ids: yup
-    .array()
-    .min(1, i18n.t('app.automation_create_edit.validation_property_min'))
-    .required(i18n.t('app.automation_create_edit.validation_property_required')),
+        .array()
+        .min(1, i18n.t('app.automation_create_edit.validation_property_min'))
+        .required(i18n.t('app.automation_create_edit.validation_property_required')),
     is_active: yup.boolean().default(false),
 });
 
@@ -40,7 +44,7 @@ export default function useAutomationTemplateCreateEditContainer() {
     const editId = editData?.id;
     const queryClient = useQueryClient();
 
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+    const { control, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm({
         resolver: yupResolver(automationSchema),
         defaultValues: {
             name: '',
@@ -66,7 +70,7 @@ export default function useAutomationTemplateCreateEditContainer() {
                 body: fetchedAutomation.body || '',
                 event: fetchedAutomation.event || '',
                 temp_event_time: fetchedAutomation.temp_event_time || '',
-                listing_ids: fetchedAutomation.listing_ids || [],
+                listing_ids: [...new Set(fetchedAutomation.listing_ids?.map((id: any) => Number(id)) || [])],
                 is_active: fetchedAutomation.is_active ?? false,
             });
         }
@@ -123,9 +127,11 @@ export default function useAutomationTemplateCreateEditContainer() {
     });
 
     const onSubmit = (data: any) => {
+        const isTimeEvent = data.event === 'check_in' || data.event === 'check_out';
         const payload = {
             ...data,
-            listing_ids: data.listing_ids.map((id: any) => Number(id)),
+            listing_ids: [...new Set(data.listing_ids.map((id: any) => Number(id)))],
+            temp_event_time: isTimeEvent ? data.temp_event_time : 'Immediately',
         };
         if (editId) {
             editAutomationTemplatePayload({ id: editId, ...payload });
@@ -141,12 +147,17 @@ export default function useAutomationTemplateCreateEditContainer() {
             getManageYourListings({
                 user: user?.id!,
             }),
-        enabled: Boolean(user?.id),
+        enabled: Boolean(editId),
+
+        staleTime: 0,        // data turant stale ho jaye
+        cacheTime: 0,        // cache store hi na ho
+        refetchOnMount: true, // component mount pe dobara hit
+        refetchOnWindowFocus: true, // focus pe bhi hit
     });
 
     const transformedListing = listing?.data?.map((item: any) => ({
-         label: item.title || item.name || '',
-        value: item?.listing_id || item.id,
+        label: item.title || item.name || '',
+        value: Number(item?.listing_id || item.id),
     }));
 
     // Message Variables Api
@@ -183,6 +194,14 @@ export default function useAutomationTemplateCreateEditContainer() {
 
     const transformedEventTimes = eventTimes ?? [];
 
+    const selectedEvent = watch('event');
+
+    useEffect(() => {
+        if (selectedEvent !== 'check_in' && selectedEvent !== 'check_out') {
+            setValue('temp_event_time', '');
+        }
+    }, [selectedEvent]);
+
     return {
         control: control as any,
         errors,
@@ -193,5 +212,6 @@ export default function useAutomationTemplateCreateEditContainer() {
         transformedMessageVariables,
         transformedEvents,
         transformedEventTimes,
+        selectedEvent,
     };
 }

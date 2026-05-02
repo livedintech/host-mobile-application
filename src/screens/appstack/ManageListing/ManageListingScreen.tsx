@@ -41,49 +41,47 @@ const ManageListingScreen = () => {
     const img = item?.images?.[0]
 
     return (
-      <GlassCard width="100%" style={styles.cardWrapper}>
-        <View style={styles.imageContainer}>
-          {img ? (
-            <Image
-              source={{ uri: img }}
-              style={styles.propertyImg}
-            />
-          ) : (
-            <View style={styles.noImg}>
-              <AppText
-                text={t('app.manage_listing_screen.no_image')}
-                textAlign='center'
-                type='Bold'
+      <AppPressable onPress={() => goToPropertyDetail(item)}>
+        <GlassCard width="100%" style={styles.cardWrapper}>
+          <View style={styles.imageContainer}>
+            {img ? (
+              <Image
+                source={{ uri: img }}
+                style={styles.propertyImg}
               />
-            </View>
-          )}
+            ) : (
+              <View style={styles.noImg}>
+                <AppText
+                  text={t('app.manage_listing_screen.no_image')}
+                  textAlign='center'
+                  type='Bold'
+                />
+              </View>
+            )}
 
 
-          {item?.is_local === 0 && (
-            <View style={styles.badge}>
-              <View style={styles.badgeDot} />
-              <AppText text={t('app.manage_listing_screen.listed')} fontSize={12} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
-            </View>
-          )}
-          {/* Percentage Badge */}
-          {item?.listing_steps !== 'completed' && (
-            <GlassCard style={styles.percentageBadge}>
-              <AppText
-                text={t('app.manage_listing_screen.completed_percentage', {
-                  percentage: item?.completion_percentage,
-                })}
-                fontSize={10}
-                type="Bold"
-                color={Colors.BRUNSWICK_GREEN}
-              />
-            </GlassCard>
-          )}
-        </View>
+            {item?.is_local === 0 && (
+              <View style={styles.badge}>
+                <View style={styles.badgeDot} />
+                <AppText text={t('app.manage_listing_screen.listed')} fontSize={12} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
+              </View>
+            )}
+            {/* Percentage Badge */}
+            {item?.listing_steps !== 'completed' && (
+              <GlassCard style={styles.percentageBadge}>
+                <AppText
+                  text={t('app.manage_listing_screen.completed_percentage', {
+                    percentage: item?.completion_percentage,
+                  })}
+                  fontSize={10}
+                  type="Bold"
+                  color={Colors.BRUNSWICK_GREEN}
+                />
+              </GlassCard>
+            )}
+          </View>
 
-        <GlassCard width={'100%'} style={styles.detailsContainer}>
-          <AppPressable
-            onPress={() => goToPropertyDetail(item)}
-          >
+          <GlassCard width={'100%'} style={styles.detailsContainer}>
             <View style={styles.titleRow}>
               {item?.name && (
                 <AppText
@@ -112,9 +110,9 @@ const ManageListingScreen = () => {
                 />
               </View>
             )}
-          </AppPressable>
+          </GlassCard>
         </GlassCard>
-      </GlassCard>
+      </AppPressable>
     );
   };
 

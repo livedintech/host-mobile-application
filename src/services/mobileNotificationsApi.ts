@@ -67,3 +67,23 @@ export const deleteMobileNotification = async (id: number): Promise<void> => {
   const { ok, response } = await apiService.delete(url);
   if (!ok) throw new Error(response?.message || 'Failed to delete notification');
 };
+
+export interface NotificationsCountData {
+  total: number;
+  unread: number;
+  read: number;
+}
+
+export interface NotificationsCountResponse {
+  status: string;
+  message: string;
+  data: NotificationsCountData;
+}
+
+export const getMobileNotificationsCount = async (): Promise<NotificationsCountResponse> => {
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_MOBILE_NOTIFICATIONS_COUNT,
+  );
+  if (ok) return data;
+  throw new Error(response?.message || 'Failed to fetch notifications count');
+};

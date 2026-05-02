@@ -32,6 +32,15 @@ export const bookingDetailsSchema = yup.object().shape({
 
 export type BookingDetailsFormValues = yup.InferType<typeof bookingDetailsSchema>;
 
+const to12Hour = (time?: string): string => {
+  if (!time) return '';
+  const match = time.match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return time;
+  const h = parseInt(match[1], 10);
+  const m = match[2];
+  return `${String(h % 12 || 12).padStart(2, '0')}:${m} ${h >= 12 ? 'pm' : 'am'}`;
+};
+
 export default function useBookingDetailsContainer() {
   const { params } = useRoute<any>();
   const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
@@ -101,8 +110,8 @@ export default function useBookingDetailsContainer() {
         ? (listing?.guest_eligibility === true || listing?.guest_eligibility === 1 ? 'Yes'
           : listing?.guest_eligibility === false || listing?.guest_eligibility === 0 ? 'No'
           : '') : '',
-      check_in_time:      isEdit ? (listing?.check_in_time  ?? '') : '',
-      check_out_time:     isEdit ? (listing?.check_out_time ?? '') : '',
+      check_in_time:      isEdit ? to12Hour(listing?.check_in_time)  : '',
+      check_out_time:     isEdit ? to12Hour(listing?.check_out_time) : '',
       allow_same_day:     isEdit
         ? (listing?.allow_same_day === true ? 'Yes' : listing?.allow_same_day === false ? 'No' : '')
         : '',

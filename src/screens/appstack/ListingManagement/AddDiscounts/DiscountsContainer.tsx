@@ -41,10 +41,10 @@ export default function useDiscountsContainer() {
     resolver: yupResolver(discountsSchema) as any,
     defaultValues: {
       // Yahan listing?.prices add karein 👇
-      weekly_discount:        String(listing?.prices?.weekly_discount        ?? propertyDetail?.weekly_discount        ?? ''),
-      monthly_discount:       String(listing?.prices?.monthly_discount       ?? propertyDetail?.monthly_discount       ?? ''),
-      early_bird_price_change:String(listing?.prices?.early_bird_price_change ?? listing?.early_bird_price_change ?? propertyDetail?.early_bird_price_change ?? ''),
-      last_minute_discount:   String(listing?.prices?.last_minute_discount   ?? propertyDetail?.last_minute_discount   ?? ''),
+      weekly_discount:        String(listing?.prices?.weekly_discount        || propertyDetail?.weekly_discount        || ''),
+      monthly_discount:       String(listing?.prices?.monthly_discount       || propertyDetail?.monthly_discount       || ''),
+      early_bird_price_change:String(listing?.prices?.early_bird_price_change || listing?.early_bird_price_change || propertyDetail?.early_bird_price_change || ''),
+      last_minute_discount:   String(listing?.prices?.last_minute_discount   || propertyDetail?.last_minute_discount   || ''),
     },
   });
 
@@ -62,10 +62,10 @@ export default function useDiscountsContainer() {
   bookingCom_discount: Number(propertyDetail?.prices?.bookingCom_discount ?? 0),
   discount:            Number(propertyDetail?.prices?.discount           ?? 0),
   // 🆕 NEW
-  weekly_discount:        Number(data.weekly_discount),
-  monthly_discount:       Number(data.monthly_discount),
-  early_bird_price_change:      Number(data.early_bird_price_change),
-  last_minute_discount:   Number(data.last_minute_discount),
+  weekly_discount:         Number(data.weekly_discount)         || 0,
+  monthly_discount:        Number(data.monthly_discount)        || 0,
+  early_bird_price_change: Number(data.early_bird_price_change) || 0,
+  last_minute_discount:    Number(data.last_minute_discount)    || 0,
 },
   });
 
@@ -79,10 +79,10 @@ export default function useDiscountsContainer() {
   // ── Handler ───────────────────────────────────────────────────────────────
   const onSubmit = (data: DiscountFormValues, isSaveAndExit: boolean = false) => {
     updateListing({
-      weekly_discount:        Number(data.weekly_discount),
-      monthly_discount:       Number(data.monthly_discount),
-      early_bird_price_change:      Number(data.early_bird_price_change),
-      last_minute_discount:   Number(data.last_minute_discount),
+      weekly_discount:         data.weekly_discount         ?? '',
+      monthly_discount:        data.monthly_discount        ?? '',
+      early_bird_price_change: data.early_bird_price_change ?? '',
+      last_minute_discount:    data.last_minute_discount    ?? '',
     });
 
     handlePricingApi(buildPayload(data, isSaveAndExit) as any, {

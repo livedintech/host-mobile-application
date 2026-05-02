@@ -22,6 +22,10 @@ export class NotificationService {
     await messaging().deleteToken();
   }
 
+  static async setBadgeCount(count: number): Promise<void> {
+    await notifee.setBadgeCount(count);
+  }
+
   static async requestUserPermission(): Promise<boolean> {
     if (Platform.OS === 'ios') {
       const status = await messaging().requestPermission({
@@ -84,6 +88,7 @@ export class NotificationService {
   }
 
   static async createNotificationListeners(): Promise<void> {
+    if (this.initiated) return;
     this.initiated = true;
 
     // Background state
@@ -107,9 +112,8 @@ export class NotificationService {
       }
     });
 
-    // Foreground — show local notification
+    // Foreground — show local notification with badge increment
     messaging().onMessage(async remoteMessage => {
-      await notifee.incrementBadgeCount();
       await localNotification(remoteMessage);
     });
 
@@ -200,7 +204,9 @@ export async function localNotification(
   if (!notification) return;
 
   try {
-    const badgeCount = await notifee.getBadgeCount();
+    const currentBadge = await notifee.getBadgeCount();
+    const newBadge = currentBadge + 1;
+    await notifee.setBadgeCount(newBadge);
 
     const channelId = await notifee.createChannel({
       id: 'default',
@@ -219,9 +225,11 @@ export async function localNotification(
         smallIcon: 'notification_icon',
         importance: AndroidImportance.HIGH,
         pressAction: { id: 'default' },
+        badgeCount: newBadge,
+        showBadge: true,
       },
       ios: {
-        badgeCount: badgeCount,
+        badgeCount: newBadge,
         sound: 'default',
         foregroundPresentationOptions: {
           alert: true,

@@ -1,5 +1,7 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
+import { AppState } from 'react-native';
 import { useInfiniteQuery, useMutation, useQueryClient, InfiniteData } from '@tanstack/react-query';
+import notifee from '@notifee/react-native';
 import STORAGE_CONST from '@/constants/storage';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -121,29 +123,52 @@ export default function useNotificationsContainer() {
     return groupsToFlatItems(mergeGroupsFromPages(pages));
   }, [dataQuery.data?.pages]);
 
+  useEffect(() => {
+    if (!dataQuery.data) return;
+    const pages = dataQuery.data.pages as GetNotificationsResponse[];
+    const unreadCount = pages.reduce((total, page) =>
+      total + page.data.reduce((g, group) =>
+        g + group.data.filter(n => n.status === 'unread').length, 0), 0);
+    notifee.setBadgeCount(unreadCount);
+  }, [dataQuery.data]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextState => {
+      if (nextState === 'active') {
+        dataQuery.refetch();
+      }
+    });
+    return () => subscription.remove();
+  }, [dataQuery]);
+
   const markReadMutation = useMutation({
     mutationFn: markNotificationRead,
     onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
       queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
         QUERY_KEY,
         old => updateCacheItems(old, n => n.notification_id === id ? { ...n, status: 'read' } : n),
       );
+      notifee.decrementBadgeCount();
     },
   });
 
   const markAllReadMutation = useMutation({
     mutationFn: markAllNotificationsRead,
     onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
       queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
         QUERY_KEY,
         old => updateCacheItems(old, n => ({ ...n, status: 'read' })),
       );
+      notifee.setBadgeCount(0);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteMobileNotification,
     onSuccess: (_, id) => {
+       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
       queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
         QUERY_KEY,
         old => updateCacheItems(

@@ -27,12 +27,40 @@ const AddBookingCancelPoliciesScreen = () => {
     { label: 'Moderate - Guests can cancel at least 5 days before check-in',   value: 'moderate' },
     { label: 'Strict - No refunds for cancellations',                           value: 'strict'   },
   ];
+  const AirbnbOptions = [
+  { label: 'Flexible - Guests can cancel at least 24 hours before check-in', value: 'flexible' },
+
+  { label: 'Moderate - Guests can cancel at least 5 days before check-in', value: 'moderate' },
+
+  { label: 'Strict - No refunds for cancellations', value: 'strict' },
+
+  { label: 'Better Strict (with Grace Period) - Limited free cancellation within a short grace period', value: 'better_strict_with_grace_period' },
+
+  { label: 'Strict 14 Days (with Grace Period) - Guests must cancel at least 14 days before check-in', value: 'strict_14_with_grace_period' },
+
+  { label: 'Super Strict 30 Days - Guests must cancel at least 30 days before check-in', value: 'super_strict_30' },
+
+  { label: 'Super Strict 60 Days - Guests must cancel at least 60 days before check-in', value: 'super_strict_60' },
+
+  { label: 'Flexible (New) - Updated flexible cancellation policy', value: 'flexible_new' },
+
+  { label: 'Moderate (New) - Updated moderate cancellation policy', value: 'moderate_new' },
+
+  { label: 'Strict (New) - Updated strict cancellation policy', value: 'strict_new' },
+
+  { label: 'Super Strict 30 Days (New) - Updated 30-day strict policy', value: 'super_strict_30_new' },
+
+  { label: 'Super Strict 60 Days (New) - Updated 60-day strict policy', value: 'super_strict_60_new' },
+];
 
   const longTermOptions = [
     { label: 'Long-term with grace period', value: 'longterm_grace' },
     { label: 'Firm long-term policy',        value: 'firm_longterm'  },
   ];
-
+ const AirbnblongTermOptions = [
+    { label: 'Long-term with grace period', value: 'longterm_grace' },
+    { label: 'Firm long-term policy',        value: 'firm_longterm'  },
+  ];
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
@@ -56,9 +84,9 @@ const AddBookingCancelPoliciesScreen = () => {
           />
 
           <View style={styles.formGroup}>
-            <DropdownField name="airbnb_policy" label="Airbnb" control={control as any} errors={errors} data={policyOptions} placeholder={t('app.booking_cancel_policies.flexible_placeholder')} />
+            <DropdownField name="airbnb_policy" label="Airbnb" control={control as any} errors={errors} data={AirbnbOptions} placeholder={t('app.booking_cancel_policies.flexible_placeholder')} />
             <View style={styles.fieldGap} />
-            <DropdownField name="airbnb_longterm_policy" label="Airbnb Long-term" control={control as any} errors={errors} data={longTermOptions} placeholder={t('app.booking_cancel_policies.longterm_placeholder')} />
+            <DropdownField name="airbnb_longterm_policy" label="Airbnb Long-term" control={control as any} errors={errors} data={AirbnblongTermOptions} placeholder={t('app.booking_cancel_policies.longterm_placeholder')} />
             <View style={styles.fieldGap} />
             <DropdownField name="gathern_policy" label="Gathern" control={control as any} errors={errors} data={policyOptions} placeholder={t('app.booking_cancel_policies.flexible_placeholder')} />
             <View style={styles.fieldGap} />

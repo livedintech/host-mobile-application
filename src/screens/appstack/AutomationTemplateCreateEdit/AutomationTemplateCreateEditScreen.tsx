@@ -29,7 +29,10 @@ const CreateAutomationTemplateScreen = () => {
         transformedMessageVariables,
         transformedEvents,
         transformedEventTimes,
+        selectedEvent,
     } = useAutomationTemplateCreateEditContainer();
+
+    const showEventTime = selectedEvent === 'check_in' || selectedEvent === 'check_out';
     const { t } = useTranslation();
 
     return (
@@ -86,14 +89,16 @@ const CreateAutomationTemplateScreen = () => {
                         // labelStyle={styles.labelStyle}
                         />
 
-                        <DropdownField
-                            label={t('app.automation_create_edit.event_time_label')}
-                            name="temp_event_time"
-                            control={control}
-                            errors={errors}
-                            data={transformedEventTimes}
-                            placeholder={t('app.automation_create_edit.event_time_placeholder')}
-                        />
+                        {showEventTime && (
+                            <DropdownField
+                                label={t('app.automation_create_edit.event_time_label')}
+                                name="temp_event_time"
+                                control={control}
+                                errors={errors}
+                                data={transformedEventTimes}
+                                placeholder={t('app.automation_create_edit.event_time_placeholder')}
+                            />
+                        )}
 
                         <MultiSelectDropdownField
                             label={t('app.automation_create_edit.property_label')}

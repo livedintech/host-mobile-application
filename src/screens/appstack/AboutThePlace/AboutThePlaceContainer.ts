@@ -98,7 +98,7 @@ export default function useAboutThePlaceContainer() {
   const { control, handleSubmit, formState: { errors } } = useForm<AboutThePlaceFormValues>({
     resolver: yupResolver(aboutThePlaceSchema),
     defaultValues: {
-      size_sqm:    isEdit ? (String(listing?.property_area) ?? '') : '',
+      size_sqm:    isEdit ? (listing?.property_area != null ? String(listing.property_area) : '') : '',
       guest_limit: isEdit ? (listing?.guest_limit ? String(listing.guest_limit) : '') : '',
       bedrooms:    isEdit ? (listing?.bedrooms    ? String(listing.bedrooms)    : '') : '',
       beds:        isEdit ? (listing?.beds        ? String(listing.beds)        : '') : '',

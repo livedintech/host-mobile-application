@@ -57,6 +57,7 @@
     "female": "Female",
     "cancel": "Cancel",
     "delete": "Delete",
+    "remove":"Remove",
     "new_listing": "New Listing",
     "dropdown": {
       "apartment": "Apartment",
@@ -1367,8 +1368,8 @@
       "channel": "Channel",
       "task": "Task",
       "calendar": "Calendar",
-      "delete_listing": "Delete Listing",
-      "delete_confirm_message": "Are you sure you want to delete this listing?",
+      "delete_listing": "Remove Listing",
+      "delete_confirm_message": "Are you sure you want to Remove this listing?",
       "listing_editor": "Listing Editor",
       "your_space": "Your Space",
       "pricing": "Pricing",

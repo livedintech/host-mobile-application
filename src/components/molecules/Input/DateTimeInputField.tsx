@@ -95,10 +95,38 @@ const DateTimeInputField = ({
     return `${hours}:${minutes} ${period}`;
   };
 
+  const parseTimeToDate = (timeStr: string): Date | null => {
+    const h24Match = timeStr.match(/^(\d{1,2}):(\d{2})(:\d{2})?$/);
+    if (h24Match) {
+      const d = new Date();
+      d.setHours(parseInt(h24Match[1], 10), parseInt(h24Match[2], 10), 0, 0);
+      return d;
+    }
+    const h12Match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(am|pm)$/i);
+    if (h12Match) {
+      let hours = parseInt(h12Match[1], 10);
+      const minutes = parseInt(h12Match[2], 10);
+      const period = h12Match[3].toLowerCase();
+      if (period === 'am' && hours === 12) hours = 0;
+      if (period === 'pm' && hours !== 12) hours += 12;
+      const d = new Date();
+      d.setHours(hours, minutes, 0, 0);
+      return d;
+    }
+    return null;
+  };
+
+  const displayValue = (val: string): string => {
+    if (mode !== 'time' || !val) return val ?? '';
+    const parsed = parseTimeToDate(val);
+    if (parsed) return formatTime(parsed);
+    return val;
+  };
+
   const handleOpenPicker = (currentValue: string) => {
     handleFocus();
     if (currentValue) {
-      const parsed = new Date(currentValue);
+      const parsed = parseTimeToDate(currentValue) ?? new Date(currentValue);
       if (!isNaN(parsed.getTime())) {
         setTempDate(parsed);
       }
@@ -153,7 +181,7 @@ const DateTimeInputField = ({
                 style={[styles.input, style]}
                 placeholder={placeholder}
                 placeholderTextColor="#7B8D88"
-                value={value}
+                value={displayValue(value)}
                 editable={false}
                 pointerEvents="none"
               />

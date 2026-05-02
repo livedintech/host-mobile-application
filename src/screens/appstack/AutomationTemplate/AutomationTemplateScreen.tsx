@@ -162,7 +162,7 @@ const AutomationTemplatesScreen = () => {
 
         <ConfirmAction
           ref={removeSheetRef}
-          title={`${Item?.name}`}
+          title={`${Item?.temp_name}`}
           content="Are you sure you want to delete this template?"
           confirmText="Confirm"
           closeText="Cancel"
