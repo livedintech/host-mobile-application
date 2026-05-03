@@ -28,6 +28,8 @@ export default function usePaymentContainer() {
   const plan = priceData?.data?.plans?.[0];
   const currency = plan?.currency ?? 'SAR';
   const price = plan ? plan.price_per_property.toFixed(2) : '0.00';
+  const planId = plan?.plan_id ?? '';
+  const qtyFrom = plan?.matched_tier?.qty_from ?? 1;
 
   const starterFeatures = [
     {
@@ -137,6 +139,8 @@ export default function usePaymentContainer() {
     currency,
     price,
     isLoadingPrice,
+    planId,
+    qtyFrom,
     features: selectedPlan === 'Starter' ? starterFeatures : aiSuiteFeatures,
     goBack,
   };

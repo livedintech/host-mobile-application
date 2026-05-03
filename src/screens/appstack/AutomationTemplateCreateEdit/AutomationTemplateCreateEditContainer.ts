@@ -21,6 +21,12 @@ import { getManageYourListings } from '@/services/ createListingService';
 import { ManageListingsResponse } from '@/types/api/createListingTypes';
 import { useAuthStore } from '@/store/useAuthStore';
 
+const CACHE = {
+    REFERENCE_DATA: { staleTime: 10 * 60 * 1000, gcTime: 30 * 60 * 1000 },
+    USER_DATA: { staleTime: 5 * 60 * 1000, gcTime: 15 * 60 * 1000 },
+    NO_CACHE: { staleTime: 0, gcTime: 0 },
+} as const;
+
 const automationSchema = yup.object().shape({
     name: yup.string().required(i18n.t('app.automation_create_edit.validation_name_required')),
     body: yup.string().required(i18n.t('app.automation_create_edit.validation_body_required')),
@@ -61,6 +67,7 @@ export default function useAutomationTemplateCreateEditContainer() {
         queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_BY_ID, editId],
         queryFn: () => getAutomationTemplateByIdApi(editId),
         enabled: Boolean(editId),
+        ...CACHE.NO_CACHE,
     });
 
     useEffect(() => {
@@ -147,12 +154,8 @@ export default function useAutomationTemplateCreateEditContainer() {
             getManageYourListings({
                 user: user?.id!,
             }),
-        enabled: Boolean(editId),
-
-        staleTime: 0,        // data turant stale ho jaye
-        cacheTime: 0,        // cache store hi na ho
-        refetchOnMount: true, // component mount pe dobara hit
-        refetchOnWindowFocus: true, // focus pe bhi hit
+        enabled: Boolean(user?.id),
+        ...CACHE.USER_DATA,
     });
 
     const transformedListing = listing?.data?.map((item: any) => ({
@@ -164,6 +167,7 @@ export default function useAutomationTemplateCreateEditContainer() {
     const { data: messageVariables } = useQuery({
         queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_MESSAGE_VARIABLES],
         queryFn: getAutomationTemplateVariablesApi,
+        ...CACHE.REFERENCE_DATA,
     });
 
     const transformedMessageVariables = messageVariables
@@ -177,6 +181,7 @@ export default function useAutomationTemplateCreateEditContainer() {
     const { data: events } = useQuery({
         queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_EVENTS],
         queryFn: getAutomationTemplateEventsApi,
+        ...CACHE.REFERENCE_DATA,
     });
 
     const transformedEvents = events
@@ -190,6 +195,7 @@ export default function useAutomationTemplateCreateEditContainer() {
     const { data: eventTimes } = useQuery({
         queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE_EVENT_TIMES],
         queryFn: getAutomationTemplateEventTimesApi,
+        ...CACHE.REFERENCE_DATA,
     });
 
     const transformedEventTimes = eventTimes ?? [];

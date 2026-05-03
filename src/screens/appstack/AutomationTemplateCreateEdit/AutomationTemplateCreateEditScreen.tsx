@@ -131,17 +131,16 @@ const CreateAutomationTemplateScreen = () => {
                         />
                     </View>
 
-                    {/* Submit Button */}
+                </KeyboardAwareScrollView>
+                <View style={styles.footer}>
                     <AppButton
                         title={isEditMode ? t('app.automation_create_edit.save_btn') : t('app.automation_create_edit.create_btn')}
                         onPress={handleSubmit}
                         loading={isLoading}
-                        mt={40}
-                        mb={40}
                         backgroundColor={Colors.TEAL_PRIMARY_ALT}
                         borderColor={Colors.TEAL_PRIMARY_ALT}
                     />
-                </KeyboardAwareScrollView>
+                </View>
             </View>
         </BGImage>
     );
@@ -182,6 +181,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: Metrics.verticalScale(10),
+    },
+    footer: {
+        paddingHorizontal: Metrics.scale(22),
+        paddingVertical: Metrics.verticalScale(16),
     },
 });
 

@@ -112,7 +112,7 @@ const NotificationsScreen = () => {
     return (
       <NotificationItem
         item={data}
-        icon={getIconForType(data.payload?.notification_type)}
+        icon={getIconForType(data.payload?.notification_type, data.title)}
         time={formatTime(data.created_at)}
         onPress={handleNotificationPress}
         onDelete={handleDeleteNotification}

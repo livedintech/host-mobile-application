@@ -129,9 +129,6 @@ const LoginWithPhoneScreen = () => {
                 }} color={Colors.BLACK} />
               </ButtonView>
             )}
-             {/* <AppButton onPress={()=>{
-          navigate(NavigationRoutes.AUTH_STACK.PAYMENT)
-        }} title='Temp'/> */}
           </View>
         </View>
 

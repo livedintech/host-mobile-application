@@ -19,21 +19,31 @@ export type FlatItem =
   | { type: 'header'; title: string; key: string; id: string }
   | { type: 'notification'; data: ApiNotificationItem; key: string; id: string };
 
-export function getIconForType(notificationType: string): string {
+export function getIconForType(notificationType: string, title?: string): string {
+  const t = (title ?? '').toLowerCase();
   switch (notificationType) {
-    case 'booking':
-    case 'booking_cancellation':
-    case 'booking_modification':
+    case 'booking_detail':
+      if (t.includes('check-in') || t.includes('check in')) return 'upcomingCheckIn';
+      if (t.includes('check-out') || t.includes('check out')) return 'upcomingCheckOut';
+      return 'calendarBooking';
     case 'booking_request':
-      return 'bookingIcon';
-    case 'task_update':
-      return 'taskIcon';
-    case 'smart_lock':
-      return 'lockIcon';
+      return 'calendarBooking';
+    case 'booking_modification':
+      return 'updateBooking';
+    case 'booking_cancellation':
+      return 'cancelBooking';
     case 'chats_view':
-      return 'messageIcon';
+      return 'chatMessage';
+    case 'task_update':
+      if (t.includes('done') || t.includes('complete')) return 'completeTask';
+      return 'newTaskAssign';
+    case 'smart_lock':
+      return 'unlockActivity';
+    case 'listing_export':
+    case 'listing_mapping':
+      return 'airbnbImportListing';
     default:
-      return 'bookingIcon';
+      return 'calendarBooking';
   }
 }
 
@@ -156,7 +166,7 @@ export default function useNotificationsContainer() {
   const markAllReadMutation = useMutation({
     mutationFn: markAllNotificationsRead,
     onSuccess: () => {
-       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
       queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
         QUERY_KEY,
         old => updateCacheItems(old, n => ({ ...n, status: 'read' })),
@@ -168,7 +178,7 @@ export default function useNotificationsContainer() {
   const deleteMutation = useMutation({
     mutationFn: deleteMobileNotification,
     onSuccess: (_, id) => {
-       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT] });
       queryClient.setQueryData<InfiniteData<GetNotificationsResponse>>(
         QUERY_KEY,
         old => updateCacheItems(
@@ -189,10 +199,16 @@ export default function useNotificationsContainer() {
 
     switch (type) {
       case 'booking':
+        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+        break;
       case 'booking_detail':
-      case 'booking_modification':
-      case 'booking_request':
         navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `O${id}` });
+        break;
+      case 'booking_modification':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `O${id}` });
+        break;
+      case 'booking_request':
+        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, { activeFilter: 'booking_request' });
         break;
       case 'booking_cancellation':
         break;

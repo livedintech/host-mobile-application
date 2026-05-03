@@ -873,6 +873,13 @@ const AppStack = () => {
             .default
         }
       />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW}
+        getComponent={() =>
+          require('@/screens/common/Payment/SubscriptionWebViewScreen').default
+        }
+      />
     </Stack.Navigator>
   );
 };

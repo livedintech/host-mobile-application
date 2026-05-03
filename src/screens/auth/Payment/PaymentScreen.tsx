@@ -15,6 +15,8 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import usePaymentContainer from './PaymentContainer';
 import Metrics from '@/utility/Metrics';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -31,6 +33,8 @@ const PaymentScreen = () => {
         currency,
         price,
         isLoadingPrice,
+        planId,
+        qtyFrom,
         features,
     } = usePaymentContainer();
 
@@ -217,7 +221,7 @@ const PaymentScreen = () => {
             <View style={styles.footer}>
                 <AppButton
                     title="Start 30-days free trial"
-                    onPress={() => { }}
+                    onPress={() => navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, { planId, qtyFrom })}
                     backgroundColor={Colors.MEDIUM_JUNGLE_GREEN}
                 />
                 <AppText

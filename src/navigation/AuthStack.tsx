@@ -153,6 +153,13 @@ const AuthStack = () => {
           require('@/screens/auth/HubspotThankyou/HubspotThankyouScreen').default
         }
       />
+      <Screen
+        options={{ header: () => <HeaderApp isGoBack/> }}
+        name={NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW}
+        getComponent={() =>
+          require('@/screens/common/Payment/SubscriptionWebViewScreen').default
+        }
+      />
     </Navigator>
   );
 };

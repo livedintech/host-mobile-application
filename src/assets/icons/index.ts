@@ -310,8 +310,28 @@ import trendDown from './trendDown.svg';
 import towerBuilding from './towerBuilding.svg';
 import noAccountFound from './noAccountFound.svg';
 import channelPerformanceIcon from './channelPerformanceIcon.svg';
+import chatMessage from './chatMessage.svg'
+import calendarBooking from './calendarBooking.svg'
+import updateBooking from './updateBooking.svg'
+import cancelBooking from './cancelBooking.svg'
+import upcomingCheckIn from './upcomingCheckIn.svg'
+import upcomingCheckOut from './upcomingCheckOut.svg'
+import airbnbImportListing from './airbnbImportListing.svg'
+import newTaskAssign from './newTaskAssign.svg'
+import completeTask from './completeTask.svg'
+import unlockActivity from './unlockActivity.svg'
 
 export const icons = {
+  chatMessage,
+  calendarBooking,
+  updateBooking,
+  cancelBooking,
+  upcomingCheckIn,
+  upcomingCheckOut,
+  airbnbImportListing,
+  newTaskAssign,
+  completeTask,
+  unlockActivity,
   wirelessinternet,
   noAccountFound,
   towerBuilding,

@@ -487,7 +487,7 @@ const ChatScreen = () => {
                 <MenuOptions
                   customStyles={{ optionsContainer: styles.popupMenu }}
                 >
-                  {data?.conversation?.formatted_booking_id == null &&
+                  {conversationData?.formatted_booking_id &&
                     conversationData?.booking_id && (
                       <MenuOption
                         style={styles.menuItem}
