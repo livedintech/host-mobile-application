@@ -77,7 +77,7 @@ const getPosition = (isOn: boolean) => {
     >
       <Animated.View style={[styles.switch, animatedContainerStyle]}>
         <Animated.View style={[styles.circle, animatedCircleStyle]}>
-          {isLoading && <ActivityIndicator size={20} color={Colors.TEAL_PRIMARY_ALT} />}
+          {isLoading && <ActivityIndicator size={20} color={Colors.MEDIUM_JUNGLE_GREEN} />}
         </Animated.View>
       </Animated.View>
     </ButtonView>

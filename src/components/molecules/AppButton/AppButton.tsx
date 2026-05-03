@@ -88,7 +88,7 @@ const AppButton = ({
             disabled={disabled || loading}
         >
             {loading ? (
-                <ActivityIndicator color={txtColor} />
+                <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} />
             ) : (
                 <>
                     {/* Left Icon */}

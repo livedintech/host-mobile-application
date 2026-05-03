@@ -40,7 +40,7 @@ const CreateListingStepOneLocationScreen = () => {
   if (isInitializing) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
         <Text style={styles.loaderText}>{t('app.location_step.loading')}</Text>
       </View>
     );
@@ -109,7 +109,7 @@ const CreateListingStepOneLocationScreen = () => {
             mb={25}
           >
             {isLocating
-              ? <ActivityIndicator size="small" color={Colors.BRUNSWICK_GREEN} />
+              ? <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
               : <Svgicons path="locateMeIcon" size={32} color={Colors.BRUNSWICK_GREEN} />
             }
           </ButtonView>

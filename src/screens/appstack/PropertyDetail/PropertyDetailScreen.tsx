@@ -89,7 +89,7 @@ const PropertyDetailScreen = () => {
       <View style={styles.iconCardTextCol}>
         <AppText text={title} fontSize={17} type="Medium" color={Colors.BLACK} />
         {subtitle ? (
-          <AppText text={subtitle} fontSize={13} color={Colors.DARK_CHARCOAL_OPACITY} mt={4} />
+          <AppText text={subtitle} fontSize={13} color={Colors.DARK_CHARCOAL_OPACITY} mt={4} numberOfLines={2} />
         ) : null}
       </View>
     </ButtonView>
@@ -320,7 +320,7 @@ const PropertyDetailScreen = () => {
                 title={t('app.property_detail.arrival_guide')}
                 subtitle={propertyData.guidelines?.arrivalGuide || 'Not provided'}
                 icon="wavingHand"
-                onPress={() => handleEditSection('Guidelines')}
+                onPress={() => handleEditSection('ArrivalGuide')}
               />
 
               {/* Property Guidelines */}

@@ -22,8 +22,9 @@ const otaAccountSchema = yup.object({
 type OtaAccountFormValues = { ota_account: string };
 
 export default function useGuidelinesContainer() {
-  const { params }     = useRoute<any>();
-  const hideWifiFields = params?.hideWifiFields;
+  const { params }       = useRoute<any>();
+  const hideWifiFields   = params?.hideWifiFields;
+  const guidelinesSection: 'arrival' | 'guidelines' | undefined = params?.guidelinesSection;
   const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user }       = useAuthStore();
 
@@ -81,9 +82,15 @@ export default function useGuidelinesContainer() {
 
   // ── Schema ────────────────────────────────────────────────────────────────
   const guidelinesSchema = yup.object().shape({
-    arrival_guide:         yup.string().required(i18n.t('app.validation.arrival_guide_required')),
-    property_rules:        yup.string().required(i18n.t('app.validation.property_rules_required')),
-    checkout_instructions: yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
+    arrival_guide: guidelinesSection === 'guidelines'
+      ? yup.string()
+      : yup.string().required(i18n.t('app.validation.arrival_guide_required')),
+    property_rules: guidelinesSection === 'arrival'
+      ? yup.string()
+      : yup.string().required(i18n.t('app.validation.property_rules_required')),
+    checkout_instructions: guidelinesSection === 'arrival'
+      ? yup.string()
+      : yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
     wifi_username:  hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_username_required')),
     wifi_password:  hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_password_required')),
     door_lock_code: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.door_lock_required')),
@@ -203,6 +210,7 @@ export default function useGuidelinesContainer() {
     checkoutInstructionsLength,
     isEdit,
     hideWifiFields,
+    guidelinesSection,
     lockOptions,
     // ✅ Export
     handleExport,

@@ -103,7 +103,7 @@ const CalendarScreen = ({ route }: any) => {
           <View style={styles.calendarWrapper}>
             {loadingDates ? (
               <View style={styles.calendarLoader}>
-                <ActivityIndicator size="large" color={FIGMA_TEAL} />
+                <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
                 <AppText
                   text={t('auth.hubspot_calendar.loading_dates')}
                   fontSize={13}
@@ -207,7 +207,7 @@ const CalendarScreen = ({ route }: any) => {
         {/* Slots */}
         {loadingSlots ? (
           <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={FIGMA_TEAL} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
           </View>
         ) : agentWithSlots?.slots.length ? (
           <BottomSheetScrollView

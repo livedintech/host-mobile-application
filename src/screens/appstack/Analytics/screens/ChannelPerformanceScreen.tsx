@@ -130,7 +130,7 @@ const ChannelPerformanceScreen = () => {
 
           {isLoadingAnalyticsChannelChart ? (
             <View style={styles.loader}>
-              <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+              <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
             </View>
           ) : (
             <AnalyticsChart

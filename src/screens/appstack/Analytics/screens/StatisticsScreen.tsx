@@ -85,7 +85,7 @@ const StatisticsScreen = () => {
           onRefresh={onHandleRefresh}
           skeletonComponent={
             <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+              <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
             </View>
           }
         >

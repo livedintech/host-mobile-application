@@ -19,13 +19,14 @@ import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const pricingSchema = yup.object().shape({
   currency: yup.string().required(i18n.t('app.set_pricing.validation_currency_required')),
-  weekday_price: yup.string().required(i18n.t('app.set_pricing.validation_weekday_required')),
-  weekend_price: yup.string().required(i18n.t('app.set_pricing.validation_weekend_required')),
+  weekday_price: yup.string().required(i18n.t('app.set_pricing.validation_weekday_required')).min(1, i18n.t('app.set_pricing.validation_weekday_required')),
+  weekend_price: yup.string().required(i18n.t('app.set_pricing.validation_weekend_required')).min(1, i18n.t('app.set_pricing.validation_weekend_required')),
   tax_vat: yup.string().optional(),
   airbnb_markup: yup.string().optional(),
   gathern_markup: yup.string().optional(),
   booking_com_markup: yup.string().optional(),
   extra_guest_fee: yup.string().optional(),
+  cleaning_fee: yup.string().optional(),
 });
 
 export type PricingFormValues = yup.InferType<typeof pricingSchema>;
@@ -37,10 +38,11 @@ type NormalizedPrices = {
   gathern_markup: string;
   booking_com_markup: string;
   extra_guest_fee: string;
+  cleaning_fee: string;
 };
 
 const toStringSafe = (val: any): string =>
-  val === null || val === undefined ? '' : String(val);
+  val === null || val === undefined || val === 0 || val === '0' ? '' : String(val);
 
 const normalizePrices = (listing: any): NormalizedPrices => {
   const prices = listing?.prices ?? {};
@@ -69,6 +71,8 @@ const normalizePrices = (listing: any): NormalizedPrices => {
     extra_guest_fee: toStringSafe(
       prices.extra_guest_fee ?? prices.price_per_extra_person
     ),
+
+    cleaning_fee: toStringSafe(prices.cleaning_fee),
   };
 };
 
@@ -151,6 +155,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
       gathern_markup: normalized?.gathern_markup ?? '',
       booking_com_markup: normalized?.booking_com_markup ?? '',
       extra_guest_fee: normalized?.extra_guest_fee ?? '',
+      cleaning_fee: normalized?.cleaning_fee ?? '',
     },
   });
 
@@ -171,7 +176,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
       gathern_markup: Number(data.gathern_markup),     // 🆕 NEW
       bookingCom_markup: Number(data.booking_com_markup), // 🆕 NEW
       // swagger existing fields — default 0
-      cleaning_fee: 0,
+      cleaning_fee: Number(data.cleaning_fee),
       security_deposit: 0,
       discount: 0,
       airbnb_discount: 0,

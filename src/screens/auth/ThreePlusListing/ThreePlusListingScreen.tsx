@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '@/theme/colors';
 import { WebView } from 'react-native-webview';
 import { useTranslation } from 'react-i18next';
 
@@ -83,7 +84,7 @@ export default function ThreePlusListingScreen({ info, onBooked }: Props) {
       <View style={styles.webviewContainer}>
         {loading && (
           <View style={styles.loader}>
-            <ActivityIndicator size="large" color={BRAND} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
             <Text style={styles.loaderText}>{t('auth.three_plus_listing.loading')}</Text>
           </View>
         )}

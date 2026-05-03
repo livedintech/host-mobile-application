@@ -45,7 +45,7 @@ console.log('qtyFrom',qtyFrom);
       />
       {loading && (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
         </View>
       )}
     </View>

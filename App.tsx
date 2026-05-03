@@ -34,7 +34,7 @@ import { userEventService } from '@/services/userEventService';
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState<string | null>(null);
-  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK); // Splash/Onboarding ke liye pehle BLACK
+  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK);
 
   useEffect(() => {
     const savedLang = getStoredLanguage();
@@ -77,6 +77,7 @@ const App = () => {
       if (currentRouteName) {
         userEventService.logEvent('screen_view', currentRouteName);
       }
+
     } catch (e) { }
   };
 

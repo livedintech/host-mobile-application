@@ -246,7 +246,7 @@ const ManageBookingScreen = () => {
           contentContainerStyle={styles.scrollContent}
         >
           {isLoading ? (
-            <ActivityIndicator size="large" color={Colors.TEAL_PRIMARY_ALT} style={styles.loader} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} style={styles.loader} />
           ) : hasAccounts ? (
             <FlatList
               data={currentTabAccounts}

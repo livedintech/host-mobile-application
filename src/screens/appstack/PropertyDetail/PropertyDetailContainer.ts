@@ -259,8 +259,11 @@ export default function usePropertyDetailContainer() {
       case 'WifiAndDoorLock': // ✅ new case
         navigate(NavigationRoutes.APP_STACK.WIFI_AND_DOOR_LOCK_SCREEN, { paramData: data?.data });
         break;
+      case 'ArrivalGuide':
+        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true, guidelinesSection: 'arrival' });
+        break;
       case 'Guidelines':
-        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true });
+        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true, guidelinesSection: 'guidelines' });
         break;
       case 'Policies':
         navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES, { paramData: data?.data });
@@ -297,10 +300,9 @@ export default function usePropertyDetailContainer() {
   const handleMenuAction = (action: string) => {
     switch (action) {
       case 'task':
-        navigate(NavigationRoutes.APP_STACK.CREATE_TASK, {
-          listing_id: data?.data?.listing?.id,
-          fromChat: false,
-          conversation_id: null,
+        navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+          screen: NavigationRoutes.APP_STACK.TASK,
+          params: { listing_id: data?.data?.listing?.id },
         });
         break;
       case 'channel':

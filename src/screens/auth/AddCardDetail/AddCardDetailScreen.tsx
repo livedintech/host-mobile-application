@@ -36,7 +36,7 @@ const AddCardDetailScreen = () => {
 
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.INDIAN_RED} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
         <AppText
           text={loadingText}
           mt={10}
