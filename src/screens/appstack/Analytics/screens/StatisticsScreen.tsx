@@ -119,7 +119,7 @@ const StatisticsScreen = () => {
               value={`SAR ${formatNumber(adr.value)}`}
               subText={t('app.analytics.vs_last_month')}
               trend={adr.delta_pct}
-              icon="avg_stay_revenue"
+              icon="adr"
             />
             <StatCard
               title={t('app.analytics.avg_length_stay')}

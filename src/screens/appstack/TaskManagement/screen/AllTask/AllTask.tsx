@@ -63,7 +63,7 @@ const AllTask = () => {
   const { resetTaskStore } = useTaskStore();
 
   const filterSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['60%', '80%'], []);
+  const snapPoints = useMemo(() => ['60%'], []);
 
   const {
     control,
@@ -277,7 +277,7 @@ const AllTask = () => {
               resetTaskStore();
               navigate(NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN);
             }}
-            backgroundColor={Colors.WHITE}
+            // backgroundColor={Colors.WHITE}
             mb={11}
           />
 

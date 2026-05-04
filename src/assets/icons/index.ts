@@ -320,8 +320,10 @@ import airbnbImportListing from './airbnbImportListing.svg'
 import newTaskAssign from './newTaskAssign.svg'
 import completeTask from './completeTask.svg'
 import unlockActivity from './unlockActivity.svg'
+import chevronLeft from './chevronLeft.svg'
 
 export const icons = {
+  chevronLeft,
   chatMessage,
   calendarBooking,
   updateBooking,

@@ -60,5 +60,6 @@ export const Colors = {
   TRANSLUCENT_WHITE_C9: '#FDFDFDC9',
   PRIMARY_RED: '#E20000',
   DARK_1C: '#1c1c1c',
-  EERIE_BLACK:'#1A1A1A'
+  EERIE_BLACK:'#1A1A1A',
+  GRAY_HINT:'#EEF5F3'
 };

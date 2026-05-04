@@ -6,8 +6,9 @@ import {
     TouchableOpacity, Pressable,
     LayoutAnimation,
     Platform,
-    UIManager
+    UIManager,
 } from 'react-native';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -36,6 +37,7 @@ const PaymentScreen = () => {
         planId,
         qtyFrom,
         features,
+        refetch,
     } = usePaymentContainer();
 
     const toggleExpand = () => {
@@ -45,9 +47,10 @@ const PaymentScreen = () => {
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
+            <RefreshableScrollView
                 contentContainerStyle={styles.scrollBody}
+                refreshing={isLoadingPrice}
+                onRefresh={refetch}
             >
                 {/* Title */}
                 <View style={styles.titleSection}>
@@ -215,7 +218,7 @@ const PaymentScreen = () => {
                         ))}
                     </ScrollView>
                 </View>
-            </ScrollView>
+            </RefreshableScrollView>
 
             {/* Footer */}
             <View style={styles.footer}>

@@ -147,10 +147,14 @@ const NewLayout = ({
   updatesItems,
   onNavigate,
   t,
-}: any) => (
+}: any) => {
+  const { i18n: localI18n } = useTranslation();
+  const isArabic = localI18n.language === 'ar';
+
+  return (
   <View>
-    <View style={styles.newGreetingContainer}>
-      <Text style={styles.newGreetingText}>
+    <View style={[styles.newGreetingContainer, { paddingStart: 0, paddingEnd: 0, paddingLeft: isArabic ? 0 : Metrics.scale(10), paddingRight: isArabic ? Metrics.scale(10) : 0 }]}>
+      <Text style={[styles.newGreetingText, { textAlign: isArabic ? 'right' : 'left' }]}>
         {t('app.home.greeting_hi')}{' '}
         <Text style={styles.newGreetingName}>{user?.name || 'Tooba'},</Text>
         {' '}{t('app.home.greeting_new_end')}
@@ -191,7 +195,7 @@ const NewLayout = ({
               mt={2}
             />
           </View>
-          <Svgicons path="chevronRight" size={16} />
+          <Svgicons path={isArabic ? 'chevronLeft' : 'chevronRight'} size={16} />
         </ButtonView>
       ))}
     </GlassCard>
@@ -230,19 +234,21 @@ const NewLayout = ({
               mt={2}
             />
           </View>
-          <Svgicons path="chevronRight" size={16} />
+          <Svgicons path={isArabic ? 'chevronLeft' : 'chevronRight'} size={16} />
         </ButtonView>
       ))}
     </GlassCard>
   </View>
-);
+  );
+};
 
 // ==========================================
 // Main Screen Component
 // ==========================================
 
 const HomeScreen = ({ navigation }: any) => {
-  const { t } = useTranslation();
+  const { t, i18n: i18nInstance } = useTranslation();
+  const isRTL = i18nInstance.language === 'ar';
   const { user } = useAuthStore();
   const {
     onConnect,
@@ -440,6 +446,7 @@ const HomeScreen = ({ navigation }: any) => {
               updatesItems={updatesItems}
               onNavigate={handleNavigation}
               t={t}
+              isRTL={isRTL}
             />
           ) : (
             <OldLayout
@@ -585,8 +592,8 @@ const styles = StyleSheet.create({
   // New Layout Styles
   newGreetingContainer: {
     marginTop: 30,
-    marginBottom: 0,
-    paddingLeft: Metrics.scale(10),
+    marginBottom: Metrics.verticalScale(30),
+    paddingStart: Metrics.scale(10),
   },
   newGreetingText: { fontSize: 24, color: '#1A1A1A', lineHeight: 32 },
   newGreetingName: { color: '#00A68A', fontWeight: 'bold' },

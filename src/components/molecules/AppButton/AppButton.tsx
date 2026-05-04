@@ -1,7 +1,16 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, ViewStyle, TextStyle, View, StyleProp } from 'react-native';
+import {
+    ActivityIndicator,
+    StyleSheet,
+    ViewStyle,
+    TextStyle,
+    View,
+    StyleProp,
+    Platform,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from '@react-native-community/blur';
 import { ButtonProps } from './ButtonProps';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
@@ -13,8 +22,8 @@ type ButtonVariant = 'primary' | 'secondary';
 
 const AppButton = ({
     title,
-    leftIcon,        // 👈 Left Icon path
-    rightIcon,       // 👈 Right Icon path
+    leftIcon,
+    rightIcon,
     iconSize = 18,
     fontSize = 16,
     textTransform,
@@ -29,7 +38,7 @@ const AppButton = ({
     textStyle,
     m, mt, mb, ml, mr, mx, my,
     p, pt, pb, pl, pr, px, py,
-    type = 'Regular'
+    type = 'Regular',
 }: ButtonProps & {
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
@@ -38,42 +47,76 @@ const AppButton = ({
     rightIcon?: string;
     iconSize?: number;
 }) => {
-    const spacingStyles = {
-        margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
-        marginTop: mt !== undefined ? Metrics.verticalScale(mt) : my !== undefined ? Metrics.verticalScale(my) : undefined,
-        marginBottom: mb !== undefined ? Metrics.verticalScale(mb) : my !== undefined ? Metrics.verticalScale(my) : undefined,
-        marginLeft: ml !== undefined ? Metrics.scale(ml) : mx !== undefined ? Metrics.scale(mx) : undefined,
-        marginRight: mr !== undefined ? Metrics.scale(mr) : mx !== undefined ? Metrics.scale(mx) : undefined,
 
-        padding: p !== undefined ? Metrics.verticalScale(p) : undefined,
-        paddingTop: pt !== undefined ? Metrics.verticalScale(pt) : py !== undefined ? Metrics.verticalScale(py) : undefined,
+    // ─── Spacing ────────────────────────────────────────────────────────────────
+    const spacingStyles = {
+        margin:        m  !== undefined ? Metrics.verticalScale(m)  : undefined,
+        marginTop:     mt !== undefined ? Metrics.verticalScale(mt) : my !== undefined ? Metrics.verticalScale(my) : undefined,
+        marginBottom:  mb !== undefined ? Metrics.verticalScale(mb) : my !== undefined ? Metrics.verticalScale(my) : undefined,
+        marginLeft:    ml !== undefined ? Metrics.scale(ml)         : mx !== undefined ? Metrics.scale(mx)         : undefined,
+        marginRight:   mr !== undefined ? Metrics.scale(mr)         : mx !== undefined ? Metrics.scale(mx)         : undefined,
+        padding:       p  !== undefined ? Metrics.verticalScale(p)  : undefined,
+        paddingTop:    pt !== undefined ? Metrics.verticalScale(pt) : py !== undefined ? Metrics.verticalScale(py) : undefined,
         paddingBottom: pb !== undefined ? Metrics.verticalScale(pb) : py !== undefined ? Metrics.verticalScale(py) : undefined,
-        paddingLeft: pl !== undefined ? Metrics.scale(pl) : px !== undefined ? Metrics.scale(px) : undefined,
-        paddingRight: pr !== undefined ? Metrics.scale(pr) : px !== undefined ? Metrics.scale(px) : undefined,
+        paddingLeft:   pl !== undefined ? Metrics.scale(pl)         : px !== undefined ? Metrics.scale(px)         : undefined,
+        paddingRight:  pr !== undefined ? Metrics.scale(pr)         : px !== undefined ? Metrics.scale(px)         : undefined,
     };
 
     const isPrimary = variant === 'primary';
-    const txtColor = color || (disabled ? '#0000005E' : isPrimary ? Colors.WHITE : Colors.BLACK);
 
-    const renderGradientBorder = () => (
+    const txtColor = color || (
+        disabled  ? '#0000005E' :
+        isPrimary ? Colors.WHITE :
+                    '#222222'
+    );
+
+    // ─── Gradient border ─────────────────────────────────────────────────────────
+    const renderGradientBorder = (isLight = false) => (
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
             <MaskedView
                 style={StyleSheet.absoluteFill}
                 maskElement={
-                    <View style={{ flex: 1, backgroundColor: 'transparent', borderColor: 'white', borderWidth: 1, borderRadius: borderRadius }} />
+                    <View
+                        style={{
+                            flex: 1,
+                            backgroundColor: 'transparent',
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            borderRadius,
+                        }}
+                    />
                 }
             >
-                <LinearGradient
-                    colors={['rgba(128, 128, 128, 0.66)', 'rgba(255, 255, 255, 0.66)', 'rgba(128, 128, 128, 0.66)']}
-                    locations={[0, 0.5356, 1]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                />
+                {isLight ? (
+                    <LinearGradient
+                        colors={[
+                            'rgba(255, 255, 255, 0.90)',
+                            'rgba(180, 180, 180, 0.66)',
+                            'rgba(140, 140, 140, 0.50)',
+                        ]}
+                        locations={[0, 0.5356, 1]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                ) : (
+                    <LinearGradient
+                        colors={[
+                            'rgba(128, 128, 128, 0.66)',
+                            'rgba(255, 255, 255, 0.66)',
+                            'rgba(128, 128, 128, 0.66)',
+                        ]}
+                        locations={[0, 0.5356, 1]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                )}
             </MaskedView>
         </View>
     );
 
+    // ─── Button inner content ────────────────────────────────────────────────────
     const renderButtonInner = (innerBgColor: string) => (
         <ButtonView
             activeOpacity={0.1}
@@ -91,7 +134,6 @@ const AppButton = ({
                 <ActivityIndicator color={Colors.WHITE} />
             ) : (
                 <>
-                    {/* Left Icon */}
                     {leftIcon && (
                         <View style={{ marginRight: 8 }}>
                             <Svgicons path={leftIcon} size={iconSize} color={txtColor} />
@@ -101,14 +143,13 @@ const AppButton = ({
                     <AppText
                         text={title}
                         fontSize={Metrics.generatedFontSize(fontSize)}
-                        textAlign='center'
+                        textAlign="center"
                         color={txtColor}
                         textTransform={textTransform}
                         type={type}
                         style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
                     />
 
-                    {/* Right Icon */}
                     {rightIcon && (
                         <View style={{ marginLeft: 8 }}>
                             <Svgicons path={rightIcon} size={iconSize} color={txtColor} />
@@ -119,28 +160,104 @@ const AppButton = ({
         </ButtonView>
     );
 
+    // ─── PRIMARY DISABLED ────────────────────────────────────────────────────────
     if (isPrimary && disabled) {
         return (
             <View style={[spacingStyles, { borderRadius }]}>
-                {renderGradientBorder()}
+                {renderGradientBorder(false)}
                 {renderButtonInner(Colors.TRANSPARENT)}
             </View>
         );
     }
 
+    // ─── SECONDARY — Frosted Glass with FIXED borderRadius ──────────────────────
+    //
+    //  FIX: BlurView does NOT respect borderRadius on Android.
+    //  Solution:
+    //   - Outer View has borderRadius + overflow: 'hidden'  ← clips everything
+    //   - BlurView fills absoluteFill inside clipped container
+    //   - No borderRadius needed on BlurView itself
+    //
     if (!isPrimary) {
         return (
             <View style={[spacingStyles]}>
+
+                {/* ── OUTERMOST: gradient border wrapper ── */}
                 <View style={{ borderRadius, overflow: 'hidden' }}>
-                    {renderGradientBorder()}
-                    <View style={{ margin: 1 }}>
-                        {renderButtonInner(backgroundColor || Colors.TRANSPARENT)}
+                    {renderGradientBorder(true)}
+
+                    {/* ── 1px inset for border visibility ── */}
+                    {/* KEY FIX: borderRadius + overflow:'hidden' here clips BlurView correctly */}
+                    <View style={{
+                        margin: 1,
+                        borderRadius,
+                        overflow: 'hidden',   // ← THIS clips BlurView to pill shape
+                    }}>
+
+                        {/* ── BlurView: fills parent, clipped by overflow:hidden above ──
+                            No borderRadius on BlurView — parent handles clipping         */}
+                        <BlurView
+                            style={StyleSheet.absoluteFill}
+                            blurType="light"
+                            blurAmount={10}
+                            reducedTransparencyFallbackColor="rgba(255,255,255,0.25)"
+                        />
+
+                        {/* Layer 1 ── Frost: 18 — white tint over blur */}
+                        <View
+                            style={[
+                                StyleSheet.absoluteFill,
+                                { backgroundColor: 'rgba(255, 255, 255, 0.18)' },
+                            ]}
+                        />
+
+                        {/* Layer 2 ── Light: -45°, 80% + Depth: 24 */}
+                        <LinearGradient
+                            colors={[
+                                'rgba(255, 255, 255, 0.38)',
+                                'rgba(255, 255, 255, 0.08)',
+                                'rgba(0,   0,   0,   0.04)',
+                            ]}
+                            locations={[0, 0.5, 1]}
+                            start={{ x: 0.15, y: 0 }}
+                            end={{ x: 0.85, y: 1 }}
+                            style={StyleSheet.absoluteFill}
+                        />
+
+                        {/* Layer 3 ── Refraction: 80 — top edge bright line */}
+                        <LinearGradient
+                            colors={[
+                                'rgba(255, 255, 255, 0.70)',
+                                'rgba(255, 255, 255, 0.00)',
+                            ]}
+                            locations={[0, 0.10]}
+                            start={{ x: 0.5, y: 0 }}
+                            end={{ x: 0.5, y: 1 }}
+                            style={StyleSheet.absoluteFill}
+                        />
+
+                        {/* Layer 4 ── Dispersion: 50 + Splay: 14 */}
+                        <LinearGradient
+                            colors={[
+                                'rgba(180, 220, 255, 0.07)',
+                                'rgba(255, 255, 255, 0.00)',
+                                'rgba(220, 190, 255, 0.07)',
+                            ]}
+                            locations={[0, 0.5, 1]}
+                            start={{ x: 0, y: 0.5 }}
+                            end={{ x: 1, y: 0.5 }}
+                            style={StyleSheet.absoluteFill}
+                        />
+
+                        {/* Button content */}
+                        {renderButtonInner(Colors.TRANSPARENT)}
                     </View>
                 </View>
             </View>
         );
     }
 
+    // ─── PRIMARY (enabled) ───────────────────────────────────────────────────────
     return renderButtonInner(backgroundColor || Colors.MEDIUM_JUNGLE_GREEN);
 };
 
@@ -151,7 +268,7 @@ const styles = StyleSheet.create({
         paddingVertical: Metrics.verticalScale(14),
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: Metrics.scale(15), // Basic horizontal padding
+        paddingHorizontal: Metrics.scale(15),
     },
     text: { fontWeight: '500' },
 });

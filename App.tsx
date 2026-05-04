@@ -48,8 +48,8 @@ const App = () => {
   const setupNotifications = async () => {
     await NotificationService.requestUserPermission();
     await NotificationService.createNotificationListeners();
-      const token = await NotificationService.getToken();
-  console.log('🔔 FCM Token:', token);
+    const token = await NotificationService.getToken();
+    console.log('🔔 FCM Token:', token);
   };
 
   const getActiveRouteName = (state: any): string => {
@@ -69,7 +69,7 @@ const App = () => {
       const onboardingRoute = NavigationRoutes.AUTH_STACK.ON_BOARDING;
 
       if (currentRouteName === onboardingRoute) {
-        setSafeAreaBg(Colors.BLACK);
+        setSafeAreaBg(Colors.GRAY_HINT);
       } else {
         setSafeAreaBg(Colors.WHITE);
       }
@@ -171,35 +171,34 @@ const App = () => {
 
   return (
     <I18nextProvider i18n={i18n}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <KeyboardProvider>
-            <BottomSheetModalProvider>
-              <NavigationContainer
-                ref={navigationRef}
-                theme={MyTheme}
-                linking={linking}
-                onStateChange={handleNavigationStateChange}
-              >
-                <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
-                  <StatusBar
-                    barStyle={safeAreaBg === Colors.BLACK ? 'light-content' : 'dark-content'}
-                    backgroundColor={safeAreaBg}
-                    translucent={safeAreaBg === Colors.BLACK} 
-                  />
-                  <MenuProvider skipInstanceCheck>
-                    <StackNavigator />
-                    <AppUpdateCheck />
-                  </MenuProvider>
-                  <Toast config={toastConfig} />
-                </SafeAreaView>
-              </NavigationContainer>
-            </BottomSheetModalProvider>
-          </KeyboardProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <KeyboardProvider>
+              <BottomSheetModalProvider>
+                <NavigationContainer
+                  ref={navigationRef}
+                  theme={MyTheme}
+                  linking={linking}
+                  onStateChange={handleNavigationStateChange}>
+                  <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
+                    <StatusBar
+                      barStyle={safeAreaBg === Colors.BLACK ? 'light-content' : 'dark-content'}
+                      backgroundColor={safeAreaBg}
+                      translucent={safeAreaBg === Colors.BLACK}
+                    />
+                    <MenuProvider skipInstanceCheck>
+                      <StackNavigator />
+                      <AppUpdateCheck />
+                    </MenuProvider>
+                    <Toast config={toastConfig} />
+                  </SafeAreaView>
+                </NavigationContainer>
+              </BottomSheetModalProvider>
+            </KeyboardProvider>
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </I18nextProvider>
   );
 };
