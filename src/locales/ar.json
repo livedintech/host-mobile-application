@@ -1243,7 +1243,13 @@
       "pre_approve_title": "موافقة مسبقة على الاستفسار",
       "pre_approve_placeholder": "اكتب رسالة الموافقة المسبقة...",
       "send_approval": "إرسال الموافقة",
-      "pre_approved_success": "تمت الموافقة المسبقة على الاستفسار بنجاح"
+      "pre_approved_success": "تمت الموافقة المسبقة على الاستفسار بنجاح",
+      "accept_btn": "قبول",
+      "decline_btn": "رفض",
+      "booking_accepted": "تم قبول الحجز",
+      "booking_accepted_desc": "لقد قمت بقبول طلب الحجز الخاص بـ {{name}}",
+      "action_failed": "فشل الإجراء",
+      "accept_request_failed": "فشل في قبول الطلب"
     },
     "no_review": {
       "title": "لا توجد تقييمات بعد",

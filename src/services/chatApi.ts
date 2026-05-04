@@ -272,3 +272,23 @@ export const inquiryPreApproveApi = async (payload: inquiryPayloadType) => {
     }
     throw response;
 };
+
+
+
+export const submitBookingRequestApi = async (payload: {
+  thread_id: string | number;
+  accept: boolean;
+  reason: string | null;
+  decline_message_to_guest: string | null;
+  decline_message_to_airbnb: string | null;
+}) => {
+  const url = SERVICE_CONFIG_URLS.APP.BOOKING_REQUEST_SUBMIT;
+
+  const { ok, data, response } = await apiService.post(url, payload);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  throw response || data;
+};

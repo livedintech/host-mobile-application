@@ -1,6 +1,16 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Keyboard, Image, TextInput, Platform, Animated, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Keyboard,
+  Image,
+  TextInput,
+  Platform,
+  Animated,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -93,7 +103,7 @@ const processMessagesWithTimeLabels = (
     const showLabel =
       !olderMessage ||
       dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
-      dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
+        dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
 
     return {
       ...message,
@@ -515,8 +525,7 @@ const ChatScreen = () => {
                     style={styles.menuItem}
                     onSelect={() => {
                       navigate(NavigationRoutes.APP_STACK.LISTING, {
-                        listing_id:
-                          conversationData?.listing_id || listing_id,
+                        listing_id: conversationData?.listing_id || listing_id,
                       });
                     }}
                   >
@@ -538,7 +547,8 @@ const ChatScreen = () => {
                           assigned_to_ids: assigned_to_ids,
                           listing_id:
                             conversationData?.listing_id || listing_id,
-                          propertyName: conversationData?.listing.be_listing_name
+                          propertyName:
+                            conversationData?.listing.be_listing_name,
                         });
                       }}
                     >
@@ -633,7 +643,10 @@ const ChatScreen = () => {
                     }}
                   >
                     <View style={styles.menuTextContainer}>
-                      <AppText text={t('app.chat_detail.reply')} fontSize={13} />
+                      <AppText
+                        text={t('app.chat_detail.reply')}
+                        fontSize={13}
+                      />
                     </View>
                     <Svgicons path="chatIcon" size={16} />
                   </AppPressable>
@@ -670,7 +683,10 @@ const ChatScreen = () => {
                     }}
                   >
                     <View style={styles.menuTextContainer}>
-                      <AppText text={t('app.chat_detail.create_task')} fontSize={13} />
+                      <AppText
+                        text={t('app.chat_detail.create_task')}
+                        fontSize={13}
+                      />
                     </View>
                     <Svgicons path="taskIcon" size={16} />
                   </AppPressable>
@@ -759,7 +775,9 @@ const ChatScreen = () => {
               <View style={styles.replyingIndicatorContainer}>
                 <View style={styles.replyingIndicatorContent}>
                   <AppText
-                    text={t('app.shared.replying_to', { name: replyingToMessage.user.name })}
+                    text={t('app.shared.replying_to', {
+                      name: replyingToMessage.user.name,
+                    })}
                     fontSize={12}
                     type="Bold"
                     color={Colors.BRUNSWICK_GREEN}
@@ -792,16 +810,21 @@ const ChatScreen = () => {
                   styles.plusAction,
                   {
                     /* UPDATED LOGIC HERE */
-                    backgroundColor: (showSavedReplies && inputText.length === 0)
-                      ? Colors.TEAL_PRIMARY_ALT
-                      : Colors.TRANSPARENT,
+                    backgroundColor:
+                      showSavedReplies && inputText.length === 0
+                        ? Colors.TEAL_PRIMARY_ALT
+                        : Colors.TRANSPARENT,
                   },
                 ]}
               >
                 <GlassCard style={styles.plusAction}>
                   <Svgicons
                     /* UPDATED LOGIC HERE AS WELL */
-                    path={(showSavedReplies && inputText.length === 0) ? 'chatIconWhite' : 'chatIcon'}
+                    path={
+                      showSavedReplies && inputText.length === 0
+                        ? 'chatIconWhite'
+                        : 'chatIcon'
+                    }
                     size={20}
                   />
                 </GlassCard>
@@ -941,6 +964,21 @@ const ChatScreen = () => {
             <InquiryModal
               visible={data?.conversation?.thread_type === 'inquiry'}
               inquiryId={data?.conversation?.id}
+              description={`${formatDateRange(
+                data?.conversation?.arrival_date,
+                data?.conversation?.departure_date,
+              )}, ${data?.conversation?.number_of_guests} guests`}
+              name={data?.conversation?.name}
+            />
+            <InquiryModal
+              visible={
+                data?.conversation?.thread_type === 'reservation_request'
+              }
+              inquiryId={data?.conversation?.id}
+              threadType={data?.conversation?.thread_type}
+              guestName={data?.conversation?.name}
+              startDate={data?.conversation?.arrival_date}
+              endDate={data?.conversation?.departure_date}
               description={`${formatDateRange(
                 data?.conversation?.arrival_date,
                 data?.conversation?.departure_date,
