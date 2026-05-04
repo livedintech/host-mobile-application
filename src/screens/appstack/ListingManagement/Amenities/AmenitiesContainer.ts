@@ -61,7 +61,7 @@ export default function useAmenitiesContainer() {
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
     .map((item: any) => ({
-      label: 'Airbnb',
+      label: `Airbnb - ${item?.id}`,
       value: item.ch_channel_id,
     }));
 
@@ -88,7 +88,7 @@ export default function useAmenitiesContainer() {
   };
 
   // ── Fetch amenities list ──────────────────────────────────────────────────
-  const { data: rawAmenities = [], isLoading: isLoadingAmenities } = useQuery({
+  const { data: rawAmenities = [], isLoading: isLoadingAmenities,refetch } = useQuery({
     queryKey: [STORAGE_CONST.AMENITIES],
     queryFn:  getAmenitiesApi,
   });
@@ -137,8 +137,12 @@ export default function useAmenitiesContainer() {
     });
   };
 
+  const amenitiesList = [...rawAmenities].sort((a: any, b: any) =>
+    a.label.localeCompare(b.label),
+  );
+
   return {
-    amenitiesList:     rawAmenities,
+    amenitiesList,
     selectedAmenities,
     toggleAmenity,
     onNext,
@@ -156,5 +160,6 @@ export default function useAmenitiesContainer() {
     handleOtaSubmit,
     listingOptions,
     isPendingExporting,
+    refetch
   };
 }

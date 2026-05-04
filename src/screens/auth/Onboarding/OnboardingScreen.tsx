@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, Image, Text, I18nManager } from 'react-native';
+import { View, StyleSheet, FlatList, Image, I18nManager } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -30,13 +30,13 @@ const OnboardingScreen = () => {
         const parts = title.split(titleHighlight);
 
         return (
-            <Text style={styles.title}>
+            <AppText type='Bold' fontSize={28} color='#1A2421' textAlign='center' style={styles.title}>
                 {parts[0]}
-                <Text style={[styles.titleHighlight, isHighlightItalic && styles.titleItalic]}>
+                <AppText type='Bold' fontSize={28} color={TEAL} italic={isHighlightItalic}>
                     {titleHighlight}
-                </Text>
+                </AppText>
                 {parts[1] ?? ''}
-            </Text>
+            </AppText>
         );
     };
 
@@ -146,19 +146,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        fontFamily: 'RethinkSans-Bold',
-        fontSize: Metrics.scale(28),
-        lineHeight: Metrics.scale(38),
-        color: '#1A2421',
-        textAlign: 'center',
         marginBottom: Metrics.verticalScale(12),
-    },
-    titleHighlight: {
-        fontFamily: 'RethinkSans-Bold',
-        color: TEAL,
-    },
-    titleItalic: {
-        fontFamily: 'RethinkSans-BoldItalic',
     },
     subtitle: {
         marginTop: Metrics.verticalScale(4),

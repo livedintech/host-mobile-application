@@ -8,7 +8,6 @@ import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import InputField from '@/components/molecules/Input/InputField';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import CountryPickerField from '@/components/molecules/Input/CountryPickerField';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 
 import { Colors } from '@/theme/colors';
@@ -24,17 +23,17 @@ const HubspotDetailFormScreen = () => {
     errors,
     handleSubmit,
     onSubmit,
-    selectedCountry,
-    selectedCity,
-    selectedDistrict,
-    cities,
-    districts,
+    selectedCountryId,
+    selectedStateId,
+    selectedCityId,
+    countriesOptions,
+    statesOptions,
+    citiesOptions,
+    districtsOptions,
     onCountrySelect,
+    onStateSelect,
     onCitySelect,
   } = useHubspotDetailFormContainer();
-
-  const cityData = (cities || []).map((city) => ({ label: city, value: city }));
-  const districtData = (districts || []).map((d) => ({ label: d, value: d }));
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -79,59 +78,52 @@ const HubspotDetailFormScreen = () => {
               keyboardType="email-address"
             />
 
-            <CountryPickerField
+            <DropdownField
               name="country"
               control={control}
               errors={errors}
               label={t('auth.hubspot_form.country_label')}
               placeholder={t('auth.hubspot_form.country_placeholder')}
-              onSelect={(country) => onCountrySelect(country)}
+              data={countriesOptions}
+              onSelect={onCountrySelect}
             />
 
             <DropdownField
-              key={`city-${selectedCountry}`}
+              key={`state-${selectedCountryId}`}
+              name="state"
+              control={control}
+              errors={errors}
+              label={t('auth.hubspot_form.state_label')}
+              placeholder={t('auth.hubspot_form.state_placeholder')}
+              data={statesOptions}
+              disabled={!selectedCountryId}
+              onSelect={onStateSelect}
+            />
+
+            <DropdownField
+              key={`city-${selectedStateId}`}
               name="city"
               control={control}
               errors={errors}
               label={t('auth.hubspot_form.city_label')}
               placeholder={t('auth.hubspot_form.city_placeholder')}
-              data={cityData}
-              disabled={!selectedCountry}
-              onSelect={(item) => onCitySelect(item.value)}
+              data={citiesOptions}
+              disabled={!selectedStateId}
+              onSelect={onCitySelect}
               dropdownPosition="top"
             />
 
-            {selectedCity === 'Other' && (
-              <InputField
-                name="otherCity"
-                control={control}
-                errors={errors}
-                label={t('auth.hubspot_form.specify_city_label')}
-                placeholder={t('auth.hubspot_form.specify_city_placeholder')}
-              />
-            )}
-
             <DropdownField
-              key={`district-${selectedCity}`}
+              key={`district-${selectedCityId}`}
               name="district"
               control={control}
               errors={errors}
               label={t('auth.hubspot_form.district_label')}
               placeholder={t('auth.hubspot_form.district_placeholder')}
-              data={districtData}
-              disabled={!selectedCity}
+              data={districtsOptions}
+              disabled={!selectedCityId}
               dropdownPosition="top"
             />
-
-            {selectedDistrict === 'Other' && (
-              <InputField
-                name="otherDistrict"
-                control={control}
-                errors={errors}
-                label={t('auth.hubspot_form.specify_district_label')}
-                placeholder={t('auth.hubspot_form.specify_district_placeholder')}
-              />
-            )}
           </View>
 
           <AppButton

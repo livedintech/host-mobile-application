@@ -24,8 +24,11 @@ type OtaAccountFormValues = { ota_account: string };
 export const cancelPoliciesSchema = yup.object().shape({
   airbnb_policy:          yup.string().required(i18n.t('app.validation.airbnb_policy_required')),
   airbnb_longterm_policy: yup.string().required(i18n.t('app.validation.airbnb_longterm_required')),
-  gathern_policy:         yup.string().required(i18n.t('app.validation.gathern_policy_required')),
-  booking_com_policy:     yup.string().required(i18n.t('app.validation.bookingcom_policy_required')),
+  gathern_policy:         yup.string().optional(),
+  booking_com_policy:     yup.string().optional(),
+
+  // gathern_policy:         yup.string().required(i18n.t('app.validation.gathern_policy_required')),
+  // booking_com_policy:     yup.string().required(i18n.t('app.validation.bookingcom_policy_required')),
 });
 
 export type CancelPoliciesValues = yup.InferType<typeof cancelPoliciesSchema>;
@@ -63,7 +66,7 @@ export default function useBookingCancelPoliciesContainer() {
   const connectedAccounts = response?.data || [];
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({ label: 'Airbnb', value: item.ch_channel_id }));
+    .map((item: any) => ({ label: `Airbnb - ${item?.id}`, value: item.ch_channel_id }));
 
   // ── Export Mutation ───────────────────────────────────────────────────────
   const { mutate: createListingExportPayload, isPending: isPendingExporting } =
@@ -111,7 +114,7 @@ export default function useBookingCancelPoliciesContainer() {
   const { control, handleSubmit, formState: { errors } } = useForm<CancelPoliciesValues>({
     resolver: yupResolver(cancelPoliciesSchema) as any,
     defaultValues: {
-      airbnb_policy:          isEdit ? getPolicyValue(listing?.airbnb_cancellation_policy, null)     : '',
+      airbnb_policy:          isEdit ? getPolicyValue(listing?.cancellation_policy, null)     : '',
       airbnb_longterm_policy: isEdit ? (listing?.airbnb_longterm_policy ?? '')                       : '',
       gathern_policy:         isEdit ? getPolicyValue(listing?.gathern_cancellation_policy, null)    : '',
       booking_com_policy:     isEdit ? getPolicyValue(listing?.bookingCom_cancellation_policy, null) : '',
@@ -125,7 +128,7 @@ export default function useBookingCancelPoliciesContainer() {
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
       name:                           propertyDetail?.name || 'New Listing',
-      airbnb_cancellation_policy:     data.airbnb_policy,
+      cancellation_policy:     data.airbnb_policy,
       airbnb_longterm_policy:         data.airbnb_longterm_policy,
       gathern_cancellation_policy:    data.gathern_policy,
       bookingCom_cancellation_policy: data.booking_com_policy,
@@ -154,7 +157,7 @@ export default function useBookingCancelPoliciesContainer() {
 
   const onNext = (data: CancelPoliciesValues) => {
     updateListing({
-      airbnb_cancellation_policy:     data.airbnb_policy,
+      cancellation_policy:     data.airbnb_policy,
       airbnb_longterm_policy:         data.airbnb_longterm_policy,
       gathern_cancellation_policy:    data.gathern_policy,
       bookingCom_cancellation_policy: data.booking_com_policy,
@@ -166,7 +169,7 @@ export default function useBookingCancelPoliciesContainer() {
 
   const onSaveExit = (data: CancelPoliciesValues) => {
     updateListing({
-      airbnb_cancellation_policy:     data.airbnb_policy,
+      cancellation_policy:     data.airbnb_policy,
       airbnb_longterm_policy:         data.airbnb_longterm_policy,
       gathern_cancellation_policy:    data.gathern_policy,
       bookingCom_cancellation_policy: data.booking_com_policy,

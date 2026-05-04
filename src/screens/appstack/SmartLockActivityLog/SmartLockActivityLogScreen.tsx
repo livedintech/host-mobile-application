@@ -62,7 +62,7 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={Colors.BLACK} />
+                <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
               ) : (
                 <AppText text={t('app.smart_lock_activity.refresh')} fontSize={12} color={Colors.BLACK} />
               )}

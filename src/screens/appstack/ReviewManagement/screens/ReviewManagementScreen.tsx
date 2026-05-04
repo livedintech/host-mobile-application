@@ -78,7 +78,7 @@ const ReviewManagementScreen = () => {
 
         {allReviewsLoading ? (
           <View style={styles.centerContainer}>
-            <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
           </View>
         ) : reviewsData.length === 0 ? (
           <View style={styles.emptyWrapper}>

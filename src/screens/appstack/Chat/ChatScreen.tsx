@@ -1,7 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { StyleSheet, View, FlatList, TextInput, Image, ListRenderItemInfo, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Swipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
   useAnimatedStyle,
   SharedValue,
@@ -41,6 +41,172 @@ import {
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+type SwipeActionsProps = {
+  drag: SharedValue<number>;
+  item: ChatMessage;
+  actionWidth: number;
+  totalActionWidth: number;
+  onSnooze: () => void;
+  onArchive: () => void;
+  t: (key: string) => string;
+};
+
+const SwipeActions = ({
+  drag,
+  item,
+  actionWidth,
+  totalActionWidth,
+  onSnooze,
+  onArchive,
+  t,
+}: SwipeActionsProps) => {
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: drag.value + totalActionWidth }],
+  }));
+
+  return (
+    <Reanimated.View
+      style={[styles.swipeContainer, { width: totalActionWidth }, style]}
+    >
+      <ButtonView
+        style={[styles.snoozeAction, { width: actionWidth }]}
+        onPress={onSnooze}
+      >
+        <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
+        <AppText
+          text={item?.is_mute ? t('app.chat.unsnoozed') : t('app.chat.snooze')}
+          color={Colors.WHITE}
+          fontSize={12}
+          mt={5}
+          type="Medium"
+        />
+      </ButtonView>
+      <ButtonView
+        style={[styles.archiveAction, { width: actionWidth }]}
+        onPress={onArchive}
+      >
+        <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
+        <AppText
+          text={item?.is_archived ? t('app.chat.unarchived') : t('app.chat.archive')}
+          color={Colors.WHITE}
+          fontSize={12}
+          mt={5}
+          type="Medium"
+        />
+      </ButtonView>
+    </Reanimated.View>
+  );
+};
+
+type ChatRowProps = {
+  item: ChatMessage;
+  openSwipeableRef: { current: SwipeableMethods | null };
+  handleAction: (item: any, action: any) => void;
+  goToChatDetail: (item: any) => void;
+  sourceLogos: Record<string, any>;
+  getOtaKey: (value?: string) => string;
+  actionWidth: number;
+  totalActionWidth: number;
+  t: (key: string) => string;
+};
+
+const ChatRow = ({
+  item,
+  openSwipeableRef,
+  handleAction,
+  goToChatDetail,
+  sourceLogos,
+  getOtaKey,
+  actionWidth,
+  totalActionWidth,
+  t,
+}: ChatRowProps) => {
+  const swipeableRef = useRef<SwipeableMethods>(null);
+
+  return (
+    <Swipeable
+      ref={swipeableRef}
+      friction={2}
+      rightThreshold={totalActionWidth * 0.4}
+      overshootRight={false}
+      renderRightActions={(_prog, drag) => (
+        <SwipeActions
+          drag={drag}
+          item={item}
+          actionWidth={actionWidth}
+          totalActionWidth={totalActionWidth}
+          onSnooze={() => { handleAction(item, 'Snoozed'); swipeableRef.current?.close(); }}
+          onArchive={() => { handleAction(item, 'Archived'); swipeableRef.current?.close(); }}
+          t={t}
+        />
+      )}
+      onSwipeableOpen={() => {
+        if (openSwipeableRef.current && openSwipeableRef.current !== swipeableRef.current) {
+          openSwipeableRef.current.close();
+        }
+        openSwipeableRef.current = swipeableRef.current;
+      }}
+    >
+      <View style={styles.chatRow}>
+        <Image
+          source={sourceLogos[getOtaKey((item as any).booking?.ota_name)]}
+          style={styles.avatar}
+        />
+        <AppPressable
+          style={styles.chatInfo}
+          onPress={() => goToChatDetail(item)}
+        >
+          <View style={styles.infoTop}>
+            <View style={{ flex: 1, marginRight: Metrics.scale(10) }}>
+              <AppText
+                text={item.name || 'Unknown'}
+                type="SemiBold"
+                fontSize={16}
+                color={Colors.MIDNIGHT}
+                numberOfLines={1}
+              />
+            </View>
+            <AppText
+              text={
+                item.last_message_date
+                  ? dayjs.utc((item as any).created_at).local().format('MM/DD/YY')
+                  : t('app.chat.not_available')
+              }
+              fontSize={12}
+              color={Colors.GREY_SHADOW}
+            />
+          </View>
+          <View style={styles.infoBottom}>
+            <AppText
+              text={item.last_message || t('app.chat.no_message_preview')}
+              fontSize={13}
+              color={Colors.GREY_SHADOW}
+              numberOfLines={1}
+              style={{ flex: 0.85 }}
+            />
+            {item.unread_count ? (
+              <View style={styles.unreadBadge}>
+                <AppText
+                  text={item?.unread_count}
+                  color={Colors.WHITE}
+                  fontSize={11}
+                  type="Bold"
+                />
+              </View>
+            ) : (
+              <Svgicons
+                path="chevronRight"
+                size={12}
+                color={Colors.GREY_SHADOW}
+              />
+            )}
+          </View>
+        </AppPressable>
+      </View>
+    </Swipeable>
+  );
+};
 
 const ChatScreen = () => {
   const { t } = useTranslation();
@@ -83,6 +249,8 @@ const ChatScreen = () => {
     [],
   );
 
+  const openSwipeableRef = useRef<SwipeableMethods | null>(null);
+
   const { user } = useAuthStore();
 
   if (!user?.has_listing) {
@@ -91,12 +259,12 @@ const ChatScreen = () => {
   const ACTION_WIDTH = Metrics.scale(80);
   const TOTAL_ACTION_WIDTH = ACTION_WIDTH * 2;
 
-const TABS: { id: ChatStatus; label: string }[] = [
-  { id: 'All', label: t('app.chat.tab_all') },
-  { id: 'Archived', label: t('app.chat.tab_archived') },
-  { id: 'Snoozed', label: t('app.chat.tab_snoozed') },
-  { id: 'Unread', label: t('app.chat.tab_unread') },
-];
+  const TABS: { id: ChatStatus; label: string }[] = [
+    { id: 'All', label: t('app.chat.tab_all') },
+    { id: 'Archived', label: t('app.chat.tab_archived') },
+    { id: 'Snoozed', label: t('app.chat.tab_snoozed') },
+    { id: 'Unread', label: t('app.chat.tab_unread') },
+  ];
   if (isLoading) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -128,116 +296,19 @@ const TABS: { id: ChatStatus; label: string }[] = [
     return 'default';
   };
 
-  const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => {
-    const renderRightActions = (
-      _prog: SharedValue<number>,
-      drag: SharedValue<number>,
-    ) => {
-      const style = useAnimatedStyle(() => ({
-        transform: [{ translateX: drag.value + TOTAL_ACTION_WIDTH }],
-      }));
-
-      return (
-        <Reanimated.View
-          style={[styles.swipeContainer, { width: TOTAL_ACTION_WIDTH }, style]}
-        >
-          <ButtonView
-            style={[styles.snoozeAction, { width: ACTION_WIDTH }]}
-            onPress={() => handleAction(item, 'Snoozed')}
-          >
-            <Svgicons path="snoozeIcon" size={24} color={Colors.WHITE} />
-            <AppText
-              text={item?.is_mute ? t('app.chat.unsnoozed') : t('app.chat.snooze')}
-              color={Colors.WHITE}
-              fontSize={12}
-              mt={5}
-              type="Medium"
-            />
-          </ButtonView>
-          <ButtonView
-            style={[styles.archiveAction, { width: ACTION_WIDTH }]}
-            onPress={() => handleAction(item, 'Archived')}
-          >
-            <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
-            <AppText
-              text={item?.is_archived ? t('app.chat.unarchived') : t('app.chat.archive')}
-              color={Colors.WHITE}
-              fontSize={12}
-              mt={5}
-              type="Medium"
-            />
-          </ButtonView>
-        </Reanimated.View>
-      );
-    };
-
-    return (
-      <Swipeable
-        friction={1.5}
-        rightThreshold={40}
-        overshootRight={false}
-        renderRightActions={renderRightActions}
-      >
-        <View style={styles.chatRow}>
-          <Image
-            source={sourceLogos[getOtaKey(item.booking?.ota_name)]}
-            style={styles.avatar}
-          />
-
-          <AppPressable
-            style={styles.chatInfo}
-            onPress={() => goToChatDetail(item)}
-          >
-            <View style={styles.infoTop}>
-              <View style={{ flex: 1, marginRight: Metrics.scale(10) }}>
-                <AppText
-                  text={item.name || 'Unknown'}
-                  type="SemiBold"
-                  fontSize={16}
-                  color={Colors.MIDNIGHT}
-                  numberOfLines={1}
-                />
-              </View>
-              <AppText
-                text={
-                  item.last_message_date
-                    ? dayjs.utc(item.created_at).local().format('MM/DD/YY')
-                    : t('app.chat.not_available')
-                }
-                fontSize={12}
-                color={Colors.GREY_SHADOW}
-              />
-            </View>
-            <View style={styles.infoBottom}>
-              <AppText
-                text={item.last_message || t('app.chat.no_message_preview')}
-                fontSize={13}
-                color={Colors.GREY_SHADOW}
-                numberOfLines={1}
-                style={{ flex: 0.85 }}
-              />
-              {item.unread_count ? (
-                <View style={styles.unreadBadge}>
-                  <AppText
-                    text={item?.unread_count}
-                    color={Colors.WHITE}
-                    fontSize={11}
-                    type="Bold"
-                  />
-                </View>
-              ) : (
-                <Svgicons
-                  path="chevronRight"
-                  size={12}
-                  color={Colors.GREY_SHADOW}
-                />
-              )}
-            </View>
-          </AppPressable>
-        </View>
-      </Swipeable>
-    );
-  };
+  const renderItem = ({ item }: ListRenderItemInfo<ChatMessage>) => (
+    <ChatRow
+      item={item}
+      openSwipeableRef={openSwipeableRef}
+      handleAction={handleAction}
+      goToChatDetail={goToChatDetail}
+      sourceLogos={sourceLogos}
+      getOtaKey={getOtaKey}
+      actionWidth={ACTION_WIDTH}
+      totalActionWidth={TOTAL_ACTION_WIDTH}
+      t={t}
+    />
+  );
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -323,7 +394,7 @@ const TABS: { id: ChatStatus; label: string }[] = [
                 contentContainerStyle={styles.tabsList}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => {
-            const isActive = activeTab === item.id;
+                  const isActive = activeTab === item.id;
                   return (
                     <AppPressable
                       style={[styles.tab, isActive && styles.activeTab]}
@@ -357,15 +428,15 @@ const TABS: { id: ChatStatus; label: string }[] = [
                       activeTab === 'Archived'
                         ? t('app.chat.no_archived')
                         : activeTab === 'Snoozed'
-                        ? t('app.chat.no_snoozed')
-                        : activeTab === 'Unread'
-                        ? t('app.chat.no_unread')
-                        : t('app.chat.no_messages')
+                          ? t('app.chat.no_snoozed')
+                          : activeTab === 'Unread'
+                            ? t('app.chat.no_unread')
+                            : t('app.chat.no_messages')
                     }
                     descriptionText={
                       activeTab === 'Archived' ||
-                      activeTab === 'Snoozed' ||
-                      activeTab === 'Unread'
+                        activeTab === 'Snoozed' ||
+                        activeTab === 'Unread'
                         ? t('app.chat.no_conversations')
                         : t('app.chat.no_listing_message')
                     }

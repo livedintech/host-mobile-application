@@ -70,6 +70,7 @@ type Listing = {
   // ─────────────────────────────────────────
 
   // ─── Set Pricing fields ──────────────────
+  listing_currency: string;
   weekday_base_price: string;
   weekend_base_price: string;
   discount: string;
@@ -80,6 +81,20 @@ type Listing = {
   gathern_discount: string;
   booking_discount: string;
   extra_guest_fee: string;
+  weekly_discount: string;
+  monthly_discount: string;
+  early_bird_discount: string;
+  last_minute_discount: string;
+  prices?: {
+    airbnb_discount?: number;
+    gathern_discount?: number;
+    bookingCom_discount?: number;
+    discount?: number;
+    weekly_discount?: number;
+    monthly_discount?: number;
+    early_bird_discount?: number;
+    last_minute_discount?: number;
+  };
   // ─────────────────────────────────────────
 
   // ─── Document Upload fields ──────────────
@@ -124,6 +139,9 @@ const initialListing: Listing = {
   district: '',
 
   // ─── Step 2 defaults ───
+  guest_limit: 0,
+  bathrooms: 0,
+  amenities: [],
   size_sqm: 0,
   bedrooms: 0,
   beds: 0,
@@ -167,6 +185,7 @@ const initialListing: Listing = {
   // ─────────────────────────────────
 
   // ─── Set Pricing defaults ────────
+  listing_currency: '',
   weekday_base_price: '',
   weekend_base_price: '',
   discount: '',
@@ -177,6 +196,10 @@ const initialListing: Listing = {
   gathern_discount: '',
   booking_discount: '',
   extra_guest_fee: '',
+  weekly_discount: '',
+  monthly_discount: '',
+  early_bird_discount: '',
+  last_minute_discount: '',
   // ─────────────────────────────────
 
   // ─── Document Upload defaults ────

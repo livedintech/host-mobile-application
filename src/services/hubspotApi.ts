@@ -10,7 +10,9 @@ export const AGENTS = [
 ];
 
 const BASE_URL = 'https://api.hubapi.com';
-const APP_TIMEZONE = 'Asia/Baghdad'; 
+const MEETINGS_PUBLIC_URL = 'https://api.hubspot.com/meetings-public/v3/book';
+
+const getDeviceTimezone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const getHeaders = () => {
   if (!HUBSPOT_ACCESS_TOKEN) {
@@ -49,47 +51,39 @@ export interface LeadInfo {
 
 // ───────────────── HELPERS ─────────────────
 
-const formatToBaghdadDate = (timestamp: number) => {
-  const date = new Date(timestamp);
-  // Returns "YYYY-MM-DD" strictly in Baghdad time
+const formatToLocalDate = (timestamp: number, timezone: string) => {
   return new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    timeZone: APP_TIMEZONE,
-  }).format(date);
+    timeZone: timezone,
+  }).format(new Date(timestamp));
+};
+
+const getMonthOffset = (year: number, month: number) => {
+  const now = new Date();
+  return (year - now.getFullYear()) * 12 + (month - (now.getMonth() + 1));
 };
 
 // ───────────────── API FUNCTIONS ─────────────────
 
-/**
- * Fetches all available dates for the calendar UI based on Baghdad Time
- */
 export const fetchAllAgentsAvailableDates = async (year: number, month: number): Promise<Record<string, boolean>> => {
   const availableDates: Record<string, boolean> = {};
-
-  // Request window: 1 day before to 1 day after to catch timezone boundary slots
-  const startOfMonth = new Date(year, month - 1, 1);
-  const endOfMonth = new Date(year, month, 0, 23, 59, 59);
-  
-  const startTime = startOfMonth.getTime() - 86400000; 
-  const endTime = endOfMonth.getTime() + 86400000;
+  const timezone = getDeviceTimezone();
+  const monthOffset = getMonthOffset(year, month);
 
   await Promise.all(AGENTS.map(async agent => {
     try {
-      const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${agent.meetingSlug}?startTime=${startTime}&endTime=${endTime}&timezone=${encodeURIComponent(APP_TIMEZONE)}`;
-      const res = await fetch(url, { method: 'GET', headers: getHeaders() });
+      const url = `${MEETINGS_PUBLIC_URL}/availability-page?monthOffset=${monthOffset}&slug=${agent.meetingSlug}&timezone=${encodeURIComponent(timezone)}`;
+      const res = await fetch(url, { method: 'GET' });
       if (!res.ok) return;
-      
+
       const data = await res.json();
       const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
-      
-      // Use 2700000ms for 45-minute slots
       const availabilityData = durationMap['2700000']?.availabilities || [];
 
       availabilityData.forEach((slot: any) => {
-        const dateStr = formatToBaghdadDate(slot.startMillisUtc);
-        availableDates[dateStr] = true;
+        availableDates[formatToLocalDate(slot.startMillisUtc, timezone)] = true;
       });
     } catch (e) {
       console.error("[fetchAllAgentsAvailableDates Error]:", e);
@@ -98,33 +92,27 @@ export const fetchAllAgentsAvailableDates = async (year: number, month: number):
   return availableDates;
 };
 
-/**
- * Fetches specific time slots for a date (YYYY-MM-DD) based on Baghdad Time
- */
 export const fetchSlotsForDate = async (slug: string, date: string): Promise<HubSpotSlot[]> => {
   try {
-    const [year, month, day] = date.split('-').map(Number);
-    
-    // Create a search window centered around the target date
-    const targetDateMidnight = new Date(year, month - 1, day).getTime();
-    const startTime = targetDateMidnight - 86400000;
-    const endTime = targetDateMidnight + (2 * 86400000);
+    const [year, month] = date.split('-').map(Number);
+    const timezone = getDeviceTimezone();
+    const monthOffset = getMonthOffset(year, month);
 
-    const url = `${BASE_URL}/scheduler/v3/meetings/meeting-links/book/availability-page/${slug}?startTime=${startTime}&endTime=${endTime}&timezone=${encodeURIComponent(APP_TIMEZONE)}`;
-    
-    const res = await fetch(url, { method: 'GET', headers: getHeaders() });
+    const url = `${MEETINGS_PUBLIC_URL}/availability-page?monthOffset=${monthOffset}&slug=${slug}&timezone=${encodeURIComponent(timezone)}`;
+
+    const res = await fetch(url, { method: 'GET' });
     const data = await res.json();
-    
+
     const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
     const availabilityData = durationMap['2700000']?.availabilities || [];
 
     return availabilityData
-      .filter((slot: any) => formatToBaghdadDate(slot.startMillisUtc) === date)
+      .filter((slot: any) => formatToLocalDate(slot.startMillisUtc, timezone) === date)
       .map((slot: any) => ({
         startTime: slot.startMillisUtc,
         endTime: slot.endMillisUtc,
       }))
-      .sort((a, b) => a.startTime - b.startTime);
+      .sort((a: HubSpotSlot, b: HubSpotSlot) => a.startTime - b.startTime);
   } catch (error) {
     console.error("[fetchSlotsForDate Error]:", error);
     return [];

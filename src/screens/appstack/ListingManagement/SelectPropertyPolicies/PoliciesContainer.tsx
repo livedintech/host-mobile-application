@@ -62,7 +62,7 @@ export default function usePoliciesContainer() {
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
     .map((item: any) => ({
-      label: 'Airbnb',
+      label: `Airbnb - ${item?.id}`,
       value: item.ch_channel_id,
     }));
 
@@ -107,8 +107,8 @@ export default function usePoliciesContainer() {
   const { control, handleSubmit, formState: { errors } } = useForm<PoliciesFormValues>({
     resolver: yupResolver(policiesSchema) as any,
     defaultValues: {
-      quiet_hours_start: listing?.quiet_hours_start  ?? propertyDetail?.quiet_hours_start ?? '',
-      quiet_hours_end:   listing?.quiet_hours_end    ?? propertyDetail?.quiet_hours_end   ?? '',
+      quiet_hours_start: listing?.quiet_hours_start ?? '',
+      quiet_hours_end:   listing?.quiet_hours_end  ?? '',
     },
   });
 

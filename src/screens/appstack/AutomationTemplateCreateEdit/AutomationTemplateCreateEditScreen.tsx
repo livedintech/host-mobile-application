@@ -1,6 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -26,14 +27,18 @@ const CreateAutomationTemplateScreen = () => {
         isEditMode,
         transformedListing,
         transformedMessageVariables,
-        transformedEvents
+        transformedEvents,
+        transformedEventTimes,
+        selectedEvent,
     } = useAutomationTemplateCreateEditContainer();
+
+    const showEventTime = selectedEvent === 'check_in' || selectedEvent === 'check_out';
     const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
-                <ScrollView
+                <KeyboardAwareScrollView
                     contentContainerStyle={styles.scrollContainer}
                     showsVerticalScrollIndicator={false}
                 >
@@ -84,6 +89,17 @@ const CreateAutomationTemplateScreen = () => {
                         // labelStyle={styles.labelStyle}
                         />
 
+                        {showEventTime && (
+                            <DropdownField
+                                label={t('app.automation_create_edit.event_time_label')}
+                                name="temp_event_time"
+                                control={control}
+                                errors={errors}
+                                data={transformedEventTimes}
+                                placeholder={t('app.automation_create_edit.event_time_placeholder')}
+                            />
+                        )}
+
                         <MultiSelectDropdownField
                             label={t('app.automation_create_edit.property_label')}
                             name="listing_ids"
@@ -115,17 +131,16 @@ const CreateAutomationTemplateScreen = () => {
                         />
                     </View>
 
-                    {/* Submit Button */}
+                </KeyboardAwareScrollView>
+                <View style={styles.footer}>
                     <AppButton
                         title={isEditMode ? t('app.automation_create_edit.save_btn') : t('app.automation_create_edit.create_btn')}
                         onPress={handleSubmit}
                         loading={isLoading}
-                        mt={40}
-                        mb={40}
                         backgroundColor={Colors.TEAL_PRIMARY_ALT}
                         borderColor={Colors.TEAL_PRIMARY_ALT}
                     />
-                </ScrollView>
+                </View>
             </View>
         </BGImage>
     );
@@ -166,6 +181,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: Metrics.verticalScale(10),
+    },
+    footer: {
+        paddingHorizontal: Metrics.scale(22),
+        paddingVertical: Metrics.verticalScale(16),
     },
 });
 

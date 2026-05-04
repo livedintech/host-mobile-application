@@ -37,7 +37,7 @@ const YourSmartLocksScreen = () => {
   if (isLoading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
   }

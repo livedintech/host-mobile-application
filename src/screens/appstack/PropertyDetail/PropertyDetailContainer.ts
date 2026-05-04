@@ -61,7 +61,7 @@ export default function usePropertyDetailContainer() {
  const listingOptions = connectedAccounts
   .filter((item: any) => item.connection_type === 'Airbnb')
   .map((item: any) => ({
-    label: 'Airbnb',
+    label: `Airbnb - ${item?.id}`,
     value: item.ch_channel_id,
   }));
 
@@ -133,7 +133,6 @@ export default function usePropertyDetailContainer() {
   } else if (typeof rawDescription === 'object' && rawDescription !== null) {
     extractedDescription = rawDescription?.description || '';
   }
-
   const propertyData = {
     title: listing?.name || '',
     discounts: listing?.discounts ? `${listing.discounts}%` : '',
@@ -172,7 +171,7 @@ export default function usePropertyDetailContainer() {
     },
 
     bookingDetails: {
-      bookingType: listing?.instant_booking ? 'Instant' : 'Manual', // ✅ Fix
+      bookingType: listing?.instant_booking === 0 ? 'Instant' : 'Manual', // ✅ Fix
       guestEligibility: listing?.guest_eligibility === 1,
       checkIn: listing?.check_in_time
         ? dayjs(listing.check_in_time, 'HH:mm:ss').format('hh:mm a')
@@ -190,7 +189,7 @@ export default function usePropertyDetailContainer() {
 
     // ✅ Cancel policies — API { id, title } object deta hai
     cancelPolicies: {
-      airbnb: listing?.airbnb_cancellation_policy?.title || '',
+      airbnb: listing?.cancellation_policy || '',
       gathern: listing?.gathern_cancellation_policy?.title || '',
       booking: listing?.bookingCom_cancellation_policy?.title || '',
     },
@@ -260,8 +259,11 @@ export default function usePropertyDetailContainer() {
       case 'WifiAndDoorLock': // ✅ new case
         navigate(NavigationRoutes.APP_STACK.WIFI_AND_DOOR_LOCK_SCREEN, { paramData: data?.data });
         break;
+      case 'ArrivalGuide':
+        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true, guidelinesSection: 'arrival' });
+        break;
       case 'Guidelines':
-        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true });
+        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true, guidelinesSection: 'guidelines' });
         break;
       case 'Policies':
         navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES, { paramData: data?.data });
@@ -298,10 +300,9 @@ export default function usePropertyDetailContainer() {
   const handleMenuAction = (action: string) => {
     switch (action) {
       case 'task':
-        navigate(NavigationRoutes.APP_STACK.CREATE_TASK, {
-          listing_id: data?.data?.listing?.id,
-          fromChat: false,
-          conversation_id: null,
+        navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+          screen: NavigationRoutes.APP_STACK.TASK,
+          params: { listing_id: data?.data?.listing?.id },
         });
         break;
       case 'channel':
@@ -314,7 +315,7 @@ export default function usePropertyDetailContainer() {
           [
             { text: i18n.t('common.cancel'), style: 'cancel' },
             {
-              text: i18n.t('common.delete'),
+              text: i18n.t('common.remove'),
               style: 'destructive',
               onPress: () =>
                 deletePropertyPayload({

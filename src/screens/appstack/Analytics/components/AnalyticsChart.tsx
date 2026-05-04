@@ -87,7 +87,7 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
           </View>
         ) : (
           <View>
-            {renderHeader(`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} ${t('app.analytics.per_channel_suffix')}`)}
+            {renderHeader(`${t(`app.analytics.tab_${activeTab}`)} ${t('app.analytics.per_channel_suffix')}`)}
             <View style={styles.barList}>
               {data.map((item: any, index: number) => (
                 <View key={index} style={styles.barRow}>

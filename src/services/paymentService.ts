@@ -66,3 +66,41 @@ export const subscriptionActiveApi = async (payload: savePaymentinfoPayloadType)
     }
     throw response;
 };
+
+export interface SubscriptionCalculateParams {
+    properties_count: number;
+    billing_cycle: 'monthly' | 'yearly';
+    plan_key: 'starter' | 'ai_suite';
+}
+
+export interface SubscriptionPlan {
+    plan_id: string;
+    plan_key: string;
+    plan_name: string;
+    billing_cycle: string;
+    currency: string;
+    properties_count: number;
+    price_per_property: number;
+    total_price: number;
+    matched_tier: { qty_from: number; qty_to: number };
+}
+
+export interface SubscriptionCalculateResponse {
+    status: string;
+    data: {
+        properties_count: number;
+        billing_cycle: string;
+        plans: SubscriptionPlan[];
+    };
+}
+
+export const subscriptionCalculateApi = async (params: SubscriptionCalculateParams) => {
+    const { ok, response, data } = await apiService.get<SubscriptionCalculateResponse>(
+        SERVICE_CONFIG_URLS.APP.SUBSCRIPTION_CALCULATE,
+        params,
+    );
+    if (ok && data) {
+        return data;
+    }
+    throw response;
+};

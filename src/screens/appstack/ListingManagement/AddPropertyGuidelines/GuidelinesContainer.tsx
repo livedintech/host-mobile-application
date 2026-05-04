@@ -22,13 +22,14 @@ const otaAccountSchema = yup.object({
 type OtaAccountFormValues = { ota_account: string };
 
 export default function useGuidelinesContainer() {
-  const { params }     = useRoute<any>();
+  const { params } = useRoute<any>();
   const hideWifiFields = params?.hideWifiFields;
+  const guidelinesSection: 'arrival' | 'guidelines' | undefined = params?.guidelinesSection;
   const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
-  const { user }       = useAuthStore();
+  const { user } = useAuthStore();
 
   const listing = params?.paramData?.listing;
-  const isEdit  = Boolean(listing?.listing_id);
+  const isEdit = Boolean(listing?.listing_id);
 
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
@@ -48,14 +49,14 @@ export default function useGuidelinesContainer() {
   // ── OTA Accounts ──────────────────────────────────────────────────────────
   const { data: response } = useQuery({
     queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
-    queryFn:  () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-    enabled:  !!user?.id,
+    queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
+    enabled: !!user?.id,
   });
 
   const connectedAccounts = response?.data || [];
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({ label: 'Airbnb', value: item.ch_channel_id }));
+    .map((item: any) => ({ label: `Airbnb - ${item?.id}`, value: item.ch_channel_id }));
 
   // ── Export Mutation ───────────────────────────────────────────────────────
   const { mutate: createListingExportPayload, isPending: isPendingExporting } =
@@ -81,11 +82,17 @@ export default function useGuidelinesContainer() {
 
   // ── Schema ────────────────────────────────────────────────────────────────
   const guidelinesSchema = yup.object().shape({
-    arrival_guide:         yup.string().required(i18n.t('app.validation.arrival_guide_required')),
-    property_rules:        yup.string().required(i18n.t('app.validation.property_rules_required')),
-    checkout_instructions: yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
-    wifi_username:  hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_username_required')),
-    wifi_password:  hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_password_required')),
+    arrival_guide: guidelinesSection === 'guidelines'
+      ? yup.string()
+      : yup.string().required(i18n.t('app.validation.arrival_guide_required')),
+    property_rules: guidelinesSection === 'arrival'
+      ? yup.string()
+      : yup.string().required(i18n.t('app.validation.property_rules_required')),
+    checkout_instructions: guidelinesSection === 'arrival'
+      ? yup.string()
+      : yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
+    wifi_username: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_username_required')),
+    wifi_password: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_password_required')),
     door_lock_code: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.door_lock_required')),
   });
 
@@ -96,23 +103,23 @@ export default function useGuidelinesContainer() {
     useForm<GuidelinesFormValues>({
       resolver: yupResolver(guidelinesSchema) as any,
       defaultValues: {
-        arrival_guide:         listing?.arrival_guide         ?? propertyDetail?.arrival_guide         ?? '',
-        property_rules:        listing?.house_rule            ?? propertyDetail?.house_rule            ?? '',
-        checkout_instructions: listing?.cleaning_instructions ?? propertyDetail?.cleaning_instructions ?? '',
-        wifi_username:         listing?.wifi_network          ?? propertyDetail?.wifi_network          ?? '',
-        wifi_password:         listing?.wifi_password         ?? propertyDetail?.wifi_password         ?? '',
-        door_lock_code:        listing?.door_lock_code        ?? propertyDetail?.door_lock_code        ?? '',
+        arrival_guide: listing?.arrival_guide ?? '',
+        property_rules: listing?.house_rule ?? '',
+        checkout_instructions: listing?.cleaning_instructions ?? '',
+        wifi_username: listing?.wifi_network ?? '',
+        wifi_password: listing?.wifi_password ?? '',
+        door_lock_code: listing?.door_lock_code ?? '',
       },
     });
 
-  const arrivalGuideLength         = (watch('arrival_guide') || '').length;
-  const houseRulesLength           = (watch('property_rules') || '').length;
+  const arrivalGuideLength = (watch('arrival_guide') || '').length;
+  const houseRulesLength = (watch('property_rules') || '').length;
   const checkoutInstructionsLength = (watch('checkout_instructions') || '').length;
 
   // ── Lock Options ──────────────────────────────────────────────────────────
   const { data: rawTTLocks = [], isLoading: isLoadingTTLocks } = useQuery({
     queryKey: [STORAGE_CONST.TT_LOCKS],
-    queryFn:  getTTLOCKSApi,
+    queryFn: getTTLOCKSApi,
   });
 
   const lockOptions = rawTTLocks.map((lock: any) => ({
@@ -122,18 +129,18 @@ export default function useGuidelinesContainer() {
 
   // ── Payload builder ───────────────────────────────────────────────────────
   const buildPayload = (data: GuidelinesFormValues, isSaveAndExit: boolean = false) => ({
-    user_id:       String(user?.id),
+    user_id: String(user?.id),
     channel_id,
-    listing_id:    String(listing_id),
+    listing_id: String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:                  propertyDetail?.name || 'New Listing',
-      arrival_guide:         data.arrival_guide,
-      house_rule:            data.property_rules,
+      name: propertyDetail?.name || 'New Listing',
+      arrival_guide: data.arrival_guide,
+      house_rule: data.property_rules,
       cleaning_instructions: data.checkout_instructions,
-      wifi_network:          data.wifi_username,
-      wifi_password:         data.wifi_password,
-      door_lock_code:        String(data.door_lock_code),
+      wifi_network: data.wifi_username,
+      wifi_password: data.wifi_password,
+      door_lock_code: String(data.door_lock_code),
     },
   });
 
@@ -161,12 +168,12 @@ export default function useGuidelinesContainer() {
   // ── Handlers ──────────────────────────────────────────────────────────────
   const onNext = (data: GuidelinesFormValues) => {
     updateListing({
-      arrival_guide:         data.arrival_guide,
-      house_rule:            data.property_rules,
+      arrival_guide: data.arrival_guide,
+      house_rule: data.property_rules,
       cleaning_instructions: data.checkout_instructions,
-      wifi_network:          data.wifi_username,
-      wifi_password:         data.wifi_password,
-      door_lock_code:        data.door_lock_code,
+      wifi_network: data.wifi_username,
+      wifi_password: data.wifi_password,
+      door_lock_code: data.door_lock_code,
     });
     createDetails(buildPayload(data, false) as any, {
       onSuccess: () => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES),
@@ -175,12 +182,12 @@ export default function useGuidelinesContainer() {
 
   const onSaveExit = (data: GuidelinesFormValues) => {
     updateListing({
-      arrival_guide:         data.arrival_guide,
-      house_rule:            data.property_rules,
+      arrival_guide: data.arrival_guide,
+      house_rule: data.property_rules,
       cleaning_instructions: data.checkout_instructions,
-      wifi_network:          data.wifi_username,
-      wifi_password:         data.wifi_password,
-      door_lock_code:        data.door_lock_code,
+      wifi_network: data.wifi_username,
+      wifi_password: data.wifi_password,
+      door_lock_code: data.door_lock_code,
     });
     if (isEdit) {
       updateDetails(buildPayload(data, true) as any);
@@ -203,6 +210,7 @@ export default function useGuidelinesContainer() {
     checkoutInstructionsLength,
     isEdit,
     hideWifiFields,
+    guidelinesSection,
     lockOptions,
     // ✅ Export
     handleExport,

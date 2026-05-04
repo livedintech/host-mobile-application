@@ -68,6 +68,8 @@ const SetPricingScreen = () => {
             <InputField name="booking_com_markup" label={t('app.set_pricing.bookingcom_markup_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.percent_placeholder')} keyboardType="numeric" />
             <View style={styles.fieldGap} />
             <InputField name="extra_guest_fee" label={t('app.set_pricing.extra_guest_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.extra_guest_placeholder')} keyboardType="numeric" />
+            <View style={styles.fieldGap} />
+            <InputField name="cleaning_fee" label={t('app.set_pricing.cleaning_fee_label')} control={control as any} errors={errors} placeholder={t('app.set_pricing.cleaning_fee_placeholder')} keyboardType="numeric" />
           </View>
         </KeyboardAwareScrollView>
 

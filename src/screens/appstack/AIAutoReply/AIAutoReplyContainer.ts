@@ -6,8 +6,8 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
-import { deleteAiAutoReplyApi, editStatusAiAutoReplyApi, getaiAutoReplyApi } from '@/services/aiAutoReplyApi';
-import { aiAutoReplyTypesApiPayload, aiAutoReplyTypesApiResponse, deleteaiAutoReplyTypesApiPayload, deleteaiAutoReplyTypesApiResponse, editStatusAiAutoReplyTypesApiPayload } from '@/types/api/aiAutoReplyTypes';
+import { deleteAiAutoReplyApi, editAiAllowStatusApi, editStatusAiAutoReplyApi, getaiAutoReplyApi } from '@/services/aiAutoReplyApi';
+import { aiAllowStatusPayload, aiAllowStatusResponse, aiAutoReplyTypesApiPayload, aiAutoReplyTypesApiResponse, deleteaiAutoReplyTypesApiPayload, deleteaiAutoReplyTypesApiResponse, editStatusAiAutoReplyTypesApiPayload } from '@/types/api/aiAutoReplyTypes';
 import { PAGE_SIZE } from '@/services/api';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
 
@@ -45,6 +45,7 @@ export default function useAIAutoReplyContainer() {
 
     const { data: raiseIssueData, isLoading, isFetching } = dataQuery;
     const data = useInfiniteListData(raiseIssueData?.pages);
+    const isAiAllowed: boolean = !!raiseIssueData?.pages?.[0]?.is_ai_allow;
 
     // Delete User 
     const {
@@ -87,6 +88,22 @@ export default function useAIAutoReplyContainer() {
     },
   });
 
+    // Toggle global AI allow status
+    const { mutate: editAiAllowPayload, isPending: isPendingAiAllow } = useMutation<
+        aiAllowStatusResponse,
+        Error,
+        aiAllowStatusPayload
+    >({
+        mutationFn: editAiAllowStatusApi,
+        onSuccess: ({ message }) => {
+            Toast.show({ type: 'success', text1: message });
+            queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_AI_AUTO_REPLY] });
+        },
+        onError: error => {
+            Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.something_went_wrong') });
+        },
+    });
+
     const openRemoveConfirmSheet = (item: any) => {
         setItem(item)
         removeSheetRef?.current?.open();
@@ -98,6 +115,10 @@ export default function useAIAutoReplyContainer() {
                 id: Item?.id
             })
     }
+    const handleToggleAiAllow = () => {
+        editAiAllowPayload({ is_ai_allow: !isAiAllowed });
+    };
+
     const toggleSwitch = (item: { id: string; is_enabled: boolean }) => {
         setItem({
             id: item?.id
@@ -123,6 +144,8 @@ export default function useAIAutoReplyContainer() {
         removeSheetRef,
         isLoadingRemoved: isPendingDeleteAiAutoReply && !isIdleDeleteAiAutoReply,
         isLoadingStatus: isPendingEditSaveEdit && !isIdleEditSaveEdit,
-
+        isAiAllowed,
+        handleToggleAiAllow,
+        isLoadingAiAllow: isPendingAiAllow,
     };
 }

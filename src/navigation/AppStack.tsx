@@ -19,7 +19,7 @@ const AppStack = () => {
         component={TabStack}
       />
       <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ header: () => <HeaderApp isLogo isLang isNotification /> }}
         name={NavigationRoutes.APP_STACK.HOME}
         getComponent={() =>
           require('@/screens/appstack/Home/HomeScreen').default
@@ -865,6 +865,21 @@ const AppStack = () => {
         }
       />
       {/* CANCEL RESERVATION END */}
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.NOTIFIATION}
+        getComponent={() =>
+          require('@/screens/appstack/Notificaiton/NotificaitonScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW}
+        getComponent={() =>
+          require('@/screens/common/Payment/SubscriptionWebViewScreen').default
+        }
+      />
     </Stack.Navigator>
   );
 };

@@ -583,7 +583,7 @@ const ReviewDetailScreen = ({ route }: any) => {
           { justifyContent: 'center', alignItems: 'center' },
         ]}
       >
-        <ActivityIndicator size="large" color={Colors.PINE_FOREST} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
   }

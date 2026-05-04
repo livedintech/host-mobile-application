@@ -166,7 +166,7 @@ const EditTask = ({ route }: any) => {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
           {isDeleting && (
             <AppText text={t('app.task_management.deleting_task')} mt={10} />
           )}

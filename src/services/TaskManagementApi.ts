@@ -276,14 +276,14 @@ export const getHostTaskList = async (page = 1, limit = 10, status?: string, lis
 //GET TASK DETAIL
 export const getTaskDetail = async (
   taskId: number | string,
-  taskType: string,
+  taskType?: string,
 ) => {
   const baseUrl = SERVICE_CONFIG_URLS.APP.TASK_MANAGEMENT_TASK_DETAIL.replace(
     '{taskid}',
     String(taskId),
   );
 
-  const url = `${baseUrl}?task_type=${taskType}`;
+  const url = taskType ? `${baseUrl}?task_type=${taskType}` : baseUrl;
 
   const { ok, response, data } = await apiService.get(url);
 

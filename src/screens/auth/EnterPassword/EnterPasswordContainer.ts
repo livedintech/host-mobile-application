@@ -17,6 +17,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
 import { usePhoneStore } from '@/store/usePhoneStore';
+import { NotificationService } from '@/services/notification.service';
 
 // Validation Schema
 const signInSchema = yup.object().shape({
@@ -72,11 +73,11 @@ export default function useEnterPasswordContainer() {
         return;
       }
       clearPhoneData()
-      if (data?.user?.signup_step === 'step_1') { 
+      if (data?.user?.signup_step === 'step_1') {
         navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
           phone_number: data?.user?.phone,
           phone_with_code: data?.user?.phone_with_code,
-          country_code:data?.user?.country_code,
+          country_code: data?.user?.country_code,
           pricing: data?.user?.subscription?.price
         });
       }
@@ -117,12 +118,14 @@ export default function useEnterPasswordContainer() {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
+    const token = await NotificationService.getToken();
     const payload = {
       country_code: country_code,        // previous screen se aya
       phone_number: phone_number,        // previous screen se aya
       phone_with_code: phone_with_code,  // previous screen se aya
       password: data?.password,
+      fcm_token: token
     };
     // Remember Me logic
     if (data.rememberMe) {

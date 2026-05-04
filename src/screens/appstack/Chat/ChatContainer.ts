@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import i18n from '@/locales/i18n/i18n';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import { useForm } from 'react-hook-form';
@@ -15,7 +15,6 @@ import {
 } from '@/services/chatApi';
 import { PAGE_SIZE, queryClient } from '@/services/api';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
-import Toast from 'react-native-toast-message';
 import {
   createChatArchiveByConversationIdPayloadType,
   createChatArchiveByConversationIdResponseType,
@@ -27,7 +26,7 @@ import { getUserListingsByUserIDApi } from '@/services/bookingManagementApi';
 import { useAuthStore } from '@/store/useAuthStore';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
@@ -120,7 +119,7 @@ export const useChatContainer = () => {
         : undefined,
   });
 
-  const { data: rawData, isLoading, isFetching } = dataQuery;
+  const { data: rawData, isFetching } = dataQuery;
   const data = useInfiniteListData(rawData?.pages);
 
 
@@ -132,32 +131,18 @@ export const useChatContainer = () => {
     });
   };
 
-  const showSuccess = (message: string) =>
-    Toast.show({ type: 'success', text1: message });
-
-  const showError = (message: string) =>
-    Toast.show({ type: 'error', text1: message });
-
   const { mutate: archiveChat } = useMutation<
     createChatArchiveByConversationIdResponseType,
     Error,
     createChatArchiveByConversationIdPayloadType
   >({
     mutationFn: createInboxArchiveApi,
-    onSuccess: ({ message }) => {
-      invalidateChats();
-      showSuccess(message);
-    },
-    onError: (error) => showError(error.message),
+    onSuccess: () => invalidateChats(),
   });
 
   const { mutate: unArchiveChat } = useMutation({
     mutationFn: createInboxUnArchiveApi,
-    onSuccess: ({ message }) => {
-      invalidateChats();
-      showSuccess(message);
-    },
-    onError: (error: Error) => showError(error.message),
+    onSuccess: () => invalidateChats(),
   });
 
   const { mutate: snoozeChat } = useMutation<
@@ -166,20 +151,12 @@ export const useChatContainer = () => {
     createChatSnoozeByConversationIdPayloadType
   >({
     mutationFn: createInboxSnoozeApi,
-    onSuccess: ({ message }) => {
-      invalidateChats();
-      showSuccess(message);
-    },
-    onError: (error) => showError(error.message),
+    onSuccess: () => invalidateChats(),
   });
 
   const { mutate: unSnoozeChat } = useMutation({
     mutationFn: createInboxUnSnoozeApi,
-    onSuccess: ({ message }) => {
-      invalidateChats();
-      showSuccess(message);
-    },
-    onError: (error: Error) => showError(error.message),
+    onSuccess: () => invalidateChats(),
   });
 
   const { mutate: markRead } = useMutation<
@@ -189,7 +166,6 @@ export const useChatContainer = () => {
   >({
     mutationFn: markReadChatApi,
     onSuccess: invalidateChats,
-    onError: (error) => showError(error.message),
   });
 
   /* -------------------------------- ACTIONS -------------------------------- */

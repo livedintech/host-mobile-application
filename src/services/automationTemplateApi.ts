@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import Utils from "@/utility/Utils";
-import { automationTemplateEditStatusTypesApiPayload, AutomationTemplateTypesApiPayload, deleteAutomationTemplateTypesApiPayload } from "@/types/api/automationTemplateTypes";
+import { automationTemplateEditStatusTypesApiPayload, AutomationTemplateTypesApiPayload, deleteAutomationTemplateTypesApiPayload, EventTimeItem } from "@/types/api/automationTemplateTypes";
 
 // Get List
 export const getAutomationTemplateApi = async ({
@@ -34,7 +34,7 @@ export const createAutomationTemplateApi = async (payload: AutomationTemplateTyp
     if (ok) {
         return data;
     }
-    throw response;
+    throw new Error(response.message || 'Failed to create automation template');
 };
 
 // Edit 
@@ -89,6 +89,30 @@ export const getAutomationTemplateEventsApi = async () => {
     }
 
     throw response.message;
+};
+
+// Get Single Automation by ID
+export const getAutomationTemplateByIdApi = async (id: string | number) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.GET_AUTOMATIONS_TEMPLATE_BY_ID,
+        { id },
+    );
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data.data;
+    }
+    throw new Error(response.message || 'Failed to fetch automation');
+};
+
+// Get Event Times
+export const getAutomationTemplateEventTimesApi = async (): Promise<EventTimeItem[]> => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_AUTOMATIONS_TEMPLATE_EVENT_TIMES
+    );
+    if (ok) {
+        return data.data;
+    }
+    throw new Error(response.message || 'Failed to fetch event times');
 };
 
 // Edit Status Saved Replies

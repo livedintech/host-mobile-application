@@ -28,7 +28,7 @@ export default function useAutomationTemplateContainer() {
     };
 
     const createNewTemplate = () => {
-        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AUTOMATION_TEMPLATE);
+        navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AUTOMATION_TEMPLATE, { editData: null });
     };
 
     // Get All Chat List

@@ -487,7 +487,7 @@ const ChatScreen = () => {
                 <MenuOptions
                   customStyles={{ optionsContainer: styles.popupMenu }}
                 >
-                  {data?.conversation?.formatted_booking_id == null &&
+                  {conversationData?.formatted_booking_id &&
                     conversationData?.booking_id && (
                       <MenuOption
                         style={styles.menuItem}
@@ -514,12 +514,9 @@ const ChatScreen = () => {
                   <MenuOption
                     style={styles.menuItem}
                     onSelect={() => {
-                      navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
-                        screen: NavigationRoutes.APP_STACK.LISTING,
-                        params: {
-                          listing_id:
-                            conversationData?.listing_id || listing_id,
-                        },
+                      navigate(NavigationRoutes.APP_STACK.LISTING, {
+                        listing_id:
+                          conversationData?.listing_id || listing_id,
                       });
                     }}
                   >

@@ -13,6 +13,10 @@ import i18n, { changeLanguage } from '@/locales/i18n/i18n';
 import RNRestart from 'react-native-restart';
 import GlassCard from '../GlassCard/GlassCard';
 import { useAuthStore } from '@/store/useAuthStore';
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
+import { useQuery } from '@tanstack/react-query';
+import STORAGE_CONST from '@/constants/storage';
+import { getMobileNotificationsCount } from '@/services/mobileNotificationsApi';
 
 interface HeaderApp {
   isGoBack?: boolean;
@@ -22,6 +26,7 @@ interface HeaderApp {
   isLang?: boolean;
   addIconAfterisGoBack?: string;
   isShowProfile?:boolean;
+  isNotification?:boolean
 }
 
 const HeaderApp = ({
@@ -31,12 +36,21 @@ const HeaderApp = ({
   isLang,
   isGoBackAfterLogo,
   addIconAfterisGoBack,
-  isShowProfile
+  isShowProfile,
+  isNotification
 }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
   const { user } = useAuthStore();
+
+  const { data: notifCountData } = useQuery({
+    queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT],
+    queryFn: getMobileNotificationsCount,
+    enabled: !!isNotification,
+    refetchInterval: 60000,
+  });
+  const unreadCount = notifCountData?.data?.unread ?? 0;
 
   const { t } = useTranslation();
 
@@ -101,6 +115,19 @@ const HeaderApp = ({
                 <AppText text={t('common.lang_switch')} fontSize={12} type="Medium" />
               </Pressable>
             </GradientBorder>
+          )}
+          {isNotification && (
+            <AppPressable style={{
+              marginLeft: Metrics.scale(5),
+              alignSelf:'center'
+            }} onPress={()=>{
+              navigate(NavigationRoutes.APP_STACK.NOTIFIATION)
+            }}>
+              <View style={styles.bellWrapper}>
+                <Svgicons path='bell' size={25}/>
+                {unreadCount > 0 && <View style={styles.unreadDot} />}
+              </View>
+            </AppPressable>
           )}
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
@@ -188,5 +215,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  bellWrapper: {
+    position: 'relative',
+  },
+  unreadDot: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF3B30',
+    borderWidth: 1,
+    borderColor: Colors.WHITE,
+  },
 });

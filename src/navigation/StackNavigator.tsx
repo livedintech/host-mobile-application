@@ -11,7 +11,7 @@ const StackNavigator = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 3000); // 3 seconds tak splash dikhayein
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);

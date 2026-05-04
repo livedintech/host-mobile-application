@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { zustandStorage } from '@/storage/mmkv';
+import { storage } from '@/storage/mmkv';
 import { User } from '@/types/api/authTypes';
 
 
@@ -21,7 +22,10 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       setToken: (token) => set({ token, isLoggedIn: true }),
       setUser: (user) => set({ user }),
-      logout: () => set({ token: null, user: null, isLoggedIn: false }),
+      logout: () => {
+        storage.remove('NAV_STATE');
+        set({ token: null, user: null, isLoggedIn: false });
+      },
     }),
     {
       name: 'auth-storage',

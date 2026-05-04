@@ -9,8 +9,7 @@ import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 import { smartLockApiResponseType, smartLockGeneratePasscodePayloadType } from '@/types/api/smartLockTypes';
 import Toast from 'react-native-toast-message';
-import { navigate } from '@/services/navigationService';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { goBack } from '@/services/navigationService';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
@@ -59,7 +58,7 @@ export default function useGeneratePasscodeContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_ACTIVE_CODES]
             });
-            navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES,{ lock_id })
+            goBack()
         },
         onError: error => {
             Toast.show({

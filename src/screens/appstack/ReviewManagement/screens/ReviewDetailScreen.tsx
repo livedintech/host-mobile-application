@@ -125,7 +125,7 @@ const ReviewDetailScreen = ({ route }: any) => {
   if (isLoading || !bookingData.property) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={FIGMA_TEAL} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
   }

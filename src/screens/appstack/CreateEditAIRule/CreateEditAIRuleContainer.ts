@@ -116,9 +116,9 @@ export default function useCreateEditAIRuleContainer(editData?: any) {
     });
     
     // Listing
-      const transformedListing = listing?.data.map((item: any) => ({
-        label: item.title,
-        value: item.id,
+      const transformedListing = listing?.data?.map((item: any) => ({
+        label: item.title || item.name || '',
+        value: item?.listing_id || item.id,
       }));
 
     return {
