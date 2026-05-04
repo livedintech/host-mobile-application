@@ -11,7 +11,7 @@ import { useTaskStore } from '@/store/taskStore';
 import { PAGE_SIZE } from '@/services/api';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
 
-const AllTaskContainer = () => {
+const AllTaskContainer = (initialListingId?: string) => {
   const { setTaskInfo } = useTaskStore();
   const STATUS_MAP: Record<string, string> = {
     'To-do': 'todo',
@@ -22,7 +22,7 @@ const AllTaskContainer = () => {
 
   const [activeTab, setActiveTab] = useState('To-do');
   const [appliedFilters, setAppliedFilters] = useState({
-    listings: [] as string[],
+    listings: initialListingId ? [initialListingId] : [] as string[],
     assignees: [] as string[],
   });
 

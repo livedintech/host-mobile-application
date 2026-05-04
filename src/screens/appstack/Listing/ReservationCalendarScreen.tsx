@@ -87,7 +87,7 @@ const ReservationCalendarScreen = () => {
       <View style={{ flex: 1 }}>
         {resLoading ? (
           <View style={styles.centerContainer}>
-            <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
           </View>
         ) : (
           <FlatListSimpleHandler

@@ -38,7 +38,7 @@ const ChecklistItemsList = ({
 
   if (isLoading)
     return (
-      <ActivityIndicator color={Colors.PINE_FOREST} style={{ margin: 20 }} />
+      <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} style={{ margin: 20 }} />
     );
 
   return (
@@ -167,7 +167,7 @@ const CreateChecklistScreen = () => {
         <ActivityIndicator
           size="large"
           style={{ flex: 1 }}
-          color={Colors.PINE_FOREST}
+          color={Colors.MEDIUM_JUNGLE_GREEN}
         />
       ) : (
         <FlatList
@@ -239,7 +239,7 @@ const CreateChecklistScreen = () => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator size="small" />
+                <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
               ) : (
                 <AppText
                   text={t('app.task_management.confirm')}

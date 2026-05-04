@@ -41,7 +41,7 @@ const AddNewPaymentMethodScreen = () => {
 
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.INDIAN_RED} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
         <AppText
           text={loadingText}
           mt={10}
@@ -163,7 +163,7 @@ const AddNewPaymentMethodScreen = () => {
                     radius={12}
                   />
                 ) : (
-                  <ActivityIndicator color={Colors.INDIAN_RED} />
+                  <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} />
                 )}
               </View>
             )}
@@ -187,7 +187,7 @@ const AddNewPaymentMethodScreen = () => {
                   >
                     <AppText
                       text={t('auth.add_payment.retry_loading')}
-                      color={Colors.INDIAN_RED}
+                      color={Colors.MEDIUM_JUNGLE_GREEN}
                       type="Bold"
                       fontSize={16}
                     />

@@ -58,7 +58,7 @@ const PhotoUploadTemplate = (props: any) => {
       {/* ✅ Delete loader */}
       {deletingIndex === index && props.isDeleting ? (
         <View style={styles.deletingOverlay}>
-          <ActivityIndicator size="small" color={Colors.WHITE} />
+          <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
         </View>
       ) : null}
 
@@ -79,7 +79,7 @@ const PhotoUploadTemplate = (props: any) => {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
           <AppText text={t('app.photo_upload.loading')} mt={15} fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} />
         </View>
       </BGImage>

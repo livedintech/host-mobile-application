@@ -27,8 +27,8 @@ const TABS = ['Airbnb', 'Gathern', 'Booking.com'] as const;
 type TabType = typeof TABS[number];
 
 const TAB_ICON_MAP: Record<TabType, string> = {
-  Airbnb:        'airbnb',
-  Gathern:       'gathern',
+  Airbnb: 'airbnb',
+  Gathern: 'gathern',
   'Booking.com': 'bookingCom',
 };
 
@@ -47,7 +47,7 @@ const InfoRow = ({ icon, label, value, valueColor }: any) => (
   </View>
 );
 
-const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions,t }: any) => {
+const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions, t }: any) => {
   const { control, formState: { errors }, setValue } = useForm();
   useEffect(() => {
     if (account?.listings?.[0]?.id) {
@@ -76,7 +76,7 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
       <InfoRow
         icon="towerBuilding"
         label={t('app.manage_booking.total_property')}
-        value="01"
+        value={account?.properties_sync_all_count}
         valueColor={Colors.BLACK}
       />
 
@@ -84,8 +84,8 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
         <InfoRow
           icon="database_check"
           label={t('app.manage_booking.connection_status')}
-          value={t('app.manage_booking.connection_active')}
-          valueColor={Colors.TEAL_PRIMARY_ALT}
+          value={account?.channel_status ===  'unknown' ? 'Disconnect' : account?.channel_status}
+          valueColor={account?.channel_status ===  'unknown' ? Colors.ALERT_RED   : Colors.TEAL_PRIMARY_ALT }
         />
       )}
 
@@ -98,16 +98,10 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
             valueColor={Colors.BLACK}
           />
           <InfoRow
-            icon={TAB_ICON_MAP[selectedTab as TabType]}
-            label={t('app.manage_booking.total_property')}
-            value="01"
-            valueColor={Colors.BLACK}
-          />
-          <InfoRow
             icon="database_check"
             label={t('app.manage_booking.connection_status')}
-            value={t('app.manage_booking.connection_active')}
-            valueColor={Colors.TEAL_PRIMARY_ALT}
+            value={account?.channel_status ===  'unknown' ? 'Disconnect' : account?.channel_status}
+          valueColor={account?.channel_status ===  'unknown' ? Colors.ALERT_RED   : Colors.TEAL_PRIMARY_ALT }
           />
           {account?.listings?.[0]?.listing_relation && (
             <DropdownField
@@ -149,7 +143,7 @@ const ManageBookingScreen = () => {
 
   const hasAccounts = currentTabAccounts.length > 0;
 
-   useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       refetch();
     }, [])
@@ -246,7 +240,7 @@ const ManageBookingScreen = () => {
           contentContainerStyle={styles.scrollContent}
         >
           {isLoading ? (
-            <ActivityIndicator size="large" color={Colors.TEAL_PRIMARY_ALT} style={styles.loader} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} style={styles.loader} />
           ) : hasAccounts ? (
             <FlatList
               data={currentTabAccounts}
@@ -260,7 +254,7 @@ const ManageBookingScreen = () => {
                     onExport={goToListing}
                     listingOptions={listingOptions}
                     user={user}
-                     t={t}
+                    t={t}
                   />
                 </View>
               )}
@@ -301,66 +295,66 @@ const ManageBookingScreen = () => {
 export default ManageBookingScreen;
 
 const styles = StyleSheet.create({
-  bgContainer:        { flex: 1 },
-  container:          { flex: 1 },
+  bgContainer: { flex: 1 },
+  container: { flex: 1 },
   header: {
     paddingHorizontal: 20,
-    marginTop:         20,
-    marginBottom:      25,
+    marginTop: 20,
+    marginBottom: 25,
   },
   tabsContainer: {
-    flexDirection:    'row',
+    flexDirection: 'row',
     paddingHorizontal: Metrics.baseMargin,
-    marginBottom:     Metrics.verticalScale(30),
-    justifyContent:   'space-between',
-    gap:              Metrics.scale(10),
+    marginBottom: Metrics.verticalScale(30),
+    justifyContent: 'space-between',
+    gap: Metrics.scale(10),
   },
   tabBtn: {
-    paddingVertical:  12,
-    backgroundColor:  'rgba(255,255,255,0.4)',
-    width:            Metrics.scale(125),
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    width: Metrics.scale(125),
   },
-  activeTabBtn:       { backgroundColor: Colors.TEAL_PRIMARY_ALT },
+  activeTabBtn: { backgroundColor: Colors.TEAL_PRIMARY_ALT },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom:     40,
-    flexGrow:          1,
+    paddingBottom: 40,
+    flexGrow: 1,
   },
-  loader:             { marginTop: 50 },
-  connectedCard:      { padding: 24, borderRadius: 24 },
-  cardHeader:         { marginBottom: 25 },
+  loader: { marginTop: 50 },
+  connectedCard: { padding: 24, borderRadius: 24 },
+  cardHeader: { marginBottom: 25 },
   cardRow: {
-    flexDirection:  'row',
-    alignItems:     'center',
-    marginBottom:   20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   iconCircle: {
-    width:           44,
-    height:          44,
-    borderRadius:    22,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: 'rgba(255,255,255,0.6)',
-    justifyContent:  'center',
-    alignItems:      'center',
-    marginRight:     15,
-    borderWidth:     1,
-    borderColor:     'rgba(255,255,255,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.9)',
   },
-  cardSpacing:        { marginTop: 16 },
+  cardSpacing: { marginTop: 16 },
   noAccountContainer: {
-    flex:            1,
-    justifyContent:  'center',
-    alignItems:      'center',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
   tabEmptyContainer: {
-    flex:           1,
+    flex: 1,
     justifyContent: 'center',
-    alignItems:     'center',
-    marginTop:      60,
+    alignItems: 'center',
+    marginTop: 60,
   },
   footer: {
     paddingHorizontal: 20,
-    paddingBottom:     30,
-    paddingTop:        10,
+    paddingBottom: 30,
+    paddingTop: 10,
   },
 });

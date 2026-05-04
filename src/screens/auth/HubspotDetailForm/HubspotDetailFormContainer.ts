@@ -4,22 +4,14 @@ import { meetingDetailsSchema } from '@/validation/hubspot/hubspotSchemas';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
-
-// Keys must match exactly what CountryPicker returns
-export const CITIES_BY_COUNTRY: Record<string, string[]> = {
-  'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Khobar'],
-  'United Arab Emirates': ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
-  'Pakistan': ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan'],
-  'India': ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata'],
-  'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Leeds'],
-  'United States': ['New York', 'Los Angeles', 'Chicago', 'Houston'],
-};
-
-export const DISTRICTS_BY_CITY: Record<string, string[]> = {
-  Riyadh: ['Olaya', 'Malaz', 'Diplomatic Quarter', 'Other'],
-  Dubai: ['Marina', 'Downtown', 'Jumeirah', 'Other'],
-  Karachi: ['DHA', 'Gulshan', 'Clifton', 'Other'],
-};
+import { useQuery } from '@tanstack/react-query';
+import STORAGE_CONST from '@/constants/storage';
+import {
+  getListingCountriesApi,
+  getListingStateApi,
+  getListingCityApi,
+  getListingDistrictsApi,
+} from '@/services/ createListingService';
 
 export default function useHubspotDetailFormContainer() {
   const route = useRoute<any>();
@@ -31,7 +23,6 @@ export default function useHubspotDetailFormContainer() {
     handleSubmit,
     watch,
     setValue,
-    clearErrors,
     formState: { errors },
   } = useForm<any>({
     resolver: yupResolver(meetingDetailsSchema) as any,
@@ -39,60 +30,78 @@ export default function useHubspotDetailFormContainer() {
       fullName: '',
       email: '',
       country: null,
-      city: '',
-      district: '',
-      otherCity: '',
-      otherDistrict: '',
+      state: null,
+      city: null,
+      district: null,
       phone: { phone: incomingPhone, actualPhone: incomingPhone },
     },
   });
 
-  const selectedCountryObj = watch('country');
-  const selectedCountry = selectedCountryObj?.name || '';
-  const selectedCity = watch('city');
-  const selectedDistrict = watch('district');
+  const selectedCountryId = watch('country');
+  const selectedStateId = watch('state');
+  const selectedCityId = watch('city');
 
-  const cities = selectedCountry ? (CITIES_BY_COUNTRY[selectedCountry] || ['Other']) : [];
-  const districts = selectedCity ? (DISTRICTS_BY_CITY[selectedCity] || ['Other']) : [];
+  const { data: countriesData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_COUNTRIES],
+    queryFn: getListingCountriesApi,
+  });
 
-  const onCountrySelect = (country: any) => {
-    console.log('country', country);
+  const { data: statesData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_STATE, selectedCountryId],
+    queryFn: () => getListingStateApi({ country_id: Number(selectedCountryId) }),
+    enabled: Boolean(selectedCountryId),
+  });
 
-  setValue('country', {
-  cca2: country.cca2,
-  name: country.name,
-  callingCode: country.callingCode?.[0] || '',
-}, {
-  shouldValidate: true,
-  shouldDirty: true,
-});
+  const { data: citiesData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_CITIES, selectedStateId],
+    queryFn: () => getListingCityApi({ state_id: Number(selectedStateId) }),
+    enabled: Boolean(selectedStateId),
+  });
 
-clearErrors('country');
-    setValue('city', '');
-    setValue('district', '');
-    setValue('otherCity', '');
-    setValue('otherDistrict', '');
+  const { data: districtsData = [] } = useQuery({
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_DISTRICTS, selectedCityId],
+    queryFn: () => getListingDistrictsApi({ city_id: Number(selectedCityId) }),
+    enabled: Boolean(selectedCityId),
+  });
+
+  const countriesOptions = (countriesData as any[]).map((item) => ({ label: item.name, value: item.id }));
+  const statesOptions = (statesData as any[]).map((item) => ({ label: item.name, value: item.id }));
+  const citiesOptions = (citiesData as any[]).map((item) => ({ label: item.name, value: item.id }));
+  const districtsOptions = (districtsData as any[]).map((item) => ({ label: item.name, value: item.id }));
+
+  const onCountrySelect = () => {
+    setValue('state', null);
+    setValue('city', null);
+    setValue('district', null);
   };
 
-  const onCitySelect = (city: string) => {
-    setValue('district', '');
-    setValue('otherDistrict', '');
+  const onStateSelect = () => {
+    setValue('city', null);
+    setValue('district', null);
+  };
+
+  const onCitySelect = () => {
+    setValue('district', null);
   };
 
   const onSubmit = (data: any) => {
-    const finalCountry = data.country?.name || '';
-    const countryCode = data.country?.callingCode || '';
-    const finalCity = data.city === 'Other' ? data.otherCity : data.city;
-    const finalDistrict = data.district === 'Other' ? data.otherDistrict : data.district;
+    const countryObj = (countriesData as any[]).find((c) => c.id === data.country);
+    const stateObj = (statesData as any[]).find((s) => s.id === data.state);
+    const cityObj = (citiesData as any[]).find((c) => c.id === data.city);
+    const districtObj = (districtsData as any[]).find((d) => d.id === data.district);
 
     const formattedUserInfo = {
       ...payload,
       ...data,
-      country: finalCountry,
-      country_code: countryCode,
-      city: finalCity,
-      district: finalDistrict,
-      city_if_other: data.district === 'Other' ? data.otherDistrict : '',
+      country: countryObj?.name || '',
+      country_code: countryObj?.phone_code || '',
+      state: stateObj?.name || '',
+      city: cityObj?.name || '',
+      district: districtObj?.name || '',
+      country_id: data.country,
+      state_id: data.state,
+      city_id: data.city,
+      district_id: data.district,
       email: data.email.toLowerCase(),
       phone: data.phone?.phone,
     };
@@ -107,12 +116,15 @@ clearErrors('country');
     errors,
     handleSubmit,
     onSubmit,
-    selectedCountry,
-    selectedCity,
-    selectedDistrict,
-    cities,
-    districts,
+    selectedCountryId,
+    selectedStateId,
+    selectedCityId,
+    countriesOptions,
+    statesOptions,
+    citiesOptions,
+    districtsOptions,
     onCountrySelect,
+    onStateSelect,
     onCitySelect,
   };
 }

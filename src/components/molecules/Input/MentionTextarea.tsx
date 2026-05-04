@@ -34,11 +34,10 @@ export default function MentionTextarea({
 
   const [showList, setShowList] = useState(false);
   const [filtered, setFiltered] = useState<any[]>([]);
-  const [cursorPos, setCursorPos] = useState(0);
+  const [inputAreaHeight, setInputAreaHeight] = useState(0);
 
   const error = errors[name]?.message;
 
-  // same colors as CustomInput
   const GLASS_BASE = 'rgba(255,255,255,0.25)';
   const GLASS_RIM = 'rgba(255,255,255,0.6)';
   const FOCUS_COLOR = Colors.PINE_FOREST || '#000000';
@@ -67,10 +66,17 @@ export default function MentionTextarea({
   const handleChange = (text: string, onChange: any) => {
     onChange(text);
 
-    const lastAt = text.lastIndexOf('@', cursorPos);
+    // Find the last @ in the entire text and use everything after it as keyword
+    const lastAt = text.lastIndexOf('@');
 
     if (lastAt !== -1) {
-      const keyword = text.slice(lastAt + 1, cursorPos);
+      const keyword = text.slice(lastAt + 1);
+
+      // Stop showing dropdown if user typed a space or newline after @
+      if (keyword.includes(' ') || keyword.includes('\n')) {
+        setShowList(false);
+        return;
+      }
 
       const matches = variables.filter(v =>
         v.key.toLowerCase().includes(keyword.toLowerCase()),
@@ -84,12 +90,12 @@ export default function MentionTextarea({
   };
 
   const insertVariable = (item: any, value: string, onChange: any) => {
-    const lastAt = value.lastIndexOf('@', cursorPos);
+    const lastAt = value.lastIndexOf('@');
 
     const newText =
       value.substring(0, lastAt) +
-      `{${item.key}}` +
-      value.substring(cursorPos);
+      `${item.key}` +
+      ' ';
 
     onChange(newText);
     setShowList(false);
@@ -100,73 +106,71 @@ export default function MentionTextarea({
   };
 
   return (
-    <View style={styles.wrapper}>
-      {label && (
-        <AppText
-          text={label}
-          mb={8}
-          color={Colors.BLACK}
-          fontSize={14}
-          type="Medium"
-        />
-      )}
-
-      <Controller
-        control={control}
-        name={name}
-        render={({ field: { value, onChange } }) => (
-          <>
-            <Animated.View
-              style={[
-                styles.glassContainer,
-                {
-                  borderColor: error
-                    ? Colors.INDIAN_RED
-                    : animatedBorderColor,
-                  backgroundColor: GLASS_BASE,
-                },
-              ]}
-            >
-              <TextInput
-                ref={inputRef}
-                multiline
-                value={value}
-                style={styles.input}
-                placeholder={placeholder}
-                placeholderTextColor={'#7B8D88'}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onSelectionChange={e =>
-                  setCursorPos(e.nativeEvent.selection.start)
-                }
-                onChangeText={text =>
-                  handleChange(text, onChange)
-                }
-              />
-            </Animated.View>
-
-            {showList && (
-              <View style={styles.dropdown}>
-                <FlatList
-                  data={filtered}
-                  keyExtractor={i => i.key}
-                  keyboardShouldPersistTaps="handled"
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() =>
-                        insertVariable(item, value, onChange)
-                      }
-                    >
-                      <AppText text={item.key} />
-                    </TouchableOpacity>
-                  )}
-                />
-              </View>
-            )}
-          </>
+    <View style={[styles.wrapper, showList && styles.wrapperActive]}>
+      <View
+        onLayout={e => setInputAreaHeight(e.nativeEvent.layout.height)}
+      >
+        {label && (
+          <AppText
+            text={label}
+            mb={8}
+            color={Colors.BLACK}
+            fontSize={14}
+            type="Medium"
+          />
         )}
-      />
+
+        <Controller
+          control={control}
+          name={name}
+          render={({ field: { value, onChange } }) => (
+            <>
+              <Animated.View
+                style={[
+                  styles.glassContainer,
+                  {
+                    borderColor: error
+                      ? Colors.INDIAN_RED
+                      : animatedBorderColor,
+                    backgroundColor: GLASS_BASE,
+                  },
+                ]}
+              >
+                <TextInput
+                  ref={inputRef}
+                  multiline
+                  value={value}
+                  style={styles.input}
+                  placeholder={placeholder}
+                  placeholderTextColor={'#7B8D88'}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChangeText={text => handleChange(text, onChange)}
+                />
+              </Animated.View>
+
+              {showList && (
+                <View style={[styles.dropdown, { top: inputAreaHeight + 4 }]}>
+                  <FlatList
+                    data={filtered}
+                    keyExtractor={i => i.key}
+                    keyboardShouldPersistTaps="handled"
+                    nestedScrollEnabled
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.item}
+                        onPress={() => insertVariable(item, value, onChange)}
+                      >
+                        <AppText text={item.key} />
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              )}
+            </>
+          )}
+        />
+      </View>
 
       {error && (
         <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
@@ -180,6 +184,10 @@ const styles = StyleSheet.create({
     marginBottom: Metrics.verticalScale(18),
   },
 
+  wrapperActive: {
+    zIndex: 999,
+  },
+
   glassContainer: {
     borderWidth: 1.5,
     borderRadius: 12,
@@ -191,13 +199,12 @@ const styles = StyleSheet.create({
   input: {
     color: '#000000',
     fontSize: Metrics.generatedFontSize(14),
-    fontWeight: '600',
+    fontWeight: '400',
     textAlignVertical: 'top',
   },
 
   dropdown: {
     position: 'absolute',
-    top: 85,
     width: '100%',
     backgroundColor: Colors.WHITE,
     borderRadius: 12,
@@ -205,6 +212,11 @@ const styles = StyleSheet.create({
     borderColor: Colors.SMOOTH_GREY,
     maxHeight: 180,
     zIndex: 999,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
   },
 
   item: {

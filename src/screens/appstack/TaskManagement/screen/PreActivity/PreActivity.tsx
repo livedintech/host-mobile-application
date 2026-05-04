@@ -156,7 +156,7 @@ const PreActivity = ({ route }: any) => {
             {isVideoLoading && (
               <ActivityIndicator 
                 size="large" 
-                color={Colors.PRIMARY_TEAL} 
+                color={Colors.MEDIUM_JUNGLE_GREEN}
                 style={StyleSheet.absoluteFill} 
               />
             )}

@@ -85,7 +85,7 @@ const StatisticsScreen = () => {
           onRefresh={onHandleRefresh}
           skeletonComponent={
             <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+              <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
             </View>
           }
         >
@@ -103,35 +103,35 @@ const StatisticsScreen = () => {
             <StatCard
               title={t('app.analytics.rental_revenue')}
               value={`SAR ${formatNumber(revenue.value)}`}
-              subText="vs last month"
+              subText={t('app.analytics.vs_last_month')}
               trend={revenue.delta_pct}
               icon="walletIcon"
             />
             <StatCard
               title={t('app.analytics.occupancy')}
               value={`${occupancy.value}%`}
-              subText="vs last month"
+              subText={t('app.analytics.vs_last_month')}
               trend={occupancy.delta_pct}
               icon="occupancy"
             />
             <StatCard
               title={t('app.analytics.avg_daily_rate')}
               value={`SAR ${formatNumber(adr.value)}`}
-              subText="vs last month"
+              subText={t('app.analytics.vs_last_month')}
               trend={adr.delta_pct}
               icon="avg_stay_revenue"
             />
             <StatCard
               title={t('app.analytics.avg_length_stay')}
               value={`${stayLength.value} Nights`}
-              subText="vs last month"
+              subText={t('app.analytics.vs_last_month')}
               trend={stayLength.delta_pct}
               icon="avg_length_of_stay"
             />
             <StatCard
               title={t('app.analytics.revPar')}
               value={`SAR ${formatNumber(revpar.value)}`}
-              subText="vs last month"
+              subText={t('app.analytics.vs_last_month')}
               trend={revpar.delta_pct}
               icon="avg_length_of_stay"
             />

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -25,6 +25,7 @@ import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHand
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useRoute } from '@react-navigation/native';
 import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer';
 import NoTaskScreen from '../NoTaskScreen/NoTaskScreen';
 import { useTaskStore } from '@/store/taskStore';
@@ -42,6 +43,9 @@ const formatDate = (dateString: string) => {
 };
 
 const AllTask = () => {
+  const route = useRoute<any>();
+  const initialListingId = route.params?.listing_id?.toString();
+
   const {
     isLoading,
     activeTab,
@@ -53,8 +57,8 @@ const AllTask = () => {
     dataQuery,
     isFetching,
     rawList,
-  } = AllTaskContainer();
-    const { t } = useTranslation();
+  } = AllTaskContainer(initialListingId);
+  const { t } = useTranslation();
 
   const { resetTaskStore } = useTaskStore();
 
@@ -69,6 +73,12 @@ const AllTask = () => {
   } = useForm({
     defaultValues: { listings: [], assignees: [] },
   });
+
+  useEffect(() => {
+    if (initialListingId) {
+      reset({ listings: [initialListingId], assignees: [] });
+    }
+  }, [initialListingId]);
 
   const handleOpenFilter = () => { filterSheetRef.current?.present() };
   const handleCloseFilter = () => { filterSheetRef.current?.close() };
@@ -101,7 +111,7 @@ const AllTask = () => {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator
           size="large"
-          color={Colors.TEAL_GREEN || '#FF0000'}
+          color={Colors.MEDIUM_JUNGLE_GREEN}
         />
       </View>
     );
@@ -308,7 +318,7 @@ const AllTask = () => {
                 label="Select Listing"
                 placeholder={t('app.task_management.select_multiple')}
                 data={listingOptions}
-                control={control}
+                control={control as any}
                 errors={errors}
               />
 
@@ -318,7 +328,7 @@ const AllTask = () => {
                   label="Select Task Assignee"
                   placeholder={t('app.task_management.select_multiple')}
                   data={assigneeOptions}
-                  control={control}
+                  control={control as any}
                   errors={errors}
                 />
               </View>

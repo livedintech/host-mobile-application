@@ -151,7 +151,7 @@ const ViewReviewScreen = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.BOTTLE_GREEN} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
   }

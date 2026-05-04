@@ -25,12 +25,22 @@ export const bookingDetailsSchema = yup.object().shape({
   booking_type:       yup.string().required(i18n.t('app.validation.booking_type_required')),
   guest_eligibility:  yup.string().required(i18n.t('app.validation.guest_eligibility_required')),
   check_in_time:      yup.string().required(i18n.t('app.validation.checkin_time_required')),
+  check_in_time_end:  yup.string().required(i18n.t('app.validation.checkin_time_required')),
   check_out_time:     yup.string().required(i18n.t('app.validation.checkout_time_required')),
   allow_same_day:     yup.string().required(i18n.t('app.validation.field_required')),
   cleanliness_status: yup.string().required(i18n.t('app.validation.cleanliness_required')),
 });
 
 export type BookingDetailsFormValues = yup.InferType<typeof bookingDetailsSchema>;
+
+const to12Hour = (time?: string): string => {
+  if (!time) return '';
+  const match = time.match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return time;
+  const h = parseInt(match[1], 10);
+  const m = match[2];
+  return `${String(h % 12 || 12).padStart(2, '0')}:${m} ${h >= 12 ? 'pm' : 'am'}`;
+};
 
 export default function useBookingDetailsContainer() {
   const { params } = useRoute<any>();
@@ -65,7 +75,7 @@ export default function useBookingDetailsContainer() {
   const connectedAccounts = response?.data || [];
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({ label: 'Airbnb', value: item.ch_channel_id }));
+    .map((item: any) => ({ label: `Airbnb - ${item?.id}`, value: item.ch_channel_id }));
 
   // ── Export Mutation ───────────────────────────────────────────────────────
   const { mutate: createListingExportPayload, isPending: isPendingExporting } =
@@ -101,8 +111,9 @@ export default function useBookingDetailsContainer() {
         ? (listing?.guest_eligibility === true || listing?.guest_eligibility === 1 ? 'Yes'
           : listing?.guest_eligibility === false || listing?.guest_eligibility === 0 ? 'No'
           : '') : '',
-      check_in_time:      isEdit ? (listing?.check_in_time  ?? '') : '',
-      check_out_time:     isEdit ? (listing?.check_out_time ?? '') : '',
+      check_in_time:      isEdit ? to12Hour(listing?.check_in_time)     : '',
+      check_in_time_end:  isEdit ? to12Hour(listing?.check_in_time_end) : '',
+      check_out_time:     isEdit ? to12Hour(listing?.check_out_time)    : '',
       allow_same_day:     isEdit
         ? (listing?.allow_same_day === true ? 'Yes' : listing?.allow_same_day === false ? 'No' : '')
         : '',
@@ -120,6 +131,7 @@ export default function useBookingDetailsContainer() {
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
+      check_in_time_end:  data.check_in_time_end,
       check_out_time:     data.check_out_time,
       allow_same_day:     data.allow_same_day === 'Yes',
       cleanliness_status: data.cleanliness_status,
@@ -151,6 +163,7 @@ export default function useBookingDetailsContainer() {
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
+      check_in_time_end:  data.check_in_time_end,
       check_out_time:     data.check_out_time,
       allow_same_day:     data.allow_same_day === 'Yes',
       cleanliness_status: data.cleanliness_status,
@@ -165,6 +178,7 @@ export default function useBookingDetailsContainer() {
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
+      check_in_time_end:  data.check_in_time_end,
       check_out_time:     data.check_out_time,
       allow_same_day:     data.allow_same_day === 'Yes',
       cleanliness_status: data.cleanliness_status,

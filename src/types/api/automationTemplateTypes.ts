@@ -4,18 +4,31 @@ export interface automationTemplateEditStatusTypesApiPayload {
 }
 export interface AutomationTemplateTypesApiPayload {
     id?: string;
-    title: string;
+    name: string;
     body: string;
-    listing_ids?: string[];
-    auto_apply_new_listings: boolean
+    event: string;
+    temp_event_time: string;
+    listing_ids?: (string | number)[];
+    is_active: boolean;
 }
 
 export interface AutomationTemplateTypesApiResponse {
     status: string;
     message: string;
     data: {
-
+        id?: number;
+        name?: string;
+        event?: string;
+        body?: string;
+        temp_event_time?: string;
+        is_active?: boolean;
+        listing_ids?: string[];
     };
+}
+
+export interface EventTimeItem {
+    value: string;
+    label: string;
 }
 
 export interface deleteAutomationTemplateTypesApiPayload {

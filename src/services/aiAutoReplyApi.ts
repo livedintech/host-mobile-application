@@ -1,7 +1,7 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import apiService from "./apiService";
 import Utils from "@/utility/Utils";
-import { aiAutoReplyTypesApiPayload, deleteaiAutoReplyTypesApiPayload, editAiAutoReplyTypesApiPayload, editStatusAiAutoReplyTypesApiPayload } from "@/types/api/aiAutoReplyTypes";
+import { aiAllowStatusPayload, aiAutoReplyTypesApiPayload, deleteaiAutoReplyTypesApiPayload, editAiAutoReplyTypesApiPayload, editStatusAiAutoReplyTypesApiPayload } from "@/types/api/aiAutoReplyTypes";
 
 // Get Ai Auto Reply List
 export const getaiAutoReplyApi = async ({
@@ -76,4 +76,16 @@ export const editStatusAiAutoReplyApi = async (payload: editStatusAiAutoReplyTyp
         return data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
-}; 
+};
+
+// Toggle AI Allow Status (global switch)
+export const editAiAllowStatusApi = async (payload: aiAllowStatusPayload) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.AI_ALLOW_STATUS,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw new Error(response.message || 'Failed to update AI allow status');
+};

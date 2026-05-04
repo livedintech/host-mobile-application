@@ -34,16 +34,15 @@ import { userEventService } from '@/services/userEventService';
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState<string | null>(null);
-  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK); // Splash/Onboarding ke liye pehle BLACK
+  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK);
 
   useEffect(() => {
-   const savedLang = getStoredLanguage();
-  changeLanguage(savedLang);
+    const savedLang = getStoredLanguage();
+    changeLanguage(savedLang);
 
     initializeApp();
     configureGoogleSignIn();
     setupNotifications();
-    
   }, []);
 
   const setupNotifications = async () => {
@@ -78,6 +77,7 @@ const App = () => {
       if (currentRouteName) {
         userEventService.logEvent('screen_view', currentRouteName);
       }
+
     } catch (e) { }
   };
 
@@ -180,7 +180,7 @@ const App = () => {
                 ref={navigationRef}
                 theme={MyTheme}
                 linking={linking}
-                onStateChange={handleNavigationStateChange} // ✅ route change listener
+                onStateChange={handleNavigationStateChange}
               >
                 <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
                   <StatusBar

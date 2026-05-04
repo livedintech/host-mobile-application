@@ -41,7 +41,7 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
 
         {isLoading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#000000" />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
             <AppText text={t('app.booking_details.fetching')} mt={10} color="#666" />
           </View>
         ) : isError ? (

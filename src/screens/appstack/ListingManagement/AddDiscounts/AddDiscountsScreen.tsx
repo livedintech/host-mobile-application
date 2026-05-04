@@ -44,7 +44,7 @@ const AddDiscountsScreen = () => {
                         <InputField name="monthly_discount" label={t('app.discounts.monthly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.monthly_placeholder')} keyboardType="numeric"/>
                         <View style={styles.gap} />
                         <InputField name="last_minute_discount" label={t('app.discounts.last_minute_label')} control={control as any} errors={errors} placeholder={t('app.discounts.last_minute_placeholder')} keyboardType="numeric"/>
-                        <InputField name="early_bird_price_change" label={t('app.discounts.early_bird_label')} control={control as any} errors={errors} placeholder={t('app.discounts.early_bird_placeholder')} keyboardType="numeric"/>
+                        <InputField name="early_bird_discount" label={t('app.discounts.early_bird_label')} control={control as any} errors={errors} placeholder={t('app.discounts.early_bird_placeholder')} keyboardType="numeric"/>
 
                     </View>
                 </KeyboardAwareScrollView>

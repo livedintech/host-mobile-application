@@ -17,10 +17,10 @@ import { queryClient } from '@/services/api';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const discountsSchema = yup.object().shape({
-  weekly_discount:         yup.string().optional(),
-  monthly_discount:        yup.string().optional(),
-  early_bird_price_change: yup.string().optional(),
-  last_minute_discount:    yup.string().optional(),
+  weekly_discount: yup.string().optional(),
+  monthly_discount: yup.string().optional(),
+  early_bird_discount: yup.string().optional(),
+  last_minute_discount: yup.string().optional(),
 });
 
 export type DiscountFormValues = yup.InferType<typeof discountsSchema>;
@@ -29,44 +29,40 @@ export type DiscountFormValues = yup.InferType<typeof discountsSchema>;
 export default function useDiscountsContainer() {
   const { params } = useRoute<any>();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
+  const { updateListing, listing_id, channel_id } = useCreateListingStore();
   const { user } = useAuthStore();
 
   const listing = params?.paramData?.listing;
-  const isEdit  = Boolean(listing?.listing_id); // ✅ consistent
-  
+  const isEdit = Boolean(listing?.listing_id); // ✅ consistent
 
   // ── Form ──────────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors } } = useForm<DiscountFormValues>({
     resolver: yupResolver(discountsSchema) as any,
     defaultValues: {
-      // Yahan listing?.prices add karein 👇
-      weekly_discount:        String(listing?.prices?.weekly_discount        ?? propertyDetail?.weekly_discount        ?? ''),
-      monthly_discount:       String(listing?.prices?.monthly_discount       ?? propertyDetail?.monthly_discount       ?? ''),
-      early_bird_price_change:String(listing?.prices?.early_bird_price_change ?? listing?.early_bird_price_change ?? propertyDetail?.early_bird_price_change ?? ''),
-      last_minute_discount:   String(listing?.prices?.last_minute_discount   ?? propertyDetail?.last_minute_discount   ?? ''),
+      weekly_discount: String(listing?.prices?.weekly_discount ?? ''),
+      monthly_discount: String(listing?.prices?.monthly_discount ?? ''),
+      early_bird_discount: String(listing?.prices?.early_bird_discount ?? ''),
+      last_minute_discount: String(listing?.prices?.last_minute_discount ?? ''),
     },
   });
 
   // ── Payload builder ───────────────────────────────────────────────────────
   const buildPayload = (data: DiscountFormValues, isSaveAndExit: boolean = false) => ({
-    user_id:          String(user?.id),
-    listing_id:       String(listing_id),
+    user_id: String(user?.id),
+    listing_id: String(listing_id),
     channel_id,
-    listing_currency: propertyDetail?.listing_currency ?? 'SAR',
-    save_and_exit:    isSaveAndExit ? 1 : 0,
+    listing_currency: listing?.listing_currency ?? 'SAR',
+    save_and_exit: isSaveAndExit ? 1 : 0,
     prices: {
-  // ✅ store se lena — pricing screen par user ne fill kiya tha
-  airbnb_discount:     Number(propertyDetail?.prices?.airbnb_discount    ?? 0),
-  gathern_discount:    Number(propertyDetail?.prices?.gathern_discount   ?? 0),
-  bookingCom_discount: Number(propertyDetail?.prices?.bookingCom_discount ?? 0),
-  discount:            Number(propertyDetail?.prices?.discount           ?? 0),
-  // 🆕 NEW
-  weekly_discount:        Number(data.weekly_discount),
-  monthly_discount:       Number(data.monthly_discount),
-  early_bird_price_change:      Number(data.early_bird_price_change),
-  last_minute_discount:   Number(data.last_minute_discount),
-},
+      airbnb_discount: Number(listing?.prices?.airbnb_discount ?? 0),
+      gathern_discount: Number(listing?.prices?.gathern_discount ?? 0),
+      bookingCom_discount: Number(listing?.prices?.bookingCom_discount ?? 0),
+      discount: Number(listing?.prices?.discount ?? 0),
+      weekly_discount: Number(data.weekly_discount) || 0,
+      monthly_discount: Number(data.monthly_discount) || 0,
+      early_bird_discount: Number(data.early_bird_discount) || 0,
+      last_minute_discount: Number(data.last_minute_discount) || 0,
+    },
   });
 
   // ── Mutation ──────────────────────────────────────────────────────────────
@@ -79,10 +75,10 @@ export default function useDiscountsContainer() {
   // ── Handler ───────────────────────────────────────────────────────────────
   const onSubmit = (data: DiscountFormValues, isSaveAndExit: boolean = false) => {
     updateListing({
-      weekly_discount:        Number(data.weekly_discount),
-      monthly_discount:       Number(data.monthly_discount),
-      early_bird_price_change:      Number(data.early_bird_price_change),
-      last_minute_discount:   Number(data.last_minute_discount),
+      weekly_discount: data.weekly_discount ?? '',
+      monthly_discount: data.monthly_discount ?? '',
+      early_bird_discount: data.early_bird_discount ?? '',
+      last_minute_discount: data.last_minute_discount ?? '',
     });
 
     handlePricingApi(buildPayload(data, isSaveAndExit) as any, {

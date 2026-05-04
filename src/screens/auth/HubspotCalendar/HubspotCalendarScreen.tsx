@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -30,7 +30,6 @@ const CalendarScreen = ({ route }: any) => {
   const { t } = useTranslation();
   const userInfo = route?.params?.userInfo!;
 
-
   const {
     currentMonth,
     selectedDate,
@@ -39,29 +38,23 @@ const CalendarScreen = ({ route }: any) => {
     selectedSlot,
     isBooking,
     loadingDates,
+    markedDates,
     setSelectedSlot,
     handleDateSelect,
     handleMonthChange,
     handleConfirmBooking,
-    buildMarkedDates,
+    handleSheetDismiss,
+    openSheet,
     formatTime,
     refreshDates,
     bottomSheetRef,
-    snapPoints
+    snapPoints,
   } = useHubspotCalendarContainer(userInfo);
-
-  const openSheet = () => {
-    if (!selectedDate) return;
-    bottomSheetRef.current?.present();
-  };
 
   const closeSheet = useCallback(() => {
     bottomSheetRef.current?.dismiss();
-  }, []);
+  }, [bottomSheetRef]);
 
-  const handleSheetDismiss = useCallback(() => {
-    handleMonthChange(currentMonth);
-  }, [currentMonth]);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -78,7 +71,6 @@ const CalendarScreen = ({ route }: any) => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>
-        {/* ── Main scrollable content ── */}
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -111,7 +103,7 @@ const CalendarScreen = ({ route }: any) => {
           <View style={styles.calendarWrapper}>
             {loadingDates ? (
               <View style={styles.calendarLoader}>
-                <ActivityIndicator size="large" color={FIGMA_TEAL} />
+                <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
                 <AppText
                   text={t('auth.hubspot_calendar.loading_dates')}
                   fontSize={13}
@@ -121,23 +113,16 @@ const CalendarScreen = ({ route }: any) => {
               </View>
             ) : (
               <Calendar
-                current={`${currentMonth.year}-${String(
-                  currentMonth.month,
-                ).padStart(2, '0')}-01`}
-                markedDates={buildMarkedDates()}
-                onDayPress={(day: { dateString: string }) =>
-                  handleDateSelect(day.dateString)
-                }
+                current={`${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-01`}
+                markedDates={markedDates}
+                onDayPress={(day: { dateString: string }) => handleDateSelect(day.dateString)}
                 onMonthChange={handleMonthChange}
+                enableSwipeMonths={false}
                 minDate={new Date().toISOString().split('T')[0]}
                 renderArrow={(direction: 'left' | 'right') => (
                   <View style={styles.arrowContainer}>
                     <Svgicons
-                      path={
-                        direction === 'left'
-                          ? 'arrowLeftIcon'
-                          : 'arrowRightIcon'
-                      }
+                      path={direction === 'left' ? 'arrowLeftIcon' : 'arrowRightIcon'}
                       size={14}
                       color={Colors.BLACK}
                     />
@@ -179,7 +164,7 @@ const CalendarScreen = ({ route }: any) => {
           </View>
         </ScrollView>
 
-        {/* ── Next button — always visible at bottom ── */}
+        {/* Next button */}
         <View style={styles.mainFooter}>
           <AppButton
             title={t('auth.hubspot_calendar.next')}
@@ -189,7 +174,7 @@ const CalendarScreen = ({ route }: any) => {
         </View>
       </SafeAreaView>
 
-      {/* ── Time slot bottom sheet ── */}
+      {/* Time slot bottom sheet */}
       <BottomSheetModal
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -222,16 +207,16 @@ const CalendarScreen = ({ route }: any) => {
         {/* Slots */}
         {loadingSlots ? (
           <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={FIGMA_TEAL} />
+            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
           </View>
-        ) : (
+        ) : agentWithSlots?.slots.length ? (
           <BottomSheetScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[styles.slotsGrid, { paddingHorizontal: s(20) }]}
           >
-            {agentWithSlots?.slots.map((slot, idx) => (
+            {agentWithSlots.slots.map((slot) => (
               <TouchableOpacity
-                key={idx}
+                key={slot.startTime}
                 style={[
                   styles.slotBtn,
                   selectedSlot === slot && styles.slotBtnSelected,
@@ -248,6 +233,14 @@ const CalendarScreen = ({ route }: any) => {
             ))}
             <View style={{ height: vs(20) }} />
           </BottomSheetScrollView>
+        ) : (
+          <View style={styles.loaderContainer}>
+            <AppText
+              text={t('auth.hubspot_calendar.no_slots')}
+              fontSize={13}
+              color="#666"
+            />
+          </View>
         )}
 
         {/* Sheet footer */}
@@ -337,7 +330,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: vs(150) },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: vs(150),
+  },
   slotsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   slotBtn: {
     width: '23%',

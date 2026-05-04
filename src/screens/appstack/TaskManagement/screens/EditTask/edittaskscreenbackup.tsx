@@ -291,7 +291,7 @@ const EditTaskScreen = () => {
   if (isLoadingTaskDetail) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.PINE_FOREST} />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
   }
@@ -344,7 +344,7 @@ const EditTaskScreen = () => {
                   {isLoadingChecklistDetail ? (
                     <ActivityIndicator
                       size="small"
-                      color={Colors.PINE_FOREST}
+                      color={Colors.MEDIUM_JUNGLE_GREEN}
                     />
                   ) : (
                     checklistDetail?.items?.map((check: any) => (

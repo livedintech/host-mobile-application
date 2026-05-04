@@ -57,7 +57,7 @@ const SubscriptionHistoryScreen = () => {
         <GradientBorder borderRadius={24} style={styles.cardWrapper}>
           <View style={styles.innerCard}>
             {isLoadingGetSubscrptionUserPlan ? (
-              <ActivityIndicator color={Colors.BRUNSWICK_GREEN} />
+              <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} />
             ) : hasSubscription ? (
               <>
                 <AppText
@@ -124,7 +124,7 @@ const SubscriptionHistoryScreen = () => {
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator color={Colors.BRUNSWICK_GREEN} />
+            <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} />
           </View>
         ) : listingCount === 0 ? (
           <GradientBorder borderRadius={24} style={styles.cardWrapper}>

@@ -96,7 +96,7 @@ const ListingScreen = () => {
 
       {isFetchingDetails && (
         <View style={styles.overlayLoader}>
-          <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
         </View>
       )}
 

@@ -28,8 +28,8 @@ const AddPropertyGuidelinesScreen = () => {
     isLoading,
     isEdit,
     hideWifiFields,
+    guidelinesSection,
     lockOptions,
-    // ✅ Export
     handleExport,
     handleExportSubmit,
     bottomSheetVisible,
@@ -88,32 +88,40 @@ const AddPropertyGuidelinesScreen = () => {
           )}
 
           <View style={[styles.formGroup, isEdit && { marginTop: Metrics.verticalScale(20) }]}>
-            <TextareaField
-              name="arrival_guide"
-              control={control as any}
-              errors={errors}
-              label={t('app.property_guidelines.arrival_guide_label')}
-              placeholder={"• Property Name: Olive Residency\n• Address: Building 12, Al Noor Street, City Center"}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="property_rules"
-              control={control as any}
-              errors={errors}
-              label={t('app.property_guidelines.property_rules_label')}
-              placeholder={"• Please maintain a low noise level at all times."}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="checkout_instructions"
-              control={control as any}
-              errors={errors}
-              label={t('app.property_guidelines.checkout_instructions_label')}
-              placeholder={"• Please leave the apartment in a reasonable condition."}
-              multiline
-            />
+            {guidelinesSection !== 'guidelines' && (
+              <>
+                <TextareaField
+                  name="arrival_guide"
+                  control={control as any}
+                  errors={errors}
+                  label={t('app.property_guidelines.arrival_guide_label')}
+                  placeholder={"• Property Name: Olive Residency\n• Address: Building 12, Al Noor Street, City Center"}
+                  multiline
+                />
+                <View style={styles.fieldGap} />
+              </>
+            )}
+            {guidelinesSection !== 'arrival' && (
+              <>
+                <TextareaField
+                  name="property_rules"
+                  control={control as any}
+                  errors={errors}
+                  label={t('app.property_guidelines.property_rules_label')}
+                  placeholder={"• Please maintain a low noise level at all times."}
+                  multiline
+                />
+                <View style={styles.fieldGap} />
+                <TextareaField
+                  name="checkout_instructions"
+                  control={control as any}
+                  errors={errors}
+                  label={t('app.property_guidelines.checkout_instructions_label')}
+                  placeholder={"• Please leave the apartment in a reasonable condition."}
+                  multiline
+                />
+              </>
+            )}
           </View>
 
           <View style={styles.bottomSection}>

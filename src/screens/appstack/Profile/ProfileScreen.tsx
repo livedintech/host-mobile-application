@@ -126,7 +126,7 @@ const ProfileScreen = () => {
               hitSlop={10}
             >
               {isRemoving ? (
-                <ActivityIndicator size="small" color={Colors.WHITE} />
+                <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
               ) : (
                 <AppText text="✕" color={Colors.WHITE} fontSize={10} />
               )}

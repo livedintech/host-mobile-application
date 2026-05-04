@@ -40,10 +40,11 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
 }) => {
   const error = errors[name]?.message as string;
 
-  // Helper function for character-based truncation
-  const truncateText = (text: string, limit: number) => {
-    return text.length > limit ? `${text.substring(0, limit)}...` : text;
-  };
+  const MAX_VISIBLE_CHIPS = 3;
+  const MAX_CHIP_TEXT_LEN = 8;
+
+  const truncateText = (text: string, limit: number) =>
+    text.length > limit ? `${text.substring(0, limit)}...` : text;
 
   return (
     <View style={{ marginBottom: Metrics.verticalScale(18) }}>
@@ -65,12 +66,11 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
               const isSelected = value?.includes(item.value);
               return (
                 <View style={styles.itemContainer}>
-                  <Svgicons 
-                    path={isSelected ? "CheckboxCheckedIcon" : "CheckboxUncheckedIcon"} 
+                  <Svgicons
+                    path={isSelected ? "CheckboxCheckedIcon" : "CheckboxUncheckedIcon"}
                   />
                   <View style={{ flex: 1 }}>
                     <AppText
-                      // Manually truncating to 15 characters
                       text={truncateText(item.label, 35)}
                       fontSize={13}
                       color={Colors.BLACK_35_PERCENT}
@@ -82,15 +82,45 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
               );
             };
 
+            const renderSelectedItem = (item: DropdownItem) => {
+              const selectedValues = value || [];
+              const itemIndex = selectedValues.indexOf(item.value);
+              const totalSelected = selectedValues.length;
+
+              if (itemIndex > MAX_VISIBLE_CHIPS) return <View style={styles.hiddenChip} />;
+
+              if (itemIndex === MAX_VISIBLE_CHIPS) {
+                const remaining = totalSelected - MAX_VISIBLE_CHIPS;
+                return (
+                  <View style={styles.moreChip}>
+                    <AppText text={`+${remaining}`} fontSize={11} color={Colors.BLACK} type="Medium" />
+                  </View>
+                );
+              }
+
+              return (
+                <View style={styles.selectedChip}>
+                  <AppText
+                    text={truncateText(item.label, MAX_CHIP_TEXT_LEN)}
+                    fontSize={11}
+                    color={Colors.BLACK}
+                    numberOfLines={1}
+                    type="Medium"
+                  />
+                </View>
+              );
+            };
+
             return (
               <MultiSelect
+                inside
                 dropdownPosition={dropdownPosition}
                 style={[
                   styles.dropdown,
                   !!error && styles.errorBorder,
                   disabled && styles.disabled,
                 ]}
-                containerStyle={styles.whiteContainer} 
+                containerStyle={styles.whiteContainer}
                 itemContainerStyle={styles.itemContainerStyle}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -105,8 +135,9 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
                 renderRightIcon={() => (
                   <Svgicons path="ChevronDownIcon" width={15} height={15} />
                 )}
-                selectedStyle={styles.selectedStyle}
+                selectedStyle={styles.selectedChip}
                 renderItem={renderDropdownItem}
+                renderSelectedItem={renderSelectedItem}
                 backgroundColor="transparent"
               />
             );
@@ -128,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 12
   },
   dropdown: {
-    minHeight: Metrics.verticalScale(56),
+    height: Metrics.verticalScale(56),
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 12,
     paddingHorizontal: 16,
@@ -186,6 +217,29 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 1)',
     paddingHorizontal: 10,
     paddingVertical: 4,
+  },
+  selectedChip: {
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 1)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginRight: 4,
+    marginVertical: 2,
+  },
+  moreChip: {
+    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.08)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginRight: 4,
+    marginVertical: 2,
+  },
+  hiddenChip: {
+    width: 0,
+    height: 0,
+    overflow: 'hidden',
   },
 });
 
