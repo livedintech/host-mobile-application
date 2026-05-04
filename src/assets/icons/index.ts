@@ -321,8 +321,12 @@ import newTaskAssign from './newTaskAssign.svg'
 import completeTask from './completeTask.svg'
 import unlockActivity from './unlockActivity.svg'
 import chevronLeft from './chevronLeft.svg'
+import arLang from './arLang.svg'
+import enLang from './enLang.svg'
 
 export const icons = {
+  enLang,
+  arLang,
   chevronLeft,
   chatMessage,
   calendarBooking,

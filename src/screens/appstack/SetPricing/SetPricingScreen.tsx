@@ -16,6 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
 import Modal from 'react-native-modal';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const SetPricingScreen = () => {
   const { t } = useTranslation();
@@ -36,11 +37,9 @@ const SetPricingScreen = () => {
           automaticallyAdjustKeyboardInsets={false}
         >
           <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
-                <Svgicons path='arrowLeftIcon' size={24} />
-              </TouchableOpacity>
-            </GradientBorder>
+             <ButtonView onPress={() => goBack()}>
+                        <Svgicons path="back" size={40} />
+                      </ButtonView>
             {!isEdit && <CircularProgress percentage={80} size={48} strokeWidth={4} />}
           </View>
 

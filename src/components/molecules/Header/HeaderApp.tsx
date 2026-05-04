@@ -25,8 +25,8 @@ interface HeaderApp {
   isLogo?: boolean;
   isLang?: boolean;
   addIconAfterisGoBack?: string;
-  isShowProfile?:boolean;
-  isNotification?:boolean
+  isShowProfile?: boolean;
+  isNotification?: boolean
 }
 
 const HeaderApp = ({
@@ -78,53 +78,65 @@ const HeaderApp = ({
         )}
         {isShowProfile && (
           <GlassCard width="auto" style={styles.profilePill}>
-          {user?.profile_picture ? (
-            <Image
-              source={{ uri: user.profile_picture }}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View style={styles.placeholderIcon}>
-              <Svgicons path="imageUploadIcon" size={25} />
+            {user?.profile_picture ? (
+              <Image
+                source={{ uri: user.profile_picture }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.placeholderIcon}>
+                <Svgicons path="imageUploadIcon" size={25} />
+              </View>
+            )}
+            <View>
+              <AppText
+                text={t('app.home.hello', { name: user?.name })}
+                fontSize={12}
+                color={Colors.PINE_FOREST}
+              />
+              <AppText
+                text={t('app.home.good_morning')}
+                fontSize={14}
+                type="SemiBold"
+                color={Colors.BLACK}
+              />
             </View>
-          )}
-          <View>
-            <AppText
-              text={t('app.home.hello', { name: user?.name })}
-              fontSize={12}
-              color={Colors.PINE_FOREST}
-            />
-            <AppText
-              text={t('app.home.good_morning')}
-              fontSize={14}
-              type="SemiBold"
-              color={Colors.BLACK}
-            />
-          </View>
-        </GlassCard>
+          </GlassCard>
         )}
-        
+
         <View style={styles.headerRight}>
           {isLang && (
-            <GradientBorder
-              borderRadius={16}
-              borderWidth={1}
-              style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}
-            >
-              <Pressable style={styles.langBtn} onPress={handleLanguageToggle}>
-                <AppText text={t('common.lang_switch')} fontSize={12} type="Medium" />
-              </Pressable>
-            </GradientBorder>
+            <>
+              {/* <GradientBorder
+                borderRadius={16}
+                borderWidth={1}
+                style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}
+              >
+                <Pressable style={styles.langBtn} onPress={handleLanguageToggle}>
+                  <AppText text={t('common.lang_switch')} fontSize={12} type="Medium" />
+                </Pressable>
+              </GradientBorder> */}
+              
+              <ButtonView onPress={handleLanguageToggle} style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}>
+                {i18n.language === 'ar' ? (
+                  <Svgicons path='enLang' size={65} />
+                ) : (
+                  <Svgicons path='arLang' size={60} />
+                )}
+
+
+              </ButtonView>
+            </>
           )}
           {isNotification && (
             <AppPressable style={{
               marginLeft: Metrics.scale(5),
-              alignSelf:'center'
-            }} onPress={()=>{
+              alignSelf: 'center'
+            }} onPress={() => {
               navigate(NavigationRoutes.APP_STACK.NOTIFIATION)
             }}>
               <View style={styles.bellWrapper}>
-                <Svgicons path='bell' size={25}/>
+                <Svgicons path='bell' size={25} />
                 {unreadCount > 0 && <View style={styles.unreadDot} />}
               </View>
             </AppPressable>

@@ -65,12 +65,9 @@ const StatisticsScreen = () => {
       {/* <StatusBar barStyle="dark-content" /> */}
       <View style={{ flex: 1 }}>
         <View style={styles.navBar}>
-          <View style={styles.arrowCircleInner}>
-            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-              <Svgicons path="arrowLeftIcon" size={24} />
-            </AppPressable>
-          </View>
-
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
           <ButtonView onPress={() => setIsFilterVisible(true)}>
             <GlassCard width="auto" style={styles.filterGlass}>
               <Svgicons path="filterIcon" size={20} />

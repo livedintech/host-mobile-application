@@ -11,6 +11,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const AddAIPricingScreen = () => {
   const { control, errors, handleSubmit, onSave, isLoading } = useAIPricingContainer();
@@ -23,11 +24,9 @@ const AddAIPricingScreen = () => {
           
           {/* Header */}
           <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtn} onPress={() => goBack()}>
-                <Svgicons path='arrowLeftIcon' size={24} />
-              </TouchableOpacity>
-            </GradientBorder>
+             <ButtonView onPress={() => goBack()}>
+                        <Svgicons path="back" size={40} />
+                      </ButtonView>
             <CircularProgress percentage={87} size={48} strokeWidth={4} />
           </View>
 

@@ -10,6 +10,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const MakePropertyStandOutScreen = () => {
   const { t } = useTranslation();
@@ -23,11 +24,9 @@ const MakePropertyStandOutScreen = () => {
         
         {/* Header with Back Button */}
         <View style={styles.header}>
-          <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtn}>
-            <AppPressable style={styles.backBtn} onPress={() => goBack()}>
-              <Svgicons path='arrowLeftIcon' size={24} />
-            </AppPressable>
-          </GradientBorder>
+          <ButtonView onPress={() => goBack()}>
+                     <Svgicons path="back" size={40} />
+                   </ButtonView>
         </View>
 
         <View style={styles.content}>

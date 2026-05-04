@@ -15,6 +15,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Metrics from '@/utility/Metrics';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const DescribeHouseScreen = () => {
   const {
@@ -41,7 +42,7 @@ const DescribeHouseScreen = () => {
   } = useDescribeHouseContainer();
   const { t } = useTranslation();
 
-  const showTitle       = !editType || editType === 'title';
+  const showTitle = !editType || editType === 'title';
   const showDescription = !editType || editType === 'description';
 
   return (
@@ -56,11 +57,9 @@ const DescribeHouseScreen = () => {
         >
           {/* Header Row */}
           <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <AppPressable style={styles.backBtnWrapper} onPress={() => goBack()}>
-                <Svgicons path='arrowLeftIcon' size={24} />
-              </AppPressable>
-            </GradientBorder>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
             {!isEdit && <CircularProgress percentage={40} size={48} strokeWidth={4} />}
           </View>
 
@@ -193,42 +192,42 @@ const DescribeHouseScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container:          { flex: 1, paddingHorizontal: Metrics.baseMargin },
+  container: { flex: 1, paddingHorizontal: Metrics.baseMargin },
   headerRow: {
-    flexDirection:  'row',
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:     'center',
-    marginTop:      10,
+    alignItems: 'center',
+    marginTop: 10,
   },
   backBtnWrapper: {
-    width:           35,
-    height:          35,
+    width: 35,
+    height: 35,
     backgroundColor: Colors.WHITE,
-    justifyContent:  'center',
-    alignItems:      'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   descriptionWrapper: { marginTop: 25 },
   footer: { bottom: 0, right: 0, width: '100%', padding: 25, paddingBottom: 35 },
   modalOverlay: {
-    flex:            1,
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent:  'flex-end',
+    justifyContent: 'flex-end',
   },
   bottomSheet: {
-    backgroundColor:      Colors.WHITE,
-    borderTopLeftRadius:  24,
+    backgroundColor: Colors.WHITE,
+    borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal:    24,
-    paddingTop:           12,
-    paddingBottom:        40,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 40,
   },
   handleBar: {
-    width:           40,
-    height:          5,
+    width: 40,
+    height: 5,
     backgroundColor: '#D4D4D4',
-    borderRadius:    3,
-    alignSelf:       'center',
-    marginBottom:    25,
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginBottom: 25,
   },
 });
 

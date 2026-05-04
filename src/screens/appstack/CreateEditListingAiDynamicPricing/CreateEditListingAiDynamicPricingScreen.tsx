@@ -9,11 +9,12 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import useAIDynamicPricingContainer from './CreateEditListingAiDynamicPricingContainer';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const AIDynamicPricingScreen = () => {
-  const { 
-    selectedMode, setSelectedMode, 
-    manualOverride, setManualOverride, 
+  const {
+    selectedMode, setSelectedMode,
+    manualOverride, setManualOverride,
     onSave,
     isLoading,
     isEdit
@@ -23,8 +24,8 @@ const AIDynamicPricingScreen = () => {
   const ModeCard = ({ title, type, points }: any) => {
     const isActive = selectedMode === type;
     return (
-      <TouchableOpacity 
-        style={[styles.card, isActive && styles.activeCard]} 
+      <TouchableOpacity
+        style={[styles.card, isActive && styles.activeCard]}
         onPress={() => setSelectedMode(type)}
         activeOpacity={0.8}
       >
@@ -36,21 +37,21 @@ const AIDynamicPricingScreen = () => {
             <AppText text={p} fontSize={13} color="#6B6B6B" />
           </View>
         ))}
-        
+
         {/* Graph Placeholder (As seen in Screenshot 1 & 2) */}
         {isActive && (
-           <View style={styles.graphContainer}>
-              <AppText text={t('app.ai_dynamic_pricing.result')} fontSize={12} color="#6B6B6B" mb={10} />
-              <View style={styles.placeholderGraph}>
-                 {/* Yahan aap apna SVG graph laga sakte hain */}
-                 <View style={[styles.graphLine, type === 'aggressive' && styles.aggressiveLine]} />
-              </View>
-              <View style={styles.graphLabels}>
-                 <AppText text={t('app.ai_dynamic_pricing.month_april')} fontSize={10} />
-                 <AppText text={t('app.ai_dynamic_pricing.month_may')} fontSize={10} />
-                 <AppText text={t('app.ai_dynamic_pricing.month_june')} fontSize={10} />
-              </View>
-           </View>
+          <View style={styles.graphContainer}>
+            <AppText text={t('app.ai_dynamic_pricing.result')} fontSize={12} color="#6B6B6B" mb={10} />
+            <View style={styles.placeholderGraph}>
+              {/* Yahan aap apna SVG graph laga sakte hain */}
+              <View style={[styles.graphLine, type === 'aggressive' && styles.aggressiveLine]} />
+            </View>
+            <View style={styles.graphLabels}>
+              <AppText text={t('app.ai_dynamic_pricing.month_april')} fontSize={10} />
+              <AppText text={t('app.ai_dynamic_pricing.month_may')} fontSize={10} />
+              <AppText text={t('app.ai_dynamic_pricing.month_june')} fontSize={10} />
+            </View>
+          </View>
         )}
       </TouchableOpacity>
     );
@@ -61,16 +62,16 @@ const AIDynamicPricingScreen = () => {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => goBack()} style={styles.backBtn}>
-              <Svgicons path='arrowLeftIcon' size={24} />
-            </TouchableOpacity>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
             <CircularProgress percentage={90} size={48} strokeWidth={4} />
           </View>
 
           <AppText text={t('app.ai_dynamic_pricing.title')} fontSize={32} type="Bold" mt={30} />
           <AppText
             text={t('app.ai_dynamic_pricing.description')}
-            fontSize={14} color="#6B6B6B" mt={10} 
+            fontSize={14} color="#6B6B6B" mt={10}
           />
 
           <View style={styles.cardsWrapper}>
@@ -92,8 +93,8 @@ const AIDynamicPricingScreen = () => {
               <AppText text={t('app.ai_dynamic_pricing.manual_override_title')} fontSize={18} type="Medium" />
               <AppText text={t('app.ai_dynamic_pricing.manual_override_desc')} fontSize={12} color="#6B6B6B" mt={5} />
             </View>
-            <Switch 
-              value={manualOverride} 
+            <Switch
+              value={manualOverride}
               onValueChange={setManualOverride}
               trackColor={{ false: "#767577", true: "#00A684" }}
             />
@@ -127,13 +128,13 @@ const styles = StyleSheet.create({
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   backBtn: { padding: 8, borderRadius: 20, backgroundColor: 'white', borderWidth: 1, borderColor: '#EEE' },
   cardsWrapper: { marginTop: 30 },
-  card: { 
-    backgroundColor: 'rgba(255,255,255,0.6)', 
-    padding: 20, 
-    borderRadius: 20, 
-    marginBottom: 20, 
-    borderWidth: 1, 
-    borderColor: 'transparent' 
+  card: {
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    padding: 20,
+    borderRadius: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'transparent'
   },
   activeCard: { borderColor: '#00A684', backgroundColor: 'white' },
   pointRow: { flexDirection: 'row', alignItems: 'center', marginTop: 5 },
