@@ -1245,7 +1245,14 @@
       "pre_approve_title": "Pre-Approve Inquiry",
       "pre_approve_placeholder": "Type your pre-approval message...",
       "send_approval": "Send Approval",
-      "pre_approved_success": "Inquiry Pre-approved successfully"
+      "pre_approved_success": "Inquiry Pre-approved successfully",
+
+       "accept_btn": "Accept",
+  "decline_btn": "Decline",
+  "booking_accepted": "Booking Accepted",
+  "booking_accepted_desc": "You have accepted booking request of {{name}}",
+  "action_failed": "Action Failed",
+  "accept_request_failed": "Failed to accept request"
     },
     "no_review": {
       "title": "No Reviews Yet",
