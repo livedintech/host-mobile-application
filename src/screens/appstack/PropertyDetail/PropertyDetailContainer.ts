@@ -189,7 +189,7 @@ export default function usePropertyDetailContainer() {
 
     // ✅ Cancel policies — API { id, title } object deta hai
     cancelPolicies: {
-      airbnb: listing?.airbnb_cancellation_policy?.title || '',
+      airbnb: listing?.cancellation_policy || '',
       gathern: listing?.gathern_cancellation_policy?.title || '',
       booking: listing?.bookingCom_cancellation_policy?.title || '',
     },

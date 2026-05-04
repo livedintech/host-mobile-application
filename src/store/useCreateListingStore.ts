@@ -83,7 +83,7 @@ type Listing = {
   extra_guest_fee: string;
   weekly_discount: string;
   monthly_discount: string;
-  early_bird_price_change: string;
+  early_bird_discount: string;
   last_minute_discount: string;
   prices?: {
     airbnb_discount?: number;
@@ -92,7 +92,7 @@ type Listing = {
     discount?: number;
     weekly_discount?: number;
     monthly_discount?: number;
-    early_bird_price_change?: number;
+    early_bird_discount?: number;
     last_minute_discount?: number;
   };
   // ─────────────────────────────────────────
@@ -198,7 +198,7 @@ const initialListing: Listing = {
   extra_guest_fee: '',
   weekly_discount: '',
   monthly_discount: '',
-  early_bird_price_change: '',
+  early_bird_discount: '',
   last_minute_discount: '',
   // ─────────────────────────────────
 

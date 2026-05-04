@@ -12,13 +12,12 @@ import {
   fetchFirstAvailableAgentForDate,
   submitLeadAndBookMeeting,
 } from '@/services/hubspotApi';
-import { MeetingDetailsFormValues } from '@/validation/hubspot/hubspotSchemas';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const today = new Date().toISOString().split('T')[0];
 
-export default function useHubspotCalendarContainer(userInfo: MeetingDetailsFormValues) {
+export default function useHubspotCalendarContainer(userInfo: any) {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [SCREEN_HEIGHT * 0.85], []);
   const latestDateRef = useRef<string>('');

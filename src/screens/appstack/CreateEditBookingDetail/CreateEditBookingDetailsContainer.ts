@@ -25,6 +25,7 @@ export const bookingDetailsSchema = yup.object().shape({
   booking_type:       yup.string().required(i18n.t('app.validation.booking_type_required')),
   guest_eligibility:  yup.string().required(i18n.t('app.validation.guest_eligibility_required')),
   check_in_time:      yup.string().required(i18n.t('app.validation.checkin_time_required')),
+  check_in_time_end:  yup.string().required(i18n.t('app.validation.checkin_time_required')),
   check_out_time:     yup.string().required(i18n.t('app.validation.checkout_time_required')),
   allow_same_day:     yup.string().required(i18n.t('app.validation.field_required')),
   cleanliness_status: yup.string().required(i18n.t('app.validation.cleanliness_required')),
@@ -110,8 +111,9 @@ export default function useBookingDetailsContainer() {
         ? (listing?.guest_eligibility === true || listing?.guest_eligibility === 1 ? 'Yes'
           : listing?.guest_eligibility === false || listing?.guest_eligibility === 0 ? 'No'
           : '') : '',
-      check_in_time:      isEdit ? to12Hour(listing?.check_in_time)  : '',
-      check_out_time:     isEdit ? to12Hour(listing?.check_out_time) : '',
+      check_in_time:      isEdit ? to12Hour(listing?.check_in_time)     : '',
+      check_in_time_end:  isEdit ? to12Hour(listing?.check_in_time_end) : '',
+      check_out_time:     isEdit ? to12Hour(listing?.check_out_time)    : '',
       allow_same_day:     isEdit
         ? (listing?.allow_same_day === true ? 'Yes' : listing?.allow_same_day === false ? 'No' : '')
         : '',
@@ -129,6 +131,7 @@ export default function useBookingDetailsContainer() {
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
+      check_in_time_end:  data.check_in_time_end,
       check_out_time:     data.check_out_time,
       allow_same_day:     data.allow_same_day === 'Yes',
       cleanliness_status: data.cleanliness_status,
@@ -160,6 +163,7 @@ export default function useBookingDetailsContainer() {
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
+      check_in_time_end:  data.check_in_time_end,
       check_out_time:     data.check_out_time,
       allow_same_day:     data.allow_same_day === 'Yes',
       cleanliness_status: data.cleanliness_status,
@@ -174,6 +178,7 @@ export default function useBookingDetailsContainer() {
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
+      check_in_time_end:  data.check_in_time_end,
       check_out_time:     data.check_out_time,
       allow_same_day:     data.allow_same_day === 'Yes',
       cleanliness_status: data.cleanliness_status,

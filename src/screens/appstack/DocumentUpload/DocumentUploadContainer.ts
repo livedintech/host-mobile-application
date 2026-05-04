@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DocumentFormValues, documentUploadSchema } from '@/validation/auth/createListingSchemas';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
@@ -225,7 +225,10 @@ export default function useDocumentUploadContainer() {
         if (isEdit) {
           goBack();
         } else {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          resetToRoutes([
+            { name: NavigationRoutes.APP_STACK.HOME },
+            { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS },
+          ] as any);
         }
       } else {
         throw new Error(result.message);
@@ -243,7 +246,10 @@ export default function useDocumentUploadContainer() {
     onSuccess: () => {
       setBottomSheetVisible(false);
       Toast.show({ type: 'success', text1: i18n.t('common.toast.listing_exported') });
-      navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+      resetToRoutes([
+        { name: NavigationRoutes.APP_STACK.HOME },
+        { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS },
+      ] as any);
     },
     onError: (err: any) =>
       Toast.show({ type: 'error', text1: err.message }),

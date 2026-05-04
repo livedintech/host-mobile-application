@@ -352,7 +352,7 @@ const PropertyDetailScreen = () => {
                 title={t('app.property_detail.cancel_policies')}
                 subtitle={
                   [
-                    propertyData.cancelPolicies?.airbnb && 'Airbnb',
+                    propertyData.cancelPolicies && 'Airbnb',
                     propertyData.cancelPolicies?.gathern && 'Gathern',
                     propertyData.cancelPolicies?.booking && 'Booking.com',
                   ].filter(Boolean).join(', ') || 'Not set'
