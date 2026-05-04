@@ -64,7 +64,7 @@ export default function useAboutThePlaceContainer() {
   const connectedAccounts = response?.data || [];
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({ label: 'Airbnb', value: item.ch_channel_id }));
+    .map((item: any) => ({ label: `Airbnb - ${item?.id}`, value: item.ch_channel_id }));
 
   // ── Export Mutation ───────────────────────────────────────────────────────
   const { mutate: createListingExportPayload, isPending: isPendingExporting } =

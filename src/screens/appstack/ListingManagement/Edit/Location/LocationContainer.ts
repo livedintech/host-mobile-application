@@ -47,7 +47,7 @@ export default function useLocationContainer() {
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
     .map((item: any) => ({
-      label: 'Airbnb',
+      label: `Airbnb - ${item?.id}`,
       value: item.ch_channel_id,
     }));
 
