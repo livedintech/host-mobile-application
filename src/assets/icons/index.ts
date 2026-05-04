@@ -328,7 +328,6 @@ import comfort from './comfort.svg'
 import facilities from './facilities.svg'
 import staff from './staff.svg'
 
-
 export const icons = {
   enLang,
   arLang,
