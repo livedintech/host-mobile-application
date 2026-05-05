@@ -195,10 +195,13 @@ export const createHubSpotContact = async (
     let data = await res.json();
 
     // -------------------------
-    // handle duplicate contact
+    // ✅ HANDLE DUPLICATE EMAIL
     // -------------------------
-    if (res.status === 409)
-      return data?.message?.match(/Existing ID: (\d+)/)?.[1] || null;
+    if (res.status === 409) {
+      console.warn('[HubSpot] Email already exists');
+
+      return 'Email already exists';
+    }
 
     // -------------------------
     // fallback for INVALID_OPTION error
@@ -220,8 +223,9 @@ export const createHubSpotContact = async (
 
       data = await res.json();
 
-      if (res.status === 409)
-        return data?.message?.match(/Existing ID: (\d+)/)?.[1] || null;
+      if (res.status === 409) {
+        return 'Email already exists';
+      }
     }
 
     if (!res.ok) {
@@ -336,6 +340,10 @@ export const submitLeadAndBookMeeting = async (
     const contactId = await createHubSpotContact(lead, agent.ownerId);
     if (!contactId)
       return { success: false, error: 'Failed to create contact' };
+
+    if (contactId === 'Email already exists') {
+      return { success: false, error: contactId };
+    }
     await createHubSpotDeal(lead, agent.ownerId, contactId);
 
     const meetingBooked = await bookHubSpotMeeting(lead, slot, agent);
