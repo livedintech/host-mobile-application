@@ -65,12 +65,9 @@ const StatisticsScreen = () => {
       {/* <StatusBar barStyle="dark-content" /> */}
       <View style={{ flex: 1 }}>
         <View style={styles.navBar}>
-          <View style={styles.arrowCircleInner}>
-            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-              <Svgicons path="arrowLeftIcon" size={24} />
-            </AppPressable>
-          </View>
-
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
           <ButtonView onPress={() => setIsFilterVisible(true)}>
             <GlassCard width="auto" style={styles.filterGlass}>
               <Svgicons path="filterIcon" size={20} />
@@ -119,7 +116,7 @@ const StatisticsScreen = () => {
               value={`SAR ${formatNumber(adr.value)}`}
               subText={t('app.analytics.vs_last_month')}
               trend={adr.delta_pct}
-              icon="avg_stay_revenue"
+              icon="adr"
             />
             <StatCard
               title={t('app.analytics.avg_length_stay')}

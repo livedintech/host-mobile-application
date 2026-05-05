@@ -3,7 +3,7 @@ import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { queryClient } from '@/services/api';
 import { createGathernCreateChannelApi } from '@/services/bookingManagementApi';
-import { navigate } from '@/services/navigationService';
+import { navigate, resetToRoutes } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { CreateGathernUserPayloadType, creatGathernChannelResponse } from '@/types/api/bookingManagementTypes';
 import { useMutation } from '@tanstack/react-query';
@@ -52,7 +52,7 @@ export default function useGathrenCreateAccountContainer() {
     >({
         mutationFn: createGathernCreateChannelApi,
         onSuccess: ({ message }) => {
-            navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
+            resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_BOOKING }] as any);
 
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],

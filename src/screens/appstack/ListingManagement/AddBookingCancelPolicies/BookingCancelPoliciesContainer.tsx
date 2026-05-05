@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi, createListingExportApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -178,7 +178,7 @@ export default function useBookingCancelPoliciesContainer() {
       updateDetails(buildPayload(data, true) as any);
     } else {
       createDetails(buildPayload(data, true) as any, {
-        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+        onSuccess: () => resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any),
       });
     }
   };

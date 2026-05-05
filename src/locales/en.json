@@ -102,7 +102,7 @@
       "slide3": {
         "title": "Total Control. Zero\nHeavy Lifting.",
         "title_highlight": "Total Control.",
-        "subtitle": "Agent ALI does the work. You stay in charge.",
+        "subtitle": "Livedin works across all channels so that you don’t have to",
         "primary_btn": "Explore First",
         "secondary_btn": "Get Started"
       }
@@ -142,7 +142,8 @@
       "validation_password_required": "Password is required",
       "validation_password_min": "Password must be at least 8 characters",
       "validation_password_letters": "Password must contain letters",
-      "validation_password_numbers": "Password must contain numbers"
+      "validation_password_numbers": "Password must contain numbers",
+      "validation_password_symbols": "Password must contain at least one symbol (@$!%*?&#)"
     },
     "payment": {
       "title": "Payment",

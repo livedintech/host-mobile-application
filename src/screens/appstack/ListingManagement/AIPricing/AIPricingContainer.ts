@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -90,7 +90,7 @@ export default function useAIPricingContainer() {
           Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
           if (isSaveAndExit) {
-            navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+            resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
           } else {
             navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING);
           }

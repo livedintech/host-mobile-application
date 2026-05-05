@@ -320,13 +320,18 @@ import airbnbImportListing from './airbnbImportListing.svg'
 import newTaskAssign from './newTaskAssign.svg'
 import completeTask from './completeTask.svg'
 import unlockActivity from './unlockActivity.svg'
+import chevronLeft from './chevronLeft.svg'
+import arLang from './arLang.svg'
+import enLang from './enLang.svg'
 import cleanliness from './cleanliness.svg'
 import comfort from './comfort.svg'
 import facilities from './facilities.svg'
 import staff from './staff.svg'
 
-
 export const icons = {
+  enLang,
+  arLang,
+  chevronLeft,
   chatMessage,
   calendarBooking,
   updateBooking,

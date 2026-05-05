@@ -2,7 +2,7 @@ import { create, ApisauceConfig, ApiResponse } from 'apisauce';
 import Utils from '../utility/Utils';
 import { CONTENT_TYPE, HTTP_STATUS } from './api';
 import { useAuthStore } from '@/store/useAuthStore';
-import { BASE_URL_DEV} from '@env';
+import { BASE_URL_DEV,BASE_URL_PROD} from '@env';
 
 const BASE_URL = BASE_URL_DEV;
 

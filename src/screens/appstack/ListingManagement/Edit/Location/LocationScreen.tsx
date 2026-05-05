@@ -16,6 +16,7 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import Metrics from '@/utility/Metrics';
 import useLocationContainer from './LocationContainer';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const LocationScreen = () => {
   const { t } = useTranslation();
@@ -51,11 +52,9 @@ const LocationScreen = () => {
       <View style={styles.container}>
 
         {/* Header */}
-        <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-          <AppPressable style={styles.backBtnWrapper} onPress={() => goBack()}>
-            <Svgicons path='arrowLeftIcon' size={24} />
-          </AppPressable>
-        </GradientBorder>
+        <ButtonView onPress={() => goBack()}>
+                   <Svgicons path="back" size={40} />
+                 </ButtonView>
 
         {/* Title */}
         <AppText

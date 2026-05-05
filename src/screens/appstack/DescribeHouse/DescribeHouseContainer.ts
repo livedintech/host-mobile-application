@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import Toast from 'react-native-toast-message';
 import { useState } from 'react';
 
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi, createListingExportApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -166,7 +166,7 @@ export default function useDescribeHouseContainer() {
       updateListingDetails(buildPayload(data, true));
     } else {
       createListingDetailsPayload(buildPayload(data, true), {
-        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+        onSuccess: () => resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any),
       });
     }
   };

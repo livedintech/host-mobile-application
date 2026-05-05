@@ -40,8 +40,8 @@ const PhotoUploadTemplate = (props: any) => {
   });
 
   const featuredItem = props.mediaList.find(item => item.isFeatured);
-  console.log('featuredItem',props.mediaList);
-  
+  console.log('featuredItem', props.mediaList);
+
 
   const renderMediaItem = ({ item, index }: { item: MediaItem; index: number }) => (
     <View style={styles.mediaWrapper}>
@@ -98,11 +98,9 @@ const PhotoUploadTemplate = (props: any) => {
         >
           {/* Header */}
           <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <ButtonView style={styles.backBtnWrapper} onPress={() => goBack()}>
-                <Svgicons path='arrowLeftIcon' size={24} />
-              </ButtonView>
-            </GradientBorder>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
             {/* ✅ Edit mode mein progress hide */}
             {props.primaryBtnTitle && (
               <CircularProgress percentage={props.percentage} size={48} strokeWidth={4} />
@@ -115,7 +113,7 @@ const PhotoUploadTemplate = (props: any) => {
           <AppText text={props.screenTitle} fontSize={32} type="Bold" />
 
           <View style={styles.infoSection}>
-           <AppText text={t('app.photo_upload.upload_limit', { maxImages: props.maxImages, maxVideos: props.maxVideos })} fontSize={14} color="#6B6B6B" />
+            <AppText text={t('app.photo_upload.upload_limit', { maxImages: props.maxImages, maxVideos: props.maxVideos })} fontSize={14} color="#6B6B6B" />
             <AppText text={t('app.photo_upload.format_hint')} fontSize={14} color="#6B6B6B" />
             <AppText text={t('app.photo_upload.size_hint')} fontSize={14} color="#6B6B6B" />
           </View>

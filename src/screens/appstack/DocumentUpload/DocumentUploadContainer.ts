@@ -226,7 +226,7 @@ export default function useDocumentUploadContainer() {
           goBack();
         } else {
           resetToRoutes([
-            { name: NavigationRoutes.APP_STACK.HOME },
+            { name: NavigationRoutes.APP_STACK.ROOT_STACK },
             { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS },
           ] as any);
         }
@@ -247,7 +247,7 @@ export default function useDocumentUploadContainer() {
       setBottomSheetVisible(false);
       Toast.show({ type: 'success', text1: i18n.t('common.toast.listing_exported') });
       resetToRoutes([
-        { name: NavigationRoutes.APP_STACK.HOME },
+        { name: NavigationRoutes.APP_STACK.ROOT_STACK },
         { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS },
       ] as any);
     },

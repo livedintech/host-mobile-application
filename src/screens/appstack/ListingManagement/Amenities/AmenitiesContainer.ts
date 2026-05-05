@@ -3,7 +3,7 @@ import i18n from '@/locales/i18n/i18n';
 import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { navigate, goBack } from '@/services/navigationService';
+import { navigate, goBack, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { getAmenitiesApi, CreateUpdateAmenitiesApi, createListingExportApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -131,7 +131,7 @@ export default function useAmenitiesContainer() {
         if (isEdit) {
           goBack();
         } else {
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
         }
       },
     });

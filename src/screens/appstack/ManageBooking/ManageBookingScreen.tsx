@@ -156,7 +156,7 @@ const ManageBookingScreen = () => {
         <View style={styles.container}>
           <View style={styles.header}>
             <AppText
-              text={t('app.manage_booking.page_title')}
+              text={t('app.manage_booking.page_titles')}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}
@@ -165,23 +165,24 @@ const ManageBookingScreen = () => {
           </View>
 
           <View style={styles.noAccountContainer}>
-            <Svgicons path="noAccountFound" size={258} />
-            <AppText
-              text={t('app.manage_booking.no_account_title')}
-              fontSize={28}
-              type="SemiBold"
-              color={Colors.BLACK}
-              textAlign="center"
-              mt={20}
-            />
-            <AppText
-              text={t('app.manage_booking.no_account_desc')}
-              fontSize={12}
-              color={Colors.DARK_CHARCOAL_OPACITY}
-              textAlign="center"
-              mt={15}
-              px={50}
-            />
+             <Svgicons path="noAccountFound" size={200} />
+              <AppText
+                text={t('app.manage_booking.no_account_title')}
+                fontSize={28}
+                type="SemiBold"
+                color={Colors.BLACK}
+                textAlign="center"
+                mt={15}
+              />
+              <AppText
+                text={t('app.manage_booking.no_account_desc')}
+                fontSize={12}
+                type="Regular"
+                color={Colors.DIM_GREY}
+                textAlign="center"
+                mt={8}
+                px={60}
+              />
           </View>
 
           <View style={styles.footer}>
@@ -264,12 +265,21 @@ const ManageBookingScreen = () => {
             <View style={styles.tabEmptyContainer}>
               <Svgicons path="noAccountFound" size={200} />
               <AppText
-                text={t('app.manage_booking.no_tab_account', { tab: selectedTab })}
-                fontSize={22}
+                text={t('app.manage_booking.no_account_title')}
+                fontSize={28}
                 type="SemiBold"
                 color={Colors.BLACK}
                 textAlign="center"
                 mt={15}
+              />
+              <AppText
+                text={t('app.manage_booking.no_account_desc')}
+                fontSize={12}
+                type="Regular"
+                color={Colors.DIM_GREY}
+                textAlign="center"
+                mt={8}
+                px={60}
               />
             </View>
           )}
@@ -342,15 +352,15 @@ const styles = StyleSheet.create({
   cardSpacing: { marginTop: 16 },
   noAccountContainer: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
   },
   tabEmptyContainer: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 60,
+    // marginTop: 60,
   },
   footer: {
     paddingHorizontal: 20,

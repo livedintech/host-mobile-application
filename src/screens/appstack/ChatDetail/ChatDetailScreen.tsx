@@ -24,7 +24,7 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, navigateToRoot } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useAuthStore } from '@/store/useAuthStore';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -524,8 +524,9 @@ const ChatScreen = () => {
                   <MenuOption
                     style={styles.menuItem}
                     onSelect={() => {
-                      navigate(NavigationRoutes.APP_STACK.LISTING, {
-                        listing_id: conversationData?.listing_id || listing_id,
+                      navigateToRoot(NavigationRoutes.APP_STACK.LISTING, {
+                        listing_id:
+                          conversationData?.listing_id || listing_id,
                       });
                     }}
                   >

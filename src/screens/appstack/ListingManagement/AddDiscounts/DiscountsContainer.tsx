@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingPricingApi } from '@/services/ createListingService'; // ✅ pricing API
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -92,7 +92,7 @@ export default function useDiscountsContainer() {
         if (isSaveAndExit) {
           isEdit
             ? goBack()
-            : navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+            : resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
         } else {
           navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
         }

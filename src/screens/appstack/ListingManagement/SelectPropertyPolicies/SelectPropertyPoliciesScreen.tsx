@@ -15,6 +15,7 @@ import Metrics from '@/utility/Metrics';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const SelectPropertyPoliciesScreen = () => {
   const { t } = useTranslation();
@@ -58,11 +59,9 @@ const SelectPropertyPoliciesScreen = () => {
 
           {/* Header */}
           <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-              <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
-                <Svgicons path='arrowLeftIcon' size={24} />
-              </TouchableOpacity>
-            </GradientBorder>
+             <ButtonView onPress={() => goBack()}>
+                        <Svgicons path="back" size={40} />
+                      </ButtonView>
             {!isEdit && <CircularProgress percentage={50} size={48} strokeWidth={4} />}
           </View>
 

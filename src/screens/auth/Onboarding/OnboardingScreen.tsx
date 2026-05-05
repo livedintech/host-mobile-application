@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     },
     slide: {
         width: Metrics.screenWidth,
-        height: Metrics.screenHeight,
+        // height: Metrics.screenHeight,
         paddingBottom: Metrics.verticalScale(220),
     },
     textContainer: {
@@ -146,16 +146,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
+        marginTop: Metrics.verticalScale(50),
         marginBottom: Metrics.verticalScale(12),
     },
     subtitle: {
-        marginTop: Metrics.verticalScale(4),
+        // marginTop: Metrics.verticalScale(4),
+        paddingHorizontal: Metrics.scale(20)
     },
     imageContainer: {
         flex: 1,
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: Metrics.scale(20),
+        // backgroundColor:'red'
     },
     image: {
         width: Metrics.screenWidth * 0.72,

@@ -91,7 +91,6 @@ const AppButton = ({
                 <ActivityIndicator color={Colors.WHITE} />
             ) : (
                 <>
-                    {/* Left Icon */}
                     {leftIcon && (
                         <View style={{ marginRight: 8 }}>
                             <Svgicons path={leftIcon} size={iconSize} color={txtColor} />
@@ -108,7 +107,6 @@ const AppButton = ({
                         style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
                     />
 
-                    {/* Right Icon */}
                     {rightIcon && (
                         <View style={{ marginLeft: 8 }}>
                             <Svgicons path={rightIcon} size={iconSize} color={txtColor} />
@@ -132,10 +130,31 @@ const AppButton = ({
         return (
             <View style={[spacingStyles]}>
                 <View style={{ borderRadius, overflow: 'hidden' }}>
+                    {/* Heavy frosted base */}
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255,255,255,0.45)' }]} />
+                    {/* Strong top-to-bottom diffusion */}
+                    <LinearGradient
+                        colors={['rgba(255,255,255,0.80)', 'rgba(255,255,255,0.30)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    {/* Diagonal shimmer */}
+                    <LinearGradient
+                        colors={['rgba(255,255,255,0.50)', 'rgba(255,255,255,0.00)', 'rgba(255,255,255,0.25)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    {/* Bottom depth */}
+                    <LinearGradient
+                        colors={['rgba(0,0,0,0.00)', 'rgba(0,0,0,0.10)']}
+                        start={{ x: 0, y: 0.5 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
                     {renderGradientBorder()}
-                    <View style={{ margin: 1 }}>
-                        {renderButtonInner(backgroundColor || Colors.TRANSPARENT)}
-                    </View>
+                    {renderButtonInner(Colors.TRANSPARENT)}
                 </View>
             </View>
         );
@@ -151,7 +170,7 @@ const styles = StyleSheet.create({
         paddingVertical: Metrics.verticalScale(14),
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: Metrics.scale(15), // Basic horizontal padding
+        paddingHorizontal: Metrics.scale(15),
     },
     text: { fontWeight: '500' },
 });

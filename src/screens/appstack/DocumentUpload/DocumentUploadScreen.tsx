@@ -9,11 +9,12 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
-import { goBack } from '@/services/navigationService';
+import { goBack, navigateToRoot } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import useDocumentUploadContainer from './DocumentUploadContainer';
 import { useTranslation } from 'react-i18next';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 const DocumentUploadScreen = () => {
   const {
@@ -123,66 +124,66 @@ const DocumentUploadScreen = () => {
           {renderUploadButton(t('app.document_upload.national_id_label'), 'nationalId', nationalIdDoc)}
 
           {/* Footer */}
-      {/* Footer */}
-<View style={styles.footer}>
-  {/* ✅ Export — hamesha show karo, create + edit dono mein */}
-  <AppButton
-    title={t('app.document_upload.export')}
-    variant='secondary'
-    onPress={handleExport}
-    disabled={isLoading}
-    mb={12}
-  />
-  <AppButton
-    title={t('app.document_upload.save_exit')}
-    onPress={handleSubmit(onSaveExit)}
-    loading={isLoading}
-  />
-</View>
+          {/* Footer */}
+          <View style={styles.footer}>
+            {/* ✅ Export — hamesha show karo, create + edit dono mein */}
+            <AppButton
+              title={t('app.document_upload.export')}
+              variant='secondary'
+              onPress={handleExport}
+              disabled={isLoading}
+              mb={12}
+            />
+            <AppButton
+              title={t('app.document_upload.save_exit')}
+              onPress={handleSubmit(onSaveExit)}
+              loading={isLoading}
+            />
+          </View>
 
         </ScrollView>
 
         {/* Bottom Sheet Modal — sirf create mode mein */}
-          <Modal
-            visible={bottomSheetVisible}
-            transparent
-            animationType="fade"
-            onRequestClose={() => setBottomSheetVisible(false)}
-          >
-            <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-              <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+        <Modal
+          visible={bottomSheetVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setBottomSheetVisible(false)}
+        >
+          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
 
-                <View style={styles.handleBar} />
+              <View style={styles.handleBar} />
 
-                <AppText
-                  text={t('app.document_upload.select_ota')}
-                  fontSize={20}
-                  type="SemiBold"
-                  color={Colors.PINE_FOREST}
-                  mb={20}
+              <AppText
+                text={t('app.document_upload.select_ota')}
+                fontSize={20}
+                type="SemiBold"
+                color={Colors.PINE_FOREST}
+                mb={20}
+              />
+
+              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
+                <DropdownField
+                  name="ota_account"
+                  control={otaControl}
+                  errors={otaErrors}
+                  label=""
+                  data={listingOptions}
+                  placeholder={t('app.document_upload.select_account')}
+                  dropdownPosition="top"
                 />
+              </View>
 
-                <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                  <DropdownField
-                    name="ota_account"
-                    control={otaControl}
-                    errors={otaErrors}
-                    label=""
-                    data={listingOptions}
-                    placeholder={t('app.document_upload.select_account')}
-                    dropdownPosition="top"
-                  />
-                </View>
-
-                <AppButton
-                  title={t('app.document_upload.export')}
-                  onPress={handleOtaSubmit(handleExportSubmit)}
-                  mt={20}
-                  loading={isLoadingChannelList || isCreating}
-                />
-              </AppPressable>
+              <AppButton
+                title={t('app.document_upload.export')}
+                onPress={handleOtaSubmit(handleExportSubmit)}
+                mt={20}
+                loading={isLoadingChannelList || isCreating}
+              />
             </AppPressable>
-          </Modal>
+          </AppPressable>
+        </Modal>
 
       </View>
     </BGImage>

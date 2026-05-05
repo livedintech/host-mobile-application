@@ -14,6 +14,7 @@ import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ConfirmAddressScreen = () => {
   const {
@@ -40,11 +41,9 @@ const ConfirmAddressScreen = () => {
       >
         {/* <CircularProgress percentage={10} size={48} strokeWidth={4} /> */}
         <View style={styles.headerRow}>
-          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner} >
-            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-              <Svgicons path='arrowLeftIcon' size={24} />
-            </AppPressable>
-          </GradientBorder>
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
           {!isEdit && <CircularProgress percentage={10} size={48} strokeWidth={4} />}
         </View>
         <View style={styles.titleContainer}>

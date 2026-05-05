@@ -8,7 +8,7 @@ import { CreateListingPayload, CreateListingResponse, getChannelIDResponse } fro
 import Toast from 'react-native-toast-message';
 import { createListingApi, createNewListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { navigate } from '@/services/navigationService';
+import { navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 
@@ -118,7 +118,7 @@ export default function useCreateListingStepOneContainer() {
 
         setListingId(data?.listing_id);
 
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
       },
     });
   });

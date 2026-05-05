@@ -4,7 +4,7 @@ import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation, useRoute, StackActions } from '@react-navigation/native';
 import { addressSchema, AddressFormValues } from '@/validation/auth/createListingSchemas';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -185,7 +185,7 @@ export default function useConfirmAddressContainer() {
       editListingDetailsPayload(payload);
     } else {
       createListingDetailsPayload(payload, {
-        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+        onSuccess: () => resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any),
       });
     }
   };

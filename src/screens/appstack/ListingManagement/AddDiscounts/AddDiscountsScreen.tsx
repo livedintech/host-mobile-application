@@ -12,6 +12,7 @@ import { goBack } from '@/services/navigationService';
 import useDiscountsContainer from './DiscountsContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const AddDiscountsScreen = () => {
     const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit } = useDiscountsContainer();
@@ -29,9 +30,9 @@ const AddDiscountsScreen = () => {
         >
 
                     <View style={styles.headerRow}>
-                        <TouchableOpacity onPress={() => goBack()} style={styles.backBtn}>
-                            <Svgicons path='arrowLeftIcon' size={24} />
-                        </TouchableOpacity>
+                         <ButtonView onPress={() => goBack()}>
+                                    <Svgicons path="back" size={40} />
+                                  </ButtonView>
                         {!isEdit && <CircularProgress percentage={85} size={48} strokeWidth={4} />}
                     </View>
 

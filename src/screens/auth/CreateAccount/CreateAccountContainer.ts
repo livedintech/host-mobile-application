@@ -12,20 +12,19 @@ import { createAccountApi } from '@/services/authApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Toast from 'react-native-toast-message';
-import { useCallback, useState, useEffect, useRef } from 'react'; // Added useEffect, useRef
-
-// SignUp Schema
-const signUpSchema = yup.object().shape({
-  fullName: yup.string().required(i18n.t('auth.create_account.validation_name_required')),
-  password: yup
-    .string()
-    .min(8, i18n.t('auth.create_account.validation_password_min'))
-    .matches(/[a-zA-Z]/, i18n.t('auth.create_account.validation_password_letters'))
-    .matches(/[0-9]/, i18n.t('auth.create_account.validation_password_numbers'))
-    .required(i18n.t('auth.create_account.validation_password_required')),
-});
+import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 
 export default function useCreateAccountContainer() {
+  const signUpSchema = useMemo(() => yup.object().shape({
+    fullName: yup.string().required(i18n.t('auth.create_account.validation_name_required')),
+    password: yup
+      .string()
+      .min(8, i18n.t('auth.create_account.validation_password_min'))
+      .matches(/[a-zA-Z]/, i18n.t('auth.create_account.validation_password_letters'))
+      .matches(/[0-9]/, i18n.t('auth.create_account.validation_password_numbers'))
+      .matches(/[@$!%*?&#]/, i18n.t('auth.create_account.validation_password_symbols'))
+      .required(i18n.t('auth.create_account.validation_password_required')),
+  }), []);
   const route = useRoute<any>();
   const navigation = useNavigation(); // Hook for navigation
 
@@ -44,8 +43,6 @@ export default function useCreateAccountContainer() {
   const allowGoBack = useRef(false); // Ref to check if we should allow going back
 
   const prefill = (route.params as any) || {};
-
-  console.log('deeplinkTest', prefill);
 
   const toggleTerms = useCallback(() => setIsTermsAccepted(prev => !prev), []);
 

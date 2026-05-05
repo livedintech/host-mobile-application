@@ -127,15 +127,13 @@ const AirbnbImportScreen = () => {
         )}
         {/* <HeaderApp isGoBack /> */}
         <View style={styles.headerRow}>
-          <GradientBorder borderRadius={16} borderWidth={1} style={styles.backBtnWrapper}>
-            <ButtonView style={styles.backBtnWrapper} onPress={() => goBack()}>
-              <Svgicons path='arrowLeftIcon' size={24} />
-            </ButtonView>
-          </GradientBorder>
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
           <AppButton title='Refresh' onPress={refetch} variant='secondary' type='Regular' borderRadius={100} style={{
             paddingHorizontal: Metrics.scale(35),
             paddingVertical: Metrics.verticalScale(8)
-          }}/>
+          }} />
         </View>
 
         <View style={styles.header}>

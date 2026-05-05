@@ -15,7 +15,7 @@ export default function usePaymentContainer() {
   const planKey = selectedPlan === 'Starter' ? 'starter' : 'ai_suite';
   const cycle = billingCycle === 'Monthly' ? 'monthly' : 'yearly';
 
-  const { data: priceData, isLoading: isLoadingPrice } = useQuery({
+  const { data: priceData, isLoading: isLoadingPrice, refetch } = useQuery({
     queryKey: [STORAGE_CONST.SUBSCRIPTION_CALCULATE, planKey, cycle],
     queryFn: () =>
       subscriptionCalculateApi({
@@ -143,5 +143,6 @@ export default function usePaymentContainer() {
     qtyFrom,
     features: selectedPlan === 'Starter' ? starterFeatures : aiSuiteFeatures,
     goBack,
+    refetch,
   };
 }

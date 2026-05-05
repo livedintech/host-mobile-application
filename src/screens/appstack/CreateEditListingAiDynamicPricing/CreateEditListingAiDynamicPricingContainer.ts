@@ -3,7 +3,7 @@ import i18n from '@/locales/i18n/i18n';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -83,7 +83,7 @@ export default function useAIDynamicPricingContainer() {
           Toast.show({ type: 'success', text1: res?.message || i18n.t('common.toast.saved') });
 
           if (isSaveAndExit) {
-            navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+            resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
           } else {
             navigate(NavigationRoutes.APP_STACK.DOCUMENT_UPLOAD);
           }

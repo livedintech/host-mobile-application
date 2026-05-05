@@ -2,7 +2,7 @@ import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CancelPoliciesFormValues, cancelPoliciesSchema } from '@/validation/auth/createListingSchemas';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useMutation } from '@tanstack/react-query';
 import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
@@ -111,7 +111,7 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   } else {
     createListingDetailsPayload(payload, {
       onSuccess: () => {
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
       },
     });
   }

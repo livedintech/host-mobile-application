@@ -16,6 +16,7 @@ import { goBack } from '@/services/navigationService';
 import NoAiAutoReplyScreen from '../NoAiAutoReplyScreen/NoAiAutoReplyScreen';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 const AIAutoReplyScreen = () => {
   const { t } = useTranslation();
@@ -38,6 +39,16 @@ const AIAutoReplyScreen = () => {
     handleToggleAiAllow,
     isLoadingAiAllow,
   } = useAIAutoReplyContainer();
+
+    if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <SpinnerLoader size={'large'} />
+        </View>
+      </BGImage>
+    );
+  }
 
   const renderItem = ({ item }: { item: any }) => {
     return (
