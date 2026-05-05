@@ -2,7 +2,7 @@ import i18n from '@/locales/i18n/i18n';
 import { useEffect } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
-import { navigate } from '@/services/navigationService';
+import { resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -178,9 +178,11 @@ export default function useGathernImportContainer() {
   };
 
   // Final submit
-  const onNext = (data: FormValues) => {
-    console.log('Final form submit:', data);
-    navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
+  const onNext = (_data: FormValues) => {
+    resetToRoutes([
+      { name: NavigationRoutes.APP_STACK.ROOT_STACK },
+      { name: NavigationRoutes.APP_STACK.MANAGE_BOOKING },
+    ] as any);
   };
 
   const isLoadingScreen =

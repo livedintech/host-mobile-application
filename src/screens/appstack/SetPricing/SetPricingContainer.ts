@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingExportApi, createListingPricingApi } from '@/services/ createListingService'; // ✅ correct API
 import { useCreateListingStore } from '@/store/useCreateListingStore';
@@ -215,7 +215,7 @@ const handleExportSubmit = (data: OtaAccountFormValues) => {
         if (isSaveAndExit) {
           isEdit
             ? goBack()
-            : navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+            : resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
         } else {
           navigate(NavigationRoutes.APP_STACK.ADD_DISCOUNTS);
         }

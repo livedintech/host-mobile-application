@@ -158,12 +158,9 @@ const CreateChecklistContainer = () => {
         //   id: conversationId,
         //   listing_id: draft?.listingSelection
         // });
-        navigate(NavigationRoutes.APP_STACK.CHAT, {
-          screen: NavigationRoutes.APP_STACK.CHAT_DETAIL,
-          params: { 
-            conversation_id: conversationId, 
-            listing_id: draft?.listingSelection 
-          },
+        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+          conversation_id: conversationId,
+          listing_id: draft?.listingSelection,
         });
       } else {
         // 🔹 DEFAULT NAVIGATION TO TASK LIST

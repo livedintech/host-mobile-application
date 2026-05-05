@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { createListingDetailsApi, editListingApi, createListingExportApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -166,7 +166,7 @@ export default function useAboutThePlaceContainer() {
       updateListingDetails(buildPayload(data, true));
     } else {
       createListingDetails(buildPayload(data, true), {
-        onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+        onSuccess: () => resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any),
       });
     }
   };
