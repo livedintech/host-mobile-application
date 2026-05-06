@@ -54,7 +54,11 @@ export const FilterModalView = ({
   };
 
   return (
-    <BottomSheetComponent isVisible={isVisible} onClose={onClose} customHeight={Metrics.screenHeight * 0.70}>
+    <BottomSheetComponent
+      isVisible={isVisible}
+      onClose={onClose}
+      customHeight={Metrics.screenHeight * 0.7}
+    >
       <View
         style={[
           styles.container,
@@ -63,7 +67,12 @@ export const FilterModalView = ({
       >
         {/* Header */}
         <View style={styles.header}>
-          <AppText text={t('app.filter_modal_view.apply_filter')} type="Bold" fontSize={ms(20)} color="#000" />
+          <AppText
+            text={t('app.filter_modal_view.apply_filter')}
+            type="Bold"
+            fontSize={ms(20)}
+            color="#000"
+          />
           <ButtonView onPress={onClose} style={styles.closeCircle}>
             <X size={ms(18)} color="#000" />
           </ButtonView>
@@ -79,7 +88,7 @@ export const FilterModalView = ({
             control={control as any}
             errors={errors}
             data={actualProperties}
-            placeholder="Select Multiple Options"
+            placeholder={t('app.filter_modal_view.placeholder_multiple')}
           />
 
           <View style={{ marginTop: vs(25), display: 'none' }}>
@@ -88,10 +97,16 @@ export const FilterModalView = ({
               name="checkInOut"
               control={control as any}
               errors={errors}
-              placeholder="Select Multiple Options"
+              placeholder={t('app.filter_modal_view.placeholder_multiple')}
               data={[
-                { label: t('app.filter_modal_view.checked_in'), value: 'today' },
-                { label: t('app.filter_modal_view.checked_out'), value: 'checkedout' },
+                {
+                  label: t('app.filter_modal_view.checked_in'),
+                  value: 'today',
+                },
+                {
+                  label: t('app.filter_modal_view.checked_out'),
+                  value: 'checkedout',
+                },
               ]}
             />
           </View>
