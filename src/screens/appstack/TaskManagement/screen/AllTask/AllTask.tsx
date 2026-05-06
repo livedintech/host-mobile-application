@@ -184,8 +184,8 @@ const AllTask = () => {
               <AppText
                 text={
                   item.assigned_user_name
-                    ? `Assigned to ${item.assigned_user_name}`
-                    : 'Unassigned'
+                    ? `${t('app.task_management.assigned_to_user')} ${item.assigned_user_name}`
+                    : `${t('app.task_management.unassigned')}`
                 }
                 fontSize={13}
                 ml={10}
@@ -196,7 +196,7 @@ const AllTask = () => {
               <View style={styles.infoRow}>
                 <Svgicons path="task_calendar" size={16} />
                 <AppText
-                  text={`Date: ${item?.date ? formatDate(item.date) : '--'}`}
+                  text={`${t('app.task_management.date_value')} ${item?.date ? formatDate(item.date) : '--'}`}
                   fontSize={13}
                   ml={10}
                   color={Colors.DARK_CHARCOAL}
