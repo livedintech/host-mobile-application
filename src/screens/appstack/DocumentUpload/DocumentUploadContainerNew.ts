@@ -16,10 +16,9 @@ import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 import * as yup from 'yup';
 import { createListingExportApi } from '@/services/ createListingService';
-import { BASE_URL_DEV } from '@env';
 import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+import { BASE_URL } from '@/services/apiService';
 
-const BASE_URL = BASE_URL_DEV;
 
 const otaAccountSchema = yup.object({
   ota_account: yup.string().required('Please select an OTA account'),

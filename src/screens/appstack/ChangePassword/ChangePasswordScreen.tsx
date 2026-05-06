@@ -8,13 +8,15 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useChangePasswordContainer from './ChangePasswordContainer';
 import PasswordField from '@/components/molecules/Input/PasswordField';
 import { useTranslation } from 'react-i18next';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 
 const ChangePasswordScreen = () => {
   const { t } = useTranslation();
   const { control, errors, handleSubmit, onSubmit, isLoading } = useChangePasswordContainer();
 
   return (
-    <View style={styles.container}>
+    <BGImage source={require('@/assets/img/background/linearBG.png')} style={{flex:1}}>
+
       {/* Decorative Circles Background */}
 
       <View style={styles.content}>
@@ -63,7 +65,7 @@ const ChangePasswordScreen = () => {
           </View>
         </View>
       </View>
-    </View>
+    </BGImage>
   );
 };
 

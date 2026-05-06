@@ -156,7 +156,7 @@ const ManageBookingScreen = () => {
         <View style={styles.container}>
           <View style={styles.header}>
             <AppText
-              text={t('app.manage_booking.page_titles')}
+              text={t('app.manage_booking.page_title')}
               fontSize={28}
               type="Bold"
               color={Colors.BLACK}

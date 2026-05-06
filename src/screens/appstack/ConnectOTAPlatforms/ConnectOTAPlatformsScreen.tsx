@@ -13,20 +13,21 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 
 const PLATFORMS = [
-  { key: 'Airbnb',       icon: 'airbnb',     labelKey: 'connect_airbnb'      },
-  { key: 'Gathern',      icon: 'gathern',    labelKey: 'connect_gathern'     },
-  { key: 'Booking.com',  icon: 'bookingCom', labelKey: 'connect_bookingcom'  },
+  { key: 'Airbnb', icon: 'airbnb', labelKey: 'connect_airbnb' },
+  { key: 'Gathern', icon: 'gathern', labelKey: 'connect_gathern' },
+  { key: 'Booking.com', icon: 'bookingCom', labelKey: 'connect_bookingcom' },
 ] as const;
 
 const ConnectOTAPlatformsScreen = () => {
   const { t } = useTranslation();
-  const { handleConnect, isPending, refetch, connectedAccounts } = useManageBookingContainer();
+  const { handleConnect, isPending, refetch, connectedAccounts } =
+    useManageBookingContainer();
 
   // ✅ Screen focus hone par refetch — agar connect ho gaya to wapas jao
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [])
+    }, []),
   );
 
   // ✅ Account connect ho gaya — wapas ManageBooking par jao
@@ -36,22 +37,15 @@ const ConnectOTAPlatformsScreen = () => {
       if (totalAccounts > 0) {
         goBack();
       }
-    }, [connectedAccounts])
+    }, [connectedAccounts]),
   );
 
   return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
+    <BGImage
+      source={require('@/assets/img/background/linearBG.png')}
+      style={styles.bgContainer}
+    >
       <View style={styles.container}>
-
-        {/* Header */}
-        <View style={styles.header}>
-          <GradientBorder borderRadius={22} borderWidth={1} style={styles.backBtnWrapper}>
-            <TouchableOpacity style={styles.backBtnWrapper} onPress={() => goBack()}>
-              <Svgicons path="arrowLeftIcon" size={24} />
-            </TouchableOpacity>
-          </GradientBorder>
-        </View>
-
         {/* Title */}
         <View style={styles.titleSection}>
           <AppText
@@ -91,7 +85,6 @@ const ConnectOTAPlatformsScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
-
       </View>
     </BGImage>
   );
@@ -100,35 +93,35 @@ const ConnectOTAPlatformsScreen = () => {
 export default ConnectOTAPlatformsScreen;
 
 const styles = StyleSheet.create({
-  bgContainer:    { flex: 1 },
-  container:      { flex: 1 },
+  bgContainer: { flex: 1 },
+  container: { flex: 1 },
   header: {
     paddingHorizontal: 20,
-    marginTop:         20,
-    marginBottom:      10,
+    marginTop: 20,
+    marginBottom: 10,
   },
   backBtnWrapper: {
-    width:           44,
-    height:          44,
+    width: 44,
+    height: 44,
     backgroundColor: Colors.WHITE,
-    justifyContent:  'center',
-    alignItems:      'center',
-    borderRadius:    22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 22,
   },
   titleSection: {
     paddingHorizontal: 20,
-    marginTop:         20,
-    marginBottom:      40,
+    marginTop: 20,
+    marginBottom: 40,
   },
   platformList: {
     paddingHorizontal: 20,
-    gap:               Metrics.verticalScale(16),
+    gap: Metrics.verticalScale(16),
   },
   platformCard: {
-    flexDirection:   'row',
-    alignItems:      'center',
-    padding:         20,
-    borderRadius:    20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.4)',
   },
 });

@@ -856,6 +856,13 @@ const AppStack = () => {
           require('@/screens/common/Payment/SubscriptionWebViewScreen').default
         }
       />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.CHECKOUT_INSTRUCTION}
+        getComponent={() =>
+          require('@/screens/appstack/ListingManagement/CheckoutInstruction/CheckoutInstructionScreen').default
+        }
+      />
     </Stack.Navigator>
   );
 };

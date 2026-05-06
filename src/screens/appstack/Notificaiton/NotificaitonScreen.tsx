@@ -12,6 +12,8 @@ import useNotificationsContainer, {
   formatTime,
 } from './NotificationsContainer';
 import { ApiNotificationItem } from '@/services/mobileNotificationsApi';
+import { useTranslation } from 'react-i18next';
+
 
 type NotificationItemProps = {
   item: ApiNotificationItem;
@@ -101,6 +103,10 @@ const NotificationsScreen = () => {
     goBack,
   } = useNotificationsContainer();
 
+    const { i18n: localI18n, t } = useTranslation();
+  const isArabic = localI18n.language === 'ar';
+  
+
   const renderItem = ({ item }: { item: FlatItem }) => {
     if (item.type === 'header') {
       return (
@@ -126,10 +132,10 @@ const NotificationsScreen = () => {
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => goBack()} style={styles.backCircle}>
-              <Svgicons path="arrowLeftIcon" size={24} />
+              <Svgicons path={isArabic ? "arrowRightIcon" : "arrowLeftIcon"} size={24} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.markReadBtn} onPress={handleMarkAllRead}>
-              <AppText text="Mark all as read" fontSize={13} type="Medium" />
+              <AppText text={t('app.notifications.mark_all_read')} fontSize={13} type="Medium" />
             </TouchableOpacity>
           </View>
 
@@ -143,7 +149,7 @@ const NotificationsScreen = () => {
             contentContainerStyle={styles.scrollBody}
             contentInsetAdjustmentBehavior="never"
             ListHeaderComponent={
-              <AppText text="Notifications" fontSize={34} type="Bold" mb={5} />
+              <AppText  text={t('app.notifications.title')} fontSize={34} type="Bold" mb={5} />
             }
           />
         </SafeAreaView>

@@ -14,7 +14,6 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
 import { useTranslation } from 'react-i18next';
 
-
 // ==========================================
 // Reusable Components
 // ==========================================
@@ -59,186 +58,219 @@ const OldLayout = ({
   incomplete_listings,
   unexported_listings,
   handleListingNavigation,
-  t
-}: any) => (
-  <View>
-    <View style={styles.greetingContainer}>
-      <Text style={styles.greetingText}>
-        {t('app.home.greeting_hi')}{' '}
-        <Text style={styles.greetingName}>{user?.name},</Text>
-        {' '}{t('app.home.greeting_old_end')}
-      </Text>
-    </View>
+  t,
+  isRTL,
+}: any) => {
+  const comma = isRTL ? '،' : ',';
 
-    <View style={styles.gridContainer}>
-      {cardsData.map(({ key }: any) => {
-        const content = getCardContent(key);
-        return (
-          <GlassCard key={key} width="49%" style={styles.cardStyle}>
-            <ButtonView
-              style={{ flex: 1, justifyContent: 'space-between' }}
-              onPress={() => onConnect(key)}
-              disabled={isSupervisor}
-            >
-              <View style={styles.cardHeader}>
-                <GlassCard style={styles.iconBox}>
-                  <Svgicons path={iconMap[key]} size={22} />
-                </GlassCard>
-                <AppText
-                  ml={6}
-                  text={content.title}
-                  fontSize={11}
-                  type="Regular"
-                  color={Colors.BLACK}
-                  numberOfLines={2}
-                  style={{ flex: 1 }}
-                />
-              </View>
-              <View style={styles.cardFooter}>
-                <AppText
-                  text={content.desc}
-                  fontSize={11}
-                  type="Medium"
-                  color={Colors.BLACK}
-                  style={{ flex: 1, marginRight: 10 }}
-                  numberOfLines={3}
-                />
-                <GlassCard style={styles.arrowBtn}>
-                  <Svgicons
-                    path="arrowRightIcon"
-                    stroke={Colors.BLACK}
-                    width={14}
-                    height={14}
+  return (
+    <View>
+      <View style={styles.greetingContainer}>
+        <Text style={styles.greetingText}>
+          {t('app.home.greeting_hi')}{' '}
+          <Text style={styles.greetingName}>
+            {user?.name}
+            {comma}
+          </Text>{' '}
+          {t('app.home.greeting_old_end')}
+        </Text>
+      </View>
+
+      <View style={styles.gridContainer}>
+        {cardsData.map(({ key }: any) => {
+          const content = getCardContent(key);
+          return (
+            <GlassCard key={key} width="49%" style={styles.cardStyle}>
+              <ButtonView
+                style={{ flex: 1, justifyContent: 'space-between' }}
+                onPress={() => onConnect(key)}
+                disabled={isSupervisor}
+              >
+                <View style={styles.cardHeader}>
+                  <GlassCard style={styles.iconBox}>
+                    <Svgicons path={iconMap[key]} size={22} />
+                  </GlassCard>
+                  <AppText
+                    ml={6}
+                    text={content.title}
+                    fontSize={11}
+                    type="Regular"
+                    color={Colors.BLACK}
+                    numberOfLines={2}
+                    style={{ flex: 1 }}
                   />
-                </GlassCard>
-              </View>
-            </ButtonView>
-          </GlassCard>
-        );
-      })}
+                </View>
+                <View style={styles.cardFooter}>
+                  <AppText
+                    text={content.desc}
+                    fontSize={11}
+                    type="Medium"
+                    color={Colors.BLACK}
+                    style={{ flex: 1, marginRight: 10 }}
+                    numberOfLines={3}
+                  />
+                  <GlassCard style={styles.arrowBtn}>
+                    <Svgicons
+                      path={isRTL ? 'arrowLeftIcon' : 'arrowRightIcon'}
+                      stroke={Colors.BLACK}
+                      width={14}
+                      height={14}
+                    />
+                  </GlassCard>
+                </View>
+              </ButtonView>
+            </GlassCard>
+          );
+        })}
+      </View>
+
+      {/* Pending Actions moved to Old Layout */}
+      {incomplete_listings?.length > 0 && (
+        <PendingActionCard
+          iconPath="airbnb"
+          onPress={() =>
+            handleListingNavigation(incomplete_listings, 'incomplete')
+          }
+          text={t('app.home.pending_incomplete')}
+        />
+      )}
+
+      {unexported_listings?.length > 0 && (
+        <PendingActionCard
+          iconPath="airbnb"
+          onPress={() =>
+            handleListingNavigation(unexported_listings, 'unexported')
+          }
+          text={t('app.home.export_pending')}
+        />
+      )}
     </View>
-
-    {/* Pending Actions moved to Old Layout */}
-    {incomplete_listings?.length > 0 && (
-      <PendingActionCard
-        iconPath="airbnb"
-        onPress={() =>
-          handleListingNavigation(incomplete_listings, 'incomplete')
-        }
-        text={t('app.home.pending_incomplete')}
-      />
-    )}
-
-    {unexported_listings?.length > 0 && (
-      <PendingActionCard
-        iconPath="airbnb"
-        onPress={() =>
-          handleListingNavigation(unexported_listings, 'unexported')
-        }
-        text={t('app.home.export_pending')}
-      />
-    )}
-  </View>
-);
-
+  );
+};
 const NewLayout = ({
   user,
   recommendedNextItems,
   updatesItems,
   onNavigate,
   t,
+  isRTL,
 }: any) => {
   const { i18n: localI18n } = useTranslation();
   const isArabic = localI18n.language === 'ar';
+  const comma = isArabic ? '،' : ',';
 
   return (
-  <View>
-    <View style={[styles.newGreetingContainer, { paddingStart: 0, paddingEnd: 0, paddingLeft: isArabic ? 0 : Metrics.scale(10), paddingRight: isArabic ? Metrics.scale(10) : 0 }]}>
-      <Text style={[styles.newGreetingText, { textAlign: isArabic ? 'right' : 'left' }]}>
-        {t('app.home.greeting_hi')}{' '}
-        <Text style={styles.newGreetingName}>{user?.name || 'Tooba'},</Text>
-        {' '}{t('app.home.greeting_new_end')}
-      </Text>
+    <View>
+      <View
+        style={[
+          styles.newGreetingContainer,
+          {
+            paddingStart: 0,
+            paddingEnd: 0,
+            paddingLeft: isArabic ? 0 : Metrics.scale(10),
+            paddingRight: isArabic ? Metrics.scale(10) : 0,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.newGreetingText,
+            { textAlign: isArabic ? 'right' : 'left' },
+          ]}
+        >
+          {t('app.home.greeting_hi')}{' '}
+          <Text style={styles.newGreetingName}>
+            {user?.name || 'Tooba'}
+            {comma}
+          </Text>{' '}
+          {t('app.home.greeting_new_end')}
+        </Text>
+      </View>
+
+      <GlassCard width="100%" style={styles.sectionCard}>
+        <AppText
+          text={t('app.home.recommended_next')}
+          fontSize={18}
+          type="Bold"
+          color={Colors.BLACK}
+          mb={15}
+        />
+        {recommendedNextItems.map((item: any, index: number) => (
+          <ButtonView
+            key={item.id}
+            style={[
+              styles.listItem,
+              index !== recommendedNextItems.length - 1 && styles.borderBottom,
+            ]}
+            onPress={() => item.route && onNavigate(item.route)}
+          >
+            <View style={styles.listItemIcon}>
+              <Svgicons path={item.icon} size={22} />
+            </View>
+            <View style={styles.listItemContent}>
+              <AppText
+                text={item.title}
+                fontSize={14}
+                type="Medium"
+                color={Colors.BLACK}
+              />
+              <AppText
+                text={item.subtitle}
+                fontSize={12}
+                color={Colors.BLACK}
+                mt={2}
+              />
+            </View>
+            <Svgicons
+              path={isArabic ? 'chevronLeft' : 'chevronRight'}
+              size={16}
+            />
+          </ButtonView>
+        ))}
+      </GlassCard>
+
+      <GlassCard width="100%" style={styles.sectionCard}>
+        <AppText
+          text={t('app.home.your_updates')}
+          fontSize={18}
+          type="Bold"
+          color={Colors.BLACK}
+          mb={15}
+        />
+        {updatesItems.map((item: any, index: number) => (
+          <ButtonView
+            key={item.id}
+            style={[
+              styles.listItem,
+              index !== updatesItems.length - 1 && styles.borderBottom,
+            ]}
+            onPress={() => item.route && onNavigate(item.route, item.params)}
+          >
+            <View style={styles.listItemIcon}>
+              <Svgicons path={item.icon} size={22} />
+            </View>
+            <View style={styles.listItemContent}>
+              <AppText
+                text={item.title}
+                fontSize={14}
+                type="Medium"
+                color={Colors.BLACK}
+              />
+              <AppText
+                text={item.subtitle}
+                fontSize={12}
+                color={Colors.BLACK}
+                mt={2}
+              />
+            </View>
+            <Svgicons
+              path={isArabic ? 'chevronLeft' : 'chevronRight'}
+              size={16}
+            />
+          </ButtonView>
+        ))}
+      </GlassCard>
     </View>
-
-    <GlassCard width="100%" style={styles.sectionCard}>
-      <AppText
-        text={t('app.home.recommended_next')}
-        fontSize={18}
-        type="Bold"
-        color={Colors.BLACK}
-        mb={15}
-      />
-      {recommendedNextItems.map((item: any, index: number) => (
-        <ButtonView
-          key={item.id}
-          style={[
-            styles.listItem,
-            index !== recommendedNextItems.length - 1 && styles.borderBottom,
-          ]}
-          onPress={() => item.route && onNavigate(item.route)}
-        >
-          <View style={styles.listItemIcon}>
-            <Svgicons path={item.icon} size={22} />
-          </View>
-          <View style={styles.listItemContent}>
-            <AppText
-              text={item.title}
-              fontSize={14}
-              type="Medium"
-              color={Colors.BLACK}
-            />
-            <AppText
-              text={item.subtitle}
-              fontSize={12}
-              color={Colors.BLACK}
-              mt={2}
-            />
-          </View>
-          <Svgicons path={isArabic ? 'chevronLeft' : 'chevronRight'} size={16} />
-        </ButtonView>
-      ))}
-    </GlassCard>
-
-    <GlassCard width="100%" style={styles.sectionCard}>
-      <AppText
-        text={t('app.home.your_updates')}
-        fontSize={18}
-        type="Bold"
-        color={Colors.BLACK}
-        mb={15}
-      />
-      {updatesItems.map((item: any, index: number) => (
-        <ButtonView
-          key={item.id}
-          style={[
-            styles.listItem,
-            index !== updatesItems.length - 1 && styles.borderBottom,
-          ]}
-          onPress={() => item.route && onNavigate(item.route, item.params)}
-        >
-          <View style={styles.listItemIcon}>
-            <Svgicons path={item.icon} size={22} />
-          </View>
-          <View style={styles.listItemContent}>
-            <AppText
-              text={item.title}
-              fontSize={14}
-              type="Medium"
-              color={Colors.BLACK}
-            />
-            <AppText
-              text={item.subtitle}
-              fontSize={12}
-              color={Colors.BLACK}
-              mt={2}
-            />
-          </View>
-          <Svgicons path={isArabic ? 'chevronLeft' : 'chevronRight'} size={16} />
-        </ButtonView>
-      ))}
-    </GlassCard>
-  </View>
   );
 };
 
@@ -297,7 +329,8 @@ const HomeScreen = ({ navigation }: any) => {
       subtitle: (() => {
         const recommendations = UserPermission?.recommendations;
         const count = recommendations?.remaining_count ?? 0;
-        if (count === 1 && recommendations?.remaining_title) return recommendations.remaining_title;
+        if (count === 1 && recommendations?.remaining_title)
+          return recommendations.remaining_title;
         if (count > 1) return t('app.home.for_properties', { count });
       })(),
       route: NavigationRoutes.APP_STACK.RECURRING_INITIAL_SCREEN,
@@ -332,7 +365,6 @@ const HomeScreen = ({ navigation }: any) => {
       recommendations[item.id as keyof typeof recommendations];
     return !isCompleted;
   });
-
 
   // const updatesItems = [
   //   {
@@ -374,14 +406,64 @@ const HomeScreen = ({ navigation }: any) => {
   // ];
 
   const updatesItems = [
-    { id: 1, icon: 'chatBubble', title: t('app.home.inbox'), subtitle: t('app.home.inbox_sub', { count: UserPermission?.dashboard_counts?.unread_messages }), route: NavigationRoutes.APP_STACK.CHAT },
-    { id: 2, icon: 'direct', title: t('app.home.checkins'), subtitle: t('app.home.checkins_sub', { count: UserPermission?.dashboard_counts?.checkins_today }), route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, params: { activeFilter: 'today' } },
-    { id: 3, icon: 'direct', title: t('app.home.tasks'), subtitle: t('app.home.tasks_sub', { count: UserPermission?.dashboard_counts?.tasks }), route: NavigationRoutes.APP_STACK.TASK },
-    { id: 4, icon: 'direct', title: t('app.home.checkouts'), subtitle: t('app.home.checkouts_sub', { count: UserPermission?.dashboard_counts?.checkouts_today }), route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, params: { activeFilter: 'today' } },
-    { id: 5, icon: 'direct', title: t('app.home.booking_requests'), subtitle: t('app.home.booking_requests_sub', { count: UserPermission?.dashboard_counts?.reservation_requests }), route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, params: { activeFilter: 'booking_request' } },
-    { id: 6, icon: 'direct', title: t('app.home.analytics'), subtitle: t('app.home.analytics_sub', { count: UserPermission?.occupancy?.last_7_days_percentage }), route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN },
+    {
+      id: 1,
+      icon: 'chatBubble',
+      title: t('app.home.inbox'),
+      subtitle: t('app.home.inbox_sub', {
+        count: UserPermission?.dashboard_counts?.unread_messages,
+      }),
+      route: NavigationRoutes.APP_STACK.CHAT,
+    },
+    {
+      id: 2,
+      icon: 'direct',
+      title: t('app.home.checkins'),
+      subtitle: t('app.home.checkins_sub', {
+        count: UserPermission?.dashboard_counts?.checkins_today,
+      }),
+      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+      params: { activeFilter: 'today' },
+    },
+    {
+      id: 3,
+      icon: 'direct',
+      title: t('app.home.tasks'),
+      subtitle: t('app.home.tasks_sub', {
+        count: UserPermission?.dashboard_counts?.tasks,
+      }),
+      route: NavigationRoutes.APP_STACK.TASK,
+    },
+    {
+      id: 4,
+      icon: 'direct',
+      title: t('app.home.checkouts'),
+      subtitle: t('app.home.checkouts_sub', {
+        count: UserPermission?.dashboard_counts?.checkouts_today,
+      }),
+      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+      params: { activeFilter: 'today' },
+    },
+    {
+      id: 5,
+      icon: 'direct',
+      title: t('app.home.booking_requests'),
+      subtitle: t('app.home.booking_requests_sub', {
+        count: UserPermission?.dashboard_counts?.reservation_requests,
+      }),
+      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+      params: { activeFilter: 'booking_request' },
+    },
+    {
+      id: 6,
+      icon: 'direct',
+      title: t('app.home.analytics'),
+      subtitle: t('app.home.analytics_sub', {
+        count: UserPermission?.occupancy?.last_7_days_percentage,
+      }),
+      route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN,
+    },
   ];
-
 
   return (
     <BGImage
@@ -416,8 +498,6 @@ const HomeScreen = ({ navigation }: any) => {
             onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}
             activeOpacity={0.7}
           >
-
-
             <View style={styles.headerRight}>
               <ButtonView>
                 <GlassCard width="auto" style={styles.langBtn}>
@@ -460,6 +540,7 @@ const HomeScreen = ({ navigation }: any) => {
               unexported_listings={unexported_listings}
               handleListingNavigation={handleListingNavigation}
               t={t}
+              isRTL={isRTL}
             />
           )}
         </RefreshableScrollView>
