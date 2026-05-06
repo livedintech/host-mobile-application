@@ -51,11 +51,10 @@ const VerifyPhoneNumberScreen = () => {
   // Logic to format the dynamic masked number
   const cleanCode = code?.replace(/\D/g, '') || '';
   const cleanPhone = actualPhone?.replace(/\D/g, '') || '';
-  const firstDigit = cleanPhone.charAt(0);
-  
-  const maskedLocal = cleanPhone.length > 9 
-    ? `${firstDigit}XX XXX XXXX` 
-    : `${firstDigit}XX XXX XXX`;
+  const lastFour = cleanPhone.slice(-4);
+  const maskedLocal = cleanPhone.length > 9
+    ? `XXX XXX ${lastFour}`
+    : `XXX XX ${lastFour}`;
 
   const formattedDisplayNumber = `(+${cleanCode}) ${maskedLocal}`;
 
