@@ -31,7 +31,10 @@ const addNewPasswordSchema = yup.object().shape({
 
 export default function useAddNewPasswordContainer() {
   const { params } = useRoute();
-  const phone = params?.phone;
+  console.log("prabanna",params)
+  const phone = params?.phone_number;
+  const phoneWithCode = params?.phone_with_code;
+  const countryCode = params?.country_code
   const otp = params?.otp;
 
   const {
@@ -64,6 +67,8 @@ export default function useAddNewPasswordContainer() {
   const onSubmit = (data: any) => {
     const payload = {
       phone_number: phone,
+      phone_with_code : phoneWithCode ,
+      country_code :countryCode ,
       otp: otp,
       password: data?.password,
       password_confirmation: data?.confirmPassword,

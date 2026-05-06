@@ -5,7 +5,7 @@ import {
   getHostTaskList,
   getTaskManagementListing,
   getTaskManagementVendor,
-  getTaskDetail
+  getTaskDetail,
 } from '@/services/TaskManagementApi';
 import { useTaskStore } from '@/store/taskStore';
 import { PAGE_SIZE } from '@/services/api';
@@ -14,37 +14,42 @@ import useInfiniteListData from '@/hooks/useInfiniteListData';
 const AllTaskContainer = (initialListingId?: string) => {
   const { setTaskInfo } = useTaskStore();
   const STATUS_MAP: Record<string, string> = {
-    'To-do': 'todo',
-    'In Progress': 'inprogress',
-    'Complete': 'completed',
-    'Template': 'template',
+    todo: 'todo',
+    in_progress: 'inprogress',
+    complete: 'completed',
+    template: 'template',
   };
 
-  const [activeTab, setActiveTab] = useState('To-do');
+  const [activeTab, setActiveTab] = useState('todo');
   const [appliedFilters, setAppliedFilters] = useState({
-    listings: initialListingId ? [initialListingId] : [] as string[],
+    listings: initialListingId ? [initialListingId] : ([] as string[]),
     assignees: [] as string[],
   });
 
- const dataQuery = useInfiniteQuery({
+  const dataQuery = useInfiniteQuery({
     queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST, activeTab, appliedFilters],
     queryFn: ({ pageParam = 1 }) =>
       getHostTaskList(
-        pageParam as number, 
+        pageParam as number,
         PAGE_SIZE,
         STATUS_MAP[activeTab],
-        appliedFilters.listings.length > 0 ? Number(appliedFilters.listings[0]) : undefined,
-        appliedFilters.assignees.length > 0 ? Number(appliedFilters.assignees[0]) : undefined,
+        appliedFilters.listings.length > 0
+          ? Number(appliedFilters.listings[0])
+          : undefined,
+        appliedFilters.assignees.length > 0
+          ? Number(appliedFilters.assignees[0])
+          : undefined,
       ),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.current_page < lastPage.last_page ? lastPage.current_page + 1 : undefined,
+    getNextPageParam: lastPage =>
+      lastPage.current_page < lastPage.last_page
+        ? lastPage.current_page + 1
+        : undefined,
   });
 
-  const { data: dataList, isLoading, isFetching} = dataQuery;
+  const { data: dataList, isLoading, isFetching } = dataQuery;
 
   const rawList = useInfiniteListData(dataList?.pages) as any[];
-
 
   // 2. Fetch Listing Options for Filter
   const { data: rawListings = [] } = useQuery({
@@ -59,23 +64,29 @@ const AllTaskContainer = (initialListingId?: string) => {
   });
 
   // Transform data for MultiSelectDropdown
-  const listingOptions = useMemo(() =>
-    rawListings?.map((item: any) => ({
-      label: item.value,
-      value: item.id.toString(),
-    })) || [], [rawListings]);
+  const listingOptions = useMemo(
+    () =>
+      rawListings?.map((item: any) => ({
+        label: item.value,
+        value: item.id.toString(),
+      })) || [],
+    [rawListings],
+  );
 
-  const assigneeOptions = useMemo(() =>
-    rawVendors?.map((item: any) => ({
-      label: item.name,
-      value: item.id.toString(),
-    })) || [], [rawVendors]);
+  const assigneeOptions = useMemo(
+    () =>
+      rawVendors?.map((item: any) => ({
+        label: item.name,
+        value: item.id.toString(),
+      })) || [],
+    [rawVendors],
+  );
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
 
-  const applyFilters = (data: { listings: string[], assignees: string[] }) => {
+  const applyFilters = (data: { listings: string[]; assignees: string[] }) => {
     setAppliedFilters(data);
   };
 

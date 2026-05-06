@@ -80,8 +80,12 @@ const AllTask = () => {
     }
   }, [initialListingId]);
 
-  const handleOpenFilter = () => { filterSheetRef.current?.present() };
-  const handleCloseFilter = () => { filterSheetRef.current?.close() };
+  const handleOpenFilter = () => {
+    filterSheetRef.current?.present();
+  };
+  const handleCloseFilter = () => {
+    filterSheetRef.current?.close();
+  };
 
   const onApplyFilter = (data: any) => {
     applyFilters(data);
@@ -109,10 +113,7 @@ const AllTask = () => {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator
-          size="large"
-          color={Colors.MEDIUM_JUNGLE_GREEN}
-        />
+        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
       </View>
     );
   }
@@ -122,12 +123,7 @@ const AllTask = () => {
     const isCompleted = item.status?.toLowerCase() === 'completed';
     const handlePress = () => {
       // Navigate on every status
-      setTaskInfo(
-        item.id,
-        item.task_type,
-        item.status,
-        item.description,
-      );
+      setTaskInfo(item.id, item.task_type, item.status, item.description);
 
       navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
         taskId: item.id,
@@ -213,9 +209,14 @@ const AllTask = () => {
     );
   };
 
-  const ListHeader = ({t}:any) => (
+  const ListHeader = ({ t }: any) => (
     <View style={styles.header}>
-      <AppText text={t('app.task_management.title')} fontSize={26} type="Medium" mb={24} />
+      <AppText
+        text={t('app.task_management.title')}
+        fontSize={26}
+        type="Medium"
+        mb={24}
+      />
       <View style={styles.filterRow}>
         <View style={styles.tabScrollWrapper}>
           <ScrollView
@@ -223,18 +224,18 @@ const AllTask = () => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabContainer}
           >
-            {['To-do', 'In Progress', 'Complete', 'Template'].map(tab => (
+            {tabs.map(tab => (
               <ButtonView
-                key={tab}
-                style={[styles.tab, activeTab === tab && styles.activeTab]}
-                onPress={() => handleTabChange(tab)}
+                key={tab.key}
+                style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+                onPress={() => handleTabChange(tab.key)}
               >
                 <AppText
-                  text={tab}
+                  text={tab.label} 
                   fontSize={14}
-                  type={activeTab === tab ? 'Bold' : 'Medium'}
+                  type={activeTab === tab.key ? 'Bold' : 'Medium'}
                   color={
-                    activeTab === tab
+                    activeTab === tab.key
                       ? Colors.WHITE
                       : Colors.DARK_CHARCOAL_OPACITY_80
                   }
@@ -251,6 +252,13 @@ const AllTask = () => {
     </View>
   );
 
+  const tabs = [
+    { key: 'todo', label: t('app.task_management.tabs.todo') },
+    { key: 'in_progress', label: t('app.task_management.tabs.in_progress') },
+    { key: 'complete', label: t('app.task_management.tabs.complete') },
+    { key: 'template', label: t('app.task_management.tabs.template') },
+  ];
+
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
@@ -259,7 +267,7 @@ const AllTask = () => {
           meta={dataQuery}
           isLoading={isLoading || isFetching}
           renderItem={renderTaskItem}
-          ListHeaderComponent={<ListHeader t={t}/>}
+          ListHeaderComponent={<ListHeader t={t} />}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <NoTaskScreen
@@ -271,7 +279,7 @@ const AllTask = () => {
 
         <View style={styles.actionFooter}>
           <AppButton
-            variant='secondary'
+            variant="secondary"
             title={t('app.task_management.setup_cleaning')}
             onPress={() => {
               resetTaskStore();
@@ -301,7 +309,11 @@ const AllTask = () => {
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
-              <AppText text={t('app.task_management.apply_filter')} fontSize={24} type="Medium" />
+              <AppText
+                text={t('app.task_management.apply_filter')}
+                fontSize={24}
+                type="Medium"
+              />
               <ButtonView onPress={onResetFilter}>
                 {/* <AppText
                   text={t('app.task_management.reset')}
@@ -315,7 +327,7 @@ const AllTask = () => {
             <View style={styles.formContent}>
               <MultiSelectDropdownField
                 name="listings"
-                label="Select Listing"
+                label={t('app.task_management.filters.select_listing')}
                 placeholder={t('app.task_management.select_multiple')}
                 data={listingOptions}
                 control={control as any}
@@ -325,7 +337,7 @@ const AllTask = () => {
               <View style={{ marginTop: 10 }}>
                 <MultiSelectDropdownField
                   name="assignees"
-                  label="Select Task Assignee"
+                 label={t('app.task_management.filters.select_task_assignee')}
                   placeholder={t('app.task_management.select_multiple')}
                   data={assigneeOptions}
                   control={control as any}

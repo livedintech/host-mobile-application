@@ -528,6 +528,25 @@
       "select_ota": "Select OTA Account",
       "select_account": "Select Account"
     },
+    "checkoutInstruction": {
+      "title": "Check-out instructions",
+      "subtitle": "Explain what's essential for guests to do before they leave. Anyone can read these before they book.",
+      "skip": "Skip for now",
+      "next": "Next",
+      "saveExit": "Save & Exit",
+      "towelsLabel": "Gather used towels",
+      "towelsPlaceholder": "Please place all used towels in the bathroom or laundry basket provided.",
+      "trashLabel": "Throw trash away",
+      "trashPlaceholder": "Kindly dispose of all trash in the bins. If full, please take it to the designated waste area.",
+      "turnOffLabel": "Turn things off",
+      "turnOffPlaceholder": "Before leaving, make sure to turn off lights, AC/heating, and all electrical appliances.",
+      "lockUpLabel": "Lock up",
+      "lockUpPlaceholder": "Before leaving, make sure to turn off lights, AC/heating, and all electrical appliances.",
+      "keysLabel": "Return keys",
+      "keysPlaceholder": "Please return the keys to the lockbox or the agreed location. Make sure the lockbox is properly closed.",
+      "additionalLabel": "Additional requests",
+      "additionalPlaceholder": "Please leave the property in a tidy condition. Do not leave any personal belongings behind. Inform us once you've checked out."
+    },
     "discounts": {
       "title_new": "Add discounts",
       "title_edit": "Discounts",
@@ -1055,7 +1074,8 @@
       "channel_direct": "Direct",
       "date_today": "Today",
       "date_last_7_days": "Last 7 Days",
-      "date_last_30_days": "Last 30 Days"
+      "date_last_30_days": "Last 30 Days",
+      "nights":"Nights"
     },
     "billing": {
       "title": "Billing",
@@ -1161,7 +1181,17 @@
       "select_user_hint_extended": "Select a user to continue. If you can't find the user, either create one or assign property to an existing user in More →",
       "status_todo": "Todo",
       "status_in_progress": "In Progress",
-      "status_completed": "Completed"
+      "status_completed": "Completed",
+          "tabs": {
+        "todo": "To-do",
+        "in_progress": "In Progress",
+        "complete": "Complete",
+        "template": "Template"
+      },
+        "filters": {
+        "select_listing": "Select Listing",
+        "select_task_assignee": "Select Task Assignee"
+      }
     },
     "listing_screen": {
       "booking_created": "Booking created",
@@ -1811,7 +1841,14 @@
       "recurring_cleaning_suffix": ", every time there is a new booking, the cleaning task will automatically appear in your task management for the assigned team member.",
       "unassigned": "Unassigned",
       "chars_of_1000": "/1000 characters",
-      "booking_code": "Booking Code"
-    }
+      "booking_code": "Booking Code",
+       "no_data_found": "No data found"
+    },
+      "notifications": {
+    "title": "Notifications",
+    "mark_all_read": "Mark all as read",
+    "empty_title": "No notifications yet",
+    "empty_desc": "You're all caught up. New notifications will appear here."
+  }
   }
 }
