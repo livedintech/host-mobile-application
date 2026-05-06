@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
+import { useTranslation } from 'react-i18next';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -34,6 +35,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
   disabled,
   onSelect
 }) => {
+  const { t } = useTranslation();
   const [pickerVisible, setPickerVisible] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -128,7 +130,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
 
       {errors[name] && (
         <AppText
-          text={errors[name]?.message as string || "Required"}
+          text={errors[name]?.message as string || t('common.required')}
           color={Colors.INDIAN_RED}
           style={styles.errorText}
         />

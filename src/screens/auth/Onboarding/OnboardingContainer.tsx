@@ -75,11 +75,11 @@ export default function useOnboardingContainer() {
     }, [onboardingData.length]);
 
     const loginWithPhone = useCallback(() => {
-        navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
+        navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
     }, []);
 
     const handleGetStarted = useCallback(() => {
-        navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
+        navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
     }, []);
 
     const handleSkip = useCallback(() => {
