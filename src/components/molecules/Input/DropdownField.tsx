@@ -7,6 +7,7 @@ import {
   RegisterOptions,
 } from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
+import { useTranslation } from 'react-i18next';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -44,6 +45,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   dropdownPosition,
   onSelect,
 }) => {
+  const { t } = useTranslation();
   const error = errors[name]?.message as string;
 
   return (
@@ -103,7 +105,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
               />
             )}
             autoScroll={false}
-            searchPlaceholder="Search..."
+            searchPlaceholder={t('common.search')}
           />
         )}
       />

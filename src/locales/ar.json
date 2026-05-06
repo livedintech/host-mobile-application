@@ -2,6 +2,8 @@
   "common": {
     "lang_switch": "English",
     "or": "Or",
+    "search": "بحث...",
+    "required": "مطلوب",
     "tab": {
       "home": "الرئيسية",
       "calendar": "التقويم",

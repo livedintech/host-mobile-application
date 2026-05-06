@@ -2,6 +2,8 @@
   "common": {
     "lang_switch": "العربية",
     "or": "Or",
+    "search": "Search...",
+    "required": "Required",
     "tab": {
       "home": "Home",
       "calendar": "Calendar",
