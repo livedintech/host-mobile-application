@@ -65,7 +65,12 @@ const CreateTaskNonCleaning = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <AppText text={t('app.task_management.create_task_title')} fontSize={32} type="Bold" mb={12} />
+          <AppText
+            text={t('app.task_management.create_task_title')}
+            fontSize={32}
+            type="Bold"
+            mb={12}
+          />
           <AppText
             text={t('app.task_management.create_non_cleaning_desc')}
             fontSize={14}
@@ -76,7 +81,7 @@ const CreateTaskNonCleaning = () => {
 
           <View style={styles.formContainer}>
             <DropdownField
-              label="Listing Selection"
+              label={t('app.task_management.listing_selection_label')}
               name="listing"
               control={control}
               data={transformedListing}
@@ -86,7 +91,7 @@ const CreateTaskNonCleaning = () => {
             />
 
             <DropdownField
-              label="Category"
+              label={t('app.task_management.category_label')}
               name="category"
               control={control}
               data={transformedCategory}
@@ -96,7 +101,7 @@ const CreateTaskNonCleaning = () => {
             />
 
             <DateTimeInputField
-              label="Select Date"
+              label={t('app.task_management.date_placeholder')}
               name="date"
               mode="date"
               control={control}
@@ -108,7 +113,7 @@ const CreateTaskNonCleaning = () => {
 
             <View style={{ flex: 1 }}>
               <DateTimeInputField
-                label="Select Start Time"
+                label={t('app.task_management.start_time_label')}
                 name="startTime"
                 mode="time"
                 control={control}
@@ -120,7 +125,7 @@ const CreateTaskNonCleaning = () => {
             </View>
             <View style={{ flex: 1 }}>
               <DateTimeInputField
-                label="Select End Time"
+                label={t('app.task_management.end_time_label')}
                 name="endTime"
                 mode="time"
                 control={control}
@@ -132,7 +137,7 @@ const CreateTaskNonCleaning = () => {
             </View>
 
             <DropdownField
-              label="Assign User"
+              label={t('app.task_management.assign_user_label')}
               name="assignUser"
               control={control}
               data={transformedVendor}

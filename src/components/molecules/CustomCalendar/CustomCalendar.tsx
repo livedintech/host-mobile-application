@@ -71,6 +71,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
     ota,
     bookingData,
     color: markingColor,
+    isArabic,
   } = marking || {};
   const isActive = !!type && type !== 'none';
 
@@ -231,9 +232,9 @@ const CustomCalendar = ({
         )}
         renderArrow={(dir: any) =>
           dir === 'left' ? (
-            <ChevronRight size={ms(22)} color="#A0A0A0" />
+            <ChevronLeft size={ms(22)} color="#a0a0a0" />
           ) : (
-            <ChevronLeft size={ms(22)} color="#000000" />
+            <ChevronRight size={ms(22)} color="#000000" />
           )
         }
         style={{ backgroundColor: 'transparent' }}

@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as DocumentPicker from '@react-native-documents/picker';
 import RNFS from 'react-native-fs';
 import Toast from 'react-native-toast-message';
-import { BASE_URL_DEV } from '@env';
 import {
     documentUploadSchema,
     DocumentFormValues,
@@ -18,8 +17,8 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
+import { BASE_URL } from '@/services/apiService';
 
-const BASE_URL = BASE_URL_DEV;
 
 interface ApiDocument {
     url: string;

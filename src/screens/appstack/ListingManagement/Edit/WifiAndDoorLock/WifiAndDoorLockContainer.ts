@@ -25,7 +25,7 @@ type OtaAccountFormValues = { ota_account: string };
 export const wifiAndDoorLockSchema = yup.object().shape({
     wifi_username: yup.string().required(i18n.t('app.validation.wifi_username_required')),
     wifi_password: yup.string().required(i18n.t('app.validation.wifi_password_required')),
-    door_lock_code: yup.string().required(i18n.t('app.validation.door_lock_code_required')),
+    door_lock_code: yup.string().optional(),
 });
 
 export type WifiAndDoorLockFormValues = yup.InferType<typeof wifiAndDoorLockSchema>;

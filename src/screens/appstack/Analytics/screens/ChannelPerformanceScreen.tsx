@@ -96,12 +96,17 @@ const ChannelPerformanceScreen = () => {
     else if (rawChannel === 'gathern') barColor = '#CE92F3';
     else if (rawChannel === 'bookingcom') barColor = '#16AEDD';
 
+
+    const percentage = totalValue > 0 
+    ? (displayValue / totalValue) * 100 
+    : 0
+    
     return {
       value: displayValue,
       count: item?.reservations || 0,
       label: displayTitle, // Used for text
       svgPath: svgPath, // Used for the SVG
-      percentage: (displayValue / totalValue) * 100,
+      percentage: percentage,
       color: barColor,
     };
   });

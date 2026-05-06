@@ -1,10 +1,10 @@
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
 import { ProfilePicture, UpdateProfilePayload } from "@/types/api/profileTypes";
 import { useAuthStore } from "@/store/useAuthStore";
-import { BASE_URL_DEV } from "@env";
-import apiService from "./apiService";
+import apiService, { BASE_URL } from "./apiService";
 import Utils from "@/utility/Utils";
 import { CreateEditlistingStatePayloadType } from "@/types/api/bookingManagementTypes";
+
 
 export const updateProfileApi = async (payload: UpdateProfilePayload) => {
   // ✅ Store directly access karo — hook nahi
@@ -30,7 +30,7 @@ export const updateProfileApi = async (payload: UpdateProfilePayload) => {
 
   // ✅ fetch directly use karo — apisauce/axios bypass
   const response = await fetch(
-    `${BASE_URL_DEV}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
+    `${BASE_URL}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
     {
       method: 'POST',
       headers: {
@@ -91,7 +91,7 @@ export const uploadProfilePictureApi = async (image: ProfilePicture) => {
   } as any);
 
   const response = await fetch(
-    `${BASE_URL_DEV}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
+    `${BASE_URL}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
     {
       method: 'POST',
       headers: {
@@ -115,7 +115,7 @@ export const removeProfilePictureApi = async () => {
   formData.append('profile_picture', ''); // empty string = remove
 
   const response = await fetch(
-    `${BASE_URL_DEV}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
+    `${BASE_URL}${SERVICE_CONFIG_URLS.APP.UPDATE_PROFILE}`,
     {
       method: 'POST',
       headers: {

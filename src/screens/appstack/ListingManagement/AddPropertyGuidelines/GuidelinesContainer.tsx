@@ -93,7 +93,7 @@ export default function useGuidelinesContainer() {
       : yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
     wifi_username: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_username_required')),
     wifi_password: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_password_required')),
-    door_lock_code: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.door_lock_required')),
+    door_lock_code: hideWifiFields ? yup.string() : yup.string().optional()
   });
 
   type GuidelinesFormValues = yup.InferType<typeof guidelinesSchema>;
@@ -176,7 +176,7 @@ export default function useGuidelinesContainer() {
       door_lock_code: data.door_lock_code,
     });
     createDetails(buildPayload(data, false) as any, {
-      onSuccess: () => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES),
+      onSuccess: () => navigate(NavigationRoutes.APP_STACK.CHECKOUT_INSTRUCTION),
     });
   };
 

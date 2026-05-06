@@ -35,7 +35,8 @@ export const CalendarSection = ({
   isLoading,
   onRefresh,
 }: Props) => {
-    const { t } = useTranslation();
+    const { t , i18n} = useTranslation();
+    const isArabic = i18n.language === 'ar'
   
   console.log("markedDates",markedDates);
   console.log("bookingsTest",bookings)
@@ -59,6 +60,8 @@ export const CalendarSection = ({
             markedDates={markedDates}
             onDayPress={onDayPress}
             defaultPrice={defaultPrice}
+            t={t}
+            isArabic = {isArabic}
           />
         ) : (
           <MultiChannelCalendar

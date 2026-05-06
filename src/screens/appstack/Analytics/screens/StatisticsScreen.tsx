@@ -120,7 +120,7 @@ const StatisticsScreen = () => {
             />
             <StatCard
               title={t('app.analytics.avg_length_stay')}
-              value={`${stayLength.value} Nights`}
+             value={`${stayLength.value} ${t('app.analytics.nights')}`}
               subText={t('app.analytics.vs_last_month')}
               trend={stayLength.delta_pct}
               icon="avg_length_of_stay"
