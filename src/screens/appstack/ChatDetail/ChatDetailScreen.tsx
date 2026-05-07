@@ -875,6 +875,13 @@ const ChatScreen = () => {
                   color={Colors.BLACK}
                   fontSize={18}
                 />
+                {!SAVED_REPLIES.length  && (
+                  <View>
+                    <AppText text='No saved replies found' type='SemiBold' fontSize={16} mt={5} mb={7}/>
+                    <AppText text='Create reusable responses from the Saved Replies option in the Inbox menu to quickly reply to messages without typing the same thing again.' color={Colors.DARK_CHARCOAL_OPACITY} fontSize={12} pr={50}/>
+
+                  </View>
+                )}
                 <View style={styles.repliesGrid}>
                   {SAVED_REPLIES.map(
                     (reply: { id: number; body: string; title: string }) => (

@@ -31,7 +31,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 export const useChatContainer = () => {
   const { user } = useAuthStore();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['40%', '60%'], []);
+  const snapPoints = useMemo(() => ['60%'], []);
   const [activeTab, setActiveTab] = useState<ChatStatus>('All');
 
   const [filterAssigned, setFilterAssigned] = useState(false);

@@ -21,6 +21,7 @@ interface Props {
   onReset: () => void;
   actualProperties: any[];
   initialSelectedValues: string[];
+  customHeight?: any
 }
 
 export const FilterModalView = ({
@@ -29,6 +30,7 @@ export const FilterModalView = ({
   onApply,
   actualProperties,
   initialSelectedValues,
+  customHeight
 }: Props) => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -57,7 +59,7 @@ export const FilterModalView = ({
     <BottomSheetComponent
       isVisible={isVisible}
       onClose={onClose}
-      customHeight={Metrics.screenHeight * 0.7}
+      customHeight={customHeight ? customHeight : Metrics.screenHeight * 0.7}
     >
       <View
         style={[
