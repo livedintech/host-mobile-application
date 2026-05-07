@@ -1,10 +1,11 @@
-import React, { useRef, useMemo, useCallback, useEffect } from 'react';
+import React, { useRef, useMemo, useCallback, useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
   Platform,
   ScrollView,
   ActivityIndicator,
+  BackHandler,
 } from 'react-native';
 import {
   BottomSheetView,
@@ -45,6 +46,7 @@ const formatDate = (dateString: string) => {
 const AllTask = () => {
   const route = useRoute<any>();
   const initialListingId = route.params?.listing_id?.toString();
+  const initialTab = route.params?.initialTab;
 
   const {
     isLoading,
@@ -57,13 +59,25 @@ const AllTask = () => {
     dataQuery,
     isFetching,
     rawList,
-  } = AllTaskContainer(initialListingId);
+  } = AllTaskContainer(initialListingId, initialTab);
   const { t } = useTranslation();
 
   const { resetTaskStore } = useTaskStore();
 
   const filterSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['60%'], []);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (isFilterOpen) {
+        filterSheetRef.current?.dismiss();
+        return true;
+      }
+      return false;
+    });
+    return () => backHandler.remove();
+  }, [isFilterOpen]);
 
   const {
     control,
@@ -306,6 +320,7 @@ const AllTask = () => {
           backdropComponent={renderBackdrop}
           backgroundStyle={styles.bottomSheetBackground}
           handleIndicatorStyle={styles.sheetIndicator}
+          onChange={index => setIsFilterOpen(index >= 0)}
         >
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.sheetHeader}>
