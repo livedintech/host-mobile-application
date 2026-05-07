@@ -160,6 +160,13 @@ const AuthStack = () => {
           require('@/screens/common/Payment/SubscriptionWebViewScreen').default
         }
       />
+      <Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.AUTH_STACK.DEEP_LINK_HANDLER}
+        getComponent={() =>
+          require('@/screens/auth/DeepLinkHandler/DeepLinkHandlerScreen').default
+        }
+      />
     </Navigator>
   );
 };

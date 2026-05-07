@@ -29,10 +29,21 @@ export default function useVerifyPhoneNumberContainer() {
   console.log('params', params);
 
 
-  const actualPhone = (params as any)?.phone_number; // instead of params?.actualPhone
-  const code = (params as any)?.phone_with_code;     // instead of params?.code
-  const country_code = (params as any)?.country_code;
+  const actualPhone   = (params as any)?.phone_number;
+  const code          = (params as any)?.phone_with_code;
+  const country_code  = (params as any)?.country_code;
   const isLoginScreen = (params as any)?.isLoginScreen;
+  const isDeepLink    = (params as any)?.isDeepLink;
+
+  const dlListing  = (params as any)?.dl_listing  || '';
+  const dlName     = (params as any)?.dl_name     || '';
+  const dlEmail    = (params as any)?.dl_email    || '';
+  const dlPhone    = (params as any)?.dl_phone    || '';
+  const dlCountry  = (params as any)?.dl_country  || '';
+  const dlState    = (params as any)?.dl_state    || '';
+  const dlCity     = (params as any)?.dl_city     || '';
+  const dlDistrict = (params as any)?.dl_district || '';
+  const dlRef      = (params as any)?.dl_ref      || '';
 
   const {
     control,
@@ -58,18 +69,47 @@ export default function useVerifyPhoneNumberContainer() {
    onSuccess: ({ message }) => {
     Toast.show({ type: 'success', text1: message });
 
-    const navParams = {
-      country_code,      // e.g., 'SA'
-      phone_number: actualPhone, // e.g., '123456789111'
-      phone_with_code: code,     // e.g., '966'
-      otp: otpCode,       // Only if login screen needs it
+    const phoneParams = {
+      country_code,
+      phone_number:    actualPhone,
+      phone_with_code: code,
+      otp:             otpCode,
     };
 
     if (isLoginScreen) {
-      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, navParams);
-    } else {
-      navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, navParams);
+      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, phoneParams);
+      return;
     }
+
+    if (isDeepLink) {
+      if (!dlListing) {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
+          ...phoneParams,
+          name: dlName, email: dlEmail,
+          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
+        });
+      } else if (String(dlListing) === '1') {
+        navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
+          payload: {
+            ...phoneParams,
+            listing_count: 1,
+            pricing: null,
+            name: dlName,
+            ref:  dlRef,
+          },
+        });
+      } else if (String(dlListing) === '2' || String(dlListing) === '3') {
+        navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {
+          name: dlName, email: dlEmail, phone: dlPhone,
+          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
+        });
+      } else {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, { ...phoneParams, name: dlName });
+      }
+      return;
+    }
+
+    navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phoneParams);
   },
   onError: ({ message }) => {
     Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });

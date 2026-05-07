@@ -246,6 +246,31 @@ export const getListingDistrictsApi = async (payload: CreateEditlistingDistricts
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
 
+// Name-based APIs for HubspotDetailForm deep link flow
+export const getStatesByCountryNameApi = async (country_name: string) => {
+    const { ok, response, data } = await apiService.get(
+        `api/v2/states?country_name=${encodeURIComponent(country_name)}`
+    );
+    if (ok) return data?.data;
+    throw new Error(response.message || 'Failed to fetch states');
+};
+
+export const getCitiesByNameApi = async (country_name: string, state_name: string) => {
+    const { ok, response, data } = await apiService.get(
+        `api/v2/cities?country_name=${encodeURIComponent(country_name)}&state_name=${encodeURIComponent(state_name)}`
+    );
+    if (ok) return data?.data;
+    throw new Error(response.message || 'Failed to fetch cities');
+};
+
+export const getDistrictsByCityNameApi = async (city_name: string) => {
+    const { ok, response, data } = await apiService.get(
+        `api/v2/districts?city_name=${encodeURIComponent(city_name)}`
+    );
+    if (ok) return data?.data;
+    throw new Error(response.message || 'Failed to fetch districts');
+};
+
 // Delete
 export const deleteListingApi = async (payload: DeleteListingPayloadType) => {
     const url = Utils.createDynamicUrl(
