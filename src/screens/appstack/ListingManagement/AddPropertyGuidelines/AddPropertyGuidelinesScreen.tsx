@@ -60,7 +60,7 @@ const AddPropertyGuidelinesScreen = () => {
               <Svgicons path="back" size={40} />
             </ButtonView>
             {!isEdit && (
-              <CircularProgress percentage={42} size={48} strokeWidth={4} />
+              <CircularProgress percentage={45} size={48} strokeWidth={4} />
             )}
           </View>
 
