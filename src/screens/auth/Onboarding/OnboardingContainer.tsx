@@ -83,8 +83,12 @@ export default function useOnboardingContainer() {
     }, []);
 
     const handleSkip = useCallback(() => {
-        navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
-    }, []);
+        const lastIndex = onboardingData.length - 1;
+        setActiveIndex(lastIndex);
+        setTimeout(() => {
+            flatListRef.current?.scrollToIndex({ index: lastIndex, animated: true });
+        }, 0);
+    }, [onboardingData.length]);
 
     return {
         activeIndex,

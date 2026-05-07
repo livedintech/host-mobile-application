@@ -433,6 +433,7 @@ const HomeScreen = ({ navigation }: any) => {
         count: UserPermission?.dashboard_counts?.tasks,
       }),
       route: NavigationRoutes.APP_STACK.TASK,
+      params: { initialTab: 'in_progress' },
     },
     {
       id: 4,
