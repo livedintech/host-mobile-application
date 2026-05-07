@@ -1190,7 +1190,10 @@
       "filters": {
         "select_listing": "اختر القائمة",
         "select_task_assignee": "اختر المسؤول عن المهمة"
-      }
+      },
+      "assigned_to_user": "مُسند إلى ",
+    "unassigned": "غير مُسند",
+    "date_value": "التاريخ: "
     },
     "listing_screen": {
       "booking_created": "تم إنشاء الحجز",
@@ -1463,7 +1466,9 @@
       "apply_filter": "تطبيق الفلتر",
       "select_property": "اختر العقار",
       "checked_in": "تسجيل الوصول",
-      "checked_out": "تسجيل المغادرة"
+      "checked_out": "تسجيل المغادرة",
+      "select_check_io": "اختر تسجيل الوصول/المغادرة",
+      "placeholder_multiple": "اختر خيارات متعددة"
     },
     "direct_cancel_modal": {
       "confirm_text": "هل أنت متأكد أنك تريد إلغاء الحجز؟",

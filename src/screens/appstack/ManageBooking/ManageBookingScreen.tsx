@@ -55,6 +55,13 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
     }
   }, [account]);
 
+
+const formatStatus = (status?: string) => {
+    if (!status || status === 'unknown') return 'Disconnect';
+    
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  };
+
   return (
     <GlassCard width="100%" style={styles.connectedCard} onPress={() => onExport(account)}>
       <View style={styles.cardHeader}>
@@ -84,7 +91,8 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
         <InfoRow
           icon="database_check"
           label={t('app.manage_booking.connection_status')}
-          value={account?.channel_status ===  'unknown' ? 'Disconnect' : account?.channel_status}
+          // value={account?.channel_status ===  'unknown' ? 'Disconnect' : account?.channel_status}
+          value={formatStatus(account?.channel_status)}
           valueColor={account?.channel_status ===  'unknown' ? Colors.ALERT_RED   : Colors.TEAL_PRIMARY_ALT }
         />
       )}

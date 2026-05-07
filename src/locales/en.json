@@ -1191,7 +1191,10 @@
         "filters": {
         "select_listing": "Select Listing",
         "select_task_assignee": "Select Task Assignee"
-      }
+      },
+      "assigned_to_user": "Assigned to ",
+    "unassigned": "Unassigned",
+    "date_value": "Date: "
     },
     "listing_screen": {
       "booking_created": "Booking created",
@@ -1465,7 +1468,9 @@
       "apply_filter": "Apply Filter",
       "select_property": "Select Property",
       "checked_in": "Checked-in",
-      "checked_out": "Checked-out"
+      "checked_out": "Checked-out",
+      "select_check_io": "Select Check-in/Check-out",
+      "placeholder_multiple": "Select Multiple Options"
     },
     "direct_cancel_modal": {
       "confirm_text": "Are you sure you want to cancel reservation?",

@@ -108,6 +108,7 @@ const NotificationsScreen = () => {
   
 
   const renderItem = ({ item }: { item: FlatItem }) => {
+    console.log("item",item)
     if (item.type === 'header') {
       return (
         <AppText text={item.title} fontSize={16} type="SemiBold" mt={20} mb={15} />
