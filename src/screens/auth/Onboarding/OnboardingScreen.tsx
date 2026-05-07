@@ -95,34 +95,8 @@ const OnboardingScreen = () => {
 
             {/* Action Buttons */}
             <View style={styles.footer}>
-                {/* Top outline button: Skip / Explore First */}
-                {/* <ButtonView
-                    style={styles.outlineButton}
-                    onPress={isLastSlide ? loginWithPhone : handleSkip}
-                >
-                    <AppText
-                        text={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn}
-                        color='#1A2421'
-                        type='Regular'
-                        fontSize={15}
-                    />
-                </ButtonView> */}
                 <AppButton onPress={isLastSlide ? loginWithPhone : handleSkip} title={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn} variant='secondary' type='Regular' />
-
-                {/* Bottom teal button: Continue / Get Started */}
-                {/* <ButtonView
-                    style={styles.tealButton}
-                    onPress={isLastSlide ? handleGetStarted : handleContinue}
-                >
-                    <AppText
-                        text={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn}
-                        color={Colors.WHITE}
-                        type='Regular'
-                        fontSize={15}
-                    />
-                </ButtonView> */}
                 <AppButton onPress={isLastSlide ? handleGetStarted : handleContinue} title={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn} variant='primary' type='Regular' />
-
             </View>
         </BGImage>
     );

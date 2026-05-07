@@ -7,21 +7,22 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 interface PaginationProps {
   activeIndex: number;
+  onDotPress?: (index: number) => void;
 }
 
-const Pagination = ({ activeIndex }: PaginationProps) => {
-  
+const Pagination = ({ activeIndex, onDotPress }: PaginationProps) => {
+
   const handlePress = (index: number) => {
-    // Index ke mutabiq screens link karein
+    if (onDotPress) {
+      onDotPress(index);
+      return;
+    }
     if (index === 0) {
-      // Home screen 1 (Property Earn)
-      navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN); 
+      navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
     } else if (index === 1) {
-      // Home screen 2 (Calendar Sync)
-      navigate(NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO); 
+      navigate(NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO);
     } else if (index === 2) {
-      // Sign Up screen
-      navigate(NavigationRoutes.AUTH_STACK.AGENT_INTRO); 
+      navigate(NavigationRoutes.AUTH_STACK.AGENT_INTRO);
     }
   };
 
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     paddingVertical: Metrics.verticalScale(35),
     // backgroundColor: Colors.BRUNSWICK_GREEN_16, 
     width: '100%',
+    backgroundColor:Colors.WHITE
   },
   dot: {
     height: Metrics.verticalScale(8),

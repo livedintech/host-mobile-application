@@ -29,24 +29,7 @@ const AuthStack = () => {
         options={{ header: () => <HeaderApp isGoBack isGetStarted isLang /> }}
         name={NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN}
         getComponent={() =>
-          require('@/screens/auth/PropertyCanEarn/PropertyCanEarnScreen')
-            .default
-        }
-      />
-      <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted /> }}
-        name={NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO}
-        getComponent={() =>
-          require('@/screens/auth/ConnectCalendarsIntro/ConnectCalendarsIntroScreen')
-            .default
-        }
-      />
-      <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang isGetStarted /> }}
-        name={NavigationRoutes.AUTH_STACK.AGENT_INTRO}
-        getComponent={() =>
-          require('@/screens/auth/AgentIntro/AgentIntroScreen')
-            .default
+          require('@/screens/auth/IntroSlides/IntroSlidesScreen').default
         }
       />
       <Screen

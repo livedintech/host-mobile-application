@@ -1,12 +1,29 @@
 <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0.5" y="0.5" width="35" height="35" rx="17.5" fill="white" fill-opacity="0.01" stroke="url(#paint0_linear_106_29683)"/>
-<path d="M15.57 11.93L9.5 18L15.57 24.07" stroke="black" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M26.4999 18H9.66992" stroke="black" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-<defs>
-<linearGradient id="paint0_linear_106_29683" x1="18" y1="0" x2="18" y2="36" gradientUnits="userSpaceOnUse">
-<stop stop-color="white"/>
-<stop offset="0.36" stop-color="#808080"/>
-<stop offset="1" stop-color="white"/>
-</linearGradient>
-</defs>
+  <!-- Outer circle slightly uneven -->
+  <rect x="1" y="0.8" width="34" height="34.2" rx="16.8"
+    fill="white" fill-opacity="0.02"
+    stroke="url(#paint0_linear_106_20700)"
+    stroke-width="1.2"
+    transform="rotate(-1 18 18)" />
+
+  <!-- Arrow made slightly rough -->
+  <path d="M15.8 12.4L9.9 18.1L15.4 24.3"
+    stroke="#13463C"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- Line slightly tilted -->
+  <path d="M26.3 17.8H9.9"
+    stroke="#13463C"
+    stroke-width="1.6"
+    stroke-linecap="round"/>
+
+  <defs>
+    <linearGradient id="paint0_linear_106_20700" x1="18" y1="0" x2="17" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white"/>
+      <stop offset="0.4" stop-color="#6F6F6F"/>
+      <stop offset="1" stop-color="#F5F5F5"/>
+    </linearGradient>
+  </defs>
 </svg>
