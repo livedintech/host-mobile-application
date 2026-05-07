@@ -7,11 +7,7 @@ const linking = {
   config: {
     screens: {
       ManageBooking: 'airbnb-callback',
-      AUTH_STACK: {
-        screens: {
-          CREATE_ACCOUNT_SCREEN: 'signup',
-        },
-      },
+      DEEP_LINK_HANDLER_SCREEN: 'signup',
     },
   },
 };

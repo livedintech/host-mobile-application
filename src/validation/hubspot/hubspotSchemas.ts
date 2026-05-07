@@ -3,10 +3,10 @@ import * as yup from 'yup';
 export interface MeetingDetailsFormValues {
   fullName: string;
   email: string;
-  country: number | null;
-  state: number | null;
-  city: number | null;
-  district?: number | null;
+  country: string | null;
+  state: string | null;
+  city: string | null;
+  district?: string | null;
   phone?: string;
   country_code?: string;
 }
@@ -24,8 +24,8 @@ export const meetingDetailsSchema = yup.object({
 
   email: yup.string().required('Email is required').email('Enter a valid email address'),
 
-  country: yup.number().required('Please select a country').nullable(),
-  state: yup.number().required('Please select a state').nullable(),
-  city: yup.number().required('Please select a city').nullable(),
-  district: yup.number().nullable().notRequired(),
+  country: yup.string().required('Please select a country').nullable(),
+  state: yup.string().required('Please select a state').nullable(),
+  city: yup.string().required('Please select a city').nullable(),
+  district: yup.string().nullable().notRequired(),
 });

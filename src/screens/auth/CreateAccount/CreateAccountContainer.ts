@@ -42,7 +42,8 @@ export default function useCreateAccountContainer() {
   const [navAction, setNavAction] = useState<any>(null);
   const allowGoBack = useRef(false); // Ref to check if we should allow going back
 
-  const prefill = (route.params as any) || {};
+  const prefill      = (route.params as any) || {};
+  const deepLinkName = prefill?.payload?.name || prefill?.name || '';
 
   const toggleTerms = useCallback(() => setIsTermsAccepted(prev => !prev), []);
 
@@ -53,7 +54,7 @@ export default function useCreateAccountContainer() {
   } = useForm({
     resolver: yupResolver(signUpSchema),
     defaultValues: {
-      fullName: '',
+      fullName: deepLinkName,
       password: '',
     },
   });
