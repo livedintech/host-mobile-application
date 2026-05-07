@@ -750,7 +750,8 @@
       "tab_unread": "غير المقروءة",
       "unknown_guest": "غير معروف",
       "no_message_preview": "لا توجد رسالة",
-      "not_available": "غير متاح"
+      "not_available": "غير متاح",
+      "guests": "ضيوف"
     },
     "subscription": {
       "title": "تكلفة العقار",

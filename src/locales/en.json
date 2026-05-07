@@ -752,7 +752,8 @@
       "tab_unread": "Unread",
       "unknown_guest": "Unknown",
       "no_message_preview": "No message",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "guests": "guests"
     },
     "subscription": {
       "title": "Listing Cost",

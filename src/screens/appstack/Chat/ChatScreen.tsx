@@ -1,7 +1,20 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useCallback, useRef } from 'react';
-import { StyleSheet, View, FlatList, TextInput, Image, ListRenderItemInfo, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Swipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  TextInput,
+  Image,
+  ListRenderItemInfo,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
+import Swipeable, {
+  SwipeableMethods,
+} from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
   useAnimatedStyle,
   SharedValue,
@@ -88,7 +101,9 @@ const SwipeActions = ({
       >
         <Svgicons path="archiveIcon" size={24} color={Colors.WHITE} />
         <AppText
-          text={item?.is_archived ? t('app.chat.unarchived') : t('app.chat.archive')}
+          text={
+            item?.is_archived ? t('app.chat.unarchived') : t('app.chat.archive')
+          }
           color={Colors.WHITE}
           fontSize={12}
           mt={5}
@@ -123,6 +138,8 @@ const ChatRow = ({
   t,
 }: ChatRowProps) => {
   const swipeableRef = useRef<SwipeableMethods>(null);
+  const { i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
 
   return (
     <Swipeable
@@ -136,13 +153,22 @@ const ChatRow = ({
           item={item}
           actionWidth={actionWidth}
           totalActionWidth={totalActionWidth}
-          onSnooze={() => { handleAction(item, 'Snoozed'); swipeableRef.current?.close(); }}
-          onArchive={() => { handleAction(item, 'Archived'); swipeableRef.current?.close(); }}
+          onSnooze={() => {
+            handleAction(item, 'Snoozed');
+            swipeableRef.current?.close();
+          }}
+          onArchive={() => {
+            handleAction(item, 'Archived');
+            swipeableRef.current?.close();
+          }}
           t={t}
         />
       )}
       onSwipeableOpen={() => {
-        if (openSwipeableRef.current && openSwipeableRef.current !== swipeableRef.current) {
+        if (
+          openSwipeableRef.current &&
+          openSwipeableRef.current !== swipeableRef.current
+        ) {
           openSwipeableRef.current.close();
         }
         openSwipeableRef.current = swipeableRef.current;
@@ -170,7 +196,10 @@ const ChatRow = ({
             <AppText
               text={
                 item.last_message_date
-                  ? dayjs.utc((item as any).created_at).local().format('MM/DD/YY')
+                  ? dayjs
+                      .utc((item as any).created_at)
+                      .local()
+                      .format('MM/DD/YY')
                   : t('app.chat.not_available')
               }
               fontSize={12}
@@ -195,11 +224,13 @@ const ChatRow = ({
                 />
               </View>
             ) : (
-              <Svgicons
-                path="chevronRight"
-                size={12}
-                color={Colors.GREY_SHADOW}
-              />
+              <View style={{ transform: [{ scaleX: isRTL ? -1 : 1 }] }}>
+                <Svgicons
+                  path="chevronRight"
+                  size={12}
+                  color={Colors.GREY_SHADOW}
+                />
+              </View>
             )}
           </View>
         </AppPressable>
@@ -209,7 +240,7 @@ const ChatRow = ({
 };
 
 const ChatScreen = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     activeTab,
     setActiveTab,
@@ -428,15 +459,15 @@ const ChatScreen = () => {
                       activeTab === 'Archived'
                         ? t('app.chat.no_archived')
                         : activeTab === 'Snoozed'
-                          ? t('app.chat.no_snoozed')
-                          : activeTab === 'Unread'
-                            ? t('app.chat.no_unread')
-                            : t('app.chat.no_messages')
+                        ? t('app.chat.no_snoozed')
+                        : activeTab === 'Unread'
+                        ? t('app.chat.no_unread')
+                        : t('app.chat.no_messages')
                     }
                     descriptionText={
                       activeTab === 'Archived' ||
-                        activeTab === 'Snoozed' ||
-                        activeTab === 'Unread'
+                      activeTab === 'Snoozed' ||
+                      activeTab === 'Unread'
                         ? t('app.chat.no_conversations')
                         : t('app.chat.no_listing_message')
                     }
