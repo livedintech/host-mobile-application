@@ -113,7 +113,7 @@ const processMessagesWithTimeLabels = (
   });
 };
 const ChatScreen = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
   const route = useRoute();
   const params = route?.params as
@@ -525,8 +525,7 @@ const ChatScreen = () => {
                     style={styles.menuItem}
                     onSelect={() => {
                       navigateToRoot(NavigationRoutes.APP_STACK.LISTING, {
-                        listing_id:
-                          conversationData?.listing_id || listing_id,
+                        listing_id: conversationData?.listing_id || listing_id,
                       });
                     }}
                   >
@@ -576,7 +575,16 @@ const ChatScreen = () => {
               maintainVisibleContentPosition={{
                 minIndexForVisible: 0,
               }}
-              contentContainerStyle={styles.messagesList}
+              contentContainerStyle={[
+                styles.messagesList,
+                {
+                  paddingBottom:
+                    data?.conversation?.thread_type === 'inquiry' ||
+                    data?.conversation?.thread_type === 'reservation_request'
+                      ? Metrics.verticalScale(200)
+                      : 0,
+                },
+              ]}
               keyboardShouldPersistTaps="handled"
               onScrollToIndexFailed={handleScrollToIndexFailed}
               onScroll={handleScroll}
@@ -856,11 +864,17 @@ const ChatScreen = () => {
                 ]}
               >
                 <GlassCard style={styles.plusAction}>
-                  <Svgicons
-                    path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
-                    size={18}
-                    color={Colors.WHITE}
-                  />
+                  <View
+                    style={{
+                      transform: [{ scaleX: i18n.dir() === 'rtl' ? -1 : 1 }],
+                    }}
+                  >
+                    <Svgicons
+                      path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
+                      size={18}
+                      color={Colors.WHITE}
+                    />
+                  </View>
                 </GlassCard>
               </AppPressable>
             </View>
@@ -975,7 +989,9 @@ const ChatScreen = () => {
               description={`${formatDateRange(
                 data?.conversation?.arrival_date,
                 data?.conversation?.departure_date,
-              )}, ${data?.conversation?.number_of_guests} guests`}
+              )}, ${data?.conversation?.number_of_guests} ${t(
+                'app.chat.guests',
+              )}`}
               name={data?.conversation?.name}
             />
             <InquiryModal
@@ -990,7 +1006,9 @@ const ChatScreen = () => {
               description={`${formatDateRange(
                 data?.conversation?.arrival_date,
                 data?.conversation?.departure_date,
-              )}, ${data?.conversation?.number_of_guests} guests`}
+              )}, ${data?.conversation?.number_of_guests} ${t(
+                'app.chat.guests',
+              )}`}
               name={data?.conversation?.name}
             />
           </View>
