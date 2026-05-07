@@ -12,19 +12,38 @@ export default function useManageListingContainer() {
   const [localSelectedId, setLocalSelectedId] = useState<number | null>(null);
   const { params } = useRoute();
 
+  const dlName     = (params as any)?.name     || '';
+  const dlEmail    = (params as any)?.email    || '';
+  const dlCountry  = (params as any)?.country  || '';
+  const dlState    = (params as any)?.state    || '';
+  const dlCity     = (params as any)?.city     || '';
+  const dlDistrict = (params as any)?.district || '';
+  const dlRef      = (params as any)?.ref      || '';
+
   const onSelect = (value: number | null) => {
     if (!value) return;
     const payload = {
-      country_code: params?.country_code,
-      phone_number: params?.phone_number,
-      phone_with_code: params?.phone_with_code,
-      listing_count: localSelectedId,
-      pricing: plan?.price,
+      country_code:    (params as any)?.country_code,
+      phone_number:    (params as any)?.phone_number,
+      phone_with_code: (params as any)?.phone_with_code,
+      listing_count:   localSelectedId,
+      pricing:         plan?.price,
+      name:            dlName,
     };
     if (value === 1) {
       navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, { payload });
     } else {
-      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, { payload });
+      navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {
+        payload,
+        name:     dlName,
+        email:    dlEmail,
+        phone:    (params as any)?.phone_number,
+        country:  dlCountry,
+        state:    dlState,
+        city:     dlCity,
+        district: dlDistrict,
+        ref:      dlRef,
+      });
     }
   };
 

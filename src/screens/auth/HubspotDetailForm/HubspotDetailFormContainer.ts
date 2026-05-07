@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { meetingDetailsSchema } from '@/validation/hubspot/hubspotSchemas';
@@ -8,15 +9,24 @@ import { useQuery } from '@tanstack/react-query';
 import STORAGE_CONST from '@/constants/storage';
 import {
   getListingCountriesApi,
-  getListingStateApi,
-  getListingCityApi,
-  getListingDistrictsApi,
+  getStatesByCountryNameApi,
+  getCitiesByNameApi,
+  getDistrictsByCityNameApi,
 } from '@/services/ createListingService';
 
 export default function useHubspotDetailFormContainer() {
-  const route = useRoute<any>();
+  const route   = useRoute<any>();
   const payload = route.params?.payload || {};
-  const incomingPhone = payload?.phone?.actualPhone || payload?.phone?.phone || '';
+
+  const dlName     = route.params?.name     || '';
+  const dlEmail    = route.params?.email    || '';
+  const dlPhone    = route.params?.phone    || '';
+  const dlCountry  = route.params?.country  || '';
+  const dlState    = route.params?.state    || '';
+  const dlCity     = route.params?.city     || '';
+  const dlDistrict = route.params?.district || '';
+
+  const incomingPhone = dlPhone || payload?.phone?.actualPhone || payload?.phone?.phone || '';
 
   const {
     control,
@@ -27,19 +37,19 @@ export default function useHubspotDetailFormContainer() {
   } = useForm<any>({
     resolver: yupResolver(meetingDetailsSchema) as any,
     defaultValues: {
-      fullName: '',
-      email: '',
-      country: null,
-      state: null,
-      city: null,
+      fullName: dlName,
+      email:    dlEmail,
+      country:  dlCountry || null,
+      state:    null,
+      city:     null,
       district: null,
       phone: { phone: incomingPhone, actualPhone: incomingPhone },
     },
   });
 
-  const selectedCountryId = watch('country');
-  const selectedStateId = watch('state');
-  const selectedCityId = watch('city');
+  const selectedCountry = watch('country');
+  const selectedState   = watch('state');
+  const selectedCity    = watch('city');
 
   const { data: countriesData = [] } = useQuery({
     queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_COUNTRIES],
@@ -47,36 +57,36 @@ export default function useHubspotDetailFormContainer() {
   });
 
   const { data: statesData = [] } = useQuery({
-    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_STATE, selectedCountryId],
-    queryFn: () => getListingStateApi({ country_id: Number(selectedCountryId) }),
-    enabled: Boolean(selectedCountryId),
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_STATE, selectedCountry],
+    queryFn: () => getStatesByCountryNameApi(selectedCountry),
+    enabled: Boolean(selectedCountry),
   });
 
   const { data: citiesData = [] } = useQuery({
-    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_CITIES, selectedStateId],
-    queryFn: () => getListingCityApi({ state_id: Number(selectedStateId) }),
-    enabled: Boolean(selectedStateId),
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_CITIES, selectedState],
+    queryFn: () => getCitiesByNameApi(selectedCountry, selectedState),
+    enabled: Boolean(selectedState),
   });
 
   const { data: districtsData = [] } = useQuery({
-    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_DISTRICTS, selectedCityId],
-    queryFn: () => getListingDistrictsApi({ city_id: Number(selectedCityId) }),
-    enabled: Boolean(selectedCityId),
+    queryKey: [STORAGE_CONST.LISTING_CRATE_EDIT_DISTRICTS, selectedCity],
+    queryFn: () => getDistrictsByCityNameApi(selectedCity),
+    enabled: Boolean(selectedCity),
   });
 
-  const countriesOptions = (countriesData as any[]).map((item) => ({ label: item.name, value: item.id }));
-  const statesOptions = (statesData as any[]).map((item) => ({ label: item.name, value: item.id }));
-  const citiesOptions = (citiesData as any[]).map((item) => ({ label: item.name, value: item.id }));
-  const districtsOptions = (districtsData as any[]).map((item) => ({ label: item.name, value: item.id }));
+  const countriesOptions = (countriesData as any[]).map(item => ({ label: item.name, value: item.name }));
+  const statesOptions    = (statesData    as any[]).map(item => ({ label: item.name, value: item.name }));
+  const citiesOptions    = (citiesData    as any[]).map(item => ({ label: item.name, value: item.name }));
+  const districtsOptions = (districtsData as any[]).map(item => ({ label: item.name, value: item.name }));
 
   const onCountrySelect = () => {
-    setValue('state', null);
-    setValue('city', null);
+    setValue('state',    null);
+    setValue('city',     null);
     setValue('district', null);
   };
 
   const onStateSelect = () => {
-    setValue('city', null);
+    setValue('city',     null);
     setValue('district', null);
   };
 
@@ -84,26 +94,40 @@ export default function useHubspotDetailFormContainer() {
     setValue('district', null);
   };
 
-  const onSubmit = (data: any) => {
-    const countryObj = (countriesData as any[]).find((c) => c.id === data.country);
-    const stateObj = (statesData as any[]).find((s) => s.id === data.state);
-    const cityObj = (citiesData as any[]).find((c) => c.id === data.city);
-    const districtObj = (districtsData as any[]).find((d) => d.id === data.district);
+  useEffect(() => {
+    if (!dlState || (statesData as any[]).length === 0) return;
+    const match = (statesData as any[]).find(
+      s => s.name.toLowerCase() === dlState.toLowerCase()
+    );
+    if (match) setValue('state', match.name);
+  }, [statesData]);
 
+  useEffect(() => {
+    if (!dlCity || (citiesData as any[]).length === 0) return;
+    const match = (citiesData as any[]).find(
+      c => c.name.toLowerCase() === dlCity.toLowerCase()
+    );
+    if (match) setValue('city', match.name);
+  }, [citiesData]);
+
+  useEffect(() => {
+    if (!dlDistrict || (districtsData as any[]).length === 0) return;
+    const match = (districtsData as any[]).find(
+      d => d.name.toLowerCase() === dlDistrict.toLowerCase()
+    );
+    if (match) setValue('district', match.name);
+  }, [districtsData]);
+
+  const onSubmit = (data: any) => {
     const formattedUserInfo = {
       ...payload,
       ...data,
-      country: countryObj?.name || '',
-      country_code: countryObj?.phone_code || '',
-      state: stateObj?.name || '',
-      city: cityObj?.name || '',
-      district: districtObj?.name || '',
-      country_id: data.country,
-      state_id: data.state,
-      city_id: data.city,
-      district_id: data.district,
-      email: data.email.toLowerCase(),
-      phone: data.phone?.phone,
+      country:  data.country  || '',
+      state:    data.state    || '',
+      city:     data.city     || '',
+      district: data.district || '',
+      email:    data.email.toLowerCase(),
+      phone:    data.phone?.phone,
     };
 
     navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_CALENDAR, {
@@ -116,9 +140,9 @@ export default function useHubspotDetailFormContainer() {
     errors,
     handleSubmit,
     onSubmit,
-    selectedCountryId,
-    selectedStateId,
-    selectedCityId,
+    selectedCountryId: selectedCountry,
+    selectedStateId:   selectedState,
+    selectedCityId:    selectedCity,
     countriesOptions,
     statesOptions,
     citiesOptions,
