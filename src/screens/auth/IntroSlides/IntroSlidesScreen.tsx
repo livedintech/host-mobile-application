@@ -31,6 +31,7 @@ const IntroSlidesScreen = () => {
     control, errors, handleSubmit, showResults, isLoading,
     availableCityItems, availableDistrictItems,
     selectedcity, chartPoints, roundedMax, yAxisLabels, xAxisLabels, chartData,
+    availableBedroomItems
   } = usePropertyCanEarnContainer();
 
   const handleMomentumScrollEnd = useCallback((e: any) => {
@@ -68,7 +69,7 @@ const IntroSlidesScreen = () => {
             </View>
             <View>
               <AppText text={t('auth.property_can_earn.bedrooms')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
-              <DropdownField name="bedrooms" label="" control={control} errors={errors} data={bedroomOptions} placeholder={t('auth.property_can_earn.bedrooms_placeholder')} />
+              <DropdownField name="bedrooms" label="" control={control} errors={errors} data={availableBedroomItems} placeholder={t('auth.property_can_earn.bedrooms_placeholder')} />
             </View>
             <AppButton type='Bold' onPress={handleSubmit} title={t('auth.property_can_earn.next')} loading={isLoading} style={styles.nextBtn} color="#FFFFFF" />
           </View>
