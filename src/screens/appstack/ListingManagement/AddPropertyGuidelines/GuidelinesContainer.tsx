@@ -176,7 +176,7 @@ export default function useGuidelinesContainer() {
       door_lock_code: data.door_lock_code,
     });
     createDetails(buildPayload(data, false) as any, {
-      onSuccess: () => navigate(NavigationRoutes.APP_STACK.CHECKOUT_INSTRUCTION),
+      onSuccess: () => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES),
     });
   };
 
