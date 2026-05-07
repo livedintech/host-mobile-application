@@ -252,3 +252,21 @@ export const getSubscriptionFeaturesApi = async (payload: {subscription_id:numbe
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
+
+
+// Get Number of Bedrooms (Direct URL)
+export const getNoBedroomApi = async (city: string, location: string) => {
+    const { ok, response, data } = await apiService.get(
+        "https://host.livedin.co/api/get-bedrooms-v2",
+        {
+            city,
+            location,
+        },
+    );
+
+    if (ok) {
+        return data;
+    }
+
+    throw response;
+};

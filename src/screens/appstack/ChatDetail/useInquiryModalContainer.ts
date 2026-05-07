@@ -25,7 +25,7 @@ const schema = yup.object().shape({
 });
 
 interface Props {
-  onClose: () => void;
+  onClose?: () => void;
   inquiryId: string;
 
   guestName?: string;
@@ -112,7 +112,7 @@ const navigation = useNavigation<any>();
   const resetState = () => {
     reset({ formType: 'actions', message: '', offerAmount: '' });
     setViewState('actions');
-    onClose();
+   onClose?.();
   };
 
   const handleBackToActions = () => {
