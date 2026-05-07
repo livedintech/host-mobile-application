@@ -7,16 +7,29 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import STORAGE_CONST from '@/constants/storage';
 import { useQuery } from '@tanstack/react-query';
-import { getChartDataApi, getCitiesApi, getDistrictsApi } from '@/services/authApi';
+import {
+  getChartDataApi,
+  getCitiesApi,
+  getDistrictsApi,
+  getNoBedroomApi,
+} from '@/services/authApi';
 
 // ✅ Stable default references outside component to prevent infinite re-renders
 const DEFAULT_LIST: any[] = [];
-const DEFAULT_CHART = { data: { monthly: '0', yearly: '0', months: [] as number[] } };
+const DEFAULT_CHART = {
+  data: { monthly: '0', yearly: '0', months: [] as number[] },
+};
 
 const homeSchema = yup.object().shape({
-  city: yup.string().required(i18n.t('auth.property_can_earn.validation_city_required')),
-  district: yup.string().required(i18n.t('auth.property_can_earn.validation_district_required')),
-  bedrooms: yup.string().required(i18n.t('auth.property_can_earn.validation_bedrooms_required')),
+  city: yup
+    .string()
+    .required(i18n.t('auth.property_can_earn.validation_city_required')),
+  district: yup
+    .string()
+    .required(i18n.t('auth.property_can_earn.validation_district_required')),
+  bedrooms: yup
+    .string()
+    .required(i18n.t('auth.property_can_earn.validation_bedrooms_required')),
 });
 // AuthTack.CONNECT_CALENDARS_INTRO
 export default function usePropertyCanEarnContainer() {
@@ -39,7 +52,9 @@ export default function usePropertyCanEarnContainer() {
   const selectedbedrooms = watch('bedrooms') || '';
 
   const isChartQueryEnabled =
-    Boolean(selectedcity) && Boolean(selecteddistrict) && Boolean(selectedbedrooms);
+    Boolean(selectedcity) &&
+    Boolean(selecteddistrict) &&
+    Boolean(selectedbedrooms);
 
   // ✅ Cities
   const { data: cities = DEFAULT_LIST } = useQuery({
@@ -56,8 +71,14 @@ export default function usePropertyCanEarnContainer() {
 
   // ✅ Chart Data
   const { data: chartData = DEFAULT_CHART } = useQuery({
-    queryKey: [STORAGE_CONST.CHART_DATA, selectedcity, selecteddistrict, selectedbedrooms],
-    queryFn: () => getChartDataApi(selectedcity, selecteddistrict, selectedbedrooms),
+    queryKey: [
+      STORAGE_CONST.CHART_DATA,
+      selectedcity,
+      selecteddistrict,
+      selectedbedrooms,
+    ],
+    queryFn: () =>
+      getChartDataApi(selectedcity, selecteddistrict, selectedbedrooms),
     enabled: isChartQueryEnabled,
   });
 
@@ -68,14 +89,28 @@ export default function usePropertyCanEarnContainer() {
   //   return months.map((value: number, index: number) => ({ timestamp: index, value }));
   // }, [chartData]);
 
-  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTHS = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
-
-  const chartPoints = chartData?.data?.months.map((value: number, index: number) => ({
-  timestamp: Date.now() + index * 1000, // ya koi bhi unique number
-  value,
-  month: MONTHS[index], // ← yeh add karo
-}));
+  const chartPoints = chartData?.data?.months.map(
+    (value: number, index: number) => ({
+      timestamp: Date.now() + index * 1000, // ya koi bhi unique number
+      value,
+      month: MONTHS[index], // ← yeh add karo
+    }),
+  );
 
   // ✅ maxValue and roundedMax inside useMemo to prevent recalc on every render
   const { roundedMax } = useMemo(() => {
@@ -93,19 +128,55 @@ export default function usePropertyCanEarnContainer() {
     });
   }, [roundedMax]);
 
-  const xAxisLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const xAxisLabels = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   // ✅ availableCityItems depends on stable cities reference
   const availableCityItems = useMemo(
-    () => cities?.data?.map((city: string) => ({ label: city, value: city })) ?? [],
+    () =>
+      cities?.data?.map((city: string) => ({ label: city, value: city })) ?? [],
     [cities],
   );
 
   // ✅ availableDistrictItems depends on stable districts reference
   const availableDistrictItems = useMemo(
-    () => districts?.data?.map((district: string) => ({ label: district, value: district })) ?? [],
+    () =>
+      districts?.data?.map((district: string) => ({
+        label: district,
+        value: district,
+      })) ?? [],
     [districts],
   );
+
+  // ✅ Bedrooms
+  const { data: bedroomsData = DEFAULT_LIST } = useQuery({
+    queryKey: [STORAGE_CONST.BEDROOMS, selectedcity, selecteddistrict],
+    queryFn: () => getNoBedroomApi(selectedcity, selecteddistrict),
+    enabled: !!selectedcity && !!selecteddistrict,
+  });
+
+  // ✅ availableBedroomItems
+  const availableBedroomItems = useMemo(() => {
+    // Based on your API RES: {"data": [1, 2, 3]}
+    return (
+      bedroomsData?.data?.map((val: number) => ({
+        label: `${val} ${val === 1 ? '' : ''}`,
+        value: String(val),
+      })) ?? []
+    );
+  }, [bedroomsData]);
 
   const onNext = (_data: any) => {
     setIsLoading(true);
@@ -135,6 +206,7 @@ export default function usePropertyCanEarnContainer() {
     resetView: () => setShowResults(false),
     goTologinWithPhone,
     goToConnectAccountIntro,
+    availableBedroomItems,
     availableCityItems,
     availableDistrictItems,
     selectedcity,

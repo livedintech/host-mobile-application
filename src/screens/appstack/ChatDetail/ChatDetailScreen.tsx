@@ -993,6 +993,7 @@ const ChatScreen = () => {
                 'app.chat.guests',
               )}`}
               name={data?.conversation?.name}
+              onClose={()=>{}}
             />
             <InquiryModal
               visible={
@@ -1010,6 +1011,8 @@ const ChatScreen = () => {
                 'app.chat.guests',
               )}`}
               name={data?.conversation?.name}
+              onClose={()=>{}}
+
             />
           </View>
         </TouchableWithoutFeedback>
