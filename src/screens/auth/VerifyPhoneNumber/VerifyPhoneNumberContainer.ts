@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
 import { OtpVerifyResponse, VerifyOtpPayload } from '@/types/api/authTypes';
-import { resendOtpApi, verifyOtpApi } from '@/services/authApi';
+import { resendOtpApi } from '@/services/authApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
@@ -59,62 +59,6 @@ export default function useVerifyPhoneNumberContainer() {
 
   const otpCode = watch('otpCode');
 
-  // Verify OTP
-  const {
-    mutate: otpVerifyPayload,
-    isPending,
-    isIdle,
-  } = useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
-    mutationFn: verifyOtpApi,
-   onSuccess: ({ message }) => {
-    Toast.show({ type: 'success', text1: message });
-
-    const phoneParams = {
-      country_code,
-      phone_number:    actualPhone,
-      phone_with_code: code,
-      otp:             otpCode,
-    };
-
-    if (isLoginScreen) {
-      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, phoneParams);
-      return;
-    }
-
-    if (isDeepLink) {
-      if (!dlListing) {
-        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
-          ...phoneParams,
-          name: dlName, email: dlEmail,
-          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
-        });
-      } else if (String(dlListing) === '1') {
-        navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
-          payload: {
-            ...phoneParams,
-            listing_count: 1,
-            pricing: null,
-            name: dlName,
-            ref:  dlRef,
-          },
-        });
-      } else if (String(dlListing) === '2' || String(dlListing) === '3') {
-        navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {
-          name: dlName, email: dlEmail, phone: dlPhone,
-          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
-        });
-      } else {
-        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, { ...phoneParams, name: dlName });
-      }
-      return;
-    }
-
-    navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phoneParams);
-  },
-  onError: ({ message }) => {
-    Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
-  },
-  });
 
   // Resend OTP
   const {
@@ -163,12 +107,47 @@ export default function useVerifyPhoneNumberContainer() {
   }, [isResendDisabled, actualPhone, code, country_code]);
 
   const handleVerifyOtp = (data: { otpCode: string }) => {
-    otpVerifyPayload({
+    const phoneParams = {
       country_code,
-      phone_number: actualPhone,
+      phone_number:    actualPhone,
       phone_with_code: code,
-      otp: data.otpCode,
-    });
+      otp:             data.otpCode,
+    };
+
+    if (isLoginScreen) {
+      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, phoneParams);
+      return;
+    }
+
+    if (isDeepLink) {
+      if (!dlListing) {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
+          ...phoneParams,
+          name: dlName, email: dlEmail,
+          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
+        });
+      } else if (String(dlListing) === '1') {
+        navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
+          payload: {
+            ...phoneParams,
+            listing_count: 1,
+            pricing: null,
+            name: dlName,
+            ref:  dlRef,
+          },
+        });
+      } else if (String(dlListing) === '2' || String(dlListing) === '3') {
+        navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {
+          name: dlName, email: dlEmail, phone: dlPhone,
+          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
+        });
+      } else {
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, { ...phoneParams, name: dlName });
+      }
+      return;
+    }
+
+    navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, phoneParams);
   };
 
   const formatTimer = (seconds: number) => {
@@ -180,8 +159,7 @@ export default function useVerifyPhoneNumberContainer() {
   };
 
   return {
-    isLoading:
-      (isPending && !isIdle) || (isPendingResendOtp && !isIdleResendOtp),
+    isLoading: isPendingResendOtp && !isIdleResendOtp,
     control,
     errors,
     otpCode,

@@ -8,6 +8,7 @@ import {
     Platform,
     UIManager,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -24,6 +25,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const PaymentScreen = () => {
+    const { t } = useTranslation();
     const {
         selectedPlan,
         setSelectedPlan,
@@ -45,6 +47,9 @@ const PaymentScreen = () => {
         setIsExpanded(!isExpanded);
     };
 
+    const billingLabel = (cycle: 'Monthly' | 'Yearly') =>
+        cycle === 'Monthly' ? t('auth.payment.monthly') : t('auth.payment.yearly');
+
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
             <RefreshableScrollView
@@ -55,11 +60,11 @@ const PaymentScreen = () => {
                 {/* Title */}
                 <View style={styles.titleSection}>
                     <AppText fontSize={30} type="Bold" color={Colors.BLACK}>
-                        {'Select your '}
-                        <AppText text="plan" color={Colors.MEDIUM_JUNGLE_GREEN} fontSize={30} type="Bold" />
+                        {t('auth.payment.select_your')}
+                        <AppText text={t('auth.payment.plan')} color={Colors.MEDIUM_JUNGLE_GREEN} fontSize={30} type="Bold" />
                     </AppText>
                     <AppText
-                        text="Choose the plan that best fits your needs. You can select either a monthly or yearly subscription based on your preference."
+                        text={t('auth.payment.select_plan_subtitle')}
                         fontSize={13}
                         color={Colors.DARK_CHARCOAL_OPACITY}
                         mt={12}
@@ -75,7 +80,7 @@ const PaymentScreen = () => {
                             onPress={() => setSelectedPlan('Starter')}
                         >
                             <AppText
-                                text="Starter"
+                                text={t('auth.payment.tab_starter')}
                                 color={selectedPlan === 'Starter' ? Colors.WHITE : Colors.BLACK}
                                 type="Bold"
                                 fontSize={16}
@@ -86,7 +91,7 @@ const PaymentScreen = () => {
                             onPress={() => setSelectedPlan('AI Suite')}
                         >
                             <AppText
-                                text="AI Suite"
+                                text={t('auth.payment.tab_ai_suite')}
                                 color={selectedPlan === 'AI Suite' ? Colors.WHITE : Colors.BLACK}
                                 type="Bold"
                                 fontSize={16}
@@ -112,7 +117,7 @@ const PaymentScreen = () => {
                                 {billingCycle === item && <View style={styles.radioInner} />}
                             </View>
                             <AppText
-                                text={item}
+                                text={billingLabel(item)}
                                 fontSize={15}
                                 ml={8}
                                 color={Colors.BLACK}
@@ -133,7 +138,7 @@ const PaymentScreen = () => {
                     <View style={styles.cardHeader}>
                         <View style={{ flex: 1 }}>
                             <AppText
-                                text={billingCycle}
+                                text={billingLabel(billingCycle)}
                                 fontSize={22}
                                 type="Bold"
                                 color={Colors.BLACK}
@@ -148,7 +153,7 @@ const PaymentScreen = () => {
                                         <AppText
                                             text={
                                                 selectedPlan === 'Starter'
-                                                    ? `Starting from ${currency} ${price}`
+                                                    ? t('auth.payment.starting_from', { currency, price })
                                                     : `${currency} ${price}`
                                             }
                                             fontSize={17}
@@ -156,7 +161,7 @@ const PaymentScreen = () => {
                                             color={Colors.BLACK}
                                         />
                                         <AppText
-                                            text=" /per listing"
+                                            text={t('auth.payment.per_listing')}
                                             color={Colors.MEDIUM_JUNGLE_GREEN}
                                             fontSize={17}
                                             type="SemiBold"
@@ -168,7 +173,7 @@ const PaymentScreen = () => {
 
                         <TouchableOpacity style={styles.viewMoreBtn} onPress={toggleExpand}>
                             <AppText
-                                text={isExpanded ? 'View Less' : 'View More'}
+                                text={isExpanded ? t('auth.payment.view_less') : t('auth.payment.view_more')}
                                 fontSize={12}
                                 type="Medium"
                                 color={Colors.BLACK}
@@ -179,7 +184,7 @@ const PaymentScreen = () => {
                     {/* AI Suite note when collapsed */}
                     {selectedPlan === 'AI Suite' && !isExpanded && (
                         <AppText
-                            text="Everything in starter, plus all AI capabilities below:"
+                            text={t('auth.payment.ai_suite_note')}
                             fontSize={12}
                             color={Colors.DARK_CHARCOAL_OPACITY}
                             mb={14}
@@ -223,7 +228,7 @@ const PaymentScreen = () => {
             {/* Footer */}
             <View style={styles.footer}>
                 <AppButton
-                    title="Start 30-days free trial"
+                    title={t('auth.payment.start_30_trial')}
                     onPress={() => navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, { planId, qtyFrom })}
                     backgroundColor={Colors.MEDIUM_JUNGLE_GREEN}
                 />
@@ -234,13 +239,11 @@ const PaymentScreen = () => {
                     mt={12}
                     lineHeight={15}
                 >
-                    {'By starting your free trial, you agree to the '}
-                    <AppText text="Terms of Service" type="Bold" fontSize={10} color={Colors.BLACK} />
-                    {' and '}
-                    <AppText text="Privacy Policy" type="Bold" fontSize={10} color={Colors.BLACK} />
-                    {
-                        '. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.'
-                    }
+                    {t('auth.payment.legal_trial')}
+                    <AppText text={t('auth.payment.terms_of_service')} type="Bold" fontSize={10} color={Colors.BLACK} />
+                    {t('auth.payment.legal_2')}
+                    <AppText text={t('auth.payment.privacy_policy')} type="Bold" fontSize={10} color={Colors.BLACK} />
+                    {t('auth.payment.legal_3')}
                 </AppText>
             </View>
         </BGImage>

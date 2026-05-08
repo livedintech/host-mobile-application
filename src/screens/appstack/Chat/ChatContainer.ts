@@ -234,11 +234,12 @@ export const useChatContainer = () => {
     })
   );
 
-  const transformedListings =
-    listings?.data?.map((item: { title: string; listing_id: string }) => ({
-      label: item.title,
-      value: item.listing_id,
-    })) || [];
+const transformedListings =
+  listings?.data?.map((item: { title: string; listing_id: string }) => ({
+    label: item?.title || `Listing #${item?.listing_id}`,
+    value: item?.listing_id ? String(item.listing_id) : '',
+  })).filter((item) => item.value !== '') || [];
+    
 
   const transformedApartmentTypes = [
     { label: i18n.t('common.dropdown.apartment'), value: 'apartment' },
@@ -249,7 +250,6 @@ const MENU_OPTIONS = [
   { id: 'saved_replies', label: i18n.t('common.dropdown.saved_replies'), icon: 'expandIcon' },
   { id: 'automation_template', label: i18n.t('common.dropdown.automation_template'), icon: 'automationTemplateIcon' },
   { id: 'ai_auto_reply', label: i18n.t('common.dropdown.ai_auto_reply'), icon: 'aiAutoReplyIcon' },
-
 ];
 
   const handleOpenFilter = () => {

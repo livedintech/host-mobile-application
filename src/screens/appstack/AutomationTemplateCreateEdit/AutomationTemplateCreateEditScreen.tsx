@@ -34,7 +34,6 @@ const CreateAutomationTemplateScreen = () => {
 
     const showEventTime = selectedEvent === 'check_in' || selectedEvent === 'check_out';
     const { t } = useTranslation();
-
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>

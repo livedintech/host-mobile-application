@@ -328,7 +328,9 @@ import comfort from './comfort.svg'
 import facilities from './facilities.svg'
 import staff from './staff.svg'
 import crossUnique from './crossUnique.svg'
+import calender_black from './calender_black.svg'
 export const icons = {
+  calender_black,
   crossUnique,
   enLang,
   arLang,

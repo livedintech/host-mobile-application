@@ -2,11 +2,12 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   TextInput,
+  ScrollView,
   TouchableOpacity,
   StyleSheet,
   Animated,
-  ScrollView,
-  PanResponder,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '../AppText/AppText';
@@ -31,61 +32,81 @@ export default function MentionTextarea({
   placeholder,
 }: Props) {
   const inputRef = useRef<TextInput>(null);
+  const containerRef = useRef<View>(null);
+  const textRef = useRef('');
+  const cursorPosRef = useRef(0);
+  const activeAtPosRef = useRef(0);
   const animation = useRef(new Animated.Value(0)).current;
   const [showList, setShowList] = useState(false);
-  const [filtered, setFiltered] = useState<{ key: string; label: string }[]>([]);
-
-  // ✅ Track whether the ScrollView is being scrolled
-  const isScrolling = useRef(false);
+  const [filtered, setFiltered] = useState<any[]>([]);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
 
   const error = errors[name]?.message;
   const GLASS_BASE = 'rgba(255,255,255,0.25)';
   const GLASS_RIM = 'rgba(255,255,255,0.6)';
   const FOCUS_COLOR = Colors.PINE_FOREST || '#000000';
 
-  const handleFocus = () => {
-    Animated.timing(animation, { toValue: 1, duration: 250, useNativeDriver: false }).start();
-  };
-
-  const handleBlur = () => {
-    setTimeout(() => setShowList(false), 150);
-    Animated.timing(animation, { toValue: 0, duration: 250, useNativeDriver: false }).start();
-  };
-
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [GLASS_RIM, FOCUS_COLOR],
   });
 
-  const handleChange = (text: string, onChange: (val: string) => void) => {
+  const handleFocus = () =>
+    Animated.timing(animation, { toValue: 1, duration: 250, useNativeDriver: false }).start();
+
+  const handleBlur = () =>
+    Animated.timing(animation, { toValue: 0, duration: 250, useNativeDriver: false }).start();
+
+  const openDropdown = (matches: any[]) => {
+    containerRef.current?.measureInWindow((x, y, width, height) => {
+      setDropdownPos({ top: y + height + 4, left: x, width });
+      setFiltered(matches);
+      setShowList(true);
+    });
+  };
+
+  const closeDropdown = () => setShowList(false);
+
+  const handleChange = (text: string, onChange: any) => {
+    textRef.current = text;
     onChange(text);
-    const lastAt = text.lastIndexOf('@');
+  };
+
+  // Detect mention based on cursor position — works for @ anywhere in text
+  const handleSelectionChange = (event: any) => {
+    const cursorPos = event.nativeEvent.selection.end;
+    cursorPosRef.current = cursorPos;
+
+    const textBeforeCursor = textRef.current.slice(0, cursorPos);
+    const lastAt = textBeforeCursor.lastIndexOf('@');
 
     if (lastAt !== -1) {
-      const keyword = text.slice(lastAt + 1);
-      if (keyword.includes(' ') || keyword.includes('\n')) {
-        setShowList(false);
-        return;
+      const keyword = textBeforeCursor.slice(lastAt + 1);
+      if (!keyword.includes(' ') && !keyword.includes('\n')) {
+        const matches = variables.filter(v =>
+          v.key.toLowerCase().includes(keyword.toLowerCase()),
+        );
+        if (matches.length > 0) {
+          activeAtPosRef.current = lastAt;
+          openDropdown(matches);
+        } else {
+          closeDropdown();
+        }
+      } else {
+        closeDropdown();
       }
-      const matches = variables.filter(v =>
-        v.key.toLowerCase().includes(keyword.toLowerCase()),
-      );
-      setFiltered(matches);
-      setShowList(matches.length > 0);
     } else {
-      setShowList(false);
+      closeDropdown();
     }
   };
 
-  const insertVariable = (
-    item: { key: string; label: string },
-    value: string,
-    onChange: (val: string) => void,
-  ) => {
-    const lastAt = value.lastIndexOf('@');
-    const newText = value.substring(0, lastAt) + `${item.key}` + ' ';
+  const insertVariable = (item: any, onChange: any) => {
+    const beforeAt = textRef.current.substring(0, activeAtPosRef.current);
+    const afterCursor = textRef.current.substring(cursorPosRef.current);
+    const newText = beforeAt + item.key + ' ' + afterCursor;
+    textRef.current = newText;
     onChange(newText);
-    setShowList(false);
+    closeDropdown();
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
@@ -99,75 +120,72 @@ export default function MentionTextarea({
         control={control}
         name={name}
         render={({ field: { value, onChange } }) => (
-          <View>
-            <Animated.View
-              style={[
-                styles.glassContainer,
-                {
-                  borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
-                  backgroundColor: GLASS_BASE,
-                },
-              ]}
-            >
-              <TextInput
-                ref={inputRef}
-                multiline
-                value={value}
-                style={styles.input}
-                placeholder={placeholder}
-                placeholderTextColor={'#7B8D88'}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onChangeText={text => handleChange(text, onChange)}
-                scrollEnabled={true}
-                textAlignVertical="top"
-              />
-            </Animated.View>
+          <>
+            <View ref={containerRef} collapsable={false}>
+              <Animated.View
+                style={[
+                  styles.glassContainer,
+                  {
+                    borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
+                    backgroundColor: GLASS_BASE,
+                  },
+                ]}
+              >
+                <TextInput
+                  ref={inputRef}
+                  multiline
+                  value={value}
+                  style={styles.input}
+                  placeholder={placeholder}
+                  placeholderTextColor="#7B8D88"
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChangeText={text => handleChange(text, onChange)}
+                  onSelectionChange={handleSelectionChange}
+                />
+              </Animated.View>
+            </View>
 
-            {showList && filtered.length > 0 && (
-              <View style={styles.dropdown}>
-                <ScrollView
-                  keyboardShouldPersistTaps="handled"
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator={true}
-                  style={styles.scrollView}
-                  bounces={false}
-                  // ✅ Set isScrolling = true when scroll starts
-                  onScrollBeginDrag={() => { isScrolling.current = true; }}
-                  // ✅ Reset after scroll ends with small delay
-                  onScrollEndDrag={() => {
-                    setTimeout(() => { isScrolling.current = false; }, 100);
-                  }}
-                  onMomentumScrollEnd={() => { isScrolling.current = false; }}
-                >
-                  {filtered.map((item, index) => (
-                    <TouchableOpacity
-                      key={item.key}
-                      activeOpacity={0.7}
+            <Modal
+              visible={showList}
+              transparent
+              animationType="none"
+              onRequestClose={closeDropdown}
+            >
+              <TouchableWithoutFeedback onPress={closeDropdown}>
+                <View style={StyleSheet.absoluteFill}>
+                  <TouchableWithoutFeedback>
+                    <View
                       style={[
-                        styles.item,
-                        index === filtered.length - 1 && styles.itemLast,
+                        styles.dropdown,
+                        {
+                          top: dropdownPos.top,
+                          left: dropdownPos.left,
+                          width: dropdownPos.width,
+                        },
                       ]}
-                      // ✅ Check isScrolling before inserting
-                      onPressIn={() => {
-                        // Reset scroll flag on each new touch
-                        isScrolling.current = false;
-                      }}
-                      onPress={() => {
-                        // ✅ Only insert if user was NOT scrolling
-                        if (!isScrolling.current) {
-                          insertVariable(item, value, onChange);
-                        }
-                      }}
                     >
-                      <AppText text={item.label || item.key} fontSize={13} color={Colors.MIDNIGHT} />
-                      {/* <AppText text={`@${item.key}`} fontSize={11} color={Colors.DARK_CHARCOAL_OPACITY || '#888'} mt={2} /> */}
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-          </View>
+                      <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        bounces={false}
+                        style={styles.dropdownList}
+                      >
+                        {filtered.map(item => (
+                          <TouchableOpacity
+                            key={item.key}
+                            style={styles.item}
+                            onPress={() => insertVariable(item, onChange)}
+                          >
+                            <AppText text={item.key} />
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+          </>
         )}
       />
 
@@ -197,21 +215,26 @@ const styles = StyleSheet.create({
     minHeight: 110,
   },
   dropdown: {
-    marginTop: 4,
+    position: 'absolute',
     backgroundColor: Colors.WHITE,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
-    overflow: 'hidden',
+    elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
-    elevation: 4,
   },
   scrollView: {
     maxHeight: 180,
   },
+
+  dropdownList: {
+    maxHeight: 180,
+    borderRadius: 12,
+  },
+
   item: {
     paddingHorizontal: 14,
     paddingVertical: 10,

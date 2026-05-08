@@ -196,9 +196,9 @@ const ChatRow = ({
               text={
                 item.last_message_date
                   ? dayjs
-                      .utc((item as any).created_at)
-                      .local()
-                      .format('MM/DD/YY')
+                    .utc((item as any).created_at)
+                    .local()
+                    .format('MM/DD/YY')
                   : t('app.chat.not_available')
               }
               fontSize={12}
