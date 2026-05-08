@@ -2,10 +2,12 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   TextInput,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
   StyleSheet,
   Animated,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Controller } from 'react-hook-form';
 import AppText from '../AppText/AppText';
@@ -30,108 +32,102 @@ export default function MentionTextarea({
   placeholder,
 }: Props) {
   const inputRef = useRef<TextInput>(null);
+  const containerRef = useRef<View>(null);
+  const textRef = useRef('');
+  const cursorPosRef = useRef(0);
+  const activeAtPosRef = useRef(0);
   const animation = useRef(new Animated.Value(0)).current;
 
   const [showList, setShowList] = useState(false);
   const [filtered, setFiltered] = useState<any[]>([]);
-  const [inputAreaHeight, setInputAreaHeight] = useState(0);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
 
   const error = errors[name]?.message;
-
   const GLASS_BASE = 'rgba(255,255,255,0.25)';
   const GLASS_RIM = 'rgba(255,255,255,0.6)';
   const FOCUS_COLOR = Colors.PINE_FOREST || '#000000';
-
-  const handleFocus = () => {
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handleBlur = () => {
-    Animated.timing(animation, {
-      toValue: 0,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  };
 
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [GLASS_RIM, FOCUS_COLOR],
   });
 
-  const handleChange = (text: string, onChange: any) => {
-    onChange(text);
+  const handleFocus = () =>
+    Animated.timing(animation, { toValue: 1, duration: 250, useNativeDriver: false }).start();
 
-    // Find the last @ in the entire text and use everything after it as keyword
-    const lastAt = text.lastIndexOf('@');
+  const handleBlur = () =>
+    Animated.timing(animation, { toValue: 0, duration: 250, useNativeDriver: false }).start();
+
+  const openDropdown = (matches: any[]) => {
+    containerRef.current?.measureInWindow((x, y, width, height) => {
+      setDropdownPos({ top: y + height + 4, left: x, width });
+      setFiltered(matches);
+      setShowList(true);
+    });
+  };
+
+  const closeDropdown = () => setShowList(false);
+
+  const handleChange = (text: string, onChange: any) => {
+    textRef.current = text;
+    onChange(text);
+  };
+
+  // Detect mention based on cursor position — works for @ anywhere in text
+  const handleSelectionChange = (event: any) => {
+    const cursorPos = event.nativeEvent.selection.end;
+    cursorPosRef.current = cursorPos;
+
+    const textBeforeCursor = textRef.current.slice(0, cursorPos);
+    const lastAt = textBeforeCursor.lastIndexOf('@');
 
     if (lastAt !== -1) {
-      const keyword = text.slice(lastAt + 1);
-
-      // Stop showing dropdown if user typed a space or newline after @
-      if (keyword.includes(' ') || keyword.includes('\n')) {
-        setShowList(false);
-        return;
+      const keyword = textBeforeCursor.slice(lastAt + 1);
+      if (!keyword.includes(' ') && !keyword.includes('\n')) {
+        const matches = variables.filter(v =>
+          v.key.toLowerCase().includes(keyword.toLowerCase()),
+        );
+        if (matches.length > 0) {
+          activeAtPosRef.current = lastAt;
+          openDropdown(matches);
+        } else {
+          closeDropdown();
+        }
+      } else {
+        closeDropdown();
       }
-
-      const matches = variables.filter(v =>
-        v.key.toLowerCase().includes(keyword.toLowerCase()),
-      );
-
-      setFiltered(matches);
-      setShowList(matches.length > 0);
     } else {
-      setShowList(false);
+      closeDropdown();
     }
   };
 
-  const insertVariable = (item: any, value: string, onChange: any) => {
-    const lastAt = value.lastIndexOf('@');
-
-    const newText =
-      value.substring(0, lastAt) +
-      `${item.key}` +
-      ' ';
-
+  const insertVariable = (item: any, onChange: any) => {
+    const beforeAt = textRef.current.substring(0, activeAtPosRef.current);
+    const afterCursor = textRef.current.substring(cursorPosRef.current);
+    const newText = beforeAt + item.key + ' ' + afterCursor;
+    textRef.current = newText;
     onChange(newText);
-    setShowList(false);
-
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 100);
+    closeDropdown();
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   return (
-    <View style={[styles.wrapper, showList && styles.wrapperActive]}>
-      <View
-        onLayout={e => setInputAreaHeight(e.nativeEvent.layout.height)}
-      >
-        {label && (
-          <AppText
-            text={label}
-            mb={8}
-            color={Colors.BLACK}
-            fontSize={14}
-            type="Medium"
-          />
-        )}
+    <View style={styles.wrapper}>
+      {label && (
+        <AppText text={label} mb={8} color={Colors.BLACK} fontSize={14} type="Medium" />
+      )}
 
-        <Controller
-          control={control}
-          name={name}
-          render={({ field: { value, onChange } }) => (
-            <>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field: { value, onChange } }) => (
+          <>
+            <View ref={containerRef} collapsable={false}>
               <Animated.View
                 style={[
                   styles.glassContainer,
                   {
-                    borderColor: error
-                      ? Colors.INDIAN_RED
-                      : animatedBorderColor,
+                    borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
                     backgroundColor: GLASS_BASE,
                   },
                 ]}
@@ -142,35 +138,57 @@ export default function MentionTextarea({
                   value={value}
                   style={styles.input}
                   placeholder={placeholder}
-                  placeholderTextColor={'#7B8D88'}
+                  placeholderTextColor="#7B8D88"
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   onChangeText={text => handleChange(text, onChange)}
+                  onSelectionChange={handleSelectionChange}
                 />
               </Animated.View>
+            </View>
 
-              {showList && (
-                <View style={[styles.dropdown, { top: inputAreaHeight + 4 }]}>
-                  <FlatList
-                    data={filtered}
-                    keyExtractor={i => i.key}
-                    keyboardShouldPersistTaps="handled"
-                    nestedScrollEnabled
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={styles.item}
-                        onPress={() => insertVariable(item, value, onChange)}
+            <Modal
+              visible={showList}
+              transparent
+              animationType="none"
+              onRequestClose={closeDropdown}
+            >
+              <TouchableWithoutFeedback onPress={closeDropdown}>
+                <View style={StyleSheet.absoluteFill}>
+                  <TouchableWithoutFeedback>
+                    <View
+                      style={[
+                        styles.dropdown,
+                        {
+                          top: dropdownPos.top,
+                          left: dropdownPos.left,
+                          width: dropdownPos.width,
+                        },
+                      ]}
+                    >
+                      <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        bounces={false}
+                        style={styles.dropdownList}
                       >
-                        <AppText text={item.key} />
-                      </TouchableOpacity>
-                    )}
-                  />
+                        {filtered.map(item => (
+                          <TouchableOpacity
+                            key={item.key}
+                            style={styles.item}
+                            onPress={() => insertVariable(item, onChange)}
+                          >
+                            <AppText text={item.key} />
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </View>
+                  </TouchableWithoutFeedback>
                 </View>
-              )}
-            </>
-          )}
-        />
-      </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+          </>
+        )}
+      />
 
       {error && (
         <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
@@ -182,10 +200,6 @@ export default function MentionTextarea({
 const styles = StyleSheet.create({
   wrapper: {
     marginBottom: Metrics.verticalScale(18),
-  },
-
-  wrapperActive: {
-    zIndex: 999,
   },
 
   glassContainer: {
@@ -205,18 +219,20 @@ const styles = StyleSheet.create({
 
   dropdown: {
     position: 'absolute',
-    width: '100%',
     backgroundColor: Colors.WHITE,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.SMOOTH_GREY,
-    maxHeight: 180,
-    zIndex: 999,
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
+  },
+
+  dropdownList: {
+    maxHeight: 180,
+    borderRadius: 12,
   },
 
   item: {

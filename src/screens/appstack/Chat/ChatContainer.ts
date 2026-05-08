@@ -250,7 +250,6 @@ const MENU_OPTIONS = [
   { id: 'saved_replies', label: i18n.t('common.dropdown.saved_replies'), icon: 'expandIcon' },
   { id: 'automation_template', label: i18n.t('common.dropdown.automation_template'), icon: 'automationTemplateIcon' },
   { id: 'ai_auto_reply', label: i18n.t('common.dropdown.ai_auto_reply'), icon: 'aiAutoReplyIcon' },
-
 ];
 
   const handleOpenFilter = () => {

@@ -64,7 +64,7 @@
     "dropdown": {
       "apartment": "Apartment",
       "saved_replies": "Saved Replies",
-      "automation_template": "Automation Template",
+      "automation_template": "Message Templates",
       "ai_auto_reply": "AI Auto Replies"
     }
   },
@@ -151,6 +151,7 @@
       "title": "Payment",
       "subtitle": "Your card is required to start the free trial. No charges during the trial. You can remove your card anytime from your Profile.",
       "monthly": "Monthly",
+      "yearly": "Yearly",
       "monthly_trial": "14-day free trial, then SAR {{price}}/month per listing",
       "what_included": "What is included?",
       "additional_addons": "Additional Add-ons",
@@ -159,7 +160,95 @@
       "terms_of_service": "Terms of Service",
       "legal_2": " and ",
       "privacy_policy": "Privacy Policy",
-      "legal_3": ". Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period."
+      "legal_3": ". Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.",
+      "select_your": "Select your ",
+      "plan": "plan",
+      "select_plan_subtitle": "Choose the plan that best fits your needs. You can select either a monthly or yearly subscription based on your preference.",
+      "tab_starter": "Starter",
+      "tab_ai_suite": "AI Suite",
+      "per_listing": "/per listing",
+      "starting_from": "Starting from {{currency}} {{price}}",
+      "view_more": "View More",
+      "view_less": "View Less",
+      "ai_suite_note": "Everything in starter, plus all AI capabilities below:",
+      "start_30_trial": "Start 30-days free trial",
+      "legal_trial": "By starting your free trial, you agree to the ",
+      "starter_features": {
+        "channel_sync": {
+          "title": "Channel & Sync",
+          "airbnb": "Airbnb integration (2-way sync)",
+          "booking": "Booking.com integration (2-way sync)",
+          "gathern": "Gathern integration (KSA)",
+          "create_export": "Create & export property (Airbnb + Gathern)",
+          "reservation_details": "Reservation details view (all channels)"
+        },
+        "ai_limited": {
+          "title": "AI Features - Limited Access",
+          "ai_reply": "AI Reply: 2 bookings/listing only",
+          "ai_pricing": "AI Pricing: 1 property (multi-property hosts) or 1 month then discontinued (single-property hosts)"
+        },
+        "inbox": {
+          "title": "Inbox & Communication",
+          "unified_inbox": "Unified inbox (Airbnb + Booking.com)",
+          "saved_replies": "Saved replies / message templates",
+          "automated_triggers": "Automated message triggers (event-based)",
+          "direct_booking": "Direct booking creation",
+          "multilang": "Multi-language: Arabic + English"
+        },
+        "calendar": {
+          "title": "Calendar",
+          "management": "Calendar management (single + multi-calendar)"
+        },
+        "operations": {
+          "title": "Operations",
+          "cleaning": "Cleaning & task schedule automation",
+          "maintenance": "Create maintenance & other tasks",
+          "smart_lock": "Smart lock integration — TT Lock (native)",
+          "lock_code": "Automated lock code per booking & task"
+        },
+        "analytics": {
+          "title": "Analytics",
+          "reviews": "Airbnb + Booking.com + Gatherin reviews",
+          "performance": "Property performance analytics",
+          "revenue": "Revenue / booking analytics"
+        },
+        "platform": {
+          "title": "Platform",
+          "mobile_app": "Mobile app (iOS + Android)",
+          "staff_app": "Separate staff / operator app",
+          "user_roles": "User roles (Owner/Manager/Supervisor/Staff)",
+          "onboarding": "Self-serve onboarding",
+          "whatsapp": "WhatsApp chat support"
+        }
+      },
+      "ai_suite_features": {
+        "communication": {
+          "title": "AI Communication",
+          "autopilot": "AI Autopilot - True auto-send, no human review required",
+          "copilot": "Co-pilot / Draft Mode - Review messages before sending",
+          "policy": "Policy Enforcement Engine - Auto-guard brand standards & rules",
+          "tone": "Custom Tone & Brand Voice - Fully personalised AI responses",
+          "escalation": "Smart Escalation to Human - Auto-route complex guest queries"
+        },
+        "revenue": {
+          "title": "AI Revenue & Upsells",
+          "dynamic_pricing": "AI Dynamic Pricing - Unrestricted across all properties",
+          "gap_night": "Gap Night Upsell Automation - Fill calendar gaps automatically",
+          "checkin_upsell": "Early Check-in / Late Checkout Upsell - Capture ancillary revenue"
+        },
+        "operations": {
+          "title": "AI Operations",
+          "maintenance_ticket": "Maintenance Ticket from Guest Messages - Auto-create from reviews & messages",
+          "review_requests": "Automated Review Requests - Trigger post-checkout review ask",
+          "scheduling": "24/7 Scheduling & Shift Control - Customise AI availability windows"
+        },
+        "onboarding": {
+          "title": "Onboarding & Future Feature",
+          "dedicated_support": "Dedicated Onboarding Support - White-glove setup assistance",
+          "csat": "Guest Satisfaction / CSAT Tracking - coming soon",
+          "api_access": "API Access / Webhooks - coming soon"
+        }
+      }
     },
     "select_payment": {
       "title_1": "Select ",

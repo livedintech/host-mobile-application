@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { goBack } from '@/services/navigationService';
 import { subscriptionCalculateApi } from '@/services/paymentService';
@@ -8,6 +9,7 @@ export type PlanType = 'Starter' | 'AI Suite';
 export type BillingCycle = 'Monthly' | 'Yearly';
 
 export default function usePaymentContainer() {
+  const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('Starter');
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('Monthly');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,98 +35,98 @@ export default function usePaymentContainer() {
 
   const starterFeatures = [
     {
-      title: 'Channel & Sync',
+      title: t('auth.payment.starter_features.channel_sync.title'),
       items: [
-        'Airbnb integration (2-way sync)',
-        'Booking.com integration (2-way sync)',
-        'Gathern integration (KSA)',
-        'Create & export property (Airbnb + Gathern)',
-        'Reservation details view (all channels)',
+        t('auth.payment.starter_features.channel_sync.airbnb'),
+        t('auth.payment.starter_features.channel_sync.booking'),
+        t('auth.payment.starter_features.channel_sync.gathern'),
+        t('auth.payment.starter_features.channel_sync.create_export'),
+        t('auth.payment.starter_features.channel_sync.reservation_details'),
       ],
     },
     {
-      title: 'AI Features - Limited Access',
+      title: t('auth.payment.starter_features.ai_limited.title'),
       items: [
-        'AI Reply: 2 bookings/listing only',
-        'AI Pricing: 1 property (multi-property hosts) or 1 month then discontinued (single-property hosts)',
+        t('auth.payment.starter_features.ai_limited.ai_reply'),
+        t('auth.payment.starter_features.ai_limited.ai_pricing'),
       ],
     },
     {
-      title: 'Inbox & Communication',
+      title: t('auth.payment.starter_features.inbox.title'),
       items: [
-        'Unified inbox (Airbnb + Booking.com)',
-        'Saved replies / message templates',
-        'Automated message triggers (event-based)',
-        'Direct booking creation',
-        'Multi-language: Arabic + English',
+        t('auth.payment.starter_features.inbox.unified_inbox'),
+        t('auth.payment.starter_features.inbox.saved_replies'),
+        t('auth.payment.starter_features.inbox.automated_triggers'),
+        t('auth.payment.starter_features.inbox.direct_booking'),
+        t('auth.payment.starter_features.inbox.multilang'),
       ],
     },
     {
-      title: 'Calendar',
-      items: ['Calendar management (single + multi-calendar)'],
+      title: t('auth.payment.starter_features.calendar.title'),
+      items: [t('auth.payment.starter_features.calendar.management')],
     },
     {
-      title: 'Operations',
+      title: t('auth.payment.starter_features.operations.title'),
       items: [
-        'Cleaning & task schedule automation',
-        'Create maintenance & other tasks',
-        'Smart lock integration — TT Lock (native)',
-        'Automated lock code per booking & task',
+        t('auth.payment.starter_features.operations.cleaning'),
+        t('auth.payment.starter_features.operations.maintenance'),
+        t('auth.payment.starter_features.operations.smart_lock'),
+        t('auth.payment.starter_features.operations.lock_code'),
       ],
     },
     {
-      title: 'Analytics',
+      title: t('auth.payment.starter_features.analytics.title'),
       items: [
-        'Airbnb + Booking.com + Gatherin reviews',
-        'Property performance analytics',
-        'Revenue / booking analytics',
+        t('auth.payment.starter_features.analytics.reviews'),
+        t('auth.payment.starter_features.analytics.performance'),
+        t('auth.payment.starter_features.analytics.revenue'),
       ],
     },
     {
-      title: 'Platform',
+      title: t('auth.payment.starter_features.platform.title'),
       items: [
-        'Mobile app (iOS + Android)',
-        'Separate staff / operator app',
-        'User roles (Owner/Manager/Supervisor/Staff)',
-        'Self-serve onboarding',
-        'WhatsApp chat support',
+        t('auth.payment.starter_features.platform.mobile_app'),
+        t('auth.payment.starter_features.platform.staff_app'),
+        t('auth.payment.starter_features.platform.user_roles'),
+        t('auth.payment.starter_features.platform.onboarding'),
+        t('auth.payment.starter_features.platform.whatsapp'),
       ],
     },
   ];
 
   const aiSuiteFeatures = [
     {
-      title: 'AI Communication',
+      title: t('auth.payment.ai_suite_features.communication.title'),
       items: [
-        'AI Autopilot - True auto-send, no human review required',
-        'Co-pilot / Draft Mode - Review messages before sending',
-        'Policy Enforcement Engine - Auto-guard brand standards & rules',
-        'Custom Tone & Brand Voice - Fully personalised AI responses',
-        'Smart Escalation to Human - Auto-route complex guest queries',
+        t('auth.payment.ai_suite_features.communication.autopilot'),
+        t('auth.payment.ai_suite_features.communication.copilot'),
+        t('auth.payment.ai_suite_features.communication.policy'),
+        t('auth.payment.ai_suite_features.communication.tone'),
+        t('auth.payment.ai_suite_features.communication.escalation'),
       ],
     },
     {
-      title: 'AI Revenue & Upsells',
+      title: t('auth.payment.ai_suite_features.revenue.title'),
       items: [
-        'AI Dynamic Pricing - Unrestricted across all properties',
-        'Gap Night Upsell Automation - Fill calendar gaps automatically',
-        'Early Check-in / Late Checkout Upsell - Capture ancillary revenue',
+        t('auth.payment.ai_suite_features.revenue.dynamic_pricing'),
+        t('auth.payment.ai_suite_features.revenue.gap_night'),
+        t('auth.payment.ai_suite_features.revenue.checkin_upsell'),
       ],
     },
     {
-      title: 'AI Operations',
+      title: t('auth.payment.ai_suite_features.operations.title'),
       items: [
-        'Maintenance Ticket from Guest Messages - Auto-create from reviews & messages',
-        'Automated Review Requests - Trigger post-checkout review ask',
-        '24/7 Scheduling & Shift Control - Customise AI availability windows',
+        t('auth.payment.ai_suite_features.operations.maintenance_ticket'),
+        t('auth.payment.ai_suite_features.operations.review_requests'),
+        t('auth.payment.ai_suite_features.operations.scheduling'),
       ],
     },
     {
-      title: 'Onboarding & Future Feature',
+      title: t('auth.payment.ai_suite_features.onboarding.title'),
       items: [
-        'Dedicated Onboarding Support - White-glove setup assistance',
-        'Guest Satisfaction / CSAT Tracking - coming soon',
-        'API Access / Webhooks - coming soon',
+        t('auth.payment.ai_suite_features.onboarding.dedicated_support'),
+        t('auth.payment.ai_suite_features.onboarding.csat'),
+        t('auth.payment.ai_suite_features.onboarding.api_access'),
       ],
     },
   ];

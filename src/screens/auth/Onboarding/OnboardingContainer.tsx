@@ -1,6 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
-import { FlatList, NativeScrollEvent, NativeSyntheticEvent, I18nManager } from 'react-native';
-import Metrics from '@/utility/Metrics';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { FlatList, I18nManager } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useTranslation } from 'react-i18next';
@@ -42,37 +41,52 @@ export default function useOnboardingContainer() {
         },
     ];
 
-    const [activeIndex, setActiveIndex] = useState(
-        isRTL ? onboardingData.length - 1 : 0
-    );
+    const total = onboardingData.length;
+
+    const [activeIndex, setActiveIndex] = useState(0);
+    const isLastSlide = activeIndex === total - 1;
 
     const flatListRef = useRef<FlatList>(null);
     const isScrolling = useRef(false);
 
-    const handleMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-        const offsetX = Math.abs(e.nativeEvent.contentOffset.x);
-        const index = Math.round(offsetX / Metrics.screenWidth);
-        const clampedIndex = Math.max(0, Math.min(index, onboardingData.length - 1));
-        setActiveIndex(clampedIndex);
-        isScrolling.current = false;
-    };
+    // viewabilityConfig must be stable (useRef) to avoid FlatList warning
+    const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 50 });
+
+    // Keep a ref of activeIndex so handleContinue can read it without stale closure.
+    const activeIndexRef = useRef(0);
+
+    // onViewableItemsChanged reports the data index of the visible item — RTL-safe.
+    // Buttons update ONLY when the slide is actually visible, preventing jerk.
+    const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
+        if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+            const idx = viewableItems[0].index;
+            activeIndexRef.current = idx;
+            setActiveIndex(idx);
+            isScrolling.current = false;
+        }
+    });
+
+    // In RTL, FlatList physically shows item[total-1] (slide 3) first because RTL layout
+    // is mirrored. Scroll to index 0 after mount so slide 1 is visible first.
+    useEffect(() => {
+        if (isRTL) {
+            setTimeout(() => {
+                flatListRef.current?.scrollToIndex({ index: 0, animated: false });
+            }, 100);
+        }
+    }, []);
 
     const handleContinue = useCallback(() => {
         if (isScrolling.current) return;
+        const next = activeIndexRef.current + 1;
+        if (next >= total) return;
+        isScrolling.current = true;
+        flatListRef.current?.scrollToIndex({ index: next, animated: true });
+    }, [total]);
 
-        setActiveIndex(prev => {
-            if (prev >= onboardingData.length - 1) return prev;
-
-            const nextIndex = prev + 1;
-            isScrolling.current = true;
-
-            setTimeout(() => {
-                flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-            }, 0);
-
-            return nextIndex;
-        });
-    }, [onboardingData.length]);
+    const handleSkip = useCallback(() => {
+        flatListRef.current?.scrollToIndex({ index: total - 1, animated: true });
+    }, [total]);
 
     const loginWithPhone = useCallback(() => {
         navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
@@ -82,22 +96,17 @@ export default function useOnboardingContainer() {
         navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
     }, []);
 
-    const handleSkip = useCallback(() => {
-        const lastIndex = onboardingData.length - 1;
-        setActiveIndex(lastIndex);
-        setTimeout(() => {
-            flatListRef.current?.scrollToIndex({ index: lastIndex, animated: true });
-        }, 0);
-    }, [onboardingData.length]);
-
     return {
         activeIndex,
+        isLastSlide,
         flatListRef,
-        handleMomentumScrollEnd,
+        viewabilityConfig,
+        onViewableItemsChanged,
         handleContinue,
         handleGetStarted,
         loginWithPhone,
         handleSkip,
         onboardingData,
+        total,
     };
 }

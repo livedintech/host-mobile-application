@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, Image, I18nManager } from 'react-native';
+import { View, StyleSheet, FlatList, Image } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -13,16 +13,17 @@ const BG_COLOR = '#EEF5F3';
 const OnboardingScreen = () => {
     const {
         activeIndex,
+        isLastSlide,
         flatListRef,
-        handleMomentumScrollEnd,
+        viewabilityConfig,
+        onViewableItemsChanged,
         handleContinue,
         handleGetStarted,
         loginWithPhone,
         handleSkip,
-        onboardingData
+        onboardingData,
     } = useOnboardingContainer();
 
-    const isLastSlide = activeIndex === onboardingData.length - 1;
     const currentSlide = onboardingData[activeIndex];
 
     const renderMixedTitle = (item: typeof onboardingData[0]) => {
@@ -69,34 +70,44 @@ const OnboardingScreen = () => {
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={handleMomentumScrollEnd}
                 keyExtractor={(item) => item.id}
                 scrollEventThrottle={16}
+                getItemLayout={(_, index) => ({
+                    length: Metrics.screenWidth,
+                    offset: Metrics.screenWidth * index,
+                    index,
+                })}
+                onViewableItemsChanged={onViewableItemsChanged.current}
+                viewabilityConfig={viewabilityConfig.current}
             />
 
             {/* Pagination Dots */}
             <View style={styles.pagination}>
-                {onboardingData.map((_, i) => {
-                    const displayIndex = I18nManager.isRTL
-                        ? onboardingData.length - 1 - activeIndex
-                        : activeIndex;
-
-                    return (
-                        <View
-                            key={i}
-                            style={[
-                                styles.dot,
-                                displayIndex === i ? styles.activeDot : styles.inactiveDot
-                            ]}
-                        />
-                    );
-                })}
+                {onboardingData.map((_, i) => (
+                    <View
+                        key={i}
+                        style={[
+                            styles.dot,
+                            activeIndex === i ? styles.activeDot : styles.inactiveDot
+                        ]}
+                    />
+                ))}
             </View>
 
             {/* Action Buttons */}
             <View style={styles.footer}>
-                <AppButton onPress={isLastSlide ? loginWithPhone : handleSkip} title={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn} variant='secondary' type='Regular' />
-                <AppButton onPress={isLastSlide ? handleGetStarted : handleContinue} title={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn} variant='primary' type='Regular' />
+                <AppButton
+                    onPress={isLastSlide ? loginWithPhone : handleSkip}
+                    title={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn}
+                    variant='secondary'
+                    type='Regular'
+                />
+                <AppButton
+                    onPress={isLastSlide ? handleGetStarted : handleContinue}
+                    title={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn}
+                    variant='primary'
+                    type='Regular'
+                />
             </View>
         </BGImage>
     );
@@ -111,7 +122,6 @@ const styles = StyleSheet.create({
     },
     slide: {
         width: Metrics.screenWidth,
-        // height: Metrics.screenHeight,
         paddingBottom: Metrics.verticalScale(220),
     },
     textContainer: {
@@ -124,15 +134,12 @@ const styles = StyleSheet.create({
         marginBottom: Metrics.verticalScale(12),
     },
     subtitle: {
-        // marginTop: Metrics.verticalScale(4),
         paddingHorizontal: Metrics.scale(20)
     },
     imageContainer: {
         flex: 1,
-        // justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: Metrics.scale(20),
-        // backgroundColor:'red'
     },
     image: {
         width: Metrics.screenWidth * 0.72,
