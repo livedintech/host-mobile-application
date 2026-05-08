@@ -44,6 +44,19 @@ target 'HostMobileApp' do
       end
     end
 
+    # Fix: Xcode 26 stricter consteval rules ke saath fmt 11.0.2 incompatible hai
+    fmt_format_inl = File.join(installer.sandbox.root, 'fmt/include/fmt/format-inl.h')
+    if File.exist?(fmt_format_inl)
+      content = File.read(fmt_format_inl)
+      patched = content
+        .gsub('fmt::format_to(it, FMT_STRING("{}{}"), message, SEP)', 'fmt::format_to(it, "{}{}", message, SEP)')
+        .gsub('fmt::format_to(it, FMT_STRING("{}{}"), ERROR_STR, error_code)', 'fmt::format_to(it, "{}{}", ERROR_STR, error_code)')
+        .gsub('fmt::format_to(out, FMT_STRING("{:x}"), value)', 'fmt::format_to(out, "{:x}", value)')
+        .gsub('fmt::format_to(out, FMT_STRING("{:08x}"), value)', 'fmt::format_to(out, "{:08x}", value)')
+        .gsub('fmt::format_to(out, FMT_STRING("p{}")', 'fmt::format_to(out, "p{}"')
+      File.write(fmt_format_inl, patched) if patched != content
+    end
+
     # Fix: Xcode 16 explicit module build Firebase ke saath break karta hai
     installer.pods_project.targets.each do |target|
       if target.name.start_with?('Firebase') || target.name == 'RNFBFirestore'

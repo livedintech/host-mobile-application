@@ -48,7 +48,6 @@ import { useTranslation } from 'react-i18next';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
-  BottomSheetScrollView,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 
@@ -494,10 +493,7 @@ const ChatScreen = () => {
               backgroundStyle={styles.bottomSheetBackground}
               handleIndicatorStyle={styles.sheetIndicator}
             >
-              <BottomSheetScrollView
-                contentContainerStyle={styles.sheetContent}
-                keyboardShouldPersistTaps="handled"
-              >
+              <BottomSheetView style={styles.sheetContent}>
                 {/* Header */}
                 <View style={styles.sheetHeader}>
                   <AppText
@@ -516,7 +512,7 @@ const ChatScreen = () => {
 
                 {/* Filter Field */}
                 <MultiSelectDropdownField
-                  dropdownPosition="bottom"
+                  dropdownPosition="top"
                   name="listings"
                   control={control}
                   errors={errors}
@@ -537,7 +533,7 @@ const ChatScreen = () => {
                     style={styles.flex}
                   />
                 </View>
-              </BottomSheetScrollView>
+              </BottomSheetView>
             </BottomSheetModal>
           </View>
         </TouchableWithoutFeedback>

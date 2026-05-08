@@ -152,7 +152,7 @@ const AutomationTemplatesScreen = () => {
 
         <View style={styles.footer}>
           <AppButton
-            loading={isLoadingRemoved || isLoadingStatus}
+            loading={isLoadingRemoved}
             title={t('app.automation_template.create_btn')}
             onPress={createNewTemplate}
             backgroundColor={Colors.TEAL_PRIMARY_ALT}

@@ -57,7 +57,7 @@ const HeaderApp = ({
   const handleLanguageToggle = async () => {
     const newLang = i18n.language === 'en' ? 'ar' : 'en';
     await changeLanguage(newLang);
-    // RNRestart.restart();
+    RNRestart.restart();
   };
 
   return (

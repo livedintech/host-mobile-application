@@ -56,11 +56,12 @@ const FilterModal = ({
       onBackdropPress={onClose}
       onBackButtonPress={onClose}
       backdropOpacity={0.4}
-      useNativeDriver={true}
-      useNativeDriverForBackdrop={true}
+      useNativeDriver={false}
+      useNativeDriverForBackdrop={false}
       animationIn="slideInUp"
       animationOut="slideOutDown"
-      hideModalContentWhileAnimating={true}
+      hideModalContentWhileAnimating={false}
+      statusBarTranslucent={true}
       style={styles.centeredModal}
     >
       <View style={styles.modalContent}>
@@ -124,7 +125,7 @@ const FilterModal = ({
 const styles = StyleSheet.create({
   centeredModal: { justifyContent: 'flex-end', margin: 0, },
   modalContent: {
-    backgroundColor: '#FDFDFDBD',
+backgroundColor: 'rgba(255, 255, 255, 0.85)',
     padding: 24,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,

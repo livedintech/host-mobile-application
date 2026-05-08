@@ -159,6 +159,7 @@ const ReservationCalendarScreen = () => {
       </View>
 
       <FilterModalView
+        customHeight={Metrics.screenHeight * 0.5}
         isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}
         initialSelectedValues={selectedPropertyValues}

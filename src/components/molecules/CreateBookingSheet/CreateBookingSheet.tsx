@@ -85,27 +85,27 @@ export const CreateBookingSheet = ({
   return (
     <BottomSheetComponent isVisible={isVisible} onClose={onClose}>
       <View style={styles.grabZone} pointerEvents="box-none" />
-
+      <View style={styles.headerRow}>
+        <AppText
+          text={
+            bookingType === 'direct'
+              ? t('app.listing_screen.create_direct_booking')
+              : t('app.listing_screen.set_pricing')
+          }
+          type="Medium"
+          fontSize={22}
+          color={Colors.BLACK}
+        />
+        {/* <TouchableOpacity onPress={onClose} style={styles.closeButton}> */}
+          <Svgicons path="crossUnique" size={30} onPress={onClose}/>
+        {/* </TouchableOpacity> */}
+      </View>
       <KeyboardAwareScrollView
         style={styles.flex1}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.headerRow}>
-          <AppText
-            text={
-              bookingType === 'direct'
-                ? t('app.listing_screen.create_direct_booking')
-                : t('app.listing_screen.set_pricing')
-            }
-            type="Bold"
-            fontSize={22}
-            color={Colors.BLACK}
-          />
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Svgicons path="closeIcon" size={20} />
-          </TouchableOpacity>
-        </View>
+
 
         {/* Type Selector */}
         <View style={styles.radioRow}>
@@ -125,7 +125,7 @@ export const CreateBookingSheet = ({
                 {bookingType === type && <View style={styles.radioInner} />}
               </View>
               <AppText
-                text={type === 'direct' ? t('app.listing_screen.direct_booking')  : t('app.listing_screen.pricing')}
+                text={type === 'direct' ? t('app.listing_screen.direct_booking') : t('app.listing_screen.pricing')}
               />
             </Pressable>
           ))}
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: s(16),
     paddingTop: vs(10),
-    paddingBottom: vs(120),
+    paddingBottom: vs(60),
   },
   radioRow: {
     flexDirection: 'row',
@@ -332,6 +332,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: vs(20),
     paddingTop: vs(10),
+     paddingHorizontal: s(16),
   },
   closeButton: {
     width: ms(36),
