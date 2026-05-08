@@ -223,9 +223,8 @@ export const CreateBookingSheet = ({
           rules={{ required: t('app.listing_screen.check_in_required') }}
           rightIcon={
             <Svgicons
-              path="Calendar_Days"
+              path="calender_black"
               size={20}
-              color={Colors.BRUNSWICK_GREEN}
             />
           }
         />
@@ -241,7 +240,7 @@ export const CreateBookingSheet = ({
           rules={{ required: t('app.listing_screen.check_out_required') }}
           rightIcon={
             <Svgicons
-              path="Calendar_Days"
+              path="calender_black"
               size={20}
               color={Colors.BRUNSWICK_GREEN}
             />
@@ -317,10 +316,10 @@ const styles = StyleSheet.create({
     width: ms(9),
     height: ms(9),
     borderRadius: 5,
-    backgroundColor: '#2D4A41',
+    backgroundColor: Colors.NIAGARA,
   },
   radioActive: {
-    borderColor: '#2D4A41',
+    borderColor: Colors.NIAGARA
   },
   buttonContainer: {
     marginTop: vs(20),

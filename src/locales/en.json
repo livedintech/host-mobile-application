@@ -1229,7 +1229,7 @@
       "date_placeholder": "mm/dd/yy",
       "check_in_required": "Check-in date is required",
       "check_out_required": "Check-out date is required",
-      "set_pricing": "Set Pricing"
+      "set_pricing": "Save"
     },
     "account_screen": {
       "title": "Account"

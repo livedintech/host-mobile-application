@@ -196,9 +196,9 @@ const ChatRow = ({
               text={
                 item.last_message_date
                   ? dayjs
-                      .utc((item as any).created_at)
-                      .local()
-                      .format('MM/DD/YY')
+                    .utc((item as any).created_at)
+                    .local()
+                    .format('MM/DD/YY')
                   : t('app.chat.not_available')
               }
               fontSize={12}
@@ -458,15 +458,15 @@ const ChatScreen = () => {
                       activeTab === 'Archived'
                         ? t('app.chat.no_archived')
                         : activeTab === 'Snoozed'
-                        ? t('app.chat.no_snoozed')
-                        : activeTab === 'Unread'
-                        ? t('app.chat.no_unread')
-                        : t('app.chat.no_messages')
+                          ? t('app.chat.no_snoozed')
+                          : activeTab === 'Unread'
+                            ? t('app.chat.no_unread')
+                            : t('app.chat.no_messages')
                     }
                     descriptionText={
                       activeTab === 'Archived' ||
-                      activeTab === 'Snoozed' ||
-                      activeTab === 'Unread'
+                        activeTab === 'Snoozed' ||
+                        activeTab === 'Unread'
                         ? t('app.chat.no_conversations')
                         : t('app.chat.no_listing_message')
                     }

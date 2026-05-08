@@ -992,7 +992,7 @@ const ChatScreen = () => {
               )}, ${data?.conversation?.number_of_guests} ${t(
                 'app.chat.guests',
               )}`}
-              name={data?.conversation?.name}
+              name={`Inquiry - ${data?.conversation?.listing?.title}`}
               onClose={()=>{}}
             />
             <InquiryModal

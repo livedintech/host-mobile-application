@@ -61,5 +61,6 @@ export const Colors = {
   PRIMARY_RED: '#E20000',
   DARK_1C: '#1c1c1c',
   EERIE_BLACK:'#1A1A1A',
-  GRAY_HINT:'#EEF5F3'
+  GRAY_HINT:'#EEF5F3',
+  NIAGARA: '#09A289'
 };
