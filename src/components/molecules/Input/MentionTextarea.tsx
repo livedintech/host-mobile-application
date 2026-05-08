@@ -37,7 +37,6 @@ export default function MentionTextarea({
   const cursorPosRef = useRef(0);
   const activeAtPosRef = useRef(0);
   const animation = useRef(new Animated.Value(0)).current;
-
   const [showList, setShowList] = useState(false);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
@@ -201,7 +200,6 @@ const styles = StyleSheet.create({
   wrapper: {
     marginBottom: Metrics.verticalScale(18),
   },
-
   glassContainer: {
     borderWidth: 1.5,
     borderRadius: 12,
@@ -209,14 +207,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     minHeight: 130,
   },
-
   input: {
     color: '#000000',
     fontSize: Metrics.generatedFontSize(14),
     fontWeight: '400',
     textAlignVertical: 'top',
+    minHeight: 110,
   },
-
   dropdown: {
     position: 'absolute',
     backgroundColor: Colors.WHITE,
@@ -226,8 +223,11 @@ const styles = StyleSheet.create({
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+  },
+  scrollView: {
+    maxHeight: 180,
   },
 
   dropdownList: {
@@ -236,8 +236,12 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    padding: 12,
-    borderBottomWidth: 0.5,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: Colors.SMOOTH_GREY,
+  },
+  itemLast: {
+    borderBottomWidth: 0,
   },
 });
