@@ -32,7 +32,6 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = HostMobileApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = HostMobileApp/Info.plist; sourceTree = "<group>"; };
 		20D6C0715531B22D62659F62 /* Pods-HostMobileApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HostMobileApp.release.xcconfig"; path = "Target Support Files/Pods-HostMobileApp/Pods-HostMobileApp.release.xcconfig"; sourceTree = "<group>"; };
-		442E0E2C4A51A028C57D03C8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = HostMobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		70FA7D113FF34B0791E3278F /* RethinkSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-Bold.ttf"; path = "../src/assets/fonts/RethinkSans-Bold.ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = HostMobileApp/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = HostMobileApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -70,7 +69,6 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				0FEADEE22F695B0500EEE44C /* GoogleService-Info.plist */,
-				442E0E2C4A51A028C57D03C8 /* PrivacyInfo.xcprivacy */,
 			);
 			name = HostMobileApp;
 			sourceTree = "<group>";
@@ -336,7 +334,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = HostMobileApp/HostMobileApp.entitlements;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = B2Q2KJ8428;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = HostMobileApp/Info.plist;
@@ -367,7 +365,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = HostMobileApp/HostMobileApp.entitlements;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = B2Q2KJ8428;
 				INFOPLIST_FILE = HostMobileApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Livedin App";
