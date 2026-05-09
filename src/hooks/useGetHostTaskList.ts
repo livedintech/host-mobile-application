@@ -15,7 +15,7 @@ export const useGetHostTaskList = () => {
       const current = lastPage?.meta?.current_page;
       const last = lastPage?.meta?.last_page;
 
-      if (current < last) return current + 1;
+      if (current != null && last != null && current < last) return current + 1;
       return undefined;
     },
   });

@@ -228,9 +228,9 @@ export const getHostTaskList = async (page = 1, limit = 10, status?: string, lis
 
   if (res.ok) {
     return {
-      data: res.data.data.data,
-      current_page: res.data.data.current_page,
-      last_page: res.data.data.last_page,
+      data: res.data?.data?.data ?? [],
+      current_page: res.data?.data?.current_page ?? 1,
+      last_page: res.data?.data?.last_page ?? 1,
     };
   }
 

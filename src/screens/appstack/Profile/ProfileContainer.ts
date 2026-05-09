@@ -11,7 +11,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { deleteAccountApi } from '@/services/authApi';
 import Toast from 'react-native-toast-message';
 import { getProfileCitiesApi, getProfileCountriesApi, removeProfilePictureApi, updateProfileApi, uploadProfilePictureApi } from '@/services/profileApi';
-import { ProfilePicture, UpdateProfilePayload } from '@/types/api/profileTypes';
+import { CityOption, CountryOption, ProfilePicture, UpdateProfilePayload } from '@/types/api/profileTypes';
 import STORAGE_CONST from '@/constants/storage';
 
 export default function useProfileContainer() {
@@ -19,8 +19,7 @@ export default function useProfileContainer() {
   const navigation = useNavigation();
   const { user, logout, setUser } = useAuthStore();
   const isFirstRender = useRef(true);
-  console.log('user:',user);
-  
+
 
   const [selectedImage, setSelectedImage] = useState<ProfilePicture | null>(null);
   const currentProfilePic = user?.profile_picture || null;
@@ -155,12 +154,12 @@ export default function useProfileContainer() {
     },
   });
 
-  const countriesOptions = countriesData.map((item: any) => ({
+  const countriesOptions = (countriesData as CountryOption[]).map((item) => ({
     label: item.name,
     value: item.id,
   }));
 
-  const citiesOptions = citiesData.map((item: any) => ({
+  const citiesOptions = (citiesData as CityOption[]).map((item) => ({
     label: item.name,
     value: item.id,
   }));

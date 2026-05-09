@@ -50,7 +50,7 @@ const InfoRow = ({ icon, label, value, valueColor }: any) => (
 const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions, t }: any) => {
   const { control, formState: { errors }, setValue } = useForm();
   useEffect(() => {
-    if (account?.listings?.[0]?.id) {
+    if (account?.listings?.[0]?.listing_id) {
       setValue('listing_id', String(account.listings[0].listing_id));
     }
   }, [account]);

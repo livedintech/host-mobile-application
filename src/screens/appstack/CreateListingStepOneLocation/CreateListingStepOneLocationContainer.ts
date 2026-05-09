@@ -80,7 +80,7 @@ export default function useCreateListingStepOneLocationContainer() {
       );
       const data = await res.json();
       if (data.status === 'OK' && data.results?.length > 0) {
-        const address: string = data.results[0].formatted_address;
+        const address: string = data.results[0]?.formatted_address ?? '';
         setCurrentAddress(address);
         placesRef.current?.setAddressText(address);
         return address;

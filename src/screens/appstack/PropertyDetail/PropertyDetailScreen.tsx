@@ -331,6 +331,14 @@ const PropertyDetailScreen = () => {
                 onPress={() => handleEditSection('Guidelines')}
               />
 
+              {/* Checkout Instructions */}
+              <IconCard
+                title={t('app.checkoutInstruction.title')}
+                subtitle={propertyData.guidelines?.checkoutInstructions || 'Not provided'}
+                icon="clipboardCheck"
+                onPress={() => handleEditSection('CheckoutInstructions')}
+              />
+
               {/* Booking Details */}
               <IconCard
                 title={t('app.property_detail.booking_details')}

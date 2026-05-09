@@ -28,10 +28,10 @@ export default function useSmartLockActivityLogContainer() {
     enabled: !!lock_id,
   });
       const logs = data?.data?.items?.map((item: any) => ({
-        id: item.raw.recordId.toString(),        // unique id
-        lockName: item.title,                    // lock name
-        action: item.subtitle,                   // action description
-    })) || [];
+        id: item.raw?.recordId?.toString() ?? '',
+        lockName: item.title,
+        action: item.subtitle,
+    })).filter((item: any) => item.id !== '') || [];
 
     const handleRefresh = async () => {
         await refetch();
