@@ -1,6 +1,6 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import React, { useState } from 'react'; // Added useState
-import { StyleSheet, ScrollView, View, ImageBackground, Image, Modal } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, ScrollView, View, ImageBackground, Image, Modal, ActivityIndicator } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
@@ -11,22 +11,41 @@ import { useAuthStore } from '@/store/useAuthStore';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
+// TODO: uncomment when backend fixes logout endpoint
+// import { logoutApi } from '@/services/authApi';
+// import { useMutation } from '@tanstack/react-query';
+// import Toast from 'react-native-toast-message';
 
 const MoreScreen = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuthStore();
-  const [isModalVisible, setModalVisible] = useState(false); // Modal state
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
+  // TODO: uncomment when backend fixes logout endpoint
+  // const { mutate: handleLogout, isPending } = useMutation({
+  //   mutationFn: () => logoutApi({ user_id: user?.id ?? '', fcm_token: '' }),
+  //   onSuccess: () => {
+  //     setModalVisible(false);
+  //     logout();
+  //   },
+  //   onError: () => {
+  //     setModalVisible(false);
+  //     Toast.show({ type: 'error', text1: t('common.toast.something_went_wrong') });
+  //   },
+  // });
+
   const handleLogout = () => {
-    toggleModal();
+    setModalVisible(false);
     logout();
   };
+  const isPending = false;
 
   const displayPhone = user?.phone_with_code && user?.phone 
     ? `+${user.phone_with_code} ${user.phone}` 
     : (user?.phone_with_code || user?.phone || '******');
+
 
   return (
     <ImageBackground
@@ -118,8 +137,11 @@ const MoreScreen = () => {
                 <AppText text={t('app.more.cancel')} type="Medium" fontSize={16} color="black" />
               </AppPressable>
 
-              <AppPressable style={styles.confirmButton} onPress={handleLogout}>
-                <AppText text={t('app.more.confirm')} type="Medium" fontSize={16} color="white" />
+              <AppPressable style={styles.confirmButton} onPress={() => handleLogout()} disabled={isPending}>
+                {isPending
+                  ? <ActivityIndicator color="white" />
+                  : <AppText text={t('app.more.confirm')} type="Medium" fontSize={16} color="white" />
+                }
               </AppPressable>
             </View>
           </View>

@@ -1,5 +1,5 @@
-import { Image, Pressable, StyleSheet, View } from 'react-native';
-import React, { useCallback } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -17,6 +17,7 @@ import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { useQuery } from '@tanstack/react-query';
 import STORAGE_CONST from '@/constants/storage';
 import { getMobileNotificationsCount } from '@/services/mobileNotificationsApi';
+import { useNotificationStore } from '@/store/useNotificationStore';
 
 interface HeaderApp {
   isGoBack?: boolean;
@@ -43,6 +44,7 @@ const HeaderApp = ({
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
   const { user } = useAuthStore();
+  const { unreadCount, setUnreadCount } = useNotificationStore();
 
   const { data: notifCountData } = useQuery({
     queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT],
@@ -50,7 +52,12 @@ const HeaderApp = ({
     enabled: !!isNotification,
     refetchInterval: 60000,
   });
-  const unreadCount = notifCountData?.data?.unread ?? 0;
+
+  useEffect(() => {
+    if (notifCountData?.data?.unread !== undefined) {
+      setUnreadCount(notifCountData.data.unread);
+    }
+  }, [notifCountData?.data?.unread]);
 
   const { t } = useTranslation();
 
@@ -143,9 +150,9 @@ const HeaderApp = ({
           )}
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
-              <Pressable style={styles.getStartedBtn} onPress={getStarted}>
+              <AppPressable style={styles.getStartedBtn} onPress={getStarted}>
                 <AppText text={t('app.header.get_started')} fontSize={12} type="Medium" />
-              </Pressable>
+              </AppPressable>
             </GradientBorder>
           )}
         </View>
@@ -153,13 +160,11 @@ const HeaderApp = ({
       {isGoBackAfterLogo && (
         <View style={styles.headerRow}>
           <View
-            borderRadius={16}
-            borderWidth={1}
             style={styles.arrowCircleInner}
           >
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
-            </Pressable>
+            </AppPressable>
           </View>
           {addIconAfterisGoBack && <Svgicons path="mapIcon" size={35} />}
         </View>

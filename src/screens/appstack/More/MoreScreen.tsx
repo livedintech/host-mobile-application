@@ -1,8 +1,10 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import i18n from '@/locales/i18n/i18n';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { userEventService } from '@/services/userEventService';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, ActivityIndicator } from 'react-native';
+import { logoutApi } from '@/services/authApi';
+import { NotificationService } from '@/services/notification.service';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -19,7 +21,9 @@ import { useTranslation } from 'react-i18next';
 const MoreScreen = () => {
 
   const { t } = useTranslation();
-  const { logout,user } = useAuthStore();
+  const { logout, user, token } = useAuthStore();
+  const [isLogoutLoading, setIsLogoutLoading] = useState(false);
+
   const goToBilling = useCallback(() => {
     navigate(NavigationRoutes.APP_STACK.BILLING);
   }, []);
@@ -34,9 +38,19 @@ const MoreScreen = () => {
   }, []);
 
   const handleLogout = useCallback(async () => {
-    await userEventService.logEvent('logout', 'profile');
-    logout();
-  }, [logout]);
+    setIsLogoutLoading(true);
+    try {
+      const fcmToken = await NotificationService.getToken();
+      await logoutApi({ user_id: user?.id ?? '', fcm_token: fcmToken });
+    } catch (error) {
+      console.error('error logout:', error);
+    } finally {
+      await userEventService.logEvent('logout', 'profile');
+      await NotificationService.deleteToken();
+      logout();
+      setIsLogoutLoading(false);
+    }
+  }, [logout, user]);
 
   const referComingSoon = () => {
     Toast.show({

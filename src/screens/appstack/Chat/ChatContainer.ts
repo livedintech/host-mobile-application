@@ -238,7 +238,7 @@ const transformedListings =
   listings?.data?.map((item: { title: string; listing_id: string }) => ({
     label: item?.title || `Listing #${item?.listing_id}`,
     value: item?.listing_id ? String(item.listing_id) : '',
-  })).filter((item) => item.value !== '') || [];
+  }))?.filter((item: { label: string; value: string }) => item.value !== '') || [];
     
 
   const transformedApartmentTypes = [

@@ -19,6 +19,7 @@ export const SERVICE_CONFIG_URLS = {
     UPDATE_PASSWORD: `${authController}/update-password`,
     CHANGE_PASSWORD: `${authController}/user/change-password`,
     DELETE_ACCOUNT: `${authController}/user/delete-account`,
+    LOGOUT: `${authController}/user/logout`,
   },
   APP: {
     CREATE_CHANNEX_ACCOUNT: `${authController}/create/channex/account/{user_id}`,

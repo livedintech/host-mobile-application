@@ -14,6 +14,7 @@ import {
   ApiNotificationGroup,
   GetNotificationsResponse,
 } from '@/services/mobileNotificationsApi';
+import { useNotificationStore } from '@/store/useNotificationStore';
 
 export type FlatItem =
   | { type: 'header'; title: string; key: string; id: string }
@@ -115,6 +116,7 @@ function updateCacheItems(
 
 export default function useNotificationsContainer() {
   const queryClient = useQueryClient();
+  const { setUnreadCount, decrementUnreadCount } = useNotificationStore();
 
   const dataQuery = useInfiniteQuery({
     queryKey: QUERY_KEY,
@@ -140,6 +142,7 @@ export default function useNotificationsContainer() {
       total + page.data.reduce((g, group) =>
         g + group.data.filter(n => n.status === 'unread').length, 0), 0);
     notifee.setBadgeCount(unreadCount);
+    setUnreadCount(unreadCount);
   }, [dataQuery.data]);
 
   useEffect(() => {
@@ -160,6 +163,7 @@ export default function useNotificationsContainer() {
         old => updateCacheItems(old, n => n.notification_id === id ? { ...n, status: 'read' } : n),
       );
       notifee.decrementBadgeCount();
+      decrementUnreadCount();
     },
   });
 
@@ -172,6 +176,7 @@ export default function useNotificationsContainer() {
         old => updateCacheItems(old, n => ({ ...n, status: 'read' })),
       );
       notifee.setBadgeCount(0);
+      setUnreadCount(0);
     },
   });
 
