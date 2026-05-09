@@ -265,6 +265,9 @@ export default function usePropertyDetailContainer() {
       case 'Guidelines':
         navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES, { paramData: data?.data, hideWifiFields: true, guidelinesSection: 'guidelines' });
         break;
+      case 'CheckoutInstructions':
+        navigate(NavigationRoutes.APP_STACK.CHECKOUT_INSTRUCTION, { paramData: data?.data });
+        break;
       case 'Policies':
         navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES, { paramData: data?.data });
         break;

@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { processColor, StatusBar, View, StyleSheet } from 'react-native';
+import { processColor, StatusBar, View, StyleSheet, AppState, AppStateStatus } from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -35,6 +35,7 @@ const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState<string | null>(null);
   const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK);
+  const appState = useRef<AppStateStatus>(AppState.currentState);
 
   useEffect(() => {
     const savedLang = getStoredLanguage();
@@ -43,6 +44,19 @@ const App = () => {
     initializeApp();
     configureGoogleSignIn();
     setupNotifications();
+
+    userEventService.logEvent('app_open', 'app');
+
+    const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      if (appState.current === 'active' && nextState === 'background') {
+        userEventService.logEvent('app_background', 'app');
+      } else if (appState.current !== 'active' && nextState === 'active') {
+        userEventService.logEvent('app_open', 'app');
+      }
+      appState.current = nextState;
+    });
+
+    return () => subscription.remove();
   }, []);
 
   const setupNotifications = async () => {

@@ -1,4 +1,14 @@
-import messaging, {
+import {
+  getMessaging,
+  getToken,
+  onTokenRefresh,
+  deleteToken,
+  onMessage,
+  onNotificationOpenedApp,
+  getInitialNotification,
+  requestPermission,
+  hasPermission,
+  AuthorizationStatus,
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
@@ -10,16 +20,16 @@ export class NotificationService {
   static initiated = false;
 
   static async getToken(): Promise<string> {
-    const FCMToken = await messaging().getToken();
+    const FCMToken = await getToken(getMessaging());
     return FCMToken;
   }
 
   static onTokenRefresh(callback: (token: string) => void): () => void {
-    return messaging().onTokenRefresh(callback);
+    return onTokenRefresh(getMessaging(), callback);
   }
 
   static async deleteToken(): Promise<void> {
-    await messaging().deleteToken();
+    await deleteToken(getMessaging());
   }
 
   static async setBadgeCount(count: number): Promise<void> {
@@ -28,7 +38,7 @@ export class NotificationService {
 
   static async requestUserPermission(): Promise<boolean> {
     if (Platform.OS === 'ios') {
-      const status = await messaging().requestPermission({
+      const status = await requestPermission(getMessaging(), {
         alert: true,
         badge: true,
         sound: true,
@@ -36,8 +46,8 @@ export class NotificationService {
       });
 
       return (
-        status === messaging.AuthorizationStatus.AUTHORIZED ||
-        status === messaging.AuthorizationStatus.PROVISIONAL
+        status === AuthorizationStatus.AUTHORIZED ||
+        status === AuthorizationStatus.PROVISIONAL
       );
     }
 
@@ -71,10 +81,10 @@ export class NotificationService {
 
   static async hasPermission(): Promise<boolean> {
     if (Platform.OS === 'ios') {
-      const status = await messaging().hasPermission();
+      const status = await hasPermission(getMessaging());
       return (
-        status === messaging.AuthorizationStatus.AUTHORIZED ||
-        status === messaging.AuthorizationStatus.PROVISIONAL
+        status === AuthorizationStatus.AUTHORIZED ||
+        status === AuthorizationStatus.PROVISIONAL
       );
     }
 
@@ -92,12 +102,12 @@ export class NotificationService {
     this.initiated = true;
 
     // Background state
-    messaging().onNotificationOpenedApp(remoteMessage => {
+    onNotificationOpenedApp(getMessaging(), remoteMessage => {
       NotificationService.handleNavigation(remoteMessage);
     });
 
     // Quit state — Firebase
-    messaging().getInitialNotification().then(remoteMessage => {
+    getInitialNotification(getMessaging()).then(remoteMessage => {
       if (remoteMessage) {
         NotificationService.handleNavigation(remoteMessage);
       }
@@ -113,7 +123,7 @@ export class NotificationService {
     });
 
     // Foreground — show local notification with badge increment
-    messaging().onMessage(async remoteMessage => {
+    onMessage(getMessaging(), async remoteMessage => {
       await localNotification(remoteMessage);
     });
 

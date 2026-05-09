@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Pressable, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useWatch } from 'react-hook-form';
 import BottomSheetComponent from '@/components/molecules/BottomSheetComponent/BottomSheetComponent';
@@ -110,7 +111,7 @@ export const CreateBookingSheet = ({
         {/* Type Selector */}
         <View style={styles.radioRow}>
           {['direct', 'pricing'].map(type => (
-            <Pressable
+            <AppPressable
               disabled={isLoading}
               key={type}
               style={styles.radioItem}
@@ -127,7 +128,7 @@ export const CreateBookingSheet = ({
               <AppText
                 text={type === 'direct' ? t('app.listing_screen.direct_booking') : t('app.listing_screen.pricing')}
               />
-            </Pressable>
+            </AppPressable>
           ))}
         </View>
 

@@ -51,6 +51,18 @@ export const changePasswordApi = async (payload: any) => {
     throw response; // This allows React Query to catch the error
 };
 
+// Logout
+export const logoutApi = async (payload: { user_id: number | string; fcm_token: string }) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.AUTH.LOGOUT,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
 // Delete Account (Soft Delete)
 // @/services/authService.ts
 

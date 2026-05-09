@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import React, { useCallback } from 'react';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -143,9 +143,9 @@ const HeaderApp = ({
           )}
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
-              <Pressable style={styles.getStartedBtn} onPress={getStarted}>
+              <AppPressable style={styles.getStartedBtn} onPress={getStarted}>
                 <AppText text={t('app.header.get_started')} fontSize={12} type="Medium" />
-              </Pressable>
+              </AppPressable>
             </GradientBorder>
           )}
         </View>
@@ -157,9 +157,9 @@ const HeaderApp = ({
             borderWidth={1}
             style={styles.arrowCircleInner}
           >
-            <Pressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
               <Svgicons path="arrowLeftIcon" size={24} />
-            </Pressable>
+            </AppPressable>
           </View>
           {addIconAfterisGoBack && <Svgicons path="mapIcon" size={35} />}
         </View>

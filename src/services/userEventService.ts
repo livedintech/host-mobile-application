@@ -76,10 +76,16 @@ class UserEventService {
       console.log('[UserEvent]', JSON.stringify(event, null, 2));
     }
 
-    await addDoc(collection(getFirestore(), 'user_events'), {
-      ...event,
-      timestamp: serverTimestamp(),
-    });
+    try {
+      await addDoc(collection(getFirestore(), 'user_events'), {
+        ...event,
+        timestamp: serverTimestamp(),
+      });
+    } catch (err) {
+      if (__DEV__) {
+        console.warn('[UserEvent] Failed to log event:', err);
+      }
+    }
   }
 }
 
