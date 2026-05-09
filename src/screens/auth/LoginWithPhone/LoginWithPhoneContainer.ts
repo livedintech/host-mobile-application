@@ -185,9 +185,13 @@ export default function useLoginWithPhoneContainer() {
       } else {
         const stored = storage.getString(APPLE_USER_KEY);
         if (stored) {
-          const parsed = JSON.parse(stored);
-          email = parsed.email || '';
-          name = name || parsed.name || '';
+          try {
+            const parsed = JSON.parse(stored);
+            email = parsed?.email || '';
+            name = name || parsed?.name || '';
+          } catch {
+            email = '';
+          }
         }
       }
 
