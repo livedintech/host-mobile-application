@@ -24,11 +24,6 @@ const checkoutSchema = yup.object().shape({
 
 type CheckoutFormValues = yup.InferType<typeof checkoutSchema>;
 
-const buildCheckoutInstructions = (data: CheckoutFormValues) =>
-  [data.towels, data.trash, data.turnOff, data.lockUp, data.keys, data.additional]
-    .filter(Boolean)
-    .join('\n');
-
 export default function useCheckoutInstructionContainer() {
   const { params } = useRoute<any>();
   const { listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
@@ -40,12 +35,12 @@ export default function useCheckoutInstructionContainer() {
   const { control, handleSubmit, formState: { errors } } = useForm<CheckoutFormValues>({
     resolver: yupResolver(checkoutSchema) as any,
     defaultValues: {
-      towels: '',
-      trash: '',
-      turnOff: '',
-      lockUp: '',
-      keys: '',
-      additional: listing?.cleaning_instructions ?? '',
+      towels: listing?.checkout_towels ?? '',
+      trash: listing?.checkout_trash ?? '',
+      turnOff: listing?.checkout_turn_off ?? '',
+      lockUp: listing?.checkout_lock_up ?? '',
+      keys: listing?.checkout_keys ?? '',
+      additional: listing?.checkout_additional ?? '',
     },
   });
 
@@ -56,7 +51,12 @@ export default function useCheckoutInstructionContainer() {
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
       name: propertyDetail?.name || 'New Listing',
-      cleaning_instructions: buildCheckoutInstructions(data),
+      checkout_towels: data.towels,
+      checkout_trash: data.trash,
+      checkout_turn_off: data.turnOff,
+      checkout_lock_up: data.lockUp,
+      checkout_keys: data.keys,
+      checkout_additional: data.additional,
     },
   });
 
