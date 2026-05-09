@@ -14,7 +14,19 @@ export interface UpdateProfilePayload {
   city_id?: number;
   permanent_address?: string;
   phone?: string;
+  phone_with_code?: string;
+  country_code?: string;
   email?: string;
+}
+
+export interface CountryOption {
+  id: number;
+  name: string;
+}
+
+export interface CityOption {
+  id: number;
+  name: string;
 }
 
 export interface UpdateProfileResponse {

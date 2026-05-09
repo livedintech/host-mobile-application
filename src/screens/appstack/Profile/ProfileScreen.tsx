@@ -11,7 +11,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import useProfileContainer from './ProfileContainer';
 import Metrics from '@/utility/Metrics';
 import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
-import ImageCropPicker from 'react-native-image-crop-picker';
+import ImageCropPicker, { Image as CropImage } from 'react-native-image-crop-picker';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import BGImage from '@/components/molecules/BGImage/BGImage';
@@ -44,7 +44,7 @@ const ProfileScreen = () => {
   };
 
   // ✅ Common image handler
-  const handleImageResult = (image: any) => {
+  const handleImageResult = (image: CropImage) => {
     setLocalImage(image.path);
     onImageSelect({
       uri: image.path,
