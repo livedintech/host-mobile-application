@@ -19,8 +19,9 @@ interface NoTaskProps {
 
 const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
   const { t } = useTranslation();
+  console.log("activeTab",activeTab)
   const emptyText =
-    activeTab === 'Complete' ? t('app.no_task.completed') : t('app.no_task.available');
+    activeTab === 'complete' ? t('app.no_task.completed') : t('app.no_task.available');
   const { resetTaskStore } = useTaskStore();
   return (
     // <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -39,7 +40,7 @@ const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
         {/* Center Illustration and Message */}
         <View style={styles.centerContent}>
           <View style={styles.iconContainer}>
-            <Svgicons path="noAccountTask" size={Metrics.scale(250)} />
+            <Svgicons path="noTaskAvailable" size={Metrics.scale(320)} />
           </View>
 
           <AppText

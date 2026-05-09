@@ -329,6 +329,9 @@ import facilities from './facilities.svg'
 import staff from './staff.svg'
 import crossUnique from './crossUnique.svg'
 import calender_black from './calender_black.svg'
+import noTaskAvailable from './noTaskAvailable.svg'
+import noListingFound from './noListingFound.svg'
+
 export const icons = {
   calender_black,
   crossUnique,
@@ -661,5 +664,7 @@ export const icons = {
   cleanliness,
   comfort,
   staff,
-  facilities
+  facilities,
+  noTaskAvailable,
+  noListingFound
 };

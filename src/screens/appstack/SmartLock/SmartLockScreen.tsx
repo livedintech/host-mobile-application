@@ -22,7 +22,7 @@ const SmartLockScreen = () => {
         <View style={styles.content}>
           {/* Main Illustration using the requested path */}
           <View style={styles.svgContainer}>
-            <Svgicons path="noTTLockScreen" size={Metrics.scale(280)} />
+            <Svgicons path="noTTLockScreen" size={Metrics.scale(320)} />
           </View>
 
           {/* Title - Updated to Black per design */}
