@@ -4,7 +4,7 @@ import { CONTENT_TYPE, HTTP_STATUS } from './api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { BASE_URL_DEV, BASE_URL_LIVE } from '@env';
 
-export const BASE_URL = BASE_URL_DEV;
+export const BASE_URL = BASE_URL_LIVE;
 
 // Create API instance
 const apiSauceInstance = create({
