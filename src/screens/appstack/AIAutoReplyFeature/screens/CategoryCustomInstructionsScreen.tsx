@@ -84,7 +84,7 @@ const CategoryInstructionsScreen = () => {
               placeholder="Add instructions that Autopilot should follow for this category..."
               multiline={true}
               height={Metrics.verticalScale(140)}
-              sparkleIcon={true}
+              sparkleIcon={false}
             />
 
             <View style={{ marginTop: Metrics.verticalScale(10) }}>
