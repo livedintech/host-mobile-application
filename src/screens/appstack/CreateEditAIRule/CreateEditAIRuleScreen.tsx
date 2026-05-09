@@ -83,6 +83,7 @@ const CreateEditAIRuleScreen = () => {
                             errors={errors}
                             data={transformedListing || []}
                             placeholder={t('app.create_ai_rule.property_placeholder')}
+                            dropdownPosition='top'
                         />
 
                         {/* Auto-Create Toggle */}
