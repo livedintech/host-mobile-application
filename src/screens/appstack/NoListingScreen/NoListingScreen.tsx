@@ -38,7 +38,7 @@ const NoListingScreen = () => {
         <View style={styles.content}>
           {/* Central Illustration */}
           <View style={styles.svgContainer}>
-            <Svgicons path="noListingOnTTLock" size={Metrics.scale(260)} />
+            <Svgicons path="noListingFound" size={Metrics.scale(320)} />
           </View>
 
           {/* Title */}

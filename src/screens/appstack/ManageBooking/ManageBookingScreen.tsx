@@ -173,7 +173,7 @@ const ManageBookingScreen = () => {
           </View>
 
           <View style={styles.noAccountContainer}>
-             <Svgicons path="noAccountFound" size={200} />
+             <Svgicons path="noAccountFound" size={Metrics.scale(320)} />
               <AppText
                 text={t('app.manage_booking.no_account_title')}
                 fontSize={28}
@@ -271,7 +271,7 @@ const ManageBookingScreen = () => {
           ) : (
             // ✅ Yeh tab k liye account nahi
             <View style={styles.tabEmptyContainer}>
-              <Svgicons path="noAccountFound" size={200} />
+              <Svgicons path="noAccountFound" size={Metrics.scale(320)} />
               <AppText
                 text={t('app.manage_booking.no_account_title')}
                 fontSize={28}
