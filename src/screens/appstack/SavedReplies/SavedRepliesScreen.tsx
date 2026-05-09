@@ -39,48 +39,65 @@ const SavedRepliesScreen = () => {
       <GlassCard width="100%" style={styles.glassCardOverride}>
         <View style={styles.cardContent}>
           <View style={styles.infoSection}>
-           <View style={styles.titleRow}>
+            <View style={styles.titleRow}>
               <AppText
                 text={item.title}
                 fontSize={18}
                 type="Bold"
                 color={Colors.BLACK}
-              style={{ flex: 1 }}
+                style={{ flex: 1 }}
               />
               {/* Updated Action Icons with GlassCards */}
               <View style={styles.actionIcons}>
                 <GlassCard width={40} style={styles.iconGlassCard}>
-                  <AppPressable onPress={() => openRemoveConfirmSheet(item)} style={styles.iconBtn}>
+                  <AppPressable
+                    onPress={() => openRemoveConfirmSheet(item)}
+                    style={styles.iconBtn}
+                  >
                     <Svgicons path="TrashFull" size={20} color={Colors.BLACK} />
                   </AppPressable>
                 </GlassCard>
-                
+
                 <GlassCard width={40} style={styles.iconGlassCard}>
-                  <AppPressable onPress={() => editReply(item)} style={styles.iconBtn}>
-                    <Svgicons path="editIconUserManagement" size={20} color={Colors.BLACK} />
+                  <AppPressable
+                    onPress={() => editReply(item)}
+                    style={styles.iconBtn}
+                  >
+                    <Svgicons
+                      path="editIconUserManagement"
+                      size={20}
+                      color={Colors.BLACK}
+                    />
                   </AppPressable>
                 </GlassCard>
               </View>
             </View>
 
-           <View style={[styles.detailsRow]}>
+            <View style={[styles.detailsRow]}>
               <View style={styles.textDetails}>
-                <AppText text={t('app.saved_replies.listing_access')} fontSize={14} type="Bold" color={Colors.BLACK} />
-                <AppText 
-                   text={item.listing_label || t('app.saved_replies.all_listings')}
-                   fontSize={13} 
-                   color={Colors.GREY_SHADOW} 
-                   mt={2}
+                <AppText
+                  text={t('app.saved_replies.listing_access')}
+                  fontSize={14}
+                  type="Bold"
+                  color={Colors.BLACK}
+                />
+                <AppText
+                  text={
+                    item.listing_label || t('app.saved_replies.all_listings')
+                  }
+                  fontSize={13}
+                  color={Colors.GREY_SHADOW}
+                  mt={2}
                 />
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-  <CustomSwitch
-    onToggle={() => toggleSwitch(item)}
-    value={item.is_active}
-    disabled={isLoadingStatus}
-    isLoading={item?.id === Item?.id ? isLoadingStatus : false}
-  />
-</View>
+                <CustomSwitch
+                  onToggle={() => toggleSwitch(item)}
+                  value={item.is_active}
+                  disabled={isLoadingStatus}
+                  isLoading={item?.id === Item?.id ? isLoadingStatus : false}
+                />
+              </View>
             </View>
           </View>
         </View>
@@ -91,11 +108,15 @@ const SavedRepliesScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-      
-
         {!!data?.length && (
           <View style={styles.topTextSection}>
-            <AppText text={t('app.saved_replies.title')} fontSize={28} type="Bold" color={Colors.BLACK} mb={20} />
+            <AppText
+              text={t('app.saved_replies.title')}
+              fontSize={28}
+              type="Bold"
+              color={Colors.BLACK}
+              mb={20}
+            />
             <AppText
               text={t('app.saved_replies.description')}
               fontSize={14}
@@ -109,7 +130,9 @@ const SavedRepliesScreen = () => {
           isLoading={isLoading || isFetching}
           data={data}
           meta={dataQuery}
-          ListEmptyComponent={<NoSavedRepliesScreen onCreatePress={createNewReply} />}
+          ListEmptyComponent={
+            <NoSavedRepliesScreen onCreatePress={createNewReply} />
+          }
           renderItem={renderItem}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.listContent}
@@ -154,7 +177,7 @@ const styles = StyleSheet.create({
   topTextSection: { paddingHorizontal: 22, marginBottom: 25 },
   listContent: {
     paddingHorizontal: 22,
-    paddingBottom: 140, 
+    paddingBottom: 140,
   },
   glassCardOverride: {
     marginBottom: 16,
@@ -164,15 +187,15 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   infoSection: { width: '100%' },
-  titleRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
-  actionIcons: { 
-    flexDirection: 'row', 
-    gap: 8 
+  actionIcons: {
+    flexDirection: 'row',
+    gap: 8,
   },
   iconGlassCard: {
     height: 40,
@@ -183,16 +206,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0, // Reset default GlassCard margin
   },
-  iconBtn: { 
+  iconBtn: {
     width: '100%',
     height: '100%',
-    justifyContent: 'center', 
-    alignItems: 'center' 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  detailsRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-   alignItems: 'center',
+  detailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   textDetails: { flex: 1 },
   footer: {

@@ -1107,7 +1107,11 @@
       "smart_lock": "إدارة الأقفال الذكية",
       "statistics": "الإحصائيات",
       "listing_performance": "أداء العقار",
-      "channel_performance": "أداء القناة"
+      "channel_performance": "أداء القناة",
+      "chat_settings_section": "إعدادات الدردشة",
+      "ai_autopilot": "الطيار الآلي للذكاء الاصطناعي",
+      "escalation_settings": "إعدادات التصعيد",
+      "message_categories": "فئات الرسائل"
     },
     "pre_activity_screen": {
       "title": "معاينة النشاط المسبق",
@@ -1169,8 +1173,7 @@
       "date_today": "اليوم",
       "date_last_7_days": "آخر 7 أيام",
       "date_last_30_days": "آخر 30 يوم",
-          "nights": "ليالي"
-
+      "nights": "ليالي"
     },
     "billing": {
       "title": "الفواتير",
@@ -1277,7 +1280,7 @@
       "status_todo": "للقيام",
       "status_in_progress": "قيد التنفيذ",
       "status_completed": "مكتمل",
-           "tabs": {
+      "tabs": {
         "todo": "المهام",
         "in_progress": "قيد التنفيذ",
         "complete": "مكتملة",
@@ -1288,8 +1291,8 @@
         "select_task_assignee": "اختر المسؤول عن المهمة"
       },
       "assigned_to_user": "مُسند إلى ",
-    "unassigned": "غير مُسند",
-    "date_value": "التاريخ: "
+      "unassigned": "غير مُسند",
+      "date_value": "التاريخ: "
     },
     "listing_screen": {
       "booking_created": "تم إنشاء الحجز",
@@ -1941,7 +1944,7 @@
       "unassigned": "غير معين",
       "chars_of_1000": "/1000 حرف",
       "booking_code": "رمز الحجز",
-       "no_data_found": "لا توجد بيانات"
+      "no_data_found": "لا توجد بيانات"
     },
     "notifications": {
       "title": "الإشعارات",

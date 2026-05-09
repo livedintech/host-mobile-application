@@ -59,7 +59,7 @@
     "female": "Female",
     "cancel": "Cancel",
     "delete": "Delete",
-    "remove":"Remove",
+    "remove": "Remove",
     "new_listing": "New Listing",
     "dropdown": {
       "apartment": "Apartment",
@@ -1109,7 +1109,11 @@
       "smart_lock": "Smart Lock Management",
       "statistics": "Statistics",
       "listing_performance": "Listing Performance",
-      "channel_performance": "Channel Performance"
+      "channel_performance": "Channel Performance",
+      "chat_settings_section": "Chat Settings",
+      "ai_autopilot": "AI Autopilot",
+      "escalation_settings": "Escalation Settings",
+      "message_categories": "Message Categories"
     },
     "pre_activity_screen": {
       "title": "Pre-activity Preview",
@@ -1171,7 +1175,7 @@
       "date_today": "Today",
       "date_last_7_days": "Last 7 Days",
       "date_last_30_days": "Last 30 Days",
-      "nights":"Nights"
+      "nights": "Nights"
     },
     "billing": {
       "title": "Billing",
@@ -1278,19 +1282,19 @@
       "status_todo": "Todo",
       "status_in_progress": "In Progress",
       "status_completed": "Completed",
-          "tabs": {
+      "tabs": {
         "todo": "To-do",
         "in_progress": "In Progress",
         "complete": "Complete",
         "template": "Template"
       },
-        "filters": {
+      "filters": {
         "select_listing": "Select Listing",
         "select_task_assignee": "Select Task Assignee"
       },
       "assigned_to_user": "Assigned to ",
-    "unassigned": "Unassigned",
-    "date_value": "Date: "
+      "unassigned": "Unassigned",
+      "date_value": "Date: "
     },
     "listing_screen": {
       "booking_created": "Booking created",
@@ -1378,12 +1382,12 @@
       "send_approval": "Send Approval",
       "pre_approved_success": "Inquiry Pre-approved successfully",
 
-       "accept_btn": "Accept",
-  "decline_btn": "Decline",
-  "booking_accepted": "Booking Accepted",
-  "booking_accepted_desc": "You have accepted booking request of {{name}}",
-  "action_failed": "Action Failed",
-  "accept_request_failed": "Failed to accept request"
+      "accept_btn": "Accept",
+      "decline_btn": "Decline",
+      "booking_accepted": "Booking Accepted",
+      "booking_accepted_desc": "You have accepted booking request of {{name}}",
+      "action_failed": "Action Failed",
+      "accept_request_failed": "Failed to accept request"
     },
     "no_review": {
       "title": "No Reviews Yet",
@@ -1943,13 +1947,13 @@
       "unassigned": "Unassigned",
       "chars_of_1000": "/1000 characters",
       "booking_code": "Booking Code",
-       "no_data_found": "No data found"
+      "no_data_found": "No data found"
     },
-      "notifications": {
-    "title": "Notifications",
-    "mark_all_read": "Mark all as read",
-    "empty_title": "No notifications yet",
-    "empty_desc": "You're all caught up. New notifications will appear here."
-  }
+    "notifications": {
+      "title": "Notifications",
+      "mark_all_read": "Mark all as read",
+      "empty_title": "No notifications yet",
+      "empty_desc": "You're all caught up. New notifications will appear here."
+    }
   }
 }

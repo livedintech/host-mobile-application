@@ -1,6 +1,14 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, ImageBackground, Image, Modal, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  ImageBackground,
+  Image,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
@@ -42,10 +50,10 @@ const MoreScreen = () => {
   };
   const isPending = false;
 
-  const displayPhone = user?.phone_with_code && user?.phone 
-    ? `+${user.phone_with_code} ${user.phone}` 
-    : (user?.phone_with_code || user?.phone || '******');
-
+  const displayPhone =
+    user?.phone_with_code && user?.phone
+      ? `+${user.phone_with_code} ${user.phone}`
+      : user?.phone_with_code || user?.phone || '******';
 
   return (
     <ImageBackground
@@ -57,16 +65,25 @@ const MoreScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Profile Header */}
-        <AppPressable onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}>
+        <AppPressable
+          onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}
+        >
           <GlassCard width="auto" style={styles.profileCard}>
             <View style={styles.profileInfo}>
               {user?.profile_picture ? (
-                <Image source={{ uri: user.profile_picture }} style={styles.avatar} />
+                <Image
+                  source={{ uri: user.profile_picture }}
+                  style={styles.avatar}
+                />
               ) : (
                 <Svgicons path="imageUploadIcon" size={25} />
               )}
               <View>
-                <AppText text={user?.name ?? 'User Name'} type="Bold" fontSize={16} />
+                <AppText
+                  text={user?.name ?? 'User Name'}
+                  type="Bold"
+                  fontSize={16}
+                />
                 <AppText text={displayPhone} fontSize={12} color="grey" />
               </View>
             </View>
@@ -78,11 +95,36 @@ const MoreScreen = () => {
           title={t('app.more.account_section')}
           headerIcon="userOutline"
           items={[
-            { title: t('app.more.listing_management'), icon: 'direct', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS) },
-            { title: t('app.more.booking_platform'), icon: 'bookingIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING) },
-            { title: t('app.more.user_management'), icon: 'userManagementIconNew', onPress: () => navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT) },
-            { title: t('app.more.review_management'), icon: 'reviewManagementIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT) },
-            { title: t('app.more.smart_lock'), icon: 'lockIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS) },
+            {
+              title: t('app.more.listing_management'),
+              icon: 'direct',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
+            },
+            {
+              title: t('app.more.booking_platform'),
+              icon: 'bookingIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING),
+            },
+            {
+              title: t('app.more.user_management'),
+              icon: 'userManagementIconNew',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT),
+            },
+            {
+              title: t('app.more.review_management'),
+              icon: 'reviewManagementIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT),
+            },
+            {
+              title: t('app.more.smart_lock'),
+              icon: 'lockIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS),
+            },
           ]}
         />
 
@@ -90,17 +132,58 @@ const MoreScreen = () => {
           title={t('app.more.analytics_section')}
           headerIcon="analyticsOutline"
           items={[
-            { title: t('app.more.statistics'), icon: 'statsIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN) },
-            { title: t('app.more.listing_performance'), icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE) },
-            { title: t('app.more.channel_performance'), icon: 'performanceIcon', onPress: () => navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE) },
+            {
+              title: t('app.more.statistics'),
+              icon: 'statsIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.STATISTICS_SCREEN),
+            },
+            {
+              title: t('app.more.listing_performance'),
+              icon: 'performanceIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.LISTING_PERFORMANCE),
+            },
+            {
+              title: t('app.more.channel_performance'),
+              icon: 'performanceIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.CHANNEL_PERFORMANCE),
+            },
           ]}
         />
-
+        <MenuSection
+          title={t('app.more.chat_settings_section')}
+          headerIcon="aiSetting" 
+          items={[
+            {
+              title: t('app.more.ai_autopilot'),
+              icon: 'aiAutoReplyMoreScreenIcon',
+              onPress: () => navigate(NavigationRoutes.APP_STACK.AI_AUTOPILOT),
+            },
+            {
+              title: t('app.more.escalation_settings'),
+              icon: 'escalationIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.ESCALATION_SETTINGS),
+            },
+            {
+              title: t('app.more.message_categories'),
+              icon: 'messageCategoriesIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES),
+            },
+          ]}
+        />
         {/* Logout Trigger */}
         <AppPressable onPress={toggleModal}>
           <GlassCard width="100%" style={styles.logoutCard}>
             <View style={styles.logoutContent}>
-              <AppText text={t('app.more.logout')} type="Medium" fontSize={16} />
+              <AppText
+                text={t('app.more.logout')}
+                type="Medium"
+                fontSize={16}
+              />
               <GlassCard width={36} style={styles.logoutIconGlass}>
                 <Svgicons path="logoutIcon" size={18} />
               </GlassCard>
@@ -118,30 +201,45 @@ const MoreScreen = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <AppText 
+            <AppText
               text={t('app.more.logout_confirm')}
-              type="Bold" 
-              fontSize={18} 
-              style={styles.modalTitle} 
+              type="Bold"
+              fontSize={18}
+              style={styles.modalTitle}
             />
-            
-            <AppText 
+
+            <AppText
               text={t('app.more.logout_subtitle')}
-              fontSize={14} 
+              fontSize={14}
               color="grey"
               style={styles.modalSubTitle}
             />
 
             <View style={styles.modalButtonContainer}>
               <AppPressable style={styles.cancelButton} onPress={toggleModal}>
-                <AppText text={t('app.more.cancel')} type="Medium" fontSize={16} color="black" />
+                <AppText
+                  text={t('app.more.cancel')}
+                  type="Medium"
+                  fontSize={16}
+                  color="black"
+                />
               </AppPressable>
 
-              <AppPressable style={styles.confirmButton} onPress={() => handleLogout()} disabled={isPending}>
-                {isPending
-                  ? <ActivityIndicator color="white" />
-                  : <AppText text={t('app.more.confirm')} type="Medium" fontSize={16} color="white" />
-                }
+              <AppPressable
+                style={styles.confirmButton}
+                onPress={() => handleLogout()}
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <AppText
+                    text={t('app.more.confirm')}
+                    type="Medium"
+                    fontSize={16}
+                    color="white"
+                  />
+                )}
               </AppPressable>
             </View>
           </View>
@@ -176,7 +274,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.scale(16),
     marginBottom: Metrics.verticalScale(20),
   },
-  logoutContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  logoutContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   logoutIconGlass: {
     height: 36,
     borderRadius: 18,
