@@ -66,7 +66,7 @@ export default function useAutomationTemplateContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE]
             });
-            removeSheetRef?.current?.close()
+            // removeSheetRef?.current?.close()
         },
         onError: error => {
             Toast.show({
@@ -95,7 +95,11 @@ export default function useAutomationTemplateContainer() {
 
     const openRemoveConfirmSheet = (item: any) => {
         setItem(item)
-        removeSheetRef?.current?.open();
+        // removeSheetRef?.current?.open();
+
+          setTimeout(() => {
+    removeSheetRef.current?.open();
+  }, 100);
     };
     const confirm = () => {
         if (Item)
