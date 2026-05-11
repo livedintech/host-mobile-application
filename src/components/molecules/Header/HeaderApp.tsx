@@ -1,5 +1,5 @@
 import { Image, StyleSheet, View } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -18,6 +18,7 @@ import { useQuery } from '@tanstack/react-query';
 import STORAGE_CONST from '@/constants/storage';
 import { getMobileNotificationsCount } from '@/services/mobileNotificationsApi';
 import { useNotificationStore } from '@/store/useNotificationStore';
+import { UpdateLanguageApi } from '@/services/ChangeLanguageApi';
 
 interface HeaderApp {
   isGoBack?: boolean;
@@ -27,7 +28,7 @@ interface HeaderApp {
   isLang?: boolean;
   addIconAfterisGoBack?: string;
   isShowProfile?: boolean;
-  isNotification?: boolean
+  isNotification?: boolean;
 }
 
 const HeaderApp = ({
@@ -38,13 +39,14 @@ const HeaderApp = ({
   isGoBackAfterLogo,
   addIconAfterisGoBack,
   isShowProfile,
-  isNotification
+  isNotification,
 }: HeaderApp) => {
   const getStarted = useCallback(() => {
     navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
   }, []);
   const { user } = useAuthStore();
   const { unreadCount, setUnreadCount } = useNotificationStore();
+  const [isChangingLanguage, setIsChangingLanguage] = useState(false);
 
   const { data: notifCountData } = useQuery({
     queryKey: [STORAGE_CONST.GET_MOBILE_NOTIFICATIONS_COUNT],
@@ -62,9 +64,22 @@ const HeaderApp = ({
   const { t } = useTranslation();
 
   const handleLanguageToggle = async () => {
-    const newLang = i18n.language === 'en' ? 'ar' : 'en';
-    await changeLanguage(newLang);
-    RNRestart.restart();
+    try {
+      const newLang = i18n.language === 'en' ? 'ar' : 'en';
+
+      // 1. update backend first (important)
+      await UpdateLanguageApi({
+        language: newLang,
+      });
+
+      // 2. update local i18n
+      await changeLanguage(newLang);
+
+      // 3. restart app
+      RNRestart.restart();
+    } catch (error) {
+      console.log('Language update failed:', error);
+    }
   };
 
   return (
@@ -123,27 +138,31 @@ const HeaderApp = ({
                   <AppText text={t('common.lang_switch')} fontSize={12} type="Medium" />
                 </Pressable>
               </GradientBorder> */}
-              
-              <ButtonView onPress={handleLanguageToggle} style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}>
+
+              <ButtonView
+                onPress={handleLanguageToggle}
+                style={[styles.langBtn, { marginRight: Metrics.scale(5) }]}
+              >
                 {i18n.language === 'ar' ? (
-                  <Svgicons path='enLang' size={65} />
+                  <Svgicons path="enLang" size={65} />
                 ) : (
-                  <Svgicons path='arLang' size={60} />
+                  <Svgicons path="arLang" size={60} />
                 )}
-
-
               </ButtonView>
             </>
           )}
           {isNotification && (
-            <AppPressable style={{
-              marginLeft: Metrics.scale(5),
-              alignSelf: 'center'
-            }} onPress={() => {
-              navigate(NavigationRoutes.APP_STACK.NOTIFIATION)
-            }}>
+            <AppPressable
+              style={{
+                marginLeft: Metrics.scale(5),
+                alignSelf: 'center',
+              }}
+              onPress={() => {
+                navigate(NavigationRoutes.APP_STACK.NOTIFIATION);
+              }}
+            >
               <View style={styles.bellWrapper}>
-                <Svgicons path='bell' size={25} />
+                <Svgicons path="bell" size={25} />
                 {unreadCount > 0 && <View style={styles.unreadDot} />}
               </View>
             </AppPressable>
@@ -151,7 +170,11 @@ const HeaderApp = ({
           {isGetStarted && (
             <GradientBorder style={styles.getStartedBtn} borderRadius={20}>
               <AppPressable style={styles.getStartedBtn} onPress={getStarted}>
-                <AppText text={t('app.header.get_started')} fontSize={12} type="Medium" />
+                <AppText
+                  text={t('app.header.get_started')}
+                  fontSize={12}
+                  type="Medium"
+                />
               </AppPressable>
             </GradientBorder>
           )}
@@ -159,10 +182,11 @@ const HeaderApp = ({
       </View>
       {isGoBackAfterLogo && (
         <View style={styles.headerRow}>
-          <View
-            style={styles.arrowCircleInner}
-          >
-            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+          <View style={styles.arrowCircleInner}>
+            <AppPressable
+              style={styles.arrowCircleInner}
+              onPress={() => goBack()}
+            >
               <Svgicons path="arrowLeftIcon" size={24} />
             </AppPressable>
           </View>
