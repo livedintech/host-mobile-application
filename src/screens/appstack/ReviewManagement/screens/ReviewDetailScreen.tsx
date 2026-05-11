@@ -953,6 +953,10 @@ const ReviewDetailScreen = ({ route }: any) => {
                   label: t('app.review_detail.ota_share'),
                   value: payment_breakdown?.ota_share,
                 },
+                {
+                  label: t('app.review_detail.tax'),
+                  value: payment_breakdown?.tax,
+                },
               ].map((item, index) => (
                 <View key={index} style={styles.paymentItem}>
                   <AppText

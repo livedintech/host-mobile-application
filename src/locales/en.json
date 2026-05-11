@@ -1477,6 +1477,7 @@
       "cleaning_fee": "Cleaning Fee:",
       "host_share": "Host Share:",
       "ota_share": "OTA Share:",
+      "tax":"Tax:",
       "view_details": "View Details",
       "create_new_task": "Create New Task"
     },
