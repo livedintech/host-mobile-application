@@ -71,13 +71,6 @@ const AppStack = () => {
 
       {/* TASK SCREEN OLD END */}
 
-      {/* <Stack.Screen
-        options={{ headerShown: false }}
-        name={NavigationRoutes.APP_STACK.MORE}
-        getComponent={() =>
-          require('@/screens/appstack/More/MoreScreen').default
-        }
-      /> */}
       <Stack.Screen
         options={{
           header: () => <HeaderApp isLogo isGoBack isLang />,

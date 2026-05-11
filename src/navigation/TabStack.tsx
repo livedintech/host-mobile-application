@@ -39,7 +39,7 @@ const TabStack = () => {
       <Tab.Screen
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}
-        component={require('@/screens/appstack/More/MoreScreenNew').default}
+        component={require('@/screens/appstack/More/MoreScreen').default}
       />
     </Tab.Navigator>
   );
