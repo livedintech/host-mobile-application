@@ -86,7 +86,7 @@ export interface VerifyOtpPayload {
   country_code?: string;
   phone_number?: string;
   phone_with_code?: string;
-
+  otp?: string;
 }
 
 export interface ResetPasswordPayload {
