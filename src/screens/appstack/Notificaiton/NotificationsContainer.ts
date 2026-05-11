@@ -235,6 +235,9 @@ export default function useNotificationsContainer() {
       case 'payment_received':
         navigate(NavigationRoutes.APP_STACK.BILLING);
         break;
+        case 'escalation':
+        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: id });
+        break;
       default:
         break;
     }
