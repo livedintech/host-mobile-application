@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { getFirestore, addDoc, collection, serverTimestamp } from '@react-native-firebase/firestore';
 import DeviceInfo from 'react-native-device-info';
 import { useAuthStore } from '@/store/useAuthStore';
+import { getStoredLanguage } from '@/locales/i18n/i18n';
 
 // ─── Event Action Types ────────────────────────────────────────────────────────
 // Backend ke saath agree karo konse actions track karne hain — yahan add karo
@@ -42,6 +43,7 @@ interface UserEvent {
   timestamp: number; // epoch ms — Firestore ke serverTimestamp se replace hoga
   device: string;
   app_version: string;
+  language: string; // 'ar' | 'en' — app UI language at event time
 }
 
 // ─── Service ──────────────────────────────────────────────────────────────────
@@ -69,6 +71,7 @@ class UserEventService {
       timestamp: Date.now(),
       device: Platform.OS,
       app_version: this.appVersion || DeviceInfo.getVersion(),
+      language: getStoredLanguage(),
     };
 
     // ── DEV: console mein dikhao ─────────────────────────────────────────────

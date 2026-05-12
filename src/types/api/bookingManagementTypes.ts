@@ -1,5 +1,7 @@
 export interface createChannelsUserIdPayload {
-  user_id: number
+  user_id: number;
+  channel_name?: string;
+  redirect_url?: string;
 }
 export interface getChannelsUserIdPayload {
   user_id: number

@@ -405,66 +405,72 @@ const HomeScreen = ({ navigation }: any) => {
   //   },
   // ];
 
-  const updatesItems = [
-    {
-      id: 1,
-      icon: 'chatBubble',
-      title: t('app.home.inbox'),
-      subtitle: t('app.home.inbox_sub', {
-        count: UserPermission?.dashboard_counts?.unread_messages,
-      }),
-      route: NavigationRoutes.APP_STACK.CHAT,
-    },
-    {
-      id: 2,
-      icon: 'direct',
-      title: t('app.home.checkins'),
-      subtitle: t('app.home.checkins_sub', {
-        count: UserPermission?.dashboard_counts?.checkins_today,
-      }),
-      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
-      params: { activeFilter: 'today' },
-    },
-    {
-      id: 3,
-      icon: 'direct',
-      title: t('app.home.tasks'),
-      subtitle: t('app.home.tasks_sub', {
-        count: UserPermission?.dashboard_counts?.tasks,
-      }),
-      route: NavigationRoutes.APP_STACK.TASK,
-      params: { initialTab: 'in_progress' },
-    },
-    {
-      id: 4,
-      icon: 'direct',
-      title: t('app.home.checkouts'),
-      subtitle: t('app.home.checkouts_sub', {
-        count: UserPermission?.dashboard_counts?.checkouts_today,
-      }),
-      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
-      params: { activeFilter: 'today' },
-    },
-    {
-      id: 5,
-      icon: 'direct',
-      title: t('app.home.booking_requests'),
-      subtitle: t('app.home.booking_requests_sub', {
-        count: UserPermission?.dashboard_counts?.reservation_requests,
-      }),
-      route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
-      params: { activeFilter: 'booking_request' },
-    },
-    {
-      id: 6,
-      icon: 'direct',
-      title: t('app.home.analytics'),
-      subtitle: t('app.home.analytics_sub', {
-        count: UserPermission?.occupancy?.last_7_days_percentage,
-      }),
-      route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN,
-    },
-  ];
+const updatesItems = [
+  {
+    id: 1,
+    icon: 'chatBubble',
+    title: t('app.home.inbox'),
+    count: UserPermission?.dashboard_counts?.unread_messages ?? 0,
+    subtitle: t('app.home.inbox_sub', {
+      count: UserPermission?.dashboard_counts?.unread_messages,
+    }),
+    route: NavigationRoutes.APP_STACK.CHAT,
+  },
+  {
+    id: 2,
+    icon: 'direct',
+    title: t('app.home.checkins'),
+    count: UserPermission?.dashboard_counts?.checkins_today ?? 0,
+    subtitle: t('app.home.checkins_sub', {
+      count: UserPermission?.dashboard_counts?.checkins_today,
+    }),
+    route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+    params: { activeFilter: 'today' },
+  },
+  {
+    id: 3,
+    icon: 'direct',
+    title: t('app.home.tasks'),
+    count: UserPermission?.dashboard_counts?.tasks ?? 0,
+    subtitle: t('app.home.tasks_sub', {
+      count: UserPermission?.dashboard_counts?.tasks,
+    }),
+    route: NavigationRoutes.APP_STACK.TASK,
+    params: { initialTab: 'in_progress' },
+  },
+  {
+    id: 4,
+    icon: 'direct',
+    title: t('app.home.checkouts'),
+    count: UserPermission?.dashboard_counts?.checkouts_today ?? 0,
+    subtitle: t('app.home.checkouts_sub', {
+      count: UserPermission?.dashboard_counts?.checkouts_today,
+    }),
+    route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+    params: { activeFilter: 'today' },
+  },
+  {
+    id: 5,
+    icon: 'direct',
+    title: t('app.home.booking_requests'),
+    count: UserPermission?.dashboard_counts?.reservation_requests ?? 0,
+    subtitle: t('app.home.booking_requests_sub', {
+      count: UserPermission?.dashboard_counts?.reservation_requests,
+    }),
+    route: NavigationRoutes.APP_STACK.RESERVATION_CALENDAR,
+    params: { activeFilter: 'booking_request' },
+  },
+  {
+    id: 6,
+    icon: 'direct',
+    title: t('app.home.analytics'),
+    count: UserPermission?.occupancy?.last_7_days_percentage ?? 0,
+    subtitle: t('app.home.analytics_sub', {
+      count: UserPermission?.occupancy?.last_7_days_percentage,
+    }),
+    route: NavigationRoutes.APP_STACK.STATISTICS_SCREEN,
+  },
+].filter(item => item.count > 0);
 
   return (
     <BGImage

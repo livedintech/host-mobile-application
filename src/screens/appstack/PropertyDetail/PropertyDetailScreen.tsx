@@ -44,6 +44,7 @@ const PropertyDetailScreen = () => {
     isPendingExporting,
     data,
     firstCategoryImages,
+    listing
   } = usePropertyDetailContainer();
 
   const isSupervisor = UserPermission?.role_key === 'supervisor';
@@ -139,7 +140,7 @@ const PropertyDetailScreen = () => {
                 <AppText text={t('app.property_detail.task')} fontSize={16} color={Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="taskIcon" size={20} />
               </MenuOption>
-
+            {listing?.is_sync === 'sync_all' && (
               <MenuOption
                 disabled={isSupervisor}
                 onSelect={() => handleMenuAction('calendar')}
@@ -148,6 +149,8 @@ const PropertyDetailScreen = () => {
                 <AppText text={t('app.property_detail.calendar')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="calendarGridIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BRUNSWICK_GREEN} />
               </MenuOption>
+            )}
+              
 
               <MenuOption
                 disabled={isSupervisor}

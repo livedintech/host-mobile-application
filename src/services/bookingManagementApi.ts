@@ -9,7 +9,10 @@ export const createChannelsUserbyId = async (payload: createChannelsUserIdPayloa
         { user_id: payload.user_id },
     );
 
-    const { ok, response, data } = await apiService.post(url, {});
+    const body: Record<string, string> = {};
+    if (payload.channel_name) body.channel_name = payload.channel_name;
+    if (payload.redirect_url) body.redirect_url = payload.redirect_url;
+    const { ok, response, data } = await apiService.post(url, body);
     if (ok) {
         return data;
     }

@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
 import { OtpVerifyResponse, VerifyOtpPayload } from '@/types/api/authTypes';
-import { resendOtpApi } from '@/services/authApi';
+import { resendOtpApi, verifyOtpApi } from '@/services/authApi';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
@@ -59,6 +59,23 @@ export default function useVerifyPhoneNumberContainer() {
 
   const otpCode = watch('otpCode');
 
+
+  // Verify OTP
+  const { mutate: verifyOtpPayload, isPending: isPendingVerifyOtp } =
+    useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
+      mutationFn: verifyOtpApi,
+      onSuccess: (_data, variables) => {
+        navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, {
+          country_code: variables.country_code,
+          phone_number: variables.phone_number,
+          phone_with_code: variables.phone_with_code,
+          otp: variables.otp,
+        });
+      },
+      onError: ({ message }) => {
+        Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
+      },
+    });
 
   // Resend OTP
   const {
@@ -115,7 +132,7 @@ export default function useVerifyPhoneNumberContainer() {
     };
 
     if (isLoginScreen) {
-      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, phoneParams);
+      verifyOtpPayload(phoneParams);
       return;
     }
 
@@ -159,7 +176,7 @@ export default function useVerifyPhoneNumberContainer() {
   };
 
   return {
-    isLoading: isPendingResendOtp && !isIdleResendOtp,
+    isLoading: isPendingVerifyOtp || (isPendingResendOtp && !isIdleResendOtp),
     control,
     errors,
     otpCode,

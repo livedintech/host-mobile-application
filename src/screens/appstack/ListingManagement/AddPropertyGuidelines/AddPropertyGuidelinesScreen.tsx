@@ -132,19 +132,6 @@ const AddPropertyGuidelinesScreen = () => {
                   }
                   multiline
                 />
-                <View style={styles.fieldGap} />
-                <TextareaField
-                  name="checkout_instructions"
-                  control={control as any}
-                  errors={errors}
-                  label={t(
-                    'app.property_guidelines.checkout_instructions_label',
-                  )}
-                  placeholder={
-                    '• Please leave the apartment in a reasonable condition.'
-                  }
-                  multiline
-                />
               </>
             )}
           </View>

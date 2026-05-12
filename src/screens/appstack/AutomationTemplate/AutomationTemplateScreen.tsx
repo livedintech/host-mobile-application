@@ -175,7 +175,7 @@ const AutomationTemplatesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1},
+  container: { flex: 1, paddingTop:40},
   headerNav: { paddingHorizontal: 22, marginBottom: 15 },
   backBtn: {
     width: 40,

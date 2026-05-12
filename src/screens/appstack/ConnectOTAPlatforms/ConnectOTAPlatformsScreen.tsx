@@ -20,7 +20,7 @@ const PLATFORMS = [
 
 const ConnectOTAPlatformsScreen = () => {
   const { t } = useTranslation();
-  const { handleConnect, isPending, refetch, connectedAccounts } =
+  const { handleConnect, refetch, connectedAccounts } =
     useManageBookingContainer();
 
   // ✅ Screen focus hone par refetch — agar connect ho gaya to wapas jao
@@ -70,7 +70,7 @@ const ConnectOTAPlatformsScreen = () => {
               key={platform.key}
               activeOpacity={0.8}
               onPress={() => handleConnect(platform.key)}
-              disabled={isPending}
+              disabled={false}
             >
               <GlassCard width="100%" style={styles.platformCard}>
                 <Svgicons path={platform.icon} size={28} />

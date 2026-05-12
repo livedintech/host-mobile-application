@@ -71,13 +71,6 @@ const AppStack = () => {
 
       {/* TASK SCREEN OLD END */}
 
-      {/* <Stack.Screen
-        options={{ headerShown: false }}
-        name={NavigationRoutes.APP_STACK.MORE}
-        getComponent={() =>
-          require('@/screens/appstack/More/MoreScreen').default
-        }
-      /> */}
       <Stack.Screen
         options={{
           header: () => <HeaderApp isLogo isGoBack isLang />,
@@ -835,6 +828,13 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.AIRBNB_ACCOUNT_NAME}
+        getComponent={() =>
+          require('@/screens/appstack/AirbnbAccountName/AirbnbAccountNameScreen').default
+        }
+      />
+      <Stack.Screen
+      options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.CONNECT_OTA_PLATFORMS}
         getComponent={() =>
           require('@/screens/appstack/ConnectOTAPlatforms/ConnectOTAPlatformsScreen')
