@@ -1,4 +1,4 @@
-import i18n from '@/locales/i18n/i18n';
+import i18n, { getStoredLanguage } from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
@@ -125,7 +125,8 @@ export default function useEnterPasswordContainer() {
       phone_number: phone_number,        // previous screen se aya
       phone_with_code: phone_with_code,  // previous screen se aya
       password: data?.password,
-      fcm_token: token
+      fcm_token: token,
+      language: getStoredLanguage(),
     };
     // Remember Me logic
     if (data.rememberMe) {
