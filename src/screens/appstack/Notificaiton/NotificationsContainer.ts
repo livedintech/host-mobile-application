@@ -235,9 +235,21 @@ export default function useNotificationsContainer() {
       case 'payment_received':
         navigate(NavigationRoutes.APP_STACK.BILLING);
         break;
-        case 'escalation':
+      case 'escalation':
         navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: id });
         break;
+         case 'password_changed':
+        navigate(NavigationRoutes.APP_STACK.CHANGE_PASSWORD);
+        break;
+        case 'profile_updated':
+        navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+        break;
+         case 'profile_updated':
+        navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+        break;
+        //  case 'listing_added':
+        // navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+        // break;
       default:
         break;
     }
