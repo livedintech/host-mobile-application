@@ -60,7 +60,7 @@ const ManageListingScreen = () => {
             )}
 
 
-            {item?.is_local === 0 && (
+            {item?.is_sync === 'sync_all' && (
               <View style={styles.badge}>
                 <View style={styles.badgeDot} />
                 <AppText text={t('app.manage_listing_screen.listed')} fontSize={12} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />

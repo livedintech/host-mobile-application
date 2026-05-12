@@ -2,10 +2,10 @@ import { HUBSPOT_ACCESS_TOKEN } from '@env';
 
 export const AGENTS = [
   {
-    id: '88880167',
-    name: 'Tech Livedin',
-    meetingSlug: 'tech-livedin',
-    ownerId: '88880167',
+    id: '81155987',
+    name: 'Uzair Ahmed',
+    meetingSlug: 'uzair-ahmed3/saassales-meeting',
+    ownerId: '81155987',
   },
 ];
 
@@ -90,7 +90,10 @@ export const fetchAllAgentsAvailableDates = async (
         const data = await res.json();
         const durationMap =
           data.linkAvailability?.linkAvailabilityByDuration || {};
-        const availabilityData = durationMap['2700000']?.availabilities || [];
+        const firstDuration = Object.keys(durationMap)[0];
+        const availabilityData = firstDuration
+          ? durationMap[firstDuration]?.availabilities || []
+          : [];
 
         availabilityData.forEach((slot: any) => {
           availableDates[formatToLocalDate(slot.startMillisUtc, timezone)] =
@@ -121,7 +124,10 @@ export const fetchSlotsForDate = async (
     const data = await res.json();
 
     const durationMap = data.linkAvailability?.linkAvailabilityByDuration || {};
-    const availabilityData = durationMap['2700000']?.availabilities || [];
+    const firstDuration = Object.keys(durationMap)[0];
+    const availabilityData = firstDuration
+      ? durationMap[firstDuration]?.availabilities || []
+      : [];
 
     return availabilityData
       .filter(

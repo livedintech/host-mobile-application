@@ -1,11 +1,19 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import useCheckoutInstructionContainer from './CheckoutInstructionContainer';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from 'react-native';
+import useCheckoutInstructionContainer, {
+  TASK_KEYS,
+  TaskKey,
+} from './CheckoutInstructionContainer';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import TextareaField from '@/components/molecules/Input/TextareaField';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack, navigate } from '@/services/navigationService';
@@ -15,16 +23,19 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
+const TASK_LABEL_KEYS: Record<TaskKey, string> = {
+  return_keys: 'app.checkoutInstruction.taskReturnKeys',
+  turn_things_off: 'app.checkoutInstruction.taskTurnThingsOff',
+  throw_trash: 'app.checkoutInstruction.taskThrowTrash',
+  lock_up: 'app.checkoutInstruction.taskLockUp',
+  gather_towels: 'app.checkoutInstruction.taskGatherTowels',
+  additional_requests: 'app.checkoutInstruction.taskAdditionalRequests',
+};
+
+
 const CheckoutInstructionScreen = () => {
-  const {
-    control,
-    errors,
-    handleSubmit,
-    onNext,
-    onSaveExit,
-    isLoading,
-    isEdit,
-  } = useCheckoutInstructionContainer();
+  const { tasks, setTaskChecked, setTaskDetail, onNext, onSaveExit, isLoading, isEdit } =
+    useCheckoutInstructionContainer();
   const { t } = useTranslation();
 
   return (
@@ -85,61 +96,44 @@ const CheckoutInstructionScreen = () => {
               isEdit && { marginTop: Metrics.verticalScale(20) },
             ]}
           >
-            <TextareaField
-              name="towels"
-              control={control as any}
-              errors={errors}
-              label={t('app.checkoutInstruction.towelsLabel')}
-              placeholder={t('app.checkoutInstruction.towelsPlaceholder')}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="trash"
-              control={control as any}
-              errors={errors}
-              label={t('app.checkoutInstruction.trashLabel')}
-              placeholder={t('app.checkoutInstruction.trashPlaceholder')}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="turnOff"
-              control={control as any}
-              errors={errors}
-              label={t('app.checkoutInstruction.turnOffLabel')}
-              placeholder={t('app.checkoutInstruction.turnOffPlaceholder')}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="lockUp"
-              control={control as any}
-              errors={errors}
-              label={t('app.checkoutInstruction.lockUpLabel')}
-              placeholder={t('app.checkoutInstruction.lockUpPlaceholder')}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="keys"
-              control={control as any}
-              errors={errors}
-              label={t('app.checkoutInstruction.keysLabel')}
-              placeholder={t('app.checkoutInstruction.keysPlaceholder')}
-              multiline
-            />
-            <View style={styles.fieldGap} />
-            <TextareaField
-              name="additional"
-              control={control as any}
-              errors={errors}
-              label={t('app.checkoutInstruction.additionalLabel')}
-              placeholder={t('app.checkoutInstruction.additionalPlaceholder')}
-              multiline
-            />
-          </View>
+            {TASK_KEYS.map(key => {
+              const task = tasks[key];
+              return (
+                <View key={key}>
+                  <TouchableOpacity
+                    style={styles.taskRow}
+                    onPress={() => setTaskChecked(key, !task.checked)}
+                    activeOpacity={0.7}
+                  >
+                    <Svgicons
+                      path={task.checked ? 'CheckboxCheckedIcon' : 'CheckboxUncheckedIcon'}
+                      size={22}
+                    />
+                    <AppText
+                      text={t(TASK_LABEL_KEYS[key])}
+                      fontSize={14}
+                      type="Regular"
+                      style={styles.taskLabel}
+                    />
+                  </TouchableOpacity>
 
+                  {task.checked && (
+                    <View style={styles.textareaContainer}>
+                      <TextInput
+                        style={styles.textarea}
+                        value={task.detail}
+                        onChangeText={val => setTaskDetail(key, val)}
+                        placeholder={t('app.checkoutInstruction.taskDetailPlaceholder')}
+                        placeholderTextColor="rgba(0, 0, 0, 0.3)"
+                        multiline
+                        selectionColor={Colors.BOTTLE_GREEN}
+                      />
+                    </View>
+                  )}
+                </View>
+              );
+            })}
+          </View>
         </KeyboardAwareScrollView>
 
         <View style={styles.footer}>
@@ -148,14 +142,14 @@ const CheckoutInstructionScreen = () => {
               title={t('app.checkoutInstruction.next')}
               variant="secondary"
               backgroundColor={Colors.WHITE}
-              onPress={handleSubmit(onNext)}
+              onPress={onNext}
               loading={isLoading}
             />
           )}
           <AppButton
             title={t('app.checkoutInstruction.saveExit')}
             mt={12}
-            onPress={handleSubmit(onSaveExit)}
+            onPress={onSaveExit}
             disabled={isLoading}
           />
         </View>
@@ -181,7 +175,34 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   formGroup: { marginTop: 10 },
-  fieldGap: { height: 25 },
+  taskRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Metrics.verticalScale(12),
+    gap: 12,
+  },
+  taskLabel: {
+    flex: 1,
+    color: Colors.PINE_FOREST,
+  },
+  textareaContainer: {
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    marginBottom: Metrics.verticalScale(8),
+    minHeight: Metrics.verticalScale(100),
+  },
+  textarea: {
+    flex: 1,
+    paddingHorizontal: Metrics.scale(16),
+    paddingTop: Platform.OS === 'ios' ? Metrics.verticalScale(12) : Metrics.verticalScale(10),
+    paddingBottom: Metrics.verticalScale(12),
+    color: Colors.PINE_FOREST,
+    fontSize: 14,
+    textAlignVertical: 'top',
+    minHeight: Metrics.verticalScale(100),
+  },
   footer: { bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
 });
 

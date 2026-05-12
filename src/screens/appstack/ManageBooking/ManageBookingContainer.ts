@@ -1,18 +1,13 @@
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { queryClient } from '@/services/api';
 import {
-  createChannelsUserbyId,
   getChannelsUserbyId,
   getUserListingsByUserIDApi,
 } from '@/services/bookingManagementApi';
 import { navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import InAppBrowser from 'react-native-inappbrowser-reborn';
+import { useQuery } from '@tanstack/react-query';
 import i18n from '@/locales/i18n/i18n';
-
-const AIRBNB_REDIRECT_SCHEME = 'livedinapp://airbnb-callback';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
@@ -34,7 +29,7 @@ export default function useManageBookingContainer() {
       key: 'Airbnb',
       alreadyMsg: i18n.t('app.manage_booking.airbnb_connected'),
       alreadyDesc: i18n.t('app.manage_booking.airbnb_connected_desc'),
-      action: () => createChannexAccount(),
+      action: () => navigate(NavigationRoutes.APP_STACK.AIRBNB_ACCOUNT_NAME),
     },
     Gathern: {
       key: 'Gathern',
@@ -49,44 +44,6 @@ export default function useManageBookingContainer() {
       action: () => navigate(NavigationRoutes.APP_STACK.BOOKING_COM_STEP_1),
     },
   };
-
-  const openAirbnbOAuth = async (url: string) => {
-    try {
-      if (await InAppBrowser.isAvailable()) {
-        const result = await InAppBrowser.openAuth(url, AIRBNB_REDIRECT_SCHEME, {
-          dismissButtonStyle: 'cancel',
-          preferredBarTintColor: '#FFFFFF',
-          preferredControlTintColor: '#000000',
-          readerMode: false,
-          animated: true,
-          modalEnabled: true,
-          enableBarCollapsing: false,
-          showTitle: true,
-        });
-        if (result.type === 'success') {
-          queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER] });
-          refetch();
-        }
-      } else {
-        const { Linking } = require('react-native');
-        Linking.openURL(url);
-      }
-    } catch {
-      const { Linking } = require('react-native');
-      Linking.openURL(url);
-    }
-  };
-
-  const { mutate: createChannexAccount, isPending } = useMutation({
-    mutationFn: () => createChannelsUserbyId({ user_id: user!.id }),
-    onSuccess: (res) => {
-      const url = res?.data?.connection_link_url;
-      if (url) openAirbnbOAuth(url);
-    },
-    onError: (error: any) => {
-      console.log('Create Error:', error?.message);
-    },
-  });
 
   // ✅ CLEAN handler
   const handleConnect = (platform: keyof typeof PLATFORM_CONFIG) => {
@@ -125,7 +82,6 @@ export default function useManageBookingContainer() {
   return {
     handleConnect,
     isLoading,
-    isPending,
     refetch,
     connectedAccounts,
     goToListing,

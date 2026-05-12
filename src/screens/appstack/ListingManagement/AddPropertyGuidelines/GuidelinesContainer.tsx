@@ -88,9 +88,6 @@ export default function useGuidelinesContainer() {
     property_rules: guidelinesSection === 'arrival'
       ? yup.string()
       : yup.string().required(i18n.t('app.validation.property_rules_required')),
-    checkout_instructions: guidelinesSection === 'arrival'
-      ? yup.string()
-      : yup.string().required(i18n.t('app.validation.checkout_instructions_required')),
     wifi_username: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_username_required')),
     wifi_password: hideWifiFields ? yup.string() : yup.string().required(i18n.t('app.validation.wifi_password_required')),
     door_lock_code: hideWifiFields ? yup.string() : yup.string().optional()
@@ -105,7 +102,6 @@ export default function useGuidelinesContainer() {
       defaultValues: {
         arrival_guide: listing?.arrival_guide ?? '',
         property_rules: listing?.house_rule ?? '',
-        checkout_instructions: listing?.cleaning_instructions ?? '',
         wifi_username: listing?.wifi_network ?? '',
         wifi_password: listing?.wifi_password ?? '',
         door_lock_code: listing?.door_lock_code ?? '',
@@ -114,8 +110,6 @@ export default function useGuidelinesContainer() {
 
   const arrivalGuideLength = (watch('arrival_guide') || '').length;
   const houseRulesLength = (watch('property_rules') || '').length;
-  const checkoutInstructionsLength = (watch('checkout_instructions') || '').length;
-
   // ── Lock Options ──────────────────────────────────────────────────────────
   const { data: rawTTLocks = [], isLoading: isLoadingTTLocks } = useQuery({
     queryKey: [STORAGE_CONST.TT_LOCKS],
@@ -137,7 +131,6 @@ export default function useGuidelinesContainer() {
       name: propertyDetail?.name || 'New Listing',
       arrival_guide: data.arrival_guide,
       house_rule: data.property_rules,
-      cleaning_instructions: data.checkout_instructions,
       wifi_network: data.wifi_username,
       wifi_password: data.wifi_password,
       door_lock_code: String(data.door_lock_code),
@@ -170,7 +163,6 @@ export default function useGuidelinesContainer() {
     updateListing({
       arrival_guide: data.arrival_guide,
       house_rule: data.property_rules,
-      cleaning_instructions: data.checkout_instructions,
       wifi_network: data.wifi_username,
       wifi_password: data.wifi_password,
       door_lock_code: data.door_lock_code,
@@ -184,7 +176,6 @@ export default function useGuidelinesContainer() {
     updateListing({
       arrival_guide: data.arrival_guide,
       house_rule: data.property_rules,
-      cleaning_instructions: data.checkout_instructions,
       wifi_network: data.wifi_username,
       wifi_password: data.wifi_password,
       door_lock_code: data.door_lock_code,
@@ -207,7 +198,6 @@ export default function useGuidelinesContainer() {
     isLoading: isCreating || isUpdating,
     arrivalGuideLength,
     houseRulesLength,
-    checkoutInstructionsLength,
     isEdit,
     hideWifiFields,
     guidelinesSection,

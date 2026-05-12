@@ -377,5 +377,6 @@ export default function usePropertyDetailContainer() {
     handleExport,
     isPendingExporting,
     firstCategoryImages,
+    listing
   };
 }

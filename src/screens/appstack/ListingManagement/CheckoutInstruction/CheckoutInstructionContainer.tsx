@@ -1,7 +1,5 @@
 import i18n from '@/locales/i18n/i18n';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
 import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
@@ -13,16 +11,29 @@ import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 
-const checkoutSchema = yup.object().shape({
-  towels: yup.string().required(i18n.t('app.validation.towels_required')),
-  trash: yup.string().required(i18n.t('app.validation.trash_required')),
-  turnOff: yup.string().required(i18n.t('app.validation.turn_off_required')),
-  lockUp: yup.string().required(i18n.t('app.validation.lock_up_required')),
-  keys: yup.string().required(i18n.t('app.validation.keys_required')),
-  additional: yup.string().required(i18n.t('app.validation.additional_required')),
-});
+export type TaskKey =
+  | 'return_keys'
+  | 'turn_things_off'
+  | 'throw_trash'
+  | 'lock_up'
+  | 'gather_towels'
+  | 'additional_requests';
 
-type CheckoutFormValues = yup.InferType<typeof checkoutSchema>;
+export type TaskState = {
+  checked: boolean;
+  detail: string;
+};
+
+export type TasksState = Record<TaskKey, TaskState>;
+
+export const TASK_KEYS: TaskKey[] = [
+  'return_keys',
+  'turn_things_off',
+  'throw_trash',
+  'lock_up',
+  'gather_towels',
+  'additional_requests',
+];
 
 export default function useCheckoutInstructionContainer() {
   const { params } = useRoute<any>();
@@ -32,38 +43,69 @@ export default function useCheckoutInstructionContainer() {
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<CheckoutFormValues>({
-    resolver: yupResolver(checkoutSchema) as any,
-    defaultValues: {
-      towels: listing?.checkout_towels ?? '',
-      trash: listing?.checkout_trash ?? '',
-      turnOff: listing?.checkout_turn_off ?? '',
-      lockUp: listing?.checkout_lock_up ?? '',
-      keys: listing?.checkout_keys ?? '',
-      additional: listing?.checkout_additional ?? '',
+  const checkoutInstructions = listing?.checkout_instructions;
+
+  const [tasks, setTasks] = useState<TasksState>({
+    return_keys: {
+      checked: checkoutInstructions?.return_keys?.is_present ?? false,
+      detail: checkoutInstructions?.return_keys?.task_detail ?? '',
+    },
+    turn_things_off: {
+      checked: checkoutInstructions?.turn_things_off?.is_present ?? false,
+      detail: checkoutInstructions?.turn_things_off?.task_detail ?? '',
+    },
+    throw_trash: {
+      checked: checkoutInstructions?.throw_trash?.is_present ?? false,
+      detail: checkoutInstructions?.throw_trash?.task_detail ?? '',
+    },
+    lock_up: {
+      checked: checkoutInstructions?.lock_up?.is_present ?? false,
+      detail: checkoutInstructions?.lock_up?.task_detail ?? '',
+    },
+    gather_towels: {
+      checked: checkoutInstructions?.gather_towels?.is_present ?? false,
+      detail: checkoutInstructions?.gather_towels?.task_detail ?? '',
+    },
+    additional_requests: {
+      checked: checkoutInstructions?.additional_requests?.is_present ?? false,
+      detail: checkoutInstructions?.additional_requests?.task_detail ?? '',
     },
   });
 
-  const buildPayload = (data: CheckoutFormValues, isSaveAndExit: boolean = false) => ({
+  const setTaskChecked = (key: TaskKey, checked: boolean) => {
+    setTasks(prev => ({ ...prev, [key]: { ...prev[key], checked } }));
+  };
+
+  const setTaskDetail = (key: TaskKey, detail: string) => {
+    setTasks(prev => ({ ...prev, [key]: { ...prev[key], detail } }));
+  };
+
+  const buildPayload = (isSaveAndExit: boolean = false) => ({
     user_id: String(user?.id),
     channel_id,
     listing_id: String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
       name: propertyDetail?.name || 'New Listing',
-      checkout_towels: data.towels,
-      checkout_trash: data.trash,
-      checkout_turn_off: data.turnOff,
-      checkout_lock_up: data.lockUp,
-      checkout_keys: data.keys,
-      checkout_additional: data.additional,
+      checkout_instructions: TASK_KEYS.reduce(
+        (acc, key) => {
+          acc[key] = tasks[key].checked
+            ? { is_present: true, task_detail: tasks[key].detail }
+            : { is_present: false };
+          return acc;
+        },
+        {} as Record<TaskKey, any>,
+      ),
     },
   });
 
   const { mutate: createDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
+      Toast.show({
+        type: 'error',
+        text1: err.message || i18n.t('common.toast.something_went_wrong'),
+      }),
   });
 
   const { mutate: updateDetails, isPending: isUpdating } = useMutation({
@@ -77,20 +119,23 @@ export default function useCheckoutInstructionContainer() {
       goBack();
     },
     onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
+      Toast.show({
+        type: 'error',
+        text1: err.message || i18n.t('common.toast.something_went_wrong'),
+      }),
   });
 
-  const onNext = (data: CheckoutFormValues) => {
-    createDetails(buildPayload(data, false) as any, {
+  const onNext = () => {
+    createDetails(buildPayload(false) as any, {
       onSuccess: () => navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES),
     });
   };
 
-  const onSaveExit = (data: CheckoutFormValues) => {
+  const onSaveExit = () => {
     if (isEdit) {
-      updateDetails(buildPayload(data, true) as any);
+      updateDetails(buildPayload(true) as any);
     } else {
-      createDetails(buildPayload(data, true) as any, {
+      createDetails(buildPayload(true) as any, {
         onSuccess: () =>
           resetToRoutes([
             { name: NavigationRoutes.APP_STACK.ROOT_STACK },
@@ -101,9 +146,9 @@ export default function useCheckoutInstructionContainer() {
   };
 
   return {
-    control,
-    errors,
-    handleSubmit,
+    tasks,
+    setTaskChecked,
+    setTaskDetail,
     onNext,
     onSaveExit,
     isLoading: isCreating || isUpdating,

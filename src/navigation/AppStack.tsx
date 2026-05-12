@@ -827,6 +827,13 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.AIRBNB_ACCOUNT_NAME}
+        getComponent={() =>
+          require('@/screens/appstack/AirbnbAccountName/AirbnbAccountNameScreen').default
+        }
+      />
+      <Stack.Screen
       options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.CONNECT_OTA_PLATFORMS}
         getComponent={() =>

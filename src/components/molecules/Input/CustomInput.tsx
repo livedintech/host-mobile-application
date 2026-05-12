@@ -23,12 +23,14 @@ type Props = {
   wrapperStyle?: StyleProp<ViewStyle>;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
+  onSubmitEditing?: () => void;
   placeholder?: string;
   error?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconPress?: () => void;
   keyboardType?: KeyboardTypeOptions;
+  returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   secureTextEntry?: boolean;
   editable?: boolean;
   label?: string;
@@ -43,12 +45,14 @@ const CustomInput = ({
   value,
   onChangeText,
   onBlur,
+  onSubmitEditing,
   placeholder,
   error,
   leftIcon,
   rightIcon,
   onRightIconPress,
   keyboardType = 'default',
+  returnKeyType,
   secureTextEntry = false,
   style,
   wrapperStyle,
@@ -136,6 +140,8 @@ const CustomInput = ({
           autoCapitalize={autoCapitalize}
           numberOfLines={numberOfLines}
           maxLength={maxLength}
+          returnKeyType={returnKeyType}
+          onSubmitEditing={onSubmitEditing}
         />
 
         {rightIcon && (

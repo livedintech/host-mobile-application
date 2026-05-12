@@ -338,6 +338,7 @@
       "title_2": " so our agent can schedule a meeting with you",
       "loading_dates": "Loading available dates...",
       "select_slot": "Select Any One Available Time Slot",
+      "no_slots": "No available slots for the selected date",
       "next": "Next",
       "confirm": "Confirm"
     },
@@ -629,18 +630,13 @@
       "skip": "Skip for now",
       "next": "Next",
       "saveExit": "Save & Exit",
-      "towelsLabel": "Gather used towels",
-      "towelsPlaceholder": "Please place all used towels in the bathroom or laundry basket provided.",
-      "trashLabel": "Throw trash away",
-      "trashPlaceholder": "Kindly dispose of all trash in the bins. If full, please take it to the designated waste area.",
-      "turnOffLabel": "Turn things off",
-      "turnOffPlaceholder": "Before leaving, make sure to turn off lights, AC/heating, and all electrical appliances.",
-      "lockUpLabel": "Lock up",
-      "lockUpPlaceholder": "Before leaving, make sure to turn off lights, AC/heating, and all electrical appliances.",
-      "keysLabel": "Return keys",
-      "keysPlaceholder": "Please return the keys to the lockbox or the agreed location. Make sure the lockbox is properly closed.",
-      "additionalLabel": "Additional requests",
-      "additionalPlaceholder": "Please leave the property in a tidy condition. Do not leave any personal belongings behind. Inform us once you've checked out."
+      "taskReturnKeys": "Return keys to a specific place/person on checking out",
+      "taskTurnThingsOff": "Turn lights/appliances etc off on leaving",
+      "taskThrowTrash": "Take care of trash before leaving",
+      "taskLockUp": "Lock the doors on leaving",
+      "taskGatherTowels": "Keep the towels in a specified place",
+      "taskAdditionalRequests": "Other requests on/before checking out",
+      "taskDetailPlaceholder": "Add details..."
     },
     "discounts": {
       "title_new": "Add discounts",
@@ -1713,6 +1709,14 @@
       "connect_airbnb": "Connect Airbnb",
       "connect_gathern": "Connect Gathern",
       "connect_bookingcom": "Connect Booking.com"
+    },
+    "airbnb_account_name": {
+      "title_prefix": "Please set a name",
+      "title_suffix": "account",
+      "label": "Enter Name *",
+      "placeholder": "e.g. My Airbnb Channel",
+      "hint": "Set a name for this Airbnb account so it's easy to identify and manage when syncing and representing your OTA listings.",
+      "next_btn": "Next"
     },
     "decline_step1": {
       "option_dates": "Issue with trip dates, length or price",

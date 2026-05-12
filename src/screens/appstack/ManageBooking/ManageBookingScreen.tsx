@@ -56,9 +56,9 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
   }, [account]);
 
 
-const formatStatus = (status?: string) => {
+  const formatStatus = (status?: string) => {
     if (!status || status === 'unknown') return 'Disconnect';
-    
+
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   };
 
@@ -67,7 +67,6 @@ const formatStatus = (status?: string) => {
       <View style={styles.cardHeader}>
         <AppText text={selectedTab} type="Bold" color={Colors.BLACK} fontSize={18} />
       </View>
-
       <InfoRow
         icon={TAB_ICON_MAP[selectedTab as TabType]}
         label={`${selectedTab} ID`}
@@ -77,28 +76,34 @@ const formatStatus = (status?: string) => {
       <InfoRow
         icon="businessCard"
         label={t('app.manage_booking.livedin_name')}
-        value={user?.name}
+        value={account?.channel_name || user?.name}
         valueColor={Colors.BLACK}
       />
-      <InfoRow
-        icon="towerBuilding"
-        label={t('app.manage_booking.total_property')}
-        value={account?.properties_sync_all_count}
-        valueColor={Colors.BLACK}
-      />
-
       {selectedTab !== 'Booking.com' && (
-        <InfoRow
-          icon="database_check"
-          label={t('app.manage_booking.connection_status')}
-          // value={account?.channel_status ===  'unknown' ? 'Disconnect' : account?.channel_status}
-          value={formatStatus(account?.channel_status)}
-          valueColor={account?.channel_status ===  'unknown' ? Colors.ALERT_RED   : Colors.TEAL_PRIMARY_ALT }
-        />
+        <View>
+          <InfoRow
+            icon="towerBuilding"
+            label={t('app.manage_booking.total_property')}
+            value={account?.properties_sync_all_count}
+            valueColor={Colors.BLACK}
+          />
+          <InfoRow
+            icon="database_check"
+            label={t('app.manage_booking.connection_status')}
+            value={formatStatus(account?.channel_status)}
+            valueColor={account?.channel_status === 'unknown' ? Colors.ALERT_RED : Colors.TEAL_PRIMARY_ALT}
+          />
+        </View>
       )}
 
       {selectedTab === 'Booking.com' && (
         <View>
+          <InfoRow
+            icon="towerBuilding"
+            label={t('app.manage_booking.total_property')}
+            value={'1'}
+            valueColor={Colors.BLACK}
+          />
           <InfoRow
             icon={TAB_ICON_MAP[selectedTab as TabType]}
             label={t('app.manage_booking.property_name')}
@@ -108,8 +113,8 @@ const formatStatus = (status?: string) => {
           <InfoRow
             icon="database_check"
             label={t('app.manage_booking.connection_status')}
-            value={account?.channel_status ===  'unknown' ? 'Disconnect' : account?.channel_status}
-          valueColor={account?.channel_status ===  'unknown' ? Colors.ALERT_RED   : Colors.TEAL_PRIMARY_ALT }
+            value={account?.channel_status === 'unknown' ? 'Disconnect' : account?.channel_status}
+            valueColor={account?.channel_status === 'unknown' ? Colors.ALERT_RED : Colors.TEAL_PRIMARY_ALT}
           />
           {account?.listings?.[0]?.listing_relation && (
             <DropdownField
@@ -132,7 +137,6 @@ const ManageBookingScreen = () => {
   const {
     handleConnect,
     isLoading,
-    isPending,
     refetch,
     goToListing,
     connectedAccounts,
@@ -173,24 +177,24 @@ const ManageBookingScreen = () => {
           </View>
 
           <View style={styles.noAccountContainer}>
-             <Svgicons path="noAccountFound" size={Metrics.scale(320)} />
-              <AppText
-                text={t('app.manage_booking.no_account_title')}
-                fontSize={28}
-                type="SemiBold"
-                color={Colors.BLACK}
-                textAlign="center"
-                mt={15}
-              />
-              <AppText
-                text={t('app.manage_booking.no_account_desc')}
-                fontSize={12}
-                type="Regular"
-                color={Colors.DIM_GREY}
-                textAlign="center"
-                mt={8}
-                px={60}
-              />
+            <Svgicons path="noAccountFound" size={Metrics.scale(320)} />
+            <AppText
+              text={t('app.manage_booking.no_account_title')}
+              fontSize={28}
+              type="SemiBold"
+              color={Colors.BLACK}
+              textAlign="center"
+              mt={15}
+            />
+            <AppText
+              text={t('app.manage_booking.no_account_desc')}
+              fontSize={12}
+              type="Regular"
+              color={Colors.DIM_GREY}
+              textAlign="center"
+              mt={8}
+              px={60}
+            />
           </View>
 
           <View style={styles.footer}>
@@ -298,7 +302,7 @@ const ManageBookingScreen = () => {
           <AppButton
             title={hasAccounts ? t('app.manage_booking.add_account', { tab: selectedTab }) : t('app.manage_booking.connect_account', { tab: selectedTab })}
             onPress={() => handleConnect(selectedTab)}
-            loading={isPending}
+            loading={false}
             backgroundColor={Colors.TEAL_PRIMARY_ALT}
             borderColor="transparent"
             color={Colors.WHITE}
