@@ -166,5 +166,8 @@ export const SERVICE_CONFIG_URLS = {
     MARK_ALL_NOTIFICATIONS_READ: `${authController}/mobile-notifications/read-all`,
     DELETE_MOBILE_NOTIFICATION: `${authController}/mobile-notifications/{id}`,
     UPDATE_LANGUAGE: `${authController}/user/update-language`,
+    AI_AUTOPILOT: `${authController}/agent/autopilot-settings`,
+    AI_AUTOPILOT_SETTINGS: `${authController}/agent/autopilot-settings`,
+    AI_AUTOPILOT_ESCALATION_SETTINGS: `${authController}/agent/escalation-settings`,    
   },
 };

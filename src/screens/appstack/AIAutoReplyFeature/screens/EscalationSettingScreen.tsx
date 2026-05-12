@@ -1,64 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  ScrollView,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { LineChart } from 'react-native-gifted-charts';
-import { useForm, useWatch } from 'react-hook-form'; // ✅ Added useWatch
+import { useForm, useWatch } from 'react-hook-form';
 
 // Shared Components
 import AppText from '@/components/molecules/AppText/AppText';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
+import InputField from '@/components/molecules/Input/InputField';
 
 // Theme & Utility
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
-import InputField from '@/components/molecules/Input/InputField';
+import EscalationSettingContainer from '../containers/EscalationSettingContainer';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
-const EscalationSettingsScreen = () => {
-  const navigation = useNavigation();
-  const [frustrationEnabled, setFrustrationEnabled] = useState(true);
+const EscalationSettingScreen = () => {
+  const { 
+    frustrationEnabled, 
+    setFrustrationEnabled, 
+    handleSave, 
+    isPending,
+    settingsData,
+    isLoading,
+    isFetching,
+    refetch
+  } = EscalationSettingContainer();
 
   const {
     control,
+    handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      confidenceInput: '80', // Use numbers for logic
+      confidenceInput: '80',
       sentimentInput: '52',
     },
   });
 
-  // ✅ Watch inputs in real-time to trigger graph updates
+  // Sync API data to Form Inputs
+  useEffect(() => {
+    if (settingsData) {
+      setValue('confidenceInput', String(settingsData.confidence_level || '80'));
+      setValue('sentimentInput', String(settingsData.sentiment_level || '50'));
+    }
+  }, [settingsData, setValue]);
+
   const confidenceValue = useWatch({ control, name: 'confidenceInput' }) || '0';
   const sentimentValue = useWatch({ control, name: 'sentimentInput' }) || '0';
 
-  // --- Logic to calculate Dynamic Data ---
-  const fullBellCurve = [5, 12, 25, 45, 40, 30, 15]; // Static shape
+  // --- Graph Logic ---
+  const fullBellCurve = [5, 12, 25, 45, 40, 30, 15];
   const commonXLabels = ['0', '30', '50', '70', '90', '100'];
 
   const getGraphData = (val: string, type: 'red' | 'green') => {
     const numeric = parseInt(val.replace(/[^0-9]/g, '')) || 0;
     const splitIndex = Math.floor((numeric / 100) * (fullBellCurve.length - 1));
-
     return fullBellCurve.map((item, index) => {
-      if (type === 'red') {
-        return index <= splitIndex ? { value: item } : { value: 0 };
-      }
+      if (type === 'red') return index <= splitIndex ? { value: item } : { value: 0 };
       return index > splitIndex ? { value: item } : { value: 0 };
     });
   };
 
-  // Recalculate positions
   const confNum = parseInt(confidenceValue) || 0;
   const sentNum = parseInt(sentimentValue) || 0;
 
@@ -77,25 +88,18 @@ const EscalationSettingsScreen = () => {
   };
 
   return (
-    <BGImage
-      source={require('@/assets/img/background/linearBG.png')}
-      style={styles.container}
-    >
+    <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView
+        <RefreshableScrollView
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          isLoading={isLoading}
+          refreshing={isFetching}
+          onRefresh={refetch}
         >
-          <AppText
-            text="Escalation Settings"
-            fontSize={28}
-            type="Bold"
-            mt={20}
-            mb={12}
-          />
+          <AppText text="Escalation Settings" fontSize={28} type="Bold" mt={20} mb={12} />
           <AppText
             text="Define thresholds for automation. If the AI confidence or sentiment falls below these levels, messages are escalated to you."
             fontSize={14}
@@ -107,13 +111,6 @@ const EscalationSettingsScreen = () => {
           {/* --- CONFIDENCE LEVEL CARD --- */}
           <GlassCard style={styles.graphCard}>
             <AppText text="Confidence Level" fontSize={16} type="Bold" mb={8} />
-            <AppText
-              text="Choose how confident the AI should be before sending a reply automatically."
-              fontSize={13}
-              color={Colors.BLACK_60_PERCENT}
-              mb={20}
-            />
-
             <View style={styles.chartContainer}>
               <LineChart
                 {...graphConfigs}
@@ -131,26 +128,10 @@ const EscalationSettingsScreen = () => {
                   showVerticalLines
                   verticalLinesColor={Colors.BLACK}
                   verticalLinesThickness={2}
-                  verticalLinesDataPointsIndices={[
-                    Math.floor((confNum / 100) * 6),
-                  ]}
+                  verticalLinesDataPointsIndices={[Math.floor((confNum / 100) * 6)]}
                 />
-                {/* Dynamic Status Bubble */}
-                <View
-                  style={[
-                    styles.statusBubble,
-                    {
-                      left: `${confNum}%`,
-                      borderColor: Colors.MEDIUM_SEA_GREEN,
-                    },
-                  ]}
-                >
-                  <AppText
-                    text={`${confNum}% Automated`}
-                    fontSize={10}
-                    color={Colors.MEDIUM_SEA_GREEN}
-                    type="Bold"
-                  />
+                <View style={[styles.statusBubble, { left: `${confNum}%`, borderColor: Colors.MEDIUM_SEA_GREEN }]}>
+                  <AppText text={`${confNum}% Automated`} fontSize={10} color={Colors.MEDIUM_SEA_GREEN} type="Bold" />
                 </View>
               </View>
             </View>
@@ -159,44 +140,25 @@ const EscalationSettingsScreen = () => {
           <InputField
             name="confidenceInput"
             label="Send Automatically When Confident"
-            placeholder="80"
             control={control as any}
             errors={errors}
             keyboardType="numeric"
             containerStyle={{ marginBottom: 10 }}
           />
-          <AppText
-            text="Minimum confidence required for AI to reply."
-            fontSize={12}
-            color={Colors.BLACK_35_PERCENT}
-            mb={24}
-          />
+          <AppText text="Minimum confidence required for AI to reply." fontSize={12} color={Colors.BLACK_35_PERCENT} mb={24} />
 
+          {/* --- FRUSTRATION DETECTION --- */}
           <GlassCard style={styles.frustrationCard}>
             <View style={styles.row}>
               <AppText text="Frustration Detection" fontSize={15} type="Bold" />
-              <CustomSwitch
-                value={frustrationEnabled}
-                onToggle={setFrustrationEnabled}
-              />
+              <CustomSwitch value={frustrationEnabled} onToggle={setFrustrationEnabled} />
             </View>
-            <AppText
-              text="Turn this on to send conversations to you when the guest seems upset or frustrated."
-              fontSize={13}
-              color={Colors.BLACK_60_PERCENT}
-            />
+            <AppText text="Turn this on to send conversations to you when the guest seems upset or frustrated." fontSize={13} color={Colors.BLACK_60_PERCENT} />
           </GlassCard>
 
           {/* --- SENTIMENT LEVEL CARD --- */}
           <GlassCard style={styles.graphCard}>
             <AppText text="Sentiment Level" fontSize={16} type="Bold" mb={8} />
-            <AppText
-              text="Choose how positive or negative a message can be before the AI responds automatically."
-              fontSize={13}
-              color={Colors.BLACK_60_PERCENT}
-              mb={20}
-            />
-
             <View style={styles.chartContainer}>
               <LineChart
                 {...graphConfigs}
@@ -214,22 +176,10 @@ const EscalationSettingsScreen = () => {
                   showVerticalLines
                   verticalLinesColor={Colors.BLACK}
                   verticalLinesThickness={2}
-                  verticalLinesDataPointsIndices={[
-                    Math.floor((sentNum / 100) * 6),
-                  ]}
+                  verticalLinesDataPointsIndices={[Math.floor((sentNum / 100) * 6)]}
                 />
-                <View
-                  style={[
-                    styles.statusBubble,
-                    { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED },
-                  ]}
-                >
-                  <AppText
-                    text={`${sentNum}% Escalated`}
-                    fontSize={10}
-                    color={Colors.INDIAN_RED}
-                    type="Bold"
-                  />
+                <View style={[styles.statusBubble, { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED }]}>
+                  <AppText text={`${sentNum}% Escalated`} fontSize={10} color={Colors.INDIAN_RED} type="Bold" />
                 </View>
               </View>
             </View>
@@ -238,20 +188,20 @@ const EscalationSettingsScreen = () => {
           <InputField
             name="sentimentInput"
             label="Escalate When Sentiment Is Below"
-            placeholder="50"
             control={control as any}
             errors={errors}
             keyboardType="numeric"
             containerStyle={{ marginBottom: 10 }}
           />
-        </ScrollView>
+        </RefreshableScrollView>
       </KeyboardAvoidingView>
 
       <View style={styles.footer}>
         <AppButton
-          title="Save Settings"
-          onPress={() => navigation.goBack()}
+          title={isPending ? "Saving..." : "Save Settings"}
+          onPress={handleSubmit(handleSave)}
           variant="primary"
+          disabled={isPending || isLoading}
           backgroundColor={Colors.TEAL_PRIMARY_ALT}
         />
       </View>
@@ -265,52 +215,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.scale(24),
     paddingBottom: Metrics.verticalScale(140),
   },
-  graphCard: {
-    padding: Metrics.scale(16),
-    borderRadius: 20,
-    marginBottom: Metrics.verticalScale(24),
-    width: '100%',
-  },
-  chartContainer: {
-    height: Metrics.verticalScale(160),
-    position: 'relative',
-    marginLeft: -20,
-  },
+  graphCard: { padding: Metrics.scale(16), borderRadius: 20, marginBottom: Metrics.verticalScale(24), width: '100%' },
+  chartContainer: { height: Metrics.verticalScale(160), position: 'relative', marginLeft: -20 },
   overlayChart: { ...StyleSheet.absoluteFillObject },
-  statusBubble: {
-    position: 'absolute',
-    top: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: Colors.WHITE,
-    borderRadius: 12,
-    borderWidth: 1,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-  },
-  frustrationCard: {
-    padding: Metrics.scale(16),
-    borderRadius: 16,
-    marginBottom: Metrics.verticalScale(20),
-    width: '100%',
-  },
-  row: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: 10,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: Metrics.scale(24),
-    paddingBottom: Metrics.verticalScale(40),
-    backgroundColor: 'transparent',
-  },
+  statusBubble: { position: 'absolute', top: 5, paddingHorizontal: 8, paddingVertical: 4, backgroundColor: Colors.WHITE, borderRadius: 12, borderWidth: 1, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15 },
+  frustrationCard: { padding: Metrics.scale(16), borderRadius: 16, marginBottom: Metrics.verticalScale(20), width: '100%' },
+  row: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(40) },
 });
 
-export default EscalationSettingsScreen;
+export default EscalationSettingScreen;
