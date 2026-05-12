@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { BASE_URL_DEV, BASE_URL_LIVE } from '@env';
 import { getStoredLanguage } from '@/locales/i18n/i18n';
 
-export const BASE_URL = BASE_URL_LIVE;
+export const BASE_URL = BASE_URL_DEV;
 
 // Create API instance
 const apiSauceInstance = create({
