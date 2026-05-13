@@ -7,6 +7,8 @@ export interface ApiNotificationPayload {
   sound: string;
   otaName: string;
   notification_type: string;
+  name?: string;
+  channel_id?: string;
 }
 
 export interface ApiNotificationItem {

@@ -146,45 +146,60 @@ export class NotificationService {
 
     setTimeout(() => {
       switch (type) {
+        case 'booking':
+          navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+          break;
+
         case 'booking_detail':
+        case 'booking_confirmed':
+        case 'direct_booking_received':
+        case 'stay_completed':
+        case 'checkin_today':
+        case 'checkout_today':
           navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
             booking_id: `O${id}`,
           });
           break;
 
+        case 'booking_modification':
+        case 'reservation_updated':
+          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+            booking_id: `O${id}`,
+          });
+          break;
+
+        case 'booking_request':
+        case 'pre_booking_inquiry':
+        case 'new_booking_request':
+          navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, {
+            activeFilter: 'booking_request',
+          });
+          break;
+
+        case 'booking_cancellation':
+        case 'reservation_cancelled':
+          navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+          break;
+
         case 'chats_view':
+        case 'new_guest_message':
+        case 'escalation':
           navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
             conversation_id: id,
           });
           break;
 
-        case 'booking_modification':
-          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: `O${id}`,
-          });
-          break;
-
-        case 'booking_cancellation':
-          navigate(NavigationRoutes.APP_STACK.NOTIFIATION);
-          break;
-
-        case 'booking_request':
-          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: `O${id}`,
-          });
-          break;
-
-        case 'listing_mapping':
-        case 'listing_export':
-          break;
-
         case 'task_update':
+        case 'task_created':
+        case 'task_in_progress':
+        case 'task_completed':
           navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
             taskId: id,
           });
           break;
 
         case 'smart_lock':
+        case 'smart_lock_assigned':
           navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES);
           break;
 
@@ -197,6 +212,33 @@ export class NotificationService {
 
         case 'payment_received':
           navigate(NavigationRoutes.APP_STACK.BILLING);
+          break;
+
+        case 'password_changed':
+          navigate(NavigationRoutes.APP_STACK.CHANGE_PASSWORD);
+          break;
+
+        case 'profile_updated':
+        case 'account_created':
+          navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+          break;
+
+        case 'listing_deleted':
+          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          break;
+
+        case 'listing_added':
+        case 'listing_mapped':
+        case 'listing_unmapped':
+        case 'listing_exported':
+          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          break;
+
+        case 'user_invited':
+        case 'user_invitation_accepted':
+        case 'user_role_updated':
+        case 'user_removed':
+          navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
           break;
 
         default:
@@ -236,7 +278,6 @@ export async function localNotification(
         importance: AndroidImportance.HIGH,
         pressAction: { id: 'default' },
         badgeCount: newBadge,
-        showBadge: true,
       },
       ios: {
         badgeCount: newBadge,
