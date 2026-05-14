@@ -225,7 +225,7 @@ const ManageBookingScreen = () => {
               onPress={() => navigate(NavigationRoutes.APP_STACK.CONNECT_OTA_PLATFORMS)}
               backgroundColor={Colors.TEAL_PRIMARY_ALT}
               borderColor="transparent"
-              color={Colors.WHITE}
+              // color={Colors.WHITE}
               fontSize={16}
             />
           </View>
@@ -303,7 +303,7 @@ const ManageBookingScreen = () => {
             <View style={styles.tabEmptyContainer}>
               <Svgicons path="noAccountFound" size={Metrics.scale(320)} />
               <AppText
-                text={t('app.manage_booking.no_account_title')}
+                text={selectedTab === 'Gathern' ? t('app.shared.coming_soon') : t('app.manage_booking.no_account_title')}
                 fontSize={28}
                 type="SemiBold"
                 color={Colors.BLACK}
@@ -329,9 +329,10 @@ const ManageBookingScreen = () => {
             title={hasAccounts ? t('app.manage_booking.add_account', { tab: selectedTab }) : t('app.manage_booking.connect_account', { tab: selectedTab })}
             onPress={() => handleConnect(selectedTab)}
             loading={false}
-            backgroundColor={Colors.TEAL_PRIMARY_ALT}
+            disabled={selectedTab === 'Gathern'}
+            backgroundColor={selectedTab === 'Gathern' ? Colors.DIM_GREY : Colors.TEAL_PRIMARY_ALT}
             borderColor="transparent"
-            color={Colors.WHITE}
+            // color={Colors.WHITE}
             fontSize={16}
           />
         </View>

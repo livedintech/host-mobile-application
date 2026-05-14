@@ -63,16 +63,15 @@ export const createBookingSchema = yup.object({
     .required('End date is required') // Now required for everyone
     .test(
       'is-after-start',
-      'End date cannot be before start date',
+      'End date must be after start date',
       function (value) {
         const { start_date } = this.parent;
         if (!start_date || !value) return true;
 
-        // Standardize comparison
         const start = new Date(start_date).setHours(0, 0, 0, 0);
         const end = new Date(value).setHours(0, 0, 0, 0);
 
-        return end >= start;
+        return end > start;
       },
     ),
 

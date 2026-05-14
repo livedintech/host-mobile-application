@@ -65,25 +65,28 @@ const ConnectOTAPlatformsScreen = () => {
 
         {/* Platform List */}
         <View style={styles.platformList}>
-          {PLATFORMS.map(platform => (
-            <TouchableOpacity
-              key={platform.key}
-              activeOpacity={0.8}
-              onPress={() => handleConnect(platform.key)}
-              disabled={false}
-            >
-              <GlassCard width="100%" style={styles.platformCard}>
-                <Svgicons path={platform.icon} size={28} />
-                <AppText
-                  text={t(`app.connect_ota.${platform.labelKey}`)}
-                  fontSize={16}
-                  type="Medium"
-                  color={Colors.BLACK}
-                  ml={15}
-                />
-              </GlassCard>
-            </TouchableOpacity>
-          ))}
+          {PLATFORMS.map(platform => {
+            const isGathern = platform.key === 'Gathern';
+            return (
+              <TouchableOpacity
+                key={platform.key}
+                activeOpacity={isGathern ? 1 : 0.8}
+                onPress={() => !isGathern && handleConnect(platform.key)}
+                disabled={isGathern}
+              >
+                <GlassCard width="100%" style={[styles.platformCard, isGathern && styles.disabledCard]}>
+                  <Svgicons path={platform.icon} size={28} />
+                  <AppText
+                    text={isGathern ? t('app.shared.coming_soon') : t(`app.connect_ota.${platform.labelKey}`)}
+                    fontSize={16}
+                    type="Medium"
+                    color={isGathern ? Colors.DIM_GREY : Colors.BLACK}
+                    ml={15}
+                  />
+                </GlassCard>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
     </BGImage>
@@ -123,5 +126,8 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.4)',
+  },
+  disabledCard: {
+    opacity: 0.5,
   },
 });

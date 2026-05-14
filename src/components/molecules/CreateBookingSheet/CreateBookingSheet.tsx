@@ -59,7 +59,11 @@ export const CreateBookingSheet = ({
   });
 
   const minStartDate = today;
-  const minEndDate = startDateValue ? new Date(startDateValue) : today;
+  const minEndDate = (() => {
+    const base = startDateValue ? new Date(startDateValue) : new Date(today);
+    base.setDate(base.getDate() + 1);
+    return base;
+  })();
 
   // Calculate Total Logic
   const safeNumber = (value: any): number => {

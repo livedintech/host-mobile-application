@@ -24,7 +24,7 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import { goBack, navigate, navigateToRoot } from '@/services/navigationService';
+import { goBack, navigate } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useAuthStore } from '@/store/useAuthStore';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -524,7 +524,7 @@ const ChatScreen = () => {
                   <MenuOption
                     style={styles.menuItem}
                     onSelect={() => {
-                      navigateToRoot(NavigationRoutes.APP_STACK.LISTING, {
+                      navigate(NavigationRoutes.APP_STACK.LISTING_STACK, {
                         listing_id: conversationData?.listing_id || listing_id,
                       });
                     }}
@@ -844,6 +844,7 @@ const ChatScreen = () => {
                 <TextInput
                   value={inputText}
                   onChangeText={setInputText}
+                  onFocus={() => setShowSavedReplies(false)}
                   placeholder={t('app.chat_detail.write_message')}
                   placeholderTextColor={Colors.SECRET_CHOCOLATE}
                   style={styles.input}

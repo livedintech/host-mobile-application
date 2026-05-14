@@ -17,6 +17,13 @@ const AppStack = () => {
         component={TabStack}
       />
       <Stack.Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.APP_STACK.LISTING_STACK}
+        getComponent={() =>
+          require('@/screens/appstack/Listing/ListingScreen').default
+        }
+      />
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.RESERVATION_CALENDAR}
         getComponent={() =>

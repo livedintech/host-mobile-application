@@ -1958,7 +1958,8 @@
       "unassigned": "Unassigned",
       "chars_of_1000": "/1000 characters",
       "booking_code": "Booking Code",
-      "no_data_found": "No data found"
+       "no_data_found": "No data found",
+       "coming_soon": "Coming Soon"
     },
     "notifications": {
       "title": "Notifications",

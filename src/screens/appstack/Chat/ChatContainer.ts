@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import i18n from '@/locales/i18n/i18n';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import { useForm } from 'react-hook-form';
@@ -121,6 +121,13 @@ export const useChatContainer = () => {
 
   const { data: rawData, isFetching } = dataQuery;
   const data = useInfiniteListData(rawData?.pages);
+
+  const hasEverLoaded = useRef(false);
+  useEffect(() => {
+    if (dataQuery.isSuccess) {
+      hasEverLoaded.current = true;
+    }
+  }, [dataQuery.isSuccess]);
 
 
   /* --------------------------------- MUTATIONS --------------------------------- */
@@ -270,13 +277,13 @@ const handlePopupMenu = (selectedId: string) => {
   } else if (selectedId === 'automation_template') {
     navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE);
   } else if (selectedId === 'ai_auto_reply') {
-    navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY);
+    navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES);
   }
 };
 
   return {
     data,
-    isLoading:false,
+    isLoading: !hasEverLoaded.current,
     isFetching,
     dataQuery,
     activeTab,
