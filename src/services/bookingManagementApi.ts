@@ -220,3 +220,14 @@ export const bookingcomConnectionApi = async (payload: bookingcomConnectionPaylo
     }
     throw response;
 };
+
+export const updateChannelStatusApi = async (payload: { channel_id: number; status: 'active' | 'inactive' }) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CHANNEL_STATUS,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};

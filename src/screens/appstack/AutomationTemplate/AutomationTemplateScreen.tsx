@@ -7,7 +7,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
 import useAutomationTemplateContainer from './AutomationTemplateContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import BGImage from '@/components/molecules/BGImage/BGImage';
@@ -25,7 +25,8 @@ const AutomationTemplatesScreen = () => {
     createNewTemplate,
     confirm,
     openRemoveConfirmSheet,
-    removeSheetRef,
+    isDeleteModalVisible,
+    setDeleteModalVisible,
     isLoadingRemoved,
     data,
     dataQuery,
@@ -160,13 +161,12 @@ const AutomationTemplatesScreen = () => {
           />
         </View>
 
-        <ConfirmAction
-          ref={removeSheetRef}
-          title={`${Item?.temp_name}`}
-          content="Are you sure you want to delete this template?"
-          confirmText="Confirm"
-          closeText="Cancel"
+        <AccountDeleteModal
+          isVisible={isDeleteModalVisible}
+          onClose={() => setDeleteModalVisible(false)}
           onConfirm={confirm}
+          title={`${Item?.temp_name}`}
+          description="Are you sure you want to delete this template?"
           isLoading={isLoadingRemoved}
         />
       </View>

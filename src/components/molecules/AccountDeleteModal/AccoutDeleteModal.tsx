@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Modal } from 'react-native'; // Switched to standard Modal to match MoreScreen
+import { StyleSheet, View, Modal, ActivityIndicator } from 'react-native';
 import AppText from '../AppText/AppText';
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { Colors } from '@/theme/colors';
@@ -12,9 +12,10 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   title: string;
   description: string;
+  isLoading?: boolean;
 }
 
-const AccountDeleteModal = ({ isVisible, onClose, onConfirm, title, description }: ConfirmModalProps) => {
+const AccountDeleteModal = ({ isVisible, onClose, onConfirm, title, description, isLoading }: ConfirmModalProps) => {
   const { t } = useTranslation();
 
   return (
@@ -22,41 +23,45 @@ const AccountDeleteModal = ({ isVisible, onClose, onConfirm, title, description 
       transparent={true}
       visible={isVisible}
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={() => { if (!isLoading) onClose(); }}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
-          <AppText 
+          <AppText
             text={title}
-            type="Bold" 
-            fontSize={18} 
-            style={styles.modalTitle} 
+            type="Bold"
+            fontSize={18}
+            style={styles.modalTitle}
           />
-          
-          <AppText 
+
+          <AppText
             text={description}
-            fontSize={14} 
+            fontSize={14}
             color="grey"
             style={styles.modalSubTitle}
           />
 
           <View style={styles.modalButtonContainer}>
-            <AppPressable style={styles.cancelButton} onPress={onClose}>
-              <AppText 
-                text={t('app.account_delete_modal.cancel')} 
-                type="Medium" 
-                fontSize={16} 
-                color="black" 
+            <AppPressable style={[styles.cancelButton, isLoading && styles.disabledButton]} onPress={() => { if (!isLoading) onClose(); }}>
+              <AppText
+                text={t('app.account_delete_modal.cancel')}
+                type="Medium"
+                fontSize={16}
+                color="black"
               />
             </AppPressable>
 
-            <AppPressable style={styles.confirmButton} onPress={onConfirm}>
-              <AppText 
-                text={t('app.account_delete_modal.confirm')} 
-                type="Medium" 
-                fontSize={16} 
-                color="white" 
-              />
+            <AppPressable style={[styles.confirmButton, isLoading && styles.disabledButton]} onPress={() => { if (!isLoading) onConfirm(); }}>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <AppText
+                  text={t('app.account_delete_modal.confirm')}
+                  type="Medium"
+                  fontSize={16}
+                  color="white"
+                />
+              )}
             </AppPressable>
           </View>
         </View>
@@ -107,9 +112,12 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     borderRadius: 25,
-    backgroundColor: Colors.PRIMARY_TEAL, // Match MoreScreen teal
+    backgroundColor: Colors.PRIMARY_TEAL,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
 });
 

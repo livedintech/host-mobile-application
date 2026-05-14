@@ -1,9 +1,8 @@
 import i18n from '@/locales/i18n/i18n';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { deleteAiAutoReplyApi, editAiAllowStatusApi, editStatusAiAutoReplyApi, getaiAutoReplyApi } from '@/services/aiAutoReplyApi';
@@ -20,8 +19,8 @@ interface AIReply {
 
 export default function useAIAutoReplyContainer() {
     const queryClient = useQueryClient();
-    const removeSheetRef = useRef<ConfirmActionRef>(null);
-  const [Item, setItem] = useState<{ id: string; is_active?: boolean; name?: string }>()
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [Item, setItem] = useState<{ id: string; is_active?: boolean; name?: string }>()
 
     const handleCreateNew = () => navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_AUTO_REPLY);
     const handleEdit = (item: AIReply) => navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_AUTO_REPLY, { editData: item });
@@ -105,16 +104,15 @@ export default function useAIAutoReplyContainer() {
     });
 
     const openRemoveConfirmSheet = (item: any) => {
-        setItem(item)
-        removeSheetRef?.current?.open();
+        setItem(item);
+        setIsDeleteModalVisible(true);
     };
+    const closeDeleteModal = () => setIsDeleteModalVisible(false);
     const confirm = () => {
-
         if (Item)
-            deleteAiAutoReplyPayload({
-                id: Item?.id
-            })
-    }
+            deleteAiAutoReplyPayload({ id: Item?.id });
+        setIsDeleteModalVisible(false);
+    };
     const handleToggleAiAllow = () => {
         editAiAllowPayload({ is_ai_allow: !isAiAllowed });
     };
@@ -140,8 +138,9 @@ export default function useAIAutoReplyContainer() {
         handleKnowledgeBase,
         confirm,
         openRemoveConfirmSheet,
+        closeDeleteModal,
+        isDeleteModalVisible,
         Item,
-        removeSheetRef,
         isLoadingRemoved: isPendingDeleteAiAutoReply && !isIdleDeleteAiAutoReply,
         isLoadingStatus: isPendingEditSaveEdit && !isIdleEditSaveEdit,
         isAiAllowed,

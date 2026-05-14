@@ -78,6 +78,7 @@ const CreateSavedReplyScreen = () => {
                             errors={errors}
                             data={transformedListing || []}
                             placeholder={t('app.saved_replies_create_edit.property_placeholder')}
+                            dropdownPosition='top'
                         />
 
                         {/* ── Auto-Create Checkbox ── */}

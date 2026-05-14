@@ -4,9 +4,11 @@ import {
   View,
   ActivityIndicator,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import useManageBookingContainer from './ManageBookingContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -35,23 +37,24 @@ const TAB_ICON_MAP: Record<TabType, string> = {
 const normalizeType = (type: string) =>
   type === 'Bookings.com' ? 'Booking.com' : type;
 
-const InfoRow = ({ icon, label, value, valueColor }: any) => (
+const InfoRow = ({ icon, label, value, valueColor, valueStyle }: any) => (
   <View style={styles.cardRow}>
     <View style={styles.iconCircle}>
       <Svgicons path={icon} size={20} />
     </View>
-    <View>
+    <View style={{ flex: 1 }}>
       <AppText text={label} type="Regular" color={Colors.BLACK} fontSize={14} />
-      <AppText text={value} type="Medium" color={valueColor} fontSize={14} mt={2} />
+      <AppText text={value} type="Medium" color={valueColor} fontSize={14} mt={2} style={valueStyle} />
     </View>
   </View>
 );
 
-const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions, t }: any) => {
+const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOptions, t, onDeactivate }: any) => {
   const { control, formState: { errors }, setValue } = useForm();
   useEffect(() => {
-    if (account?.listings?.[0]?.listing_id) {
-      setValue('listing_id', String(account.listings[0].listing_id));
+    const airbnbId = account?.listings?.[0]?.listing_relation?.listing_id_airbnb;
+    if (airbnbId) {
+      setValue('listing_id', String(airbnbId));
     }
   }, [account]);
 
@@ -66,6 +69,11 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
     <GlassCard width="100%" style={styles.connectedCard} onPress={() => onExport(account)}>
       <View style={styles.cardHeader}>
         <AppText text={selectedTab} type="Bold" color={Colors.BLACK} fontSize={18} />
+        {account?.channel_status === 'active' && (
+          <TouchableOpacity onPress={() => onDeactivate(account?.id)} style={styles.trashBtn}>
+            <Svgicons path="trashIcon" size={22} />
+          </TouchableOpacity>
+        )}
       </View>
       <InfoRow
         icon={TAB_ICON_MAP[selectedTab as TabType]}
@@ -98,17 +106,18 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
 
       {selectedTab === 'Booking.com' && (
         <View>
-          <InfoRow
+          {/* <InfoRow
             icon="towerBuilding"
             label={t('app.manage_booking.total_property')}
             value={'1'}
             valueColor={Colors.BLACK}
-          />
+          /> */}
           <InfoRow
             icon={TAB_ICON_MAP[selectedTab as TabType]}
             label={t('app.manage_booking.property_name')}
-            value={account?.listings?.[0]?.title}
+            value={account?.listings?.[0]?.title || account?.channel_name}
             valueColor={Colors.BLACK}
+            valueStyle={{ textTransform: 'capitalize' }}
           />
           <InfoRow
             icon="database_check"
@@ -141,10 +150,23 @@ const ManageBookingScreen = () => {
     goToListing,
     connectedAccounts,
     listingOptions,
+    deactivateChannel,
+    isDeactivating,
   } = useManageBookingContainer();
   const { user } = useAuthStore();
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
+  const [deactivateModalVisible, setDeactivateModalVisible] = useState(false);
+  const [pendingChannelId, setPendingChannelId] = useState<number | null>(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
+  useEffect(() => {
+    if (!isDeactivating && isConfirmed) {
+      setDeactivateModalVisible(false);
+      setPendingChannelId(null);
+      setIsConfirmed(false);
+    }
+  }, [isDeactivating, isConfirmed]);
   const totalAccounts = connectedAccounts?.length ?? 0;
 
   const currentTabAccounts = useMemo(() => {
@@ -268,6 +290,10 @@ const ManageBookingScreen = () => {
                     listingOptions={listingOptions}
                     user={user}
                     t={t}
+                    onDeactivate={(channelId: number) => {
+                      setPendingChannelId(channelId);
+                      setDeactivateModalVisible(true);
+                    }}
                   />
                 </View>
               )}
@@ -310,6 +336,24 @@ const ManageBookingScreen = () => {
           />
         </View>
       </View>
+      <AccountDeleteModal
+        isVisible={deactivateModalVisible}
+        onClose={() => {
+          if (!isDeactivating) {
+            setDeactivateModalVisible(false);
+            setPendingChannelId(null);
+          }
+        }}
+        onConfirm={() => {
+          if (pendingChannelId !== null) {
+            deactivateChannel(pendingChannelId);
+            setIsConfirmed(true);
+          }
+        }}
+        isLoading={isDeactivating}
+        title={t('app.manage_booking.deactivate_title')}
+        description={t('app.manage_booking.deactivate_desc')}
+      />
     </BGImage>
   );
 };
@@ -344,7 +388,15 @@ const styles = StyleSheet.create({
   },
   loader: { marginTop: 50 },
   connectedCard: { padding: 24, borderRadius: 24 },
-  cardHeader: { marginBottom: 25 },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 25,
+  },
+  trashBtn: {
+    padding: 6,
+  },
   cardRow: {
     flexDirection: 'row',
     alignItems: 'center',

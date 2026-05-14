@@ -7,7 +7,6 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import Metrics from '@/utility/Metrics';
 import useAIAutoReplyContainer from './AIAutoReplyContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import BGImage from '@/components/molecules/BGImage/BGImage';
@@ -17,6 +16,7 @@ import NoAiAutoReplyScreen from '../NoAiAutoReplyScreen/NoAiAutoReplyScreen';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 
 const AIAutoReplyScreen = () => {
   const { t } = useTranslation();
@@ -32,8 +32,9 @@ const AIAutoReplyScreen = () => {
     Item,
     confirm,
     openRemoveConfirmSheet,
+    isDeleteModalVisible,
+    closeDeleteModal,
     isLoadingRemoved,
-    removeSheetRef,
     isLoadingStatus,
     isAiAllowed,
     handleToggleAiAllow,
@@ -203,13 +204,12 @@ const AIAutoReplyScreen = () => {
           />
         </View>
 
-        <ConfirmAction
-          ref={removeSheetRef}
-          title={`${Item?.name}`}
-          content={t('app.ai_auto_reply.delete_confirm')}
-          confirmText={t('app.ai_auto_reply.confirm_btn')}
-          closeText={t('app.ai_auto_reply.cancel_btn')}
+        <AccountDeleteModal
+          isVisible={isDeleteModalVisible}
+          onClose={closeDeleteModal}
           onConfirm={confirm}
+          title={`${Item?.name}`}
+          description={t('app.ai_auto_reply.delete_confirm')}
           isLoading={isLoadingRemoved}
         />
       </View>

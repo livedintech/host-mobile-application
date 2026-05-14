@@ -6,13 +6,11 @@ import {
   Image,
   Modal,
   Dimensions,
-  KeyboardAvoidingView,
-  Platform,
+  Keyboard,
 } from 'react-native';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
-  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import { useForm } from 'react-hook-form';
 import Video from 'react-native-video';
@@ -65,7 +63,7 @@ const ChecklistDetail = ({ route }: any) => {
     name: string;
   } | null>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%', '75%'], []);
+  const snapPoints = useMemo(() => ['70%'], []);
   const {
     control,
     handleSubmit,
@@ -80,13 +78,18 @@ const ChecklistDetail = ({ route }: any) => {
     return localItems?.some(item => item.images && item.images.length > 0);
   }, [localItems]);
 
+  const closeSheet = useCallback(() => {
+    Keyboard.dismiss();
+    bottomSheetRef.current?.close();
+  }, []);
+
   const onFormSubmit = (data: any) => {
     if (selectedItem) {
       updateItem(selectedItem.id, data.itemName);
     } else {
       addItem(data.itemName);
     }
-    bottomSheetRef.current?.close();
+    closeSheet();
     reset();
   };
 
@@ -159,12 +162,12 @@ const ChecklistDetail = ({ route }: any) => {
     ({ item }: { item: any }) => {
       const isLocked = item.images && item.images.length > 0;
       return (
-   <GlassCard 
-        width="100%" 
+   <GlassCard
+        width="100%"
         style={[
-          styles.taskCard, 
+          styles.taskCard,
           // ✅ Add this line to change background color when checked
-          item.isChecked && { backgroundColor: Colors.WHITE } 
+          item.isChecked && { backgroundColor: Colors.WHITE }
         ]}
       >
           <View style={styles.taskRow}>
@@ -198,10 +201,6 @@ const ChecklistDetail = ({ route }: any) => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={[styles.container, { paddingTop: insets.top }]}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{ flex: 1 }}
-        >
           <HeaderApp isGoBackAfterLogo />
           <FlatListSimpleHandler
             data={localItems}
@@ -299,9 +298,12 @@ const ChecklistDetail = ({ route }: any) => {
             index={-1}
             snapPoints={snapPoints}
             enablePanDownToClose
-            keyboardBehavior="extend"
+            keyboardBehavior="interactive"
             keyboardBlurBehavior="restore"
             android_keyboardInputMode="adjustResize"
+            onAnimate={(_, toIndex) => {
+              if (toIndex === -1) Keyboard.dismiss();
+            }}
             backdropComponent={props => (
               <BottomSheetBackdrop
                 {...props}
@@ -313,7 +315,7 @@ const ChecklistDetail = ({ route }: any) => {
             backgroundStyle={styles.sheetBackground}
             handleIndicatorStyle={styles.sheetIndicator}
           >
-            <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
+            <BottomSheetView style={styles.sheetContent}>
               {/* Header with Close Button */}
               <View style={styles.sheetHeader}>
                 <AppText
@@ -322,7 +324,7 @@ const ChecklistDetail = ({ route }: any) => {
                   type="Medium"
                 />
                 <ButtonView
-                  onPress={() => bottomSheetRef.current?.close()}
+                  onPress={closeSheet}
                   style={styles.closeButton}
                 >
                   <Svgicons
@@ -353,9 +355,8 @@ const ChecklistDetail = ({ route }: any) => {
                 borderRadius={30}
                 onPress={handleSubmit(onFormSubmit)}
               />
-            </BottomSheetScrollView>
+            </BottomSheetView>
           </BottomSheet>
-        </KeyboardAvoidingView>
       </View>
     </BGImage>
   );
