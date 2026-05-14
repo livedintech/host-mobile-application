@@ -68,9 +68,11 @@ const HeaderApp = ({
       const newLang = i18n.language === 'en' ? 'ar' : 'en';
 
       // 1. update backend first (important)
-      await UpdateLanguageApi({
-        language: newLang,
-      });
+      if (user?.id) {
+        await UpdateLanguageApi({
+          language: newLang,
+        });
+      }
 
       // 2. update local i18n
       await changeLanguage(newLang);
@@ -99,7 +101,7 @@ const HeaderApp = ({
           </ButtonView>
         )}
         {isShowProfile && (
-          <GlassCard width="auto" style={styles.profilePill}>
+          <GlassCard width="auto" style={styles.profilePill} onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}>
             {user?.profile_picture ? (
               <Image
                 source={{ uri: user.profile_picture }}

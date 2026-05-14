@@ -7,12 +7,10 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useSavedRepliesContainer } from './SavedRepliesContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
-import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import Metrics from '@/utility/Metrics';
-import { goBack } from '@/services/navigationService';
 import NoSavedRepliesScreen from '../NoSavedRepliesScreen/NoSavedRepliesScreen';
 import { useTranslation } from 'react-i18next';
 
@@ -27,7 +25,8 @@ const SavedRepliesScreen = () => {
     isLoading,
     confirm,
     openRemoveConfirmSheet,
-    removeSheetRef,
+    isDeleteModalVisible,
+    setDeleteModalVisible,
     isLoadingRemoved,
     Item,
     isLoadingStatus,
@@ -75,16 +74,9 @@ const SavedRepliesScreen = () => {
 
             <View style={[styles.detailsRow]}>
               <View style={styles.textDetails}>
+                <AppText text={t('app.saved_replies.listing_access')} fontSize={14} type="Bold" color={Colors.BLACK} />
                 <AppText
-                  text={t('app.saved_replies.listing_access')}
-                  fontSize={14}
-                  type="Bold"
-                  color={Colors.BLACK}
-                />
-                <AppText
-                  text={
-                    item.listing_label || t('app.saved_replies.all_listings')
-                  }
+                  text={item.listing_label || t('app.saved_replies.all_listings')}
                   fontSize={13}
                   color={Colors.GREY_SHADOW}
                   mt={2}
@@ -108,6 +100,8 @@ const SavedRepliesScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
+
+
         {!!data?.length && (
           <View style={styles.topTextSection}>
             <AppText
@@ -147,13 +141,12 @@ const SavedRepliesScreen = () => {
           />
         </View>
 
-        <ConfirmAction
-          ref={removeSheetRef}
-          title={`${Item?.title}`}
-          content={t('app.saved_replies.delete_confirm')}
-          confirmText={t('app.saved_replies.confirm_btn')}
-          closeText={t('app.saved_replies.cancel_btn')}
+        <AccountDeleteModal
+          isVisible={isDeleteModalVisible}
+          onClose={() => setDeleteModalVisible(false)}
           onConfirm={confirm}
+          title={`${Item?.title}`}
+          description={t('app.saved_replies.delete_confirm')}
           isLoading={isLoadingRemoved}
         />
       </View>
@@ -195,7 +188,7 @@ const styles = StyleSheet.create({
   },
   actionIcons: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 8
   },
   iconGlassCard: {
     height: 40,
@@ -210,7 +203,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   detailsRow: {
     flexDirection: 'row',

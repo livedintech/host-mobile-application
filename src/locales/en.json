@@ -145,7 +145,11 @@
       "validation_password_min": "Password must be at least 8 characters",
       "validation_password_letters": "Password must contain letters",
       "validation_password_numbers": "Password must contain numbers",
-      "validation_password_symbols": "Password must contain at least one symbol (@$!%*?&#)"
+      "validation_password_symbols": "Password must contain at least one symbol (@$!%*?&#)",
+      "exit_modal_title": "Leave Account Setup?",
+      "exit_modal_text": "Going back will invalidate your OTP and you'll need to restart sign-up.",
+      "exit_modal_cancel": "Cancel",
+      "exit_modal_confirm": "Confirm"
     },
     "payment": {
       "title": "Payment",
@@ -888,7 +892,9 @@
       "gathern_connected": "Gathern Already Connected",
       "gathern_connected_desc": "Your Gathern account is already connected.",
       "bookingcom_connected": "Booking.com Already Connected",
-      "bookingcom_connected_desc": "Your Booking.com account is already connected."
+      "bookingcom_connected_desc": "Your Booking.com account is already connected.",
+      "deactivate_title": "Deactivate Account",
+      "deactivate_desc": "Are you sure you want to deactivate this account? You can reconnect it later."
     },
     "no_listing_smart_lock": {
       "title": "No Property Found",

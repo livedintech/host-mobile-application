@@ -1,5 +1,4 @@
 import i18n from '@/locales/i18n/i18n';
-import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import STORAGE_CONST from '@/constants/storage';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -8,7 +7,7 @@ import { navigate } from '@/services/navigationService';
 import { deleteSaveReplyApi, editStatusSaveReplyApi, getSavedRepliesApi } from '@/services/savedRepliesApi';
 import { deleteSavedRepliesTypesApiPayload, editStatusSavedRepliesTypesApiPayload, savedRepliesTypesApiResponse } from '@/types/api/savedRepliesTypes';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Toast from 'react-native-toast-message';
 
 interface SavedReply {
@@ -19,7 +18,7 @@ interface SavedReply {
 }
 
 export const useSavedRepliesContainer = () => {
-  const removeSheetRef = useRef<ConfirmActionRef>(null);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [Item, setItem] = useState<{ id: string; is_active?: boolean; title?: string }>()
 
   const editReply = (item: SavedReply) => {
@@ -65,7 +64,7 @@ export const useSavedRepliesContainer = () => {
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_SAVED_REPLIES]
       });
-      removeSheetRef?.current?.close()
+      setDeleteModalVisible(false);
     },
     onError: error => {
       Toast.show({
@@ -93,8 +92,8 @@ export const useSavedRepliesContainer = () => {
 
 
   const openRemoveConfirmSheet = (item: any) => {
-    setItem(item)
-    removeSheetRef?.current?.open();
+    setItem(item);
+    setDeleteModalVisible(true);
   };
   const confirm = () => {
 
@@ -123,7 +122,8 @@ export const useSavedRepliesContainer = () => {
     createNewReply,
     openRemoveConfirmSheet,
     confirm,
-    removeSheetRef,
+    isDeleteModalVisible,
+    setDeleteModalVisible,
     isLoadingRemoved: isPendingDeleteSaveReply && !isIdleDeleteSaveReply || isPendingEditSaveEdit && !isIdleEditSaveEdit,
     isLoadingStatus: isPendingEditSaveEdit && !isIdleEditSaveEdit,
     Item

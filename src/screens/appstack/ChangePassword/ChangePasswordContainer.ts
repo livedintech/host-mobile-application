@@ -45,5 +45,5 @@ export default function useChangePasswordContainer() {
     // goBack()
   };
 
-  return { control, errors, handleSubmit, onSubmit, isLoading: false, navigation };
+  return { control, errors, handleSubmit, onSubmit, isLoading: isPending, navigation };
 }

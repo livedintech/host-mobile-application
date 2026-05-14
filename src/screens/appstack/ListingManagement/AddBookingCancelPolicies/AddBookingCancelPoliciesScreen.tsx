@@ -58,11 +58,11 @@ const AddBookingCancelPoliciesScreen = () => {
 const AirbnblongTermOptions = [
   {
     label: 'Firm Long Term - Full refund up to 30 days before check-in, after that first 30 days non-refundable',
-    value: 'CANCEL_LONG_TERM_WITH_GRACE_PERIOD',
+    value: 'CANCEL_LONG_TERM_FAIR',
   },
   {
     label: 'Strict Long Term - Full refund within 48 hours of booking (if 28+ days before check-in), after that first 30 days non-refundable',
-    value: 'CANCEL_LONG_TERM_FAIR',
+    value: 'CANCEL_LONG_TERM_WITH_GRACE_PERIOD',
   },
 ];
   return (

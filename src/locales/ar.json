@@ -143,7 +143,11 @@
       "validation_password_required": "كلمة المرور مطلوبة",
       "validation_password_min": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
       "validation_password_letters": "يجب أن تحتوي كلمة المرور على أحرف",
-      "validation_password_numbers": "يجب أن تحتوي كلمة المرور على أرقام"
+      "validation_password_numbers": "يجب أن تحتوي كلمة المرور على أرقام",
+      "exit_modal_title": "هل تريد مغادرة إعداد الحساب؟",
+      "exit_modal_text": "العودة للخلف سيُلغي رمز التحقق OTP وستحتاج إلى البدء من جديد.",
+      "exit_modal_cancel": "إلغاء",
+      "exit_modal_confirm": "تأكيد"
     },
     "payment": {
       "title": "الدفع",
@@ -886,7 +890,9 @@
       "gathern_connected": "Gathern متصل بالفعل",
       "gathern_connected_desc": "حساب Gathern الخاص بك متصل بالفعل.",
       "bookingcom_connected": "Booking.com متصل بالفعل",
-      "bookingcom_connected_desc": "حساب Booking.com الخاص بك متصل بالفعل."
+      "bookingcom_connected_desc": "حساب Booking.com الخاص بك متصل بالفعل.",
+      "deactivate_title": "إلغاء تفعيل الحساب",
+      "deactivate_desc": "هل أنت متأكد أنك تريد إلغاء تفعيل هذا الحساب؟ يمكنك إعادة الاتصال لاحقًا."
     },
     "no_listing_smart_lock": {
       "title": "لم يتم العثور على عقار",

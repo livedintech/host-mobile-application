@@ -148,6 +148,7 @@ export const SERVICE_CONFIG_URLS = {
     SUBSCRIPTION_ACTIVE: `${authController}/subscription/activate`,
     BOOING_COM_TEST_CONNECTION: `${authController}/bookingcom/test-connection`,
     BOOING_COM_CONNECTION: `${authController}/bookingcom/connection`,
+    CHANNEL_STATUS: `${authController}/channelmanagement/channel-status`,
     UPDATE_PROFILE: `${authController}/user/update`,
     PROFILE_CITIES: `${authController}/cities?country_id={country_id}`,
     INQUIRY_SPECIAL_OFFER: `${authController}/bookings/inquiry/special-offer`,

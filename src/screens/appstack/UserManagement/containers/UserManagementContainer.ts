@@ -26,7 +26,7 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   const queryClient = useQueryClient();
   const { params } = useRoute<any>();
   const editUser = params?.editUser;
-  console.log('user?.role_key::',user?.role_key);
+  console.log('editUser:s:',editUser);
   
 
   
@@ -59,6 +59,8 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
     label: service.name || service.label, // Adjust based on your API response keys
     value: service.id || service.value,
   }));
+
+  
 
   // 2. Validation Schema
   const userManagementSchema = yup.object({
@@ -267,6 +269,6 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
         editUser: item,
       }),
     handleDeleteUser,
-    permissionToEditPhoneNumber:editUser
+    permissionToEditPhoneNumber: mode === 'edit' && !!editUser
   };
 }

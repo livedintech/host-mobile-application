@@ -2,17 +2,17 @@ import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useRoute, useNavigation } from '@react-navigation/native'; // Added useNavigation
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 import {
   CreateAccountPayload,
   CreateAccountResponse,
 } from '@/types/api/authTypes';
 import { createAccountApi } from '@/services/authApi';
-import { navigate } from '@/services/navigationService';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Toast from 'react-native-toast-message';
-import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import { useCallback, useState, useEffect, useMemo, useRef } from 'react';
+import { navigate, reset } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export default function useCreateAccountContainer() {
   const signUpSchema = useMemo(() => yup.object().shape({
@@ -25,8 +25,9 @@ export default function useCreateAccountContainer() {
       .matches(/[@$!%*?&#]/, i18n.t('auth.create_account.validation_password_symbols'))
       .required(i18n.t('auth.create_account.validation_password_required')),
   }), []);
+
   const route = useRoute<any>();
-  const navigation = useNavigation(); // Hook for navigation
+  const navigation = useNavigation();
 
   const { params } = useRoute();
   const country_code = params?.payload?.country_code;
@@ -34,13 +35,10 @@ export default function useCreateAccountContainer() {
   const phone_with_code = params?.payload?.phone_with_code;
   const listing_count = params?.payload?.listing_count;
   const pricing = params?.payload?.pricing;
-  
+
   const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
-  
-  // --- Back Navigation Interception States ---
-  const [isExitModalVisible, setIsExitModalVisible] = useState(false);
-  const [navAction, setNavAction] = useState<any>(null);
-  const allowGoBack = useRef(false); // Ref to check if we should allow going back
+  const [showBackModal, setShowBackModal] = useState(false);
+  const confirmedRef = useRef(false);
 
   const prefill      = (route.params as any) || {};
   const deepLinkName = prefill?.payload?.name || prefill?.name || '';
@@ -59,39 +57,24 @@ export default function useCreateAccountContainer() {
     },
   });
 
-  // Intercept back navigation
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      if (allowGoBack.current) {
-        return; // Modal me 'Confirm' press karne par back jane do
-      }
-
-      // Default back behavior ko rok do
+      if (confirmedRef.current) return;
       e.preventDefault();
-      
-      // Action save karo aur modal show karo
-      setNavAction(e.data.action);
-      setIsExitModalVisible(true);
+      setShowBackModal(true);
     });
-
     return unsubscribe;
   }, [navigation]);
 
-  const onConfirmExit = () => {
-    setIsExitModalVisible(false);
-    allowGoBack.current = true; // Ab allow kar do back jana
-    setTimeout(() => {
-      if (navAction) {
-        navigation.dispatch(navAction); // Save kiya hua action perform karo (jaise goBack)
-      }
-    }, 100);
-  };
+  const confirmGoBack = useCallback(() => {
+    confirmedRef.current = true;
+    setShowBackModal(false);
+    reset(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
+  }, []);
 
-  const onCancelExit = () => {
-    setIsExitModalVisible(false);
-    setNavAction(null);
-  };
-  // -------------------------------------------
+  const cancelGoBack = useCallback(() => {
+    setShowBackModal(false);
+  }, []);
 
   const {
     mutate: createAccountPayload,
@@ -134,9 +117,8 @@ export default function useCreateAccountContainer() {
     handleLanguage: () => console.log('AR Toggled'),
     isTermsAccepted,
     toggleTerms,
-    // Export modal states and functions
-    isExitModalVisible,
-    onConfirmExit,
-    onCancelExit,
+    showBackModal,
+    confirmGoBack,
+    cancelGoBack,
   };
 }

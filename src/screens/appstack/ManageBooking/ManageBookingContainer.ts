@@ -3,14 +3,16 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import {
   getChannelsUserbyId,
   getUserListingsByUserIDApi,
+  updateChannelStatusApi,
 } from '@/services/bookingManagementApi';
 import { navigate } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import i18n from '@/locales/i18n/i18n';
 
 export default function useManageBookingContainer() {
   const { user } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const { data: response, isLoading, refetch } = useQuery({
     queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
@@ -64,6 +66,14 @@ export default function useManageBookingContainer() {
     }
   };
 
+  const { mutate: deactivateChannel, isPending: isDeactivating } = useMutation({
+    mutationFn: (channel_id: number) =>
+      updateChannelStatusApi({ channel_id, status: 'inactive' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id] });
+    },
+  });
+
   // Fetch user listings (for dropdown options)
   const { data: apiResponse, isLoading: isLoadingDropdown, isFetching: isFetchingDropdown } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
@@ -77,7 +87,7 @@ export default function useManageBookingContainer() {
   // Prepare dropdown options (values must be strings)
   const listingOptions = apiResponse?.data?.map((item: any) => ({
     label: item.name,
-    value: String(item.id), // ✅ listing_id nahi, id use karo
+    value: String(item.listing_id),
   })) ?? [];
   return {
     handleConnect,
@@ -87,5 +97,7 @@ export default function useManageBookingContainer() {
     goToListing,
     user,
     listingOptions,
+    deactivateChannel,
+    isDeactivating,
   };
 }

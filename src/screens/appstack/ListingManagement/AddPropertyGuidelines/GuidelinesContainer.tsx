@@ -101,7 +101,7 @@ export default function useGuidelinesContainer() {
       resolver: yupResolver(guidelinesSchema) as any,
       defaultValues: {
         arrival_guide: listing?.arrival_guide ?? '',
-        property_rules: listing?.house_rule ?? '',
+        property_rules: listing?.house_manual || listing?.house_manul || '',
         wifi_username: listing?.wifi_network ?? '',
         wifi_password: listing?.wifi_password ?? '',
         door_lock_code: listing?.door_lock_code ?? '',

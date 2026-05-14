@@ -158,9 +158,11 @@ export default function usePropertyDetailContainer() {
       minGapNight: listing?.min_gap_night ?? '',
       minNights: listing?.min_nights ?? '', // ✅ Fix
       maxNights: listing?.max_nights ?? '',
-      features: Array.isArray(listing?.amenities)
-        ? listing.amenities.join(', ')
-        : '',
+      features: Array.isArray(listing?.amenities_with_labels)
+        ? listing.amenities_with_labels.map((a: { label: string }) => a.label).join(', ')
+        : Array.isArray(listing?.amenities)
+          ? listing.amenities.join(', ')
+          : '',
     },
 
     houseDetails: {
