@@ -56,6 +56,7 @@ const getOTASource = (source?: string) => {
       color: COLORS.GATHERN_DARK,
       light: COLORS.GATHERN_LIGHT,
     };
+
   return {
     icon: 'livedin',
     color: COLORS.LIVEDIN_DARK,
@@ -164,13 +165,13 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                   isSingleDay && { maxWidth: SELECTION_HEIGHT * 0.9 },
                 ]}
               >
-                {brand.icon !== 'livedin' && (
-                  <Svgicons
-                    path={brand.icon as any}
-                    size={ms(9)}
-                    color={iconColor}
-                  />
-                )}
+                {/* {brand.icon !== 'livedin' && ( */}
+                <Svgicons
+                  path={brand.icon as any}
+                  size={ms(9)}
+                  color={iconColor}
+                />
+                {/* )} */}
                 {/* <AppText
                   text={displayName}
                   style={[
