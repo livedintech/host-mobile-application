@@ -49,14 +49,24 @@ const SavedRepliesScreen = () => {
               {/* Updated Action Icons with GlassCards */}
               <View style={styles.actionIcons}>
                 <GlassCard width={40} style={styles.iconGlassCard}>
-                  <AppPressable onPress={() => openRemoveConfirmSheet(item)} style={styles.iconBtn}>
+                  <AppPressable
+                    onPress={() => openRemoveConfirmSheet(item)}
+                    style={styles.iconBtn}
+                  >
                     <Svgicons path="TrashFull" size={20} color={Colors.BLACK} />
                   </AppPressable>
                 </GlassCard>
 
                 <GlassCard width={40} style={styles.iconGlassCard}>
-                  <AppPressable onPress={() => editReply(item)} style={styles.iconBtn}>
-                    <Svgicons path="editIconUserManagement" size={20} color={Colors.BLACK} />
+                  <AppPressable
+                    onPress={() => editReply(item)}
+                    style={styles.iconBtn}
+                  >
+                    <Svgicons
+                      path="editIconUserManagement"
+                      size={20}
+                      color={Colors.BLACK}
+                    />
                   </AppPressable>
                 </GlassCard>
               </View>
@@ -94,7 +104,13 @@ const SavedRepliesScreen = () => {
 
         {!!data?.length && (
           <View style={styles.topTextSection}>
-            <AppText text={t('app.saved_replies.title')} fontSize={28} type="Bold" color={Colors.BLACK} mb={20} />
+            <AppText
+              text={t('app.saved_replies.title')}
+              fontSize={28}
+              type="Bold"
+              color={Colors.BLACK}
+              mb={20}
+            />
             <AppText
               text={t('app.saved_replies.description')}
               fontSize={14}
@@ -108,7 +124,9 @@ const SavedRepliesScreen = () => {
           isLoading={isLoading || isFetching}
           data={data}
           meta={dataQuery}
-          ListEmptyComponent={<NoSavedRepliesScreen onCreatePress={createNewReply} />}
+          ListEmptyComponent={
+            <NoSavedRepliesScreen onCreatePress={createNewReply} />
+          }
           renderItem={renderItem}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.listContent}
@@ -166,7 +184,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   actionIcons: {
     flexDirection: 'row',

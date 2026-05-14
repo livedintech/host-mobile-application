@@ -331,6 +331,11 @@ import crossUnique from './crossUnique.svg'
 import calender_black from './calender_black.svg'
 import noTaskAvailable from './noTaskAvailable.svg'
 import noListingFound from './noListingFound.svg'
+import aiSetting from './aiSetting.svg'
+import escalationIcon from './escalationIcon.svg'
+import messageCategoriesIcon from './messageCategoriesIcon.svg'
+import aiAutoReplyMoreScreenIcon from './aiAutoReplyMoreScreenIcon.svg'
+import pencilEdit from './pencilEdit.svg'
 
 export const icons = {
   calender_black,
@@ -666,5 +671,10 @@ export const icons = {
   staff,
   facilities,
   noTaskAvailable,
-  noListingFound
+  noListingFound,
+  aiSetting,
+  escalationIcon,
+  messageCategoriesIcon,
+  aiAutoReplyMoreScreenIcon,
+  pencilEdit
 };

@@ -147,7 +147,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          headerShown: false
+          headerShown: false,
         }}
         name={NavigationRoutes.APP_STACK.AIRBNB_IMPORT}
         getComponent={() =>
@@ -164,7 +164,7 @@ const AppStack = () => {
       />
       <Stack.Screen
         options={{
-          headerShown: false
+          headerShown: false,
         }}
         name={NavigationRoutes.APP_STACK.GATHERN_IMPORT}
         getComponent={() =>
@@ -837,7 +837,8 @@ const AppStack = () => {
       options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.CONNECT_OTA_PLATFORMS}
         getComponent={() =>
-          require('@/screens/appstack/ConnectOTAPlatforms/ConnectOTAPlatformsScreen').default
+          require('@/screens/appstack/ConnectOTAPlatforms/ConnectOTAPlatformsScreen')
+            .default
         }
       />
       {/* CANCEL RESERVATION END */}
@@ -845,8 +846,7 @@ const AppStack = () => {
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.NOTIFIATION}
         getComponent={() =>
-          require('@/screens/appstack/Notificaiton/NotificaitonScreen')
-            .default
+          require('@/screens/appstack/Notificaiton/NotificaitonScreen').default
         }
       />
       <Stack.Screen
@@ -860,7 +860,49 @@ const AppStack = () => {
         options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CHECKOUT_INSTRUCTION}
         getComponent={() =>
-          require('@/screens/appstack/ListingManagement/CheckoutInstruction/CheckoutInstructionScreen').default
+          require('@/screens/appstack/ListingManagement/CheckoutInstruction/CheckoutInstructionScreen')
+            .default
+        }
+      />
+      {/* AI AUTO FEATURE */}
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.AI_AUTOPILOT}
+        getComponent={() =>
+          require('@/screens/appstack/AIAutoReplyFeature/screens/AiAutoPilotScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.ESCALATION_SETTINGS}
+        getComponent={() =>
+          require('@/screens/appstack/AIAutoReplyFeature/screens/EscalationSettingScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES}
+        getComponent={() =>
+          require('@/screens/appstack/AIAutoReplyFeature/screens/MessageCategoriesScreen')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.HOW_AUTOPILOT_WORK}
+        getComponent={() =>
+          require('@/screens/appstack/AIAutoReplyFeature/screens/HowAutoPilotWork')
+            .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp isGoBack /> }}
+        name={NavigationRoutes.APP_STACK.CATEGORY_CUSTOM_INSTRUCTIONS}
+        getComponent={() =>
+          require('@/screens/appstack/AIAutoReplyFeature/screens/CategoryCustomInstructionsScreen')
+            .default
         }
       />
     </Stack.Navigator>
