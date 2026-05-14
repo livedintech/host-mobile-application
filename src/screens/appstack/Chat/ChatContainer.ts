@@ -277,7 +277,7 @@ const handlePopupMenu = (selectedId: string) => {
   } else if (selectedId === 'automation_template') {
     navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE);
   } else if (selectedId === 'ai_auto_reply') {
-    navigate(NavigationRoutes.APP_STACK.AI_AUTO_REPLY);
+    navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES);
   }
 };
 

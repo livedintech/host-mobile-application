@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useAirbnbImportContainer from './AirbnbImportContainer';
@@ -10,8 +10,6 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import HeaderApp from '@/components/molecules/Header/HeaderApp';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
@@ -125,7 +123,6 @@ const AirbnbImportScreen = () => {
             <SpinnerLoader />
           </View>
         )}
-        {/* <HeaderApp isGoBack /> */}
         <View style={styles.headerRow}>
           <ButtonView onPress={() => goBack()}>
             <Svgicons path="back" size={40} />
@@ -193,16 +190,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
   },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   scrollContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -262,8 +249,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.baseMargin,
     paddingTop: Metrics.baseMargin,
   },
-  backBtnWrapper: { width: 32, height: 32, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
-
 });
 
 export default AirbnbImportScreen;

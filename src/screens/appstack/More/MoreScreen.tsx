@@ -14,10 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { logoutApi } from '@/services/authApi';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-// TODO: uncomment when backend fixes logout endpoint
-// import { logoutApi } from '@/services/authApi';
-// import { useMutation } from '@tanstack/react-query';
-// import Toast from 'react-native-toast-message';
+import { NotificationService } from '@/services/notification.service';
 
 const MoreScreen = () => {
   const { t } = useTranslation();
@@ -26,24 +23,20 @@ const MoreScreen = () => {
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
-  // TODO: uncomment when backend fixes logout endpoint
-  // const { mutate: handleLogout, isPending } = useMutation({
-  //   mutationFn: () => logoutApi({ user_id: user?.id ?? '', fcm_token: '' }),
-  //   onSuccess: () => {
-  //     setModalVisible(false);
-  //     logout();
-  //   },
-  //   onError: () => {
-  //     setModalVisible(false);
-  //     Toast.show({ type: 'error', text1: t('common.toast.something_went_wrong') });
-  //   },
-  // });
-
-  const handleLogout = () => {
-    setModalVisible(false);
-    logout();
-  };
-  const isPending = false;
+  const { mutate: handleLogout, isPending } = useMutation({
+    mutationFn: async () => {
+      const fcm_token = await NotificationService.getToken().catch(() => '');
+      return logoutApi({ user_id: user?.id ?? '', fcm_token });
+    },
+    onSuccess: () => {
+      setModalVisible(false);
+      logout();
+    },
+    onError: () => {
+      setModalVisible(false);
+      Toast.show({ type: 'error', text1: t('common.toast.something_went_wrong') });
+    },
+  });
 
   const displayPhone = user?.phone_with_code && user?.phone 
     ? `+${user.phone_with_code} ${user.phone}` 
