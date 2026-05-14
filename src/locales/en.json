@@ -1477,7 +1477,7 @@
       "cleaning_fee": "Cleaning Fee:",
       "host_share": "Host Share:",
       "ota_share": "OTA Share:",
-      "tax":"Tax:",
+      "tax": "Tax:",
       "view_details": "View Details",
       "create_new_task": "Create New Task"
     },
@@ -1959,6 +1959,83 @@
       "mark_all_read": "Mark all as read",
       "empty_title": "No notifications yet",
       "empty_desc": "You're all caught up. New notifications will appear here."
+    },
+    "autopilot": {
+      "title": "AI Autopilot",
+      "description": "Set up your AI Autopilot to handle replies intelligently and consistently.",
+      "how_it_works": "How Autopilot works?",
+      "status_active": "Autopilot Active",
+      "status_disabled": "Autopilot Disabled",
+      "status_subtitle": "AI will send replies automatically when confident",
+      "label_select_property": "Select Property",
+      "placeholder_properties": "Select Properties",
+      "error_property_required": "Please select at least one property",
+      "label_auto_create": "Auto-create for new listings",
+      "label_wait_trigger": "Wait Trigger",
+      "placeholder_delay": "Select delay",
+      "btn_save": "Save Settings",
+      "update_success": "AI Autopilot updated successfully",
+      "update_error": "Something went wrong",
+      "wait_options": {
+        "instant": "Instant",
+        "1min": "1 minute",
+        "5min": "5 minutes",
+        "10min": "10 minutes",
+        "15min": "15 minutes"
+      }
+    },
+    "how_autopilot": {
+      "title": "How Autopilot Works",
+      "escalation_title": "Autopilot Message Escalation & Responsibility",
+      "escalation_desc": "Autopilot will escalate messages to you for review based on its confidence. The escalation will be sent via a push notification on your mobile app or in your browser. Autopilot may send incorrect information. By using Autopilot, you agree to be responsible for messages sent by the system.",
+      "best_results": "For best results:",
+      "tip_1": "1. Set a 5-10 minute response delay to allow time for review",
+      "tip_2": "2. Add relevant information to AI Memory to improve response accuracy",
+      "improvement_desc": "Autopilot will improve over time based on your messages and feedback. You can enhance responses by updating AI Memories.",
+      "upgrade_title": "Grow Faster with AI Suite",
+      "upgrade_desc": "The Starter Plan includes limited AI access and supports up to 2 bookings per listing. To unlock advanced AI features, higher booking capacity, automated guest communication, dynamic pricing, and full-scale hosting tools, upgrade to the AI Suite plan for a complete smart hosting experience.",
+      "btn_upgrade": "Upgrade to AI Suite"
+    },
+    "escalation": {
+      "title": "Escalation Settings",
+      "description": "Define thresholds for automation. If the AI confidence or sentiment falls below these levels, messages are escalated to you.",
+      "confidence_title": "Confidence Level",
+      "confidence_label": "Send Automatically When Confident",
+      "confidence_automated": "Automated",
+      "confidence_hint": "Minimum confidence required for AI to reply.",
+      "frustration_title": "Frustration Detection",
+      "frustration_desc": "Turn this on to send conversations to you when the guest seems upset or frustrated.",
+      "sentiment_title": "Sentiment Level",
+      "sentiment_label": "Escalate When Sentiment Is Below",
+      "sentiment_escalated": "Escalated",
+      "btn_save": "Save Settings",
+      "saving": "Saving...",
+      "toast_success_title": "Settings Updated",
+      "toast_success_desc": "Your AI escalation rules have been saved.",
+      "toast_error_title": "Update Failed"
+    },
+    "categories": {
+      "title": "Message Categories",
+      "description": "Choose which types of messages Autopilot should handle automatically. If a message category is off, you will receive an escalation notification.",
+      "confidence": "Confidence: ",
+      "message_percentage": "{{percentage}}% of messages",
+      "btn_save": "Save Changes",
+      "saving": "Saving...",
+      "toast_success": "Categories updated successfully",
+      "toast_success_title": "Success"
+    },
+    "category_instructions": {
+      "main_title": "Custom instructions for {{title}}",
+      "add_more": "+ Add more",
+      "label_instructions": "Instructions",
+      "placeholder_instructions": "Add instructions...",
+      "label_select_property": "Select Property",
+      "placeholder_multiselect": "Select Multiple Options",
+      "label_auto_create": "Auto-create for all new listings",
+      "btn_apply": "Apply Changes",
+      "saving": "Saving...",
+      "toast_success": "Instructions saved successfully",
+      "toast_error": "Failed to save"
     }
   }
 }

@@ -1,91 +1,33 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-// Shared Components
 import AppText from '@/components/molecules/AppText/AppText';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
-// Theme & Utility
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-
-interface CategoryItem {
-  id: string;
-  title: string;
-  confidence: number;
-  percentageOfMessages: string;
-  isEnabled: boolean;
-}
+import MessageCategoriesContainer from '../containers/MessageCategoriesContainer';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const MessageCategoriesScreen = () => {
-  const navigation = useNavigation<any>();
-
-  const [categories, setCategories] = useState<CategoryItem[]>([
-    {
-      id: '1',
-      title: 'Discount Requests',
-      confidence: 99,
-      percentageOfMessages: '21.7%',
-      isEnabled: true,
-    },
-    {
-      id: '2',
-      title: 'Booking Inquiry',
-      confidence: 87,
-      percentageOfMessages: '15.0%',
-      isEnabled: true,
-    },
-    {
-      id: '3',
-      title: 'Booking Changes',
-      confidence: 95,
-      percentageOfMessages: '8.0%',
-      isEnabled: true,
-    },
-    {
-      id: '4',
-      title: 'Check-in/Check-out',
-      confidence: 100,
-      percentageOfMessages: '4.5%',
-      isEnabled: true,
-    },
-    {
-      id: '5',
-      title: 'Booking Cancellation',
-      confidence: 85,
-      percentageOfMessages: '4.5%',
-      isEnabled: true,
-    },
-    {
-      id: '6',
-      title: 'Guest Complaints',
-      confidence: 45,
-      percentageOfMessages: '4.5%',
-      isEnabled: true,
-    },
-    {
-      id: '7',
-      title: 'Maintenance Issues',
-      confidence: 30,
-      percentageOfMessages: '4.5%',
-      isEnabled: true,
-    },
-  ]);
-
-  const toggleSwitch = (id: string) => {
-    setCategories(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, isEnabled: !item.isEnabled } : item,
-      ),
-    );
-  };
+  const { t } = useTranslation();
+  const {
+    categories,
+    toggleSwitch,
+    isLoading,
+    isFetching,
+    refetch,
+    handleSave,
+    isUpdating,
+    navigation
+  } = MessageCategoriesContainer();
 
   const getConfidenceColor = (value: number) => {
     if (value >= 80) return Colors.MEDIUM_SEA_GREEN;
@@ -98,24 +40,25 @@ const MessageCategoriesScreen = () => {
       source={require('@/assets/img/background/linearBG.png')}
       style={styles.container}
     >
-      <ScrollView
+      <RefreshableScrollView
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+        isLoading={isLoading}
+        refreshing={isFetching}
+        onRefresh={refetch}
       >
-        <AppText text="Message Categories" fontSize={32} type="Bold" mb={12} />
+        <AppText text={t('app.categories.title')} fontSize={32} type="Bold" mb={12} />
         <AppText
-          text="Choose which types of messages Autopilot should handle automatically. If a message category is off, you will receive an escalation notification."
+          text={t('app.categories.description')}
           fontSize={14}
-          color={Colors.BLACK_60_PERCENT}
+          color={Colors.DARK_CHARCOAL_OPACITY}
           lineHeight={18}
           mb={24}
         />
 
-        {categories.map(item => (
+        {categories.map((item) => (
           <GlassCard key={item.id} style={styles.card}>
-            {/* Row 1: Title and Pencil Icon */}
             <View style={styles.topRow}>
-              <AppText text={item.title} fontSize={17} type="Bold" />
+              <AppText text={item.category_name} fontSize={17} type="Bold" />
 
               <GlassCard style={styles.pencilGlassWrapper}>
                 <ButtonView
@@ -123,28 +66,21 @@ const MessageCategoriesScreen = () => {
                   onPress={() =>
                     navigation.navigate(
                       NavigationRoutes.APP_STACK.CATEGORY_CUSTOM_INSTRUCTIONS,
-                      {
-                        title: item.title,
-                      },
+                      { title: item.category_name , category_id: item.id}
                     )
                   }
                 >
-                  <Svgicons
-                    path="pencilEdit"
-                    size={16}
-                    color={Colors.BLACK_53_PERCENT}
-                  />
+                  <Svgicons path="pencilEdit" size={18} />
                 </ButtonView>
               </GlassCard>
             </View>
 
-            {/* Row 2: Stats (Confidence/Percentage) and Switch */}
             <View style={styles.bottomRow}>
               <View style={styles.statsContainer}>
                 <AppText
-                  text="Confidence: "
+                  text={t('app.categories.confidence')}
                   fontSize={13}
-                  color={Colors.BLACK_60_PERCENT}
+                  color={Colors.BLACK}
                   type="Medium"
                 >
                   <AppText
@@ -155,27 +91,28 @@ const MessageCategoriesScreen = () => {
                   />
                 </AppText>
                 <AppText
-                  text={`${item.percentageOfMessages} of messages`}
+                  text={t('app.categories.message_percentage', { percentage: item.message_percentage })}
                   fontSize={13}
-                  color={Colors.BLACK_35_PERCENT}
+                  color={Colors.BLACK}
                   mt={2}
                 />
               </View>
 
               <CustomSwitch
-                value={item.isEnabled}
+                value={item.status}
                 onToggle={() => toggleSwitch(item.id)}
               />
             </View>
           </GlassCard>
         ))}
-      </ScrollView>
+      </RefreshableScrollView>
 
       <View style={styles.footer}>
         <AppButton
-          title="Save Changes"
-          onPress={() => navigation.goBack()}
+          title={isUpdating ? t('app.categories.saving') : t('app.categories.btn_save')}
+          onPress={handleSave}
           variant="primary"
+          disabled={isUpdating || isLoading}
           backgroundColor={Colors.TEAL_PRIMARY_ALT}
         />
       </View>
@@ -184,73 +121,15 @@ const MessageCategoriesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Metrics.verticalScale(50),
-  },
-
-  scrollContent: {
-    paddingHorizontal: Metrics.scale(24),
-    paddingBottom: Metrics.verticalScale(120),
-  },
-  card: {
-    padding: Metrics.scale(16),
-    borderRadius: 24,
-    marginBottom: Metrics.verticalScale(14),
-    width: '100%',
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Metrics.verticalScale(8), // Space between title row and stats row
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end', // Aligns switch to the bottom of the stats block
-  },
-  statsContainer: {
-    flex: 1,
-  },
-  pencilGlassWrapper: {
-    padding: 0,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-    width: Metrics.scale(40),
-  },
-  editIcon: {
-    width: Metrics.scale(40),
-    height: Metrics.scale(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statsRow: {
-    // Removed flexDirection: 'row' to stack lines
-    justifyContent: 'center',
-  },
-  actionColumn: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    height: Metrics.verticalScale(70),
-  },
-
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: Metrics.scale(24),
-    paddingBottom: Metrics.verticalScale(30),
-    backgroundColor: 'transparent',
-  },
+  container: { flex: 1, paddingTop: Metrics.verticalScale(50) },
+  scrollContent: { paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(120) },
+  card: { padding: Metrics.scale(16), borderRadius: 24, marginBottom: Metrics.verticalScale(14), width: '100%' },
+  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Metrics.verticalScale(8) },
+  bottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
+  statsContainer: { flex: 1 },
+  pencilGlassWrapper: { padding: 0, borderRadius: 8, backgroundColor: 'rgba(255, 255, 255, 0.4)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.6)', width: Metrics.scale(40) },
+  editIcon: { width: Metrics.scale(40), height: Metrics.scale(40), justifyContent: 'center', alignItems: 'center' },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(30), backgroundColor: 'transparent' },
 });
 
 export default MessageCategoriesScreen;

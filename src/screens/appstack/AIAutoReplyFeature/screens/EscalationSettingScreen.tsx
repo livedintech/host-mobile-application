@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next'; // Added
 
-// Shared Components
 import AppText from '@/components/molecules/AppText/AppText';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
@@ -16,13 +11,13 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import InputField from '@/components/molecules/Input/InputField';
 
-// Theme & Utility
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import EscalationSettingContainer from '../containers/EscalationSettingContainer';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const EscalationSettingScreen = () => {
+  const { t } = useTranslation(); // Added
   const { 
     frustrationEnabled, 
     setFrustrationEnabled, 
@@ -46,7 +41,6 @@ const EscalationSettingScreen = () => {
     },
   });
 
-  // Sync API data to Form Inputs
   useEffect(() => {
     if (settingsData) {
       setValue('confidenceInput', String(settingsData.confidence_level || '80'));
@@ -57,7 +51,6 @@ const EscalationSettingScreen = () => {
   const confidenceValue = useWatch({ control, name: 'confidenceInput' }) || '0';
   const sentimentValue = useWatch({ control, name: 'sentimentInput' }) || '0';
 
-  // --- Graph Logic ---
   const fullBellCurve = [5, 12, 25, 45, 40, 30, 15];
   const commonXLabels = ['0', '30', '50', '70', '90', '100'];
 
@@ -89,35 +82,27 @@ const EscalationSettingScreen = () => {
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <RefreshableScrollView
           contentContainerStyle={styles.scrollContent}
           isLoading={isLoading}
           refreshing={isFetching}
           onRefresh={refetch}
         >
-          <AppText text="Escalation Settings" fontSize={28} type="Bold" mt={20} mb={12} />
+          <AppText text={t('app.escalation.title')} fontSize={28} type="Bold" mt={20} mb={12} />
           <AppText
-            text="Define thresholds for automation. If the AI confidence or sentiment falls below these levels, messages are escalated to you."
+            text={t('app.escalation.description')}
             fontSize={14}
             color={Colors.BLACK_60_PERCENT}
             lineHeight={18}
             mb={24}
           />
 
-          {/* --- CONFIDENCE LEVEL CARD --- */}
+          {/* CONFIDENCE CARD */}
           <GlassCard style={styles.graphCard}>
-            <AppText text="Confidence Level" fontSize={16} type="Bold" mb={8} />
+            <AppText text={t('app.escalation.confidence_title')} fontSize={16} type="Bold" mb={8} />
             <View style={styles.chartContainer}>
-              <LineChart
-                {...graphConfigs}
-                data={getGraphData(confidenceValue, 'red')}
-                color={Colors.INDIAN_RED}
-                startFillColor={Colors.INDIAN_RED}
-              />
+              <LineChart {...graphConfigs} data={getGraphData(confidenceValue, 'red')} color={Colors.INDIAN_RED} startFillColor={Colors.INDIAN_RED} />
               <View style={styles.overlayChart}>
                 <LineChart
                   {...graphConfigs}
@@ -131,7 +116,7 @@ const EscalationSettingScreen = () => {
                   verticalLinesDataPointsIndices={[Math.floor((confNum / 100) * 6)]}
                 />
                 <View style={[styles.statusBubble, { left: `${confNum}%`, borderColor: Colors.MEDIUM_SEA_GREEN }]}>
-                  <AppText text={`${confNum}% Automated`} fontSize={10} color={Colors.MEDIUM_SEA_GREEN} type="Bold" />
+                  <AppText text={`${confNum}% ${t('app.escalation.confidence_automated')}`} fontSize={10} color={Colors.MEDIUM_SEA_GREEN} type="Bold" />
                 </View>
               </View>
             </View>
@@ -139,33 +124,28 @@ const EscalationSettingScreen = () => {
 
           <InputField
             name="confidenceInput"
-            label="Send Automatically When Confident"
+            label={t('app.escalation.confidence_label')}
             control={control as any}
             errors={errors}
             keyboardType="numeric"
             containerStyle={{ marginBottom: 10 }}
           />
-          <AppText text="Minimum confidence required for AI to reply." fontSize={12} color={Colors.BLACK_35_PERCENT} mb={24} />
+          <AppText text={t('app.escalation.confidence_hint')} fontSize={12} color={Colors.BLACK_35_PERCENT} mb={24} />
 
-          {/* --- FRUSTRATION DETECTION --- */}
+          {/* FRUSTRATION CARD */}
           <GlassCard style={styles.frustrationCard}>
             <View style={styles.row}>
-              <AppText text="Frustration Detection" fontSize={15} type="Bold" />
+              <AppText text={t('app.escalation.frustration_title')} fontSize={15} type="Bold" />
               <CustomSwitch value={frustrationEnabled} onToggle={setFrustrationEnabled} />
             </View>
-            <AppText text="Turn this on to send conversations to you when the guest seems upset or frustrated." fontSize={13} color={Colors.BLACK_60_PERCENT} />
+            <AppText text={t('app.escalation.frustration_desc')} fontSize={13} color={Colors.BLACK_60_PERCENT} />
           </GlassCard>
 
-          {/* --- SENTIMENT LEVEL CARD --- */}
+          {/* SENTIMENT CARD */}
           <GlassCard style={styles.graphCard}>
-            <AppText text="Sentiment Level" fontSize={16} type="Bold" mb={8} />
+            <AppText text={t('app.escalation.sentiment_title')} fontSize={16} type="Bold" mb={8} />
             <View style={styles.chartContainer}>
-              <LineChart
-                {...graphConfigs}
-                data={getGraphData(sentimentValue, 'red')}
-                color={Colors.INDIAN_RED}
-                startFillColor={Colors.INDIAN_RED}
-              />
+              <LineChart {...graphConfigs} data={getGraphData(sentimentValue, 'red')} color={Colors.INDIAN_RED} startFillColor={Colors.INDIAN_RED} />
               <View style={styles.overlayChart}>
                 <LineChart
                   {...graphConfigs}
@@ -179,7 +159,7 @@ const EscalationSettingScreen = () => {
                   verticalLinesDataPointsIndices={[Math.floor((sentNum / 100) * 6)]}
                 />
                 <View style={[styles.statusBubble, { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED }]}>
-                  <AppText text={`${sentNum}% Escalated`} fontSize={10} color={Colors.INDIAN_RED} type="Bold" />
+                  <AppText text={`${sentNum}% ${t('app.escalation.sentiment_escalated')}`} fontSize={10} color={Colors.INDIAN_RED} type="Bold" />
                 </View>
               </View>
             </View>
@@ -187,7 +167,7 @@ const EscalationSettingScreen = () => {
 
           <InputField
             name="sentimentInput"
-            label="Escalate When Sentiment Is Below"
+            label={t('app.escalation.sentiment_label')}
             control={control as any}
             errors={errors}
             keyboardType="numeric"
@@ -198,7 +178,7 @@ const EscalationSettingScreen = () => {
 
       <View style={styles.footer}>
         <AppButton
-          title={isPending ? "Saving..." : "Save Settings"}
+          title={isPending ? t('app.escalation.saving') : t('app.escalation.btn_save')}
           onPress={handleSubmit(handleSave)}
           variant="primary"
           disabled={isPending || isLoading}
@@ -211,10 +191,7 @@ const EscalationSettingScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: Metrics.verticalScale(40) },
-  scrollContent: {
-    paddingHorizontal: Metrics.scale(24),
-    paddingBottom: Metrics.verticalScale(140),
-  },
+  scrollContent: { paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(140) },
   graphCard: { padding: Metrics.scale(16), borderRadius: 20, marginBottom: Metrics.verticalScale(24), width: '100%' },
   chartContainer: { height: Metrics.verticalScale(160), position: 'relative', marginLeft: -20 },
   overlayChart: { ...StyleSheet.absoluteFillObject },

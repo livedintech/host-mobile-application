@@ -35,7 +35,6 @@ export const updateAIAutopilot = async (payload: {
   throw response.message;
 };
 
-
 // GET AI Autopilot Settings
 export const getAIAutopilotSettings = async (user_id: number) => {
   const { ok, response, data } = await apiService.get(
@@ -46,7 +45,6 @@ export const getAIAutopilotSettings = async (user_id: number) => {
 
   throw response?.message;
 };
-
 
 // AI Escalation Settings
 export const updateAIEscalationSettings = async (payload: {
@@ -69,7 +67,6 @@ export const updateAIEscalationSettings = async (payload: {
   throw response?.message;
 };
 
-
 // GET AI Escalation Settings
 export const getAIEscalationSettings = async (user_id: number) => {
   const { ok, response, data } = await apiService.get(
@@ -77,6 +74,73 @@ export const getAIEscalationSettings = async (user_id: number) => {
   );
 
   if (ok) return data?.data;
+
+  throw response?.message;
+};
+
+// GET AI Message Categories
+export const getAIMessageCategories = async (user_id: number) => {
+  const { ok, response, data } = await apiService.get(
+    `${SERVICE_CONFIG_URLS.APP.AI_MESSAGE_CATEGORIES}?user_id=${user_id}`,
+  );
+
+  if (ok) {
+    return data?.data;
+  }
+
+  throw response?.message;
+};
+
+// GET AI Category Instructions
+export const getAICategoryInstructions = async (
+  user_id: number,
+  category_id: number,
+) => {
+  const { ok, response, data } = await apiService.get(
+    `${SERVICE_CONFIG_URLS.APP.AI_CATEGORY_INSTRUCTIONS}?user_id=${user_id}&category_id=${category_id}`,
+  );
+
+  if (ok) {
+    return data?.data;
+  }
+
+  throw response?.message;
+};
+
+// SAVE AI Category Instructions
+export const saveAICategoryInstructions = async (payload: {
+  user_id: number;
+  category_id: number;
+  instructions: string[];
+  listing_ids: number[];
+  apply_to_all_listings: boolean;
+}) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.AI_CATEGORY_INSTRUCTIONS_SAVE,
+    payload,
+  );
+
+  if (ok) {
+    return data;
+  }
+
+  throw response?.message;
+};
+
+
+// UPDATE AI Message Category Status
+export const updateAIMessageCategoryStatus = async (payload: {
+  id: number;
+  status: boolean;
+}) => {
+  const { ok, response, data } = await apiService.post(
+    SERVICE_CONFIG_URLS.APP.AI_MESSAGE_CATEGORY_STATUS_UPDATE,
+    payload,
+  );
+
+  if (ok) {
+    return data;
+  }
 
   throw response?.message;
 };

@@ -15,6 +15,7 @@ import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 import { ListingOption } from '@/types/api/AnalyticsTypes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useTranslation } from 'react-i18next';
 
 type FormValues = {
   properties: string[];
@@ -24,8 +25,17 @@ type FormValues = {
 const AiAutoPilotContainer = () => {
   const [isAutopilotActive, setIsAutopilotActive] = useState(true);
   const [autoCreateAll, setAutoCreateAll] = useState(false);
+  const { t } = useTranslation();
 
   const { user } = useAuthStore();
+
+  const waitTriggerData = [
+    { label: t('app.autopilot.wait_options.instant'), value: '0' },
+    { label: t('app.autopilot.wait_options.1min'), value: '1' },
+    { label: t('app.autopilot.wait_options.5min'), value: '5' },
+    { label: t('app.autopilot.wait_options.10min'), value: '10' },
+    { label: t('app.autopilot.wait_options.15min'), value: '15' },
+  ];
 
   const {
     control,
@@ -139,7 +149,7 @@ const AiAutoPilotContainer = () => {
 
     // data
     listingOptions,
-
+    waitTriggerData,
     // actions
     onSubmit,
 

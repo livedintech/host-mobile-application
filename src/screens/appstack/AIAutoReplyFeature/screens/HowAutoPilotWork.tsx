@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next'; // Added
 
 // Shared Components
 import AppText from '@/components/molecules/AppText/AppText';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 // Theme & Utility
 import { Colors } from '@/theme/colors';
@@ -15,24 +15,28 @@ import Metrics from '@/utility/Metrics';
 
 const HowAutoPilotWork = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation(); // Added
 
   return (
     <BGImage
       source={require('@/assets/img/background/linearBG.png')}
       style={styles.container}
     >
-
-
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <AppText text="How Autopilot Works" fontSize={32} type="Bold" mb={24} />
+        <AppText 
+          text={t('app.how_autopilot.title')} 
+          fontSize={32} 
+          type="Bold" 
+          mb={24} 
+        />
 
         {/* Section 1: Escalation & Responsibility */}
         <GlassCard style={styles.infoCard}>
           <AppText 
-            text="Autopilot Message Escalation & Responsibility" 
+            text={t('app.how_autopilot.escalation_title')} 
             fontSize={18} 
             type="Bold" 
             mb={16} 
@@ -44,31 +48,32 @@ const HowAutoPilotWork = () => {
             lineHeight={20} 
             mb={16}
           >
-            Autopilot will escalate messages to you for review based on its confidence. 
-            The escalation will be sent via a push notification on your mobile app or 
-            in your browser. Autopilot may send incorrect information. By using Autopilot, 
-            you agree to be responsible for messages sent by the system.
+            {t('app.how_autopilot.escalation_desc')}
           </AppText>
 
           <AppText fontSize={14} color={Colors.DARK_CHARCOAL} type="Bold" mb={4}>
-            For best results::
+            {t('app.how_autopilot.best_results')}
           </AppText>
           <AppText fontSize={14} color={Colors.DARK_CHARCOAL} mb={2}>
-            1. Set a 5-10 minute response delay to allow time for review
+            {t('app.how_autopilot.tip_1')}
           </AppText>
           <AppText fontSize={14} color={Colors.DARK_CHARCOAL} mb={16}>
-            2. Add relevant information to AI Memory to improve response accuracy
+            {t('app.how_autopilot.tip_2')}
           </AppText>
 
           <AppText fontSize={14} color={Colors.DARK_CHARCOAL} lineHeight={20}>
-            Autopilot will improve over time based on your messages and feedback. 
-            You can enhance responses by updating AI Memories.
+            {t('app.how_autopilot.improvement_desc')}
           </AppText>
         </GlassCard>
 
         {/* Section 2: Grow Faster Card */}
         <GlassCard style={styles.upgradeCard}>
-          <AppText text="Grow Faster with AI Suite" fontSize={18} type="Bold" mb={12} />
+          <AppText 
+            text={t('app.how_autopilot.upgrade_title')} 
+            fontSize={18} 
+            type="Bold" 
+            mb={12} 
+          />
           
           <AppText 
             fontSize={14} 
@@ -76,14 +81,11 @@ const HowAutoPilotWork = () => {
             lineHeight={20} 
             mb={24}
           >
-            The Starter Plan includes limited AI access and supports up to 2 bookings 
-            per listing. To unlock advanced AI features, higher booking capacity, 
-            automated guest communication, dynamic pricing, and full-scale hosting tools, 
-            upgrade to the AI Suite plan for a complete smart hosting experience.
+            {t('app.how_autopilot.upgrade_desc')}
           </AppText>
 
           <AppButton 
-            title="Upgrade to AI Suite" 
+            title={t('app.how_autopilot.btn_upgrade')} 
             onPress={() => console.log('Upgrade Pressed')}
             variant="primary"
             backgroundColor={Colors.TEAL_PRIMARY_ALT}
@@ -99,22 +101,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Metrics.verticalScale(40),
-
-  },
-
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // Shadow for the back button
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   scrollContent: {
     paddingHorizontal: Metrics.scale(24),

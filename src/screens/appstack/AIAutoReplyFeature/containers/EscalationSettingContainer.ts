@@ -4,8 +4,10 @@ import Toast from 'react-native-toast-message';
 import { updateAIEscalationSettings, getAIEscalationSettings } from '@/services/AiAutoFeatureApi';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useTranslation } from 'react-i18next';
 
 const EscalationSettingContainer = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
@@ -37,16 +39,16 @@ const EscalationSettingContainer = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['aiEscalationSettings'] });
       Toast.show({
-        type: 'success',
-        text1: 'Settings Updated',
-        text2: 'Your AI escalation rules have been saved.',
+       type: 'success',
+        text1: t('app.escalation.toast_success_title'),
+        text2: t('app.escalation.toast_success_desc'),
       });
       navigation.goBack();
     },
     onError: (error: any) => {
       Toast.show({
         type: 'error',
-        text1: 'Update Failed',
+        text1: t('app.escalation.toast_error_title'),
         text2: error || 'Something went wrong',
       });
     },

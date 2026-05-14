@@ -1,7 +1,6 @@
-// AiAutoPilotScreen.tsx
-
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
@@ -21,6 +20,7 @@ import AiAutoPilotContainer from '../containers/AiAutoPilotContainer';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const AiAutoPilotScreen = ({ navigation }: any) => {
+  const { t } = useTranslation();
   const {
     isAutopilotActive,
     setIsAutopilotActive,
@@ -34,15 +34,8 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
     listingOptions,
     isRefetching,
     refetchAutopilot,
+    waitTriggerData
   } = AiAutoPilotContainer();
-
-  const waitTriggerData = [
-    { label: 'Instant', value: '0' },
-    { label: '1 minute', value: '1' },
-    { label: '5 minutes', value: '5' },
-    { label: '10 minutes', value: '10' },
-    { label: '15 minutes', value: '15' },
-  ];
 
   return (
     <BGImage
@@ -54,7 +47,7 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
         refreshing={isRefetching}
         onRefresh={refetchAutopilot}
       >
-        <AppText text="AI Autopilot" fontSize={32} type="Bold" mb={16} />
+        <AppText text={t('app.autopilot.title')} fontSize={32} type="Bold" mb={16} />
 
         {/* Description */}
         <View style={styles.descriptionRow}>
@@ -64,10 +57,9 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
             lineHeight={22}
             style={{ flex: 1 }}
           >
-            Set up your AI Autopilot to handle replies intelligently and
-            consistently.{' '}
+            {t('app.autopilot.description')}{' '}
             <AppText
-              text="How Autopilot works?"
+              text={t('app.autopilot.how_it_works')}
               color={Colors.TEAL_GREEN}
               type="Bold"
               style={styles.link}
@@ -86,7 +78,9 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
             <View style={{ flex: 1 }}>
               <AppText
                 text={
-                  isAutopilotActive ? 'Autopilot Active' : 'Autopilot Disabled'
+                  isAutopilotActive 
+                    ? t('app.autopilot.status_active') 
+                    : t('app.autopilot.status_disabled')
                 }
                 fontSize={20}
                 type="Bold"
@@ -99,7 +93,7 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
               />
 
               <AppText
-                text="AI will send replies automatically when confident"
+                text={t('app.autopilot.status_subtitle')}
                 fontSize={14}
                 color={Colors.BLACK_60_PERCENT}
               />
@@ -118,11 +112,11 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
             name="properties"
             control={control as any}
             errors={errors}
-            label="Select Property"
+            label={t('app.autopilot.label_select_property')}
             data={listingOptions}
-            placeholder="Select Properties"
+            placeholder={t('app.autopilot.placeholder_properties')}
             rules={{
-              required: 'Please select at least one property',
+              required: t('app.autopilot.error_property_required'),
             }}
             dropdownPosition="top"
           />
@@ -136,7 +130,7 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
               onPress={() => setAutoCreateAll(!autoCreateAll)}
             />
             <AppText
-              text="Auto-create for new listings"
+              text={t('app.autopilot.label_auto_create')}
               ml={10}
               fontSize={14}
             />
@@ -146,14 +140,14 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
             name="waitTrigger"
             control={control as any}
             errors={errors}
-            label="Wait Trigger"
+            label={t('app.autopilot.label_wait_trigger')}
             data={waitTriggerData}
-            placeholder="Select delay"
+            placeholder={t('app.autopilot.placeholder_delay')}
             dropdownPosition="top"
           />
 
           <AppButton
-            title="Save Settings"
+            title={t('app.autopilot.btn_save')}
             loading={isPending}
             onPress={handleSubmit(onSubmit)}
             style={styles.button}
@@ -163,26 +157,23 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
     </BGImage>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Metrics.verticalScale(40),
   },
-
   scrollContent: {
     paddingHorizontal: Metrics.scale(24),
     paddingBottom: Metrics.verticalScale(40),
   },
-
   descriptionRow: {
     flexDirection: 'row',
     marginBottom: Metrics.verticalScale(30),
   },
-
   link: {
     textDecorationLine: 'underline',
   },
-
   stateCard: {
     borderRadius: 24,
     padding: Metrics.scale(20),
@@ -192,25 +183,22 @@ const styles = StyleSheet.create({
     borderColor: Colors.WHITE,
     width: '100%',
   },
-
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   inputSection: {
     marginTop: Metrics.verticalScale(10),
   },
-
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: Metrics.verticalScale(5),
     marginBottom: Metrics.verticalScale(15),
   },
-
   button: {
     marginTop: Metrics.verticalScale(30),
   },
 });
+
 export default AiAutoPilotScreen;
