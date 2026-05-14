@@ -42,6 +42,7 @@ const ListingScreen = () => {
     isBookingOpen,
     setIsBookingOpen,
     isLoading,
+    isCalendarLoading,
     cleaningFee,
     discount,
     bookingType,
@@ -94,7 +95,7 @@ const ListingScreen = () => {
         onCardPress={handleReservationPress}
       />
 
-      {isFetchingDetails && (
+      {(isFetchingDetails || isLoading || isCalendarLoading) && (
         <View style={styles.overlayLoader}>
           <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
         </View>

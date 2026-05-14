@@ -303,7 +303,7 @@ const HomeScreen = ({ navigation }: any) => {
   // Navigation Central Handler
   const handleNavigation = (route: any, params?: any) => {
     if (route) {
-      navigation.navigate(route, params);
+      navigation.navigate(route, params ? { ...params, _t: Date.now() } : undefined);
     }
   };
 

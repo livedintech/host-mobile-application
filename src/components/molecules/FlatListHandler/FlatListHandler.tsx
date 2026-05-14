@@ -93,7 +93,7 @@ export default function FlatListHandler({
           title=""
           onRefresh={onRefresh}
           refreshing={isRefreshing ?? false}  // ← yeh add karo
-          tintColor={Colors.INDIAN_RED}
+          tintColor={Colors.MEDIUM_JUNGLE_GREEN}
         />
       }
       onEndReached={fetchMore}
