@@ -53,7 +53,7 @@ const ViewChecklistAll = () => {
     useViewChecklistAllContainer({ taskId, taskType });
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%', '75%'], []);
+  const snapPoints = useMemo(() => ['70%'], []);
 
   const {
     control,
@@ -176,59 +176,57 @@ const ViewChecklistAll = () => {
               />
             </View>
           )}
-
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={-1}
-            snapPoints={snapPoints}
-            enablePanDownToClose
-            keyboardBehavior="extend"
-            keyboardBlurBehavior="restore"
-            android_keyboardInputMode="adjustResize"
-            backdropComponent={renderBackdrop}
-            // This makes the actual sheet container transparent/glassy
-            backgroundStyle={styles.sheetBackground}
-            handleIndicatorStyle={styles.sheetIndicator}
-          >
-            <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
-              <View style={styles.sheetHeader}>
-                <AppText text={t('app.task_management.view_checklist_add_section')} fontSize={24} type="Medium" />
-                <ButtonView
-                  onPress={handleClosePress}
-                  style={styles.closeButton}
-                >
-                  {/* If your Svgicons supports custom paths, ensure 'closeIcon' matches the X style */}
-                  <Svgicons
-                    path="crossIconTask"
-                    size={14}
-                    color={Colors.BLACK}
-                  />
-                </ButtonView>
-              </View>
-
-              <View style={styles.inputWrapper}>
-                <InputField
-                  name="sectionName"
-                  label={t('app.task_management.section_name_label')}
-                  control={control}
-                  errors={errors}
-                  placeholder={t('app.task_management.section_name_placeholder')}
-                  rules={{ required: t('app.task_management.section_required') }}
-                />
-              </View>
-
-              <AppButton
-                title={t('app.task_management.add')}
-                mt={25}
-                backgroundColor={Colors.PRIMARY_TEAL}
-                borderColor={Colors.PRIMARY_TEAL}
-                color={Colors.WHITE}
-                onPress={handleSubmit(onAddSectionSubmit)}
-                borderRadius={30} // Matches the pill shape in Figma
-              />
-            </BottomSheetScrollView>
-          </BottomSheet>
         </KeyboardAvoidingView>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          keyboardBehavior="extend"
+          keyboardBlurBehavior="restore"
+          android_keyboardInputMode="adjustResize"
+          backdropComponent={renderBackdrop}
+          backgroundStyle={styles.sheetBackground}
+          handleIndicatorStyle={styles.sheetIndicator}
+        >
+          <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
+            <View style={styles.sheetHeader}>
+              <AppText text={t('app.task_management.view_checklist_add_section')} fontSize={24} type="Medium" />
+              <ButtonView
+                onPress={handleClosePress}
+                style={styles.closeButton}
+              >
+                <Svgicons
+                  path="crossIconTask"
+                  size={14}
+                  color={Colors.BLACK}
+                />
+              </ButtonView>
+            </View>
+
+            <View style={styles.inputWrapper}>
+              <InputField
+                name="sectionName"
+                label={t('app.task_management.section_name_label')}
+                control={control}
+                errors={errors}
+                placeholder={t('app.task_management.section_name_placeholder')}
+                rules={{ required: t('app.task_management.section_required') }}
+              />
+            </View>
+
+            <AppButton
+              title={t('app.task_management.add')}
+              mt={25}
+              backgroundColor={Colors.PRIMARY_TEAL}
+              borderColor={Colors.PRIMARY_TEAL}
+              color={Colors.WHITE}
+              onPress={handleSubmit(onAddSectionSubmit)}
+              borderRadius={30}
+            />
+          </BottomSheetScrollView>
+        </BottomSheet>
       </View>
     </BGImage>
   );

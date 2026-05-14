@@ -75,7 +75,6 @@ const NotificationItem = ({ item, icon, time, onDelete, onPress }: NotificationI
           fontSize={14}
           color={Colors.DARK_CHARCOAL_OPACITY}
           mt={4}
-          numberOfLines={2}
         />
         {item.listing_name ? (
           <AppText

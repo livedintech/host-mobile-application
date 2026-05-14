@@ -7,12 +7,10 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useSavedRepliesContainer } from './SavedRepliesContainer';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListHandler from '@/components/molecules/FlatListHandler/FlatListHandler';
-import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import Metrics from '@/utility/Metrics';
-import { goBack } from '@/services/navigationService';
 import NoSavedRepliesScreen from '../NoSavedRepliesScreen/NoSavedRepliesScreen';
 import { useTranslation } from 'react-i18next';
 
@@ -27,7 +25,8 @@ const SavedRepliesScreen = () => {
     isLoading,
     confirm,
     openRemoveConfirmSheet,
-    removeSheetRef,
+    isDeleteModalVisible,
+    setDeleteModalVisible,
     isLoadingRemoved,
     Item,
     isLoadingStatus,
@@ -39,13 +38,13 @@ const SavedRepliesScreen = () => {
       <GlassCard width="100%" style={styles.glassCardOverride}>
         <View style={styles.cardContent}>
           <View style={styles.infoSection}>
-           <View style={styles.titleRow}>
+            <View style={styles.titleRow}>
               <AppText
                 text={item.title}
                 fontSize={18}
                 type="Bold"
                 color={Colors.BLACK}
-              style={{ flex: 1 }}
+                style={{ flex: 1 }}
               />
               {/* Updated Action Icons with GlassCards */}
               <View style={styles.actionIcons}>
@@ -54,7 +53,7 @@ const SavedRepliesScreen = () => {
                     <Svgicons path="TrashFull" size={20} color={Colors.BLACK} />
                   </AppPressable>
                 </GlassCard>
-                
+
                 <GlassCard width={40} style={styles.iconGlassCard}>
                   <AppPressable onPress={() => editReply(item)} style={styles.iconBtn}>
                     <Svgicons path="editIconUserManagement" size={20} color={Colors.BLACK} />
@@ -63,24 +62,24 @@ const SavedRepliesScreen = () => {
               </View>
             </View>
 
-           <View style={[styles.detailsRow]}>
+            <View style={[styles.detailsRow]}>
               <View style={styles.textDetails}>
                 <AppText text={t('app.saved_replies.listing_access')} fontSize={14} type="Bold" color={Colors.BLACK} />
-                <AppText 
-                   text={item.listing_label || t('app.saved_replies.all_listings')}
-                   fontSize={13} 
-                   color={Colors.GREY_SHADOW} 
-                   mt={2}
+                <AppText
+                  text={item.listing_label || t('app.saved_replies.all_listings')}
+                  fontSize={13}
+                  color={Colors.GREY_SHADOW}
+                  mt={2}
                 />
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-  <CustomSwitch
-    onToggle={() => toggleSwitch(item)}
-    value={item.is_active}
-    disabled={isLoadingStatus}
-    isLoading={item?.id === Item?.id ? isLoadingStatus : false}
-  />
-</View>
+                <CustomSwitch
+                  onToggle={() => toggleSwitch(item)}
+                  value={item.is_active}
+                  disabled={isLoadingStatus}
+                  isLoading={item?.id === Item?.id ? isLoadingStatus : false}
+                />
+              </View>
             </View>
           </View>
         </View>
@@ -91,7 +90,7 @@ const SavedRepliesScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-      
+
 
         {!!data?.length && (
           <View style={styles.topTextSection}>
@@ -124,13 +123,12 @@ const SavedRepliesScreen = () => {
           />
         </View>
 
-        <ConfirmAction
-          ref={removeSheetRef}
-          title={`${Item?.title}`}
-          content={t('app.saved_replies.delete_confirm')}
-          confirmText={t('app.saved_replies.confirm_btn')}
-          closeText={t('app.saved_replies.cancel_btn')}
+        <AccountDeleteModal
+          isVisible={isDeleteModalVisible}
+          onClose={() => setDeleteModalVisible(false)}
           onConfirm={confirm}
+          title={`${Item?.title}`}
+          description={t('app.saved_replies.delete_confirm')}
           isLoading={isLoadingRemoved}
         />
       </View>
@@ -154,7 +152,7 @@ const styles = StyleSheet.create({
   topTextSection: { paddingHorizontal: 22, marginBottom: 25 },
   listContent: {
     paddingHorizontal: 22,
-    paddingBottom: 140, 
+    paddingBottom: 140,
   },
   glassCardOverride: {
     marginBottom: 16,
@@ -164,15 +162,15 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   infoSection: { width: '100%' },
-  titleRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 15
   },
-  actionIcons: { 
-    flexDirection: 'row', 
-    gap: 8 
+  actionIcons: {
+    flexDirection: 'row',
+    gap: 8
   },
   iconGlassCard: {
     height: 40,
@@ -183,16 +181,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0, // Reset default GlassCard margin
   },
-  iconBtn: { 
+  iconBtn: {
     width: '100%',
     height: '100%',
-    justifyContent: 'center', 
-    alignItems: 'center' 
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  detailsRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-   alignItems: 'center',
+  detailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   textDetails: { flex: 1 },
   footer: {

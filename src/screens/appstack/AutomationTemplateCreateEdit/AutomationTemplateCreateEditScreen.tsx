@@ -85,6 +85,7 @@ const CreateAutomationTemplateScreen = () => {
                             errors={errors}
                             data={transformedEvents}
                             placeholder={t('app.automation_create_edit.event_placeholder')}
+                            dropdownPosition='top'
                         // labelStyle={styles.labelStyle}
                         />
 
@@ -96,6 +97,7 @@ const CreateAutomationTemplateScreen = () => {
                                 errors={errors}
                                 data={transformedEventTimes}
                                 placeholder={t('app.automation_create_edit.event_time_placeholder')}
+                                dropdownPosition='top'
                             />
                         )}
 
@@ -107,6 +109,7 @@ const CreateAutomationTemplateScreen = () => {
                             data={transformedListing || []}
                             placeholder={t('app.automation_create_edit.property_placeholder')}
                             labelStyle={styles.labelStyle}
+                            dropdownPosition='top'
                         />
 
                         <Controller

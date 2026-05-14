@@ -1,5 +1,5 @@
 import i18n from '@/locales/i18n/i18n';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { navigate } from '@/services/navigationService';
@@ -8,18 +8,18 @@ import STORAGE_CONST from '@/constants/storage';
 import { PAGE_SIZE } from '@/services/api';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
 import { deleteAutomationTemplateApi, editStatusAutomationTemplateApi, getAutomationTemplateApi } from '@/services/automationTemplateApi';
-import { ConfirmActionRef } from '@/components/molecules/ConfirmAction/ConfirmAction';
 import { deleteSavedRepliesTypesApiPayload } from '@/types/api/savedRepliesTypes';
 import { automationTemplateEditStatusTypesApiPayload, AutomationTemplateTypesApiResponse, deleteAutomationTemplateTypesApiResponse } from '@/types/api/automationTemplateTypes';
 
 interface AutomationTemplate {
     id: string;
     name?: string;
+    temp_name?: string;
     is_active?: boolean;
 }
 
 export default function useAutomationTemplateContainer() {
-    const removeSheetRef = useRef<ConfirmActionRef>(null);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [Item, setItem] = useState<AutomationTemplate>()
     const queryClient = useQueryClient();
 
@@ -66,7 +66,7 @@ export default function useAutomationTemplateContainer() {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_AUTOMATION_TEMPLATE]
             });
-            // removeSheetRef?.current?.close()
+            setDeleteModalVisible(false);
         },
         onError: error => {
             Toast.show({
@@ -94,12 +94,8 @@ export default function useAutomationTemplateContainer() {
 
 
     const openRemoveConfirmSheet = (item: any) => {
-        setItem(item)
-        // removeSheetRef?.current?.open();
-
-          setTimeout(() => {
-    removeSheetRef.current?.open();
-  }, 100);
+        setItem(item);
+        setDeleteModalVisible(true);
     };
     const confirm = () => {
         if (Item)
@@ -130,7 +126,8 @@ export default function useAutomationTemplateContainer() {
         createNewTemplate,
         openRemoveConfirmSheet,
         confirm,
-        removeSheetRef,
+        isDeleteModalVisible,
+        setDeleteModalVisible,
         isLoadingRemoved: isPendingDeleteAiAutoReply && !isIdleDeleteAiAutoReply,
         isLoadingStatus: isPendingEditSaveEdit && !isIdleEditSaveEdit,
         Item

@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Colors } from '@/theme/colors';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -32,7 +33,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
             <AppText text={isEdit ? t('app.user_form.title_edit') : t('app.user_form.title_create')} fontSize={28} type="Bold" />
           </View>
@@ -61,6 +62,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
               errors={errors}
               data={rolesOptions}
               placeholder={t('app.user_form.role_placeholder')}
+              dropdownPosition='top'
             />
 
             {/* NEW: Staff Role Type Dropdown - Only shows if role is Operator */}
@@ -72,6 +74,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
                 errors={errors}
                 data={staffRoleTypeOptions}
                 placeholder={t('app.user_form.staff_type_placeholder')}
+                dropdownPosition='top'
               />
             )}
 
@@ -94,6 +97,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
                 errors={errors}
                 data={listingOptions}
                 placeholder={t('app.user_form.property_placeholder')}
+                dropdownPosition='top'
               />
             )}
 
@@ -108,7 +112,7 @@ const UserForm: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
               <AppText text={t('app.user_form.assign_all')} fontSize={14} ml={10} />
             </View>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         <View style={styles.footer}>
           <AppButton

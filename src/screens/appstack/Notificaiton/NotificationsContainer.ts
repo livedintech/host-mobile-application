@@ -257,9 +257,9 @@ export default function useNotificationsContainer() {
       case 'payment_received':
         navigate(NavigationRoutes.APP_STACK.BILLING);
         break;
-      case 'password_changed':
-        navigate(NavigationRoutes.APP_STACK.CHANGE_PASSWORD);
-        break;
+      // case 'password_changed':
+      //   navigate(NavigationRoutes.APP_STACK.CHANGE_PASSWORD);
+      //   break;
       case 'profile_updated':
       case 'account_created':
         navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);

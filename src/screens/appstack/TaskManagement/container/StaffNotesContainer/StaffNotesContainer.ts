@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { taskCreateStatusUpdate } from '@/services/TaskManagementApi';
 import { useTaskStore } from '@/store/taskStore';
-import { navigate } from '@/services/navigationService';
+import { dispatch } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { CommonActions } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
@@ -24,10 +25,18 @@ const useStaffNotesContainer = () => {
         queryKey: [STORAGE_CONST.GET_HOST_TASK_LIST],
       });
 
-      // navigate(NavigationRoutes.APP_STACK.TASK);
-      navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
-        screen: NavigationRoutes.APP_STACK.TASK,
-      });
+      dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [
+            { name: NavigationRoutes.APP_STACK.ROOT_STACK },
+            {
+              name: NavigationRoutes.APP_STACK.ROOT_STACK,
+              params: { screen: NavigationRoutes.APP_STACK.TASK },
+            },
+          ],
+        }),
+      );
       Toast.show({
         type: 'success',
         text1: data?.message ,

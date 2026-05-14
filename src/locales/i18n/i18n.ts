@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { I18nManager } from 'react-native';
+import RNRestart from 'react-native-restart';
 import en from '@/locales/en.json';
 import ar from '@/locales/ar.json';
 import { storage } from '@/storage/mmkv';
@@ -24,13 +25,24 @@ export const saveLanguage = (lang: string) => {
 
 export const changeLanguage = async (lang: string) => {
   const isRTL = lang === 'ar';
-  I18nManager.forceRTL(isRTL);
   await i18n.changeLanguage(lang);
   saveLanguage(lang);
+  if (I18nManager.isRTL !== isRTL) {
+    I18nManager.forceRTL(isRTL);
+    RNRestart.restart();
+  }
 };
 
 const savedLang = getStoredLanguage();
-I18nManager.forceRTL(savedLang === 'ar');
+const shouldBeRTL = savedLang === 'ar';
+
+// forceRTL changes isRTL immediately but the actual layout direction only takes
+// effect after a restart. If they're out of sync (e.g. first install where the
+// default language is Arabic), restart once so the layout matches the language.
+if (I18nManager.isRTL !== shouldBeRTL) {
+  I18nManager.forceRTL(shouldBeRTL);
+  RNRestart.restart();
+}
 
 i18n
   .use(initReactI18next)

@@ -26,7 +26,7 @@ import { configureGoogleSignIn } from '@/services/googleConfig';
 import NavigationRoutes from './src/navigation/NavigationRoutes';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import AppUpdateCheck from '@/components/molecules/AppUpdateCheck/AppUpdateCheck';
-import i18n, { changeLanguage, getStoredLanguage } from '@/locales/i18n/i18n';
+import i18n from '@/locales/i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
 import { NotificationService } from '@/services/notification.service';
 import { userEventService } from '@/services/userEventService';
@@ -38,9 +38,6 @@ const App = () => {
   const appState = useRef<AppStateStatus>(AppState.currentState);
 
   useEffect(() => {
-    const savedLang = getStoredLanguage();
-    changeLanguage(savedLang);
-
     initializeApp();
     configureGoogleSignIn();
     setupNotifications();

@@ -107,6 +107,9 @@ export default function useAirbnbImportContainer() {
         queryClient.invalidateQueries({
           queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
         });
+        queryClient.invalidateQueries({
+          queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
+        });
         Toast.show({ type: 'success', text1: message });
       },
       onError: (error) => {
@@ -126,6 +129,9 @@ export default function useAirbnbImportContainer() {
       });
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
       });
       Toast.show({ type: 'success', text1: message });
     },
