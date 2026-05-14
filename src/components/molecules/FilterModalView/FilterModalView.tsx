@@ -91,6 +91,7 @@ export const FilterModalView = ({
             errors={errors}
             data={actualProperties}
             placeholder={t('app.filter_modal_view.placeholder_multiple')}
+            dropdownPosition='top'
           />
 
           <View style={{ marginTop: vs(25), display: 'none' }}>

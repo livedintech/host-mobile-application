@@ -105,7 +105,7 @@ export default function useListingContainer(
   });
 
   // Query: Calendar Data
-  const { data: calendarResponse, refetch: refetchCalendar } = useQuery({
+  const { data: calendarResponse, refetch: refetchCalendar, isLoading: isCalendarLoading } = useQuery({
     queryKey: ['CALENDAR_DATA', selectedListingId],
     queryFn: () =>
       getCalendarBookingManagementListingsApi(selectedListingId || ''),
@@ -486,6 +486,7 @@ export default function useListingContainer(
     isBookingOpen,
     setIsBookingOpen,
     isLoading,
+    isCalendarLoading,
     cleaningFee,
     discount,
     handleBookingAction,

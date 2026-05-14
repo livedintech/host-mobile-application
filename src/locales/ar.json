@@ -1955,7 +1955,8 @@
       "unassigned": "غير معين",
       "chars_of_1000": "/1000 حرف",
       "booking_code": "رمز الحجز",
-      "no_data_found": "لا توجد بيانات"
+      "no_data_found": "لا توجد بيانات",
+       "coming_soon": "قريباً"
     },
     "notifications": {
       "title": "الإشعارات",

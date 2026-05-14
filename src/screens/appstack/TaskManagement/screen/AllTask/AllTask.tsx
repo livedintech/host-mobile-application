@@ -69,6 +69,12 @@ const AllTask = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
+    if (initialTab) {
+      handleTabChange(initialTab);
+    }
+  }, [route.params?._t]);
+
+  useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       if (isFilterOpen) {
         filterSheetRef.current?.dismiss();
@@ -347,6 +353,7 @@ const AllTask = () => {
                 data={listingOptions}
                 control={control as any}
                 errors={errors}
+                dropdownPosition='top'
               />
 
               <View style={{ marginTop: 10 }}>
@@ -357,6 +364,7 @@ const AllTask = () => {
                   data={assigneeOptions}
                   control={control as any}
                   errors={errors}
+                  dropdownPosition='top'
                 />
               </View>
 
