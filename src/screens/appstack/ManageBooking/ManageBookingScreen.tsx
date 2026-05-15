@@ -142,7 +142,7 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
   );
 };
 
-const ManageBookingScreen = () => {
+const ManageBookingScreen = ({ route }: any) => {
   const {
     handleConnect,
     isLoading,
@@ -155,7 +155,10 @@ const ManageBookingScreen = () => {
   } = useManageBookingContainer();
   const { user } = useAuthStore();
   const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState<TabType>('Airbnb');
+  const initialTab = (TABS as readonly string[]).includes(route?.params?.initialTab)
+    ? (route.params.initialTab as TabType)
+    : 'Airbnb';
+  const [selectedTab, setSelectedTab] = useState<TabType>(initialTab);
   const [deactivateModalVisible, setDeactivateModalVisible] = useState(false);
   const [pendingChannelId, setPendingChannelId] = useState<number | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
