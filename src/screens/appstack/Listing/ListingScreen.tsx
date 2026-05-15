@@ -48,7 +48,6 @@ const ListingScreen = () => {
     bookingType,
     setBookingType,
   } = useListingContainer(route.params?.listing_id, 0); // Fixed to Tab 0 logic
-
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 

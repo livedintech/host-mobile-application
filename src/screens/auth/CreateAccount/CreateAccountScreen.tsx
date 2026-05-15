@@ -72,6 +72,16 @@ const CreateAccountScreen = () => {
                 placeholder=""
               />
               <View style={styles.passwordWrapper}>
+                <InputField
+                  label={t('auth.create_account.email')}
+                  name="email"
+                  control={control as any}
+                  errors={errors}
+                  placeholder=""
+                  keyboardType="email-address"
+                />
+              </View>
+              <View style={styles.passwordWrapper}>
                 <PasswordField
                   label={t('auth.create_account.password')}
                   name="password"

@@ -12,13 +12,15 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
 import { logoutApi } from '@/services/authApi';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { storage } from '@/storage/mmkv';
 import Toast from 'react-native-toast-message';
 import { NotificationService } from '@/services/notification.service';
 
 const MoreScreen = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuthStore();
+  const queryClient = useQueryClient();
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => setModalVisible(!isModalVisible);
@@ -30,6 +32,8 @@ const MoreScreen = () => {
     },
     onSuccess: () => {
       setModalVisible(false);
+      queryClient.clear();
+      storage.clearAll();
       logout();
     },
     onError: () => {

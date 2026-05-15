@@ -1,18 +1,84 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { goBack } from '@/services/navigationService';
-import { subscriptionCalculateApi } from '@/services/paymentService';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { goBack, navigate, reset } from '@/services/navigationService';
+import { subscriptionCalculateApi, contactEligibilityApi } from '@/services/paymentService';
 import STORAGE_CONST from '@/constants/storage';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export type PlanType = 'Starter' | 'AI Suite';
 export type BillingCycle = 'Monthly' | 'Yearly';
 
 export default function usePaymentContainer() {
   const { t } = useTranslation();
+  const route = useRoute<any>();
+  const navigation = useNavigation();
+  const routeFullName: string = route.params?.full_name ?? '';
+  const routeEmail: string = route.params?.email ?? '';
+  const routeCountryCode: string = route.params?.country_code ?? '';
+  const routePhoneNumber: string = String(route.params?.phone_number ?? '');
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('Starter');
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('Monthly');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showBackModal, setShowBackModal] = useState(false);
+  const confirmedRef = useRef(false);
+
+  const user = useAuthStore((s) => s.user);
+  const [isCheckingEligibility, setIsCheckingEligibility] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (confirmedRef.current) return;
+      if (e.data.action.type === 'RESET') return;
+      e.preventDefault();
+      setShowBackModal(true);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const confirmGoBack = useCallback(() => {
+    confirmedRef.current = true;
+    setShowBackModal(false);
+    reset(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
+  }, []);
+
+  const cancelGoBack = useCallback(() => {
+    setShowBackModal(false);
+  }, []);
+
+  const ELIGIBLE_PLAN_ID = 'df0c79c6-e11e-4215-97b1-249011095c8f';
+
+  useEffect(() => {
+    const email = routeEmail || user?.email || '';
+    console.log('[EligibilityCheck] email:', email);
+    if (!email) {
+      setIsCheckingEligibility(false);
+      return;
+    }
+    contactEligibilityApi(email)
+      .then((result) => {
+        console.log('[EligibilityCheck] result:', JSON.stringify(result));
+        if (result?.data?.eligible) {
+          confirmedRef.current = true;
+          navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, {
+            planId: ELIGIBLE_PLAN_ID,
+            qtyFrom: 1,
+            full_name: routeFullName,
+            email: routeEmail,
+            country_code: routeCountryCode,
+            phone_number: routePhoneNumber,
+          });
+        } else {
+          setIsCheckingEligibility(false);
+        }
+      })
+      .catch((err) => {
+        console.log('[EligibilityCheck] error:', JSON.stringify(err));
+        setIsCheckingEligibility(false);
+      });
+  }, []);
 
   const planKey = selectedPlan === 'Starter' ? 'starter' : 'ai_suite';
   const cycle = billingCycle === 'Monthly' ? 'monthly' : 'yearly';
@@ -32,6 +98,18 @@ export default function usePaymentContainer() {
   const price = plan ? plan.price_per_property.toFixed(2) : '0.00';
   const planId = plan?.plan_id ?? '';
   const qtyFrom = plan?.matched_tier?.qty_from ?? 1;
+
+  const handleStartTrial = useCallback(() => {
+    confirmedRef.current = true;
+    navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, {
+      planId,
+      qtyFrom,
+      full_name: routeFullName,
+      email: routeEmail,
+      country_code: routeCountryCode,
+      phone_number: routePhoneNumber,
+    });
+  }, [planId, qtyFrom, routeFullName, routeEmail, routeCountryCode, routePhoneNumber]);
 
   const starterFeatures = [
     {
@@ -146,5 +224,14 @@ export default function usePaymentContainer() {
     features: selectedPlan === 'Starter' ? starterFeatures : aiSuiteFeatures,
     goBack,
     refetch,
+    routeFullName,
+    routeEmail,
+    routeCountryCode,
+    routePhoneNumber,
+    isCheckingEligibility,
+    showBackModal,
+    confirmGoBack,
+    cancelGoBack,
+    handleStartTrial,
   };
 }

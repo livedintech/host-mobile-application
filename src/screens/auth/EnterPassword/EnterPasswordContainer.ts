@@ -78,7 +78,9 @@ export default function useEnterPasswordContainer() {
           phone_number: data?.user?.phone,
           phone_with_code: data?.user?.phone_with_code,
           country_code: data?.user?.country_code,
-          pricing: data?.user?.subscription?.price
+          pricing: data?.user?.subscription?.price,
+          email: data?.user?.email,
+          full_name: data?.user?.name,
         });
       }
       else if (data?.user?.signup_step === 'step_2') {

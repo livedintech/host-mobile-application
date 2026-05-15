@@ -42,7 +42,12 @@ export default function useHomeContainer() {
     console.log(`Connecting to ${platform}`);
 
     if (['Airbnb', 'Gathern', 'Booking'].includes(platform)) {
-      navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
+      const tabMap: Record<string, string> = {
+        Airbnb: 'Airbnb',
+        Gathern: 'Gathern',
+        Booking: 'Booking.com',
+      };
+      navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING, { initialTab: tabMap[platform] });
     }
 
     if (platform === 'Manual') {

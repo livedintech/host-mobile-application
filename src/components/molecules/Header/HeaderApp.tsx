@@ -10,7 +10,6 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { useTranslation } from 'react-i18next';
 import i18n, { changeLanguage } from '@/locales/i18n/i18n';
-import RNRestart from 'react-native-restart';
 import GlassCard from '../GlassCard/GlassCard';
 import { useAuthStore } from '@/store/useAuthStore';
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
@@ -67,18 +66,14 @@ const HeaderApp = ({
     try {
       const newLang = i18n.language === 'en' ? 'ar' : 'en';
 
-      // 1. update backend first (important)
       if (user?.id) {
         await UpdateLanguageApi({
           language: newLang,
         });
       }
 
-      // 2. update local i18n
+      // changeLanguage already handles forceRTL + restart internally
       await changeLanguage(newLang);
-
-      // 3. restart app
-      RNRestart.restart();
     } catch (error) {
       console.log('Language update failed:', error);
     }

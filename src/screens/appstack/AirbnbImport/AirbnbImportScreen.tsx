@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 const PropertyCard = ({
   id,
   name,
+  listingRelations,
   control,
   errors,
   listingOptions,
@@ -27,7 +28,9 @@ const PropertyCard = ({
   const { t } = useTranslation();
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
-  const isMatch = String(selectedLivedinId) === String(id);
+  const isMatch =
+    (Array.isArray(listingRelations) && listingRelations.length > 0) ||
+    String(selectedLivedinId) === String(id);
 
   return (
     <GlassCard width="100%" style={styles.card}>
@@ -107,6 +110,7 @@ const AirbnbImportScreen = () => {
     <PropertyCard
       id={item.id}
       name={item.title}
+      listingRelations={item.listing_relations}
       control={control}
       errors={errors}
       listingOptions={listingOptions}

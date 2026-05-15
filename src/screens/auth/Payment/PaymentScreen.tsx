@@ -7,6 +7,7 @@ import {
     LayoutAnimation,
     Platform,
     UIManager,
+    ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
@@ -17,8 +18,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import usePaymentContainer from './PaymentContainer';
 import Metrics from '@/utility/Metrics';
-import { navigate } from '@/services/navigationService';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -36,10 +36,13 @@ const PaymentScreen = () => {
         currency,
         price,
         isLoadingPrice,
-        planId,
-        qtyFrom,
         features,
         refetch,
+        isCheckingEligibility,
+        showBackModal,
+        confirmGoBack,
+        cancelGoBack,
+        handleStartTrial,
     } = usePaymentContainer();
 
     const toggleExpand = () => {
@@ -229,7 +232,7 @@ const PaymentScreen = () => {
             <View style={styles.footer}>
                 <AppButton
                     title={t('auth.payment.start_30_trial')}
-                    onPress={() => navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, { planId, qtyFrom })}
+                    onPress={handleStartTrial}
                     backgroundColor={Colors.MEDIUM_JUNGLE_GREEN}
                 />
                 <AppText
@@ -246,6 +249,19 @@ const PaymentScreen = () => {
                     {t('auth.payment.legal_3')}
                 </AppText>
             </View>
+
+            {isCheckingEligibility && (
+                <View style={styles.loaderOverlay}>
+                    <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+                </View>
+            )}
+        <AccountDeleteModal
+            isVisible={showBackModal}
+            onClose={cancelGoBack}
+            onConfirm={confirmGoBack}
+            title={t('auth.payment.exit_modal_title')}
+            description={t('auth.payment.exit_modal_text')}
+        />
         </BGImage>
     );
 };
@@ -430,6 +446,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.06,
         shadowRadius: 8,
         elevation: 10,
+    },
+    loaderOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: Colors.WHITE,
     },
 });
 

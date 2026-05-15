@@ -1,15 +1,16 @@
-import { useState } from 'react';
-import { navigate } from '@/services/navigationService';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { navigate, reset } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useRoute } from '@react-navigation/native';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { OtpVerifyResponse, VerifyOtpPayload } from '@/types/api/authTypes';
-import { getSelectListingApi, resendOtpApi } from '@/services/authApi';
-import Toast from 'react-native-toast-message';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { getSelectListingApi } from '@/services/authApi';
 import STORAGE_CONST from '@/constants/storage';
 
 export default function useManageListingContainer() {
   const [localSelectedId, setLocalSelectedId] = useState<number | null>(null);
+  const [showBackModal, setShowBackModal] = useState(false);
+  const confirmedRef = useRef(false);
+  const navigation = useNavigation();
   const { params } = useRoute();
 
   const dlName     = (params as any)?.name     || '';
@@ -20,8 +21,29 @@ export default function useManageListingContainer() {
   const dlDistrict = (params as any)?.district || '';
   const dlRef      = (params as any)?.ref      || '';
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (confirmedRef.current) return;
+      if (e.data.action.type === 'RESET') return;
+      e.preventDefault();
+      setShowBackModal(true);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const confirmGoBack = useCallback(() => {
+    confirmedRef.current = true;
+    setShowBackModal(false);
+    reset(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
+  }, []);
+
+  const cancelGoBack = useCallback(() => {
+    setShowBackModal(false);
+  }, []);
+
   const onSelect = (value: number | null) => {
     if (!value) return;
+    confirmedRef.current = true;
     const payload = {
       country_code:    (params as any)?.country_code,
       phone_number:    (params as any)?.phone_number,
@@ -69,6 +91,9 @@ export default function useManageListingContainer() {
     setLocalSelectedId,
     onSelect,
     listingData,
-    refetch
+    refetch,
+    showBackModal,
+    confirmGoBack,
+    cancelGoBack,
   };
 }

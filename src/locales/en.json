@@ -126,13 +126,16 @@
       "title_2": "listings",
       "title_3": " do\nyou manage?",
       "card_header": "Listing Selection",
-      "next": "Next"
+      "next": "Next",
+      "exit_modal_title": "Leave Listing Selection?",
+      "exit_modal_text": "Going back will take you to the previous step."
     },
     "create_account": {
       "title_1": "Create Your Free ",
       "title_2": "Account",
       "subtitle": "Welcome to livedin. Let's build a brighter hosting journey together.",
       "full_name": "Full Name *",
+      "email": "Email *",
       "password": "Password *",
       "password_hint": "Please choose a stronger password. Try a mix of letters, numbers, and symbols.",
       "terms_1": "I confirm that I have read and accept the ",
@@ -141,6 +144,9 @@
       "privacy_policy": "privacy policy",
       "next": "Next",
       "validation_name_required": "Full Name is required",
+      "validation_name_invalid": "Full Name can only contain letters and spaces",
+      "validation_email_required": "Email is required",
+      "validation_email_invalid": "Enter a valid email address",
       "validation_password_required": "Password is required",
       "validation_password_min": "Password must be at least 8 characters",
       "validation_password_letters": "Password must contain letters",
@@ -176,6 +182,8 @@
       "view_less": "View Less",
       "ai_suite_note": "Everything in starter, plus all AI capabilities below:",
       "start_30_trial": "Start 30-days free trial",
+      "exit_modal_title": "Leave Plan Selection?",
+      "exit_modal_text": "Going back will take you to the previous step.",
       "legal_trial": "By starting your free trial, you agree to the ",
       "starter_features": {
         "channel_sync": {

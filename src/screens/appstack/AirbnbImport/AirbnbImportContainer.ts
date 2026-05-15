@@ -70,9 +70,26 @@ export default function useAirbnbImportContainer() {
       const defaultFormValues: FormValues = {};
 
       airbnbData.forEach((property: any) => {
-        const match = apiResponse.data?.find(
-          (item: any) => String(item.id) === String(property.id)
-        );
+        let match: any = null;
+
+        if (property.listing_relations?.[0]?.airbnb_external_listing_id) {
+          match = apiResponse.data?.find(
+            (item: any) => String(item.id) === String(property.listing_relations[0].airbnb_external_listing_id)
+          );
+        }
+
+        if (!match && property.listing_relations?.[0]?.other_ota_external_listing_id) {
+          match = apiResponse.data?.find(
+            (item: any) => String(item.id) === String(property.listing_relations[0].other_ota_external_listing_id)
+          );
+        }
+
+        if (!match) {
+          match = apiResponse.data?.find(
+            (item: any) => String(item.id) === String(property.id)
+          );
+        }
+
         if (match) {
           defaultFormValues[String(property.id)] = String(match.id);
         }

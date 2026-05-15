@@ -94,6 +94,17 @@ export interface SubscriptionCalculateResponse {
     };
 }
 
+export const contactEligibilityApi = async (email: string) => {
+    const { ok, response, data } = await apiService.get<{
+        status: string;
+        data: { email: string; eligible: boolean; reason: string; record: any };
+    }>(SERVICE_CONFIG_URLS.APP.CONTACT_ELIGIBILITY, { email });
+    if (ok && data) {
+        return data;
+    }
+    throw response;
+};
+
 export const subscriptionCalculateApi = async (params: SubscriptionCalculateParams) => {
     const { ok, response, data } = await apiService.get<SubscriptionCalculateResponse>(
         SERVICE_CONFIG_URLS.APP.SUBSCRIPTION_CALCULATE,

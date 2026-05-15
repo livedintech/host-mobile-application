@@ -159,6 +159,7 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_LISTING_PHOTOS: `${authController}/channelmanagement/create-listing/photos`,
     DELETE_LISTING_PHOTO: `${authController}/channelmanagement/listing/photos/{external_id}`,
     SUBSCRIPTION_CALCULATE: `${authController}/subscription/calculate`,
+    CONTACT_ELIGIBILITY: `${authController}/subscription/contact-eligibility`,
     SET_FEATURED_PHOTO: `${authController}/channelmanagement/listing/{listing_id}/photos/{media_id}/featured`,
     GET_LISTING_PHOTOS: `${authController}/channelmanagement/listing/{listing_id}/photos`,
     GET_MOBILE_NOTIFICATIONS: `${authController}/mobile-notifications`,

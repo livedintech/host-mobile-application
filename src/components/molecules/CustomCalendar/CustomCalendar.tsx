@@ -58,7 +58,7 @@ const getOTASource = (source?: string) => {
     };
 
   return {
-    icon: 'livedin',
+    icon: '',
     color: COLORS.LIVEDIN_DARK,
     light: COLORS.LIVEDIN_LIGHT,
   };
