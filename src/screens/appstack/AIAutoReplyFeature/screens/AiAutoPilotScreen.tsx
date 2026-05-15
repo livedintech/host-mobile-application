@@ -34,7 +34,7 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
     listingOptions,
     isRefetching,
     refetchAutopilot,
-    waitTriggerData
+    waitTriggerData,
   } = AiAutoPilotContainer();
 
   return (
@@ -47,7 +47,12 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
         refreshing={isRefetching}
         onRefresh={refetchAutopilot}
       >
-        <AppText text={t('app.autopilot.title')} fontSize={32} type="Bold" mb={16} />
+        <AppText
+          text={t('app.autopilot.title')}
+          fontSize={32}
+          type="Bold"
+          mb={16}
+        />
 
         {/* Description */}
         <View style={styles.descriptionRow}>
@@ -78,8 +83,8 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
             <View style={{ flex: 1 }}>
               <AppText
                 text={
-                  isAutopilotActive 
-                    ? t('app.autopilot.status_active') 
+                  isAutopilotActive
+                    ? t('app.autopilot.status_active')
                     : t('app.autopilot.status_disabled')
                 }
                 fontSize={20}
@@ -119,6 +124,7 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
               required: t('app.autopilot.error_property_required'),
             }}
             dropdownPosition="top"
+            disabled={!listingOptions?.length}
           />
 
           <ButtonView
