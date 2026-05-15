@@ -10,6 +10,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import { useTranslation } from 'react-i18next';
 
@@ -17,7 +18,7 @@ const FIGMA_TEAL = '#333333';
 
 const ManageListingScreen = () => {
   const { t } = useTranslation();
-  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId, refetch, } = useManageListingContainer();
+  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId, refetch, showBackModal, confirmGoBack, cancelGoBack } = useManageListingContainer();
 
   const handleNextPress = () => {
     if (localSelectedId !== null) {
@@ -106,6 +107,13 @@ const ManageListingScreen = () => {
           </View>
         </RefreshableScrollView>
       </SafeAreaView>
+      <AccountDeleteModal
+        isVisible={showBackModal}
+        onClose={cancelGoBack}
+        onConfirm={confirmGoBack}
+        title={t('auth.manage_listing.exit_modal_title')}
+        description={t('auth.manage_listing.exit_modal_text')}
+      />
     </BGImage>
   );
 };

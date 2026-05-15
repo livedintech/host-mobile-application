@@ -16,7 +16,8 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 export default function useCreateAccountContainer() {
   const signUpSchema = useMemo(() => yup.object().shape({
-    fullName: yup.string().required(i18n.t('auth.create_account.validation_name_required')),
+    fullName: yup.string().matches(/^[a-zA-ZÀ-ɏ\s]+$/, i18n.t('auth.create_account.validation_name_invalid')).required(i18n.t('auth.create_account.validation_name_required')),
+    email: yup.string().email(i18n.t('auth.create_account.validation_email_invalid')).required(i18n.t('auth.create_account.validation_email_required')),
     password: yup
       .string()
       .min(8, i18n.t('auth.create_account.validation_password_min'))
@@ -29,7 +30,7 @@ export default function useCreateAccountContainer() {
   const route = useRoute<any>();
   const navigation = useNavigation();
 
-  const { params } = useRoute();
+  const { params } = useRoute<any>();
   const country_code = params?.payload?.country_code;
   const phone_number = params?.payload?.phone_number;
   const phone_with_code = params?.payload?.phone_with_code;
@@ -53,6 +54,7 @@ export default function useCreateAccountContainer() {
     resolver: yupResolver(signUpSchema),
     defaultValues: {
       fullName: deepLinkName,
+      email: '',
       password: '',
     },
   });
@@ -60,6 +62,7 @@ export default function useCreateAccountContainer() {
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
       if (confirmedRef.current) return;
+      if (e.data.action.type === 'RESET') return;
       e.preventDefault();
       setShowBackModal(true);
     });
@@ -82,13 +85,16 @@ export default function useCreateAccountContainer() {
     isIdle,
   } = useMutation<CreateAccountResponse, Error, CreateAccountPayload>({
     mutationFn: createAccountApi,
-    onSuccess: ({ message }) => {
+    onSuccess: ({ message }, variables: any) => {
       Toast.show({ type: 'success', text1: message });
+      confirmedRef.current = true;
       navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
         country_code,
         phone_number,
         phone_with_code,
         pricing,
+        full_name: variables.name,
+        email: variables.email,
       });
     },
     onError: ({ message }) => {
@@ -99,6 +105,7 @@ export default function useCreateAccountContainer() {
   const onSubmit = (data: any) => {
     const payload = {
       name: data.fullName,
+      email: data.email,
       password: data.password,
       country_code,
       phone_number: String(phone_number),
