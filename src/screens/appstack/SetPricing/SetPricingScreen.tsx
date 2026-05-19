@@ -1,6 +1,6 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -15,7 +15,6 @@ import usePricingContainer from './SetPricingContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
-import Modal from 'react-native-modal';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const SetPricingScreen = () => {
@@ -37,9 +36,9 @@ const SetPricingScreen = () => {
           automaticallyAdjustKeyboardInsets={false}
         >
           <View style={styles.headerRow}>
-             <ButtonView onPress={() => goBack()}>
-                        <Svgicons path="back" size={40} />
-                      </ButtonView>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
             {!isEdit && <CircularProgress percentage={80} size={48} strokeWidth={4} />}
           </View>
 
@@ -99,9 +98,9 @@ const SetPricingScreen = () => {
       </View>
       <Modal
         visible={bottomSheetVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setBottomSheetVisible(false)}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setBottomSheetVisible(false)}
       >
         <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
           <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
@@ -112,6 +111,7 @@ const SetPricingScreen = () => {
               errors={otaErrors}
               data={listingOptions}
               placeholder={t('app.set_pricing.select_account')}
+              dropdownPosition='top'
             />
 
             <AppButton
@@ -151,6 +151,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 12,
     paddingBottom: 40,
+  },
+  modalContainer: {
+    justifyContent: 'flex-end',
+    margin: 0,        // ✅ yahi left/right space ka issue tha
   },
 });
 

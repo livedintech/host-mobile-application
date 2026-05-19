@@ -58,12 +58,12 @@ export default function usePropertyDetailContainer() {
   });
 
   const connectedAccounts = response?.data || [];
- const listingOptions = connectedAccounts
-  .filter((item: any) => item.connection_type === 'Airbnb')
-  .map((item: any) => ({
-    label: `Airbnb - ${item?.id}`,
-    value: item.ch_channel_id,
-  }));
+  const listingOptions = connectedAccounts
+    .filter((item: any) => item.connection_type === 'Airbnb')
+    .map((item: any) => ({
+      label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
+      value: item.ch_channel_id,
+    }));
 
   // ── Export ────────────────────────────────────────────────────────────────
   const handleExport = () => setBottomSheetVisible(true);
@@ -119,6 +119,9 @@ export default function usePropertyDetailContainer() {
 
   // ── Data Mapping ──────────────────────────────────────────────────────────
   const listing = data?.data?.listing;
+
+  console.log('listing?.cleaning_instructions', listing);
+
 
   // ✅ Description parsing — API plain string ya object dono handle
   let extractedDescription = '';
@@ -184,9 +187,27 @@ export default function usePropertyDetailContainer() {
     },
 
     guidelines: {
+        houseManual: listing?.house_manual || listing?.house_manul || '',  // ✅ API has both spellings
       arrivalGuide: listing?.arrival_guide || '',
       houseRules: listing?.house_rule || '',
       checkoutInstructions: listing?.cleaning_instructions || '',
+      // ✅ Add this:
+      checkoutInstructionsTasks: (() => {
+        const ci = listing?.checkout_instructions;
+        if (!ci || typeof ci !== 'object') return '';
+        const taskMap: Record<string, string> = {
+          return_keys: 'Return Keys',
+          turn_things_off: 'Turn Things Off',
+          throw_trash: 'Throw Trash',
+          lock_up: 'Lock Up',
+          gather_towels: 'Gather Towels',
+          additional_requests: 'Additional Requests',
+        };
+        const presentTasks = Object.entries(ci)
+          .filter(([_, val]: any) => val?.is_present === true)
+          .map(([key]) => taskMap[key] || key);
+        return presentTasks.join(', ');
+      })(),
     },
 
     // ✅ Cancel policies — API { id, title } object deta hai
@@ -285,7 +306,7 @@ export default function usePropertyDetailContainer() {
       case 'AIPricing':
         navigate(NavigationRoutes.APP_STACK.CREATE_EDIT_AI_DYNAMIC_PRICING, { paramData: data?.data });
         break;
-        case 'discounts':
+      case 'discounts':
         navigate(NavigationRoutes.APP_STACK.ADD_DISCOUNTS, { paramData: data?.data });
         break;
       case 'Pricing':

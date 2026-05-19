@@ -14,6 +14,9 @@ import { useAuthStore } from '@/store/useAuthStore';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
+import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+import { createListingExportApi } from '@/services/ createListingService';
+import { useQuery } from '@tanstack/react-query';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const discountsSchema = yup.object().shape({
@@ -25,12 +28,64 @@ export const discountsSchema = yup.object().shape({
 
 export type DiscountFormValues = yup.InferType<typeof discountsSchema>;
 
+const otaAccountSchema = yup.object({
+  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
+});
+type OtaAccountFormValues = { ota_account: string };
+
 // ── Container ─────────────────────────────────────────────────────────────────
 export default function useDiscountsContainer() {
   const { params } = useRoute<any>();
   const [isModalVisible, setModalVisible] = useState(false);
   const { updateListing, listing_id, channel_id } = useCreateListingStore();
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+
+  const {
+    control: otaControl,
+    handleSubmit: handleOtaSubmit,
+    formState: { errors: otaErrors },
+    watch: otaWatch,
+  } = useForm<OtaAccountFormValues>({
+    resolver: yupResolver(otaAccountSchema) as any,
+    defaultValues: { ota_account: '' },
+  });
+
+  const ota_Account = otaWatch('ota_account');
+
+  // OTA Accounts fetch
   const { user } = useAuthStore();
+  const { data: response } = useQuery({
+    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
+    queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
+    enabled: !!user?.id,
+  });
+
+  const connectedAccounts = response?.data || [];
+  const listingOptions = connectedAccounts
+    .filter((item: any) => item.connection_type === 'Airbnb')
+    .map((item: any) => ({
+      label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
+      value: item.ch_channel_id,
+    }));
+
+  const handleExport = () => setBottomSheetVisible(true);
+
+  const { mutate: exportMutate, isPending: isExporting } = useMutation({
+    mutationFn: createListingExportApi,
+    onSuccess: ({ message }: any) => {
+      setBottomSheetVisible(false);
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
+    },
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
+  });
+
+  const handleExportSubmit = () => {
+    exportMutate({
+      channel_id: ota_Account,
+      listing_id: String(listing_id),
+    } as any);
+  };
 
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id); // ✅ consistent
@@ -108,6 +163,15 @@ export default function useDiscountsContainer() {
     isLoading: isPending,
     isModalVisible,
     setModalVisible,
-    isEdit
+    isEdit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    handleExport,
+    handleExportSubmit,
+    isExporting,
+    listingOptions,
   };
 }

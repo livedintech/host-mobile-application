@@ -1518,7 +1518,10 @@
       "rate_placeholder": "أدخل السعر الليلي",
       "description": "عيّن اسماً لهذا العقار ليسهل تعرّفه وإدارته عند مزامنة قوائمك.",
       "continue": "متابعة",
-      "success_connected": "تم الاتصال بنجاح!"
+      "success_connected": "تم الاتصال بنجاح!",
+      "validation_name_required": "الاسم مطلوب",
+      "validation_rate_required": "السعر مطلوب",
+      "validation_rate_positive": "يجب أن يكون السعر أكبر من 0"
     },
     "property_detail": {
       "channel": "القناة",

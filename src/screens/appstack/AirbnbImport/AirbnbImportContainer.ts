@@ -1,3 +1,4 @@
+// AirbnbImportContainer.ts
 import i18n from '@/locales/i18n/i18n';
 import { useEffect, useCallback } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -53,7 +54,7 @@ export default function useAirbnbImportContainer() {
 
   const listingOptions =
     apiResponse?.data?.map((item: any) => ({
-      label: item.name,
+      label: item.name ?? item.title,
       value: String(item.id),
     })) ?? [];
 
@@ -100,8 +101,42 @@ export default function useAirbnbImportContainer() {
   }, [airbnbData, apiResponse, reset]);
 
   const refetch = useCallback(async () => {
-    reset({});
-    await Promise.all([refetchAirbnb(), refetchListings()]);
+    const [airbnb, listings] = await Promise.all([refetchAirbnb(), refetchListings()]);
+
+    const newAirbnbData = airbnb.data;
+    const newApiResponse = listings.data;
+
+    if (newAirbnbData && newApiResponse) {
+      const defaultFormValues: FormValues = {};
+
+      newAirbnbData.forEach((property: any) => {
+        let match: any = null;
+
+        if (property.listing_relations?.[0]?.airbnb_external_listing_id) {
+          match = newApiResponse.data?.find(
+            (item: any) => String(item.id) === String(property.listing_relations[0].airbnb_external_listing_id)
+          );
+        }
+
+        if (!match && property.listing_relations?.[0]?.other_ota_external_listing_id) {
+          match = newApiResponse.data?.find(
+            (item: any) => String(item.id) === String(property.listing_relations[0].other_ota_external_listing_id)
+          );
+        }
+
+        if (!match) {
+          match = newApiResponse.data?.find(
+            (item: any) => String(item.id) === String(property.id)
+          );
+        }
+
+        if (match) {
+          defaultFormValues[String(property.id)] = String(match.id);
+        }
+      });
+
+      reset(defaultFormValues);
+    }
   }, [refetchAirbnb, refetchListings, reset]);
 
   const { mutate: createListingImportPayload, isPending } = useMutation<

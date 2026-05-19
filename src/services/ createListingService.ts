@@ -152,6 +152,17 @@ export const createNewListingApi = async (payload: getUserListingsByUserID) => {
     throw new Error(response.message || 'Failed to fetch sub-categories');
 };
 
+export const getTTLOCKSListingApi = async () => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.GET_TT_LOCK
+    );
+
+    if (ok) {
+        return data.data;
+    }
+
+    throw response.message;
+};
 
 //Get Amunities 
 export const getTTLOCKSApi = async () => {

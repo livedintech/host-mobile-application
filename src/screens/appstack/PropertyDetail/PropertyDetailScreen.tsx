@@ -1,5 +1,4 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-// PropertyDetailScreen.tsx
 import React, { useState } from 'react';
 import { Modal, StyleSheet, View, Image, Platform } from 'react-native';
 import {
@@ -140,17 +139,17 @@ const PropertyDetailScreen = () => {
                 <AppText text={t('app.property_detail.task')} fontSize={16} color={Colors.BLACK} style={styles.menuText} />
                 <Svgicons path="taskIcon" size={20} />
               </MenuOption>
-            {listing?.is_sync === 'sync_all' && (
-              <MenuOption
-                disabled={isSupervisor}
-                onSelect={() => handleMenuAction('calendar')}
-                style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
-              >
-                <AppText text={t('app.property_detail.calendar')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="calendarGridIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BRUNSWICK_GREEN} />
-              </MenuOption>
-            )}
-              
+              {listing?.is_sync === 'sync_all' && (
+                <MenuOption
+                  disabled={isSupervisor}
+                  onSelect={() => handleMenuAction('calendar')}
+                  style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
+                >
+                  <AppText text={t('app.property_detail.calendar')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                  <Svgicons path="calendarGridIcon" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BRUNSWICK_GREEN} />
+                </MenuOption>
+              )}
+
 
               <MenuOption
                 disabled={isSupervisor}
@@ -337,7 +336,11 @@ const PropertyDetailScreen = () => {
               {/* Checkout Instructions */}
               <IconCard
                 title={t('app.checkoutInstruction.title')}
-                subtitle={propertyData.guidelines?.checkoutInstructions || 'Not provided'}
+                subtitle={
+                  propertyData.guidelines?.checkoutInstructionsTasks ||
+                  propertyData.guidelines?.checkoutInstructions ||
+                  'Not provided'
+                }
                 icon="clipboardCheck"
                 onPress={() => handleEditSection('CheckoutInstructions')}
               />

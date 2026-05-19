@@ -1,5 +1,7 @@
 import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
 import { navigate, resetToRoutes } from '@/services/navigationService';
@@ -16,8 +18,17 @@ export default function useBookingComStep3Container() {
     const { hotelId, listingId, selectedTitle } = route.params || {};
     console.log('hotelId', hotelId);
 
+    const step3Schema = yup.object().shape({
+        title: yup.string().required(i18n.t('app.booking_com_step3.validation_name_required')),
+        rate: listingId
+            ? yup.string()
+            : yup.string()
+                .required(i18n.t('app.booking_com_step3.validation_rate_required'))
+                .test('positive', i18n.t('app.booking_com_step3.validation_rate_positive'), val => Number(val) > 0),
+    });
 
     const { control, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(step3Schema),
         defaultValues: {
             title: selectedTitle || '',
             rate: '',

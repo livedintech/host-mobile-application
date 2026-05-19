@@ -1521,9 +1521,13 @@
       "rate_placeholder": "Enter price per night",
       "description": "Set a name for this listing so it's easy to identify and manage when syncing and representing your OTA listings.",
       "continue": "Continue",
-      "success_connected": "Successfully Connected!"
+      "success_connected": "Successfully Connected!",
+      "validation_name_required": "Name is required",
+      "validation_rate_required": "Rate is required",
+      "validation_rate_positive": "Rate must be greater than 0"
     },
     "property_detail": {
+      "house_manual": "House Manual",
       "channel": "Channel",
       "task": "Task",
       "calendar": "Calendar",
@@ -1549,7 +1553,7 @@
       "select_account": "Select Account",
       "export_desc": "Export your listing to automatically sync and apply all updates across your connected OTA platforms.",
       "policies_subtitle": "Smoking, Parties, +2 More",
-      "guidelines_subtitle": "House Rules, Check-out Instructions",
+      "guidelines_subtitle": "House Manual",
       "wifi_subtitle": "Wifi Details, Smart Door Lock",
       "disclosure_title": "Property Disclosure Details",
       "disclosure_subtitle": "Exterior Security Camera, + 2 More",

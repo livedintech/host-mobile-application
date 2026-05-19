@@ -54,7 +54,7 @@ export const SERVICE_CONFIG_URLS = {
     GET_USER_MANAGEMENT_LISTING: `${authController}/host/users/listings`,
     GET_VENDOR_SERVICES: `${api}/vendorservices`,
     GET_AMENITIES: `${authController}/amenities`,
-    GET_TT_LOCK: `${api}/ttlock/locks?pageNo=1&pageSize=2000`,
+      GET_TT_LOCK: `${api}/ttlock/listing-locks?pageNo=1&pageSize=2000'`,
     GET_USER_MANAGEMENT_ROLE: `${authController}/host/users/role`,
     GET_USER_MANAGEMENT: `${authController}/host/users`,
     EDIT_USER_MANAGEMENT: `${authController}/host/users/{id}`,
