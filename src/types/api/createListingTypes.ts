@@ -174,15 +174,24 @@ export interface ManageListingItem {
   id: string | number;
   type: string | null;
   name: string;
-  city?: string | null;
+  title?: string;
+  city?: { id: number; name: string } | null;
   country_code?: string | null;
-  apt?: string;
-  state?: string;
+  apt?: string | null;
+  state?: string | null;
+  street?: string | null;
+  district?: string | null;
+  zipcode?: string | null;
   occupancies: number[];
-  rate_plan_enabled: boolean | null;
+  rate_plan_enabled?: boolean | null;
   synchronization_category: string | null;
   is_sync: string | null;
   link_repository: unknown[];
+  images?: string[];
+  listing_id?: number;
+  quality_status?: string;
+  is_local?: number;
+  completion_percentage?: string;
   rooms?: Rooms;
 }
 

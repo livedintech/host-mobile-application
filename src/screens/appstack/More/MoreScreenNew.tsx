@@ -175,6 +175,29 @@ const MoreScreen = () => {
             },
           ]}
         />
+         <MenuSection
+          title={t('app.more.chat_settings_section')}
+          headerIcon="aiSetting" 
+          items={[
+            {
+              title: t('app.more.ai_autopilot'),
+              icon: 'aiAutoReplyMoreScreenIcon',
+              onPress: () => navigate(NavigationRoutes.APP_STACK.AI_AUTOPILOT),
+            },
+            {
+              title: t('app.more.escalation_settings'),
+              icon: 'escalationIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.ESCALATION_SETTINGS),
+            },
+            {
+              title: t('app.more.message_categories'),
+              icon: 'messageCategoriesIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES),
+            },
+          ]}
+        />
         {/* Logout Trigger */}
         <AppPressable onPress={toggleModal}>
           <GlassCard width="100%" style={styles.logoutCard}>

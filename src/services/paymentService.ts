@@ -34,6 +34,45 @@ export const subscriptionSavedCardsApi = async (payload: SavePaymentPayload) => 
 };
 
 
+export const getPaymentMethodsApi = async (customer_id: string) => {
+    const { ok, response, data } = await apiService.get(
+        SERVICE_CONFIG_URLS.APP.SUBSCRIPTION_PAYMENT_METHODS,
+        { customer_id },
+    );
+    if (ok) {
+        return data as {
+            status: string;
+            customer_id: string;
+            customer_number: string;
+            data: {
+                data: PaymentMethod[];
+            };
+        };
+    }
+    throw response;
+};
+
+export interface PaymentMethod {
+    id: string;
+    first_name: string;
+    last_name: string;
+    gateway_name: string;
+    email: string;
+    currency: string;
+    payment_method_type: string;
+    payment_method_subtype: string;
+    payment_method_id: string;
+    customer_profile_id: string;
+    last_four_digits: string | null;
+    expiry_month: string | null;
+    expiry_year: string | null;
+    expiry_date: string | null;
+    status: string;
+    default: number;
+    is_usable: boolean;
+    note: string | null;
+}
+
 export const getSubscriptionSaveCardsApi = async (payload: getSubscriptionSaveCardsPayloadType) => {
     const { ok, response, data } = await apiService.get(
         SERVICE_CONFIG_URLS.APP.SUBSCRIPTION_SAVED_CARDS,

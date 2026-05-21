@@ -38,7 +38,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   errors,
   label,
   data,
-  placeholder = 'Select',
+  placeholder,
   placeholderColor,
   disabled = false,
   rules,
@@ -47,6 +47,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 }) => {
   const { t } = useTranslation();
   const error = errors[name]?.message as string;
+  const finalPlaceholder = placeholder || t("common.placeholder");
 
   return (
     <View
@@ -87,7 +88,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             data={data}
             labelField="label"
             valueField="value"
-            placeholder={placeholder}
+            placeholder={finalPlaceholder}
             value={value}
             onChange={item => {
               onChange(item.value);

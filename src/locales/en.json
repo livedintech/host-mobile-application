@@ -4,6 +4,7 @@
     "or": "Or",
     "search": "Search...",
     "required": "Required",
+    "placeholder": "Select",
     "tab": {
       "home": "Home",
       "calendar": "Calendar",
@@ -873,7 +874,13 @@
       "feature_guest_communication": "24/7 Guest\nCommunication",
       "feature_revenue_management": "10 Revenue\nManagement",
       "feature_task_management": "Task\nManagement",
-      "feature_multi_calendar": "Multi-\ncalendar"
+      "feature_multi_calendar": "Multi-\ncalendar",
+      "your_properties": "Your Properties",
+      "plan_includes": "Your Plan Includes",
+      "change_plan": "Change Plan",
+      "next_payment": "Next Payment",
+      "renews": "Renews",
+      "view_more": "View More"
     },
     "smart_lock": {
       "title": "No Smart Lock Found",
@@ -1391,7 +1398,6 @@
       "pre_approve_placeholder": "Type your pre-approval message...",
       "send_approval": "Send Approval",
       "pre_approved_success": "Inquiry Pre-approved successfully",
-
       "accept_btn": "Accept",
       "decline_btn": "Decline",
       "booking_accepted": "Booking Accepted",
@@ -1970,8 +1976,8 @@
       "unassigned": "Unassigned",
       "chars_of_1000": "/1000 characters",
       "booking_code": "Booking Code",
-       "no_data_found": "No data found",
-       "coming_soon": "Coming Soon"
+      "no_data_found": "No data found",
+      "coming_soon": "Coming Soon"
     },
     "notifications": {
       "title": "Notifications",

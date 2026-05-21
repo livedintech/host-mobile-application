@@ -96,6 +96,13 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.SELECT_PLAN}
+        getComponent={() =>
+          require('@/screens/appstack/SelectPlan/SelectPlanScreen').default
+        }
+      />
+      <Stack.Screen
         options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.TRANSACTION_HISTORY}
         getComponent={() =>

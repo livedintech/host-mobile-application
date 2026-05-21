@@ -7,6 +7,7 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import GlassCard from '../GlassCard/GlassCard';
+import { useTranslation } from 'react-i18next';
 
 interface DropdownItem {
   label: string;
@@ -32,13 +33,17 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
   errors,
   label,
   data,
-  placeholder = 'Select',
+  placeholder,
   disabled = false,
   rules,
   dropdownPosition = 'bottom',
   labelStyle,
 }) => {
+    const { t } = useTranslation();
+  
   const error = errors[name]?.message as string;
+    const finalPlaceholder = placeholder || t("common.placeholder");
+
 
   const MAX_VISIBLE_CHIPS = 3;
   const MAX_CHIP_TEXT_LEN = 8;
@@ -127,7 +132,7 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
                 data={data}
                 labelField="label"
                 valueField="value"
-                placeholder={placeholder}
+                placeholder={finalPlaceholder}
                 value={value || []}
                 onChange={onChange}
                 disable={disabled}
