@@ -24,7 +24,7 @@ export const loginApi = async (payload: LoginPayload) => {
     if (ok) {
         return data;
     }
-    throw response;
+    throw { ...response, is_deleted: data?.data?.is_deleted };
 };
 
 // Forgot Password

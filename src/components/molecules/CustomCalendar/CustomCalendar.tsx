@@ -19,7 +19,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CALENDAR_PADDING = 0;
 const COLUMN_WIDTH = (SCREEN_WIDTH - CALENDAR_PADDING) / 7;
 const SELECTION_HEIGHT = vs(46);
-import { useTranslation } from 'react-i18next';
 
 // Brand Colors
 const COLORS = {
@@ -77,7 +76,6 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
     isArabic,
   } = marking || {};
   const isActive = !!type && type !== 'none';
-
   // ─── LOGIC: Disable available past dates ───
   const today = new Date().setHours(0, 0, 0, 0);
   const isPast = date.timestamp < today;
@@ -220,11 +218,10 @@ const CustomCalendar = ({
   currentDate,
   defaultPrice,
 }: any) => {
-  const { i18n } = useTranslation();
-  const isArabic = i18n.language === 'ar';
 
   return (
     <View style={styles.glassCard}>
+      <View style={{ direction: 'ltr' }}>
       <Calendar
         current={currentDate}
         markingType="custom"
@@ -236,26 +233,13 @@ const CustomCalendar = ({
             onPress={onDayPress}
           />
         )}
-        renderArrow={(dir: any) => {
-          /**
-           * Logic:
-           * In Arabic (isArabic = true), 'left' button moves to NEXT month (visually right).
-           * So we show ChevronRight for the 'left' direction and ChevronLeft for 'right'.
-           */
-          if (dir === 'left') {
-            return isArabic ? (
-              <ChevronRight size={ms(22)} color="#000000" />
-            ) : (
-              <ChevronLeft size={ms(22)} color="#000000" />
-            );
-          } else {
-            return isArabic ? (
-              <ChevronLeft size={ms(22)} color="#000000" />
-            ) : (
-              <ChevronRight size={ms(22)} color="#000000" />
-            );
-          }
-        }}
+        renderArrow={(dir: any) =>
+          dir === 'left' ? (
+            <ChevronLeft size={ms(22)} color="#000000" />
+          ) : (
+            <ChevronRight size={ms(22)} color="#000000" />
+          )
+        }
         style={{ backgroundColor: 'transparent' }}
         theme={
           {
@@ -294,6 +278,7 @@ const CustomCalendar = ({
           } as any
         }
       />
+      </View>
     </View>
   );
 };

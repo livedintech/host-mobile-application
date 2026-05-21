@@ -93,8 +93,12 @@ export default function useEnterPasswordContainer() {
       }
       Toast.show({ type: 'success', text1: message });
     },
-    onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || i18n.t('auth.enter_password.login_failed') });
+    onError: (error: any) => {
+      if (error?.is_deleted === 1) {
+        gotToVerifyOTP();
+        return;
+      }
+      Toast.show({ type: 'error', text1: error?.message || i18n.t('auth.enter_password.login_failed') });
     },
   });
 

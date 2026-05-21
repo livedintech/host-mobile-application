@@ -1343,7 +1343,8 @@
       "date_placeholder": "يي/شش/سس",
       "check_in_required": "تاريخ الوصول مطلوب",
       "check_out_required": "تاريخ المغادرة مطلوب",
-      "set_pricing": "حفظ"
+      "set_pricing": "حفظ",
+      "manage_pricing": "إدارة التسعير"
     },
     "account_screen": {
       "title": "الحساب"

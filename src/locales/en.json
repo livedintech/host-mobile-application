@@ -1345,7 +1345,8 @@
       "date_placeholder": "mm/dd/yy",
       "check_in_required": "Check-in date is required",
       "check_out_required": "Check-out date is required",
-      "set_pricing": "Save"
+      "set_pricing": "Save",
+      "manage_pricing": "Manage Pricing"
     },
     "account_screen": {
       "title": "Account"

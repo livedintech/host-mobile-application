@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { FlatList, View, Image, StyleSheet, ScrollView } from 'react-native';
+import { FlatList, View, Image, StyleSheet, ScrollView, Platform, Dimensions } from 'react-native';
 import { vs, ms, s } from 'react-native-size-matters';
 import { useTranslation } from 'react-i18next';
 
@@ -16,6 +16,7 @@ import { bedroomOptions } from '@/constants/dropdownOptions';
 import { Colors } from '@/theme/colors';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+
 
 const IntroSlidesScreen = () => {
   const { t } = useTranslation();
@@ -61,15 +62,15 @@ const IntroSlidesScreen = () => {
             <AppText text={t('auth.property_can_earn.where_located')} fontSize={18} type="Medium" color="#000000" mb={vs(15)} textAlign="center" />
             <View>
               <AppText text={t('auth.property_can_earn.city')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
-              <DropdownField name="city" label="" control={control} errors={errors} data={availableCityItems} placeholder={t('auth.property_can_earn.city_placeholder')} />
+              <DropdownField name="city" label="" control={control} errors={errors} data={availableCityItems} placeholder={t('auth.property_can_earn.city_placeholder')} mode={Platform.OS === 'ios' ? 'modal' : 'default'} listContainerStyle={Platform.OS === 'ios' ? styles.iosDropdownList : undefined} />
             </View>
             <View>
               <AppText text={t('auth.property_can_earn.district')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
-              <DropdownField name="district" label="" control={control} errors={errors} data={availableDistrictItems} placeholder={t('auth.property_can_earn.district_placeholder')} disabled={!selectedcity?.length} />
+              <DropdownField name="district" label="" control={control} errors={errors} data={availableDistrictItems} placeholder={t('auth.property_can_earn.district_placeholder')} disabled={!selectedcity?.length} mode={Platform.OS === 'ios' ? 'modal' : 'default'} listContainerStyle={Platform.OS === 'ios' ? styles.iosDropdownList : undefined} />
             </View>
             <View>
               <AppText text={t('auth.property_can_earn.bedrooms')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
-              <DropdownField name="bedrooms" label="" control={control} errors={errors} data={availableBedroomItems} placeholder={t('auth.property_can_earn.bedrooms_placeholder')} />
+              <DropdownField name="bedrooms" label="" control={control} errors={errors} data={availableBedroomItems} placeholder={t('auth.property_can_earn.bedrooms_placeholder')} mode={Platform.OS === 'ios' ? 'modal' : 'default'} listContainerStyle={Platform.OS === 'ios' ? styles.iosDropdownList : undefined} />
             </View>
             <AppButton type='Bold' onPress={handleSubmit} title={t('auth.property_can_earn.next')} loading={isLoading} style={styles.nextBtn} color="#FFFFFF" />
           </View>
@@ -155,12 +156,15 @@ const IntroSlidesScreen = () => {
           onMomentumScrollEnd={handleMomentumScrollEnd}
           keyExtractor={(item) => String(item)}
           scrollEventThrottle={16}
+          getItemLayout={(_, index) => ({ length: Metrics.screenWidth, offset: Metrics.screenWidth * index, index })}
         />
         <Pagination activeIndex={activeIndex} onDotPress={scrollToSlide} />
       </View>
     </BGImage>
   );
 };
+
+const { height: SCREEN_H } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -171,6 +175,20 @@ const styles = StyleSheet.create({
   slide: {
     width: Metrics.screenWidth,
     flex: 1,
+  },
+  iosDropdownList: {
+    height: Metrics.verticalScale(250),
+    marginTop: SCREEN_H - 250,
+    width: Metrics.screenWidth,
+    marginHorizontal: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowOpacity: 0,
+    elevation: 0,
+    paddingHorizontal: Metrics.baseMargin,
+    paddingTop: Metrics.verticalScale(16)
   },
 
   // Slide 1 - PropertyCanEarn

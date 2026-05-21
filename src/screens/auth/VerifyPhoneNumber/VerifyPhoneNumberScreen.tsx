@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, I18nManager } from 'react-native';
 import OTPTextInput from 'react-native-otp-textinput';
 import { Colors } from '@/theme/colors';
 import { s, vs } from 'react-native-size-matters';
@@ -104,7 +104,7 @@ const VerifyPhoneNumberScreen = () => {
               </View>
             </View>
 
-            <View style={styles.otpWrapper}>
+            <View style={[styles.otpWrapper, I18nManager.isRTL && styles.rtlFlip]}>
               <Controller
                 control={control}
                 name="otpCode"
@@ -113,7 +113,7 @@ const VerifyPhoneNumberScreen = () => {
                   key={resetKey}
                     ref={otpRef} // 4. Attach the ref here
                     handleTextChange={onChange}
-                    textInputStyle={styles.otpInput}
+                    textInputStyle={I18nManager.isRTL ? { ...styles.otpInput, transform: [{ scaleX: -1 }] } : styles.otpInput}
                     containerStyle={styles.otpContainer}
                     tintColor={FIGMA_TEAL}
                     offTintColor="#C4C4C4"
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
   },
   footerSec: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%' },
   bottomSec: { flex: 1, width: '100%', justifyContent: 'flex-end', paddingBottom: vs(40), marginTop: vs(40) },
+  rtlFlip: { transform: [{ scaleX: -1 }] },
 });
 
 export default VerifyPhoneNumberScreen;
