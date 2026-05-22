@@ -6,7 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
 import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { createListingDetailsApi, editListingApi, getTTLOCKSApi, createListingExportApi } from '@/services/ createListingService';
+import { createListingDetailsApi, editListingApi, getTTLOCKSApi, createListingExportApi, getTTLOCKSListingApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import Toast from 'react-native-toast-message';
@@ -56,7 +56,7 @@ export default function useGuidelinesContainer() {
   const connectedAccounts = response?.data || [];
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({ label: `Airbnb - ${item?.id}`, value: item.ch_channel_id }));
+    .map((item: any) => ({ label: `Airbnb - ${item?.id} - ${item?.channel_name}`, value: item.ch_channel_id }));
 
   // ── Export Mutation ───────────────────────────────────────────────────────
   const { mutate: createListingExportPayload, isPending: isPendingExporting } =
@@ -101,7 +101,7 @@ export default function useGuidelinesContainer() {
       resolver: yupResolver(guidelinesSchema) as any,
       defaultValues: {
         arrival_guide: listing?.arrival_guide ?? '',
-        property_rules: listing?.house_manual || listing?.house_manul || '',
+        property_rules: listing?.house_manual || listing?.house_manul || listing?.house_rule || '',
         wifi_username: listing?.wifi_network ?? '',
         wifi_password: listing?.wifi_password ?? '',
         door_lock_code: listing?.door_lock_code ?? '',
@@ -113,7 +113,7 @@ export default function useGuidelinesContainer() {
   // ── Lock Options ──────────────────────────────────────────────────────────
   const { data: rawTTLocks = [], isLoading: isLoadingTTLocks } = useQuery({
     queryKey: [STORAGE_CONST.TT_LOCKS],
-    queryFn: getTTLOCKSApi,
+    queryFn: getTTLOCKSListingApi,
   });
 
   const lockOptions = rawTTLocks.map((lock: any) => ({

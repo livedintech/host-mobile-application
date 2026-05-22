@@ -30,6 +30,9 @@ interface DropdownFieldProps {
   dropdownPosition?: 'auto' | 'top' | 'bottom';
   onSelect?: (value: any) => void;
   extraPayload?: any;
+  mode?: 'default' | 'modal' | 'auto';
+  maxHeight?: number;
+  listContainerStyle?: object;
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
@@ -38,15 +41,19 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   errors,
   label,
   data,
-  placeholder = 'Select',
+  placeholder,
   placeholderColor,
   disabled = false,
   rules,
   dropdownPosition,
   onSelect,
+  mode,
+  maxHeight,
+  listContainerStyle,
 }) => {
   const { t } = useTranslation();
   const error = errors[name]?.message as string;
+  const finalPlaceholder = placeholder || t("common.placeholder");
 
   return (
     <View
@@ -69,15 +76,17 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
         rules={rules}
         render={({ field: { onChange, value } }) => (
           <Dropdown
+            mode={mode}
+            maxHeight={maxHeight}
             dropdownPosition={dropdownPosition}
             inputSearchStyle={styles.inputSearchStyle}
             search
             style={[
               styles.dropdown,
-              !!error && styles.errorBorder,
               disabled && styles.disabled,
+              !!error && styles.errorBorder,
             ]}
-            containerStyle={styles.popupListContainer}
+            containerStyle={[styles.popupListContainer, listContainerStyle]}
             placeholderStyle={[
               styles.placeholderStyle,
               placeholderColor ? { color: placeholderColor } : {},
@@ -87,7 +96,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             data={data}
             labelField="label"
             valueField="value"
-            placeholder={placeholder}
+            placeholder={finalPlaceholder}
             value={value}
             onChange={item => {
               onChange(item.value);
@@ -97,12 +106,14 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             }}
             disable={disabled}
             renderRightIcon={() => (
-              <Svgicons
-                path="ChevronDownIcon"
-                width={15}
-                height={15}
-                color="#2D3142"
-              />
+              <View style={{ marginRight: 8 }}>
+                <Svgicons
+                  path="ChevronDownIcon"
+                  width={15}
+                  height={15}
+                  color="#2D3142"
+                />
+              </View>
             )}
             autoScroll={false}
             searchPlaceholder={t('common.search')}
@@ -151,13 +162,15 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: '#7B8D88', // Matches calendar price color
+    color: '#7B8D88',
     fontWeight: '400',
+    paddingRight: 12,
   },
   selectedTextStyle: {
     fontSize: Metrics.generatedFontSize(14),
-    color: '#000000', // Deep forest color for contrast
+    color: '#000000',
     fontWeight: '400',
+    paddingRight: 12,
   },
   itemTextStyle: {
     fontSize: Metrics.generatedFontSize(14),

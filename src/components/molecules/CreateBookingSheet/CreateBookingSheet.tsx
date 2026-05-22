@@ -95,7 +95,7 @@ export const CreateBookingSheet = ({
           text={
             bookingType === 'direct'
               ? t('app.listing_screen.create_direct_booking')
-              : t('app.listing_screen.set_pricing')
+              : t('app.listing_screen.manage_pricing')
           }
           type="Medium"
           fontSize={22}

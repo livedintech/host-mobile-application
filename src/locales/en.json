@@ -4,6 +4,7 @@
     "or": "Or",
     "search": "Search...",
     "required": "Required",
+    "placeholder": "Select",
     "tab": {
       "home": "Home",
       "calendar": "Calendar",
@@ -873,7 +874,13 @@
       "feature_guest_communication": "24/7 Guest\nCommunication",
       "feature_revenue_management": "10 Revenue\nManagement",
       "feature_task_management": "Task\nManagement",
-      "feature_multi_calendar": "Multi-\ncalendar"
+      "feature_multi_calendar": "Multi-\ncalendar",
+      "your_properties": "Your Properties",
+      "plan_includes": "Your Plan Includes",
+      "change_plan": "Change Plan",
+      "next_payment": "Next Payment",
+      "renews": "Renews",
+      "view_more": "View More"
     },
     "smart_lock": {
       "title": "No Smart Lock Found",
@@ -1338,7 +1345,8 @@
       "date_placeholder": "mm/dd/yy",
       "check_in_required": "Check-in date is required",
       "check_out_required": "Check-out date is required",
-      "set_pricing": "Save"
+      "set_pricing": "Save",
+      "manage_pricing": "Manage Pricing"
     },
     "account_screen": {
       "title": "Account"
@@ -1391,7 +1399,6 @@
       "pre_approve_placeholder": "Type your pre-approval message...",
       "send_approval": "Send Approval",
       "pre_approved_success": "Inquiry Pre-approved successfully",
-
       "accept_btn": "Accept",
       "decline_btn": "Decline",
       "booking_accepted": "Booking Accepted",
@@ -1521,9 +1528,13 @@
       "rate_placeholder": "Enter price per night",
       "description": "Set a name for this listing so it's easy to identify and manage when syncing and representing your OTA listings.",
       "continue": "Continue",
-      "success_connected": "Successfully Connected!"
+      "success_connected": "Successfully Connected!",
+      "validation_name_required": "Name is required",
+      "validation_rate_required": "Rate is required",
+      "validation_rate_positive": "Rate must be greater than 0"
     },
     "property_detail": {
+      "house_manual": "House Manual",
       "channel": "Channel",
       "task": "Task",
       "calendar": "Calendar",
@@ -1549,7 +1560,7 @@
       "select_account": "Select Account",
       "export_desc": "Export your listing to automatically sync and apply all updates across your connected OTA platforms.",
       "policies_subtitle": "Smoking, Parties, +2 More",
-      "guidelines_subtitle": "House Rules, Check-out Instructions",
+      "guidelines_subtitle": "House Manual",
       "wifi_subtitle": "Wifi Details, Smart Door Lock",
       "disclosure_title": "Property Disclosure Details",
       "disclosure_subtitle": "Exterior Security Camera, + 2 More",
@@ -1966,8 +1977,8 @@
       "unassigned": "Unassigned",
       "chars_of_1000": "/1000 characters",
       "booking_code": "Booking Code",
-       "no_data_found": "No data found",
-       "coming_soon": "Coming Soon"
+      "no_data_found": "No data found",
+      "coming_soon": "Coming Soon"
     },
     "notifications": {
       "title": "Notifications",

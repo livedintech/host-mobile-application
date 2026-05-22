@@ -1,5 +1,5 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, ImageBackground, Image, Modal, ActivityIndicator } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import Metrics from '@/utility/Metrics';
@@ -16,12 +16,55 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { storage } from '@/storage/mmkv';
 import Toast from 'react-native-toast-message';
 import { NotificationService } from '@/services/notification.service';
+import { useFocusEffect } from '@react-navigation/native';
+import { getUser } from '@/services/UserPermission';
+import { contactEligibilityApi } from '@/services/paymentService';
+
 
 const MoreScreen = () => {
   const { t } = useTranslation();
-  const { user, logout } = useAuthStore();
+  const { user, logout, setUser } = useAuthStore();
   const queryClient = useQueryClient();
   const [isModalVisible, setModalVisible] = useState(false);
+  const eligibleRef = useRef<boolean | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Always refresh user data on focus
+      getUser()
+        .then((data) => { if (data) setUser(data); })
+        .catch(() => { });
+
+      // Pre-fetch eligibility only when user has no plan
+      if (user?.sub_plan_id === null || user?.sub_plan_id === undefined) {
+        const email = user?.email ?? '';
+        if (email) {
+          contactEligibilityApi(email)
+            .then((result) => { eligibleRef.current = result?.data?.eligible ?? false; })
+            .catch(() => { eligibleRef.current = false; });
+        }
+      }
+    }, [user?.sub_plan_id, user?.email]),
+  );
+
+  const handleSubscriptionPress = () => {
+    if (user?.sub_plan_id !== null && user?.sub_plan_id !== undefined) {
+      navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY);
+      return;
+    }
+    if (eligibleRef.current) {
+      navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW, {
+        planId: 'df0c79c6-e11e-4215-97b1-249011095c8f',
+        qtyFrom: 1,
+        full_name: user?.name ?? '',
+        email: user?.email ?? '',
+        country_code: user?.country_code ?? '',
+        phone_number: user?.phone ?? '',
+      });
+      return;
+    }
+    navigate(NavigationRoutes.APP_STACK.SELECT_PLAN);
+  };
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
@@ -42,8 +85,8 @@ const MoreScreen = () => {
     },
   });
 
-  const displayPhone = user?.phone_with_code && user?.phone 
-    ? `+${user.phone_with_code} ${user.phone}` 
+  const displayPhone = user?.phone_with_code && user?.phone
+    ? `+${user.phone_with_code} ${user.phone}`
     : (user?.phone_with_code || user?.phone || '******');
 
 
@@ -96,9 +139,9 @@ const MoreScreen = () => {
           ]}
         />
 
-              <MenuSection
+        <MenuSection
           title={t('app.more.chat_settings_section')}
-          headerIcon="aiSetting" 
+          headerIcon="aiSetting"
           items={[
             {
               title: t('app.more.ai_autopilot'),
@@ -116,6 +159,28 @@ const MoreScreen = () => {
               icon: 'messageCategoriesIcon',
               onPress: () =>
                 navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES),
+            },
+          ]}
+        />
+        <MenuSection
+          title={t('app.billing.title')}
+          headerIcon="paymentCardIcon"
+          items={[
+            {
+              title: t('app.billing.payment_method'),
+              icon: 'paymentIcon',
+              onPress: () => navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST),
+            },
+            {
+              title: t('app.billing.subscription'),
+              icon: 'paymentDollar',
+              onPress: handleSubscriptionPress,
+            },
+            {
+              title: t('app.billing.transaction_history'),
+              icon: 'transactionIcon',
+              onPress: () =>
+                navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY),
             },
           ]}
         />
@@ -142,16 +207,16 @@ const MoreScreen = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <AppText 
+            <AppText
               text={t('app.more.logout_confirm')}
-              type="Bold" 
-              fontSize={18} 
-              style={styles.modalTitle} 
+              type="Bold"
+              fontSize={18}
+              style={styles.modalTitle}
             />
-            
-            <AppText 
+
+            <AppText
               text={t('app.more.logout_subtitle')}
-              fontSize={14} 
+              fontSize={14}
               color="grey"
               style={styles.modalSubTitle}
             />

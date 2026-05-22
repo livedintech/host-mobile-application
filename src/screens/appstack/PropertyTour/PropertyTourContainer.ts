@@ -22,6 +22,13 @@ const otaAccountSchema = yup.object({
 });
 type OtaAccountFormValues = { ota_account: string };
 
+// ── Fixed categories with their nav routes ────────────────────────────────
+const FIXED_CATEGORIES: { name: string; route: string }[] = [
+  { name: 'Bathroom', route: NavigationRoutes.APP_STACK.OTHER_VIDEOS },
+  { name: 'Exterior', route: NavigationRoutes.APP_STACK.OTHER_VIDEOS },
+  { name: 'Interior', route: NavigationRoutes.APP_STACK.OTHER_VIDEOS },
+];
+
 export default function usePropertyTourContainer() {
   const route = useRoute<any>();
   const { listing_id } = useCreateListingStore();
@@ -53,7 +60,7 @@ export default function usePropertyTourContainer() {
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
     .map((item: any) => ({
-      label: `Airbnb - ${item?.id}`,
+      label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
       value: item.ch_channel_id,
     }));
 
@@ -86,24 +93,56 @@ export default function usePropertyTourContainer() {
     enabled: Boolean(listing_id),
   });
 
-  const existingPhotos = photosData?.data?.photos || {};
+  // ── Normalize photos — API returns [] or {} ───────────────────────────────
+  const rawPhotos = photosData?.data?.photos;
+  const existingPhotos: Record<string, any[]> =
+    rawPhotos && !Array.isArray(rawPhotos) && typeof rawPhotos === 'object'
+      ? rawPhotos
+      : {};
 
-  const tourData = Object.keys(existingPhotos).map((categoryName, index) => {
-    const photosArray = existingPhotos[categoryName] || [];
+  // ── Merge fixed + extra API categories (case-insensitive dedup) ───────────
+  const apiCategoryNames = Object.keys(existingPhotos);
+  const fixedCategoryNames = FIXED_CATEGORIES.map((c) => c.name);
+
+  const extraCategoryNames = apiCategoryNames.filter(
+    (apiName) =>
+      !fixedCategoryNames.some(
+        (fixedName) => fixedName.toLowerCase() === apiName.toLowerCase(),
+      ),
+  );
+
+  const allCategoryNames = [...fixedCategoryNames, ...extraCategoryNames];
+
+  // ── Build tourData ────────────────────────────────────────────────────────
+  const tourData = allCategoryNames.map((categoryName, index) => {
+    // case-insensitive match against API keys
+    const matchedKey = Object.keys(existingPhotos).find(
+      (k) => k.toLowerCase() === categoryName.toLowerCase(),
+    );
+    const photosArray: any[] = matchedKey ? existingPhotos[matchedKey] : [];
     const featuredPhoto = photosArray.find((p: any) => p.is_featured === true);
     const coverPhoto = featuredPhoto || photosArray[0];
     const coverImage = coverPhoto?.url || null;
 
     return {
-      id:    index.toString(),
-      title: categoryName,
-      count: photosArray.length,
-      image: coverImage,
+      id:      index.toString(),
+      title:   categoryName,
+      count:   photosArray.length,
+      image:   coverImage,
+      isEmpty: photosArray.length === 0, // true = add mode, false = edit mode
     };
   });
 
+  // ── Navigate to correct screen per category ───────────────────────────────
   const handleCardPress = (selectedCategory: string) => {
-    navigate(NavigationRoutes.APP_STACK.OTHER_VIDEOS, {
+    const fixed = FIXED_CATEGORIES.find(
+      (c) => c.name.toLowerCase() === selectedCategory.toLowerCase(),
+    );
+    const targetRoute = fixed
+      ? fixed.route
+      : NavigationRoutes.APP_STACK.OTHER_VIDEOS;
+
+    navigate(targetRoute, {
       isEdit,
       existingPhotos: existingPhotos[selectedCategory] || [],
       category: selectedCategory,
@@ -117,7 +156,6 @@ export default function usePropertyTourContainer() {
     handleCardPress,
     isFetching,
     refetch,
-    // ✅ Export modal
     bottomSheetVisible,
     setBottomSheetVisible,
     otaControl,

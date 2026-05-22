@@ -122,7 +122,8 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
           <InfoRow
             icon="database_check"
             label={t('app.manage_booking.connection_status')}
-            value={account?.channel_status === 'unknown' ? 'Disconnect' : account?.channel_status}
+            value={formatStatus(account?.channel_status)}
+            // value={account?.channel_status === 'unknown' ? 'Disconnect' :  account?.channel_status}
             valueColor={account?.channel_status === 'unknown' ? Colors.ALERT_RED : Colors.TEAL_PRIMARY_ALT}
           />
           {account?.listings?.[0]?.listing_relation && (

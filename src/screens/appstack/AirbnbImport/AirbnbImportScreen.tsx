@@ -1,3 +1,4 @@
+// AirbnbImportScreen.tsx
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -19,6 +20,7 @@ const PropertyCard = ({
   id,
   name,
   listingRelations,
+  isMap,
   control,
   errors,
   listingOptions,
@@ -28,9 +30,17 @@ const PropertyCard = ({
   const { t } = useTranslation();
   const fieldName = `${id}`;
   const selectedLivedinId = watch(fieldName);
+
+  // isMap airbnb property ka field hai — isi se sab decide hoga
+  // Livedin ID sirf tab display hogi jab isMap: true ho
+  // const displaySelectedId = isMap && selectedLivedinId ? String(selectedLivedinId) : '-';
+  const displaySelectedId = selectedLivedinId ? String(selectedLivedinId) : '-';
+
+
+  // Re-import sirf tab jab listing_relations ho YA isMap: true ho
   const isMatch =
     (Array.isArray(listingRelations) && listingRelations.length > 0) ||
-    String(selectedLivedinId) === String(id);
+    Boolean(isMap);
 
   return (
     <GlassCard width="100%" style={styles.card}>
@@ -51,14 +61,29 @@ const PropertyCard = ({
 
       <View style={styles.infoSection}>
         <View style={styles.infoRow}>
-          <AppText text={t('app.airbnb_import.airbnb_id')} type="Regular" color={Colors.BLACK} fontSize={14} />
-          <AppText text={String(id)} type="Bold" color={Colors.BLACK} fontSize={14} />
+          <AppText
+            text={t('app.airbnb_import.airbnb_id')}
+            type="Regular"
+            color={Colors.BLACK}
+            fontSize={14}
+          />
+          <AppText
+            text={String(id)}
+            type="Bold"
+            color={Colors.BLACK}
+            fontSize={14}
+          />
         </View>
 
         <View style={styles.infoRow}>
-          <AppText text={t('app.airbnb_import.livedin_id')} type="Regular" color={Colors.BLACK} fontSize={14} />
           <AppText
-            text={selectedLivedinId ? String(selectedLivedinId) : '-'}
+            text={t('app.airbnb_import.livedin_id')}
+            type="Regular"
+            color={Colors.BLACK}
+            fontSize={14}
+          />
+          <AppText
+            text={displaySelectedId}
             type="Bold"
             color={Colors.BLACK}
             fontSize={14}
@@ -111,6 +136,7 @@ const AirbnbImportScreen = () => {
       id={item.id}
       name={item.title}
       listingRelations={item.listing_relations}
+      isMap={item.isMap}
       control={control}
       errors={errors}
       listingOptions={listingOptions}
@@ -127,14 +153,22 @@ const AirbnbImportScreen = () => {
             <SpinnerLoader />
           </View>
         )}
+
         <View style={styles.headerRow}>
           <ButtonView onPress={() => goBack()}>
             <Svgicons path="back" size={40} />
           </ButtonView>
-          <AppButton title='Refresh' onPress={refetch} variant='secondary' type='Regular' borderRadius={100} style={{
-            paddingHorizontal: Metrics.scale(35),
-            paddingVertical: Metrics.verticalScale(8)
-          }} />
+          <AppButton
+            title='Refresh'
+            onPress={refetch}
+            variant='secondary'
+            type='Regular'
+            borderRadius={100}
+            style={{
+              paddingHorizontal: Metrics.scale(35),
+              paddingVertical: Metrics.verticalScale(8),
+            }}
+          />
         </View>
 
         <View style={styles.header}>

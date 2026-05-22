@@ -4,7 +4,7 @@ export const AGENTS = [
   {
     id: '81155987',
     name: 'Uzair Ahmed',
-    meetingSlug: 'uzair-ahmed3/saassales-meeting',
+    meetingSlug: 'uzair-ahmed3/livedinsaas-sales',
     ownerId: '81155987',
   },
 ];

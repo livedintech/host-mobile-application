@@ -4,6 +4,7 @@
     "or": "Or",
     "search": "بحث...",
     "required": "مطلوب",
+    "placeholder": "اختر",
     "tab": {
       "home": "الرئيسية",
       "calendar": "التقويم",
@@ -871,7 +872,13 @@
       "feature_guest_communication": "تواصل الضيوف\n24/7",
       "feature_revenue_management": "10 إدارة\nالإيرادات",
       "feature_task_management": "إدارة\nالمهام",
-      "feature_multi_calendar": "تقويم\nمتعدد"
+      "feature_multi_calendar": "تقويم\nمتعدد",
+      "your_properties": "عقاراتك",
+      "plan_includes": "ما يتضمنه خطتك",
+      "change_plan": "تغيير الخطة",
+      "next_payment": "الدفعة التالية",
+      "renews": "يتجدد",
+      "view_more": "عرض المزيد"
     },
     "smart_lock": {
       "title": "لم يتم العثور على قفل ذكي",
@@ -1336,7 +1343,8 @@
       "date_placeholder": "يي/شش/سس",
       "check_in_required": "تاريخ الوصول مطلوب",
       "check_out_required": "تاريخ المغادرة مطلوب",
-      "set_pricing": "حفظ"
+      "set_pricing": "حفظ",
+      "manage_pricing": "إدارة التسعير"
     },
     "account_screen": {
       "title": "الحساب"
@@ -1518,7 +1526,10 @@
       "rate_placeholder": "أدخل السعر الليلي",
       "description": "عيّن اسماً لهذا العقار ليسهل تعرّفه وإدارته عند مزامنة قوائمك.",
       "continue": "متابعة",
-      "success_connected": "تم الاتصال بنجاح!"
+      "success_connected": "تم الاتصال بنجاح!",
+      "validation_name_required": "الاسم مطلوب",
+      "validation_rate_required": "السعر مطلوب",
+      "validation_rate_positive": "يجب أن يكون السعر أكبر من 0"
     },
     "property_detail": {
       "channel": "القناة",
@@ -1964,7 +1975,7 @@
       "chars_of_1000": "/1000 حرف",
       "booking_code": "رمز الحجز",
       "no_data_found": "لا توجد بيانات",
-       "coming_soon": "قريباً"
+      "coming_soon": "قريباً"
     },
     "notifications": {
       "title": "الإشعارات",
@@ -1972,7 +1983,7 @@
       "empty_title": "لا توجد إشعارات بعد",
       "empty_desc": "أنت على اطلاع دائم. ستظهر الإشعارات الجديدة هنا."
     },
-      "autopilot": {
+    "autopilot": {
       "title": "الطيار الآلي للذكاء الاصطناعي",
       "description": "قم بإعداد الطيار الآلي للذكاء الاصطناعي الخاص بك للتعامل مع الردود بذكاء وثبات.",
       "how_it_works": "كيف يعمل الطيار الآلي؟",
@@ -2006,7 +2017,7 @@
       "improvement_desc": "سيتحسن الطيار الآلي بمرور الوقت بناءً على رسائلك وملاحظاتك. يمكنك تحسين الاستجابات من خلال تحديث ذكريات الذكاء الاصطناعي.",
       "upgrade_title": "انمو بشكل أسرع مع مجموعة الذكاء الاصطناعي",
       "upgrade_desc": "تتضمن الخطة المبتدئة وصولاً محدوداً للذكاء الاصطناعي وتدعم ما يصل إلى حجزين لكل قائمة. لفتح ميزات الذكاء الاصطناعي المتقدمة، وسعة حجز أعلى، وتواصل آلي مع الضيوف، وتسعير ديناميكي، وأدوات استضافة كاملة، قم بالترقية إلى خطة AI Suite لتجربة استضافة ذكية كاملة.",
-    "btn_upgrade": "الترقية إلى حزمة الذكاء الاصطناعي"
+      "btn_upgrade": "الترقية إلى حزمة الذكاء الاصطناعي"
     },
     "escalation": {
       "title": "إعدادات التصعيد",
@@ -2050,5 +2061,4 @@
       "toast_error": "فشل في الحفظ"
     }
   }
-
 }

@@ -1,185 +1,65 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from 'react-native';
-import AppText from '@/components/molecules/AppText/AppText';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { Colors } from '@/theme/colors';
 import useSelectPaymentContainer from './SelectPaymentContainer';
-import Svgicons from '@/components/atoms/Svgicons/Svgicons';
-import BGImage from '@/components/molecules/BGImage/BGImage';
-import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import Metrics from '@/utility/Metrics';
-import { useTranslation } from 'react-i18next';
 
 const SelectPaymentScreen = () => {
-  const { paymentMethods, onSelect } = useSelectPaymentContainer();
-  const { t } = useTranslation();
+  const { webViewUrl } = useSelectPaymentContainer();
+  const [loading, setLoading] = useState(true);
+  const webViewRef = useRef<WebView>(null);
 
+  const handleOpenWindow = (syntheticEvent: any) => {
+    const url = syntheticEvent?.nativeEvent?.targetUrl;
+    if (url && webViewRef.current) {
+      webViewRef.current.injectJavaScript(`window.location.href = '${url}'; true;`);
+    }
+  };
+
+  if (!webViewUrl) {
+    return <View style={styles.container} />;
+  }
 
   return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')}>
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Screen Title */}
-          <View style={styles.titleWrapper}>
-            <AppText
-              text={t('auth.select_payment.title_1')}
-              fontSize={30}
-              color={Colors.BLACK}
-              textAlign="center"
-            />
-            <AppText
-              text={t('auth.select_payment.title_2')}
-              fontSize={30}
-              color={Colors.PRIMARY_TEAL}
-              textAlign="center"
-              type='SemiBold'
-            />
-            <AppText
-              text={t('auth.select_payment.title_3')}
-              fontSize={30}
-              color={Colors.BLACK}
-              textAlign="center"
-            />
-          </View>
-
-          {/* Main Selection Card */}
-          <GlassCard style={styles.mainCard}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Metrics.verticalScale(30) }}>
-              <AppText
-                text={t('auth.select_payment.card_header')}
-                fontSize={18}
-                type="Medium"
-                color={Colors.BLACK}
-              />
-              <GlassCard width={40} style={styles.iconCircle}>
-                <Svgicons path='cardBlack' />
-              </GlassCard>
-            </View>
-
-
-            {paymentMethods.map((item) => (
-              <AppPressable
-                key={item.id}
-                onPress={() => onSelect(item.id)} // ✅ Pass ID instead of name
-              >
-                <GlassCard style={styles.mainCardItem}>
-                    <GlassCard width={41} style={styles.iconCard}>
-                      <Svgicons path={item.icon} size={28} />
-                    </GlassCard>
-                    <View style={styles.methodInfo}>
-                      <AppText
-                        text={item.name}
-                        fontSize={16}
-                        color={Colors.BLACK}
-                      />
-                    </View>
-                </GlassCard>
-              </AppPressable>
-            ))}
-          </GlassCard>
-
-        </ScrollView>
-      </View>
-    </BGImage>
+    <View style={styles.container}>
+      <WebView
+        ref={webViewRef}
+        source={{ uri: webViewUrl }}
+        style={styles.webview}
+        onLoadEnd={() => setLoading(false)}
+        javaScriptEnabled
+        domStorageEnabled
+        javaScriptCanOpenWindowsAutomatically
+        setSupportMultipleWindows={false}
+        onOpenWindow={handleOpenWindow}
+      />
+      {loading && (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+        </View>
+      )}
+    </View>
   );
 };
+
+export default SelectPaymentScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.WHITE,
   },
-  scrollContent: {
-    paddingHorizontal: 22,
-    paddingBottom: 40
+  webview: {
+    flex: 1,
   },
-  backBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#EBEBEB',
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15
-  },
-  backIcon: {
-    width: 18,
-    height: 18,
-    resizeMode: 'contain'
-  },
-  titleWrapper: {
-    marginTop: 60,
-    marginBottom: 40,
-    flexDirection: 'row',
-    gap: 10,
-    flex: 1,
-    flexWrap: 'wrap'
-  },
-  mainCard: {
-    flex: 1,
-    width: '100%',
-    borderRadius: 17,
-    paddingHorizontal: Metrics.scale(30),
-  },
-  mainCardItem: {
-    flex: 1,
-    width: '100%',
-    borderRadius: 17,
-    paddingHorizontal: Metrics.scale(30),
-    flexDirection:'row',
-    alignItems:'center'
-  },
-  leftContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  methodIcon: {
-    width: 40,
-    height: 30,
-    resizeMode: 'contain'
-  },
-  methodInfo: {
-    marginLeft: 15,
-    flex: 1,
-  },
-  arrowCircle: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: '#EBEBEB',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  smallArrow: {
-    width: 12,
-    height: 12,
-    tintColor: Colors.BRUNSWICK_GREEN
-  },
-  securityBadge: {
-    marginTop: 30,
-    padding: 15,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  iconCircle: {
-    height: 40,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 0,
-  },
-  iconCard: {
-    height: 27,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#D9D9D900',
-    marginBottom:0
+    backgroundColor: Colors.WHITE,
   },
 });
-
-export default SelectPaymentScreen;

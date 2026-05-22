@@ -3,40 +3,38 @@ import STORAGE_CONST from "@/constants/storage";
 import NavigationRoutes from "@/navigation/NavigationRoutes";
 import { queryClient } from "@/services/api";
 import { navigate } from "@/services/navigationService";
-import { getSubscriptionSaveCardsApi, subscriptionActiveApi } from "@/services/paymentService";
+import { getPaymentMethodsApi, subscriptionActiveApi } from "@/services/paymentService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 
 export default function usePaymentMethodListContainer() {
+
+  const [isDefault, setIsDefault] = useState<string | null>(null);
   const { user } = useAuthStore();
 
-  const [isSecure, setIsSecure] = useState(true);
-  const [isDefault, setIsDefault] = useState<string | null>(null); // fix: was boolean
+  const customerId = user?.subs_customer_id;
 
   const { data, refetch, isLoading } = useQuery({
-    queryKey: [STORAGE_CONST.SAVED_CARDS],
-    queryFn: () =>
-      getSubscriptionSaveCardsApi({
-        customer_identifier: user?.phone,
-      }),
-    enabled: !!user?.id,
+    queryKey: [STORAGE_CONST.SAVED_CARDS, customerId],
+    queryFn: () => getPaymentMethodsApi(customerId!),
+    enabled: !!user?.id && !!customerId,
   });
 
+  const cards = data?.data?.data ?? [];
+
   useEffect(() => {
-  const activeToken = data?.tokens?.find(t => t.status === 'active')?.Token;
-  if (activeToken) {
-    setIsDefault(activeToken);
-  }
-}, [data]);
+    const defaultCard = cards.find(c => c.default === 1);
+    if (defaultCard) {
+      setIsDefault(defaultCard.id);
+    }
+  }, [data]);
 
-  const { mutate: subscriptionActivePayload, isPending: isSaving } = useMutation({
+  const { mutate: subscriptionActivePayload } = useMutation({
     mutationFn: subscriptionActiveApi,
-    onSuccess: ({ message }) => {
-      // Toast.show({ type: 'success', text1: message });
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.SAVED_CARDS] });
-
     },
     onError: (error: any) => {
       Toast.show({
@@ -51,20 +49,17 @@ export default function usePaymentMethodListContainer() {
     navigate(NavigationRoutes.APP_STACK.SELECT_PAYMENT_METHOD);
   };
 
- const handleSetDefault = (token: string) => {
-  setIsDefault(token);           // UI optimistically update
-  subscriptionActivePayload({ token }); // sirf token pass karo
-};
-
+  const handleSetDefault = (id: string) => {
+    setIsDefault(id);
+    subscriptionActivePayload({ token: id });
+  };
 
   return {
-    isSecure,
-    setIsSecure,
     isDefault,
     onAddNew,
-    cards: data?.tokens ?? [],
+    cards,
     isLoading,
     refetch,
-    handleSetDefault
+    handleSetDefault,
   };
 }

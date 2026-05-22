@@ -61,7 +61,7 @@ export default function useAmenitiesContainer() {
   const listingOptions = connectedAccounts
     .filter((item: any) => item.connection_type === 'Airbnb')
     .map((item: any) => ({
-      label: `Airbnb - ${item?.id}`,
+      label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
       value: item.ch_channel_id,
     }));
 

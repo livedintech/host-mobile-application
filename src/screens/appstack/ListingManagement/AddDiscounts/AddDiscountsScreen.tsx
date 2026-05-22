@@ -13,26 +13,27 @@ import useDiscountsContainer from './DiscountsContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 
 const AddDiscountsScreen = () => {
-    const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit } = useDiscountsContainer();
+    const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit, bottomSheetVisible, handleExport, handleExportSubmit, handleOtaSubmit, isExporting, listingOptions, otaControl, otaErrors, setBottomSheetVisible } = useDiscountsContainer();
     const { t } = useTranslation();
 
     return (
         <BGImage source={require('@/assets/img/background/linearBG.png')}>
             <View style={styles.container}>
                 <KeyboardAwareScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          bottomOffset={0}
-          automaticallyAdjustKeyboardInsets={false}
-        >
+                    contentContainerStyle={styles.content}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                    bottomOffset={0}
+                    automaticallyAdjustKeyboardInsets={false}
+                >
 
                     <View style={styles.headerRow}>
-                         <ButtonView onPress={() => goBack()}>
-                                    <Svgicons path="back" size={40} />
-                                  </ButtonView>
+                        <ButtonView onPress={() => goBack()}>
+                            <Svgicons path="back" size={40} />
+                        </ButtonView>
                         {!isEdit && <CircularProgress percentage={85} size={48} strokeWidth={4} />}
                     </View>
 
@@ -40,17 +41,26 @@ const AddDiscountsScreen = () => {
                     <AppText text={t('app.discounts.subtitle')} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mt={10} mb={15} pr={40} />
 
                     <View style={styles.formGroup}>
-                        <InputField name="weekly_discount" label={t('app.discounts.weekly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.weekly_placeholder')} keyboardType="numeric"/>
+                        <InputField name="weekly_discount" label={t('app.discounts.weekly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.weekly_placeholder')} keyboardType="numeric" />
                         <View style={styles.gap} />
-                        <InputField name="monthly_discount" label={t('app.discounts.monthly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.monthly_placeholder')} keyboardType="numeric"/>
+                        <InputField name="monthly_discount" label={t('app.discounts.monthly_label')} control={control as any} errors={errors} placeholder={t('app.discounts.monthly_placeholder')} keyboardType="numeric" />
                         <View style={styles.gap} />
-                        <InputField name="last_minute_discount" label={t('app.discounts.last_minute_label')} control={control as any} errors={errors} placeholder={t('app.discounts.last_minute_placeholder')} keyboardType="numeric"/>
-                        <InputField name="early_bird_discount" label={t('app.discounts.early_bird_label')} control={control as any} errors={errors} placeholder={t('app.discounts.early_bird_placeholder')} keyboardType="numeric"/>
+                        <InputField name="last_minute_discount" label={t('app.discounts.last_minute_label')} control={control as any} errors={errors} placeholder={t('app.discounts.last_minute_placeholder')} keyboardType="numeric" />
+                        <InputField name="early_bird_discount" label={t('app.discounts.early_bird_label')} control={control as any} errors={errors} placeholder={t('app.discounts.early_bird_placeholder')} keyboardType="numeric" />
 
                     </View>
                 </KeyboardAwareScrollView>
 
+                // Footer mein Export button add karo (isEdit check ke saath)
                 <View style={styles.footer}>
+                    {isEdit && (
+                        <AppButton
+                            title={t('app.set_pricing.export')}
+                            onPress={handleExport}
+                            variant='secondary'
+                            mb={12}
+                        />
+                    )}
                     {!isEdit && (
                         <AppButton
                             title={t('app.discounts.next')}
@@ -68,7 +78,7 @@ const AddDiscountsScreen = () => {
                 </View>
 
                 {/* Add Discount Modal (Screenshot 2 & 5) */}
-                <Modal visible={isModalVisible} transparent animationType="slide">
+                <Modal visible={isModalVisible} transparent animationType="slide" onRequestClose={() => setBottomSheetVisible(false)}>
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
@@ -90,6 +100,35 @@ const AddDiscountsScreen = () => {
                     </View>
                 </Modal>
             </View>
+            <Modal
+                visible={bottomSheetVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setBottomSheetVisible(false)}
+                style={styles.modalContainer}
+            >
+                <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
+                    <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
+                        <AppText text={t('app.set_pricing.select_ota')} fontSize={18} type="SemiBold" mb={20} />
+                        <DropdownField
+                            name="ota_account"
+                            control={otaControl}
+                            errors={otaErrors}
+                            data={listingOptions}
+                            placeholder={t('app.set_pricing.select_account')}
+                            dropdownPosition='top'
+                        />
+
+                        <AppButton
+                            title={t('app.set_pricing.export')}
+                            onPress={handleOtaSubmit(handleExportSubmit)}
+                            loading={isExporting}
+                            mt={20}
+                        />
+
+                    </AppPressable>
+                </AppPressable>
+            </Modal>
         </BGImage>
     );
 };
@@ -105,7 +144,28 @@ const styles = StyleSheet.create({
     footer: { position: 'absolute', bottom: 0, width: '100%', padding: 25, backgroundColor: 'white', paddingBottom: 40 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
     modalContent: { backgroundColor: 'white', padding: 25, borderTopLeftRadius: 30, borderTopRightRadius: 30, paddingBottom: 50 },
-    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }
+    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+    // styles mein add karo
+    modalContainer: {
+        justifyContent: 'flex-end',
+        margin: 0,          // ✅ left/right space fix
+    },
+    bottomSheet: {
+        backgroundColor: Colors.WHITE,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        paddingHorizontal: 24,
+        paddingTop: 12,
+        paddingBottom: 40,
+    },
+    handleBar: {
+        width: 40,
+        height: 5,
+        backgroundColor: '#D4D4D4',
+        borderRadius: 3,
+        alignSelf: 'center',
+        marginBottom: 25,
+    },
 });
 
 export default AddDiscountsScreen;

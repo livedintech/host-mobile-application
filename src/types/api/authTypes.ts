@@ -57,6 +57,8 @@ export interface User {
   accepted_privacy_policy: boolean;
   is_all_listing: boolean | null;
   role_name: string;
+  subs_customer_id: string | null;
+  sub_plan_id: string | null;
   role_key: 'super_owner' | 'supervisor' | 'admin' | 'owner' | string;
   has_listing: boolean;
   has_import_listing: boolean;

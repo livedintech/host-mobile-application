@@ -91,7 +91,10 @@ const HeaderApp = ({
           />
         )}
         {isGoBack && (
-          <ButtonView onPress={() => goBack()}>
+          <ButtonView
+            onPress={() => goBack()}
+            style={i18n.language === 'ar' ? { transform: [{ scaleX: -1 }] } : undefined}
+          >
             <Svgicons path="back" size={40} />
           </ButtonView>
         )}
@@ -184,7 +187,7 @@ const HeaderApp = ({
               style={styles.arrowCircleInner}
               onPress={() => goBack()}
             >
-              <Svgicons path="arrowLeftIcon" size={24} />
+              <Svgicons path={i18n.language === 'ar' ? 'arrowRightIcon' : 'arrowLeftIcon'} size={24} />
             </AppPressable>
           </View>
           {addIconAfterisGoBack && <Svgicons path="mapIcon" size={35} />}

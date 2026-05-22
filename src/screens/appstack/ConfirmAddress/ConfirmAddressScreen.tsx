@@ -74,7 +74,7 @@ const ConfirmAddressScreen = () => {
             control={control}
             errors={errors}
             placeholder={t('app.confirm_address.country_placeholder')}
-            disabled={isEdit}
+            // disabled={isEdit}
             data={countriesOptions}
           />
 

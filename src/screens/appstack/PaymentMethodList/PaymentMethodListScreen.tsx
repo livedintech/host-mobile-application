@@ -1,108 +1,100 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { StyleSheet, View, Image, TextInput, Switch } from 'react-native';
+import { StyleSheet, View, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import usePaymentMethodListContainer from './PaymentMethodListContainer';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import Metrics from '@/utility/Metrics';
 
 const PaymentMethodListScreen = () => {
   const { t } = useTranslation();
   const {
-    isSecure,
-    setIsSecure,
     isDefault,
     onAddNew,
     cards,
     isLoading,
     refetch,
-    handleSetDefault
+    handleSetDefault,
   } = usePaymentMethodListContainer();
+  
 
-  const renderCard = ({ item, index }: { item: any; index: number }) => (
-    <View style={styles.paymentCard}>
-      {/* Header */}
-      <View style={styles.cardHeader}>
+  const getCardLabel = (item: any) => {
+    const type = item.payment_method_type?.replace(/_/g, ' ') ?? 'Card';
+    const last4 = item.last_four_digits ? `•••• ${item.last_four_digits}` : '••••';
+    return `${type} ${last4}`;
+  };
+
+  const getExpiry = (item: any) => {
+    if (item.expiry_month && item.expiry_year) {
+      return `Expiry: ${String(item.expiry_month).padStart(2, '0')}/${String(item.expiry_year).slice(-2)}`;
+    }
+    return null;
+  };
+
+  const isCardDefault = (item: any) =>
+    item.default === 1 || isDefault === item.id;
+
+  const renderCard = ({ item }: { item: any }) => (
+    <GlassCard width="100%" style={styles.card} >
+      {/* Mastercard logo */}
+      <Image
+        source={require('@/assets/img/mastercard.png')}
+        style={styles.cardLogo}
+      />
+
+      {/* Card info */}
+      <View style={styles.cardInfo}>
         <AppText
-          text={`${item.CardBrand} Card`}
-          fontSize={16}
+          text={getCardLabel(item)}
+          fontSize={15}
           type="SemiBold"
           color={Colors.PINE_FOREST}
         />
-        {/* 3DS Verified Badge */}
-        {item.Is3DSVerified && (
+        {getExpiry(item) ? (
           <AppText
-            text="3DS Verified"
-            fontSize={12}
-            color={Colors.BRUNSWICK_GREEN}
+            text={getExpiry(item)!}
+            fontSize={13}
+            color="#8A9BA8"
+            mt={4}
           />
-        )}
+        ) : null}
       </View>
 
-      {/* Brand Logo */}
-      {item.CardBrand === 'Master' && (
-        <Image
-          source={require('@/assets/img/mastercard.png')}
-          style={styles.mcLogo}
-        />
-      )}
+      {/* Actions: icons top, badge bottom */}
+      <View style={styles.cardActions}>
+        <View style={styles.iconRow}>
+          <TouchableOpacity style={styles.iconBtn}>
+            <Svgicons path="trashIcon" width={19} height={19} color="#8A9BA8" />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.iconBtn, { marginLeft: 6 }]}>
+            <Svgicons path="editIcon" width={19} height={19} color="#8A9BA8" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Card Number */}
-      <AppText
-        text={t('app.payment_method_list.card_number')}
-        fontSize={14}
-        color={Colors.PINE_FOREST}
-        mt={15}
-        mb={8}
-      />
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={styles.flexInput}
-          value={item.CardNumber || '--'}
-          secureTextEntry={isSecure}
-          editable={false}
-        />
-        <ButtonView onPress={() => setIsSecure(!isSecure)}>
-          <Svgicons path={isSecure ? 'eyeSlash' : 'eye'} />
-        </ButtonView>
+        <GlassCard
+          width="auto"
+          style={styles.badge}
+          onPress={() => handleSetDefault(item.id)}
+        >
+          <AppText
+            text={isCardDefault(item) ? 'Default' : 'Set Default'}
+            fontSize={12}
+            color={isCardDefault(item) ? Colors.PINE_FOREST : '#8A9BA8'}
+          />
+        </GlassCard>
       </View>
-
-      {/* Token Type */}
-      <AppText
-        text={t('app.payment_method_list.card_type')}
-        fontSize={14}
-        color={Colors.PINE_FOREST}
-        mt={15}
-        mb={8}
-      />
-      <TextInput
-        style={styles.disabledInput}
-        value={item.CardBrand || '--'}
-        editable={false}
-      />
-
-      {/* Default Switch */}
-      <View style={styles.switchRow}>
-        <AppText
-          text={t('app.payment_method_list.set_default')}
-          fontSize={16}
-          color={Colors.PINE_FOREST}
-        />
-        <Switch
-          value={isDefault === item.Token}
-          onValueChange={() => handleSetDefault(item.Token)}
-          trackColor={{ false: '#E0E0E0', true: Colors.BRUNSWICK_GREEN }}
-          thumbColor={Colors.WHITE}
-        />
-      </View>
-    </View>
+    </GlassCard>
   );
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require('@/assets/img/background/moreScreenBG.png')}
+      style={styles.container}
+    >
       <FlatListSimpleHandler
         data={cards}
         isLoading={isLoading}
@@ -110,16 +102,15 @@ const PaymentMethodListScreen = () => {
         renderItem={renderCard}
         keyExtractor={item => item.id}
         listEmptyText="No Payment Methods Found"
-        contentContainerStyle={styles.scrollContent}
-        ListFooterComponent={
-          <AppButton
-            title={t('app.payment_method_list.add_new')}
-            onPress={onAddNew}
-            mt={!cards || cards.length === 0 ? 40 : 34}
-          />
-        }
+        contentContainerStyle={styles.listContent}
       />
-    </View>
+      <View style={styles.footer}>
+        <AppButton
+          title={t('app.payment_method_list.add_new')}
+          onPress={onAddNew}
+        />
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -128,68 +119,51 @@ export default PaymentMethodListScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
-  scrollContent: {
-    paddingHorizontal: 22,
-    paddingBottom: 40,
+  listContent: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 16,
   },
-  paymentCard: {
-    marginTop: 40,
-    padding: 22,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#EBEBEB',
-    backgroundColor: Colors.WHITE,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  cardHeader: {
+  card: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'stretch',
+    marginBottom: 14,
+    borderRadius: 17
   },
-  mcLogo: {
-    width: 38,
-    height: 26,
-    marginTop: 15,
+  cardLogo: {
+    width: 46,
+    height: 32,
     resizeMode: 'contain',
+    marginRight: 14,
+    alignSelf: 'center',
   },
-  disabledInput: {
-    height: 52,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: Colors.PINE_FOREST,
-    backgroundColor: '#FAFAFA',
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 52,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    backgroundColor: '#FAFAFA',
-  },
-  flexInput: {
+  cardInfo: {
     flex: 1,
-    fontSize: 16,
-    color: Colors.PINE_FOREST,
+    justifyContent: 'center',
   },
-  rowSplit: {
-    flexDirection: 'row',
-  },
-  switchRow: {
-    flexDirection: 'row',
+  cardActions: {
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
+  },
+  iconRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 25,
+  },
+  iconBtn: {
+    padding: 3,
+  },
+  badge: {
+    marginBottom: 0,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginTop: Metrics.verticalScale(10)
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 24,
+    backgroundColor: 'transparent',
   },
 });

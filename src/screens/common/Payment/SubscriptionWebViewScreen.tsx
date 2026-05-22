@@ -5,7 +5,6 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import { Colors } from '@/theme/colors';
 import { useAuthStore } from '@/store/useAuthStore';
 
-// const PRODUCT_ID = 'c07c72c2-b5f8-41c7-8f90-fbf8de2d2440';
 const BASE_URL = 'https://livedin.subscriptionflow.com/en/hosted-page/subscribe';
 
 type RouteParams = {
@@ -19,59 +18,57 @@ type RouteParams = {
 
 const PaymentScreen = () => {
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-  const { planId, qtyFrom, full_name, email, country_code, phone_number } = route.params ?? {};
+  const { planId, qtyFrom, full_name, email, country_code } = route.params ?? {};
   const [loading, setLoading] = React.useState(true);
   const webViewRef = React.useRef<WebView>(null);
   const user = useAuthStore((s) => s.user);
 
-  // Prefer nav params (new signup flow), fall back to auth store (logged-in user)
-  const nameParts = (full_name || user?.name || '').trim().split(/\s+/);
-  const firstName = nameParts[0] ?? '';
-  const lastName = nameParts.slice(1).join(' ');
+  const firstName = (full_name || user?.name || '').trim().split(/\s+/)[0] ?? '';
 
   const resolvedEmail = email || user?.email || '';
-  const resolvedCountry = country_code || user?.country || '';
-  const resolvedPhone = phone_number || user?.phone_with_code || user?.phone || '';
-  const resolvedAddress = user?.permanent_address || '';
+  const resolvedCountry = country_code || user?.country || 'SA';
+  const resolvedAddress = user?.permanent_address || 'Riyadh, Saudi Arabia';
 
-  const params = new URLSearchParams({
-    charge_quantity: String(qtyFrom),
-    payment_widget: 'true',
-    ...(firstName && { ai_firstName: firstName }),
-    ...(lastName && { ai_lastName: lastName }),
-    ...(resolvedEmail && { ai_email: resolvedEmail }),
-    ...(resolvedCountry && { ai_billing_country: resolvedCountry }),
-    ...(resolvedAddress && { ai_billing_address1: resolvedAddress }),
-    ...(resolvedPhone && { ai_phone: resolvedPhone }),
-  });
+  const queryString = [
+    `charge_quantity=${qtyFrom}`,
+    `payment_widget=true`,
+    `ai_firstName=${encodeURIComponent(firstName)}`,
+    `ai_lastName=${encodeURIComponent(firstName)}`,
+    `ai_email=${resolvedEmail}`,
+    `ai_billing_country=${resolvedCountry}`,
+    `ai_billing_address1=${encodeURIComponent(resolvedAddress)}`,
+  ].join('&');
 
-  const subscriptionUrl = `${BASE_URL}/${planId}/product/c07c72c2-b5f8-41c7-8f90-fbf8de2d2440?${params.toString()}`;
-  console.log('subscriptionUrl',subscriptionUrl);
-
-console.log('PRODUCT_ID::',planId);
-console.log('qtyFrom',qtyFrom);
-
-  // Intercept new-window requests (popups) and load them in the same WebView
-  const handleOpenWindow = (syntheticEvent: any) => {
-    const { nativeEvent } = syntheticEvent;
-    const url = nativeEvent?.targetUrl;
-    if (url && webViewRef.current) {
-      webViewRef.current.injectJavaScript(`window.location.href = '${url}'; true;`);
-    }
-  };
+  const subscriptionUrl = `${BASE_URL}/${planId}/product/c07c72c2-b5f8-41c7-8f90-fbf8de2d2440?${queryString}`;
+  console.log('subscriptionUrl', subscriptionUrl);
 
   return (
     <View style={styles.container}>
       <WebView
-      javaScriptCanOpenWindowsAutomatically={true}
         ref={webViewRef}
         source={{ uri: subscriptionUrl }}
-        style={styles.webview}
-        onLoadEnd={() => setLoading(false)}
-        javaScriptEnabled
-        domStorageEnabled
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        thirdPartyCookiesEnabled={true}
+        mixedContentMode="compatibility"
+        sharedCookiesEnabled={true}
+        javaScriptCanOpenWindowsAutomatically={true}
         setSupportMultipleWindows={false}
-        onOpenWindow={handleOpenWindow}
+        // Force ALL URLs to load inside WebView — prevent external browser from opening
+        onShouldStartLoadWithRequest={() => true}
+        onOpenWindow={(e) => {
+          const url = e.nativeEvent?.targetUrl;
+          if (url && webViewRef.current) {
+            webViewRef.current.injectJavaScript(`window.location.href = '${url}'; true;`);
+          }
+        }}
+        userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+        onMessage={(event) => console.log('MSG:', event.nativeEvent.data)}
+        onError={(error) => console.log('ERROR:', error.nativeEvent)}
+        onHttpError={(error) => console.log('HTTP ERROR:', error.nativeEvent)}
+        onNavigationStateChange={(navState) => console.log('NAV:', navState.url)}
+        onLoadEnd={() => setLoading(false)}
+        style={styles.webview}
       />
       {loading && (
         <View style={styles.loader}>
