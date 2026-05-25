@@ -61,17 +61,9 @@ export default function useVerifyPhoneNumberContainer() {
 
 
   // Verify OTP
-  const { mutate: verifyOtpPayload, isPending: isPendingVerifyOtp } =
+  const { mutateAsync: verifyOtpPayload, isPending: isPendingVerifyOtp } =
     useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
       mutationFn: verifyOtpApi,
-      onSuccess: (_data, variables) => {
-        navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, {
-          country_code: variables.country_code,
-          phone_number: variables.phone_number,
-          phone_with_code: variables.phone_with_code,
-          otp: variables.otp,
-        });
-      },
       onError: ({ message }) => {
         Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
       },
@@ -123,7 +115,7 @@ export default function useVerifyPhoneNumberContainer() {
     }
   }, [isResendDisabled, actualPhone, code, country_code]);
 
-  const handleVerifyOtp = (data: { otpCode: string }) => {
+  const handleVerifyOtp = async (data: { otpCode: string }) => {
     const phoneParams = {
       country_code,
       phone_number:    actualPhone,
@@ -131,8 +123,19 @@ export default function useVerifyPhoneNumberContainer() {
       otp:             data.otpCode,
     };
 
+    try {
+      await verifyOtpPayload(phoneParams);
+    } catch {
+      return;
+    }
+
     if (isLoginScreen) {
-      verifyOtpPayload(phoneParams);
+      navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, {
+        country_code: phoneParams.country_code,
+        phone_number: phoneParams.phone_number,
+        phone_with_code: phoneParams.phone_with_code,
+        otp: phoneParams.otp,
+      });
       return;
     }
 

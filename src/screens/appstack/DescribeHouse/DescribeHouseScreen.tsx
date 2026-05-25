@@ -121,6 +121,7 @@ const DescribeHouseScreen = () => {
                 title={t('app.describe_house.save_exit')}
                 onPress={handleSubmit(onSaveExit)}
                 mt={15}
+                loading={isLoading}
                 disabled={isLoading}
               />
             </>

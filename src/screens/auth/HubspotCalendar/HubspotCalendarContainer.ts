@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { navigate } from '@/services/navigationService';
+import { resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import {
   HubSpotSlot,
@@ -128,7 +128,10 @@ export default function useHubspotCalendarContainer(userInfo: any) {
     },
     onSuccess: (result) => {
       if (result.success) {
-        pendingNavRef.current = () => navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU);
+        pendingNavRef.current = () => resetToRoutes([
+          { name: NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE },
+          { name: NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU },
+        ] as any);
         bottomSheetRef.current?.dismiss();
       } else {
         bottomSheetRef.current?.dismiss();

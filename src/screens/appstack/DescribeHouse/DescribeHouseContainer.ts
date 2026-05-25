@@ -135,6 +135,13 @@ export default function useDescribeHouseContainer() {
 
   const { mutate: createListingDetailsPayload, isPending } = useMutation({
     mutationFn: createListingDetailsApi,
+    onSuccess: (_, variables: any) => {
+      if (variables?.save_and_exit) {
+        resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any);
+      } else {
+        navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES);
+      }
+    },
     onError: (err: any) =>
       Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
@@ -155,9 +162,7 @@ export default function useDescribeHouseContainer() {
 
   const onNext = (data: DescribeHouseFormValues) => {
     updateListing({ name: data.name, listing_desc: data.listing_descriptions });
-    createListingDetailsPayload(buildPayload(data, false), {
-      onSuccess: () => navigate(NavigationRoutes.APP_STACK.ADD_PROPERTY_GUIDELINES),
-    });
+    createListingDetailsPayload(buildPayload(data, false));
   };
 
   const onSaveExit = (data: DescribeHouseFormValues) => {
@@ -165,9 +170,11 @@ export default function useDescribeHouseContainer() {
     if (isEdit) {
       updateListingDetails(buildPayload(data, true));
     } else {
-      createListingDetailsPayload(buildPayload(data, true), {
-        onSuccess: () => resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any),
-      });
+      if (!listing_id) {
+        Toast.show({ type: 'error', text1: i18n.t('common.toast.something_went_wrong') });
+        return;
+      }
+      createListingDetailsPayload(buildPayload(data, true));
     }
   };
 

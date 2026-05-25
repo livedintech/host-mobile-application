@@ -14,7 +14,7 @@ import { CheckUserApi, resendOtpApi, socialAuthApi } from '@/services/authApi'; 
 import Toast from 'react-native-toast-message';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { usePhoneStore } from '@/store/usePhoneStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
 import { GoogleSignin, isSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
@@ -29,6 +29,7 @@ export default function useLoginWithPhoneContainer() {
   const setPhoneData = usePhoneStore((state) => state.setPhoneData);
   const [phoneNumber, setphoneNumber] = useState('');
   const { setToken, setUser } = useAuthStore()
+  const isDeletedUserFlow = useRef(false);
 
   const {
     control,
@@ -47,21 +48,17 @@ export default function useLoginWithPhoneContainer() {
   const countryCallingCode = watch('country')?.callingCode;
   const phoneNo = watch('phoneNumber');
 
-  console.log('phoneNo', phoneNo);
-
-
   // --- 1. Mutation to Send OTP (to be called if user is not found) ---
   const { mutate: sendOtpForNewUser, isPending: isSendingOtp } = useMutation({
     mutationFn: resendOtpApi,
     onSuccess: () => {
-      // Navigate ONLY after the OTP has been successfully sent
-
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
-        isLoginScreen: false,
+        isLoginScreen: isDeletedUserFlow.current,
         country_code: countryCca2,
         phone_number: phoneNo,
         phone_with_code: countryCallingCode,
       });
+      isDeletedUserFlow.current = false;
     },
     onError: (error: any) => {
       Toast.show({
@@ -88,12 +85,17 @@ export default function useLoginWithPhoneContainer() {
     onError: error => {
       if (error?.message === 'User not found') {
         setPhoneData({ phoneNumber: phoneNumber });
-
-        // Trigger the OTP send here
         sendOtpForNewUser({
           country_code: countryCca2,
           phone_number: phoneNo,
-          phone_with_code: countryCallingCode, // e.g., '92'
+          phone_with_code: countryCallingCode,
+        });
+      } else if ((error as any)?.is_deleted === 1) {
+        isDeletedUserFlow.current = true;
+        sendOtpForNewUser({
+          country_code: countryCca2,
+          phone_number: phoneNo,
+          phone_with_code: countryCallingCode,
         });
       } else {
         Toast.show({

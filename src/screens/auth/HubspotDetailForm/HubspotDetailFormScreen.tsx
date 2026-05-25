@@ -24,15 +24,9 @@ const HubspotDetailFormScreen = () => {
     handleSubmit,
     onSubmit,
     selectedCountryId,
-    selectedStateId,
-    selectedCityId,
     countriesOptions,
-    statesOptions,
     citiesOptions,
-    districtsOptions,
     onCountrySelect,
-    onStateSelect,
-    onCitySelect,
   } = useHubspotDetailFormContainer();
 
   return (
@@ -89,39 +83,14 @@ const HubspotDetailFormScreen = () => {
             />
 
             <DropdownField
-              key={`state-${selectedCountryId}`}
-              name="state"
-              control={control}
-              errors={errors}
-              label={t('auth.hubspot_form.state_label')}
-              placeholder={t('auth.hubspot_form.state_placeholder')}
-              data={statesOptions}
-              disabled={!selectedCountryId}
-              onSelect={onStateSelect}
-            />
-
-            <DropdownField
-              key={`city-${selectedStateId}`}
+              key={`city-${selectedCountryId}`}
               name="city"
               control={control}
               errors={errors}
               label={t('auth.hubspot_form.city_label')}
               placeholder={t('auth.hubspot_form.city_placeholder')}
               data={citiesOptions}
-              disabled={!selectedStateId}
-              onSelect={onCitySelect}
-              dropdownPosition="top"
-            />
-
-            <DropdownField
-              key={`district-${selectedCityId}`}
-              name="district"
-              control={control}
-              errors={errors}
-              label={t('auth.hubspot_form.district_label')}
-              placeholder={t('auth.hubspot_form.district_placeholder')}
-              data={districtsOptions}
-              disabled={!selectedCityId}
+              disabled={!selectedCountryId}
               dropdownPosition="top"
             />
           </View>
