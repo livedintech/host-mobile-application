@@ -39,11 +39,10 @@ const EscalationSettingContainer = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['aiEscalationSettings'] });
       Toast.show({
-       type: 'success',
+        type: 'success',
         text1: t('app.escalation.toast_success_title'),
         text2: t('app.escalation.toast_success_desc'),
       });
-      navigation.goBack();
     },
     onError: (error: any) => {
       Toast.show({
@@ -60,8 +59,9 @@ const EscalationSettingContainer = () => {
       confidence_level: parseInt(formData.confidenceInput),
       send_automatically_when_confident: parseInt(formData.confidenceInput),
       frustration_detection: frustrationEnabled,
-      sentiment_level: parseInt(formData.sentimentInput),
-      escalate_when_sentiment_below: parseInt(formData.sentimentInput),
+      // If frustration detection is toggled off, pass back fallback value or zero out
+      sentiment_level: frustrationEnabled ? parseInt(formData.sentimentInput) : 0,
+      escalate_when_sentiment_below: frustrationEnabled ? parseInt(formData.sentimentInput) : 0,
     };
     saveSettings(payload);
   };

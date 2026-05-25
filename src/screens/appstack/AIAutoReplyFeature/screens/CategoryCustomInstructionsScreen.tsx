@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useTranslation } from 'react-i18next'; // Added
+import { useTranslation } from 'react-i18next';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -22,9 +22,16 @@ import Metrics from '@/utility/Metrics';
 import CategoryInstructionsContainer from '../containers/CategoryInstructionsContainer';
 
 const CategoryInstructionsScreen = () => {
-  const { t } = useTranslation(); // Added
-  const { title, listingOptions, existingData, isLoading, onSave, isSaving } =
-    CategoryInstructionsContainer();
+  const { t } = useTranslation();
+  const {
+    title,
+    listingOptions,
+    existingData,
+    isLoading,
+    onSave,
+    isSaving,
+    isAddMoreDisabled,
+  } = CategoryInstructionsContainer();
 
   const {
     control,
@@ -34,9 +41,9 @@ const CategoryInstructionsScreen = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      sections: [{ instruction: '', properties: [] }],
-      apply_to_all_listings: false,
+      sections: [{ instruction: '', properties: [], apply_to_all_listings: false }],
     },
+    mode: 'onSubmit',
   });
 
   const { fields, append } = useFieldArray({
@@ -44,20 +51,17 @@ const CategoryInstructionsScreen = () => {
     name: 'sections',
   });
 
-  const isApplyAllChecked = watch('apply_to_all_listings');
+  const watchedSections = watch('sections');
 
   useEffect(() => {
     if (existingData && existingData.length > 0) {
-      const apiItem = existingData[0];
-      setValue('apply_to_all_listings', !!apiItem.apply_to_all_listings);
-
-      if (apiItem.instructions && apiItem.instructions.length > 0) {
-        const formattedSections = apiItem.instructions.map((text: string) => ({
-          instruction: text,
-          properties: apiItem.listing_ids?.map(String) || [],
-        }));
-        setValue('sections', formattedSections);
-      }
+      const formattedSections = existingData.map((apiItem: any) => ({
+        instruction: apiItem.instructions?.[0] || '',
+        properties: apiItem.listing_ids?.map(String) || [],
+        apply_to_all_listings: !!apiItem.apply_to_all_listings,
+      }));
+      
+      setValue('sections', formattedSections);
     }
   }, [existingData, setValue]);
 
@@ -85,11 +89,20 @@ const CategoryInstructionsScreen = () => {
           mt={20}
           mb={12}
         />
+        <AppText
+          text={t('app.category_instructions.description')}
+          fontSize={14}
+          type="Regular"
+          mt={20}
+          color={Colors.DARK_CHARCOAL_OPACITY}
+          mb={30}
+        />
 
         <View style={styles.addMoreRow}>
           <TouchableOpacity
-            onPress={() => append({ instruction: '', properties: [] })}
-            style={styles.addMoreButton}
+            onPress={() => append({ instruction: '', properties: [], apply_to_all_listings: false })}
+            disabled={isAddMoreDisabled}
+            style={[styles.addMoreButton, isAddMoreDisabled && { opacity: 0.45 }]}
           >
             <AppText
               text={t('app.category_instructions.add_more')}
@@ -100,48 +113,67 @@ const CategoryInstructionsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {fields.map((field, index) => (
-          <View key={field.id} style={styles.sectionContainer}>
-            <TextareaField
-              label={t('app.category_instructions.label_instructions')}
-              name={`sections.${index}.instruction`}
-              control={control as any}
-              errors={errors}
-              placeholder={t('app.category_instructions.placeholder_instructions')}
-              multiline={true}
-              height={Metrics.verticalScale(120)}
-            />
+        {fields.map((field, index) => {
+          const currentApplyAllValue = watchedSections?.[index]?.apply_to_all_listings || false;
 
-            <View style={{ marginTop: Metrics.verticalScale(10) }}>
-              <MultiSelectDropdownField
-                name={`sections.${index}.properties`}
+          // TypeScript error fixed by constructing an isolated map wrapper targeting our precise field item structures
+          const textInputFieldName = `sections.${index}.instruction`;
+          const dropdownFieldName = `sections.${index}.properties`;
+          
+          const textErrorObj = errors?.sections?.[index]?.instruction ? { [textInputFieldName]: errors.sections[index].instruction } : {};
+          const dropErrorObj = errors?.sections?.[index]?.properties ? { [dropdownFieldName]: errors.sections[index].properties } : {};
+
+          return (
+            <View key={field.id} style={styles.sectionContainer}>
+              <TextareaField
+                label={t('app.category_instructions.label_instructions')}
+                name={textInputFieldName}
                 control={control as any}
-                errors={errors}
-                label={t('app.category_instructions.label_select_property')}
-                data={listingOptions}
-                placeholder={t('app.category_instructions.placeholder_multiselect')}
-                dropdownPosition="top"
+                errors={textErrorObj as any} 
+                rules={{
+                  required: t('app.category_instructions.error_instruction_required')
+                }}
+                placeholder={t('app.category_instructions.placeholder_instructions')}
+                multiline={true}
+                height={Metrics.verticalScale(120)}
               />
+
+              <View style={{ marginTop: Metrics.verticalScale(10) }}>
+                <MultiSelectDropdownField
+                  name={dropdownFieldName}
+                  control={control as any}
+                  errors={dropErrorObj as any} 
+                  rules={{
+                    validate: (value: string[]) => 
+                      (value && value.length > 0) || 
+                      t('app.category_instructions.error_listings_required')
+                  }}
+                  label={t('app.category_instructions.label_select_property')}
+                  data={listingOptions}
+                  placeholder={t('app.category_instructions.placeholder_multiselect')}
+                  dropdownPosition="top"
+                />
+              </View>
+
+              <ButtonView style={[styles.globalCheckboxRow, { marginTop: Metrics.verticalScale(15), marginBottom: 5 }]} activeOpacity={0.7}>
+                <Checkbox
+                  isChecked={currentApplyAllValue}
+                  onPress={() =>
+                    setValue(`sections.${index}.apply_to_all_listings`, !currentApplyAllValue)
+                  }
+                />
+                <AppText
+                  text={t('app.category_instructions.label_auto_create')}
+                  ml={10}
+                  fontSize={14}
+                  type="Medium"
+                />
+              </ButtonView>
+
+              {index < fields.length - 1 && <View style={styles.divider} />}
             </View>
-
-            {index < fields.length - 1 && <View style={styles.divider} />}
-          </View>
-        ))}
-
-        <ButtonView style={styles.globalCheckboxRow} activeOpacity={0.7}>
-          <Checkbox
-            isChecked={isApplyAllChecked}
-            onPress={() =>
-              setValue('apply_to_all_listings', !isApplyAllChecked)
-            }
-          />
-          <AppText
-            text={t('app.category_instructions.label_auto_create')}
-            ml={10}
-            fontSize={14}
-            type="Medium"
-          />
-        </ButtonView>
+          );
+        })}
       </ScrollView>
 
       <View style={styles.footer}>
