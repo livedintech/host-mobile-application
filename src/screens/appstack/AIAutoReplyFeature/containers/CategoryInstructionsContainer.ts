@@ -75,6 +75,10 @@ const CategoryInstructionsContainer = () => {
     saveInstructions(payload);
   };
 
+  // Check if existingData or instructions inside existingData are empty
+  const hasNoData = !existingData || existingData.length === 0 || !existingData[0]?.instructions || existingData[0].instructions.length === 0;
+  const isAddMoreDisabled = hasNoData;
+
   return {
     title,
     listingOptions,
@@ -83,7 +87,8 @@ const CategoryInstructionsContainer = () => {
     onSave,
     isSaving,
     navigation,
-    t
+    t,
+    isAddMoreDisabled
   };
 };
 
