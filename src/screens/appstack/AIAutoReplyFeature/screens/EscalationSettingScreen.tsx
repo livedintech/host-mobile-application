@@ -18,15 +18,15 @@ import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/
 
 const EscalationSettingScreen = () => {
   const { t } = useTranslation(); // Added
-  const { 
-    frustrationEnabled, 
-    setFrustrationEnabled, 
-    handleSave, 
+  const {
+    frustrationEnabled,
+    setFrustrationEnabled,
+    handleSave,
     isPending,
     settingsData,
     isLoading,
     isFetching,
-    refetch
+    refetch,
   } = EscalationSettingContainer();
 
   const {
@@ -43,7 +43,10 @@ const EscalationSettingScreen = () => {
 
   useEffect(() => {
     if (settingsData) {
-      setValue('confidenceInput', String(settingsData.confidence_level || '80'));
+      setValue(
+        'confidenceInput',
+        String(settingsData.confidence_level || '80'),
+      );
       setValue('sentimentInput', String(settingsData.sentiment_level || '50'));
     }
   }, [settingsData, setValue]);
@@ -58,7 +61,8 @@ const EscalationSettingScreen = () => {
     const numeric = parseInt(val.replace(/[^0-9]/g, '')) || 0;
     const splitIndex = Math.floor((numeric / 100) * (fullBellCurve.length - 1));
     return fullBellCurve.map((item, index) => {
-      if (type === 'red') return index <= splitIndex ? { value: item } : { value: 0 };
+      if (type === 'red')
+        return index <= splitIndex ? { value: item } : { value: 0 };
       return index > splitIndex ? { value: item } : { value: 0 };
     });
   };
@@ -81,28 +85,58 @@ const EscalationSettingScreen = () => {
   };
 
   return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <BGImage
+      source={require('@/assets/img/background/linearBG.png')}
+      style={styles.container}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
         <RefreshableScrollView
           contentContainerStyle={styles.scrollContent}
           isLoading={isLoading}
           refreshing={isFetching}
           onRefresh={refetch}
         >
-          <AppText text={t('app.escalation.title')} fontSize={28} type="Bold" mt={20} mb={12} />
+          <AppText
+            text={t('app.escalation.title')}
+            fontSize={28}
+            type="Bold"
+            mt={20}
+            mb={12}
+          />
           <AppText
             text={t('app.escalation.description')}
             fontSize={14}
             color={Colors.BLACK_60_PERCENT}
             lineHeight={18}
-            mb={24}
+            mb={40}
           />
 
           {/* CONFIDENCE CARD */}
           <GlassCard style={styles.graphCard}>
-            <AppText text={t('app.escalation.confidence_title')} fontSize={16} type="Bold" mb={8} />
+            <AppText
+              text={t('app.escalation.confidence_title')}
+              fontSize={16}
+              type="Bold"
+              mb={8}
+            />
+
+            <AppText
+              text={t('app.escalation.graph_description')}
+              fontSize={14}
+              color={Colors.BLACK_60_PERCENT}
+              lineHeight={18}
+              mb={40}
+            />
             <View style={styles.chartContainer}>
-              <LineChart {...graphConfigs} data={getGraphData(confidenceValue, 'red')} color={Colors.INDIAN_RED} startFillColor={Colors.INDIAN_RED} />
+              <LineChart
+                {...graphConfigs}
+                data={getGraphData(confidenceValue, 'red')}
+                color={Colors.INDIAN_RED}
+                startFillColor={Colors.INDIAN_RED}
+              />
               <View style={styles.overlayChart}>
                 <LineChart
                   {...graphConfigs}
@@ -113,10 +147,32 @@ const EscalationSettingScreen = () => {
                   showVerticalLines
                   verticalLinesColor={Colors.BLACK}
                   verticalLinesThickness={2}
-                  verticalLinesDataPointsIndices={[Math.floor((confNum / 100) * 6)]}
+                  verticalLinesDataPointsIndices={[
+                    Math.floor((confNum / 100) * 6),
+                  ]}
                 />
-                <View style={[styles.statusBubble, { left: `${confNum}%`, borderColor: Colors.MEDIUM_SEA_GREEN }]}>
-                  <AppText text={`${confNum}% ${t('app.escalation.confidence_automated')}`} fontSize={10} color={Colors.MEDIUM_SEA_GREEN} type="Bold" />
+                <View
+                  style={[
+                    styles.statusBubble,
+                    confNum > 50
+                      ? {
+                          right: `${100 - confNum}%`,
+                          borderColor: Colors.MEDIUM_SEA_GREEN,
+                        }
+                      : {
+                          left: `${confNum}%`,
+                          borderColor: Colors.MEDIUM_SEA_GREEN,
+                        },
+                  ]}
+                >
+                  <AppText
+                    text={`${confNum}% ${t(
+                      'app.escalation.confidence_automated',
+                    )}`}
+                    fontSize={10}
+                    color={Colors.MEDIUM_SEA_GREEN}
+                    type="Bold"
+                  />
                 </View>
               </View>
             </View>
@@ -130,22 +186,56 @@ const EscalationSettingScreen = () => {
             keyboardType="numeric"
             containerStyle={{ marginBottom: 10 }}
           />
-          <AppText text={t('app.escalation.confidence_hint')} fontSize={12} color={Colors.BLACK_35_PERCENT} mb={24} />
+          <AppText
+            text={t('app.escalation.confidence_hint')}
+            fontSize={12}
+            color={Colors.BLACK_35_PERCENT}
+            mb={24}
+          />
 
           {/* FRUSTRATION CARD */}
           <GlassCard style={styles.frustrationCard}>
             <View style={styles.row}>
-              <AppText text={t('app.escalation.frustration_title')} fontSize={15} type="Bold" />
-              <CustomSwitch value={frustrationEnabled} onToggle={setFrustrationEnabled} />
+              <AppText
+                text={t('app.escalation.frustration_title')}
+                fontSize={15}
+                type="Bold"
+              />
+              <CustomSwitch
+                value={frustrationEnabled}
+                onToggle={setFrustrationEnabled}
+              />
             </View>
-            <AppText text={t('app.escalation.frustration_desc')} fontSize={13} color={Colors.BLACK_60_PERCENT} />
+            <AppText
+              text={t('app.escalation.frustration_desc')}
+              fontSize={13}
+              color={Colors.BLACK_60_PERCENT}
+            />
           </GlassCard>
 
           {/* SENTIMENT CARD */}
           <GlassCard style={styles.graphCard}>
-            <AppText text={t('app.escalation.sentiment_title')} fontSize={16} type="Bold" mb={8} />
+            <AppText
+              text={t('app.escalation.sentiment_title')}
+              fontSize={16}
+              type="Bold"
+              mb={8}
+            />
+
+            <AppText
+              text={t('app.escalation.graph_description')}
+              fontSize={14}
+              color={Colors.BLACK_60_PERCENT}
+              lineHeight={18}
+              mb={40}
+            />
             <View style={styles.chartContainer}>
-              <LineChart {...graphConfigs} data={getGraphData(sentimentValue, 'red')} color={Colors.INDIAN_RED} startFillColor={Colors.INDIAN_RED} />
+              <LineChart
+                {...graphConfigs}
+                data={getGraphData(sentimentValue, 'red')}
+                color={Colors.INDIAN_RED}
+                startFillColor={Colors.INDIAN_RED}
+              />
               <View style={styles.overlayChart}>
                 <LineChart
                   {...graphConfigs}
@@ -156,10 +246,29 @@ const EscalationSettingScreen = () => {
                   showVerticalLines
                   verticalLinesColor={Colors.BLACK}
                   verticalLinesThickness={2}
-                  verticalLinesDataPointsIndices={[Math.floor((sentNum / 100) * 6)]}
+                  verticalLinesDataPointsIndices={[
+                    Math.floor((sentNum / 100) * 6),
+                  ]}
                 />
-                <View style={[styles.statusBubble, { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED }]}>
-                  <AppText text={`${sentNum}% ${t('app.escalation.sentiment_escalated')}`} fontSize={10} color={Colors.INDIAN_RED} type="Bold" />
+                <View
+                  style={[
+                    styles.statusBubble,
+                    sentNum > 50
+                      ? {
+                          right: `${100 - sentNum}%`,
+                          borderColor: Colors.INDIAN_RED,
+                        }
+                      : { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED },
+                  ]}
+                >
+                  <AppText
+                    text={`${sentNum}% ${t(
+                      'app.escalation.sentiment_escalated',
+                    )}`}
+                    fontSize={10}
+                    color={Colors.INDIAN_RED}
+                    type="Bold"
+                  />
                 </View>
               </View>
             </View>
@@ -178,7 +287,11 @@ const EscalationSettingScreen = () => {
 
       <View style={styles.footer}>
         <AppButton
-          title={isPending ? t('app.escalation.saving') : t('app.escalation.btn_save')}
+          title={
+            isPending
+              ? t('app.escalation.saving')
+              : t('app.escalation.btn_save')
+          }
           onPress={handleSubmit(handleSave)}
           variant="primary"
           disabled={isPending || isLoading}
@@ -191,14 +304,55 @@ const EscalationSettingScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: Metrics.verticalScale(40) },
-  scrollContent: { paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(140) },
-  graphCard: { padding: Metrics.scale(16), borderRadius: 20, marginBottom: Metrics.verticalScale(24), width: '100%' },
-  chartContainer: { height: Metrics.verticalScale(160), position: 'relative', marginLeft: -20 },
+  scrollContent: {
+    paddingHorizontal: Metrics.scale(24),
+    paddingBottom: Metrics.verticalScale(140),
+  },
+  graphCard: {
+    padding: Metrics.scale(16),
+    borderRadius: 20,
+    marginBottom: Metrics.verticalScale(24),
+    width: '100%',
+  },
+  chartContainer: {
+    height: Metrics.verticalScale(160),
+    position: 'relative',
+    marginLeft: -20,
+  },
   overlayChart: { ...StyleSheet.absoluteFillObject },
-  statusBubble: { position: 'absolute', top: 5, paddingHorizontal: 8, paddingVertical: 4, backgroundColor: Colors.WHITE, borderRadius: 12, borderWidth: 1, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15 },
-  frustrationCard: { padding: Metrics.scale(16), borderRadius: 16, marginBottom: Metrics.verticalScale(20), width: '100%' },
-  row: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10 },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(40) },
+  statusBubble: {
+    position: 'absolute',
+    top: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: Colors.WHITE,
+    borderRadius: 12,
+    borderWidth: 1,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+  },
+  frustrationCard: {
+    padding: Metrics.scale(16),
+    borderRadius: 16,
+    marginBottom: Metrics.verticalScale(20),
+    width: '100%',
+  },
+  row: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: Metrics.scale(24),
+    paddingBottom: Metrics.verticalScale(40),
+  },
 });
 
 export default EscalationSettingScreen;

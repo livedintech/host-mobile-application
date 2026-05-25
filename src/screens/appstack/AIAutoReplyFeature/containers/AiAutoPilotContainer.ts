@@ -16,6 +16,7 @@ import STORAGE_CONST from '@/constants/storage';
 import { ListingOption } from '@/types/api/AnalyticsTypes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 
 type FormValues = {
   properties: string[];
@@ -26,6 +27,7 @@ const AiAutoPilotContainer = () => {
   const [isAutopilotActive, setIsAutopilotActive] = useState(true);
   const [autoCreateAll, setAutoCreateAll] = useState(false);
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const { user } = useAuthStore();
 
@@ -109,6 +111,8 @@ const AiAutoPilotContainer = () => {
         type: 'success',
         text1: response?.message || 'AI Autopilot updated successfully',
       });
+
+      navigation.goBack();
     },
 
     onError: (error: any) => {

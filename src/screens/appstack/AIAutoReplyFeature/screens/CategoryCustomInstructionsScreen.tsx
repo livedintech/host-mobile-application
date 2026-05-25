@@ -23,7 +23,7 @@ import CategoryInstructionsContainer from '../containers/CategoryInstructionsCon
 
 const CategoryInstructionsScreen = () => {
   const { t } = useTranslation(); // Added
-  const { title, listingOptions, existingData, isLoading, onSave, isSaving } =
+  const { title, listingOptions, existingData, isLoading, onSave, isSaving,isAddMoreDisabled } =
     CategoryInstructionsContainer();
 
   const {
@@ -85,10 +85,19 @@ const CategoryInstructionsScreen = () => {
           mt={20}
           mb={12}
         />
+        <AppText
+          text={t('app.category_instructions.description')}
+          fontSize={14}
+          type="Regular"
+          mt={20}
+          color={Colors.DARK_CHARCOAL_OPACITY}
+          mb={30}
+        />
 
         <View style={styles.addMoreRow}>
           <TouchableOpacity
             onPress={() => append({ instruction: '', properties: [] })}
+            disabled={isAddMoreDisabled}
             style={styles.addMoreButton}
           >
             <AppText
