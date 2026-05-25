@@ -101,7 +101,7 @@ export const getAICategoryInstructions = async (
   );
 
   if (ok) {
-    return data?.data;
+    return data?.data; // Returns array of objects matching your GET sample response
   }
 
   throw response?.message;
@@ -112,8 +112,8 @@ export const saveAICategoryInstructions = async (payload: {
   user_id: number;
   category_id: number;
   instructions: string[];
-  listing_ids: number[];
-  apply_to_all_listings: boolean;
+  listing_ids: number[][]; // Multi-dimensional array representing lists of listings per card configuration
+  apply_to_all_listings: boolean[]; // Array representing targeted individual checkbox flags per card configuration
 }) => {
   const { ok, response, data } = await apiService.post(
     SERVICE_CONFIG_URLS.APP.AI_CATEGORY_INSTRUCTIONS_SAVE,
@@ -126,7 +126,6 @@ export const saveAICategoryInstructions = async (payload: {
 
   throw response?.message;
 };
-
 
 // UPDATE AI Message Category Status
 export const updateAIMessageCategoryStatus = async (payload: {
