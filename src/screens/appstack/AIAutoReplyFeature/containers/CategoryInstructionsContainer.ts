@@ -44,7 +44,7 @@ const CategoryInstructionsContainer = () => {
       queryClient.invalidateQueries({
         queryKey: ['categoryInstructions', category_id],
       });
-      navigation.goBack();
+      // navigation.goBack();
     },
     onError: (err: any) => {
       Toast.show({
@@ -56,28 +56,19 @@ const CategoryInstructionsContainer = () => {
   });
 
   const onSave = (formData: any) => {
+    // Reconstruct fields to perfectly match the specific matrix arrays your backend needs
     const payload = {
       user_id: user!.id,
       category_id: category_id,
-      instructions: formData.sections
-        .map((s: any) => s.instruction)
-        .filter(Boolean),
-      // Flatten all selected listing IDs from all sections into one array
-      listing_ids: [
-        ...new Set(
-          formData.sections.flatMap((s: any) => s.properties.map(Number)),
-        ),
-      ],
-      // Use the single global checkbox value
-      apply_to_all_listings: !!formData.apply_to_all_listings,
+      instructions: formData.sections.map((s: any) => s.instruction || ''),
+      listing_ids: formData.sections.map((s: any) => s.properties.map(Number)),
+      apply_to_all_listings: formData.sections.map((s: any) => !!s.apply_to_all_listings),
     };
 
     saveInstructions(payload);
   };
 
-  // Check if existingData or instructions inside existingData are empty
-  const hasNoData = !existingData || existingData.length === 0 || !existingData[0]?.instructions || existingData[0].instructions.length === 0;
-  const isAddMoreDisabled = hasNoData;
+  const isAddMoreDisabled = !existingData || existingData.length === 0;
 
   return {
     title,
@@ -88,7 +79,7 @@ const CategoryInstructionsContainer = () => {
     isSaving,
     navigation,
     t,
-    isAddMoreDisabled
+    isAddMoreDisabled,
   };
 };
 

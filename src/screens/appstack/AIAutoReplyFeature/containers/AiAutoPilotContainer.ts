@@ -1,5 +1,3 @@
-// AiAutoPilotContainer.ts
-
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
@@ -44,6 +42,7 @@ const AiAutoPilotContainer = () => {
     formState: { errors },
     handleSubmit,
     reset,
+    getValues,
   } = useForm<FormValues>({
     defaultValues: {
       properties: [],
@@ -95,26 +94,21 @@ const AiAutoPilotContainer = () => {
   }, [autopilotData]);
 
   // =========================
-  // UPDATE AUTOPILOT
+  // UPDATE AUTOPILOT (PRIMARY FORM BUTTON)
   // =========================
   const { mutate, isPending } = useMutation({
     mutationFn: async (payload: any) => {
       return await updateAIAutopilot(payload);
     },
-
     onSuccess: (response: any) => {
       queryClient.invalidateQueries({
         queryKey: ['ai-autopilot-settings', user?.id],
       });
-
       Toast.show({
         type: 'success',
         text1: response?.message || 'AI Autopilot updated successfully',
       });
-
-      navigation.goBack();
     },
-
     onError: (error: any) => {
       Toast.show({
         type: 'error',
@@ -124,7 +118,51 @@ const AiAutoPilotContainer = () => {
   });
 
   // =========================
-  // SUBMIT
+  // INSTANT MUTATION (FOR INDIVIDUAL SWITCH TOGGLE)
+  // =========================
+  const { mutate: updateSwitchStatus, isPending: isSwitchUpdating } = useMutation({
+    mutationFn: async (payload: any) => {
+      return await updateAIAutopilot(payload);
+    },
+    onMutate: async (variables) => {
+      // Optimistically flip the switch status UI immediately
+      setIsAutopilotActive(variables.status);
+    },
+    onSuccess: (response: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ['ai-autopilot-settings', user?.id],
+      });
+      Toast.show({
+        type: 'success',
+        text1: response?.message || 'Status updated successfully',
+      });
+    },
+    onError: (error: any, variables) => {
+      // Fallback switch state to original if api request breaks
+      setIsAutopilotActive(!variables.status);
+      Toast.show({
+        type: 'error',
+        text1: error?.message || 'Failed to update status',
+      });
+    },
+  });
+
+  const handleSwitchToggle = (nextStatus: boolean) => {
+    const currentFormValues = getValues();
+    
+    const payload = {
+      user_id: user?.id,
+      status: nextStatus,
+      listings: currentFormValues.properties?.map(Number),
+      auto_create: autoCreateAll,
+      wait_trigger: Number(currentFormValues.waitTrigger),
+    };
+
+    updateSwitchStatus(payload);
+  };
+
+  // =========================
+  // SUBMIT (FORM)
   // =========================
   const onSubmit = (values: FormValues) => {
     const payload = {
@@ -141,7 +179,8 @@ const AiAutoPilotContainer = () => {
   return {
     // state
     isAutopilotActive,
-    setIsAutopilotActive,
+    handleSwitchToggle,
+    isSwitchUpdating,
     autoCreateAll,
     setAutoCreateAll,
 
@@ -154,6 +193,7 @@ const AiAutoPilotContainer = () => {
     // data
     listingOptions,
     waitTriggerData,
+    
     // actions
     onSubmit,
 

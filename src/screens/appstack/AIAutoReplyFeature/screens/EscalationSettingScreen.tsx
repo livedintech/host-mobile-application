@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { useForm, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next'; // Added
+import { useTranslation } from 'react-i18next';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import BGImage from '@/components/molecules/BGImage/BGImage';
@@ -17,7 +17,7 @@ import EscalationSettingContainer from '../containers/EscalationSettingContainer
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 
 const EscalationSettingScreen = () => {
-  const { t } = useTranslation(); // Added
+  const { t } = useTranslation();
   const {
     frustrationEnabled,
     setFrustrationEnabled,
@@ -39,6 +39,7 @@ const EscalationSettingScreen = () => {
       confidenceInput: '80',
       sentimentInput: '52',
     },
+    mode: 'onSubmit',
   });
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const EscalationSettingScreen = () => {
         'confidenceInput',
         String(settingsData.confidence_level || '80'),
       );
-      setValue('sentimentInput', String(settingsData.sentiment_level || '50'));
+      setValue('sentimentInput', String(settingsData.sentiment_level || '52'));
     }
   }, [settingsData, setValue]);
 
@@ -144,12 +145,7 @@ const EscalationSettingScreen = () => {
                   color={Colors.MEDIUM_SEA_GREEN}
                   startFillColor={Colors.MEDIUM_SEA_GREEN}
                   xAxisLabelTexts={commonXLabels}
-                  showVerticalLines
-                  verticalLinesColor={Colors.BLACK}
-                  verticalLinesThickness={2}
-                  verticalLinesDataPointsIndices={[
-                    Math.floor((confNum / 100) * 6),
-                  ]}
+                  showVerticalLines={false}
                 />
                 <View
                   style={[
@@ -181,10 +177,21 @@ const EscalationSettingScreen = () => {
           <InputField
             name="confidenceInput"
             label={t('app.escalation.confidence_label')}
+            placeholder=''
             control={control as any}
             errors={errors}
             keyboardType="numeric"
             containerStyle={{ marginBottom: 10 }}
+            rules={{
+              required: t('app.escalation.error_required', { defaultValue: 'Field cannot be empty' }),
+              validate: (val: string) => {
+                const num = parseInt(val) || 0;
+                if (num < 80 || num > 100) {
+                  return t('app.escalation.error_confidence_range', { defaultValue: 'Value must be between 80% and 100%' });
+                }
+                return true;
+              }
+            }}
           />
           <AppText
             text={t('app.escalation.confidence_hint')}
@@ -213,75 +220,90 @@ const EscalationSettingScreen = () => {
             />
           </GlassCard>
 
-          {/* SENTIMENT CARD */}
-          <GlassCard style={styles.graphCard}>
-            <AppText
-              text={t('app.escalation.sentiment_title')}
-              fontSize={16}
-              type="Bold"
-              mb={8}
-            />
-
-            <AppText
-              text={t('app.escalation.graph_description')}
-              fontSize={14}
-              color={Colors.BLACK_60_PERCENT}
-              lineHeight={18}
-              mb={40}
-            />
-            <View style={styles.chartContainer}>
-              <LineChart
-                {...graphConfigs}
-                data={getGraphData(sentimentValue, 'red')}
-                color={Colors.INDIAN_RED}
-                startFillColor={Colors.INDIAN_RED}
+          {/* SENTIMENT CARD - Disabled dynamically based on Frustration Toggle */}
+          <View style={!frustrationEnabled && styles.disabledContainer} pointerEvents={frustrationEnabled ? 'auto' : 'none'}>
+            <GlassCard style={styles.graphCard}>
+              <AppText
+                text={t('app.escalation.sentiment_title')}
+                fontSize={16}
+                type="Bold"
+                mb={8}
               />
-              <View style={styles.overlayChart}>
+
+              <AppText
+                text={t('app.escalation.graph_description')}
+                fontSize={14}
+                color={Colors.BLACK_60_PERCENT}
+                lineHeight={18}
+                mb={40}
+              />
+              <View style={styles.chartContainer}>
                 <LineChart
                   {...graphConfigs}
-                  data={getGraphData(sentimentValue, 'green')}
-                  color={Colors.MEDIUM_SEA_GREEN}
-                  startFillColor={Colors.MEDIUM_SEA_GREEN}
-                  xAxisLabelTexts={commonXLabels}
-                  showVerticalLines
-                  verticalLinesColor={Colors.BLACK}
-                  verticalLinesThickness={2}
-                  verticalLinesDataPointsIndices={[
-                    Math.floor((sentNum / 100) * 6),
-                  ]}
+                  data={getGraphData(sentimentValue, 'red')}
+                  color={Colors.INDIAN_RED}
+                  startFillColor={Colors.INDIAN_RED}
                 />
-                <View
-                  style={[
-                    styles.statusBubble,
-                    sentNum > 50
-                      ? {
-                          right: `${100 - sentNum}%`,
-                          borderColor: Colors.INDIAN_RED,
-                        }
-                      : { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED },
-                  ]}
-                >
-                  <AppText
-                    text={`${sentNum}% ${t(
-                      'app.escalation.sentiment_escalated',
-                    )}`}
-                    fontSize={10}
-                    color={Colors.INDIAN_RED}
-                    type="Bold"
+                <View style={styles.overlayChart}>
+                  <LineChart
+                    {...graphConfigs}
+                    data={getGraphData(sentimentValue, 'green')}
+                    color={Colors.MEDIUM_SEA_GREEN}
+                    startFillColor={Colors.MEDIUM_SEA_GREEN}
+                    xAxisLabelTexts={commonXLabels}
+                    showVerticalLines={false}
                   />
+                  <View
+                    style={[
+                      styles.statusBubble,
+                      sentNum > 50
+                        ? {
+                            right: `${100 - sentNum}%`,
+                            borderColor: Colors.INDIAN_RED,
+                          }
+                        : { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED },
+                    ]}
+                  >
+                    <AppText
+                      text={`${sentNum}% ${t(
+                        'app.escalation.sentiment_escalated',
+                      )}`}
+                      fontSize={10}
+                      color={Colors.INDIAN_RED}
+                      type="Bold"
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-          </GlassCard>
+            </GlassCard>
 
-          <InputField
-            name="sentimentInput"
-            label={t('app.escalation.sentiment_label')}
-            control={control as any}
-            errors={errors}
-            keyboardType="numeric"
-            containerStyle={{ marginBottom: 10 }}
+            <InputField
+              name="sentimentInput"
+              label={t('app.escalation.sentiment_label')}
+              control={control as any}
+              errors={errors}
+              keyboardType="numeric"
+              containerStyle={{ marginBottom: 10 }}
+              // disabled={!frustrationEnabled}
+              placeholder=""
+              rules={frustrationEnabled ? {
+                required: t('app.escalation.error_required', { defaultValue: 'Field cannot be empty' }),
+                validate: (val: string) => {
+                  const num = parseInt(val) || 0;
+                  if (num < 30 || num > 100) {
+                    return t('app.escalation.error_sentiment_range', { defaultValue: 'Value must be between 30% and 100%' });
+                  }
+                  return true;
+                }
+              } : {}}
+            />
+                   <AppText
+            text={t('app.escalation.sentiment_hint')}
+            fontSize={12}
+            color={Colors.BLACK_35_PERCENT}
+            mb={24}
           />
+          </View>
         </RefreshableScrollView>
       </KeyboardAvoidingView>
 
@@ -344,6 +366,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 10,
+  },
+  disabledContainer: {
+    opacity: 0.38,
   },
   footer: {
     position: 'absolute',

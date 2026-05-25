@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import AppText from '@/components/molecules/AppText/AppText';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import CustomSwitch from '@/components/molecules/CustomSwitch/CustomSwitch';
-import AppButton from '@/components/molecules/AppButton/AppButton';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
@@ -24,8 +23,7 @@ const MessageCategoriesScreen = () => {
     isLoading,
     isFetching,
     refetch,
-    handleSave,
-    isUpdating,
+    updatingId, // <-- Grab the specific ID being updated
     navigation
   } = MessageCategoriesContainer();
 
@@ -98,38 +96,30 @@ const MessageCategoriesScreen = () => {
                 />
               </View>
 
+              {/* Pass isLoading explicitly to this specific switch item */}
               <CustomSwitch
                 value={item.status}
-                onToggle={() => toggleSwitch(item.id)}
+                isLoading={updatingId === item.id}
+                disabled={updatingId !== null} // Disables other switches while one is updating
+                onToggle={(nextValue) => toggleSwitch(item.id, nextValue)}
               />
             </View>
           </GlassCard>
         ))}
       </RefreshableScrollView>
-
-      <View style={styles.footer}>
-        <AppButton
-          title={isUpdating ? t('app.categories.saving') : t('app.categories.btn_save')}
-          onPress={handleSave}
-          variant="primary"
-          disabled={isUpdating || isLoading}
-          backgroundColor={Colors.TEAL_PRIMARY_ALT}
-        />
-      </View>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: Metrics.verticalScale(50) },
-  scrollContent: { paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(120) },
+  scrollContent: { paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(40) },
   card: { padding: Metrics.scale(16), borderRadius: 24, marginBottom: Metrics.verticalScale(14), width: '100%' },
   topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Metrics.verticalScale(8) },
   bottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   statsContainer: { flex: 1 },
   pencilGlassWrapper: { padding: 0, borderRadius: 8, backgroundColor: 'rgba(255, 255, 255, 0.4)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.6)', width: Metrics.scale(40) },
   editIcon: { width: Metrics.scale(40), height: Metrics.scale(40), justifyContent: 'center', alignItems: 'center' },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(30), backgroundColor: 'transparent' },
 });
 
 export default MessageCategoriesScreen;

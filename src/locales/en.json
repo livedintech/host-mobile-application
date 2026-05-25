@@ -2029,7 +2029,8 @@
       "graph_description":"Choose how confident the AI should be before sending a reply automatically. If confidence is low, the message will be sent to you for review.",
       "confidence_label": "Send Automatically When Confident",
       "confidence_automated": "Automated",
-      "confidence_hint": "Minimum confidence required for AI to reply.",
+      "confidence_hint": "Set the minimum confidence (e.g., 90%) required for the AI to reply on its own.",
+      "sentiment_hint": "Set the minimum sentiment level (e.g., 50%) required for the AI to reply on its own.",
       "frustration_title": "Frustration Detection",
       "frustration_desc": "Turn this on to send conversations to you when the guest seems upset or frustrated.",
       "sentiment_title": "Sentiment Level",
@@ -2056,14 +2057,16 @@
       "description":"Add specific guidelines for how Autopilot should handle discount requests. These instructions will guide responses for this category and ensure consistent replies.",
       "add_more": "+ Add more",
       "label_instructions": "Instructions",
-      "placeholder_instructions": "Add instructions...",
+      "placeholder_instructions": "Add instructions that Autopilot should follow for this category...",
       "label_select_property": "Select Property",
       "placeholder_multiselect": "Select Multiple Options",
       "label_auto_create": "Auto-create for all new listings",
       "btn_apply": "Apply Changes",
       "saving": "Saving...",
       "toast_success": "Instructions saved successfully",
-      "toast_error": "Failed to save"
+      "toast_error": "Failed to save",
+      "error_instruction_required": "Instruction field cannot be left empty.",
+      "error_listings_required": "Please select at least one property."
     }
   }
 }

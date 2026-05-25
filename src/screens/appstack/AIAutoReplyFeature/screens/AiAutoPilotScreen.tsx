@@ -23,7 +23,8 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
   const {
     isAutopilotActive,
-    setIsAutopilotActive,
+    handleSwitchToggle, // Use updated switch handler
+    isSwitchUpdating,   // Inject the individual switch loader status
     autoCreateAll,
     setAutoCreateAll,
     control,
@@ -106,7 +107,9 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
 
             <CustomSwitch
               value={isAutopilotActive}
-              onToggle={setIsAutopilotActive}
+              isLoading={isSwitchUpdating}
+              disabled={isSwitchUpdating}
+              onToggle={handleSwitchToggle} // Pass value directly back to handler
             />
           </View>
         </GlassCard>
