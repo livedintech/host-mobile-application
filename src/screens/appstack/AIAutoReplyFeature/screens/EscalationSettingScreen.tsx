@@ -39,7 +39,7 @@ const EscalationSettingScreen = () => {
       confidenceInput: '80',
       sentimentInput: '52',
     },
-    mode: 'onSubmit',
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -47,8 +47,11 @@ const EscalationSettingScreen = () => {
       setValue(
         'confidenceInput',
         String(settingsData.confidence_level || '80'),
+        { shouldValidate: true },
       );
-      setValue('sentimentInput', String(settingsData.sentiment_level || '52'));
+      setValue('sentimentInput', String(settingsData.sentiment_level || '52'), {
+        shouldValidate: true,
+      });
     }
   }, [settingsData, setValue]);
 
@@ -177,20 +180,20 @@ const EscalationSettingScreen = () => {
           <InputField
             name="confidenceInput"
             label={t('app.escalation.confidence_label')}
-            placeholder=''
+            placeholder=""
             control={control as any}
             errors={errors}
             keyboardType="numeric"
             containerStyle={{ marginBottom: 10 }}
             rules={{
-              required: t('app.escalation.error_required', { defaultValue: 'Field cannot be empty' }),
+              required: t('app.escalation.error_required'),
               validate: (val: string) => {
                 const num = parseInt(val) || 0;
                 if (num < 80 || num > 100) {
-                  return t('app.escalation.error_confidence_range', { defaultValue: 'Value must be between 80% and 100%' });
+                  return t('app.escalation.error_confidence_range');
                 }
                 return true;
-              }
+              },
             }}
           />
           <AppText
@@ -221,7 +224,10 @@ const EscalationSettingScreen = () => {
           </GlassCard>
 
           {/* SENTIMENT CARD - Disabled dynamically based on Frustration Toggle */}
-          <View style={!frustrationEnabled && styles.disabledContainer} pointerEvents={frustrationEnabled ? 'auto' : 'none'}>
+          <View
+            style={!frustrationEnabled && styles.disabledContainer}
+            pointerEvents={frustrationEnabled ? 'auto' : 'none'}
+          >
             <GlassCard style={styles.graphCard}>
               <AppText
                 text={t('app.escalation.sentiment_title')}
@@ -261,7 +267,10 @@ const EscalationSettingScreen = () => {
                             right: `${100 - sentNum}%`,
                             borderColor: Colors.INDIAN_RED,
                           }
-                        : { left: `${sentNum}%`, borderColor: Colors.INDIAN_RED },
+                        : {
+                            left: `${sentNum}%`,
+                            borderColor: Colors.INDIAN_RED,
+                          },
                     ]}
                   >
                     <AppText
@@ -286,23 +295,31 @@ const EscalationSettingScreen = () => {
               containerStyle={{ marginBottom: 10 }}
               // disabled={!frustrationEnabled}
               placeholder=""
-              rules={frustrationEnabled ? {
-                required: t('app.escalation.error_required', { defaultValue: 'Field cannot be empty' }),
-                validate: (val: string) => {
-                  const num = parseInt(val) || 0;
-                  if (num < 30 || num > 100) {
-                    return t('app.escalation.error_sentiment_range', { defaultValue: 'Value must be between 30% and 100%' });
-                  }
-                  return true;
-                }
-              } : {}}
+              rules={
+                frustrationEnabled
+                  ? {
+                      required: t('app.escalation.error_required', {
+                        defaultValue: 'Field cannot be empty',
+                      }),
+                      validate: (val: string) => {
+                        const num = parseInt(val) || 0;
+                        if (num < 30 || num > 100) {
+                          return t('app.escalation.error_sentiment_range', {
+                            defaultValue: 'Value must be between 30% and 100%',
+                          });
+                        }
+                        return true;
+                      },
+                    }
+                  : {}
+              }
             />
-                   <AppText
-            text={t('app.escalation.sentiment_hint')}
-            fontSize={12}
-            color={Colors.BLACK_35_PERCENT}
-            mb={24}
-          />
+            <AppText
+              text={t('app.escalation.sentiment_hint')}
+              fontSize={12}
+              color={Colors.BLACK_35_PERCENT}
+              mb={24}
+            />
           </View>
         </RefreshableScrollView>
       </KeyboardAvoidingView>

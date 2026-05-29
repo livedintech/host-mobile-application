@@ -2040,7 +2040,10 @@
       "saving": "Saving...",
       "toast_success_title": "Settings Updated",
       "toast_success_desc": "Your AI escalation rules have been saved.",
-      "toast_error_title": "Update Failed"
+      "toast_error_title": "Update Failed",
+      "error_required": "Field cannot be empty",
+      "error_confidence_range": "Value must be between 80% and 100%",
+      "error_sentiment_range": "Value must be between 30% and 100%"
     },
     "categories": {
       "title": "Message Categories",
