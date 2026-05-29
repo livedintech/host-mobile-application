@@ -127,6 +127,18 @@ const AppButton = ({
     }
 
     if (!isPrimary) {
+        // اگر backgroundColor explicitly دیا ہو تو frosted glass skip کرو
+        if (backgroundColor !== undefined) {
+            return (
+                <View style={[spacingStyles]}>
+                    <View style={{ borderRadius, overflow: 'hidden' }}>
+                        {renderGradientBorder()}
+                        {renderButtonInner(backgroundColor)}
+                    </View>
+                </View>
+            );
+        }
+
         return (
             <View style={[spacingStyles]}>
                 <View style={{ borderRadius, overflow: 'hidden' }}>

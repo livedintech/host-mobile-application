@@ -14,7 +14,7 @@ export default function useManageBookingContainer() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
 
-  const { data: response, isLoading, refetch } = useQuery({
+  const { data: response, isLoading, refetch: refetchChannels } = useQuery({
     queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
     queryFn: () =>
       getChannelsUserbyId({
@@ -66,22 +66,30 @@ export default function useManageBookingContainer() {
     }
   };
 
-  const { mutate: deactivateChannel, isPending: isDeactivating } = useMutation({
-    mutationFn: (channel_id: number) =>
-      updateChannelStatusApi({ channel_id, status: 'inactive' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id] });
-    },
-  });
-
   // Fetch user listings (for dropdown options)
-  const { data: apiResponse, isLoading: isLoadingDropdown, isFetching: isFetchingDropdown } = useQuery({
+  const { data: apiResponse, isLoading: isLoadingDropdown, refetch: refetchListings } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () =>
       getUserListingsByUserIDApi({
         user: user?.id!,
       }),
-    // enabled: Boolean(user?.id),
+    enabled: Boolean(user?.id),
+  });
+
+  // Combined refetch — dono queries ek saath refresh hongi
+  const refetch = async () => {
+    await Promise.all([refetchChannels(), refetchListings()]);
+  };
+
+  const { mutate: deactivateChannel, isPending: isDeactivating } = useMutation({
+    mutationFn: (channel_id: number) =>
+      updateChannelStatusApi({ channel_id, status: 'inactive' }),
+    onSuccess: () => {
+      // Channels invalidate karo (account delete ke baad list update ho)
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id] });
+      // Listings bhi invalidate karo (listing options fresh rahen)
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id] });
+    },
   });
 
   // Prepare dropdown options (values must be strings)
@@ -89,9 +97,10 @@ export default function useManageBookingContainer() {
     label: item.name,
     value: String(item.listing_id),
   })) ?? [];
+
   return {
     handleConnect,
-    isLoading,
+    isLoading: isLoading || isLoadingDropdown,
     refetch,
     connectedAccounts,
     goToListing,

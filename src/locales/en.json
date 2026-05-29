@@ -893,7 +893,7 @@
       "no_account_desc": "Connect your Airbnb, Gathern, or other booking platforms to manage all your listings in one place.",
       "connect_accounts": "Connect Accounts",
       "no_tab_account": "No {{tab}} Account",
-      "add_account": "+ Add Another {{tab}} Account",
+      "add_account": "Connect {{tab}} Account",
       "connect_account": "Connect {{tab}} Account",
       "livedin_name": "Livedin Name",
       "total_property": "Total Property Count",
