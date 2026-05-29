@@ -36,10 +36,12 @@ const CategoryInstructionsContainer = () => {
 
   const { mutate: saveInstructions, isPending: isSaving } = useMutation({
     mutationFn: saveAICategoryInstructions,
-    onSuccess: () => {
+    onSuccess: (res: any) => {
+      const backendMessage = res?.message || t('app.category_instructions.toast_success');
+      console.log("backendMessage",backendMessage)
       Toast.show({
         type: 'success',
-        text1: t('app.category_instructions.toast_success'),
+      text1: backendMessage,
       });
       queryClient.invalidateQueries({
         queryKey: ['categoryInstructions', category_id],
@@ -49,8 +51,8 @@ const CategoryInstructionsContainer = () => {
     onError: (err: any) => {
       Toast.show({
         type: 'error',
-        text1: t('app.category_instructions.toast_error'),
-        text2: err,
+        // text1: t('app.category_instructions.toast_error'),
+        text1: err,
       });
     },
   });
