@@ -41,7 +41,9 @@ const CategoryInstructionsScreen = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      sections: [{ instruction: '', properties: [], apply_to_all_listings: false }],
+      sections: [
+        { instruction: '', properties: [], apply_to_all_listings: false },
+      ],
     },
     mode: 'onSubmit',
   });
@@ -60,7 +62,7 @@ const CategoryInstructionsScreen = () => {
         properties: apiItem.listing_ids?.map(String) || [],
         apply_to_all_listings: !!apiItem.apply_to_all_listings,
       }));
-      
+
       setValue('sections', formattedSections);
     }
   }, [existingData, setValue]);
@@ -100,9 +102,18 @@ const CategoryInstructionsScreen = () => {
 
         <View style={styles.addMoreRow}>
           <TouchableOpacity
-            onPress={() => append({ instruction: '', properties: [], apply_to_all_listings: false })}
+            onPress={() =>
+              append({
+                instruction: '',
+                properties: [],
+                apply_to_all_listings: false,
+              })
+            }
             disabled={isAddMoreDisabled}
-            style={[styles.addMoreButton, isAddMoreDisabled && { opacity: 0.45 }]}
+            style={[
+              styles.addMoreButton,
+              isAddMoreDisabled && { opacity: 0.45 },
+            ]}
           >
             <AppText
               text={t('app.category_instructions.add_more')}
@@ -114,14 +125,19 @@ const CategoryInstructionsScreen = () => {
         </View>
 
         {fields.map((field, index) => {
-          const currentApplyAllValue = watchedSections?.[index]?.apply_to_all_listings || false;
+          const currentApplyAllValue =
+            watchedSections?.[index]?.apply_to_all_listings || false;
 
           // TypeScript error fixed by constructing an isolated map wrapper targeting our precise field item structures
           const textInputFieldName = `sections.${index}.instruction`;
           const dropdownFieldName = `sections.${index}.properties`;
-          
-          const textErrorObj = errors?.sections?.[index]?.instruction ? { [textInputFieldName]: errors.sections[index].instruction } : {};
-          const dropErrorObj = errors?.sections?.[index]?.properties ? { [dropdownFieldName]: errors.sections[index].properties } : {};
+
+          const textErrorObj = errors?.sections?.[index]?.instruction
+            ? { [textInputFieldName]: errors.sections[index].instruction }
+            : {};
+          const dropErrorObj = errors?.sections?.[index]?.properties
+            ? { [dropdownFieldName]: errors.sections[index].properties }
+            : {};
 
           return (
             <View key={field.id} style={styles.sectionContainer}>
@@ -129,11 +145,15 @@ const CategoryInstructionsScreen = () => {
                 label={t('app.category_instructions.label_instructions')}
                 name={textInputFieldName}
                 control={control as any}
-                errors={textErrorObj as any} 
+                errors={textErrorObj as any}
                 rules={{
-                  required: t('app.category_instructions.error_instruction_required')
+                  required: t(
+                    'app.category_instructions.error_instruction_required',
+                  ),
                 }}
-                placeholder={t('app.category_instructions.placeholder_instructions')}
+                placeholder={t(
+                  'app.category_instructions.placeholder_instructions',
+                )}
                 multiline={true}
                 height={Metrics.verticalScale(120)}
               />
@@ -142,24 +162,35 @@ const CategoryInstructionsScreen = () => {
                 <MultiSelectDropdownField
                   name={dropdownFieldName}
                   control={control as any}
-                  errors={dropErrorObj as any} 
+                  errors={dropErrorObj as any}
                   rules={{
-                    validate: (value: string[]) => 
-                      (value && value.length > 0) || 
-                      t('app.category_instructions.error_listings_required')
+                    validate: (value: string[]) =>
+                      (value && value.length > 0) ||
+                      t('app.category_instructions.error_listings_required'),
                   }}
                   label={t('app.category_instructions.label_select_property')}
                   data={listingOptions}
-                  placeholder={t('app.category_instructions.placeholder_multiselect')}
+                  placeholder={t(
+                    'app.category_instructions.placeholder_multiselect',
+                  )}
                   dropdownPosition="top"
                 />
               </View>
 
-              <ButtonView style={[styles.globalCheckboxRow, { marginTop: Metrics.verticalScale(15), marginBottom: 5 }]} activeOpacity={0.7}>
+              <ButtonView
+                style={[
+                  styles.globalCheckboxRow,
+                  { marginTop: Metrics.verticalScale(15), marginBottom: 5 },
+                ]}
+                activeOpacity={0.7}
+              >
                 <Checkbox
                   isChecked={currentApplyAllValue}
                   onPress={() =>
-                    setValue(`sections.${index}.apply_to_all_listings`, !currentApplyAllValue)
+                    setValue(
+                      `sections.${index}.apply_to_all_listings`,
+                      !currentApplyAllValue,
+                    )
                   }
                 />
                 <AppText
@@ -178,11 +209,12 @@ const CategoryInstructionsScreen = () => {
 
       <View style={styles.footer}>
         <AppButton
-          title={isSaving ? t('app.category_instructions.saving') : t('app.category_instructions.btn_apply')}
+          title={t('app.category_instructions.btn_apply')}
           onPress={handleSubmit(onSave)}
           variant="primary"
-          disabled={isSaving}
+          // disabled={isSaving}
           backgroundColor={Colors.TEAL_PRIMARY_ALT}
+          loading={isSaving}
         />
       </View>
     </BGImage>
