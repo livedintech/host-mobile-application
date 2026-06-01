@@ -12,11 +12,17 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 // Theme & Utility
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const HowAutoPilotWork = () => {
   const navigation = useNavigation();
   const { t } = useTranslation(); // Added
-
+  const { user } = useAuthStore();
+  console.log('user::', user);
+  const HIDE_UPGRADE_PLAN_IDS = [
+    'b0964a43-5ff2-49b4-be4e-d75afb665d41',
+    '8b49aa16-cc53-4d16-b880-c008acc0ad3c',
+  ];
   return (
     <BGImage
       source={require('@/assets/img/background/linearBG.png')}
@@ -26,32 +32,37 @@ const HowAutoPilotWork = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <AppText 
-          text={t('app.how_autopilot.title')} 
-          fontSize={32} 
-          type="Bold" 
-          mb={24} 
+        <AppText
+          text={t('app.how_autopilot.title')}
+          fontSize={32}
+          type="Bold"
+          mb={24}
         />
 
         {/* Section 1: Escalation & Responsibility */}
         <GlassCard style={styles.infoCard}>
-          <AppText 
-            text={t('app.how_autopilot.escalation_title')} 
-            fontSize={18} 
-            type="Bold" 
-            mb={16} 
+          <AppText
+            text={t('app.how_autopilot.escalation_title')}
+            fontSize={18}
+            type="Bold"
+            mb={16}
             lineHeight={24}
           />
-          <AppText 
-            fontSize={14} 
-            color={Colors.DARK_CHARCOAL} 
-            lineHeight={20} 
+          <AppText
+            fontSize={14}
+            color={Colors.DARK_CHARCOAL}
+            lineHeight={20}
             mb={16}
           >
             {t('app.how_autopilot.escalation_desc')}
           </AppText>
 
-          <AppText fontSize={14} color={Colors.DARK_CHARCOAL} type="Bold" mb={4}>
+          <AppText
+            fontSize={14}
+            color={Colors.DARK_CHARCOAL}
+            type="Bold"
+            mb={4}
+          >
             {t('app.how_autopilot.best_results')}
           </AppText>
           <AppText fontSize={14} color={Colors.DARK_CHARCOAL} mb={2}>
@@ -67,31 +78,33 @@ const HowAutoPilotWork = () => {
         </GlassCard>
 
         {/* Section 2: Grow Faster Card */}
-        <GlassCard style={styles.upgradeCard}>
-          <AppText 
-            text={t('app.how_autopilot.upgrade_title')} 
-            fontSize={18} 
-            type="Bold" 
-            mb={12} 
-          />
-          
-          <AppText 
-            fontSize={14} 
-            color={Colors.DARK_CHARCOAL} 
-            lineHeight={20} 
-            mb={24}
-          >
-            {t('app.how_autopilot.upgrade_desc')}
-          </AppText>
+        {!HIDE_UPGRADE_PLAN_IDS.includes(user?.sub_plan_id ?? '') && (
+          <GlassCard style={styles.upgradeCard}>
+            <AppText
+              text={t('app.how_autopilot.upgrade_title')}
+              fontSize={18}
+              type="Bold"
+              mb={12}
+            />
 
-          <AppButton 
-            title={t('app.how_autopilot.btn_upgrade')} 
-            onPress={() => console.log('Upgrade Pressed')}
-            variant="primary"
-            backgroundColor={Colors.TEAL_PRIMARY_ALT}
-            mt={50}
-          />
-        </GlassCard>
+            <AppText
+              fontSize={14}
+              color={Colors.DARK_CHARCOAL}
+              lineHeight={20}
+              mb={24}
+            >
+              {t('app.how_autopilot.upgrade_desc')}
+            </AppText>
+
+            <AppButton
+              title={t('app.how_autopilot.btn_upgrade')}
+              onPress={() => console.log('Upgrade Pressed')}
+              variant="primary"
+              backgroundColor={Colors.TEAL_PRIMARY_ALT}
+              mt={50}
+            />
+          </GlassCard>
+        )}
       </ScrollView>
     </BGImage>
   );
