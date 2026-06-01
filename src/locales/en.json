@@ -183,8 +183,8 @@
       "view_less": "View Less",
       "ai_suite_note": "Everything in starter, plus all AI capabilities below:",
       "start_30_trial": "Start 30-days free trial",
-      "exit_modal_title": "Leave Plan Selection?",
-      "exit_modal_text": "Going back will take you to the previous step.",
+      "exit_modal_title": "Leave without a plan?",
+      "exit_modal_text": "You haven't selected a plan yet. Your account won't be active until you do. Are you sure you want to leave?",
       "legal_trial": "By starting your free trial, you agree to the ",
       "starter_features": {
         "channel_sync": {

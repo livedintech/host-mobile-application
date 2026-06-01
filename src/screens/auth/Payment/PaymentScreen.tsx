@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     View,
+    Modal,
     ScrollView,
     TouchableOpacity, Pressable,
     LayoutAnimation,
@@ -18,7 +19,9 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import usePaymentContainer from './PaymentContainer';
 import Metrics from '@/utility/Metrics';
-import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -39,11 +42,20 @@ const PaymentScreen = () => {
         features,
         refetch,
         isCheckingEligibility,
-        showBackModal,
-        confirmGoBack,
-        cancelGoBack,
         handleStartTrial,
+        handleLogout,
+        isLogoutLoading,
+        isLogoutModalVisible,
+        toggleModal,
+        logout
     } = usePaymentContainer();
+
+    // const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+
+    // const handleLogout = () => {
+    //     setLogoutModalVisible(false);
+    //     doLogout();
+    // };
 
     const toggleExpand = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -226,6 +238,21 @@ const PaymentScreen = () => {
                         ))}
                     </ScrollView>
                 </View>
+                {/* Logout */}
+                <AppPressable onPress={toggleModal} style={styles.logoutRow}>
+                    <GlassCard width="100%" style={styles.logoutCard}>
+                        <View style={styles.logoutContent}>
+                            <AppText
+                                text={t('app.more.logout')}
+                                type="Medium"
+                                fontSize={16}
+                            />
+                            <GlassCard width={36} style={styles.logoutIconGlass}>
+                                <Svgicons path="logoutIcon" size={18} />
+                            </GlassCard>
+                        </View>
+                    </GlassCard>
+                </AppPressable>
             </RefreshableScrollView>
 
             {/* Footer */}
@@ -234,6 +261,7 @@ const PaymentScreen = () => {
                     title={t('auth.payment.start_30_trial')}
                     onPress={handleStartTrial}
                     backgroundColor={Colors.MEDIUM_JUNGLE_GREEN}
+                    loading={isLoadingPrice}
                 />
                 <AppText
                     textAlign="center"
@@ -255,13 +283,40 @@ const PaymentScreen = () => {
                     <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
                 </View>
             )}
-        <AccountDeleteModal
-            isVisible={showBackModal}
-            onClose={cancelGoBack}
-            onConfirm={confirmGoBack}
-            title={t('auth.payment.exit_modal_title')}
-            description={t('auth.payment.exit_modal_text')}
-        />
+        <Modal
+            transparent={true}
+            visible={isLogoutModalVisible}
+            animationType="fade"
+             onRequestClose={toggleModal}
+        >
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                    <AppText
+                        text={t('app.more.logout_confirm')}
+                        type="Bold"
+                        fontSize={18}
+                        style={styles.modalTitle}
+                    />
+                    <AppText
+                        text={t('app.more.logout_subtitle')}
+                        fontSize={14}
+                        color="grey"
+                        style={styles.modalSubTitle}
+                    />
+                    <View style={styles.modalButtonContainer}>
+                        <AppPressable style={styles.cancelButton} onPress={toggleModal} disabled={isLogoutLoading}>
+                            <AppText text={t('app.more.cancel')} type="Medium" fontSize={16} color="black" />
+                        </AppPressable>
+                        <AppPressable style={styles.confirmButton} onPress={() => handleLogout()} disabled={isLogoutLoading}>
+                            {isLogoutLoading
+                                ? <ActivityIndicator size="small" color="white" />
+                                : <AppText text={t('app.more.confirm')} type="Medium" fontSize={16} color="white" />
+                            }
+                        </AppPressable>
+                    </View>
+                </View>
+            </View>
+        </Modal>
         </BGImage>
     );
 };
@@ -456,6 +511,75 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: Colors.WHITE,
+    },
+    logoutRow: {
+        marginTop: Metrics.verticalScale(20),
+    },
+    logoutCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 24,
+        paddingVertical: Metrics.verticalScale(10),
+        paddingHorizontal: Metrics.scale(16),
+        marginBottom: Metrics.verticalScale(20),
+    },
+    logoutContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    logoutIconGlass: {
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0,
+        marginBottom: 0,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: '85%',
+        backgroundColor: '#F2F2F2',
+        borderRadius: 35,
+        padding: Metrics.scale(25),
+        alignItems: 'center',
+    },
+    modalTitle: {
+        textAlign: 'center',
+        marginBottom: 10,
+        color: '#000',
+    },
+    modalSubTitle: {
+        textAlign: 'center',
+        marginBottom: 25,
+    },
+    modalButtonContainer: {
+        flexDirection: 'row',
+        gap: 15,
+        width: '100%',
+    },
+    cancelButton: {
+        flex: 1,
+        height: 50,
+        borderRadius: 25,
+        borderWidth: 1,
+        borderColor: '#D1D1D1',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'transparent',
+    },
+    confirmButton: {
+        flex: 1,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: Colors.PRIMARY_TEAL,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

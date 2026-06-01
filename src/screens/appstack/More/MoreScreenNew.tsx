@@ -19,6 +19,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
+import { storage } from '@/storage/mmkv';
+import i18n, { saveLanguage } from '@/locales/i18n/i18n';
 // TODO: uncomment when backend fixes logout endpoint
 // import { logoutApi } from '@/services/authApi';
 // import { useMutation } from '@tanstack/react-query';
@@ -46,6 +48,11 @@ const MoreScreen = () => {
 
   const handleLogout = () => {
     setModalVisible(false);
+    const currentLang = i18n.language || 'ar';
+    const rememberMeData = storage.getString('remember-me-storage');
+    storage.clearAll();
+    saveLanguage(currentLang);
+    if (rememberMeData) storage.set('remember-me-storage', rememberMeData);
     logout();
   };
   const isPending = false;

@@ -1,12 +1,21 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { goBack, navigate, reset } from '@/services/navigationService';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRoute } from '@react-navigation/native';
+import { navigate } from '@/services/navigationService';
 import { subscriptionCalculateApi, contactEligibilityApi } from '@/services/paymentService';
+import { getUser } from '@/services/UserPermission';
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { User } from '@/types/api/authTypes';
+import { storage } from '@/storage/mmkv';
+import i18n, { saveLanguage } from '@/locales/i18n/i18n';
+import { logoutApi } from '@/services/authApi';
+import { NotificationService } from '@/services/notification.service';
+import { queryClient } from '@/services/api';
+import { reset } from '@/services/navigationService';
+
 
 export type PlanType = 'Starter' | 'AI Suite';
 export type BillingCycle = 'Monthly' | 'Yearly';
@@ -14,39 +23,47 @@ export type BillingCycle = 'Monthly' | 'Yearly';
 export default function usePaymentContainer() {
   const { t } = useTranslation();
   const route = useRoute<any>();
-  const navigation = useNavigation();
-  const routeFullName: string = route.params?.full_name ?? '';
-  const routeEmail: string = route.params?.email ?? '';
-  const routeCountryCode: string = route.params?.country_code ?? '';
-  const routePhoneNumber: string = String(route.params?.phone_number ?? '');
+  const { user, logout, setUser, isLoggedIn } = useAuthStore();
+
+  const { data: freshUser } = useQuery<User>({
+    queryKey: [STORAGE_CONST.GET_USER],
+    queryFn: getUser,
+    enabled: true,
+  });
+
+  useEffect(() => {
+    if (freshUser && isLoggedIn) {
+      setUser(freshUser);
+    }
+  }, [freshUser, isLoggedIn]);
+  const routeFullName: string = route.params?.full_name ?? user?.name ?? '';
+  const routeEmail: string = route.params?.email ?? user?.email ?? '';
+  const routeCountryCode: string = route.params?.country_code ?? user?.country_code ?? '';
+  const routePhoneNumber: string = String(route.params?.phone_number ?? user?.phone ?? '');
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('Starter');
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('Monthly');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showBackModal, setShowBackModal] = useState(false);
-  const confirmedRef = useRef(false);
-
-  const user = useAuthStore((s) => s.user);
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(true);
+      const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+  
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      if (confirmedRef.current) return;
-      if (e.data.action.type === 'RESET') return;
-      e.preventDefault();
-      setShowBackModal(true);
-    });
-    return unsubscribe;
-  }, [navigation]);
-
-  const confirmGoBack = useCallback(() => {
-    confirmedRef.current = true;
-    setShowBackModal(false);
-    reset(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
-  }, []);
-
-  const cancelGoBack = useCallback(() => {
-    setShowBackModal(false);
-  }, []);
+  // const handleLogout = useCallback(() => {
+  //   const currentLang = i18n.language || 'ar';
+  //   const rememberMeData = storage.getString('remember-me-storage');
+  //   storage.clearAll();
+  //   saveLanguage(currentLang);
+  //   if (rememberMeData) storage.set('remember-me-storage', rememberMeData);
+  //   logout();
+  // }, [logout]);
+  //  const handleLogout = () => {
+  // setLogoutModalVisible(false);
+  //   const currentLang = i18n.language || 'ar';
+  //   const rememberMeData = storage.getString('remember-me-storage');
+  //   storage.clearAll();
+  //   saveLanguage(currentLang);
+  //   if (rememberMeData) storage.set('remember-me-storage', rememberMeData);
+  //   logout();
+  // };
 
   const ELIGIBLE_PLAN_ID = 'df0c79c6-e11e-4215-97b1-249011095c8f';
 
@@ -61,8 +78,7 @@ export default function usePaymentContainer() {
       .then((result) => {
         console.log('[EligibilityCheck] result:', JSON.stringify(result));
         if (result?.data?.eligible) {
-          confirmedRef.current = true;
-          navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, {
+          navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW, {
             planId: ELIGIBLE_PLAN_ID,
             qtyFrom: 1,
             full_name: routeFullName,
@@ -100,8 +116,7 @@ export default function usePaymentContainer() {
   const qtyFrom = plan?.matched_tier?.qty_from ?? 1;
 
   const handleStartTrial = useCallback(() => {
-    confirmedRef.current = true;
-    navigate(NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW, {
+    navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW, {
       planId,
       qtyFrom,
       full_name: routeFullName,
@@ -209,6 +224,39 @@ export default function usePaymentContainer() {
     },
   ];
 
+    const toggleModal = () => setLogoutModalVisible(!isLogoutModalVisible);
+
+  const performLocalLogout = useCallback(() => {
+    setLogoutModalVisible(false);
+    const currentLang = i18n.language || 'ar';
+    const rememberMeData = storage.getString('remember-me-storage');
+    logout();
+    storage.clearAll();
+    saveLanguage(currentLang);
+    if (rememberMeData) storage.set('remember-me-storage', rememberMeData);
+    queryClient.clear();
+    // Explicit reset handles two cases:
+    // 1. AppStack.PAYMENT (isLoggedIn was true): StackNavigator switches to AuthStack,
+    //    then reset ensures login screen shows instead of any stale state.
+    // 2. AuthStack.PAYMENT (isLoggedIn was already false, signup_step='step_1'):
+    //    logout() is a no-op for isLoggedIn so StackNavigator doesn't switch —
+    //    reset explicitly navigates within AuthStack to login screen.
+    setTimeout(() => reset(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE), 0);
+  }, [logout]);
+
+  const { mutate: handleLogout, isPending: isLogoutLoading } = useMutation({
+    mutationFn: async () => {
+      const fcm_token = await NotificationService.getToken().catch(() => '');
+      return logoutApi({ user_id: user?.id ?? '', fcm_token });
+    },
+    onSuccess: () => {
+      performLocalLogout();
+    },
+    onError: () => {
+      performLocalLogout();
+    },
+  });
+
   return {
     selectedPlan,
     setSelectedPlan,
@@ -222,16 +270,17 @@ export default function usePaymentContainer() {
     planId,
     qtyFrom,
     features: selectedPlan === 'Starter' ? starterFeatures : aiSuiteFeatures,
-    goBack,
     refetch,
     routeFullName,
     routeEmail,
     routeCountryCode,
     routePhoneNumber,
     isCheckingEligibility,
-    showBackModal,
-    confirmGoBack,
-    cancelGoBack,
     handleStartTrial,
+    handleLogout,
+    isLogoutLoading,
+    isLogoutModalVisible,
+    toggleModal,
+    logout
   };
 }
