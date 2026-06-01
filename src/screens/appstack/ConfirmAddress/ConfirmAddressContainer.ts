@@ -1,4 +1,5 @@
 // useConfirmAddressContainer.ts
+import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -29,7 +30,10 @@ export default function useConfirmAddressContainer() {
   const navigation = useNavigation();
 
   const listing = params?.paramData?.listing;
-  const isEdit  = Boolean(listing?.listing_id); // ✅ consistent
+  const isEdit  = Boolean(listing?.listing_id);
+
+  // Tracks which dropdowns have data so yup validates them conditionally
+  const optionsCtxRef = useRef({ hasCountries: false, hasStates: false, hasCities: false, hasDistricts: false });
 
   // ── Form ──────────────────────────────────────────────────────────────────
   const {
@@ -38,7 +42,8 @@ export default function useConfirmAddressContainer() {
     watch,
     formState: { errors },
   } = useForm<AddressFormValues>({
-    resolver: yupResolver(addressSchema),
+    resolver: ((values: any, _ctx: any, options: any) =>
+      yupResolver(addressSchema)(values, optionsCtxRef.current, options)) as any,
     defaultValues: {
       name:          listing?.name || i18n.t('common.new_listing'),
       country_code:  listing?.country?.id  ?? undefined,
@@ -83,6 +88,14 @@ export default function useConfirmAddressContainer() {
   const statesOptions    = statesData.map((item: any)    => ({ label: item.name, value: item.id }));
   const citiesOptions    = citiesData.map((item: any)    => ({ label: item.name, value: item.id }));
   const districtsOptions = districtsData.map((item: any) => ({ label: item.name, value: item.id }));
+
+  // Keep ref in sync with latest options so resolver reads fresh context on each validation
+  optionsCtxRef.current = {
+    hasCountries: countriesOptions.length > 0,
+    hasStates:    statesOptions.length    > 0,
+    hasCities:    citiesOptions.length    > 0,
+    hasDistricts: districtsOptions.length > 0,
+  };
 
   // ── Lookup helpers ────────────────────────────────────────────────────────
   const findCountry  = (id: number) => countriesData.find((c: any) => c.id === id);

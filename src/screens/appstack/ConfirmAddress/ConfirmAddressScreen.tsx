@@ -18,7 +18,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const ConfirmAddressScreen = () => {
   const {
-    control,
+    control: controlTyped,
     errors,
     handleSubmit,
     onNext,
@@ -30,6 +30,7 @@ const ConfirmAddressScreen = () => {
     citiesOptions,
     districtsOptions,
   } = useConfirmAddressContainer();
+  const control = controlTyped as any;
   const { t } = useTranslation();
 
   return (
@@ -67,14 +68,12 @@ const ConfirmAddressScreen = () => {
 
         <View style={styles.form}>
 
-          {/* All dropdowns work identically — value is primitive id */}
           <DropdownField
             name="country_code"
             label={t('app.confirm_address.country_label')}
             control={control}
-            errors={errors}
+            errors={countriesOptions.length > 0 ? errors : {}}
             placeholder={t('app.confirm_address.country_placeholder')}
-            // disabled={isEdit}
             data={countriesOptions}
           />
 
@@ -82,7 +81,7 @@ const ConfirmAddressScreen = () => {
             name="state"
             label={t('app.confirm_address.state_label')}
             control={control}
-            errors={errors}
+            errors={statesOptions.length > 0 ? errors : {}}
             placeholder={t('app.confirm_address.state_placeholder')}
             data={statesOptions}
           />
@@ -91,7 +90,7 @@ const ConfirmAddressScreen = () => {
             name="city"
             label={t('app.confirm_address.city_label')}
             control={control}
-            errors={errors}
+            errors={citiesOptions.length > 0 ? errors : {}}
             placeholder={t('app.confirm_address.city_placeholder')}
             data={citiesOptions}
           />
@@ -100,7 +99,7 @@ const ConfirmAddressScreen = () => {
             name="district"
             label={t('app.confirm_address.district_label')}
             control={control}
-            errors={errors}
+            errors={districtsOptions.length > 0 ? errors : {}}
             placeholder={t('app.confirm_address.district_placeholder')}
             data={districtsOptions}
           />
