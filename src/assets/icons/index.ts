@@ -336,8 +336,14 @@ import escalationIcon from './escalationIcon.svg'
 import messageCategoriesIcon from './messageCategoriesIcon.svg'
 import aiAutoReplyMoreScreenIcon from './aiAutoReplyMoreScreenIcon.svg'
 import pencilEdit from './pencilEdit.svg'
+import arrowReload from './arrowReload.svg'
+import cloudRefresh from './cloudRefresh.svg'
+import cloudCross from './cloudCross.svg'
 
 export const icons = {
+  cloudCross,
+  cloudRefresh,
+  arrowReload,
   calender_black,
   crossUnique,
   enLang,
