@@ -76,7 +76,7 @@ const NotificationItem = ({ item, icon, time, onDelete, onPress }: NotificationI
           color={Colors.DARK_CHARCOAL_OPACITY}
           mt={4}
         />
-        {item.listing_name ? (
+        {/* {item.listing_name ? (
           <AppText
             text={item.listing_name}
             fontSize={12}
@@ -84,7 +84,7 @@ const NotificationItem = ({ item, icon, time, onDelete, onPress }: NotificationI
             mt={2}
             numberOfLines={1}
           />
-        ) : null}
+        ) : null} */}
         <AppText text={time} fontSize={12} color={Colors.SMOOTH_GREY} mt={6} textAlign="right" />
       </View>
     </TouchableOpacity>
