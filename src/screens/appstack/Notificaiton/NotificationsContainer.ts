@@ -212,9 +212,11 @@ export default function useNotificationsContainer() {
       case 'booking':
         navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
         break;
+         case 'direct_booking_received':
+         navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `L${id}` });
+        break;
       case 'booking_detail':
       case 'booking_confirmed':
-      case 'direct_booking_received':
       case 'stay_completed':
       case 'checkin_today':
       case 'checkout_today':

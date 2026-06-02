@@ -110,6 +110,7 @@ const ChannelPerformanceScreen = () => {
       color: barColor,
     };
   });
+  console.log("chartData",chartData)
 
 
 

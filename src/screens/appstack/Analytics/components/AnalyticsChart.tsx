@@ -16,7 +16,14 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
     <View style={styles.cardHeader}>
       <View>
         <AppText text={title} type="Bold" fontSize={18} color={Colors.BLACK} />
-        {isReservation && <AppText text={t('app.shared.total_reservations', { count: total })} fontSize={13} color={Colors.DARK_CHARCOAL} mt={2} />}
+        {isReservation && (
+          <AppText
+            text={t('app.shared.total_reservations', { count: total })}
+            fontSize={13}
+            color={Colors.DARK_CHARCOAL}
+            mt={2}
+          />
+        )}
       </View>
       <GlassCard width={48} style={styles.iconGlass}>
         <Svgicons path="moneyBagIcon" size={30} />
@@ -49,7 +56,9 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                           color={Colors.BLACK}
                         />
                         <AppText
-                          text={t('app.analytics.reservations_count', { count: item.count })}
+                          text={t('app.analytics.reservations_count', {
+                            count: item.count,
+                          })}
                           fontSize={13}
                           type="Bold"
                           color={item.color}
@@ -87,7 +96,11 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
           </View>
         ) : (
           <View>
-            {renderHeader(`${t(`app.analytics.tab_${activeTab}`)} ${t('app.analytics.per_channel_suffix')}`)}
+            {renderHeader(
+              `${t(`app.analytics.tab_${activeTab}`)} ${t(
+                'app.analytics.per_channel_suffix',
+              )}`,
+            )}
             <View style={styles.barList}>
               {data.map((item: any, index: number) => (
                 <View key={index} style={styles.barRow}>
@@ -103,13 +116,25 @@ const AnalyticsChart = ({ activeTab, data, total }: any) => {
                       style={[
                         styles.barFill,
                         {
-                          width: `${item.percentage}%`,
+                          width:
+                            item.value > 0
+                              ? `${Math.max(item.percentage, 2)}%`
+                              : '0%',
                           backgroundColor: item.color,
                         },
                       ]}
                     />
                   </View>
-                  <AppText text={activeTab === 'revenue' ? t('app.analytics.sar_value', { value: item.value }) : t('app.analytics.nights_count', { count: item.value })} fontSize={13} ml={10} type="Bold" />
+                  <AppText
+                    text={
+                      activeTab === 'revenue'
+                        ? t('app.analytics.sar_value', { value: item.value })
+                        : t('app.analytics.nights_count', { count: item.value })
+                    }
+                    fontSize={13}
+                    ml={10}
+                    type="Bold"
+                  />
                 </View>
               ))}
             </View>
@@ -160,7 +185,12 @@ const styles = StyleSheet.create({
   legendRowItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   legendText: { flex: 1 },
   barList: { marginTop: 10 },
-  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 25 ,gap:10},
+  barRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+    gap: 10,
+  },
   barBackground: {
     flex: 1,
     height: 10,

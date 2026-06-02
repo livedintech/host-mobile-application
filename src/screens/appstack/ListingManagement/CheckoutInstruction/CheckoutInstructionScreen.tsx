@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  Modal,
 } from 'react-native';
 import useCheckoutInstructionContainer, {
   TASK_KEYS,
@@ -22,6 +23,8 @@ import Metrics from '@/utility/Metrics';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
+import DropdownField from '@/components/molecules/Input/DropdownField';
 
 const TASK_LABEL_KEYS: Record<TaskKey, string> = {
   return_keys: 'app.checkoutInstruction.taskReturnKeys',
@@ -32,10 +35,25 @@ const TASK_LABEL_KEYS: Record<TaskKey, string> = {
   additional_requests: 'app.checkoutInstruction.taskAdditionalRequests',
 };
 
-
 const CheckoutInstructionScreen = () => {
-  const { tasks, setTaskChecked, setTaskDetail, onNext, onSaveExit, isLoading, isEdit } =
-    useCheckoutInstructionContainer();
+  const {
+    tasks,
+    setTaskChecked,
+    setTaskDetail,
+    onNext,
+    onSaveExit,
+    isLoading,
+    isEdit,
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting
+  } = useCheckoutInstructionContainer();
   const { t } = useTranslation();
 
   return (
@@ -106,7 +124,11 @@ const CheckoutInstructionScreen = () => {
                     activeOpacity={0.7}
                   >
                     <Svgicons
-                      path={task.checked ? 'CheckboxCheckedIcon' : 'CheckboxUncheckedIcon'}
+                      path={
+                        task.checked
+                          ? 'CheckboxCheckedIcon'
+                          : 'CheckboxUncheckedIcon'
+                      }
                       size={22}
                     />
                     <AppText
@@ -123,7 +145,9 @@ const CheckoutInstructionScreen = () => {
                         style={styles.textarea}
                         value={task.detail}
                         onChangeText={val => setTaskDetail(key, val)}
-                        placeholder={t('app.checkoutInstruction.taskDetailPlaceholder')}
+                        placeholder={t(
+                          'app.checkoutInstruction.taskDetailPlaceholder',
+                        )}
                         placeholderTextColor="rgba(0, 0, 0, 0.3)"
                         multiline
                         selectionColor={Colors.BOTTLE_GREEN}
@@ -146,6 +170,14 @@ const CheckoutInstructionScreen = () => {
               loading={isLoading}
             />
           )}
+          {isEdit && (
+            <AppButton
+              title={t('app.amenities.export')}
+              onPress={handleExport}
+              variant="secondary"
+              mb={12}
+            />
+          )}
           <AppButton
             title={t('app.checkoutInstruction.saveExit')}
             mt={12}
@@ -153,6 +185,52 @@ const CheckoutInstructionScreen = () => {
             disabled={isLoading}
           />
         </View>
+        {/* ✅ Export Modal */}
+        <Modal
+          visible={bottomSheetVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setBottomSheetVisible(false)}
+        >
+          <AppPressable
+            style={styles.modalOverlay}
+            onPress={() => setBottomSheetVisible(false)}
+          >
+            <AppPressable
+              style={styles.bottomSheet}
+              onPress={e => e.stopPropagation()}
+            >
+              <View style={styles.handleBar} />
+              <AppText
+                text={t('app.amenities.select_ota')}
+                fontSize={20}
+                type="SemiBold"
+                color={Colors.PINE_FOREST}
+                mb={20}
+              />
+              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
+                <DropdownField
+                  name="ota_account"
+                  control={otaControl as any}
+                  errors={otaErrors}
+                  label=""
+                  data={listingOptions}
+                  placeholder={t('app.amenities.select_account')}
+                  dropdownPosition="top"
+                />
+              </View>
+              <AppButton
+                title={t('app.amenities.export')}
+                onPress={handleOtaSubmit(handleExportSubmit)}
+                mt={20}
+                loading={isPendingExporting}
+                backgroundColor="#00A68A"
+                borderColor="transparent"
+                color={Colors.WHITE}
+              />
+            </AppPressable>
+          </AppPressable>
+        </Modal>
       </View>
     </BGImage>
   );
@@ -196,12 +274,32 @@ const styles = StyleSheet.create({
   textarea: {
     flex: 1,
     paddingHorizontal: Metrics.scale(16),
-    paddingTop: Platform.OS === 'ios' ? Metrics.verticalScale(12) : Metrics.verticalScale(10),
+    paddingTop:
+      Platform.OS === 'ios'
+        ? Metrics.verticalScale(12)
+        : Metrics.verticalScale(10),
     paddingBottom: Metrics.verticalScale(12),
     color: Colors.PINE_FOREST,
     fontSize: 14,
     textAlignVertical: 'top',
     minHeight: Metrics.verticalScale(100),
+  },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  bottomSheet: {
+    backgroundColor:      Colors.WHITE,
+    borderTopLeftRadius:  24,
+    borderTopRightRadius: 24,
+    paddingHorizontal:    24,
+    paddingTop:           12,
+    paddingBottom:        40,
+  },
+  handleBar: {
+    width:           40,
+    height:          5,
+    backgroundColor: '#D4D4D4',
+    borderRadius:    3,
+    alignSelf:       'center',
+    marginBottom:    25,
   },
   footer: { bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
 });
