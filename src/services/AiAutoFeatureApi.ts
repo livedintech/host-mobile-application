@@ -73,8 +73,7 @@ export const getAIEscalationSettings = async (user_id: number) => {
     `${SERVICE_CONFIG_URLS.APP.AI_AUTOPILOT_ESCALATION_SETTINGS}?user_id=${user_id}`,
   );
 
-  if (ok) return data?.data;
-
+  if (ok && data) return data;
   throw response?.message;
 };
 

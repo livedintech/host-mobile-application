@@ -39,17 +39,18 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
   dropdownPosition = 'bottom',
   labelStyle,
 }) => {
-    const { t } = useTranslation();
-  
-  const error = errors[name]?.message as string;
-    const finalPlaceholder = placeholder || t("common.placeholder");
+  const { t } = useTranslation();
 
+  const error = errors[name]?.message as string;
+  const finalPlaceholder = placeholder || t('common.placeholder');
 
   const MAX_VISIBLE_CHIPS = 3;
   const MAX_CHIP_TEXT_LEN = 8;
 
   const truncateText = (text: string, limit: number) =>
     text.length > limit ? `${text.substring(0, limit)}...` : text;
+
+  const hasData = Array.isArray(data) && data.length > 0;
 
   return (
     <View style={{ marginBottom: Metrics.verticalScale(18) }}>
@@ -72,7 +73,11 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
               return (
                 <View style={styles.itemContainer}>
                   <Svgicons
-                    path={isSelected ? "CheckboxCheckedIcon" : "CheckboxUncheckedIcon"}
+                    path={
+                      isSelected
+                        ? 'CheckboxCheckedIcon'
+                        : 'CheckboxUncheckedIcon'
+                    }
                   />
                   <View style={{ flex: 1 }}>
                     <AppText
@@ -92,13 +97,19 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
               const itemIndex = selectedValues.indexOf(item.value);
               const totalSelected = selectedValues.length;
 
-              if (itemIndex > MAX_VISIBLE_CHIPS) return <View style={styles.hiddenChip} />;
+              if (itemIndex > MAX_VISIBLE_CHIPS)
+                return <View style={styles.hiddenChip} />;
 
               if (itemIndex === MAX_VISIBLE_CHIPS) {
                 const remaining = totalSelected - MAX_VISIBLE_CHIPS;
                 return (
                   <View style={styles.moreChip}>
-                    <AppText text={`+${remaining}`} fontSize={11} color={Colors.BLACK} type="Medium" />
+                    <AppText
+                      text={`+${remaining}`}
+                      fontSize={11}
+                      color={Colors.BLACK}
+                      type="Medium"
+                    />
                   </View>
                 );
               }
@@ -123,7 +134,7 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
                 style={[
                   styles.dropdown,
                   !!error && styles.errorBorder,
-                  disabled && styles.disabled,
+                  (disabled || !hasData) && styles.disabled,
                 ]}
                 containerStyle={styles.whiteContainer}
                 itemContainerStyle={styles.itemContainerStyle}
@@ -135,11 +146,13 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
                 placeholder={finalPlaceholder}
                 value={value || []}
                 onChange={onChange}
-                disable={disabled}
+                disable={disabled || !hasData}
                 activeColor={Colors.ANTI_FLASH_WHITE}
-                renderRightIcon={() => (
-                  <Svgicons path="ChevronDownIcon" width={15} height={15} />
-                )}
+                renderRightIcon={() =>
+                  hasData ? (
+                    <Svgicons path="ChevronDownIcon" width={15} height={15} />
+                  ) : null
+                }
                 selectedStyle={styles.selectedChip}
                 renderItem={renderDropdownItem}
                 renderSelectedItem={renderSelectedItem}
@@ -150,7 +163,13 @@ const MultiSelectDropdownField: React.FC<MultiSelectDropdownFieldProps> = ({
         />
       </GlassCard>
       {error && (
-        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
+        <AppText
+          text={error}
+          color={Colors.INDIAN_RED}
+          fontSize={12}
+          mt={5}
+          ml={4}
+        />
       )}
     </View>
   );
@@ -161,7 +180,7 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     width: '100%',
     padding: 0,
-    borderRadius: 12
+    borderRadius: 12,
   },
   dropdown: {
     height: Metrics.verticalScale(56),

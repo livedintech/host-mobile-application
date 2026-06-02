@@ -557,7 +557,8 @@
       "base_price_placeholder": "SAR 500",
       "price_hint": "SR499 - SR500 depending on promotions",
       "similar_listings": "Similar listings SR86 - SR129",
-      "date_error": "Start and end date cannot be the same."
+      "date_error": "Start and end date cannot be the same.",
+        "end_date_before_start_error": "End date cannot be earlier than start date."
     },
     "property_step1": {
       "step_label": "Step 1",
