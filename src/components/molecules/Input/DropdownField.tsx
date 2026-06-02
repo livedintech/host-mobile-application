@@ -53,7 +53,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 }) => {
   const { t } = useTranslation();
   const error = errors[name]?.message as string;
-  const finalPlaceholder = placeholder || t("common.placeholder");
+  const finalPlaceholder = placeholder || t('common.placeholder');
+  const hasData = Array.isArray(data) && data.length > 0;
 
   return (
     <View
@@ -83,7 +84,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             search
             style={[
               styles.dropdown,
-              disabled && styles.disabled,
+              (disabled || !hasData) && styles.disabled,
               !!error && styles.errorBorder,
             ]}
             containerStyle={[styles.popupListContainer, listContainerStyle]}
@@ -104,17 +105,19 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
                 onSelect(item);
               }
             }}
-            disable={disabled}
-            renderRightIcon={() => (
-              <View style={{ marginRight: 8 }}>
-                <Svgicons
-                  path="ChevronDownIcon"
-                  width={15}
-                  height={15}
-                  color="#2D3142"
-                />
-              </View>
-            )}
+            disable={disabled || !hasData}
+            renderRightIcon={() =>
+              hasData ? (
+                <View style={{ marginRight: 8 }}>
+                  <Svgicons
+                    path="ChevronDownIcon"
+                    width={15}
+                    height={15}
+                    color="#2D3142"
+                  />
+                </View>
+              ) : null
+            }
             autoScroll={false}
             searchPlaceholder={t('common.search')}
           />

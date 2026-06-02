@@ -555,7 +555,8 @@
       "base_price_placeholder": "SAR 500",
       "price_hint": "SR499 - SR500 حسب العروض",
       "similar_listings": "عقارات مماثلة SR86 - SR129",
-      "date_error": "لا يمكن أن يكون تاريخ البداية والنهاية متطابقَين."
+      "date_error": "لا يمكن أن يكون تاريخ البداية والنهاية متطابقَين.",
+        "end_date_before_start_error": "لا يمكن أن يكون تاريخ المغادرة قبل تاريخ الوصول."
     },
     "property_step1": {
       "step_label": "الخطوة 1",
