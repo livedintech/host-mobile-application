@@ -88,7 +88,7 @@ export default function useListingContainer(
   }, [bookingType, clearErrors]);
 
   // Query: Listings
-  const { data: listingOptions = [] } = useQuery({
+  const { data: listingOptions = [], refetch:refetchListing } = useQuery({
     queryKey: ['USER_LISTINGS', user?.id],
     queryFn: () => getUserListingsApi(user?.id || ''),
   });
@@ -353,7 +353,7 @@ export default function useListingContainer(
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      await Promise.all([refetchCalendar(), refetchReservations()]);
+      await Promise.all([refetchCalendar(), refetchReservations(), refetchListing()]);
     } finally {
       setIsRefreshing(false);
     }

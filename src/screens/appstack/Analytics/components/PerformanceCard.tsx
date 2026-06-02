@@ -6,7 +6,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 
-const PerformanceCard = ({ data , formatNumber}: any) => {
+const PerformanceCard = ({ data, formatNumber }: any) => {
   const { t } = useTranslation();
   const getAssessmentStyle = (type: string) => {
     switch (type?.toLowerCase()) {
@@ -36,13 +36,18 @@ const PerformanceCard = ({ data , formatNumber}: any) => {
         </GlassCard>
 
         <View style={styles.headerInfo}>
-          <AppText
-            text={data.title}
-            fontSize={14}
-            type="Bold"
-            numberOfLines={2}
-            mb={8}
-          />
+          <View style={styles.row}>
+            <AppText
+              text={data.title}
+              fontSize={14}
+              type="Bold"
+              numberOfLines={2}
+              mb={12}
+            />
+            <GlassCard width={20} style={styles.sparkleGlass}>
+              <Svgicons path="sparkleRewardIcon" size={16} />
+            </GlassCard>
+          </View>
 
           <View style={styles.metricsRow}>
             {/* Removed flex: 1 from these items */}
@@ -55,7 +60,11 @@ const PerformanceCard = ({ data , formatNumber}: any) => {
                   color={Colors.DIM_GREY}
                 />
               </View>
-              <AppText text={`SAR ${formatNumber(data.revenue)}`} fontSize={11} type="Bold" />
+              <AppText
+                text={`SAR ${formatNumber(data.revenue)}`}
+                fontSize={11}
+                type="Bold"
+              />
             </View>
 
             <View style={styles.metricItem}>
@@ -83,10 +92,6 @@ const PerformanceCard = ({ data , formatNumber}: any) => {
             </View>
           </View>
         </View>
-
-        <GlassCard width={36} style={styles.sparkleGlass}>
-          <Svgicons path="sparkleRewardIcon" size={18} />
-        </GlassCard>
       </View>
 
       <View style={styles.bottomRow}>
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   sparkleGlass: {
-    height: 36,
+    height: 35,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
@@ -210,6 +215,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  row:{
+    flex:1,
+   flexDirection: 'row',
+    alignItems: 'center',
+    display:'flex',
+    justifyContent:'space-between'
+  }
 });
 
 export default PerformanceCard;

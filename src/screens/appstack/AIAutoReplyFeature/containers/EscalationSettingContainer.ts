@@ -29,7 +29,7 @@ const EscalationSettingContainer = () => {
   // 2. Sync switch state when data arrives
   useEffect(() => {
     if (settingsData) {
-      setFrustrationEnabled(!!settingsData.frustration_detection);
+      setFrustrationEnabled(!!settingsData?.data?.frustration_detection);
     }
   }, [settingsData]);
 
@@ -59,7 +59,7 @@ const EscalationSettingContainer = () => {
       confidence_level: parseInt(formData.confidenceInput),
       send_automatically_when_confident: parseInt(formData.confidenceInput),
       frustration_detection: frustrationEnabled,
-      // If frustration detection is toggled off, pass back fallback value or zero out
+      // Pass backend 0 if disabled, otherwise pass input value
       sentiment_level: frustrationEnabled ? parseInt(formData.sentimentInput) : 0,
       escalate_when_sentiment_below: frustrationEnabled ? parseInt(formData.sentimentInput) : 0,
     };

@@ -38,7 +38,7 @@ const ChangeReservation = () => {
 
   const [showDetailsSheet, setShowDetailsSheet] = useState(false);
   const [showPriceSheet, setShowPriceSheet] = useState(false);
-  
+
   // 1. Local state for the date validation error
   const [dateError, setDateError] = useState<string | null>(null);
 
@@ -50,16 +50,26 @@ const ChangeReservation = () => {
     const start = watch('start_date');
     const end = watch('end_date');
 
-    if (start && end && start === end) {
+    if (!start || !end) return;
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    // Same date validation
+    if (startDate.getTime() === endDate.getTime()) {
       setDateError(t('app.change_reservation.date_error'));
-      return; // Stop execution
+      return;
     }
 
-    if (start && end) {
-      setValue('dates', `${start} - ${end}`);
-      setDateError(null); // Clear error on success
-      setShowDetailsSheet(false);
+    // End date cannot be before start date
+    if (endDate < startDate) {
+      setDateError(t('app.change_reservation.end_date_before_start_error'));
+      return;
     }
+
+    setValue('dates', `${start} - ${end}`);
+    setDateError(null);
+    setShowDetailsSheet(false);
   };
 
   // Reset error when opening the sheet
@@ -89,14 +99,22 @@ const ChangeReservation = () => {
 
           <GlassCard width="100%" style={styles.detailCard}>
             <View style={styles.cardHeader}>
-              <AppText text={t('app.change_reservation.reservation_details')} type="Bold" fontSize={16} />
+              <AppText
+                text={t('app.change_reservation.reservation_details')}
+                type="Bold"
+                fontSize={16}
+              />
               <ButtonView onPress={openDetailsSheet}>
                 <Svgicons path="pencil" size={20} />
               </ButtonView>
             </View>
             <View style={styles.row}>
               <View style={styles.column}>
-                <AppText text={t('app.change_reservation.dates')} fontSize={12} color={Colors.BLACK} />
+                <AppText
+                  text={t('app.change_reservation.dates')}
+                  fontSize={12}
+                  color={Colors.BLACK}
+                />
                 <AppText
                   text={currentDates}
                   fontSize={14}
@@ -109,12 +127,20 @@ const ChangeReservation = () => {
 
           <GlassCard width="100%" style={styles.detailCard}>
             <View style={styles.cardHeader}>
-              <AppText text={t('app.change_reservation.guest_charges')} type="Bold" fontSize={16} />
+              <AppText
+                text={t('app.change_reservation.guest_charges')}
+                type="Bold"
+                fontSize={16}
+              />
               <ButtonView onPress={() => setShowPriceSheet(true)}>
                 <Svgicons path="pencil" size={20} />
               </ButtonView>
             </View>
-            <AppText text={t('app.change_reservation.base_price')} fontSize={12} color={Colors.BLACK} />
+            <AppText
+              text={t('app.change_reservation.base_price')}
+              fontSize={12}
+              color={Colors.BLACK}
+            />
             <AppText
               text={`SR${currentPrice}`}
               fontSize={14}
@@ -171,7 +197,7 @@ const ChangeReservation = () => {
               {/* 3. Display the Error Message */}
               {dateError && (
                 <View style={styles.errorContainer}>
-                   <AppText text={dateError} color="red" fontSize={12} />
+                  <AppText text={dateError} color="red" fontSize={12} />
                 </View>
               )}
 
@@ -210,7 +236,9 @@ const ChangeReservation = () => {
                     label={t('app.change_reservation.base_price')}
                     control={control as any}
                     errors={errors}
-                    placeholder={t('app.change_reservation.base_price_placeholder')}
+                    placeholder={t(
+                      'app.change_reservation.base_price_placeholder',
+                    )}
                   />
 
                   <AppText
@@ -276,7 +304,7 @@ const styles = StyleSheet.create({
     marginTop: vs(-5),
     marginBottom: vs(10),
     paddingHorizontal: s(5),
-  }
+  },
 });
 
 export default ChangeReservation;
