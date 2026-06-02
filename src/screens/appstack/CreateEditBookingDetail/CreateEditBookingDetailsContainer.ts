@@ -49,6 +49,7 @@ export default function useBookingDetailsContainer() {
 
   const listing = params?.paramData?.listing;
   const isEdit  = Boolean(listing?.listing_id);
+  console.log("listing",listing)
 
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
