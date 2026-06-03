@@ -68,7 +68,7 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   // save_and_exit: isSaveAndExit ? 1 : 0,
   save_and_exit:  0,
   listing: {
-    name: propertyDetail?.name || 'New Listing',
+    name: propertyDetail?.name || 'New Property',
     arrival_guide: data.arrival_guide,
     house_rule: data.house_rules,
     cleaning_instructions: data.checkout_instructions

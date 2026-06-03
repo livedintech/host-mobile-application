@@ -106,7 +106,7 @@ export default function usePropertyDisclosureContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:                     propertyDetail?.name || 'New Listing',
+      name:                     propertyDetail?.name || 'New Property',
       exterior_security_camera: data.securityCameras   === 'Yes',
       noise_decibel_monitor:    data.noiseMonitor       === 'Yes',
       weapon_on_property:       data.weaponsOnProperty  === 'Yes',

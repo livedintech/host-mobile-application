@@ -44,13 +44,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     return RCTLinkingManager.application(app, open: url, options: options)
   }
 
-  // App foreground mein ho tab bhi notification banner dikhao
+  // Foreground mein APNs ka native show band — notifee onMessage se handle karta hai
   func userNotificationCenter(
     _ center: UNUserNotificationCenter,
     willPresent notification: UNNotification,
     withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
   ) {
-    completionHandler([.banner, .badge, .sound])
+    completionHandler([])
   }
 
   // User ne notification tap ki — React Native Firebase khud handle karta hai

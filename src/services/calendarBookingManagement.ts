@@ -40,9 +40,9 @@ export const getUserListingsApi = async (userId: string | number) => {
       value: String(item.listing_id),
     }));
 
-    return [{ label: "All Listings", value: "" }, ...listings];
+    return [{ label: "All Properties", value: "" }, ...listings];
   }
-  return [{ label: "All Listings", value: "" }];
+  return [{ label: "All Properties", value: "" }];
 };
 
 /**

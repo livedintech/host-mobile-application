@@ -968,7 +968,8 @@
       "none": "لا يوجد",
       "import_btn": "استيراد",
       "reimport_btn": "إعادة الاستيراد",
-      "next": "التالي"
+      "next": "التالي",
+      "refresh": "تحديث"
     },
     "gathern_import": {
       "title": "عقارات Gathern",

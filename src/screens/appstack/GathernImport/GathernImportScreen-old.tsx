@@ -34,7 +34,7 @@ const PropertyCard = ({
           </View>
 
           <View style={styles.infoRow}>
-            <AppText text="Airbnb Listing: " type="Bold" color={Colors.PINE_FOREST} />
+            <AppText text="Airbnb Property: " type="Bold" color={Colors.PINE_FOREST} />
             <AppText text={name} color={Colors.PINE_FOREST} />
           </View>
 
@@ -53,13 +53,13 @@ const PropertyCard = ({
         name={fieldName}
         control={control}
         errors={errors}
-        label="Existing Listing:"
+        label="Existing Property:"
         data={listingOptions}
         placeholder="Select.."
       />
 
       <AppButton
-        title="Import Listing"
+        title="Import Property"
         onPress={() => handleIndividualImport(fieldName)}
         mt={12}
       />

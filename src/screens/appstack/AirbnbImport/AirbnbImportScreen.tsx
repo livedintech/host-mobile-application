@@ -160,7 +160,7 @@ const AirbnbImportScreen = () => {
             <Svgicons path="back" size={40} />
           </ButtonView>
           <AppButton
-            title='Refresh'
+            title={t('app.airbnb_import.refresh')}
             onPress={refetch}
             variant='secondary'
             type='Regular'

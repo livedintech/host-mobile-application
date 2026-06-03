@@ -128,7 +128,7 @@ export default function useBookingDetailsContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:               propertyDetail?.name || 'New Listing',
+      name:               propertyDetail?.name || 'New Property',
       instant_booking:    data.booking_type === 'Instant',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,

@@ -132,7 +132,7 @@ export default function usePoliciesContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:              propertyDetail?.name || 'New Listing',
+      name:              propertyDetail?.name || 'New Property',
       is_allow_pets:     selectedPolicies.includes('pets'),
       is_smoking:        selectedPolicies.includes('smoking'),
       is_allow_parties:  selectedPolicies.includes('parties'),
