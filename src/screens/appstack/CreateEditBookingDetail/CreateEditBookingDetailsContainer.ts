@@ -105,8 +105,8 @@ export default function useBookingDetailsContainer() {
     resolver: yupResolver(bookingDetailsSchema) as any,
     defaultValues: {
       booking_type: isEdit
-        ? (listing?.instant_booking === true || listing?.instant_booking === 1 || listing?.instant_booking === '1' ? 'Instant'
-          : listing?.instant_booking === false || listing?.instant_booking === 0 || listing?.instant_booking === '0' ? 'Manual'
+        ? (listing?.instant_booking === true || listing?.instant_booking === 1 || listing?.instant_booking === '1' ? 'everyone'
+          : listing?.instant_booking === false || listing?.instant_booking === 0 || listing?.instant_booking === '0' ? 'off'
           : '') : '',
       guest_eligibility: isEdit
         ? (listing?.guest_eligibility === true || listing?.guest_eligibility === 1 ? 'Yes'
@@ -129,7 +129,7 @@ export default function useBookingDetailsContainer() {
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
       name:               propertyDetail?.name || 'New Property',
-      instant_booking:    data.booking_type === 'Instant',
+      instant_booking:    data.booking_type === 'everyone',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
       check_in_time_end:  data.check_in_time_end,
@@ -161,7 +161,7 @@ export default function useBookingDetailsContainer() {
 
   const onNext = (data: BookingDetailsFormValues) => {
     updateListing({
-      instant_booking:    data.booking_type === 'Instant',
+      instant_booking:    data.booking_type === 'everyone',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
       check_in_time_end:  data.check_in_time_end,
@@ -176,7 +176,7 @@ export default function useBookingDetailsContainer() {
 
   const onSaveExit = (data: BookingDetailsFormValues) => {
     updateListing({
-      instant_booking:    data.booking_type === 'Instant',
+      instant_booking:    data.booking_type === 'everyone',
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
       check_in_time_end:  data.check_in_time_end,

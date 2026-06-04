@@ -25,7 +25,7 @@ const AddBookingDetailsScreen = () => {
   const { t } = useTranslation();
 
   const yesNoOptions      = [{ label: t('common.yes'), value: 'Yes' }, { label: t('common.no'), value: 'No' }];
-  const bookingTypeOptions = [{ label: t('app.booking_details_edit.instant'), value: 'Instant' }, { label: t('app.booking_details_edit.manual'), value: 'Manual' }];
+  const bookingTypeOptions = [{ label: t('app.booking_details_edit.instant'), value: 'everyone' }, { label: t('app.booking_details_edit.manual'), value: 'off' }];
   const cleanlinessOptions = [{ label: t('app.booking_details_edit.clean'), value: 'Clean' }, { label: t('app.booking_details_edit.dirty'), value: 'Dirty' }];
 
   return (
