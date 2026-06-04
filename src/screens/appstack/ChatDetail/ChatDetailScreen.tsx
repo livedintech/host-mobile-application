@@ -925,7 +925,7 @@ const ChatScreen = () => {
                     <AppPressable
                       onPress={() => {
                         setShowAiSuggestion(false);
-                            setSelectedAiSuggestionId(currentSuggestion.id);
+                        setSelectedAiSuggestionId(currentSuggestion.id);
                         setInputText(currentSuggestion.agent_message);
                       }}
                     >
