@@ -131,7 +131,9 @@ const ChatScreen = () => {
     messages,
     inputText,
     showAiSuggestion,
+    currentSuggestion,
     setShowAiSuggestion,
+    setSelectedAiSuggestionId,
     showSavedReplies,
     setShowSavedReplies,
     selectedMessageId,
@@ -725,61 +727,71 @@ const ChatScreen = () => {
             )}
 
             {/* AI Suggestion */}
-            {
-              showAiSuggestion
-               && (
-                <View style={styles.aiWrapper}>
+            {showAiSuggestion && currentSuggestion?.agent_message && (
+              <View style={styles.aiWrapper}>
+                <AppText
+                  text={t('app.chat_detail.ai_suggestions')}
+                  fontSize={11}
+                  color={Colors.GREY_SHADOW}
+                  mb={8}
+                  textAlign="center"
+                />
+
+                <View style={styles.aiBubble}>
+                  <AppPressable
+                    onPress={() => setShowAiSuggestion(false)}
+                    style={styles.aiClose}
+                  >
+                    <Svgicons path="closeIcon" size={12} />
+                  </AppPressable>
+
                   <AppText
-                    text={t('app.chat_detail.ai_suggestions')}
-                    fontSize={11}
-                    color={Colors.GREY_SHADOW}
-                    mb={8}
-                    textAlign='center'
+                    text={currentSuggestion.agent_message}
+                    fontSize={13}
+                    color={Colors.BRUNSWICK_GREEN}
+                    mb={10}
                   />
-                  <View style={styles.aiBubble}>
-                    <AppPressable
-                      onPress={() => setShowAiSuggestion(false)}
-                      style={styles.aiClose}
-                    >
-                      <Svgicons path="closeIcon" size={12} />
-                    </AppPressable>
-                    <AppText
-                      text="Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival."
-                      fontSize={13}
-                      color={Colors.BRUNSWICK_GREEN}
-                      mb={10}
-                    />
-                    <View style={styles.aiFooter}>
-                      <AppPressable
-                        onPress={() => {
-                          setShowAiSuggestion(false);
-                          setInputText(
-                            'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival.',
-                          );
-                        }}
-                      >
-                        <AppText
-                          text={t('app.chat_detail.edit')}
-                          fontSize={12}
-                          type="Bold"
-                          color={Colors.PINE_FOREST}
-                        />
-                      </AppPressable>
-                      <AppPressable onPress={sendAiSuggestion}>
-                        <AppText
-                          text={t('app.chat_detail.send_now')}
-                          fontSize={12}
-                          type="Bold"
-                          ml={15}
-                          color={Colors.PINE_FOREST}
-                        />
-                      </AppPressable>
+
+                  {/* Optional metadata */}
+                  {/* {currentSuggestion.message_type && (
+                    <View style={{ marginTop: 0 }}>
+                      <AppText
+                        text={`Type: ${currentSuggestion.message_type}`}
+                        fontSize={11}
+                        color={Colors.GREY_SHADOW}
+                      />
                     </View>
+                  )} */}
+
+                  <View style={styles.aiFooter}>
+                    <AppPressable
+                      onPress={() => {
+                        setShowAiSuggestion(false);
+                            setSelectedAiSuggestionId(currentSuggestion.id);
+                        setInputText(currentSuggestion.agent_message);
+                      }}
+                    >
+                      <AppText
+                        text={t('app.chat_detail.edit')}
+                        fontSize={12}
+                        type="Bold"
+                        color={Colors.PINE_FOREST}
+                      />
+                    </AppPressable>
+
+                    <AppPressable onPress={sendAiSuggestion}>
+                      <AppText
+                        text={t('app.chat_detail.send_now')}
+                        fontSize={12}
+                        type="Bold"
+                        ml={15}
+                        color={Colors.PINE_FOREST}
+                      />
+                    </AppPressable>
                   </View>
                 </View>
-              )
-            }
-
+              </View>
+            )}
             {/* Reply Indicator in Input Area */}
             {replyingToMessage && (
               <View style={styles.replyingIndicatorContainer}>
@@ -891,11 +903,21 @@ const ChatScreen = () => {
                   color={Colors.BLACK}
                   fontSize={18}
                 />
-                {!SAVED_REPLIES.length  && (
+                {!SAVED_REPLIES.length && (
                   <View>
-                    <AppText text='No saved replies found' type='SemiBold' fontSize={16} mt={5} mb={7}/>
-                    <AppText text='Create reusable responses from the Saved Replies option in the Inbox menu to quickly reply to messages without typing the same thing again.' color={Colors.DARK_CHARCOAL_OPACITY} fontSize={12} pr={50}/>
-
+                    <AppText
+                      text="No saved replies found"
+                      type="SemiBold"
+                      fontSize={16}
+                      mt={5}
+                      mb={7}
+                    />
+                    <AppText
+                      text="Create reusable responses from the Saved Replies option in the Inbox menu to quickly reply to messages without typing the same thing again."
+                      color={Colors.DARK_CHARCOAL_OPACITY}
+                      fontSize={12}
+                      pr={50}
+                    />
                   </View>
                 )}
                 <View style={styles.repliesGrid}>
@@ -995,7 +1017,7 @@ const ChatScreen = () => {
                 'app.chat.guests',
               )}`}
               name={`Inquiry - ${data?.conversation?.listing?.title}`}
-              onClose={()=>{}}
+              onClose={() => {}}
             />
             <InquiryModal
               visible={
@@ -1013,8 +1035,7 @@ const ChatScreen = () => {
                 'app.chat.guests',
               )}`}
               name={data?.conversation?.name}
-              onClose={()=>{}}
-
+              onClose={() => {}}
             />
           </View>
         </TouchableWithoutFeedback>
