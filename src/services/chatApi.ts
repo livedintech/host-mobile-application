@@ -48,7 +48,7 @@ export const createInboxArchiveApi = async (
 ) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_ARCHIVE,
-    { conversation_id: payload.conversation_id }, // params
+    { conversation_id: payload.conversation_id ?? '' }, // params
   );
 
   const { ok, response, data } = await apiService.post(url, {}); // body
@@ -64,7 +64,7 @@ export const createInboxUnArchiveApi = async (
 ) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_UNARCHIVE,
-    { conversation_id: payload.conversation_id }, // params
+    { conversation_id: payload.conversation_id ?? '' }, // params
   );
 
   const { ok, response, data } = await apiService.post(url, {}); // body
@@ -80,7 +80,7 @@ export const createInboxSnoozeApi = async (
 ) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_SNOOZE,
-    { conversation_id: payload.conversation_id }, // params
+    { conversation_id: payload.conversation_id ?? '' }, // params
   );
 
   const { ok, response, data } = await apiService.post(url, {}); // body
@@ -96,7 +96,7 @@ export const createInboxUnSnoozeApi = async (
 ) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.CREATE_CHAT_INBOX_UNSNOOZE,
-    { conversation_id: payload.conversation_id }, // params
+    { conversation_id: payload.conversation_id ?? '' }, // params
   );
 
   const { ok, response, data } = await apiService.post(url, {}); // body
@@ -112,7 +112,7 @@ export const getChatDetailApi = async (
 ) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.GET_CHAT_DETAIL,
-    { conversation_id: payload.conversation_id }, // params
+    { conversation_id: payload.conversation_id ?? '' }, // params
   );
 
   const { ok, response, data } = await apiService.get(url, {}); // body
@@ -203,7 +203,7 @@ export const assignUserToChatApi = async (
 ) => {
   const url = Utils.createDynamicUrl(
     SERVICE_CONFIG_URLS.APP.CREATE_ASSIGN_USER,
-    { conversation_id: payload.conversation_id }, // params
+    { conversation_id: payload.conversation_id ?? '' }, // params
   );
 
   const { ok, response, data } = await apiService.post(url, { ...payload }); // body
@@ -222,7 +222,7 @@ export const getChatDetailSavedRepliesApi = async (
       offset: 0,
       limit: 0,
       listing_id: payload.listing_id,
-      is_active: payload.is_active,
+      is_active: String(payload.is_active),
     },
   );
 
