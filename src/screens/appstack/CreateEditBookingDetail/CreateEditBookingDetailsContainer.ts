@@ -99,15 +99,14 @@ export default function useBookingDetailsContainer() {
       listing_id: String(listing_id),
     });
   };
+  console.log('listing?.instant_booking',listing?.instant_booking);
+  
 
   // ── Main Form ─────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors } } = useForm<BookingDetailsFormValues>({
     resolver: yupResolver(bookingDetailsSchema) as any,
     defaultValues: {
-      booking_type: isEdit
-        ? (listing?.instant_booking === true || listing?.instant_booking === 1 || listing?.instant_booking === '1' ? 'everyone'
-          : listing?.instant_booking === false || listing?.instant_booking === 0 || listing?.instant_booking === '0' ? 'off'
-          : '') : '',
+      booking_type: isEdit ? (listing?.instant_booking ?? '') : '',
       guest_eligibility: isEdit
         ? (listing?.guest_eligibility === true || listing?.guest_eligibility === 1 ? 'Yes'
           : listing?.guest_eligibility === false || listing?.guest_eligibility === 0 ? 'No'
