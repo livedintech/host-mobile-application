@@ -35,7 +35,8 @@ export interface sendMessagePayloadType {
   body?: string,
   type?: string,
   provenance?:string;
-  reply_to?:string
+  reply_to?:string;
+  agent_message_reviews_id?: Number
 }
 export interface assignUserToChatPayloadType {
   conversation_id?: string | number,
@@ -45,4 +46,8 @@ export interface assignUserToChatPayloadType {
 export interface markReadChatPayloadType {
   conversation_id?: string | number,
   last_message_id?: string | number,
+}
+
+export interface getPendingAgentMessageReviewPayloadType {
+  message_thread_id: string | number;
 }
