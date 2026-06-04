@@ -18,24 +18,28 @@ type RouteParams = {
 
 const PaymentScreen = () => {
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-  const { planId, qtyFrom, full_name, email, country_code } = route.params ?? {};
+  const { planId, full_name, email, country_code, phone_number } = route.params ?? {};
   const [loading, setLoading] = React.useState(true);
 const webViewRef = React.useRef<WebView>(null);
   const user = useAuthStore((s) => s.user);
 
-  const firstName = (full_name || user?.name || '').trim().split(/\s+/)[0] ?? '';
+  const nameParts = (full_name || user?.name || '').trim().split(/\s+/);
+  const firstName = nameParts[0] ?? '';
+  const lastName = nameParts.slice(1).join(' ') || firstName;
 
   const resolvedEmail = email || user?.email || '';
-  const resolvedCountry = country_code || user?.country || 'SA';
+  const resolvedCountry = country_code || user?.country_code || 'SA';
   const resolvedAddress = user?.permanent_address || 'Riyadh, Saudi Arabia';
+  const resolvedPhone = phone_number || user?.phone || '';
 
   const queryString = [
-    `charge_quantity=${qtyFrom}`,
+    `payment_widget=true`,
     `ai_firstName=${encodeURIComponent(firstName)}`,
-    `ai_lastName=${encodeURIComponent(firstName)}`,
+    `ai_lastName=${encodeURIComponent(lastName)}`,
     `ai_email=${resolvedEmail}`,
     `ai_billing_country=${resolvedCountry}`,
     `ai_billing_address1=${encodeURIComponent(resolvedAddress)}`,
+    `ai_phone=${encodeURIComponent(resolvedPhone)}`,
   ].join('&');
 
   const subscriptionUrl = `${BASE_URL}/${planId}/product/c07c72c2-b5f8-41c7-8f90-fbf8de2d2440?${queryString}`;

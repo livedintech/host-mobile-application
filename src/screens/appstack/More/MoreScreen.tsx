@@ -170,7 +170,7 @@ const MoreScreen = () => {
             },
           ]}
         />
-        <MenuSection
+        {/* <MenuSection
           title={t('app.billing.title')}
           headerIcon="paymentCardIcon"
           items={[
@@ -191,7 +191,7 @@ const MoreScreen = () => {
                 navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY),
             },
           ]}
-        />
+        /> */}
 
         {/* Logout Trigger */}
         <AppPressable onPress={toggleModal}>

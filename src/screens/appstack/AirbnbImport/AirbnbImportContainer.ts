@@ -33,23 +33,25 @@ export default function useAirbnbImportContainer() {
   const {
     data: airbnbData,
     isLoading: isLoadingListing,
-    isFetching: isFetchingListing,
     refetch: refetchAirbnb,
   } = useQuery({
     queryKey: [STORAGE_CONST.GET_AIRBNB_IMPORT_LISTING, channelId],
     queryFn: () => getChannexListingsById({ channel_id: channelId! }),
     enabled: Boolean(channelId),
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const {
     data: apiResponse,
     isLoading: isLoadingDropdown,
-    isFetching: isFetchingDropdown,
     refetch: refetchListings,
   } = useQuery({
     queryKey: [STORAGE_CONST.GET_USER_LISTINGS_USER_ID, user?.id],
     queryFn: () => getUserListingsByUserIDApi({ user: user?.id! }),
     enabled: Boolean(user?.id),
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const listingOptions =
@@ -158,19 +160,15 @@ export default function useAirbnbImportContainer() {
     ] as any);
   };
 
-  const isLoading =
-    isLoadingListing ||
-    isLoadingDropdown ||
-    isFetchingListing ||
-    isFetchingDropdown ||
-    isPending;
+  const isInitialLoading = isLoadingListing || isLoadingDropdown;
 
   return {
     control,
     errors,
     properties: airbnbData ?? [],
     listingOptions,
-    isLoading,
+    isLoading: isInitialLoading,
+    isMutating: isPending,
     handleSubmit,
     onNext,
     handleIndividualImport,

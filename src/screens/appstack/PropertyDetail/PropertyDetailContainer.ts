@@ -354,9 +354,8 @@ export default function usePropertyDetailContainer() {
         );
         break;
       case 'calendar':
-        navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
-          screen: NavigationRoutes.APP_STACK.LISTING,
-          params: { listing_id: data?.data?.listing?.id },
+        navigate(NavigationRoutes.APP_STACK.LISTING_STACK, {
+          listing_id: data?.data?.listing?.id,
         });
         break;
       default:

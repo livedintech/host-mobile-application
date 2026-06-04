@@ -328,7 +328,7 @@ const PropertyDetailScreen = () => {
               {/* Property Guidelines */}
               <IconCard
                 title={t('app.property_detail.property_guidelines')}
-                subtitle={t('app.property_detail.guidelines_subtitle')}
+                subtitle={propertyData?.guidelines?.houseManual || t('app.property_detail.guidelines_subtitle')}
                 icon="clipboardCheck"
                 onPress={() => handleEditSection('Guidelines')}
               />
