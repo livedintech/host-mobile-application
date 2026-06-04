@@ -129,7 +129,7 @@ export default function useBookingDetailsContainer() {
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
       name:               propertyDetail?.name || 'New Property',
-      instant_booking:    data.booking_type === 'everyone',
+      instant_booking:    data.booking_type,
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
       check_in_time_end:  data.check_in_time_end,
@@ -161,7 +161,7 @@ export default function useBookingDetailsContainer() {
 
   const onNext = (data: BookingDetailsFormValues) => {
     updateListing({
-      instant_booking:    data.booking_type === 'everyone',
+      instant_booking:    data.booking_type,
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
       check_in_time_end:  data.check_in_time_end,
@@ -176,7 +176,7 @@ export default function useBookingDetailsContainer() {
 
   const onSaveExit = (data: BookingDetailsFormValues) => {
     updateListing({
-      instant_booking:    data.booking_type === 'everyone',
+      instant_booking:    data.booking_type,
       guest_eligibility:  data.guest_eligibility === 'Yes',
       check_in_time:      data.check_in_time,
       check_in_time_end:  data.check_in_time_end,
