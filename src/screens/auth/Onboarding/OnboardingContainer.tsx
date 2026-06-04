@@ -3,10 +3,12 @@ import { FlatList, I18nManager } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useOnboardingContainer() {
     const { t } = useTranslation();
     const isRTL = I18nManager.isRTL;
+    const setHasSeenOnboarding = useAuthStore(s => s.setHasSeenOnboarding);
 
     const onboardingData = [
         {
@@ -89,10 +91,12 @@ export default function useOnboardingContainer() {
     }, [total]);
 
     const loginWithPhone = useCallback(() => {
+        setHasSeenOnboarding();
         navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
     }, []);
 
     const handleGetStarted = useCallback(() => {
+        setHasSeenOnboarding();
         navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
     }, []);
 

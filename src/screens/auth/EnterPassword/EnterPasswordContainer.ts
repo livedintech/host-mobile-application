@@ -74,7 +74,9 @@ export default function useEnterPasswordContainer() {
       }
       clearPhoneData()
       if (data?.user?.signup_step === 'step_1') {
-        navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
+        setToken(data?.access_token);
+        setUser(data?.user);
+        navigate(NavigationRoutes.APP_STACK.PAYMENT, {
           phone_number: data?.user?.phone,
           phone_with_code: data?.user?.phone_with_code,
           country_code: data?.user?.country_code,

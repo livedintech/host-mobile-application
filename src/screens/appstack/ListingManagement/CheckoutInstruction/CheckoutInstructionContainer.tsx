@@ -99,7 +99,7 @@ export default function useCheckoutInstructionContainer() {
     listing_id: String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name: propertyDetail?.name || 'New Listing',
+      name: propertyDetail?.name || 'New Property',
       checkout_instructions: TASK_KEYS.reduce(
         (acc, key) => {
           acc[key] = tasks[key].checked

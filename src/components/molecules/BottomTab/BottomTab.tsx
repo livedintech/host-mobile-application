@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -38,19 +38,26 @@ const getLabel = (routeName: string, t: any) => {
   }
 };
 
-const TabItems = ({ state, navigation, t }: any) => (
+const TabItems = ({ state, navigation, t }: any) => {
+  const lastPressTime = useRef<number>(0);
+
+  return (
   <View style={styles.tabRow}>
     {state.routes.map((route: any, index: number) => {
       const isFocused = state.index === index;
 
       const onPress = () => {
+        const now = Date.now();
+        if (now - lastPressTime.current < 400) return;
+        lastPressTime.current = now;
+
         const event = navigation.emit({
           type: 'tabPress',
           target: route.key,
           canPreventDefault: true,
         });
         if (!isFocused && !event.defaultPrevented) {
-          navigation.navigate(route.name);
+          navigation.jumpTo(route.name);
         }
       };
 
@@ -84,7 +91,8 @@ const TabItems = ({ state, navigation, t }: any) => (
       );
     })}
   </View>
-);
+  );
+};
 
 const BottomTab = ({ state, descriptors, navigation }: any) => {
   const { t } = useTranslation();

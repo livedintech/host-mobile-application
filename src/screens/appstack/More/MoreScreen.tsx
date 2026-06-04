@@ -14,7 +14,8 @@ import { useTranslation } from 'react-i18next';
 import { logoutApi } from '@/services/authApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { storage } from '@/storage/mmkv';
-import Toast from 'react-native-toast-message';
+import i18n, { saveLanguage } from '@/locales/i18n/i18n';
+
 import { NotificationService } from '@/services/notification.service';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUser } from '@/services/UserPermission';
@@ -68,20 +69,27 @@ const MoreScreen = () => {
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
+  const performLocalLogout = useCallback(() => {
+    setModalVisible(false);
+    const currentLang = i18n.language || 'ar';
+    const rememberMeData = storage.getString('remember-me-storage');
+    logout();
+    storage.clearAll();
+    saveLanguage(currentLang);
+    if (rememberMeData) storage.set('remember-me-storage', rememberMeData);
+    queryClient.clear();
+  }, [logout, queryClient]);
+
   const { mutate: handleLogout, isPending } = useMutation({
     mutationFn: async () => {
       const fcm_token = await NotificationService.getToken().catch(() => '');
       return logoutApi({ user_id: user?.id ?? '', fcm_token });
     },
     onSuccess: () => {
-      setModalVisible(false);
-      queryClient.clear();
-      storage.clearAll();
-      logout();
+      performLocalLogout();
     },
     onError: () => {
-      setModalVisible(false);
-      Toast.show({ type: 'error', text1: t('common.toast.something_went_wrong') });
+      performLocalLogout();
     },
   });
 

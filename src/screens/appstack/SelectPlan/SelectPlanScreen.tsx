@@ -226,6 +226,7 @@ const SelectPlanScreen = () => {
                     title={t('auth.payment.start_30_trial')}
                     onPress={handleStartTrial}
                     backgroundColor={Colors.MEDIUM_JUNGLE_GREEN}
+                    loading={isLoadingPrice}
                 />
                 <AppText
                     textAlign="center"

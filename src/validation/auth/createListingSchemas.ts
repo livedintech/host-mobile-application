@@ -1,4 +1,5 @@
 import { CountryValue } from '@/components/molecules/Input/CountryPickerField';
+import i18n from '@/locales/i18n/i18n';
 import * as yup from 'yup';
 
 
@@ -6,7 +7,7 @@ import * as yup from 'yup';
 export const stepOneSchema = yup.object({
   propertyType: yup
     .string()
-    .required('Please select a property type'),
+    .required(i18n.t('app.validation.property_type_required')),
 });
 
 export type StepOneFormValues = yup.InferType<typeof stepOneSchema>;
@@ -25,81 +26,93 @@ export type DropdownOption = {
 };
 
 export const addressSchema = yup.object({
-  name: yup.string().required('Name is required'),
+  name: yup.string().required(i18n.t('app.validation.name_required')),
 
-  country_code: yup
-    .number()
-    .required('Country is required')
-    .typeError('Country is required'),
+  country_code: yup.number().when('$hasCountries', {
+    is: true,
+    then: (s) => s.required(i18n.t('app.validation.country_required')).typeError(i18n.t('app.validation.country_required')),
+    otherwise: (s) => s.nullable().optional(),
+  }),
 
-  state: yup
-    .number()
-    .required('State is required')
-    .typeError('State is required'),
+  state: yup.number().when('$hasStates', {
+    is: true,
+    then: (s) => s.required(i18n.t('app.validation.state_required')).typeError(i18n.t('app.validation.state_required')),
+    otherwise: (s) => s.nullable().optional(),
+  }),
 
-  city: yup
-    .number()
-    .required('City is required')
-    .typeError('City is required'),
+  city: yup.number().when('$hasCities', {
+    is: true,
+    then: (s) => s.required(i18n.t('app.validation.city_required')).typeError(i18n.t('app.validation.city_required')),
+    otherwise: (s) => s.nullable().optional(),
+  }),
 
-  district: yup
-    .number()
-    .required('District is required')
-    .typeError('District is required'),
+  district: yup.number().when('$hasDistricts', {
+    is: true,
+    then: (s) => s.required(i18n.t('app.validation.district_required')).typeError(i18n.t('app.validation.district_required')),
+    otherwise: (s) => s.nullable().optional(),
+  }),
 
-  address:       yup.string().required('Address is required'),
-  postalAddress: yup.string().required('Postal address is required'),
+  address:       yup.string().required(i18n.t('app.validation.address_required')),
+  postalAddress: yup.string().required(i18n.t('app.validation.postal_required')),
 });
 
-export type AddressFormValues = yup.InferType<typeof addressSchema>;
+export type AddressFormValues = {
+  name: string;
+  country_code: number | undefined;
+  state: number | undefined;
+  city: number | undefined;
+  district: number | undefined;
+  address: string;
+  postalAddress: string;
+};
 
 
 // ─── Step 2 Schema (image ke mutabiq) ───────────────────────────────────────
 export const stepTwoSchema = yup.object({
   size_sqm: yup
     .string()
-    .required('Size is required'),
+    .required(i18n.t('app.validation.size_required')),
 
   bedrooms: yup
     .string()
-    .required('Number of Bedrooms is required'),
+    .required(i18n.t('app.validation.bedrooms_required')),
 
   beds: yup
     .string()
-    .required('Number of Beds is required'),
+    .required(i18n.t('app.validation.beds_required')),
 
   kitchen: yup
     .string()
-    .required('Kitchen is required')
-    .oneOf(['true', 'false'], 'Kitchen must be Yes or No'),
+    .required(i18n.t('app.validation.kitchen_required'))
+    .oneOf(['true', 'false'], i18n.t('app.validation.kitchen_invalid')),
 
   pool: yup
     .string()
-    .required('Pool is required')
-    .oneOf(['true', 'false'], 'Pool must be Yes or No'),
+    .required(i18n.t('app.validation.pool_required'))
+    .oneOf(['true', 'false'], i18n.t('app.validation.pool_invalid')),
 
   long_term_stay: yup
     .string()
-    .required('Long term Stay is required')
-    .oneOf(['true', 'false'], 'Long term Stay must be Yes or No'),
+    .required(i18n.t('app.validation.long_term_stay_required'))
+    .oneOf(['true', 'false'], i18n.t('app.validation.long_term_stay_invalid')),
 
   min_gap_night: yup
     .string()
-    .required('Minimum Gap Night is required'),
+    .required(i18n.t('app.validation.min_gap_night_required')),
 
   min_nights: yup
     .string()
-    .required('Minimum Night Stay is required'),
+    .required(i18n.t('app.validation.min_nights_required')),
 
   max_nights: yup
     .string()
-    .required('Maximum Night Stay is required'),
+    .required(i18n.t('app.validation.max_nights_required')),
 
   amenities: yup
     .array()
     .of(yup.string().required())
-    .min(1, 'Please select at least one house feature')
-    .required('Please select at least one house feature'),
+    .min(1, i18n.t('app.validation.amenities_required'))
+    .required(i18n.t('app.validation.amenities_required')),
 });
 
 export type StepTwoFormValues = {
@@ -118,11 +131,11 @@ export type StepTwoFormValues = {
 
 
 export const describeHouseSchema = yup.object().shape({
-  name: yup.string().required('House title is required'),
+  name: yup.string().required(i18n.t('app.validation.house_title_required')),
   listing_descriptions: yup.string()
-    .required('Description is required')
-    .min(10, 'Must be at least 10 characters')
-    .max(250, 'Cannot exceed 250 characters'),
+    .required(i18n.t('app.describe_house.validation_description_required'))
+    .min(10, i18n.t('app.validation.description_min_10'))
+    .max(250, i18n.t('app.validation.description_max_250')),
 });
 
 export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
@@ -131,19 +144,19 @@ export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
 export const bookingDetailsSchema = yup.object({
   booking_type: yup
     .string()
-    .required('Booking type is required'),
+    .required(i18n.t('app.validation.booking_type_required')),
 
   guest_eligibility: yup
     .string()
-    .required('Guest eligibility is required'),
+    .required(i18n.t('app.validation.guest_eligibility_required')),
 
   check_in_time: yup
     .string()
-    .required('Check-in time is required'),
+    .required(i18n.t('app.validation.checkin_time_required')),
 
   check_out_time: yup
     .string()
-    .required('Check-out time is required'),
+    .required(i18n.t('app.validation.checkout_time_required')),
 });
 
 export type BookingDetailsFormValues = {
@@ -158,18 +171,18 @@ export type BookingDetailsFormValues = {
 export const houseGuidelinesSchema = yup.object({
   arrival_guide: yup
     .string()
-    .required('Arrival guide is required')
-    .min(20, 'Must be at least 20 characters'),
+    .required(i18n.t('app.validation.arrival_guide_required'))
+    .min(20, i18n.t('app.validation.min_20_chars')),
 
   house_rules: yup
     .string()
-    .required('House rules are required')
-    .min(20, 'Must be at least 20 characters'),
+    .required(i18n.t('app.validation.property_rules_required'))
+    .min(20, i18n.t('app.validation.min_20_chars')),
 
   checkout_instructions: yup
     .string()
-    .required('Checkout instructions are required')
-    .min(20, 'Must be at least 20 characters'),
+    .required(i18n.t('app.validation.checkout_instructions_required'))
+    .min(20, i18n.t('app.validation.min_20_chars')),
 });
 
 export type HouseGuidelinesFormValues = {
@@ -183,15 +196,15 @@ export type HouseGuidelinesFormValues = {
 export const cancelPoliciesSchema = yup.object({
   cancel_policy_airbnb: yup
     .string()
-    .required('Cancel policy for Airbnb is required'),
+    .required(i18n.t('app.validation.airbnb_policy_required')),
 
   cancel_policy_gathern: yup
     .string()
-    .required('Cancel policy for Gathern is required'),
+    .required(i18n.t('app.validation.gathern_policy_required')),
 
   cancel_policy_booking: yup
     .string()
-    .required('Cancel policy for Booking.com is required'),
+    .required(i18n.t('app.validation.bookingcom_policy_required')),
 });
 
 export type CancelPoliciesFormValues = {
@@ -205,9 +218,9 @@ export type CancelPoliciesFormValues = {
 export const aiDynamicPricingSchema = yup.object({
   pricing_mode: yup
     .number()
-    .typeError('Please select a pricing mode')
-    .required('Please select a pricing mode')
-    .oneOf([1, 2], 'Invalid pricing mode'),
+    .typeError(i18n.t('app.validation.pricing_mode_required'))
+    .required(i18n.t('app.validation.pricing_mode_required'))
+    .oneOf([1, 2], i18n.t('app.validation.pricing_mode_invalid')),
 
   manual_price_override: yup
     .boolean()
@@ -223,39 +236,39 @@ export type AiDynamicPricingFormValues = {
 export const pricingSchema = yup.object().shape({
   weekday_base_price: yup
     .string()
-    .required('Weekday base price is required'),
+    .required(i18n.t('app.validation.weekday_base_price_required')),
 
   weekend_base_price: yup
     .string()
-    .required('Weekend base price is required'),
+    .required(i18n.t('app.validation.weekend_base_price_required')),
 
   discount: yup
     .string()
-    .required('Discount is required'),
+    .required(i18n.t('app.validation.discount_required')),
 
   tax_vat: yup
     .string()
-    .required('Tax(VAT) is required'),
+    .required(i18n.t('app.validation.tax_required')),
 
   markup_price: yup
     .string()
-    .required('Markup price is required'),
+    .required(i18n.t('app.validation.markup_required')),
 
   cleaning_fee: yup
     .string()
-    .required('Cleaning fee is required'),
+    .required(i18n.t('app.validation.cleaning_fee_required')),
 
   airbnb_discount: yup
     .string()
-    .required('Airbnb discount is required'),
+    .required(i18n.t('app.validation.airbnb_discount_required')),
 
   gathern_discount: yup
     .string()
-    .required('Gathern discount is required'),
+    .required(i18n.t('app.validation.gathern_discount_required')),
 
   booking_discount: yup
     .string()
-    .required('Booking.com discount is required'),
+    .required(i18n.t('app.validation.booking_discount_required')),
 
   extra_guest_fee: yup
     .string()
@@ -277,9 +290,9 @@ export type PricingFormValues = {
 };
 
 export const disclosureSchema = yup.object().shape({
-  securityCameras: yup.string().required('Please select an option'),
-  noiseMonitor: yup.string().required('Please select an option'),
-  weaponsOnProperty: yup.string().required('Please select an option'),
+  securityCameras: yup.string().required(i18n.t('app.validation.option_required')),
+  noiseMonitor: yup.string().required(i18n.t('app.validation.option_required')),
+  weaponsOnProperty: yup.string().required(i18n.t('app.validation.option_required')),
 });
 
 export type DisclosureFormValues = yup.InferType<typeof disclosureSchema>;
@@ -295,17 +308,17 @@ export const documentUploadSchema = yup.object().shape({
   propertyOwnership: yup
     .mixed<DocumentPickerResult>()
     .nullable()
-    .required('Property ownership document is required'),
+    .required(i18n.t('app.validation.ownership_required')),
 
   authorityLicense: yup
     .mixed<DocumentPickerResult>()
     .nullable()
-    .required('Authority license is required'),
+    .required(i18n.t('app.validation.authority_required')),
 
   nationalId: yup
     .mixed<DocumentPickerResult>()
     .nullable()
-    .required('National ID is required'),
+    .required(i18n.t('app.validation.national_id_required')),
 });
 
 export type DocumentFormValues = yup.InferType<typeof documentUploadSchema>;

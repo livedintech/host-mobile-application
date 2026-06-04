@@ -40,7 +40,7 @@ export default function useAIDynamicPricingContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:                  propertyDetail?.name || 'New Listing',
+      name:                  propertyDetail?.name || 'New Property',
       ai_pricing_mode:       selectedMode,       // 🆕 NEW
       manual_price_override: manualOverride,     // 🆕 NEW (boolean)
     },

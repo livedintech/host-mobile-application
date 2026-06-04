@@ -20,7 +20,7 @@ const PaymentScreen = () => {
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
   const { planId, qtyFrom, full_name, email, country_code } = route.params ?? {};
   const [loading, setLoading] = React.useState(true);
-  const webViewRef = React.useRef<WebView>(null);
+const webViewRef = React.useRef<WebView>(null);
   const user = useAuthStore((s) => s.user);
 
   const firstName = (full_name || user?.name || '').trim().split(/\s+/)[0] ?? '';
@@ -31,7 +31,6 @@ const PaymentScreen = () => {
 
   const queryString = [
     `charge_quantity=${qtyFrom}`,
-    `payment_widget=true`,
     `ai_firstName=${encodeURIComponent(firstName)}`,
     `ai_lastName=${encodeURIComponent(firstName)}`,
     `ai_email=${resolvedEmail}`,

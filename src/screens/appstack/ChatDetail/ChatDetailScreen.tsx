@@ -726,14 +726,15 @@ const ChatScreen = () => {
 
             {/* AI Suggestion */}
             {
-              // showAiSuggestion
-              false && (
+              showAiSuggestion
+               && (
                 <View style={styles.aiWrapper}>
                   <AppText
                     text={t('app.chat_detail.ai_suggestions')}
                     fontSize={11}
                     color={Colors.GREY_SHADOW}
                     mb={8}
+                    textAlign='center'
                   />
                   <View style={styles.aiBubble}>
                     <AppPressable

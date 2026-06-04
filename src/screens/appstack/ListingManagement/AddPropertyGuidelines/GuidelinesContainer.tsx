@@ -128,7 +128,7 @@ export default function useGuidelinesContainer() {
     listing_id: String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name: propertyDetail?.name || 'New Listing',
+      name: propertyDetail?.name || 'New Property',
       arrival_guide: data.arrival_guide,
       house_rule: data.property_rules,
       wifi_network: data.wifi_username,

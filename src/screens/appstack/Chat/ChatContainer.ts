@@ -243,7 +243,7 @@ export const useChatContainer = () => {
 
 const transformedListings =
   listings?.data?.map((item: { title: string; listing_id: string }) => ({
-    label: item?.title || `Listing #${item?.listing_id}`,
+    label: item?.title || `Property #${item?.listing_id}`,
     value: item?.listing_id ? String(item.listing_id) : '',
   }))?.filter((item: { label: string; value: string }) => item.value !== '') || [];
     

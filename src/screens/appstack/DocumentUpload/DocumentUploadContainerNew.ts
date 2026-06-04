@@ -181,7 +181,7 @@ const onSaveExit = async (data: DocumentFormValues) => {
     mutationFn: createListingExportApi,
     onSuccess: () => {
       setBottomSheetVisible(false);
-      Toast.show({ type: 'success', text1: 'Listing exported successfully' });
+      Toast.show({ type: 'success', text1: 'Property exported successfully' });
       navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
     },
     onError: (err: any) =>

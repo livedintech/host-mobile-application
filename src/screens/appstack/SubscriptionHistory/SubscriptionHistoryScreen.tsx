@@ -77,9 +77,9 @@ const SubscriptionHistoryScreen = () => {
         key={`${index}-${item.id}`}
         style={[styles.propertyRow, !isLast && styles.propertyDivider]}
       >
-        <View style={styles.propertyThumb}>
-          <Svgicons path="wavingHand" size={26} />
-        </View>
+        <GlassCard width={THUMB_SIZE} style={styles.propertyThumb}>
+          <Svgicons path="direct" size={26} />
+        </GlassCard>
         <View style={styles.propertyInfo}>
           <AppText
             text={item.name || item.title || 'Untitled'}
@@ -109,12 +109,6 @@ const SubscriptionHistoryScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Back Button */}
-        <GradientBorder borderRadius={20} borderWidth={1} style={styles.backBtnWrapper}>
-          <AppPressable style={styles.backBtnInner} onPress={() => goBack()}>
-            <Svgicons path="arrowLeftIcon" size={20} />
-          </AppPressable>
-        </GradientBorder>
 
         {/* Title */}
         <AppText
@@ -122,7 +116,6 @@ const SubscriptionHistoryScreen = () => {
           fontSize={28}
           type="Bold"
           color={Colors.BRUNSWICK_GREEN}
-          mt={16}
           mb={20}
         />
 
@@ -257,9 +250,9 @@ const SubscriptionHistoryScreen = () => {
         {hasSubscription && (
           <GlassCard width="100%" style={styles.card}>
             <View style={styles.actionRow}>
-              <View style={styles.actionIconBg}>
-                <Svgicons path="subscriptionIcon" size={26} />
-              </View>
+              <GlassCard width={46} style={styles.actionIconBg}>
+                <Svgicons path="arrowReload" size={26} />
+              </GlassCard>
               <View style={styles.actionInfo}>
                 <AppText
                   text={
@@ -292,9 +285,9 @@ const SubscriptionHistoryScreen = () => {
             onPress={() => navigate(NavigationRoutes.APP_STACK.SELECT_PAYMENT_METHOD)}
           >
             <View style={styles.actionRow}>
-              <View style={styles.actionIconBg}>
-                <Svgicons path="subscriptionIcon" size={26} />
-              </View>
+              <GlassCard width={46} style={styles.actionIconBg}>
+                <Svgicons path="cloudRefresh" size={26} />
+              </GlassCard>
               <AppText
                 text={t('app.subscription.change_plan')}
                 fontSize={16}
@@ -310,9 +303,9 @@ const SubscriptionHistoryScreen = () => {
         {(isActive || isTrial) && (
           <GlassCard width="100%" style={styles.card} onPress={openSheet}>
             <View style={styles.actionRow}>
-              <View style={styles.actionIconBg}>
-                <Svgicons path="cancelBooking" size={26} />
-              </View>
+              <GlassCard width={46} style={styles.actionIconBg}>
+                <Svgicons path="cloudCross" size={26} />
+              </GlassCard>
               <AppText
                 text={t('app.subscription.cancel')}
                 fontSize={16}
@@ -346,7 +339,7 @@ const SubscriptionHistoryScreen = () => {
 const THUMB_SIZE = Metrics.scale(46);
 
 const styles = StyleSheet.create({
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 40, paddingTop: 50 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 40, paddingTop: Metrics.verticalScale(37) },
   backBtnWrapper: { width: 40, height: 40, alignSelf: 'flex-start' },
   backBtnInner: {
     width: 38,
@@ -395,6 +388,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
+    marginBottom: 0,
+    padding: 0,
   },
   propertyImage: { width: THUMB_SIZE, height: THUMB_SIZE },
   propertyInfo: { marginLeft: 12, flex: 1 },
@@ -426,9 +421,10 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 14,
-    backgroundColor: Colors.ANTI_FLASH_WHITE,
     justifyContent: 'center',
     alignItems: 'center',
+    marginVertical:0,
+    marginBottom:0
   },
   actionInfo: { marginLeft: 14, flex: 1 },
   loaderOverlay: {

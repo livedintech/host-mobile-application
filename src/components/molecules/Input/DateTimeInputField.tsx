@@ -234,6 +234,8 @@ const DateTimeInputField = ({
                   mode={mode}
                   display="spinner"
                   minimumDate={minimumDate}
+                  textColor="#000000"
+                  themeVariant="light"
                   onChange={(_, date) => {
                     if (date) setTempDate(date);
                   }}

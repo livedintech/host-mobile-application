@@ -26,8 +26,8 @@ const AppText = ({
 }: AppTextProps) => {
 
   const fontFamily = italic
-    ? `RethinkSans-${type}Italic`
-    : `RethinkSans-${type}`;
+    ? `Inter-${type}Italic`
+    : `Inter-${type}`;
 
   const spacingStyles = {
     margin: m !== undefined ? Metrics.verticalScale(m) : undefined,

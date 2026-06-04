@@ -66,78 +66,54 @@ export default function useAirbnbImportContainer() {
     reset,
   } = useForm<FormValues>({ defaultValues: {} });
 
+  // ✅ Single source of truth — form reset logic ek jagah
+  const buildAndResetForm = useCallback(
+    (properties: any[], listingsData: any[]) => {
+      const defaultFormValues: FormValues = {};
+
+      properties.forEach((property: any) => {
+        let match: any = null;
+
+        if (property.listing_relations?.[0]?.airbnb_external_listing_id) {
+          match = listingsData.find(
+            (item: any) => String(item.id) === String(property.listing_relations[0].airbnb_external_listing_id)
+          );
+        }
+
+        if (!match && property.listing_relations?.[0]?.other_ota_external_listing_id) {
+          match = listingsData.find(
+            (item: any) => String(item.id) === String(property.listing_relations[0].other_ota_external_listing_id)
+          );
+        }
+
+        if (!match) {
+          match = listingsData.find(
+            (item: any) => String(item.id) === String(property.id)
+          );
+        }
+
+        if (match) {
+          defaultFormValues[String(property.id)] = String(match.id);
+        }
+      });
+
+      reset(defaultFormValues);
+    },
+    [reset]
+  );
+
+  // Data aane par form auto-reset ho
   useEffect(() => {
-    if (airbnbData && apiResponse) {
-      const defaultFormValues: FormValues = {};
-
-      airbnbData.forEach((property: any) => {
-        let match: any = null;
-
-        if (property.listing_relations?.[0]?.airbnb_external_listing_id) {
-          match = apiResponse.data?.find(
-            (item: any) => String(item.id) === String(property.listing_relations[0].airbnb_external_listing_id)
-          );
-        }
-
-        if (!match && property.listing_relations?.[0]?.other_ota_external_listing_id) {
-          match = apiResponse.data?.find(
-            (item: any) => String(item.id) === String(property.listing_relations[0].other_ota_external_listing_id)
-          );
-        }
-
-        if (!match) {
-          match = apiResponse.data?.find(
-            (item: any) => String(item.id) === String(property.id)
-          );
-        }
-
-        if (match) {
-          defaultFormValues[String(property.id)] = String(match.id);
-        }
-      });
-
-      reset(defaultFormValues);
+    if (airbnbData && apiResponse?.data) {
+      buildAndResetForm(airbnbData, apiResponse.data);
     }
-  }, [airbnbData, apiResponse, reset]);
+  }, [airbnbData, apiResponse, buildAndResetForm]);
 
+  // Refresh button / pull-to-refresh — sirf queries refetch karo,
+  // useEffect khud form reset kar lega
   const refetch = useCallback(async () => {
-    const [airbnb, listings] = await Promise.all([refetchAirbnb(), refetchListings()]);
-
-    const newAirbnbData = airbnb.data;
-    const newApiResponse = listings.data;
-
-    if (newAirbnbData && newApiResponse) {
-      const defaultFormValues: FormValues = {};
-
-      newAirbnbData.forEach((property: any) => {
-        let match: any = null;
-
-        if (property.listing_relations?.[0]?.airbnb_external_listing_id) {
-          match = newApiResponse.data?.find(
-            (item: any) => String(item.id) === String(property.listing_relations[0].airbnb_external_listing_id)
-          );
-        }
-
-        if (!match && property.listing_relations?.[0]?.other_ota_external_listing_id) {
-          match = newApiResponse.data?.find(
-            (item: any) => String(item.id) === String(property.listing_relations[0].other_ota_external_listing_id)
-          );
-        }
-
-        if (!match) {
-          match = newApiResponse.data?.find(
-            (item: any) => String(item.id) === String(property.id)
-          );
-        }
-
-        if (match) {
-          defaultFormValues[String(property.id)] = String(match.id);
-        }
-      });
-
-      reset(defaultFormValues);
-    }
-  }, [refetchAirbnb, refetchListings, reset]);
+    await Promise.all([refetchAirbnb(), refetchListings()]);
+  }, [refetchAirbnb, refetchListings]);
 
   const { mutate: createListingImportPayload, isPending } = useMutation<
     creatGathernChannelResponse,

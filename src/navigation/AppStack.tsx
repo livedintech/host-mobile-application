@@ -6,9 +6,9 @@ import TabStack from './TabStack';
 
 const Stack = createNativeStackNavigator();
 
-const AppStack = () => {
+const AppStack = ({ initialRouteName = NavigationRoutes.APP_STACK.ROOT_STACK }: { initialRouteName?: string }) => {
   return (
-    <Stack.Navigator initialRouteName={NavigationRoutes.APP_STACK.ROOT_STACK}>
+    <Stack.Navigator initialRouteName={initialRouteName}>
       <Stack.Screen
         options={{
           headerShown: false,
@@ -96,7 +96,7 @@ const AppStack = () => {
         }
       />
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.SELECT_PLAN}
         getComponent={() =>
           require('@/screens/appstack/SelectPlan/SelectPlanScreen').default
@@ -917,6 +917,13 @@ const AppStack = () => {
         getComponent={() =>
           require('@/screens/appstack/AIAutoReplyFeature/screens/CategoryCustomInstructionsScreen')
             .default
+        }
+      />
+      <Stack.Screen
+        options={{ header: () => <HeaderApp /> }}
+        name={NavigationRoutes.APP_STACK.PAYMENT}
+        getComponent={() =>
+          require('@/screens/auth/Payment/PaymentScreen').default
         }
       />
     </Stack.Navigator>

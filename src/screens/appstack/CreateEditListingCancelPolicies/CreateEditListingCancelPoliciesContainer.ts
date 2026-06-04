@@ -74,7 +74,7 @@ const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCr
   // save_and_exit: isSaveAndExit ? 1 : 0,
   save_and_exit: 0,
   listing: {
-    name: propertyDetail?.name || 'New Listing',
+    name: propertyDetail?.name || 'New Property',
     airbnb_cancellation_policy: data.cancel_policy_airbnb, 
     gathern_cancellation_policy: data.cancel_policy_gathern,
     bookingCom_cancellation_policy: data.cancel_policy_booking, // Note the "Com" in Swagger

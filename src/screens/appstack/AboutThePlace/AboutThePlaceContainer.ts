@@ -112,7 +112,7 @@ export default function useAboutThePlaceContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:          propertyDetail?.name || 'New Listing',
+      name:          propertyDetail?.name || 'New Property',
       property_area: Number(data.size_sqm),
       guest_limit:   Number(data.guest_limit),
       bedrooms:      Number(data.bedrooms),

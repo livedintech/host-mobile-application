@@ -2,13 +2,22 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NavigationRoutes from './NavigationRoutes';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const Stack = createNativeStackNavigator();
 const { Navigator, Screen } = Stack;
 
 const AuthStack = () => {
+  const user = useAuthStore(s => s.user);
+  const hasSeenOnboarding = useAuthStore(s => s.hasSeenOnboarding);
+  const initialRoute = user?.signup_step === 'step_1'
+    ? NavigationRoutes.AUTH_STACK.PAYMENT
+    : hasSeenOnboarding
+      ? NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE
+      : NavigationRoutes.AUTH_STACK.ON_BOARDING;
+
   return (
-    <Navigator initialRouteName={NavigationRoutes.AUTH_STACK.ON_BOARDING}>
+    <Navigator initialRouteName={initialRoute}>
       <Screen
         options={{
           headerShown: false,
@@ -72,7 +81,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
+        options={({ route }) => ({ header: () => <HeaderApp isGoBack={!!route.params?.email} /> })}
         name={NavigationRoutes.AUTH_STACK.PAYMENT}
         getComponent={() =>
           require('@/screens/auth/Payment/PaymentScreen').default

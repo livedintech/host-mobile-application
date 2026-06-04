@@ -127,7 +127,7 @@ export default function useBookingCancelPoliciesContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:                           propertyDetail?.name || 'New Listing',
+      name:                           propertyDetail?.name || 'New Property',
       cancellation_policy:     data.airbnb_policy,
       airbnb_longterm_policy:         data.airbnb_longterm_policy,
       gathern_cancellation_policy:    data.gathern_policy,

@@ -103,15 +103,16 @@ const PropertyCard = ({
         />
       </View>
 
-      <AppButton
+      <View style={styles.btnStyle}>
+        <AppButton
         title={!isMatch ? t('app.airbnb_import.import_btn') : t('app.airbnb_import.reimport_btn')}
         onPress={() => handleIndividualImport(fieldName, id, isMatch)}
-        backgroundColor="rgba(255, 255, 255, 0.4)"
-        borderColor="rgba(255, 255, 255, 0.9)"
         color={Colors.BLACK}
-        fontSize={16}
+        fontSize={14}
         variant='secondary'
+        backgroundColor={Colors.TRANSPARENT}
       />
+      </View>
     </GlassCard>
   );
 };
@@ -159,7 +160,7 @@ const AirbnbImportScreen = () => {
             <Svgicons path="back" size={40} />
           </ButtonView>
           <AppButton
-            title='Refresh'
+            title={t('app.airbnb_import.refresh')}
             onPress={refetch}
             variant='secondary'
             type='Regular'
@@ -193,14 +194,14 @@ const AirbnbImportScreen = () => {
           keyboardShouldPersistTaps="handled"
         />
 
-        <View style={styles.footer}>
+        {/* <View style={styles.footer}>
           <AppButton
             title={t('app.airbnb_import.next')}
             onPress={handleSubmit(onNext)}
             color={Colors.WHITE}
             fontSize={16}
           />
-        </View>
+        </View> */}
       </View>
     </BGImage>
   );
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.7)',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     marginBottom: 20,
   },
   cardHeader: {
@@ -287,6 +288,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.baseMargin,
     paddingTop: Metrics.baseMargin,
   },
+  btnStyle:{
+    width: Metrics.scale(219),
+    alignSelf:'center',
+  }
 });
 
 export default AirbnbImportScreen;

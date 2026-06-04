@@ -13,10 +13,10 @@ const KNOWLEDGE_DATA = [
     {
         title: 'Availability Details',
         items: [
-            'Listing allows same-day check-in on the guest departure (check-out) date',
-            'Listing allows same-day check-out on the guest arrival (check-in) date',
-            "Listing is available one day before guest's arrival date",
-            "Listing is available on the guest's departure date",
+            'Property allows same-day check-in on the guest departure (check-out) date',
+            'Property allows same-day check-out on the guest arrival (check-in) date',
+            "Property is available one day before guest's arrival date",
+            "Property is available on the guest's departure date",
         ],
     },
     {
@@ -24,7 +24,7 @@ const KNOWLEDGE_DATA = [
         items: ['All incoming messages', 'All outgoing messages'],
     },
     {
-        title: 'Listing Details',
+        title: 'Property Details',
         items: [
             'Amenities (comma-separated)',
             'Cancellation policy',
