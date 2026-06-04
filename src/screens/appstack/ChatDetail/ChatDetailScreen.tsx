@@ -919,43 +919,33 @@ const ChatScreen = () => {
                         />
                       </AppPressable>
                     </View>
+                  </View>
 
-                    <View style={styles.aiActionsRow}>
-                      <AppPressable
-                        onPress={() => {
-                          if (isEditingAiMessage) {
-                            setIsEditingAiMessage(false);
-                            setEditedAiText('');
-                          } else {
-                            setIsEditingAiMessage(true);
-                            setEditedAiText(currentSuggestion.agent_message);
-                          }
-                        }}
-                      >
-                        <AppText
-                          text={isEditingAiMessage ? 'Cancel' : t('app.chat_detail.edit')}
-                          fontSize={12}
-                          type="Bold"
-                          color={Colors.PINE_FOREST}
-                        />
-                      </AppPressable>
+                  <View style={styles.aiFooter}>
+                    <AppPressable
+                      onPress={() => {
+                        setShowAiSuggestion(false);
+                            setSelectedAiSuggestionId(currentSuggestion.id);
+                        setInputText(currentSuggestion.agent_message);
+                      }}
+                    >
+                      <AppText
+                        text={t('app.chat_detail.edit')}
+                        fontSize={12}
+                        type="Bold"
+                        color={Colors.PINE_FOREST}
+                      />
+                    </AppPressable>
 
-                      <AppPressable
-                        onPress={() =>
-                          sendAiSuggestion(
-                            isEditingAiMessage ? editedAiText : undefined,
-                          )
-                        }
-                      >
-                        <AppText
-                          text={t('app.chat_detail.send_now')}
-                          fontSize={12}
-                          type="Bold"
-                          ml={15}
-                          color={Colors.PINE_FOREST}
-                        />
-                      </AppPressable>
-                    </View>
+                    <AppPressable onPress={() => sendAiSuggestion()}>
+                      <AppText
+                        text={t('app.chat_detail.send_now')}
+                        fontSize={12}
+                        type="Bold"
+                        ml={15}
+                        color={Colors.PINE_FOREST}
+                      />
+                    </AppPressable>
                   </View>
                 </View>
               </View>
