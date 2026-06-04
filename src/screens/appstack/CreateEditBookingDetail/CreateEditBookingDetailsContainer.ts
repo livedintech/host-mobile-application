@@ -107,8 +107,8 @@ export default function useBookingDetailsContainer() {
     resolver: yupResolver(bookingDetailsSchema) as any,
     defaultValues: {
       booking_type: isEdit
-        ? (listing?.instant_booking === true || listing?.instant_booking === 1 || listing?.instant_booking === '1' || listing?.instant_booking === 'everyone' ? 'everyone'
-          : listing?.instant_booking === false || listing?.instant_booking === 0 || listing?.instant_booking === '0' || listing?.instant_booking === 'off' ? 'off'
+        ? (listing?.instant_booking === 'everyone' ? 'everyone'
+          : listing?.instant_booking === 'off' ? 'off'
           : '') : '',
       guest_eligibility: isEdit
         ? (listing?.guest_eligibility === true || listing?.guest_eligibility === 1 ? 'Yes'
