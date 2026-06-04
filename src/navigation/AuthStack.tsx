@@ -10,7 +10,7 @@ const { Navigator, Screen } = Stack;
 const AuthStack = () => {
   const user = useAuthStore(s => s.user);
   const hasSeenOnboarding = useAuthStore(s => s.hasSeenOnboarding);
-  const initialRoute = user?.signup_step === 'step_1'
+  const initialRoute = user?.signup_step === 'step_11'
     ? NavigationRoutes.AUTH_STACK.PAYMENT
     : hasSeenOnboarding
       ? NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE

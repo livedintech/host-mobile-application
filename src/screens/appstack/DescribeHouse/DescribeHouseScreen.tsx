@@ -115,7 +115,6 @@ const DescribeHouseScreen = () => {
                 onPress={handleSubmit(onNext)}
                 loading={isLoading}
                 variant='secondary'
-                backgroundColor={Colors.WHITE}
               />
               <AppButton
                 title={t('app.describe_house.save_exit')}

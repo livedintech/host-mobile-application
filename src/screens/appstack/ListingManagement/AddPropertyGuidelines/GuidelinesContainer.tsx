@@ -93,7 +93,7 @@ export default function useGuidelinesContainer() {
     door_lock_code: hideWifiFields ? yup.string() : yup.string().optional()
   });
 
-  type GuidelinesFormValues = yup.InferType<typeof guidelinesSchema>;
+  type GuidelinesFormValues = yup.InferType<typeof guidelinesSchema>;  
 
   // ── Main Form ─────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors }, watch } =

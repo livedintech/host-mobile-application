@@ -88,14 +88,15 @@ export default function useCreateAccountContainer() {
     onSuccess: ({ message }, variables: any) => {
       Toast.show({ type: 'success', text1: message });
       confirmedRef.current = true;
-      navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
-        country_code,
-        phone_number,
-        phone_with_code,
-        pricing,
-        full_name: variables.name,
-        email: variables.email,
-      });
+       navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE)
+      // navigate(NavigationRoutes.AUTH_STACK.PAYMENT, {
+      //   country_code,
+      //   phone_number,
+      //   phone_with_code,
+      //   pricing,
+      //   full_name: variables.name,
+      //   email: variables.email,
+      // });
     },
     onError: ({ message }) => {
       Toast.show({ type: 'error', text1: message });

@@ -72,7 +72,6 @@ const AddBookingDetailsScreen = () => {
               onPress={handleExport}
               variant='secondary'
               mb={12}
-              backgroundColor={Colors.WHITE}
             />
           )}
           {!isEdit && (

@@ -10,10 +10,12 @@ const StackNavigator = () => {
   const { isLoggedIn, user } = useAuthStore();
   const [showSplash, setShowSplash] = useState(true);
 
-  const isPendingPayment = isLoggedIn && user?.sub_plan_id === null;
-  const appInitialRoute = isPendingPayment
-    ? NavigationRoutes.APP_STACK.PAYMENT
-    : NavigationRoutes.APP_STACK.ROOT_STACK;
+  // const isPendingPayment = isLoggedIn && user?.sub_plan_id === null;
+  // const appInitialRoute = isPendingPayment
+  //   ? NavigationRoutes.APP_STACK.PAYMENT
+  //   : NavigationRoutes.APP_STACK.ROOT_STACK;
+
+  const appInitialRoute = NavigationRoutes.APP_STACK.ROOT_STACK
 
   useEffect(() => {
     const timer = setTimeout(() => {

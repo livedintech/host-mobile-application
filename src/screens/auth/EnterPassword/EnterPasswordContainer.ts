@@ -73,7 +73,7 @@ export default function useEnterPasswordContainer() {
         return;
       }
       clearPhoneData()
-      if (data?.user?.signup_step === 'step_1') {
+      if (data?.user?.signup_step === 'step_11') {
         setToken(data?.access_token);
         setUser(data?.user);
         navigate(NavigationRoutes.APP_STACK.PAYMENT, {

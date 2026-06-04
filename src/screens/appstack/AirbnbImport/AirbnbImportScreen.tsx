@@ -110,7 +110,6 @@ const PropertyCard = ({
         color={Colors.BLACK}
         fontSize={14}
         variant='secondary'
-        backgroundColor={Colors.TRANSPARENT}
       />
       </View>
     </GlassCard>
@@ -129,6 +128,7 @@ const AirbnbImportScreen = () => {
     refetch,
     watch,
     isLoading,
+    isMutating,
     listingOptions,
   } = useAirbnbImportContainer();
 
@@ -149,7 +149,7 @@ const AirbnbImportScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
       <View style={styles.container}>
-        {isLoading && (
+        {isMutating && (
           <View style={styles.loaderContainer}>
             <SpinnerLoader />
           </View>
@@ -185,7 +185,7 @@ const AirbnbImportScreen = () => {
 
         <FlatListSimpleHandler
           onRefresh={refetch}
-          isLoading={false}
+          isLoading={isLoading}
           data={properties}
           keyExtractor={(item: any) => item.id.toString()}
           renderItem={renderItem}
