@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { processColor, StatusBar, View, StyleSheet, AppState, AppStateStatus } from 'react-native';
+import { processColor, StatusBar, View, StyleSheet, AppState, AppStateStatus, BackHandler } from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -36,6 +36,7 @@ const App = () => {
   const [initializationError, setInitializationError] = useState<string | null>(null);
   const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK);
   const appState = useRef<AppStateStatus>(AppState.currentState);
+  const navStateRef = useRef<any>(null);
 
   useEffect(() => {
     initializeApp();
@@ -53,7 +54,19 @@ const App = () => {
       appState.current = nextState;
     });
 
-    return () => subscription.remove();
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      const state = navStateRef.current;
+      if (state && state.index > 0) {
+        navigationRef.current?.goBack();
+        return true;
+      }
+      return false;
+    });
+
+    return () => {
+      subscription.remove();
+      backHandler.remove();
+    };
   }, []);
 
   const setupNotifications = async () => {
@@ -74,6 +87,7 @@ const App = () => {
   };
 
   const handleNavigationStateChange = (state: any) => {
+    navStateRef.current = state;
     try {
       const currentRouteName = getActiveRouteName(state);
 
@@ -191,6 +205,7 @@ const App = () => {
                   ref={navigationRef}
                   theme={MyTheme}
                   linking={linking}
+                  onReady={() => { navStateRef.current = navigationRef.current?.getRootState() ?? null; }}
                   onStateChange={handleNavigationStateChange}>
                   <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
                     <StatusBar
