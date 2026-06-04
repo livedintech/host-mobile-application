@@ -13,6 +13,7 @@ import {
   getChatDetailApi,
   getChatDetailSavedRepliesApi,
   deleteChatMessageApi,
+  getPendingAgentMessageReviewApi,
 } from '@/services/chatApi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -141,8 +142,8 @@ export const useChatContainer = () => {
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
   const assigned_to_ids = params?.assigned_to_ids;
-  console.log("assigned_to_ids",assigned_to_ids)
-
+  console.log('assigned_to_ids', assigned_to_ids);
+  console.log('conversation_id', conversation_id);
 
   // Core Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -151,9 +152,13 @@ export const useChatContainer = () => {
 
   // UI State
   const [showAiSuggestion, setShowAiSuggestion] = useState(true);
+  const [aiSuggestion, setAiSuggestion] = useState<any>(null);
   const [showSavedReplies, setShowSavedReplies] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<
     string | number | null
+  >(null);
+  const [selectedAiSuggestionId, setSelectedAiSuggestionId] = useState<
+    number | null
   >(null);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
 
@@ -210,6 +215,10 @@ export const useChatContainer = () => {
       });
       queryClient.invalidateQueries({
         queryKey: [STORAGE_CONST.GET_CHAT_DETAIL],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_AI_SUGGESTIONS],
       });
     },
     onError: error => {
@@ -318,11 +327,23 @@ export const useChatContainer = () => {
     }, 100);
 
     // ✅ API CALL
-    chatMessagesSend({
+    // chatMessagesSend({
+    //   conversation_id,
+    //   body: bodyText,
+    //   reply_to: replyingToMessage?._id,
+    // });
+
+    const payload: any = {
       conversation_id,
       body: bodyText,
       reply_to: replyingToMessage?._id,
-    });
+    };
+
+    if (selectedAiSuggestionId) {
+      payload.agent_message_reviews_id = selectedAiSuggestionId;
+    }
+
+    chatMessagesSend(payload);
   }, [
     inputText,
     conversation_id,
@@ -372,33 +393,6 @@ export const useChatContainer = () => {
     },
     [addMessage, replyingToMessage, user],
   );
-
-  // Send AI suggestion
-  const sendAiSuggestion = useCallback(() => {
-    const aiMessage: ChatMessage = {
-      _id: `temp-${Date.now()}`,
-      text: 'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival. Wi-Fi and other details are inside.',
-      createdAt: new Date(),
-      user: {
-        _id: Number(user?.id),
-        name: user?.name || 'You',
-      },
-    };
-    addMessage(aiMessage);
-
-    // ✅ Set flag for auto-scroll
-    setJustSentMessage(true);
-
-    setShowAiSuggestion(false);
-
-    // ✅ Auto scroll
-    setTimeout(() => {
-      flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-      setTimeout(() => setJustSentMessage(false), 500);
-    }, 100);
-
-    // TODO: Call API to send message
-  }, [addMessage, user]);
 
   // Message Actions
   const handleMessageSelect = (message: ChatMessage) => {
@@ -675,6 +669,96 @@ export const useChatContainer = () => {
   }, [addMessage, replyingToMessage, user]);
 
   console.log('messages');
+
+  const { data: pendingReviewData, isLoading: pendingReviewLoading } = useQuery(
+    {
+      queryKey: [STORAGE_CONST.GET_AI_SUGGESTIONS, conversation_id],
+      queryFn: () =>
+        getPendingAgentMessageReviewApi({
+          message_thread_id: conversation_id ?? '',
+        }),
+      enabled: Boolean(conversation_id),
+    },
+  );
+  console.log('pendingReviewData', pendingReviewData);
+
+  useEffect(() => {
+    if (pendingReviewData?.agent_message) {
+      setAiSuggestion(pendingReviewData);
+      setShowAiSuggestion(true);
+    } else {
+      setAiSuggestion(null);
+      setShowAiSuggestion(false);
+    }
+  }, [pendingReviewData]);
+
+  const currentSuggestion = aiSuggestion;
+  console.log('currentSuggestion', currentSuggestion);
+
+  // Send AI suggestion
+  // const sendAiSuggestion = useCallback(() => {
+  //   const aiMessage: ChatMessage = {
+  //     _id: `temp-${Date.now()}`,
+  //     text: 'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival. Wi-Fi and other details are inside.',
+  //     createdAt: new Date(),
+  //     user: {
+  //       _id: Number(user?.id),
+  //       name: user?.name || 'You',
+  //     },
+  //   };
+  //   addMessage(aiMessage);
+
+  //   // ✅ Set flag for auto-scroll
+  //   setJustSentMessage(true);
+
+  //   setShowAiSuggestion(false);
+
+  //   // ✅ Auto scroll
+  //   setTimeout(() => {
+  //     flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+  //     setTimeout(() => setJustSentMessage(false), 500);
+  //   }, 100);
+
+  //   // TODO: Call API to send message
+  // }, [addMessage, user]);
+
+  const sendAiSuggestion = useCallback(() => {
+    if (!currentSuggestion?.agent_message || !conversation_id) {
+      return;
+    }
+
+    const aiMessage: ChatMessage = {
+      _id: `temp-${Date.now()}`,
+      text: currentSuggestion.agent_message,
+      createdAt: new Date(),
+      user: {
+        _id: Number(user?.id),
+        name: user?.name || 'You',
+      },
+    };
+
+    addMessage(aiMessage);
+
+    setJustSentMessage(true);
+    setShowAiSuggestion(false);
+
+    setTimeout(() => {
+      flatListRef.current?.scrollToIndex({
+        index: 0,
+        animated: true,
+      });
+
+      setTimeout(() => setJustSentMessage(false), 500);
+    }, 100);
+
+    chatMessagesSend({
+      conversation_id,
+      body: currentSuggestion.agent_message,
+
+      // AI suggestion id
+      agent_message_reviews_id: currentSuggestion.id,
+    });
+  }, [currentSuggestion, conversation_id, addMessage, chatMessagesSend, user]);
   return {
     // State
     messages,
@@ -695,6 +779,8 @@ export const useChatContainer = () => {
     flatListRef,
     conversationData,
     justSentMessage,
+    currentSuggestion,
+    setSelectedAiSuggestionId,
 
     // Setters
     setInputText,
@@ -725,6 +811,6 @@ export const useChatContainer = () => {
 
     //ASSIGN CHAT IDS
     assigned_to_ids,
-    data
+    data,
   };
 };
