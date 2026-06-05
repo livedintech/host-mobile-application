@@ -41,7 +41,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NoChatScreen from '../NoChatScreen/NoChatScreen';
 import { useAuthStore } from '@/store/useAuthStore';
-import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import { useTranslation } from 'react-i18next';

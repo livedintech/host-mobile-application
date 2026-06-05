@@ -13,10 +13,17 @@ import { Colors } from '@/theme/colors';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const StatisticsScreen = () => {
   const { t } = useTranslation();
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+        const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
+
 
   const {
     AnalyticsSummary,
