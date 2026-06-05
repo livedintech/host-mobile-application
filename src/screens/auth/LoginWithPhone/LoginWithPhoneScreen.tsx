@@ -28,6 +28,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
 
 const LoginWithPhoneScreen = () => {
+  
   const { control, errors, handleSubmit, isLoading, onSubmit, rememberMe, setRememberMe, handleAppleSignIn, handleGoogleSignIn } = useLoginWithPhoneContainer();
   const { t } = useTranslation();
 
@@ -37,6 +38,7 @@ const LoginWithPhoneScreen = () => {
     configureGoogleSignIn();
   }, []);
 
+  
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>

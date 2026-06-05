@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FlatList, I18nManager } from 'react-native';
-import { navigate } from '@/services/navigationService';
+import { navigate, replace } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -91,13 +91,13 @@ export default function useOnboardingContainer() {
     }, [total]);
 
     const loginWithPhone = useCallback(() => {
-        setHasSeenOnboarding();
+        // setHasSeenOnboarding();
         navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
     }, []);
 
     const handleGetStarted = useCallback(() => {
         setHasSeenOnboarding();
-        navigate(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
+        replace(NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE);
     }, []);
 
     return {
