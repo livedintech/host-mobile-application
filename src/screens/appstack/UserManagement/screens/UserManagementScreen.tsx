@@ -11,6 +11,8 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import NoUserScreen from './NoUserScreen';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const UserManagementScreen = () => {
   const { t } = useTranslation();
@@ -42,6 +44,12 @@ const UserManagementScreen = () => {
     return names.length > 0 ? names.join(', ') : 'No Access';
   };
 
+    const { user } = useAuthStore();
+
+
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
   // Handling the Empty State
   if (!isLoading && userManagement?.length === 0) {
     return <NoUserScreen onCreateUser={handleCreateUser} />;

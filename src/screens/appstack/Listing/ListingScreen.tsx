@@ -16,7 +16,8 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
-import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
+import Metrics from '@/utility/Metrics';
 
 const ListingScreen = () => {
   const { t } = useTranslation();
@@ -48,16 +49,22 @@ const ListingScreen = () => {
     bookingType,
     setBookingType,
   } = useListingContainer(route.params?.listing_id, 0); // Fixed to Tab 0 logic
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
+    null,
+  );
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const handleToggleToReservations = () => {
-    navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR); 
-  };
-
   if (!user?.has_listing) {
-    return <NoListingScreen />;
+    return (
+      <View style={{ marginTop: Metrics.verticalScale(-15), flex:1 }}>
+        <NoListingScreen />;
+      </View>
+    );
   }
+
+  const handleToggleToReservations = () => {
+    navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+  };
 
   const handleDayPress = (day: any) => {
     const dateData = calendarDataMap[day.dateString];
@@ -102,9 +109,22 @@ const ListingScreen = () => {
 
       <View style={styles.headerFixed}>
         <View style={styles.headerRow}>
-          <AppText text={t('app.listing_screen.guest_bookings')} fontSize={26} type="Medium" color={Colors.BLACK} />
-          <ButtonView style={styles.toggleButton} onPress={handleToggleToReservations}>
-            <AppText text={t('app.listing_screen.reservations')} color={Colors.WHITE} fontSize={10} type="SemiBold" />
+          <AppText
+            text={t('app.listing_screen.guest_bookings')}
+            fontSize={26}
+            type="Medium"
+            color={Colors.BLACK}
+          />
+          <ButtonView
+            style={styles.toggleButton}
+            onPress={handleToggleToReservations}
+          >
+            <AppText
+              text={t('app.listing_screen.reservations')}
+              color={Colors.WHITE}
+              fontSize={10}
+              type="SemiBold"
+            />
           </ButtonView>
         </View>
       </View>
@@ -120,7 +140,7 @@ const ListingScreen = () => {
         defaultPrice={defaultDailyPrice}
         isLoading={isRefreshing}
         onRefresh={handleRefresh}
-        onListingPress={(id) => setValue('listing_selection', String(id))}
+        onListingPress={id => setValue('listing_selection', String(id))}
       />
 
       {isBookingOpen && (
@@ -146,9 +166,26 @@ const ListingScreen = () => {
 
 const styles = StyleSheet.create({
   headerFixed: { paddingHorizontal: s(16), marginTop: vs(15) },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: vs(15) },
-  toggleButton: { backgroundColor: '#21AA8F', paddingHorizontal: s(15), borderRadius: ms(20), height: 33, justifyContent: 'center' },
-  overlayLoader: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.7)', justifyContent: 'center', alignItems: 'center', zIndex: 999 },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(15),
+  },
+  toggleButton: {
+    backgroundColor: '#21AA8F',
+    paddingHorizontal: s(15),
+    borderRadius: ms(20),
+    height: 33,
+    justifyContent: 'center',
+  },
+  overlayLoader: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
 });
 
 export default ListingScreen;

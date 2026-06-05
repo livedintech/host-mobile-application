@@ -12,10 +12,18 @@ import AppText from '@/components/molecules/AppText/AppText';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import NoReviewScreen from './NoReviewScreen';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const ReviewManagementScreen = () => {
   const { t } = useTranslation();
   const { allReviews, allReviewsLoading, refreshReviews } = useFetchReviews();
+
+      const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
+
 
   const reviewsData = allReviews?.reviews || [];
 

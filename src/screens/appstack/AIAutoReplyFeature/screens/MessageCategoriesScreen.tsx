@@ -14,6 +14,8 @@ import Metrics from '@/utility/Metrics';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import MessageCategoriesContainer from '../containers/MessageCategoriesContainer';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const MessageCategoriesScreen = () => {
   const { t } = useTranslation();
@@ -26,6 +28,11 @@ const MessageCategoriesScreen = () => {
     updatingId, // <-- Grab the specific ID being updated
     navigation
   } = MessageCategoriesContainer();
+
+          const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
 
   const getConfidenceColor = (value: number) => {
     if (value >= 80) return Colors.MEDIUM_SEA_GREEN;

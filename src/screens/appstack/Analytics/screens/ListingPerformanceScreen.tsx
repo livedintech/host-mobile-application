@@ -11,9 +11,16 @@ import AnalyticContainers from '../containers/AnalyticContainers';
 import FilterModal from '../components/FilterModal';
 import PerformanceCard from '../components/PerformanceCard';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const ListingPerformanceScreen = () => {
   const { t } = useTranslation();
+          const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen/>;
+  }
+
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const {
     AnalyticsPerformance,

@@ -1,6 +1,15 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, SafeAreaView, Animated } from 'react-native';
-import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+  Animated,
+} from 'react-native';
+import {
+  GestureHandlerRootView,
+  Swipeable,
+} from 'react-native-gesture-handler';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -13,7 +22,8 @@ import useNotificationsContainer, {
 } from './NotificationsContainer';
 import { ApiNotificationItem } from '@/services/mobileNotificationsApi';
 import { useTranslation } from 'react-i18next';
-
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../NoListingScreen/NoListingScreen';
 
 type NotificationItemProps = {
   item: ApiNotificationItem;
@@ -41,7 +51,11 @@ const DeleteAction = ({
   return (
     <View style={styles.deleteActionContainer}>
       <Animated.View style={{ transform: [{ scale }] }}>
-        <TouchableOpacity style={styles.deleteCircle} onPress={() => onDelete(id)} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.deleteCircle}
+          onPress={() => onDelete(id)}
+          activeOpacity={0.8}
+        >
           <Svgicons path="trashIcon" size={22} color={Colors.BLACK} />
         </TouchableOpacity>
       </Animated.View>
@@ -49,10 +63,20 @@ const DeleteAction = ({
   );
 };
 
-const NotificationItem = ({ item, icon, time, onDelete, onPress }: NotificationItemProps) => (
+const NotificationItem = ({
+  item,
+  icon,
+  time,
+  onDelete,
+  onPress,
+}: NotificationItemProps) => (
   <Swipeable
     renderRightActions={(_progress, dragX) => (
-      <DeleteAction dragX={dragX} onDelete={onDelete} id={item.notification_id} />
+      <DeleteAction
+        dragX={dragX}
+        onDelete={onDelete}
+        id={item.notification_id}
+      />
     )}
     friction={2}
     rightThreshold={40}
@@ -85,7 +109,13 @@ const NotificationItem = ({ item, icon, time, onDelete, onPress }: NotificationI
             numberOfLines={1}
           />
         ) : null} */}
-        <AppText text={time} fontSize={12} color={Colors.SMOOTH_GREY} mt={6} textAlign="right" />
+        <AppText
+          text={time}
+          fontSize={12}
+          color={Colors.SMOOTH_GREY}
+          mt={6}
+          textAlign="right"
+        />
       </View>
     </TouchableOpacity>
   </Swipeable>
@@ -102,15 +132,26 @@ const NotificationsScreen = () => {
     goBack,
   } = useNotificationsContainer();
 
-    const { i18n: localI18n, t } = useTranslation();
+  const { user } = useAuthStore();
+
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
+
+  const { i18n: localI18n, t } = useTranslation();
   const isArabic = localI18n.language === 'ar';
-  
 
   const renderItem = ({ item }: { item: FlatItem }) => {
-    console.log("item",item)
+    console.log('item', item);
     if (item.type === 'header') {
       return (
-        <AppText text={item.title} fontSize={16} type="SemiBold" mt={20} mb={15} />
+        <AppText
+          text={item.title}
+          fontSize={16}
+          type="SemiBold"
+          mt={20}
+          mb={15}
+        />
       );
     }
 
@@ -131,11 +172,24 @@ const NotificationsScreen = () => {
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => goBack()} style={styles.backCircle}>
-              <Svgicons path={isArabic ? "arrowRightIcon" : "arrowLeftIcon"} size={24} />
+            <TouchableOpacity
+              onPress={() => goBack()}
+              style={styles.backCircle}
+            >
+              <Svgicons
+                path={isArabic ? 'arrowRightIcon' : 'arrowLeftIcon'}
+                size={24}
+              />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.markReadBtn} onPress={handleMarkAllRead}>
-              <AppText text={t('app.notifications.mark_all_read')} fontSize={13} type="Medium" />
+            <TouchableOpacity
+              style={styles.markReadBtn}
+              onPress={handleMarkAllRead}
+            >
+              <AppText
+                text={t('app.notifications.mark_all_read')}
+                fontSize={13}
+                type="Medium"
+              />
             </TouchableOpacity>
           </View>
 
@@ -149,7 +203,12 @@ const NotificationsScreen = () => {
             contentContainerStyle={styles.scrollBody}
             contentInsetAdjustmentBehavior="never"
             ListHeaderComponent={
-              <AppText  text={t('app.notifications.title')} fontSize={34} type="Bold" mb={5} />
+              <AppText
+                text={t('app.notifications.title')}
+                fontSize={34}
+                type="Bold"
+                mb={5}
+              />
             }
           />
         </SafeAreaView>
