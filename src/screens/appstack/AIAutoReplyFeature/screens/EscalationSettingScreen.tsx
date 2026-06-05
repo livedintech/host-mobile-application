@@ -22,6 +22,8 @@ import Metrics from '@/utility/Metrics';
 import EscalationSettingContainer from '../containers/EscalationSettingContainer';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CHART_HEIGHT = 120;
@@ -176,6 +178,12 @@ const EscalationSettingScreen = () => {
     },
     mode: 'onChange',
   });
+
+          const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
+
 
   const confidenceValue = useWatch({ control, name: 'confidenceInput' });
   const sentimentValue = useWatch({ control, name: 'sentimentInput' });

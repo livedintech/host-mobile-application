@@ -12,6 +12,8 @@ import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const ManageListingScreen = () => {
   const { t } = useTranslation();
@@ -24,7 +26,11 @@ const ManageListingScreen = () => {
     refetch,
     UserPermission,
   } = useManageListingContainer();
-
+  
+    const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
   const data = listings?.data ?? [];
   const isSupervisor = UserPermission?.role_key === 'supervisor';
 

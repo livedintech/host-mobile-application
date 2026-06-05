@@ -18,6 +18,8 @@ import Metrics from '@/utility/Metrics';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import AiAutoPilotContainer from '../containers/AiAutoPilotContainer';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const AiAutoPilotScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
@@ -37,6 +39,11 @@ const AiAutoPilotScreen = ({ navigation }: any) => {
     refetchAutopilot,
     waitTriggerData,
   } = AiAutoPilotContainer();
+
+          const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
 
   return (
     <BGImage

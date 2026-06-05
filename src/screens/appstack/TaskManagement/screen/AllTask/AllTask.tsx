@@ -31,6 +31,8 @@ import AllTaskContainer from '../../container/AllTaskContainer/AllTaskContainer'
 import NoTaskScreen from '../NoTaskScreen/NoTaskScreen';
 import { useTaskStore } from '@/store/taskStore';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -63,6 +65,12 @@ const AllTask = () => {
   const { t } = useTranslation();
 
   const { resetTaskStore } = useTaskStore();
+  const { user } = useAuthStore();
+
+
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
 
   const filterSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['60%'], []);

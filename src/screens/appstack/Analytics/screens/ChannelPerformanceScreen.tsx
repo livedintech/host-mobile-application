@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { Colors } from '@/theme/colors';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
 import AnalyticsChart from '../components/AnalyticsChart';
+import { useAuthStore } from '@/store/useAuthStore';
+import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 
 const BG_IMAGE = require('@/assets/img/background/channelPerformanceBG.png');
 
@@ -40,6 +42,11 @@ const ChannelPerformanceScreen = () => {
     control,
     name: 'listings',
   });
+
+          const { user } = useAuthStore();
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
+  }
 
   // TRIGGER: When dropdown changes, tell the container to refetch API
   useEffect(() => {
