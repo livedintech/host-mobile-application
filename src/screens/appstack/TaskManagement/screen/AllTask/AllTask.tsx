@@ -126,6 +126,7 @@ const AllTask = () => {
   const { resetTaskStore } = useTaskStore();
   const { user } = useAuthStore();
 
+
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
