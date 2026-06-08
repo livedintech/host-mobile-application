@@ -28,22 +28,21 @@ export default function useVerifyPhoneNumberContainer() {
   const { params } = useRoute();
   console.log('params', params);
 
-
-  const actualPhone   = (params as any)?.phone_number;
-  const code          = (params as any)?.phone_with_code;
-  const country_code  = (params as any)?.country_code;
+  const actualPhone = (params as any)?.phone_number;
+  const code = (params as any)?.phone_with_code;
+  const country_code = (params as any)?.country_code;
   const isLoginScreen = (params as any)?.isLoginScreen;
-  const isDeepLink    = (params as any)?.isDeepLink;
+  const isDeepLink = (params as any)?.isDeepLink;
 
-  const dlListing  = (params as any)?.dl_listing  || '';
-  const dlName     = (params as any)?.dl_name     || '';
-  const dlEmail    = (params as any)?.dl_email    || '';
-  const dlPhone    = (params as any)?.dl_phone    || '';
-  const dlCountry  = (params as any)?.dl_country  || '';
-  const dlState    = (params as any)?.dl_state    || '';
-  const dlCity     = (params as any)?.dl_city     || '';
+  const dlListing = (params as any)?.dl_listing || '';
+  const dlName = (params as any)?.dl_name || '';
+  const dlEmail = (params as any)?.dl_email || '';
+  const dlPhone = (params as any)?.dl_phone || '';
+  const dlCountry = (params as any)?.dl_country || '';
+  const dlState = (params as any)?.dl_state || '';
+  const dlCity = (params as any)?.dl_city || '';
   const dlDistrict = (params as any)?.dl_district || '';
-  const dlRef      = (params as any)?.dl_ref      || '';
+  const dlRef = (params as any)?.dl_ref || '';
 
   const {
     control,
@@ -59,13 +58,15 @@ export default function useVerifyPhoneNumberContainer() {
 
   const otpCode = watch('otpCode');
 
-
   // Verify OTP
   const { mutateAsync: verifyOtpPayload, isPending: isPendingVerifyOtp } =
     useMutation<OtpVerifyResponse, Error, VerifyOtpPayload>({
       mutationFn: verifyOtpApi,
       onError: ({ message }) => {
-        Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
+        Toast.show({
+          type: 'error',
+          text1: message || i18n.t('auth.verify_phone.login_failed'),
+        });
       },
     });
 
@@ -82,7 +83,10 @@ export default function useVerifyPhoneNumberContainer() {
       setIsResendDisabled(true);
     },
     onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || i18n.t('auth.verify_phone.login_failed') });
+      Toast.show({
+        type: 'error',
+        text1: message || i18n.t('auth.verify_phone.login_failed'),
+      });
     },
   });
 
@@ -116,11 +120,12 @@ export default function useVerifyPhoneNumberContainer() {
   }, [isResendDisabled, actualPhone, code, country_code]);
 
   const handleVerifyOtp = async (data: { otpCode: string }) => {
+    console.log("data",data)
     const phoneParams = {
       country_code,
-      phone_number:    actualPhone,
+      phone_number: actualPhone,
       phone_with_code: code,
-      otp:             data.otpCode,
+      otp: data.otpCode,
     };
 
     try {
@@ -128,6 +133,7 @@ export default function useVerifyPhoneNumberContainer() {
     } catch {
       return;
     }
+    console.log("isDeepLink",isDeepLink)
 
     if (isLoginScreen) {
       navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, {
@@ -143,8 +149,13 @@ export default function useVerifyPhoneNumberContainer() {
       if (!dlListing) {
         navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
           ...phoneParams,
-          name: dlName, email: dlEmail,
-          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
+          name: dlName,
+          email: dlEmail,
+          country: dlCountry,
+          state: dlState,
+          city: dlCity,
+          district: dlDistrict,
+          ref: dlRef,
         });
       } else if (String(dlListing) === '1') {
         navigate(NavigationRoutes.AUTH_STACK.CREATE_ACCOUNT, {
@@ -153,16 +164,25 @@ export default function useVerifyPhoneNumberContainer() {
             listing_count: 1,
             pricing: null,
             name: dlName,
-            ref:  dlRef,
+            ref: dlRef,
           },
         });
       } else if (String(dlListing) === '2' || String(dlListing) === '3') {
         navigate(NavigationRoutes.AUTH_STACK.HUB_SPOT_DETAIL_FORM, {
-          name: dlName, email: dlEmail, phone: dlPhone,
-          country: dlCountry, state: dlState, city: dlCity, district: dlDistrict, ref: dlRef,
+          name: dlName,
+          email: dlEmail,
+          phone: dlPhone,
+          country: dlCountry,
+          state: dlState,
+          city: dlCity,
+          district: dlDistrict,
+          ref: dlRef,
         });
       } else {
-        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, { ...phoneParams, name: dlName });
+        navigate(NavigationRoutes.AUTH_STACK.MANAGE_LISTING, {
+          ...phoneParams,
+          name: dlName,
+        });
       }
       return;
     }

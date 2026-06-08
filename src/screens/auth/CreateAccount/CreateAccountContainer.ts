@@ -31,10 +31,12 @@ export default function useCreateAccountContainer() {
   const navigation = useNavigation();
 
   const { params } = useRoute<any>();
+  console.log("paramss",params)
   const country_code = params?.payload?.country_code;
   const phone_number = params?.payload?.phone_number;
   const phone_with_code = params?.payload?.phone_with_code;
   const listing_count = params?.payload?.listing_count;
+  const otp = params?.payload?.otp;
   const pricing = params?.payload?.pricing;
 
   const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false);
@@ -112,7 +114,8 @@ export default function useCreateAccountContainer() {
       phone_number: String(phone_number),
       phone_with_code,
       listing_count,
-      agreeToTerms: isTermsAccepted
+      agreeToTerms: isTermsAccepted,
+      otp: otp
     };
     createAccountPayload(payload);
   };
