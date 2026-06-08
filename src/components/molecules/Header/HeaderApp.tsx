@@ -25,6 +25,7 @@ interface HeaderApp {
   isGetStarted?: boolean;
   isLogo?: boolean;
   isLang?: boolean;
+  isLangRight?: boolean;
   addIconAfterisGoBack?: string;
   isShowProfile?: boolean;
   isNotification?: boolean;
@@ -35,6 +36,7 @@ const HeaderApp = ({
   isGetStarted,
   isLogo,
   isLang,
+  isLangRight,
   isGoBackAfterLogo,
   addIconAfterisGoBack,
   isShowProfile,
@@ -126,8 +128,8 @@ const HeaderApp = ({
           </GlassCard>
         )}
 
-        <View style={styles.headerRight}>
-          {isLang && (
+        <View style={[styles.headerRight, isLangRight && { flex: 1, justifyContent: 'flex-end' }]}>
+          {(isLang || isLangRight) && (
             <>
               {/* <GradientBorder
                 borderRadius={16}

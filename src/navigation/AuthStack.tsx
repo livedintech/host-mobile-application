@@ -28,7 +28,7 @@ const AuthStack = () => {
         }
       />
       <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang /> }}
+        options={{ header: () => <HeaderApp  isLangRight /> }}
         name={NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE}
         getComponent={() =>
           require('@/screens/auth/LoginWithPhone/LoginWithPhoneScreen').default
