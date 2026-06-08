@@ -12,6 +12,7 @@ export default function useManageListingContainer() {
   const confirmedRef = useRef(false);
   const navigation = useNavigation();
   const { params } = useRoute();
+  console.log("managelistingparams",params)
 
   const dlName     = (params as any)?.name     || '';
   const dlEmail    = (params as any)?.email    || '';
@@ -48,6 +49,7 @@ export default function useManageListingContainer() {
       country_code:    (params as any)?.country_code,
       phone_number:    (params as any)?.phone_number,
       phone_with_code: (params as any)?.phone_with_code,
+      otp: (params as any)?.otp,
       listing_count:   localSelectedId,
       pricing:         plan?.price,
       name:            dlName,
