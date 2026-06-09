@@ -198,6 +198,9 @@ const ChatScreen = () => {
     string | number | null
   >(null);
 
+  const [isInquiryDismissed, setIsInquiryDismissed] = useState(false);
+  const [isReservationDismissed, setIsReservationDismissed] = useState(false);
+
   const [isAtBottom, setIsAtBottom] = useState(true);
 
   const [unreadCount, setUnreadCount] = useState(0);
@@ -581,9 +584,11 @@ const ChatScreen = () => {
                 styles.messagesList,
                 {
                   paddingBottom:
-                    data?.conversation?.thread_type === 'inquiry' ||
-                    data?.conversation?.thread_type === 'reservation_request'
-                      ? Metrics.verticalScale(200)
+                    (data?.conversation?.thread_type === 'inquiry' &&
+                      !isInquiryDismissed) ||
+                    (data?.conversation?.thread_type === 'reservation_request' &&
+                      !isReservationDismissed)
+                      ? Metrics.verticalScale(250)
                       : 0,
                 },
               ]}
@@ -1009,7 +1014,10 @@ const ChatScreen = () => {
             {/* </View>
         </KeyboardStickyView> */}
             <InquiryModal
-              visible={data?.conversation?.thread_type === 'inquiry'}
+              visible={
+                data?.conversation?.thread_type === 'inquiry' &&
+                !isInquiryDismissed
+              }
               inquiryId={data?.conversation?.id}
               description={`${formatDateRange(
                 data?.conversation?.arrival_date,
@@ -1018,11 +1026,12 @@ const ChatScreen = () => {
                 'app.chat.guests',
               )}`}
               name={`Inquiry - ${data?.conversation?.listing?.title}`}
-              onClose={() => {}}
+              onClose={() => setIsInquiryDismissed(true)}
             />
             <InquiryModal
               visible={
-                data?.conversation?.thread_type === 'reservation_request'
+                data?.conversation?.thread_type === 'reservation_request' &&
+                !isReservationDismissed
               }
               inquiryId={data?.conversation?.id}
               threadType={data?.conversation?.thread_type}
@@ -1036,7 +1045,7 @@ const ChatScreen = () => {
                 'app.chat.guests',
               )}`}
               name={data?.conversation?.name}
-              onClose={() => {}}
+              onClose={() => setIsReservationDismissed(true)}
             />
           </View>
         </TouchableWithoutFeedback>

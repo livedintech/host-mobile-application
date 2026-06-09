@@ -202,7 +202,7 @@ const NewLayout = ({
               styles.listItem,
               index !== recommendedNextItems.length - 1 && styles.borderBottom,
             ]}
-            onPress={() => item.route && onNavigate(item.route)}
+            onPress={() => item.route && onNavigate(item.route, item.params)}
           >
             <View style={styles.listItemIcon}>
               <Svgicons path={item.icon} size={22} />
@@ -314,6 +314,7 @@ const HomeScreen = ({ navigation }: any) => {
       title: t('app.home.create_staff'),
       subtitle: t('app.home.create_staff_sub'),
       route: NavigationRoutes.APP_STACK.USER_MANAGEMENT_FORM,
+      params: { mode: 'create' },
     },
     {
       id: 'has_ttlock_connected',

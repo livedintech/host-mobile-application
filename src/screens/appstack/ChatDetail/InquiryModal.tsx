@@ -95,11 +95,8 @@ const InquiryModal = ({
       {viewState === 'actions' && (
         <>
           <View style={styles.headerRow}>
-            <View
-              style={{
-                flex: 1,
-              }}
-            >
+            <View style={{ width: 28 }} />
+            <View style={{ flex: 1 }}>
               {name && (
                 <AppText
                   text={name}
@@ -110,9 +107,9 @@ const InquiryModal = ({
                 />
               )}
             </View>
-            {/* <ButtonView onPress={() => console.log('View Details')}>
-                            <AppText text={t('app.inquiry_modal.view_details')} fontSize={14} type="SemiBold" color={Colors.BLACK} style={{ textDecorationLine: 'underline' }} />
-                        </ButtonView> */}
+            <ButtonView onPress={onClose} style={styles.closeBtn}>
+              <Svgicons path="crossUnique" size={25} color={Colors.BLACK} />
+            </ButtonView>
           </View>
 
           <AppText
@@ -325,6 +322,13 @@ const styles = StyleSheet.create({
   backBtn: {
     padding: Metrics.scale(5),
     marginLeft: Metrics.scale(-5),
+  },
+  closeBtn: {
+    padding: Metrics.scale(5),
+    marginRight: Metrics.scale(-5),
+    position:'absolute',
+    right:-20,
+    top:-25
   },
   formContent: {
     width: '100%',
