@@ -595,7 +595,7 @@
       "price_hint": "SR499 - SR500 حسب العروض",
       "similar_listings": "عقارات مماثلة SR86 - SR129",
       "date_error": "لا يمكن أن يكون تاريخ البداية والنهاية متطابقَين.",
-        "end_date_before_start_error": "لا يمكن أن يكون تاريخ المغادرة قبل تاريخ الوصول."
+      "end_date_before_start_error": "لا يمكن أن يكون تاريخ المغادرة قبل تاريخ الوصول."
     },
     "property_step1": {
       "step_label": "الخطوة 1",
@@ -2080,7 +2080,10 @@
       "toast_success_desc": "تم حفظ قواعد تصعيد الذكاء الاصطناعي الخاصة بك.",
       "toast_error_title": "فشل التحديث",
       "error_required": "لا يمكن ترك هذا الحقل فارغًا",
-      "error_confidence_range": "يجب أن تكون القيمة بين 80% و 100%"
+      "error_confidence_range": "يجب أن تكون القيمة بين 75٪ و100٪",
+      "error_sentiment_range": "يجب أن تكون القيمة بين 40٪ و100٪",
+      "error_confidence_min": "لا يمكن أن يكون مستوى الثقة أقل من 75٪",
+      "error_sentiment_min": "لا يمكن أن يكون مستوى المشاعر أقل من 40٪"
     },
     "categories": {
       "title": "فئات الرسائل",
