@@ -75,7 +75,7 @@ const FigmaGradientGraph = ({
     })
     .sort((a, b) => a.x - b.x);
 
-  const visualValue = type === 'confidence' ? Math.max(inputValue, 80) : Math.max(inputValue, 30);
+  const visualValue = type === 'confidence' ? Math.max(inputValue, 75) : Math.max(inputValue, 40);
   const currentX = (visualValue / 100) * chartWidth;
 
   let currentY = CHART_HEIGHT - 30;
@@ -173,8 +173,8 @@ const EscalationSettingScreen = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      confidenceInput: '80',
-      sentimentInput: '30',
+      confidenceInput: '75',
+      sentimentInput: '40',
     },
     mode: 'onChange',
   });
@@ -204,11 +204,11 @@ const EscalationSettingScreen = () => {
   useEffect(() => {
     const configSource = settingsData?.data || settingsData;
     if (configSource) {
-      setValue('confidenceInput', String(configSource.confidence_level ?? '80'), { shouldValidate: true });
+      setValue('confidenceInput', String(configSource.confidence_level ?? '75'), { shouldValidate: true });
       
       // If frustration detection is off in the incoming payload, fall back to showing '30' instead of '0'
       const sentimentBackendVal = configSource.sentiment_level;
-      const initialSentiment = (sentimentBackendVal === 0 || !configSource.frustration_detection) ? '30' : String(sentimentBackendVal);
+      const initialSentiment = (sentimentBackendVal === 0 || !configSource.frustration_detection) ? '40' : String(sentimentBackendVal);
       setValue('sentimentInput', initialSentiment, { shouldValidate: frustrationEnabled });
     }
   }, [settingsData, setValue]);
@@ -217,7 +217,7 @@ const EscalationSettingScreen = () => {
   useEffect(() => {
     if (!frustrationEnabled) {
       clearErrors('sentimentInput');
-      setValue('sentimentInput', '30', { shouldValidate: false });
+      setValue('sentimentInput', '40', { shouldValidate: false });
     }
   }, [frustrationEnabled, clearErrors, setValue]);
 
@@ -241,7 +241,7 @@ const EscalationSettingScreen = () => {
           <InputField
             name="confidenceInput"
             label={t('app.escalation.confidence_label', 'Send Automatically When Confident')}
-            placeholder="80"
+            placeholder="75"
             control={control as any}
             errors={errors}
             keyboardType="numeric"
@@ -253,7 +253,7 @@ const EscalationSettingScreen = () => {
                 if (num < 0 || num > 100) {
                   return t('app.escalation.error_confidence_range', 'Value must be between 0 and 100');
                 }
-                if (num < 80) {
+                if (num < 75) {
                   return t('app.escalation.error_confidence_min', 'Confidence level cannot be below 80%');
                 }
                 return true;
@@ -287,7 +287,7 @@ const EscalationSettingScreen = () => {
               errors={errors}
               keyboardType="numeric"
               containerStyle={{ marginBottom: 10 }}
-              placeholder="30"
+              placeholder="40"
               rules={
                 frustrationEnabled
                   ? {
@@ -297,7 +297,7 @@ const EscalationSettingScreen = () => {
                         if (num < 0 || num > 100) {
                           return t('app.escalation.error_sentiment_range', 'Value must be between 0% and 100%');
                         }
-                        if (num < 30) {
+                        if (num < 40) {
                           return t('app.escalation.error_sentiment_min', 'Sentiment level cannot be below 30%');
                         }
                         return true;

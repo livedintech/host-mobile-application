@@ -41,9 +41,11 @@ export interface GetNotificationsResponse {
 }
 
 export const getMobileNotifications = async (page: number = 1): Promise<GetNotificationsResponse> => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const { ok, response, data } = await apiService.get(
     SERVICE_CONFIG_URLS.APP.GET_MOBILE_NOTIFICATIONS,
-    { page },
+    { page, timezone },
   );
 
   if (ok) return data;

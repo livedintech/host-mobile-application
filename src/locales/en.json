@@ -597,7 +597,7 @@
       "price_hint": "SR499 - SR500 depending on promotions",
       "similar_listings": "Similar properties SR86 - SR129",
       "date_error": "Start and end date cannot be the same.",
-        "end_date_before_start_error": "End date cannot be earlier than start date."
+      "end_date_before_start_error": "End date cannot be earlier than start date."
     },
     "property_step1": {
       "step_label": "Step 1",
@@ -2067,7 +2067,7 @@
       "title": "Escalation Settings",
       "description": "Controls when the AI replies automatically vs. when messages are sent to you for review. Higher thresholds mean more control; lower thresholds mean more automation.",
       "confidence_title": "Confidence Level",
-      "graph_description":"Choose how confident the AI should be before sending a reply automatically. If confidence is low, the message will be sent to you for review.",
+      "graph_description": "Choose how confident the AI should be before sending a reply automatically. If confidence is low, the message will be sent to you for review.",
       "confidence_label": "Send Automatically When Confident",
       "confidence_automated": "Automated",
       "confidence_hint": "Set the minimum confidence (e.g., 90%) required for the AI to reply on its own.",
@@ -2083,8 +2083,10 @@
       "toast_success_desc": "Your AI escalation rules have been saved.",
       "toast_error_title": "Update Failed",
       "error_required": "Field cannot be empty",
-      "error_confidence_range": "Value must be between 80% and 100%",
-      "error_sentiment_range": "Value must be between 30% and 100%"
+      "error_confidence_range": "Value must be between 75% and 100%",
+      "error_sentiment_range": "Value must be between 40% and 100%",
+      "error_confidence_min": "Confidence level cannot be below 75%",
+      "error_sentiment_min": "Sentiment level cannot be below 40%"
     },
     "categories": {
       "title": "Message Categories",
@@ -2098,7 +2100,7 @@
     },
     "category_instructions": {
       "main_title": "Custom instructions for {{title}}",
-      "description":"Add specific guidelines for how Autopilot should handle discount requests. These instructions will guide responses for this category and ensure consistent replies.",
+      "description": "Add specific guidelines for how Autopilot should handle discount requests. These instructions will guide responses for this category and ensure consistent replies.",
       "add_more": "+ Add more",
       "label_instructions": "Instructions",
       "placeholder_instructions": "Add instructions that Autopilot should follow for this category...",
