@@ -421,7 +421,7 @@ const ReviewDetailScreen = ({ route }: any) => {
 
                 <View style={styles.starRow}>
                   <AppText
-                    text={`${guest.rating}/5`}
+                    text={`${guest.rating}/10`}
                     fontSize={13}
                     type="Bold"
                     mr={8}

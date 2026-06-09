@@ -20,13 +20,10 @@ const PerformanceCard = ({ data, formatNumber }: any) => {
   };
 
   const style = getAssessmentStyle(data.assessment);
-  const isPositive = data.delta_pct >= 0 || !data.delta_pct;
-  const trendColor = isPositive ? '#2D9171' : '#E57373';
 
   return (
     <GlassCard width="100%" style={styles.cardContainer}>
       <View style={styles.topRow}>
-        {/* Image wrapped in GlassCard */}
         <GlassCard width={75} style={styles.imageGlassWrapper}>
           <Image
             source={require('@/assets/img/appartment.png')}
@@ -37,20 +34,22 @@ const PerformanceCard = ({ data, formatNumber }: any) => {
 
         <View style={styles.headerInfo}>
           <View style={styles.row}>
-            <AppText
-              text={data.title}
-              fontSize={14}
-              type="Bold"
-              numberOfLines={2}
-              mb={12}
-            />
-            <GlassCard width={20} style={styles.sparkleGlass}>
+            <View style={{ flex: 1 }}>
+              <AppText
+                text={data.title}
+                fontSize={14}
+                type="Bold"
+                numberOfLines={2}
+                mb={12}
+              />
+            </View>
+            {/* Explicitly passing custom width to match your original UI scaling */}
+            <GlassCard width={28} style={styles.sparkleGlass}>
               <Svgicons path="sparkleRewardIcon" size={16} />
             </GlassCard>
           </View>
 
           <View style={styles.metricsRow}>
-            {/* Removed flex: 1 from these items */}
             <View style={styles.metricItem}>
               <View style={styles.labelGroup}>
                 <Svgicons path="walletIcon" size={12} mr={4} />
@@ -109,22 +108,6 @@ const PerformanceCard = ({ data, formatNumber }: any) => {
             />
           </View>
         </GlassCard>
-
-        {/* <GlassCard width="auto" style={styles.insightBadge}>
-          <View style={styles.insightContent}>
-            <Svgicons
-              path={isPositive ? 'trendUpIcon' : 'trendDownIcon'}
-              size={14}
-              mr={4}
-            />
-            <AppText
-              text={`${data.delta_pct || 0}% vs previous period`}
-              fontSize={11}
-              color={trendColor}
-              type="Medium"
-            />
-          </View>
-        </GlassCard> */}
       </View>
     </GlassCard>
   );
@@ -139,7 +122,6 @@ const styles = StyleSheet.create({
   },
   topRow: {
     flexDirection: 'row',
-    // alignItems: 'center',
     marginBottom: 15,
   },
   imageGlassWrapper: {
@@ -156,13 +138,11 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     flex: 1,
-    paddingRight: 5,
   },
   metricsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 20,
   },
   metricItem: {
     alignItems: 'flex-start',
@@ -173,12 +153,19 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   sparkleGlass: {
-    height: 35,
-    borderRadius: 12,
+    height: 28,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginLeft: 4,
+    marginLeft: 8,
+    padding: 0,          
+    marginBottom: 0,     
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', 
+    justifyContent: 'space-between',
   },
   bottomRow: {
     flexDirection: 'row',
@@ -192,6 +179,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.5)',
+    marginBottom: 0,   
   },
   badgeContent: {
     flexDirection: 'row',
@@ -203,25 +191,6 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     marginRight: 6,
   },
-  insightBadge: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    backgroundColor: '#D9D9D933',
-    borderWidth: 1,
-    borderColor: '#FFFFFF',
-  },
-  insightContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  row:{
-    flex:1,
-   flexDirection: 'row',
-    alignItems: 'center',
-    display:'flex',
-    justifyContent:'space-between'
-  }
 });
 
 export default PerformanceCard;
