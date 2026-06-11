@@ -97,7 +97,7 @@ export const ButtonView = ({
   const _onPress = Utils.debounce((...args: any[]) => {
     const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
     if (currentScreen) {
-      userEventService.logEvent('button_tap', currentScreen);
+      userEventService.logEvent('button_tap', currentScreen).catch(() => {});
     }
     (onPress as any)(...args);
   }, debounceTime, debounceConfig);

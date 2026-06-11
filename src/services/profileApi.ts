@@ -58,10 +58,17 @@ export const getProfileCountriesApi = async () => {
     );
 
     if (ok) {
-        return data.data;
+        const countries = data?.data;
+        if (countries == null) {
+            if (__DEV__) {
+                console.warn('[API] Countries response missing data field:', data);
+            }
+            return [];
+        }
+        return countries;
     }
 
-    throw response.message;
+    throw new Error(response?.message || 'Failed to fetch countries');
 };
 
 //City
@@ -73,9 +80,16 @@ export const getProfileCitiesApi = async (payload: CreateEditlistingStatePayload
 
     const { ok, response, data } = await apiService.get(url);
     if (ok) {
-        return data?.data;
+        const cities = data?.data;
+        if (cities == null) {
+            if (__DEV__) {
+                console.warn('[API] Cities response missing data field:', data);
+            }
+            return [];
+        }
+        return cities;
     }
-    throw new Error(response.message || 'Failed to fetch sub-categories');
+    throw new Error(response?.message || 'Failed to fetch cities');
 };
 
 

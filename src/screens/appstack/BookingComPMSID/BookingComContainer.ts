@@ -9,8 +9,8 @@ import {
     BookingComFormValues,
     bookingComSchema,
 } from '@/validation/bookingCom/bookingComSchema'
-import { bookingcomConnectionPayloadType, bookingcomTestConnectionPayloadType, bookingcomTestConnectionResponse } from '@/types/api/bookingManagementTypes'
-import { bookingcomConnectionApi, bookingcomTestConnectionApi, getUserListingsByUserIDApi } from '@/services/bookingManagementApi'
+import { bookingcomConnectWithChannexPayloadType, bookingcomTestConnectionPayloadType, bookingcomTestConnectionResponse } from '@/types/api/bookingManagementTypes'
+import { bookingcomTestConnectionApi, connectBookingComWithChannexApi, getUserListingsByUserIDApi } from '@/services/bookingManagementApi'
 import STORAGE_CONST from '@/constants/storage'
 import { useAuthStore } from '@/store/useAuthStore'
 import { queryClient } from '@/services/api'
@@ -72,7 +72,7 @@ export default function useBookingComContainer() {
 
     // ----------------- Submit -----------------
     const { mutate: submitPMS, isPending: isSubmitting } = useMutation({
-        mutationFn: bookingcomConnectionApi,
+        mutationFn: connectBookingComWithChannexApi,
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
@@ -128,7 +128,7 @@ export default function useBookingComContainer() {
     // BookingComContainer.ts - onSubmit fix
 
     const onSubmit = (data: BookingComFormValues) => {
-        const payload = data.apartmentId
+        const connectionPayload = data.apartmentId
             ? {
                 title: data.roomId,
                 listing_id: String(data.apartmentId),
@@ -141,7 +141,12 @@ export default function useBookingComContainer() {
                 availability: 1,
             }
 
-        submitPMS(payload as bookingcomConnectionPayloadType)
+        const payload: bookingcomConnectWithChannexPayloadType = {
+            user_id: Number(user!.id),
+            channel_name: data.roomId,
+            ...connectionPayload,
+        }
+        submitPMS(payload)
     }
     return {
         control,

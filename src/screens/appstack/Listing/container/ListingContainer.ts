@@ -1,6 +1,13 @@
-import { useState, useMemo, useEffect } from 'react';
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
@@ -13,6 +20,10 @@ import {
   createDirectBookingApi,
   updateCalendarPricingApi,
   getCalendarBookingManagementListingsApi,
+  clearCalendarStickyCache,
+  getCalendarStickyPrices,
+  getCachedCalendarResult,
+  seedCalendarListingDefaultPrice,
   submitBookingRequestApi,
 } from '@/services/calendarBookingManagement';
 import {
@@ -22,6 +33,61 @@ import {
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { getOtaConfig } from '@/constants/ota_config';
 import { useTranslation } from 'react-i18next';
+
+const cachedDailyPricesByListing: Record<string, Record<string, number>> = {};
+const lastGoodCalendarByListing: Record<string, {
+  bookings: any[];
+  defaultDailyPrice: number;
+  cleaningFee: number;
+  discount: number;
+}> = {};
+
+const normalizeCalendarDateKey = (value: unknown): string | undefined => {
+  if (value == null || value === '') return undefined;
+  const raw = String(value).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
+  if (raw.includes('/')) {
+    const [month, day, year] = raw.split('/');
+    const fullYear = year.length === 2 ? `20${year}` : year;
+    return `${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  return raw;
+};
+
+const getCalendarDayDate = (row: any) =>
+  normalizeCalendarDateKey(row?.calender_date) ??
+  normalizeCalendarDateKey(row?.calendar_date) ??
+  normalizeCalendarDateKey(row?.date);
+
+const parseListingDayRate = (row: any): number | undefined => {
+  const raw = row?.rate ?? row?.price ?? row?.daily_rate ?? row?.amount;
+  if (raw == null || raw === '') return undefined;
+  const rate = Number(String(raw).replace(/,/g, ''));
+  return Number.isFinite(rate) && rate > 0 ? rate : undefined;
+};
+
+const countCalendarDayRows = (bookings?: any[]) =>
+  (bookings ?? []).filter((row) => getCalendarDayDate(row)).length;
+
+const scoreCalendarPayload = (
+  payload?: {
+    bookings?: any[];
+    defaultDailyPrice?: number;
+  } | null,
+  cacheKey?: string,
+) => {
+  if (!payload) return 0;
+  const dayRows = countCalendarDayRows(payload.bookings);
+  if (dayRows > 0) return dayRows + 10_000;
+  if ((payload.defaultDailyPrice ?? 0) > 0) return 1_000;
+  if (cacheKey) {
+    const stickyCount = Object.keys(
+      getCalendarStickyPrices(cacheKey).dailyPriceByDate,
+    ).length;
+    if (stickyCount > 0) return stickyCount + 500;
+  }
+  return payload.bookings?.length ?? 0;
+};
 
 export default function useListingContainer(
   listingIdFromParams: any,
@@ -64,21 +130,43 @@ export default function useListingContainer(
 
   const {
     control,
-    watch,
     setValue,
+    getValues,
     reset,
     clearErrors,
     handleSubmit,
     formState: { errors },
   } = formMethods;
-  const selectedListingId = watch('listing_selection');
+  const selectedListingIdRaw = useWatch({ control, name: 'listing_selection' });
+  const selectedListingId = selectedListingIdRaw
+    ? String(selectedListingIdRaw)
+    : '';
+
+  const setListingSelection = useCallback(
+    (id: string | number | null | undefined) => {
+      const next =
+        id != null && String(id) !== '' && String(id) !== 'all'
+          ? String(id)
+          : '';
+      if (String(getValues('listing_selection') ?? '') === next) return;
+      setValue('listing_selection', next, {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+    },
+    [getValues, setValue],
+  );
 
   // Logic: Pre-fill listing selection from params
   useEffect(() => {
     if (listingIdFromParams) {
       const targetId = String(listingIdFromParams);
-      if (selectedListingId !== targetId)
-        setValue('listing_selection', targetId);
+      if (selectedListingId !== targetId) {
+        setValue('listing_selection', targetId, {
+          shouldDirty: false,
+          shouldValidate: false,
+        });
+      }
     }
   }, [listingIdFromParams, setValue, selectedListingId]);
 
@@ -104,125 +192,313 @@ export default function useListingContainer(
     enabled: selectedTab === 1,
   });
 
-  // Query: Calendar Data
-  const { data: calendarResponse, refetch: refetchCalendar, isLoading: isCalendarLoading } = useQuery({
-    queryKey: ['CALENDAR_DATA', selectedListingId],
-    queryFn: () =>
-      getCalendarBookingManagementListingsApi(selectedListingId || ''),
-    enabled: !!user?.id,
+  const listingCacheKey = selectedListingId ? String(selectedListingId) : 'all';
+
+  const selectedListingWeekdayPrice = useMemo(() => {
+    const option = listingOptions.find(
+      (item: { value?: string }) => item.value === selectedListingId,
+    ) as { weekdayPrice?: number } | undefined;
+    return option?.weekdayPrice ?? 0;
+  }, [listingOptions, selectedListingId]);
+
+  useLayoutEffect(() => {
+    if (selectedListingWeekdayPrice > 0 && listingCacheKey) {
+      seedCalendarListingDefaultPrice(
+        listingCacheKey,
+        selectedListingWeekdayPrice,
+      );
+    }
+  }, [selectedListingWeekdayPrice, listingCacheKey]);
+
+  const listingsLoaded = listingOptions.length > 0;
+  const didAutoSelectListingRef = useRef(false);
+
+  useLayoutEffect(() => {
+    if (
+      selectedTab !== 0 ||
+      selectedListingId ||
+      !listingsLoaded ||
+      didAutoSelectListingRef.current
+    ) {
+      return;
+    }
+    const firstListing = listingOptions.find(
+      (item: { value?: string }) => item.value && item.value !== '',
+    );
+    if (firstListing?.value) {
+      didAutoSelectListingRef.current = true;
+      setValue('listing_selection', String(firstListing.value), {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+    }
+  }, [selectedTab, selectedListingId, listingOptions, listingsLoaded, setValue]);
+
+  const calendarQueryReady =
+    listingsLoaded &&
+    (!!selectedListingId || didAutoSelectListingRef.current);
+
+  // Query: Calendar Data (only on calendar tab — avoids duplicate fetches from reservation screen)
+  const {
+    data: calendarResponse,
+    refetch: refetchCalendar,
+    isLoading: isCalendarLoading,
+    isFetching: isCalendarFetching,
+  } = useQuery({
+    queryKey: ['CALENDAR_DATA', listingCacheKey] as const,
+    queryFn: async ({ queryKey }) => {
+      const key = String(queryKey[1] ?? 'all');
+      const listingId = key === 'all' ? '' : key;
+      const result = await getCalendarBookingManagementListingsApi(listingId);
+
+      if (listingId) {
+        const dayRows = countCalendarDayRows(result.bookings);
+        const cached = getCachedCalendarResult(key);
+        const cachedDays = countCalendarDayRows(cached?.bookings);
+
+        if (dayRows === 0 && cachedDays > 0) {
+          return cached!;
+        }
+      }
+
+      return result;
+    },
+    enabled: !!user?.id && selectedTab === 0 && calendarQueryReady,
+    placeholderData: (previousData, previousQuery) => {
+      if (previousQuery?.queryKey?.[1] === listingCacheKey && previousData) {
+        return previousData;
+      }
+      return (
+        getCachedCalendarResult(listingCacheKey) ??
+        lastGoodCalendarByListing[listingCacheKey]
+      );
+    },
+    retry: false,
+    staleTime: 120_000,
+    gcTime: 300_000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
-  const cleaningFee = calendarResponse?.cleaningFee;
-  const discount = calendarResponse?.discount;
-  const rawData = calendarResponse?.bookings || [];
-  const defaultDailyPrice = calendarResponse?.defaultDailyPrice || 0;
+
+  const stableCalendarResponse = useMemo(() => {
+    const incoming = calendarResponse;
+    const cached =
+      lastGoodCalendarByListing[listingCacheKey] ??
+      getCachedCalendarResult(listingCacheKey);
+
+    if (!incoming) {
+      return cached ?? incoming;
+    }
+
+    const incomingScore = scoreCalendarPayload(incoming, listingCacheKey);
+    const cachedScore = scoreCalendarPayload(cached, listingCacheKey);
+
+    if (!cached || incomingScore >= cachedScore) {
+      if (incomingScore > 0) {
+        lastGoodCalendarByListing[listingCacheKey] = incoming;
+      }
+      return incomingScore > 0 ? incoming : cached ?? incoming;
+    }
+
+    return cached;
+  }, [calendarResponse, listingCacheKey]);
+
+  const cleaningFee = stableCalendarResponse?.cleaningFee;
+  const discount = stableCalendarResponse?.discount;
+
+  const rawData = stableCalendarResponse?.bookings ?? [];
+
+  const dailyPriceByDate = useMemo(() => {
+    const stickyPrices = getCalendarStickyPrices(listingCacheKey);
+    const prices: Record<string, number> = {
+      ...stickyPrices.dailyPriceByDate,
+      ...(cachedDailyPricesByListing[listingCacheKey] ?? {}),
+    };
+    rawData.forEach((item: any) => {
+      const dateKey = getCalendarDayDate(item);
+      const rate = dateKey ? parseListingDayRate(item) : undefined;
+      if (dateKey && rate) {
+        prices[dateKey] = rate;
+      }
+    });
+    if (Object.keys(prices).length > 0) {
+      cachedDailyPricesByListing[listingCacheKey] = prices;
+    }
+    return prices;
+  }, [rawData, listingCacheKey]);
+
+  const defaultDailyPrice = useMemo(() => {
+    const stickyDefault = getCalendarStickyPrices(listingCacheKey).defaultDailyPrice;
+    const sampleDayRate = Object.values(dailyPriceByDate).find((rate) => rate > 0);
+    return (
+      stableCalendarResponse?.defaultDailyPrice ||
+      stickyDefault ||
+      selectedListingWeekdayPrice ||
+      sampleDayRate ||
+      0
+    );
+  }, [
+    stableCalendarResponse?.defaultDailyPrice,
+    listingCacheKey,
+    dailyPriceByDate,
+    selectedListingWeekdayPrice,
+  ]);
   const calendarDataMap = useMemo(() => {
-    const marks: any = {};
+    const marks: Record<string, any> = {};
     if (!Array.isArray(rawData)) return marks;
 
-    const normalizeBooking = (item: any) => ({
-      id: item.id || item.booking_id,
-      guest: item.guest || item.guest_name || 'Guest',
-      source: item.source || item.type || 'direct',
-      source_type: item.source_type || item.type,
-      listing_title: item.listing_title || 'Property',
-      start_date: item.start_date || item.arrival_date,
-      end_date: item.end_date || item.departure_date,
-      checkIn: item.checkIn || '04:00 PM',
-      checkOut: item.checkOut || '12:00 AM',
-      ...item,
-    });
+    const addDaysToDateKey = (dateKey: string, days: number) => {
+      const [y, m, d] = dateKey.split('-').map(Number);
+      const dt = new Date(y, m - 1, d + days);
+      const mm = String(dt.getMonth() + 1).padStart(2, '0');
+      const dd = String(dt.getDate()).padStart(2, '0');
+      return `${dt.getFullYear()}-${mm}-${dd}`;
+    };
 
-    rawData.forEach((item: any) => {
-      // --- PART 1: Handle Calendar Daily Rates/Specific Day Bookings (Single Listing) ---
-      if (item.calender_date) {
-        const dateKey = item.calender_date;
-        marks[dateKey] = {
-          ...marks[dateKey],
-          price: item.rate || marks[dateKey]?.price || defaultDailyPrice,
-        };
+    const normalizeBooking = (item: any) => {
+      const arrival = item.arrival_date || item.start_date;
+      const departure =
+        item.calendar_end_date || item.departure_date || item.end_date;
+      return {
+        ...item,
+        id: item.id || item.booking_id,
+        guest: item.guest || item.guest_name || 'Guest',
+        source: item.source || item.type || 'direct',
+        source_type: item.source_type || item.type,
+        listing_title: item.listing_title || 'Property',
+        arrival_date: arrival,
+        departure_date: departure,
+        start_date: arrival,
+        end_date: departure,
+        checkIn: item.checkIn || '04:00 PM',
+        checkOut: item.checkOut || '12:00 AM',
+      };
+    };
 
-        if (item.bookings && item.bookings.length > 0) {
-          const booking = normalizeBooking(item.bookings[0]);
-          const config = getOtaConfig(booking.source);
+    const isMultiCalendar =
+      !selectedListingId ||
+      selectedListingId === 'all' ||
+      selectedListingId === '';
 
-          let type = 'middle';
-          if (dateKey === booking.start_date) type = 'starting';
-          else if (dateKey === booking.end_date) type = 'ending';
-          if (booking.start_date === booking.end_date) type = 'single';
+    const applyBookingRange = (booking: any, dayRate?: number) => {
+      const normalized = normalizeBooking(booking);
+      const sourceKey =
+        normalized.source_type === 'livedin' ? 'direct' : normalized.source;
+      const config = getOtaConfig(sourceKey);
+      const rangeEnd =
+        booking.calendar_end_date ||
+        normalized.departure_date ||
+        normalized.end_date;
 
-          marks[dateKey] = {
-            ...marks[dateKey],
-            type,
+      if (!normalized.start_date || !rangeEnd) return;
+
+      let dKey = normalized.start_date;
+      while (dKey <= rangeEnd) {
+        let dateType: string = 'middle';
+        if (dKey === normalized.start_date) dateType = 'starting';
+        else if (dKey === rangeEnd) dateType = 'ending';
+        if (normalized.start_date === rangeEnd) dateType = 'single';
+
+        if (!marks[dKey]) {
+          marks[dKey] = {
+            price:
+              dayRate ||
+              (normalized.amount > 0 ? normalized.amount : undefined) ||
+              defaultDailyPrice,
             ota: config.key,
             color: config.color,
-            guest: booking.guest,
-            showLabel: type === 'starting' || type === 'single',
-            bookingData: booking,
+            guest: normalized.guest,
+            type: dateType,
+            showLabel: dateType === 'starting' || dateType === 'single',
+            bookingData: normalized,
+            channels: [config.key.toLowerCase()],
+            bookings: [normalized],
+          };
+        } else {
+          marks[dKey] = {
+            ...marks[dKey],
+            price: marks[dKey].price ?? dayRate ?? defaultDailyPrice,
+            type: dateType,
+            ota: config.key,
+            color: config.color,
+            guest: normalized.guest,
+            showLabel: dateType === 'starting' || dateType === 'single',
+            bookingData: normalized,
+            channels: [
+              ...new Set([
+                ...(marks[dKey].channels || []),
+                config.key.toLowerCase(),
+              ]),
+            ],
+            bookings: [...(marks[dKey].bookings || []), normalized],
           };
         }
+
+        dKey = addDaysToDateKey(dKey, 1);
+      }
+    };
+
+    rawData.forEach((item: any) => {
+      // Single-listing calendar: per-day rows from GET /calendar/{id}
+      const dateKey = getCalendarDayDate(item);
+      if (dateKey) {
+        const parsedRate = parseListingDayRate(item);
+        const dayRate =
+          parsedRate ??
+          dailyPriceByDate[dateKey] ??
+          marks[dateKey]?.price ??
+          defaultDailyPrice;
+
+        marks[dateKey] = {
+          ...marks[dateKey],
+          price: dayRate,
+          rate: dayRate,
+        };
+
+        if (Array.isArray(item.bookings)) {
+          item.bookings.forEach((booking: any) =>
+            applyBookingRange(booking, dayRate),
+          );
+        }
+        return;
       }
 
-      // --- PART 2: Handle Date Range Bookings ---
-      else if (item.start_date && item.end_date) {
-        const normalizedItem = normalizeBooking(item);
-        const config = getOtaConfig(
-          normalizedItem.source_type === 'livedin'
-            ? 'direct'
-            : normalizedItem.source,
-        );
+      // Multi-calendar: listings grouped with nested bookings[]
+      if (item.listing_id && Array.isArray(item.bookings)) {
+        item.bookings.forEach((booking: any) => applyBookingRange(booking));
+        return;
+      }
 
-        const isMultiCalendar =
-          !selectedListingId ||
-          selectedListingId === 'all' ||
-          selectedListingId === '';
-        const rangeEndDate =
-          isMultiCalendar && item.calendar_end_date
-            ? item.calendar_end_date
-            : normalizedItem.end_date;
-        // --- NEW LOGIC END ---
-
-        let current = new Date(normalizedItem.start_date);
-        const last = new Date(rangeEndDate);
-
-        while (current <= last) {
-          const dKey = current.toISOString().split('T')[0];
-
-          let dateType = 'middle';
-          if (dKey === normalizedItem.start_date) dateType = 'starting';
-          else if (dKey === rangeEndDate) dateType = 'ending'; // Use the rangeEndDate for markers
-          if (normalizedItem.start_date === rangeEndDate) dateType = 'single';
-
-          if (!marks[dKey]) {
-            marks[dKey] = {
-              price: normalizedItem.amount || defaultDailyPrice,
-              ota: config.key,
-              color: config.color,
-              guest: normalizedItem.guest,
-              type: dateType,
-              showLabel: dateType === 'starting' || dateType === 'single',
-              bookingData: normalizedItem,
-              channels: [config.key.toLowerCase()],
-              bookings: [normalizedItem],
-            };
-          } else {
-            const existingChannels = marks[dKey].channels || [];
-            if (!existingChannels.includes(config.key.toLowerCase())) {
-              marks[dKey].channels = [
-                ...existingChannels,
-                config.key.toLowerCase(),
-              ];
-            }
-            if (marks[dKey].bookings) {
-              marks[dKey].bookings.push(normalizedItem);
-            }
-          }
-          current.setDate(current.getDate() + 1);
-        }
+      // Flat booking range (multicalendar fallback / reservations / legacy shape)
+      const rangeStart = item.start_date || item.arrival_date;
+      const rangeEnd =
+        item.calendar_end_date || item.end_date || item.departure_date;
+      if (rangeStart && rangeEnd) {
+        applyBookingRange({ ...item, start_date: rangeStart, end_date: rangeEnd });
       }
     });
 
+    Object.entries(dailyPriceByDate).forEach(([dateKey, rate]) => {
+      if (!marks[dateKey]) {
+        marks[dateKey] = { price: rate, rate };
+        return;
+      }
+      if (!marks[dateKey].price || marks[dateKey].price <= 0) {
+        marks[dateKey] = { ...marks[dateKey], price: rate, rate };
+      }
+    });
+
+    if (defaultDailyPrice > 0) {
+      rawData.forEach((item: any) => {
+        const dateKey = getCalendarDayDate(item);
+        if (!dateKey || marks[dateKey]) return;
+        marks[dateKey] = { price: defaultDailyPrice, rate: defaultDailyPrice };
+      });
+    }
+
     return marks;
-  }, [rawData, defaultDailyPrice, selectedListingId]);
+  }, [rawData, defaultDailyPrice, selectedListingId, dailyPriceByDate]);
 
   const filteredReservations = useMemo(() => {
     return (reservationRawData || []).filter((item: any) =>
@@ -353,6 +629,10 @@ export default function useListingContainer(
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
+      clearCalendarStickyCache(selectedListingId || undefined);
+      await queryClient.removeQueries({
+        queryKey: ['CALENDAR_DATA', listingCacheKey],
+      });
       await Promise.all([refetchCalendar(), refetchReservations(), refetchListing()]);
     } finally {
       setIsRefreshing(false);
@@ -461,12 +741,14 @@ export default function useListingContainer(
     errors,
     handleSubmit,
     setValue,
+    setListingSelection,
     selectedListingId,
     listingOptions,
     rawData,
     resLoading,
     filteredReservations,
     calendarDataMap,
+    dailyPriceByDate,
     defaultDailyPrice,
     isFetchingDetails,
     searchQuery,
@@ -486,7 +768,7 @@ export default function useListingContainer(
     isBookingOpen,
     setIsBookingOpen,
     isLoading,
-    isCalendarLoading,
+    isCalendarLoading: isCalendarLoading || isCalendarFetching,
     cleaningFee,
     discount,
     handleBookingAction,

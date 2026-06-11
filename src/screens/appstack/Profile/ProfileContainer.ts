@@ -118,16 +118,56 @@ export default function useProfileContainer() {
     },
   });
 
-  const { data: countriesData = [], isLoading: isLoadingCountriesData } = useQuery({
+  const {
+    data: countriesData = [],
+    isLoading: isLoadingCountriesData,
+    isError: isCountriesError,
+    refetch: refetchCountries,
+  } = useQuery({
     queryKey: [STORAGE_CONST.PROFILE_COUNTRIES],
     queryFn: getProfileCountriesApi,
   });
 
-  const { data: citiesData = [], isLoading: isLoadingStatesData } = useQuery({
+  const {
+    data: citiesData = [],
+    isLoading: isLoadingStatesData,
+    isError: isCitiesError,
+    refetch: refetchCities,
+  } = useQuery({
     queryKey: [STORAGE_CONST.PROFILE_CITIES, selectedCountryId],
     queryFn: () => getProfileCitiesApi({ country_id: Number(selectedCountryId) }),
     enabled: Boolean(selectedCountryId),
   });
+
+  useEffect(() => {
+    if (countriesData.length > 0 && user?.country_id) {
+      setValue('country', Number(user.country_id), { shouldValidate: false });
+    }
+  }, [countriesData, user?.country_id, setValue]);
+
+  useEffect(() => {
+    if (citiesData.length > 0 && user?.city_id && selectedCountryId) {
+      setValue('city', Number(user.city_id), { shouldValidate: false });
+    }
+  }, [citiesData, user?.city_id, selectedCountryId, setValue]);
+
+  useEffect(() => {
+    if (isCountriesError) {
+      Toast.show({
+        type: 'error',
+        text1: i18n.t('common.toast.failed_load_countries', { defaultValue: 'Failed to load countries' }),
+      });
+    }
+  }, [isCountriesError]);
+
+  useEffect(() => {
+    if (isCitiesError) {
+      Toast.show({
+        type: 'error',
+        text1: i18n.t('common.toast.failed_load_cities', { defaultValue: 'Failed to load cities' }),
+      });
+    }
+  }, [isCitiesError]);
 
   // Image Upload
   const { mutate: uploadImage, isPending: isUploading } = useMutation({
@@ -156,12 +196,12 @@ export default function useProfileContainer() {
 
   const countriesOptions = (countriesData as CountryOption[]).map((item) => ({
     label: item.name,
-    value: item.id,
+    value: Number(item.id),
   }));
 
   const citiesOptions = (citiesData as CityOption[]).map((item) => ({
     label: item.name,
-    value: item.id,
+    value: Number(item.id),
   }));
 
   return {
@@ -185,7 +225,11 @@ export default function useProfileContainer() {
     citiesOptions,
     isLoadingCountriesData,
     isLoadingStatesData,
+    isCountriesError,
+    isCitiesError,
+    refetchCountries,
+    refetchCities,
     setFullViewVisible,
-    isFullViewVisible
+    isFullViewVisible,
   };
 }

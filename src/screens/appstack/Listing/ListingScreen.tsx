@@ -30,9 +30,11 @@ const ListingScreen = () => {
     errors,
     handleSubmit,
     setValue,
+    setListingSelection,
     selectedListingId,
     listingOptions,
     calendarDataMap,
+    dailyPriceByDate,
     rawData,
     defaultDailyPrice,
     isFetchingDetails,
@@ -56,8 +58,8 @@ const ListingScreen = () => {
 
   if (!user?.has_listing) {
     return (
-      <View style={{ marginTop: Metrics.verticalScale(-15), flex:1 }}>
-        <NoListingScreen />;
+      <View style={{ marginTop: Metrics.verticalScale(-15), flex: 1 }}>
+        <NoListingScreen />
       </View>
     );
   }
@@ -135,12 +137,13 @@ const ListingScreen = () => {
         listingOptions={listingOptions}
         selectedListingId={selectedListingId || ''}
         markedDates={calendarDataMap}
+        dailyPriceByDate={dailyPriceByDate}
         bookings={rawData}
         onDayPress={handleDayPress}
         defaultPrice={defaultDailyPrice}
         isLoading={isRefreshing}
         onRefresh={handleRefresh}
-        onListingPress={id => setValue('listing_selection', String(id))}
+        onListingPress={setListingSelection}
       />
 
       {isBookingOpen && (

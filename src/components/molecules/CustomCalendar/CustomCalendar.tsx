@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, memo, useMemo, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,6 +14,23 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '../AppText/AppText';
 import ButtonView from '../AppButton/ButtonView';
 import { FormatCurrency } from '@/utility/FormatUtils';
+
+const resolveDayPrice = (
+  marking: any,
+  dateString: string,
+  dailyPriceByDate?: Record<string, number>,
+  defaultPrice?: number,
+) => {
+  const candidates = [
+    marking?.price,
+    marking?.rate,
+    dailyPriceByDate?.[dateString],
+    defaultPrice,
+  ];
+  return candidates.find(
+    (value) => value != null && value !== '' && Number(value) > 0,
+  );
+};
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CALENDAR_PADDING = 0;
@@ -35,7 +52,6 @@ const COLORS = {
 };
 
 const getOTASource = (source?: string) => {
-  console.log('sourcetestt', source);
   const name = source?.toLowerCase() || '';
   if (name.includes('airbnb'))
     return {
@@ -63,7 +79,7 @@ const getOTASource = (source?: string) => {
   };
 };
 
-const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
+const CustomDay = memo(({ date, marking, onPress, defaultPrice, dailyPriceByDate }: any) => {
   const {
     type,
     guest,
@@ -88,8 +104,11 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
   const solidLight = brand.light || COLORS.DEFAULT_LIGHT;
 
   const dateString = date.dateString;
-  const arrival = bookingData?.arrival_date;
-  const departure = bookingData?.departure_date;
+  const arrival = bookingData?.arrival_date || bookingData?.start_date;
+  const departure =
+    bookingData?.departure_date ||
+    bookingData?.calendar_end_date ||
+    bookingData?.end_date;
 
   const isArrival = isActive && dateString === arrival;
   const isDeparture = isActive && dateString === departure;
@@ -110,6 +129,12 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
     ? truncateName(guest, 6)
     : truncateName(guest, 12);
   const iconColor = isMid ? themeColor : '#FFFFFF';
+  const displayPrice = resolveDayPrice(
+    marking,
+    dateString,
+    dailyPriceByDate,
+    defaultPrice,
+  );
 
   return (
     <View style={[styles.dayCell, shouldDisable && { opacity: 0.3 }]}>
@@ -163,13 +188,13 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                   isSingleDay && { maxWidth: SELECTION_HEIGHT * 0.9 },
                 ]}
               >
-                {/* {brand.icon !== 'livedin' && ( */}
-                <Svgicons
-                  path={brand.icon as any}
-                  size={ms(9)}
-                  color={iconColor}
-                />
-                {/* )} */}
+                {brand.icon ? (
+                  <Svgicons
+                    path={brand.icon as any}
+                    size={ms(9)}
+                    color={iconColor}
+                  />
+                ) : null}
                 {/* <AppText
                   text={displayName}
                   style={[
@@ -200,9 +225,9 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
             >
               {date.day}
             </Text>
-            {!isActive && (
+            {!isActive && displayPrice != null && (
               <Text style={styles.priceText}>
-                SAR {rate || price || defaultPrice}
+                {FormatCurrency(displayPrice)}
               </Text>
             )}
           </View>
@@ -210,14 +235,65 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
       </ButtonView>
     </View>
   );
-};
+});
 
 const CustomCalendar = ({
   markedDates,
+  dailyPriceByDate,
   onDayPress,
   currentDate,
   defaultPrice,
 }: any) => {
+  const initial = currentDate ? new Date(currentDate) : new Date();
+  const [visibleMonth, setVisibleMonth] = useState({
+    year: initial.getFullYear(),
+    month: initial.getMonth() + 1,
+  });
+
+  const enrichedMarkedDates = useMemo(() => {
+    const hasDefault = defaultPrice != null && Number(defaultPrice) > 0;
+    const hasDailyMap =
+      dailyPriceByDate != null &&
+      Object.keys(dailyPriceByDate).length > 0;
+
+    if (!hasDefault && !hasDailyMap) return markedDates ?? {};
+
+    const result = { ...(markedDates ?? {}) };
+    const { year, month } = visibleMonth;
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const mm = String(month).padStart(2, '0');
+      const dd = String(day).padStart(2, '0');
+      const dateKey = `${year}-${mm}-${dd}`;
+      const isBooked = result[dateKey]?.type && result[dateKey]?.type !== 'none';
+      if (isBooked) continue;
+
+      const rate = dailyPriceByDate?.[dateKey] ?? (hasDefault ? defaultPrice : 0);
+      if (!rate || rate <= 0) continue;
+
+      const existingPrice = Number(result[dateKey]?.price ?? result[dateKey]?.rate ?? 0);
+      result[dateKey] = {
+        ...result[dateKey],
+        price: existingPrice > 0 ? existingPrice : rate,
+        rate: existingPrice > 0 ? existingPrice : rate,
+      };
+    }
+
+    return result;
+  }, [markedDates, dailyPriceByDate, defaultPrice, visibleMonth]);
+
+  const renderDay = useCallback(
+    (props: any) => (
+      <CustomDay
+        {...props}
+        defaultPrice={defaultPrice}
+        dailyPriceByDate={dailyPriceByDate}
+        onPress={onDayPress}
+      />
+    ),
+    [defaultPrice, dailyPriceByDate, onDayPress],
+  );
 
   return (
     <View style={styles.glassCard}>
@@ -225,14 +301,11 @@ const CustomCalendar = ({
       <Calendar
         current={currentDate}
         markingType="custom"
-        markedDates={markedDates}
-        dayComponent={(props: any) => (
-          <CustomDay
-            {...props}
-            defaultPrice={defaultPrice}
-            onPress={onDayPress}
-          />
-        )}
+        markedDates={enrichedMarkedDates}
+        onMonthChange={(month: { year: number; month: number }) => {
+          setVisibleMonth({ year: month.year, month: month.month });
+        }}
+        dayComponent={renderDay}
         renderArrow={(dir: any) =>
           dir === 'left' ? (
             <ChevronLeft size={ms(22)} color="#000000" />

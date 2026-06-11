@@ -102,6 +102,13 @@ export interface bookingcomTestConnectionResponse {
 }
 export interface bookingcomConnectionPayloadType {
   title: string;
-  listing_id: string | number;
   hotel_id: string;
+  listing_id?: string | number;
+  rate?: number;
+  availability?: number;
+}
+
+export interface bookingcomConnectWithChannexPayloadType extends bookingcomConnectionPayloadType {
+  user_id: number;
+  channel_name?: string;
 }

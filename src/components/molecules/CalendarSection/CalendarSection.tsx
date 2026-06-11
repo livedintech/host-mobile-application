@@ -15,6 +15,7 @@ interface Props {
   listingOptions: any[];
   selectedListingId: string;
   markedDates: any;
+  dailyPriceByDate?: Record<string, number>;
   onDayPress: (day: any) => void;
   defaultPrice?: number;
   onRefresh?: () => Promise<any> | void;
@@ -30,6 +31,7 @@ export const CalendarSection = ({
   bookings,
   selectedListingId,
   markedDates,
+  dailyPriceByDate,
   onDayPress,
   defaultPrice,
   isLoading,
@@ -37,9 +39,7 @@ export const CalendarSection = ({
 }: Props) => {
     const { t , i18n} = useTranslation();
     const isArabic = i18n.language === 'ar'
-  
-  console.log("markedDates",markedDates);
-  console.log("bookingsTest",bookings)
+
   return (
     <RefreshableScrollView
       isLoading={isLoading}
@@ -58,6 +58,7 @@ export const CalendarSection = ({
         {selectedListingId ? (
           <CustomCalendar
             markedDates={markedDates}
+            dailyPriceByDate={dailyPriceByDate}
             onDayPress={onDayPress}
             defaultPrice={defaultPrice}
             t={t}

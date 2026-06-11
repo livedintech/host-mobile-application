@@ -2,10 +2,15 @@ import { create, ApisauceConfig, ApiResponse } from 'apisauce';
 import Utils from '../utility/Utils';
 import { CONTENT_TYPE, HTTP_STATUS } from './api';
 import { useAuthStore } from '@/store/useAuthStore';
-import { BASE_URL_DEV,BASE_URL_LIVE } from '@env';
+import { BASE_URL_DEV, BASE_URL_LIVE } from '@env';
 import { getStoredLanguage } from '@/locales/i18n/i18n';
 
-export const BASE_URL = BASE_URL_LIVE;
+// In dev builds, always use BASE_URL_DEV (local Laravel via 10.0.2.2 on Android emulator).
+export const BASE_URL = __DEV__ ? BASE_URL_DEV : BASE_URL_LIVE;
+
+if (__DEV__) {
+  console.log('[API] Using backend:', BASE_URL);
+}
 
 // Create API instance
 const apiSauceInstance = create({
@@ -188,8 +193,12 @@ function handleError(error: any): ApiResult {
  */
 apiSauceInstance.addRequestTransform((request) => {
   try {
+    if (__DEV__) {
+      const path = request.url ?? '';
+      console.log('[API] Request:', `${BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`);
+    }
+
     const token = useAuthStore.getState()?.token;
-    console.log("token",token)
     
     // Initialize headers if not present
     request.headers = request.headers || {};

@@ -8,7 +8,7 @@ const AppPressable = ({ onPress, ...props }: PressableProps) => {
     if (onPress) {
       const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
       if (currentScreen) {
-        userEventService.logEvent('button_tap', currentScreen);
+        userEventService.logEvent('button_tap', currentScreen).catch(() => {});
       }
       onPress(e);
     }

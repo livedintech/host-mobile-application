@@ -34,11 +34,33 @@ export const getChatListApi = async ({
     ...filters,
   });
 
-  if (res.ok) {
-    return res.data.data;
+  if (!res.ok) {
+    throw new Error(res.response?.message || 'Failed to load inbox');
   }
 
-  throw new Error(res.response.message);
+  const payload = res.data?.data ?? res.data;
+  if (!payload) {
+    return { chats: [], current_page: page, total_pages: 1, total_count: 0 };
+  }
+
+  if (Array.isArray(payload)) {
+    return {
+      chats: payload,
+      current_page: page,
+      total_pages: 1,
+      total_count: payload.length,
+    };
+  }
+
+  const chats =
+    payload.chats ?? payload.threads ?? payload.conversations ?? payload.data ?? [];
+
+  return {
+    chats: Array.isArray(chats) ? chats : [],
+    current_page: payload.current_page ?? page,
+    total_pages: payload.total_pages ?? 1,
+    total_count: payload.total_count ?? (Array.isArray(chats) ? chats.length : 0),
+  };
 };
 
 // Archive Chat
@@ -121,17 +143,24 @@ export const getChatDetailApi = async (
   throw new Error(response.message || 'Failed to fetch sub-categories');
 };
 
-//Get Chat List City
+//Get Chat List City (uses api/v2/states)
 export const getChatListCityApi = async () => {
   const { ok, response, data } = await apiService.get(
     SERVICE_CONFIG_URLS.APP.GET_CHAT_LIST_CITY,
   );
 
   if (ok) {
-    return data.data;
+    const cities = data?.data;
+    if (cities == null) {
+      if (__DEV__) {
+        console.warn('[API] Chat list cities/states response missing data:', data);
+      }
+      return [];
+    }
+    return cities;
   }
 
-  throw response.message;
+  throw new Error(response?.message || 'Failed to fetch chat cities');
 };
 
 // Chat Detail Send Message
@@ -180,10 +209,14 @@ export const GetAssignChatToUserApi = async () => {
   );
 
   if (ok) {
-    return data.data;
+    const users = data?.data;
+    if (users == null) {
+      return [];
+    }
+    return users;
   }
 
-  throw response.message;
+  throw new Error(response?.message || 'Failed to fetch users');
 };
 
 //Assign User To Chat

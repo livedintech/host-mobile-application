@@ -1,6 +1,6 @@
 import apiService from "./apiService";
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
-import { bookingcomConnectionPayloadType, bookingcomTestConnectionPayloadType, createChannelsUserIdPayload, CreateGathernUserPayloadType, createListingImportGathernType, createListingImportType, createMapListingbyUserIDType, creatGathernChannelType, getChannelsUserIdPayload, getChannexListingsByIdPayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { bookingcomConnectionPayloadType, bookingcomConnectWithChannexPayloadType, bookingcomTestConnectionPayloadType, createChannelsUserIdPayload, CreateGathernUserPayloadType, createListingImportGathernType, createListingImportType, createMapListingbyUserIDType, creatGathernChannelType, getChannelsUserIdPayload, getChannexListingsByIdPayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 import Utils from "@/utility/Utils";
 
 export const createChannelsUserbyId = async (payload: createChannelsUserIdPayload) => {
@@ -219,6 +219,20 @@ export const bookingcomConnectionApi = async (payload: bookingcomConnectionPaylo
         return data;
     }
     throw response;
+};
+
+/** Creates Channex account first, then connects Booking.com — single submit action. */
+export const connectBookingComWithChannexApi = async (
+    payload: bookingcomConnectWithChannexPayloadType,
+) => {
+    const { user_id, channel_name, ...connectionPayload } = payload;
+
+    await createChannelsUserbyId({
+        user_id,
+        channel_name: channel_name ?? connectionPayload.title ?? 'Booking.com',
+    });
+
+    return bookingcomConnectionApi(connectionPayload);
 };
 
 export const updateChannelStatusApi = async (payload: { channel_id: number; status: 'active' | 'inactive' }) => {

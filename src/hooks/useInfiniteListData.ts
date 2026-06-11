@@ -10,10 +10,11 @@ export default function useInfiniteListData<T extends { id: string | number }>(
 
     pages.forEach(page => {
       const list =
+        page?.chats ||
         page?.data ||
         page?.items ||
         page?.results ||
-        page?.chats ||
+        page?.conversations ||
         [];
 
       list.forEach((item: T) => {

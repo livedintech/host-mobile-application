@@ -55,6 +55,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   const error = errors[name]?.message as string;
   const finalPlaceholder = placeholder || t('common.placeholder');
   const hasData = Array.isArray(data) && data.length > 0;
+  const isModal = mode === 'modal';
+  const resolvedMaxHeight =
+    maxHeight ?? (isModal ? Metrics.screenHeight * 0.45 : 220);
 
   return (
     <View
@@ -78,16 +81,23 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
         render={({ field: { onChange, value } }) => (
           <Dropdown
             mode={mode}
-            maxHeight={maxHeight}
-            dropdownPosition={dropdownPosition}
-            inputSearchStyle={styles.inputSearchStyle}
-            search
+            maxHeight={resolvedMaxHeight}
+            dropdownPosition={isModal ? 'auto' : dropdownPosition}
+            inputSearchStyle={[
+              styles.inputSearchStyle,
+              isModal && styles.modalInputSearchStyle,
+            ]}
+            search={hasData}
             style={[
               styles.dropdown,
-              (disabled || !hasData) && styles.disabled,
+              disabled && styles.disabled,
               !!error && styles.errorBorder,
             ]}
-            containerStyle={[styles.popupListContainer, listContainerStyle]}
+            containerStyle={[
+              styles.popupListContainer,
+              isModal && styles.modalListContainer,
+              listContainerStyle,
+            ]}
             placeholderStyle={[
               styles.placeholderStyle,
               placeholderColor ? { color: placeholderColor } : {},
@@ -100,12 +110,14 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             placeholder={finalPlaceholder}
             value={value}
             onChange={item => {
-              onChange(item.value);
+              const next = item?.value ?? '';
+              if (String(value ?? '') === String(next ?? '')) return;
+              onChange(next);
               if (onSelect) {
                 onSelect(item);
               }
             }}
-            disable={disabled || !hasData}
+            disable={disabled}
             renderRightIcon={() =>
               hasData ? (
                 <View style={{ marginRight: 8 }}>
@@ -188,6 +200,18 @@ const styles = StyleSheet.create({
     color: Colors.MIDNIGHT,
     borderRadius: 10,
     backgroundColor: '#F8F9FA',
+  },
+  modalInputSearchStyle: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    height: 44,
+  },
+  modalListContainer: {
+    marginTop: 0,
+    borderRadius: 16,
+    paddingBottom: 8,
   },
 });
 

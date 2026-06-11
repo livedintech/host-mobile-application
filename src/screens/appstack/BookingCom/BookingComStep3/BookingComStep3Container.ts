@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
 import { navigate, resetToRoutes } from '@/services/navigationService';
-import { bookingcomConnectionApi } from '@/services/bookingManagementApi';
+import { connectBookingComWithChannexApi } from '@/services/bookingManagementApi';
+import { bookingcomConnectWithChannexPayloadType } from '@/types/api/bookingManagementTypes';
 import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
@@ -36,7 +37,7 @@ export default function useBookingComStep3Container() {
     });
 
     const { mutate: submitPMS, isPending: isSubmitting } = useMutation({
-        mutationFn: bookingcomConnectionApi,
+        mutationFn: connectBookingComWithChannexApi,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id] });
             Toast.show({ type: 'success', text1: i18n.t('app.booking_com_step3.success_connected') });
@@ -48,10 +49,16 @@ export default function useBookingComStep3Container() {
     });
 
     const onContinue = (data: any) => {
-        const payload = listingId
+        const connectionPayload = listingId
             ? { title: data.title, listing_id: String(listingId), hotel_id: hotelId }
             : { title: data.title, hotel_id: hotelId, rate: Number(data.rate), availability: 1 };
-        submitPMS(payload as any);
+
+        const payload: bookingcomConnectWithChannexPayloadType = {
+            user_id: Number(user!.id),
+            channel_name: data.title,
+            ...connectionPayload,
+        };
+        submitPMS(payload);
     };
 
     return {

@@ -250,9 +250,9 @@ const ChatScreen = () => {
     control,
     errors,
     data,
-    isLoading,
+    isListLoading,
+    showEmptyState,
     dataQuery,
-    isFetching,
     transformedCities,
     transformedListings,
     transformedApartmentTypes,
@@ -295,18 +295,6 @@ const ChatScreen = () => {
     { id: 'Snoozed', label: t('app.chat.tab_snoozed') },
     { id: 'Unread', label: t('app.chat.tab_unread') },
   ];
-  if (isLoading) {
-    return (
-      <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <SpinnerLoader size={'large'} />
-        </View>
-      </BGImage>
-    );
-  }
-
   type OtaSource = 'airbnb' | 'gathern' | 'bookingcom';
 
   const sourceLogos: Record<OtaSource, any> & { default: any } = {
@@ -448,32 +436,44 @@ const ChatScreen = () => {
 
             {/* ── Chat List ── */}
             <FlatListHandler
-              isLoading={false}
+              isLoading={isListLoading}
               data={data}
               meta={dataQuery}
               ListEmptyComponent={
-                <View style={{ flex: 1 }}>
-                  <NoChatScreen
-                    headingText={
-                      activeTab === 'Archived'
-                        ? t('app.chat.no_archived')
-                        : activeTab === 'Snoozed'
-                        ? t('app.chat.no_snoozed')
-                        : activeTab === 'Unread'
-                        ? t('app.chat.no_unread')
-                        : t('app.chat.no_messages')
-                    }
-                    descriptionText={
-                      activeTab === 'Archived' ||
-                      activeTab === 'Snoozed' ||
-                      activeTab === 'Unread'
-                        ? t('app.chat.no_conversations')
-                        : t('app.chat.no_listing_message')
-                    }
-                    showFirstButton={activeTab === 'All'}
-                    showSecondButton={activeTab === 'All'}
-                  />
-                </View>
+                showEmptyState ? (
+                  <View style={{ flex: 1 }}>
+                    <NoChatScreen
+                      headingText={
+                        activeTab === 'Archived'
+                          ? t('app.chat.no_archived')
+                          : activeTab === 'Snoozed'
+                          ? t('app.chat.no_snoozed')
+                          : activeTab === 'Unread'
+                          ? t('app.chat.no_unread')
+                          : t('app.chat.no_messages')
+                      }
+                      descriptionText={
+                        activeTab === 'Archived' ||
+                        activeTab === 'Snoozed' ||
+                        activeTab === 'Unread'
+                          ? t('app.chat.no_conversations')
+                          : t('app.chat.no_listing_message')
+                      }
+                      showFirstButton={activeTab === 'All'}
+                      showSecondButton={activeTab === 'All'}
+                    />
+                  </View>
+                ) : isListLoading ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <SpinnerLoader size="large" />
+                  </View>
+                ) : null
               }
               renderItem={renderItem}
               keyExtractor={item => String(item.id)}

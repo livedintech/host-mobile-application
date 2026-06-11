@@ -32,9 +32,13 @@ const ProfileScreen = () => {
     citiesOptions,
     isLoadingCountriesData,
     isLoadingStatesData,
+    isCountriesError,
+    isCitiesError,
     setFullViewVisible,
-    isFullViewVisible
+    isFullViewVisible,
   } = useProfileContainer();
+
+  const selectedCountryId = watch('country');
 
   const displayImage = localImage || currentProfilePic || null;
 
@@ -141,25 +145,41 @@ const ProfileScreen = () => {
             <DropdownField
               name="country"
               control={control}
-              errors={errors}
+              errors={countriesOptions.length > 0 ? errors : {}}
               label={t('app.profile.country_label')}
               data={countriesOptions}
               disabled={isLoadingCountriesData}
-              placeholder={isLoadingCountriesData ? 'Loading...' : t('app.profile.country_placeholder')}
+              mode="modal"
+              placeholder={
+                isLoadingCountriesData
+                  ? 'Loading...'
+                  : isCountriesError
+                    ? 'Failed to load countries'
+                    : countriesOptions.length === 0
+                      ? 'No countries available'
+                      : t('app.profile.country_placeholder')
+              }
             />
             <DropdownField
+              key={`profile-city-${selectedCountryId ?? 'none'}`}
               name="city"
               control={control}
-              errors={errors}
+              errors={citiesOptions.length > 0 ? errors : {}}
               label={t('app.profile.city_label')}
               data={citiesOptions}
-              disabled={isLoadingStatesData || !watch('country')}
+              disabled={isLoadingStatesData || !selectedCountryId}
+              mode="modal"
+              maxHeight={Metrics.screenHeight * 0.45}
               placeholder={
-                !watch('country')
+                !selectedCountryId
                   ? t('app.profile.select_country_first')
                   : isLoadingStatesData
                     ? 'Loading...'
-                    : t('app.profile.city_placeholder')
+                    : isCitiesError
+                      ? 'Failed to load cities'
+                      : citiesOptions.length === 0
+                        ? 'No cities available'
+                        : t('app.profile.city_placeholder')
               }
             />
             <InputField name="address" label={t('app.profile.address_label')} control={control} errors={errors} placeholder="XYZ" />

@@ -1,8 +1,8 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import i18n from '@/locales/i18n/i18n';
 import { ChatMessage, ChatStatus } from '@/types/chat';
 import { useForm } from 'react-hook-form';
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import STORAGE_CONST from '@/constants/storage';
 import {
   createInboxArchiveApi,
@@ -13,7 +13,7 @@ import {
   getChatListCityApi,
   markReadChatApi
 } from '@/services/chatApi';
-import { PAGE_SIZE, queryClient } from '@/services/api';
+import { PAGE_SIZE, queryClient, STALE_TIME } from '@/services/api';
 import useInfiniteListData from '@/hooks/useInfiniteListData';
 import {
   createChatArchiveByConversationIdPayloadType,
@@ -27,9 +27,23 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useIsFocused } from '@react-navigation/native';
+
+/** Survives tab unmount so inbox does not flash empty while refetching. */
+const cachedChatInboxByFilter: Record<string, ChatMessage[]> = {};
+
+const buildInboxInitialData = (cacheKey: string) => {
+  const cached = cachedChatInboxByFilter[cacheKey];
+  if (!cached?.length) return undefined;
+  return {
+    pages: [{ chats: cached, current_page: 1, total_pages: 1 }],
+    pageParams: [1],
+  };
+};
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
+  const isFocused = useIsFocused();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%'], []);
   const [activeTab, setActiveTab] = useState<ChatStatus>('All');
@@ -103,6 +117,11 @@ export const useChatContainer = () => {
 
   /* ------------------------------- CHAT LIST QUERY ------------------------------ */
 
+  const filterCacheKey = useMemo(
+    () => JSON.stringify(finalFilters),
+    [finalFilters],
+  );
+
   const dataQuery = useInfiniteQuery({
     queryKey: [STORAGE_CONST.GET_CHAT_LIST, finalFilters],
     queryFn: ({ pageParam = 1 }) =>
@@ -111,23 +130,36 @@ export const useChatContainer = () => {
         limit: PAGE_SIZE,
         ...finalFilters,
       }),
-    refetchInterval: 4000,
+    enabled: !!user?.id,
+    staleTime: STALE_TIME,
+    refetchOnWindowFocus: isFocused,
+    refetchOnMount: true,
+    refetchInterval: isFocused ? 30_000 : false,
+    refetchIntervalInBackground: false,
     initialPageParam: 1,
+    placeholderData: keepPreviousData,
+    initialData: () => buildInboxInitialData(filterCacheKey),
     getNextPageParam: lastPage =>
       lastPage?.current_page < lastPage?.total_pages
         ? lastPage?.current_page + 1
         : undefined,
   });
 
-  const { data: rawData, isFetching } = dataQuery;
-  const data = useInfiniteListData(rawData?.pages);
+  const { data: rawData, isFetching, isPending, isFetched } = dataQuery;
+  const parsedData = useInfiniteListData(rawData?.pages);
 
-  const hasEverLoaded = useRef(false);
-  useEffect(() => {
-    if (dataQuery.isSuccess) {
-      hasEverLoaded.current = true;
-    }
-  }, [dataQuery.isSuccess]);
+  if (parsedData.length > 0) {
+    cachedChatInboxByFilter[filterCacheKey] = parsedData;
+  }
+
+  const data =
+    parsedData.length > 0
+      ? parsedData
+      : cachedChatInboxByFilter[filterCacheKey] ?? [];
+
+  const hasMessages = data.length > 0;
+  const isListLoading = !hasMessages && (!isFetched || isPending || isFetching);
+  const showEmptyState = !hasMessages && isFetched && !isFetching && !isPending;
 
 
   /* --------------------------------- MUTATIONS --------------------------------- */
@@ -283,7 +315,8 @@ const handlePopupMenu = (selectedId: string) => {
 
   return {
     data,
-    isLoading: !hasEverLoaded.current,
+    isListLoading,
+    showEmptyState,
     isFetching,
     dataQuery,
     activeTab,
