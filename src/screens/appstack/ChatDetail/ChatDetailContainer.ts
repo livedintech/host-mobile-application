@@ -1,6 +1,9 @@
 import i18n from '@/locales/i18n/i18n';
 // ChatContainer.tsx - Complete Code with improved scroll management
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { aiFeedbackSchema, AiFeedbackFormValues } from '@/validation/chat/chatSchemas';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
 import { FlatList } from 'react-native';
@@ -14,6 +17,7 @@ import {
   getChatDetailSavedRepliesApi,
   deleteChatMessageApi,
   getPendingAgentMessageReviewApi,
+  updateAgentMessageReviewApi,
 } from '@/services/chatApi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -722,14 +726,15 @@ export const useChatContainer = () => {
   //   // TODO: Call API to send message
   // }, [addMessage, user]);
 
-  const sendAiSuggestion = useCallback(() => {
-    if (!currentSuggestion?.agent_message || !conversation_id) {
+  const sendAiSuggestion = useCallback((customText?: string) => {
+    const textToSend = customText ?? currentSuggestion?.agent_message;
+    if (!textToSend || !conversation_id) {
       return;
     }
 
     const aiMessage: ChatMessage = {
       _id: `temp-${Date.now()}`,
-      text: currentSuggestion.agent_message,
+      text: textToSend,
       createdAt: new Date(),
       user: {
         _id: Number(user?.id),
@@ -753,12 +758,62 @@ export const useChatContainer = () => {
 
     chatMessagesSend({
       conversation_id,
-      body: currentSuggestion.agent_message,
-
-      // AI suggestion id
-      agent_message_reviews_id: currentSuggestion.id,
+      body: textToSend,
+      agent_message_reviews_id: currentSuggestion?.id,
     });
   }, [currentSuggestion, conversation_id, addMessage, chatMessagesSend, user]);
+
+  const feedback = pendingReviewData?.feedback
+
+  const [aiFeedbackType, setAiFeedbackType] = useState<'up' | 'down' | null>(null);
+
+  const {
+    control: feedbackControl,
+    formState: { errors: feedbackErrors },
+    handleSubmit: handleFeedbackFormSubmit,
+    setValue: setFeedbackValue,
+    reset: resetFeedback,
+    watch: watchFeedback,
+  } = useForm<AiFeedbackFormValues>({
+    resolver: yupResolver(aiFeedbackSchema) as any,
+    defaultValues: { feedbackType: null, feedback_review: '' },
+  });
+
+  const feedbackReviewValue = watchFeedback('feedback_review');
+
+  useEffect(() => {
+    setFeedbackValue('feedbackType', aiFeedbackType);
+    resetFeedback({ feedbackType: aiFeedbackType, feedback_review: '' });
+  }, [aiFeedbackType, currentSuggestion?.id]);
+
+  const { mutate: submitFeedbackMutate } = useMutation({
+    mutationFn: updateAgentMessageReviewApi,
+    onSuccess: () => {
+      setAiFeedbackType(null);
+      resetFeedback({ feedbackType: null, feedback_review: '' });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.GET_AI_SUGGESTIONS, conversation_id],
+      });
+    },
+    onError: (error: any) => {
+      Toast.show({
+        type: 'error',
+        text1: error.message || i18n.t('common.toast.something_went_wrong'),
+      });
+    },
+  });
+
+  const handleSubmitFeedback = useCallback(() => {
+    handleFeedbackFormSubmit((data: AiFeedbackFormValues) => {
+      if (!currentSuggestion?.id || !aiFeedbackType) return;
+      submitFeedbackMutate({
+        id: currentSuggestion.id,
+        feedback: aiFeedbackType === 'up',
+        feedback_review: data.feedback_review?.trim() || undefined,
+      });
+    })();
+  }, [currentSuggestion, aiFeedbackType, handleFeedbackFormSubmit, submitFeedbackMutate]);
+
   return {
     // State
     messages,
@@ -812,5 +867,14 @@ export const useChatContainer = () => {
     //ASSIGN CHAT IDS
     assigned_to_ids,
     data,
+    feedback,
+
+    // AI Feedback
+    aiFeedbackType,
+    setAiFeedbackType,
+    feedbackControl,
+    feedbackErrors,
+    feedbackReviewValue,
+    handleSubmitFeedback,
   };
 };

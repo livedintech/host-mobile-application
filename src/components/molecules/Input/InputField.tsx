@@ -9,6 +9,8 @@ type Props = {
     placeholder: string;
     rules?: RegisterOptions;
     leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
+    onRightIconPress?: () => void;
     label?: string;
     keyboardType?: KeyboardTypeOptions;
     editable?: boolean;
@@ -25,6 +27,8 @@ const InputField = ({
     placeholder,
     rules,
     leftIcon,
+    rightIcon,
+    onRightIconPress,
     label,
     keyboardType,
     editable,
@@ -50,6 +54,8 @@ const InputField = ({
                     placeholder={placeholder}
                     error={errors?.[name]?.message as string}
                     leftIcon={leftIcon}
+                    rightIcon={rightIcon}
+                    onRightIconPress={onRightIconPress}
                     keyboardType={keyboardType}
                     editable={editable}
                     maxLength={maxLength}

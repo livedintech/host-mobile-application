@@ -339,8 +339,12 @@ import pencilEdit from './pencilEdit.svg'
 import arrowReload from './arrowReload.svg'
 import cloudRefresh from './cloudRefresh.svg'
 import cloudCross from './cloudCross.svg'
+import thumbsUpIcon from './thumbsUpIcon.svg'
+import thumbsDownIcon from './thumbsDownIcon.svg'
 
 export const icons = {
+  thumbsUpIcon,
+  thumbsDownIcon,
   cloudCross,
   cloudRefresh,
   arrowReload,

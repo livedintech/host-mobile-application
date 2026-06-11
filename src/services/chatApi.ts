@@ -10,6 +10,7 @@ import {
   markReadChatPayloadType,
   sendMessagePayloadType,
   getPendingAgentMessageReviewPayloadType,
+  updateAgentMessageReviewPayloadType,
 } from '@/types/api/chatTypes';
 type ChatListParams = {
   page?: number;
@@ -308,6 +309,31 @@ export const submitBookingRequestApi = async (payload: {
   throw response || data;
 };
 
+
+// Update Agent Message Review (thumbs up / down feedback)
+export const updateAgentMessageReviewApi = async (
+  payload: updateAgentMessageReviewPayloadType,
+) => {
+  const url = Utils.createDynamicUrl(
+    SERVICE_CONFIG_URLS.APP.AGENT_MESSAGE_REVIEWS_UPDATE,
+    { id: payload.id },
+  );
+
+  const body: { feedback: boolean; feedback_review?: string } = {
+    feedback: payload.feedback,
+  };
+  if (payload.feedback_review) {
+    body.feedback_review = payload.feedback_review;
+  }
+
+  const { ok, response, data } = await apiService.put(url, body);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  throw new Error(response?.message || 'Failed to submit feedback');
+};
 
 // Get Pending Agent Message Review
 export const getPendingAgentMessageReviewApi = async (

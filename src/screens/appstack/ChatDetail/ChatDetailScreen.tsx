@@ -1,5 +1,6 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import InputField from '@/components/molecules/Input/InputField';
 import {
   StyleSheet,
   View,
@@ -39,6 +40,7 @@ import InquiryModal from './InquiryModal';
 
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { useTranslation } from 'react-i18next';
+import AppButton from '@/components/molecules/AppButton/AppButton';
 
 dayjs.extend(advancedFormat);
 
@@ -103,7 +105,7 @@ const processMessagesWithTimeLabels = (
     const showLabel =
       !olderMessage ||
       dayjs(message.createdAt).local().format('YYYY-MM-DD') !==
-        dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
+      dayjs(olderMessage.createdAt).local().format('YYYY-MM-DD');
 
     return {
       ...message,
@@ -170,6 +172,13 @@ const ChatScreen = () => {
     sendAiSuggestion,
     assigned_to_ids,
     data,
+    feedback,
+    aiFeedbackType,
+    setAiFeedbackType,
+    feedbackControl,
+    feedbackErrors,
+    feedbackReviewValue,
+    handleSubmitFeedback,
   } = useChatContainer();
 
   console.log('conversationData', conversationData);
@@ -206,6 +215,27 @@ const ChatScreen = () => {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const [scrollButtonOpacity] = useState(new Animated.Value(0));
+  const inputAreaAnim = useRef(new Animated.Value(1)).current;
+
+  const [agentMsgExpanded, setAgentMsgExpanded] = useState(false);
+  const [isEditingAiMessage, setIsEditingAiMessage] = useState(false);
+  const [editedAiText, setEditedAiText] = useState('');
+
+  useEffect(() => {
+    if (!showAiSuggestion) {
+      setIsEditingAiMessage(false);
+      setEditedAiText('');
+    }
+  }, [showAiSuggestion]);
+
+  useEffect(() => {
+    const hide = showAiSuggestion && !!currentSuggestion?.agent_message;
+    Animated.timing(inputAreaAnim, {
+      toValue: hide ? 0 : 1,
+      duration: 280,
+      useNativeDriver: false,
+    }).start();
+  }, [showAiSuggestion, currentSuggestion?.agent_message]);
 
   const messagesWithTimeLabels = useMemo(
     () => processMessagesWithTimeLabels(messages),
@@ -586,8 +616,8 @@ const ChatScreen = () => {
                   paddingBottom:
                     (data?.conversation?.thread_type === 'inquiry' &&
                       !isInquiryDismissed) ||
-                    (data?.conversation?.thread_type === 'reservation_request' &&
-                      !isReservationDismissed)
+                      (data?.conversation?.thread_type === 'reservation_request' &&
+                        !isReservationDismissed)
                       ? Metrics.verticalScale(250)
                       : 0,
                 },
@@ -750,50 +780,170 @@ const ChatScreen = () => {
                     <Svgicons path="closeIcon" size={12} />
                   </AppPressable>
 
-                  <AppText
-                    text={currentSuggestion.agent_message}
-                    fontSize={13}
-                    color={Colors.BRUNSWICK_GREEN}
-                    mt={12}
-                    mb={10}
-                  />
-
-                  {/* Optional metadata */}
-                  {/* {currentSuggestion.message_type && (
-                    <View style={{ marginTop: 0 }}>
-                      <AppText
-                        text={`Type: ${currentSuggestion.message_type}`}
-                        fontSize={11}
-                        color={Colors.GREY_SHADOW}
+                  {aiFeedbackType && (
+                    <View style={styles.aiFeedbackSection}>
+                      <InputField
+                        name="feedback_review"
+                        control={feedbackControl as any}
+                        errors={feedbackErrors}
+                        placeholder={
+                          aiFeedbackType === 'up'
+                            ? 'What did you like? (optional)'
+                            : 'What should be different?'
+                        }
+                        containerStyle={[
+                          styles.aiFeedbackInputContainer,
+                          {
+                            paddingHorizontal: 0,
+                            borderColor:Colors.PERSIAN_GREEN
+                          },
+                        ]}
+                        rightIcon={
+                          <View
+                            style={{ opacity: feedbackReviewValue?.trim() ? 1 : 0.4 }}
+                            pointerEvents={feedbackReviewValue?.trim() ? 'auto' : 'none'}
+                          >
+                            <AppButton title='Send' onPress={handleSubmitFeedback} px={10} py={5} fontSize={12}/>
+                          </View>
+                        }
                       />
                     </View>
-                  )} */}
+                  )}
+
+                  <View
+                    style={[
+                      styles.agentMessageBox,
+                      { marginTop: aiFeedbackType ? 0 : 12 },
+                    ]}
+                  >
+                    {isEditingAiMessage ? (
+                      <TextInput
+                        value={editedAiText}
+                        onChangeText={setEditedAiText}
+                        multiline
+                        autoFocus
+                        style={styles.aiEditInput}
+                        placeholderTextColor={Colors.GREY_SHADOW}
+                      />
+                    ) : (
+                      <>
+                        <AppText
+                          text={currentSuggestion.agent_message}
+                          fontSize={13}
+                          color={Colors.BRUNSWICK_GREEN}
+                          numberOfLines={agentMsgExpanded ? undefined : 4}
+                        />
+                        {currentSuggestion.agent_message?.length > 180 && (
+                          <AppPressable
+                            onPress={() => setAgentMsgExpanded(p => !p)}
+                            style={styles.agentMsgToggle}
+                          >
+                            <AppText
+                              text={agentMsgExpanded ? 'Show less' : 'Show more'}
+                              fontSize={11}
+                              color={Colors.PERSIAN_GREEN}
+                              type="Bold"
+                            />
+                          </AppPressable>
+                        )}
+                      </>
+                    )}
+                  </View>
 
                   <View style={styles.aiFooter}>
-                    <AppPressable
-                      onPress={() => {
-                        setShowAiSuggestion(false);
-                            setSelectedAiSuggestionId(currentSuggestion.id);
-                        setInputText(currentSuggestion.agent_message);
-                      }}
-                    >
-                      <AppText
-                        text={t('app.chat_detail.edit')}
-                        fontSize={12}
-                        type="Bold"
-                        color={Colors.PINE_FOREST}
-                      />
-                    </AppPressable>
+                    <View style={styles.aiThumbsRow}>
+                      <AppPressable
+                        disabled={feedback != null}
+                        onPress={() => {
+                          setAiFeedbackType(aiFeedbackType === 'up' ? null : 'up')
+                          setAgentMsgExpanded(false)
+                        }}
+                        style={[
+                          styles.thumbCircle,
+                          {
+                            backgroundColor:
+                              feedback === true || aiFeedbackType === 'up'
+                                ? Colors.PERSIAN_GREEN
+                                : Colors.ANTI_FLASH_WHITE,
+                            opacity: feedback != null ? 0.5 : 1,
+                          },
+                        ]}
+                      >
+                        <Svgicons
+                          path="thumbsUpIcon"
+                          size={14}
+                          color={
+                            feedback === true || aiFeedbackType === 'up'
+                              ? Colors.WHITE
+                              : Colors.GREY_SHADOW
+                          }
+                        />
+                      </AppPressable>
+                      <AppPressable
+                        disabled={feedback != null}
+                        onPress={() => {
+                          setAiFeedbackType(aiFeedbackType === 'down' ? null : 'down')
+                          setAgentMsgExpanded(false)
+                        }}
+                        style={[
+                          styles.thumbCircle,
+                          {
+                            backgroundColor:
+                              feedback === false || aiFeedbackType === 'down'
+                                ? Colors.INDIAN_RED
+                                : Colors.ANTI_FLASH_WHITE,
+                            opacity: feedback != null ? 0.5 : 1,
+                          },
+                        ]}
+                      >
+                        <Svgicons
+                          path="thumbsDownIcon"
+                          size={14}
+                          color={
+                            feedback === false || aiFeedbackType === 'down'
+                              ? Colors.WHITE
+                              : Colors.GREY_SHADOW
+                          }
+                        />
+                      </AppPressable>
+                    </View>
 
-                    <AppPressable onPress={sendAiSuggestion}>
-                      <AppText
-                        text={t('app.chat_detail.send_now')}
-                        fontSize={12}
-                        type="Bold"
-                        ml={15}
-                        color={Colors.PINE_FOREST}
-                      />
-                    </AppPressable>
+                    <View style={styles.aiActionsRow}>
+                      <AppPressable
+                        onPress={() => {
+                          if (isEditingAiMessage) {
+                            setIsEditingAiMessage(false);
+                            setEditedAiText('');
+                          } else {
+                            setIsEditingAiMessage(true);
+                            setEditedAiText(currentSuggestion.agent_message);
+                          }
+                        }}
+                      >
+                        <AppText
+                          text={isEditingAiMessage ? 'Cancel' : t('app.chat_detail.edit')}
+                          fontSize={12}
+                          type="Bold"
+                          color={Colors.PINE_FOREST}
+                        />
+                      </AppPressable>
+
+                      <AppPressable
+                        onPress={() =>
+                          sendAiSuggestion(
+                            isEditingAiMessage ? editedAiText : undefined,
+                          )
+                        }
+                      >
+                        <AppText
+                          text={t('app.chat_detail.send_now')}
+                          fontSize={12}
+                          type="Bold"
+                          ml={15}
+                          color={Colors.PINE_FOREST}
+                        />
+                      </AppPressable>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -828,76 +978,88 @@ const ChatScreen = () => {
             )}
 
             {/* Input Area */}
-            <View style={styles.inputArea}>
-              <AppPressable
-                onPress={() => {
-                  Keyboard.dismiss();
-                  setShowSavedReplies(!showSavedReplies);
-                }}
-                style={[
-                  styles.plusAction,
-                  {
-                    /* UPDATED LOGIC HERE */
-                    backgroundColor:
-                      showSavedReplies && inputText.length === 0
-                        ? Colors.TEAL_PRIMARY_ALT
-                        : Colors.TRANSPARENT,
-                  },
-                ]}
-              >
-                <GlassCard style={styles.plusAction}>
-                  <Svgicons
-                    /* UPDATED LOGIC HERE AS WELL */
-                    path={
-                      showSavedReplies && inputText.length === 0
-                        ? 'chatIconWhite'
-                        : 'chatIcon'
-                    }
-                    size={20}
-                  />
-                </GlassCard>
-              </AppPressable>
+            <Animated.View
+              pointerEvents={showAiSuggestion && currentSuggestion?.agent_message ? 'none' : 'auto'}
+              style={{
+                maxHeight: inputAreaAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 120],
+                }),
+                opacity: inputAreaAnim,
+                overflow: 'hidden',
+              }}
+            >
+              <View style={styles.inputArea}>
+                <AppPressable
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    setShowSavedReplies(!showSavedReplies);
+                  }}
+                  style={[
+                    styles.plusAction,
+                    {
+                      /* UPDATED LOGIC HERE */
+                      backgroundColor:
+                        showSavedReplies && inputText.length === 0
+                          ? Colors.TEAL_PRIMARY_ALT
+                          : Colors.TRANSPARENT,
+                    },
+                  ]}
+                >
+                  <GlassCard style={styles.plusAction}>
+                    <Svgicons
+                      /* UPDATED LOGIC HERE AS WELL */
+                      path={
+                        showSavedReplies && inputText.length === 0
+                          ? 'chatIconWhite'
+                          : 'chatIcon'
+                      }
+                      size={20}
+                    />
+                  </GlassCard>
+                </AppPressable>
 
-              {/* <View style={styles.combinedInputContainer}> */}
-              <GlassCard style={styles.mainCardItem}>
-                <TextInput
-                  value={inputText}
-                  onChangeText={setInputText}
-                  onFocus={() => setShowSavedReplies(false)}
-                  placeholder={t('app.chat_detail.write_message')}
-                  placeholderTextColor={Colors.SECRET_CHOCOLATE}
-                  style={styles.input}
-                  multiline
-                />
-                {/* <Svgicons path='attachmentIcon' onPress={()=>{
+                {/* <View style={styles.combinedInputContainer}> */}
+                <GlassCard style={styles.mainCardItem}>
+                  <TextInput
+                    value={inputText}
+                    onChangeText={setInputText}
+                    onFocus={() => setShowSavedReplies(false)}
+                    placeholder={t('app.chat_detail.write_message')}
+                    placeholderTextColor={Colors.SECRET_CHOCOLATE}
+                    style={styles.input}
+                    multiline
+                  />
+                  {/* <Svgicons path='attachmentIcon' onPress={()=>{
                   setShowAttachmentMenu(!showAttachmentMenu);
                 }}/> */}
-              </GlassCard>
-              {/* </View> */}
-
-              <AppPressable
-                onPress={sendMessage}
-                disabled={!inputText.trim()}
-                style={[
-                  styles.sendButton,
-                  !inputText.trim() && styles.sendButtonDisabled,
-                ]}
-              >
-                <GlassCard style={styles.plusAction}>
-                  <View
-                    style={{
-                      transform: [{ scaleX: i18n.dir() === 'rtl' ? -1 : 1 }],
-                    }}
-                  >
-                    <Svgicons
-                      path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
-                      size={18}
-                      color={Colors.WHITE}
-                    />
-                  </View>
                 </GlassCard>
-              </AppPressable>
-            </View>
+                {/* </View> */}
+
+                <AppPressable
+                  onPress={sendMessage}
+                  disabled={!inputText.trim()}
+                  style={[
+                    styles.sendButton,
+                    !inputText.trim() && styles.sendButtonDisabled,
+                  ]}
+                >
+                  <GlassCard style={styles.plusAction}>
+                    <View
+                      style={{
+                        transform: [{ scaleX: i18n.dir() === 'rtl' ? -1 : 1 }],
+                      }}
+                    >
+                      <Svgicons
+                        path={!inputText.trim() ? 'sendIcon' : 'sendWhite'}
+                        size={18}
+                        color={Colors.WHITE}
+                      />
+                    </View>
+                  </GlassCard>
+                </AppPressable>
+              </View>
+            </Animated.View>
 
             {/* Saved Replies */}
             {showSavedReplies && inputText.length === 0 && (
@@ -1231,8 +1393,34 @@ const styles = StyleSheet.create({
   },
   aiFooter: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 15,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  aiThumbsRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  aiActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  thumbCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aiFeedbackSection: {
+    marginTop: Metrics.verticalScale(20),
+  },
+  aiFeedbackInputContainer: {
+    borderRadius: 10,
+  },
+  aiFeedbackButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
   },
   replyingIndicatorContainer: {
     flexDirection: 'row',
@@ -1445,6 +1633,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0,
     backgroundColor: Colors.TRANSPARENT,
+  },
+  agentMessageBox: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(0,128,90,0.25)',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  agentMsgToggle: {
+    alignSelf: 'flex-end',
+    marginTop: 4,
+  },
+  aiEditInput: {
+    fontSize: 13,
+    color: Colors.BRUNSWICK_GREEN,
+    padding: 0,
+    minHeight: 60,
+    maxHeight: 120,
+    textAlignVertical: 'top',
   },
   //   screenContent: {
   //   flex: 1,
