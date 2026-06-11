@@ -1350,7 +1350,9 @@
       },
       "assigned_to_user": "مُسند إلى ",
       "unassigned": "غير مُسند",
-      "date_value": "التاريخ: "
+      "date_value": "التاريخ: ",
+      "delete_task_confirm": "هل أنت متأكد من حذف هذه المهمة؟",
+  "delete_task_subtitle": "هل أنت متأكد من حذف هذه المهمة؟ لا يمكن التراجع عن هذا الإجراء وسيتم حذف المهمة نهائيًا."
     },
     "listing_screen": {
       "booking_created": "تم إنشاء الحجز",
