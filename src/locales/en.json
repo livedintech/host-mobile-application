@@ -1352,7 +1352,9 @@
       },
       "assigned_to_user": "Assigned to ",
       "unassigned": "Unassigned",
-      "date_value": "Date: "
+      "date_value": "Date: ",
+      "delete_task_confirm": "Are you sure you want to delete this task?",
+      "delete_task_subtitle": "Are you sure you want to delete this task? This action can’t be undone and the task will be permanently removed."
     },
     "listing_screen": {
       "booking_created": "Booking created",

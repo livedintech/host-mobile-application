@@ -614,7 +614,7 @@ const ChatScreen = () => {
               data={messagesWithTimeLabels}
               isLoading={isLoading}
               renderItem={renderMessage}
-              listEmptyText=""
+              listEmptyText=" "
               keyExtractor={item => item._id.toString()}
               maintainVisibleContentPosition={{
                 minIndexForVisible: 0,

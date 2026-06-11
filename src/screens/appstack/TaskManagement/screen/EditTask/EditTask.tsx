@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   TextInput,
+  Modal,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
@@ -72,6 +73,13 @@ const EditTask = ({ route }: any) => {
   const { onDeleteTask, isDeleting, assigneeOptions, onUpdateAssignee } =
     EditTaskContainer();
   const { taskId, taskType } = route?.params || {};
+
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
+  const toggleDeleteModal = () => {
+    setIsDeleteModalVisible(prev => !prev);
+  };
+
   const [isEditMode, setIsEditMode] = useState(false);
 
   const {
@@ -145,7 +153,10 @@ const EditTask = ({ route }: any) => {
     const formData = getValues();
 
     if (!formData.assignee) {
-      Toast.show({ type: 'error', text1: t('app.task_management.select_vendor') });
+      Toast.show({
+        type: 'error',
+        text1: t('app.task_management.select_vendor'),
+      });
       return;
     }
 
@@ -180,7 +191,8 @@ const EditTask = ({ route }: any) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <ButtonView
-            onPress={() => onDeleteTask(taskId)}
+            // onPress={() => onDeleteTask(taskId)}
+            onPress={toggleDeleteModal}
             style={styles.iconBtn}
           >
             <Svgicons path="deleteTask" size={24} />
@@ -248,7 +260,10 @@ const EditTask = ({ route }: any) => {
                 />
               ) : (
                 <AppText
-                  text={task?.description || t('app.task_management.no_instructions')}
+                  text={
+                    task?.description ||
+                    t('app.task_management.no_instructions')
+                  }
                   fontSize={14}
                   color={Colors.DARK_CHARCOAL}
                   mb={20}
@@ -279,7 +294,10 @@ const EditTask = ({ route }: any) => {
                 mb={4}
               />
               <AppText
-                text={task?.listing_title || t('app.task_management.address_not_available')}
+                text={
+                  task?.listing_title ||
+                  t('app.task_management.address_not_available')
+                }
                 fontSize={14}
                 color={Colors.DARK_CHARCOAL}
                 mb={20}
@@ -303,7 +321,9 @@ const EditTask = ({ route }: any) => {
                   />
                   <View style={styles.readOnlyBox}>
                     <AppText
-                      text={task?.assigned_user?.name || t('app.shared.unassigned')}
+                      text={
+                        task?.assigned_user?.name || t('app.shared.unassigned')
+                      }
                       fontSize={14}
                       color={Colors.DARK_CHARCOAL}
                     />
@@ -470,6 +490,65 @@ const EditTask = ({ route }: any) => {
           )}
         </View>
       </View>
+
+      <Modal
+        transparent
+        visible={isDeleteModalVisible}
+        animationType="fade"
+        onRequestClose={toggleDeleteModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <AppText
+              text={t('app.task_management.delete_task_confirm')}
+              type="Bold"
+              fontSize={18}
+              style={styles.modalTitle}
+            />
+
+            <AppText
+              text={t('app.task_management.delete_task_subtitle')}
+              fontSize={14}
+              color="grey"
+              style={styles.modalSubTitle}
+            />
+
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={toggleDeleteModal}
+              >
+                <AppText
+                  text={t('app.more.cancel')}
+                  type="Medium"
+                  fontSize={16}
+                  color="black"
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={() => {
+                  toggleDeleteModal();
+                  onDeleteTask(taskId);
+                }}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <AppText
+                    text={t('app.more.confirm')}
+                    type="Medium"
+                    fontSize={16}
+                    color="white"
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </BGImage>
   );
 };
@@ -556,6 +635,53 @@ const styles = StyleSheet.create({
   },
   gradientMargin: { marginBottom: 12 },
   outlineBtn: { backgroundColor: '#fff', borderRadius: 13, borderWidth: 0 },
+
+  // NEW MODAL STYLES
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '85%',
+    backgroundColor: '#F2F2F2', // Light grey/white like the screenshot
+    borderRadius: 35,
+    padding: Metrics.scale(25),
+    alignItems: 'center',
+  },
+  modalTitle: {
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#000',
+  },
+  modalSubTitle: {
+    textAlign: 'center',
+    marginBottom: 25,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    gap: 15,
+    width: '100%',
+  },
+  cancelButton: {
+    flex: 1,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#D1D1D1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  confirmButton: {
+    flex: 1,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.PRIMARY_TEAL, // The teal/green color from your screenshot
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default EditTask;
