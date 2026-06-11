@@ -1,5 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Platform,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Platform,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +23,7 @@ import { useRateGuest } from '../containers/useRateGuest';
 import { useRateStore } from '@/store/useRateStore';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import Metrics from '@/utility/Metrics';
-import Toast from 'react-native-toast-message'; // Assuming you use this or similar
+import Toast from 'react-native-toast-message';
 
 interface RateFormValues {
   cleanliness: number;
@@ -59,7 +67,7 @@ const TAGS_DATA = {
   ],
 };
 
-const RATING_LABELS: Record<number, string> = {
+const CLEANLINESS_LABELS: Record<number, string> = {
   1: 'Not at all clean',
   2: 'Not very clean',
   3: 'Fairly clean',
@@ -67,9 +75,25 @@ const RATING_LABELS: Record<number, string> = {
   5: 'Extremely clean',
 };
 
+const COMMUNICATION_LABELS: Record<number, string> = {
+  1: 'Not at all well',
+  2: 'Not very well',
+  3: 'Fairly well',
+  4: 'Very well',
+  5: 'Extremely well',
+};
+
+const HOUSE_RULES_LABELS: Record<number, string> = {
+  1: "Didn't follow any rules",
+  2: "Didn't follow most rules",
+  3: 'Followed some rules',
+  4: 'Followed most rules',
+  5: 'Followed all rules',
+};
+
 const RateYourGuestScreen = ({ route }: any) => {
-    const { t } = useTranslation();
-  
+  const { t } = useTranslation();
+
   const reviewId = route.params?.id || 'default';
   const guestName = route.params?.name || 'Guest';
 
@@ -197,7 +221,6 @@ const RateYourGuestScreen = ({ route }: any) => {
   };
 
   const saveAndNavigate = (targetStep: number) => {
-    // Only validate if moving FORWARD
     if (targetStep > step) {
       if (!validateStep(step)) return;
     }
@@ -220,7 +243,7 @@ const RateYourGuestScreen = ({ route }: any) => {
   };
 
   const handleFinalSubmit = (data: RateFormValues) => {
-    if (!validateStep(5)) return; // Final validation check
+    if (!validateStep(5)) return;
 
     const payload = {
       review_id: reviewId,
@@ -235,24 +258,19 @@ const RateYourGuestScreen = ({ route }: any) => {
 
     submitReply(payload, {
       onSuccess: () => {
-        // 1. Show Success Toast
         Toast.show({
           type: 'success',
           text1: t('app.rate_guest.review_submitted'),
           visibilityTime: 3000,
         });
 
-        // 2. Clear the local store for this specific guest
         resetReview(reviewId);
 
-        // 3. Navigate back after a short delay (optional) or immediately
-        // Delaying slightly allows the user to actually see the success message
         setTimeout(() => {
           goBack();
         }, 500);
       },
       onError: (error: any) => {
-        // Handing potential API errors
         Toast.show({
           type: 'error',
           text1: error?.message || 'Something went wrong. Please try again.',
@@ -367,22 +385,25 @@ const RateYourGuestScreen = ({ route }: any) => {
             tagsField: 'clean_tags' as const,
             icon: 'cleanWaterIcon',
             tags: TAGS_DATA.clean,
+            ratingLabels: CLEANLINESS_LABELS,
           },
           {
-            title: 'Communication',
-            sub: 'Was the guest easy to reach?',
+            title: `How well did ${guestName} communicate?`,
+            sub: `We'll share this with ${guestName} and other hosts.`,
             field: 'communication' as const,
             tagsField: 'comm_tags' as const,
             icon: 'cleanWaterIcon',
             tags: TAGS_DATA.comm,
+            ratingLabels: COMMUNICATION_LABELS,
           },
           {
-            title: 'Respect House Rules',
-            sub: 'Did the guest follow rules?',
+            title: `How well did ${guestName} follow your house rules?`,
+            sub: `We'll share this with ${guestName} and other hosts.`,
             field: 'respect_house_rules' as const,
             tagsField: 'house_tags' as const,
             icon: 'cleanWaterIcon',
             tags: TAGS_DATA.house,
+            ratingLabels: HOUSE_RULES_LABELS,
           },
         ][step - 1];
 
@@ -438,9 +459,10 @@ const RateYourGuestScreen = ({ route }: any) => {
                 </ButtonView>
               ))}
             </View>
+
             {ratingValue > 0 && (
               <AppText
-                text={RATING_LABELS[ratingValue]}
+                text={config.ratingLabels[ratingValue]}
                 fontSize={16}
                 color={Colors.BLACK}
                 mt={25}
@@ -510,7 +532,9 @@ const RateYourGuestScreen = ({ route }: any) => {
               maxLength={1000}
             />
             <AppText
-              text={`${currentValues.public_review?.length || 0}${t('app.shared.chars_of_1000')}`}
+              text={`${currentValues.public_review?.length || 0}${t(
+                'app.shared.chars_of_1000',
+              )}`}
               fontSize={12}
               color={Colors.SUPER_GREY}
               mt={Metrics.verticalScale(-10)}
@@ -542,7 +566,11 @@ const RateYourGuestScreen = ({ route }: any) => {
                   onPress={() => setValue('recommend', true)}
                   style={styles.choiceInner}
                 >
-                  <AppText text={t('app.rate_guest.yes')} type="Medium" color={Colors.BLACK} />
+                  <AppText
+                    text={t('app.rate_guest.yes')}
+                    type="Medium"
+                    color={Colors.BLACK}
+                  />
                 </ButtonView>
               </GradientBorder>
               <GradientBorder
@@ -558,7 +586,11 @@ const RateYourGuestScreen = ({ route }: any) => {
                   onPress={() => setValue('recommend', false)}
                   style={styles.choiceInner}
                 >
-                  <AppText text={t('app.rate_guest.no')} type="Medium" color={Colors.BLACK} />
+                  <AppText
+                    text={t('app.rate_guest.no')}
+                    type="Medium"
+                    color={Colors.BLACK}
+                  />
                 </ButtonView>
               </GradientBorder>
             </View>
@@ -594,20 +626,20 @@ const RateYourGuestScreen = ({ route }: any) => {
         style={{ flex: 1 }}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.safeArea}>
-        <View style={styles.mainWrapper}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-          >
-            {renderStepContent()}
-          </ScrollView>
-          {renderFooter()}
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          <View style={styles.safeArea}>
+            <View style={styles.mainWrapper}>
+              <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                bounces={false}
+              >
+                {renderStepContent()}
+              </ScrollView>
+              {renderFooter()}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </BGImage>
   );
 };
@@ -632,31 +664,26 @@ const styles = StyleSheet.create({
   starRow: { flexDirection: 'row', marginTop: 10 },
   tagSection: { marginTop: 10 },
   pillContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-pill: {
-  paddingHorizontal: 16,
-  paddingVertical: 10,
-  borderRadius: 12,
-  backgroundColor: Colors.WHITE, // Required for shadow to be visible
-  borderWidth: 0,                // Ensure no default border
-  borderColor: 'transparent',
-},
-activePill: {
-  // backgroundColor: 'rgba(29, 187, 159, 0.1)', // Light teal tint when selected
-  borderWidth: 0,                             // Explicitly remove border
-  borderColor: 'transparent',
-
-  // --- iOS Shadow (box-shadow: 0px 4px 8.1px 0px #00000021) ---
-  shadowColor: '#000000',
-  shadowOffset: {
-    width: 0,
-    height: 4,
+  pill: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: Colors.WHITE,
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
-  shadowOpacity: 0.13, // 0x21 is ~13% opacity
-  shadowRadius: 8.1,
-
-  // --- Android Shadow ---
-  elevation: 5, 
-},
+  activePill: {
+    borderWidth: 0,
+    borderColor: 'transparent',
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.13,
+    shadowRadius: 8.1,
+    elevation: 5,
+  },
   recommendRow: { flexDirection: 'row', gap: 15 },
   choiceGradient: { flex: 1 },
   choiceInner: {
