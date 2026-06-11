@@ -4,7 +4,6 @@ import {
   View,
   Platform,
   ScrollView,
-  ActivityIndicator,
   BackHandler,
 } from 'react-native';
 import {
@@ -41,7 +40,7 @@ const tabs = [
   { key: 'template', labelKey: 'app.task_management.tabs.template' },
 ];
 
-const ListHeader = ({
+const ListHeader = React.memo(({
   t,
   activeTab,
   handleTabChange,
@@ -92,7 +91,7 @@ const ListHeader = ({
       </ButtonView>
     </View>
   </View>
-);
+));
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -163,9 +162,9 @@ const AllTask = () => {
     }
   }, [initialListingId]);
 
-  const handleOpenFilter = () => {
+  const handleOpenFilter = useCallback(() => {
     filterSheetRef.current?.present();
-  };
+  }, []);
   const handleCloseFilter = () => {
     filterSheetRef.current?.close();
   };
@@ -193,17 +192,21 @@ const AllTask = () => {
     [],
   );
 
+  const listHeader = useMemo(
+    () => (
+      <ListHeader
+        t={t}
+        activeTab={activeTab}
+        handleTabChange={handleTabChange}
+        handleOpenFilter={handleOpenFilter}
+      />
+    ),
+    [t, activeTab, handleTabChange, handleOpenFilter],
+  );
+
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
-
-  // if (isLoading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  //       <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-  //     </View>
-  //   );
-  // }
 
   const renderTaskItem = ({ item }: { item: any }) => {
     console.log('Task Itemmm:', item.status);
@@ -304,14 +307,7 @@ const AllTask = () => {
           meta={dataQuery}
           isLoading={isLoading || isFetching}
           renderItem={renderTaskItem}
-          ListHeaderComponent={
-            <ListHeader
-              t={t}
-              activeTab={activeTab}
-              handleTabChange={handleTabChange}
-              handleOpenFilter={handleOpenFilter}
-            />
-          }
+          ListHeaderComponent={listHeader}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <NoTaskScreen

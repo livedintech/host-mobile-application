@@ -27,6 +27,12 @@ import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import { goBack, navigate } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/useAuthStore';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useRoute } from '@react-navigation/native';
@@ -220,6 +226,9 @@ const ChatScreen = () => {
   const [agentMsgExpanded, setAgentMsgExpanded] = useState(false);
   const [isEditingAiMessage, setIsEditingAiMessage] = useState(false);
   const [editedAiText, setEditedAiText] = useState('');
+  const aiMessageSheetRef = useRef<BottomSheetModal>(null);
+  const aiMessageSnapPoints = useMemo(() => ['60%'], []);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!showAiSuggestion) {
@@ -831,15 +840,18 @@ const ChatScreen = () => {
                           text={currentSuggestion.agent_message}
                           fontSize={13}
                           color={Colors.BRUNSWICK_GREEN}
-                          numberOfLines={agentMsgExpanded ? undefined : 4}
+                          numberOfLines={4}
                         />
                         {currentSuggestion.agent_message?.length > 180 && (
                           <AppPressable
-                            onPress={() => setAgentMsgExpanded(p => !p)}
+                            onPress={() => {
+                              setAgentMsgExpanded(true);
+                              aiMessageSheetRef.current?.present();
+                            }}
                             style={styles.agentMsgToggle}
                           >
                             <AppText
-                              text={agentMsgExpanded ? 'Show less' : 'Show more'}
+                              text="Show more"
                               fontSize={11}
                               color={Colors.PERSIAN_GREEN}
                               type="Bold"
@@ -948,6 +960,45 @@ const ChatScreen = () => {
                 </View>
               </View>
             )}
+
+            {/* Full AI Suggestion Modal */}
+            <BottomSheetModal
+              ref={aiMessageSheetRef}
+              index={0}
+              snapPoints={aiMessageSnapPoints}
+              enablePanDownToClose
+              topInset={insets.top}
+              onDismiss={() => setAgentMsgExpanded(false)}
+              backdropComponent={(props) => (
+                <BottomSheetBackdrop
+                  {...props}
+                  disappearsOnIndex={-1}
+                  appearsOnIndex={0}
+                  pressBehavior="close"
+                />
+              )}
+            >
+              <View style={styles.aiFullMessageHeader}>
+                <AppText
+                  text={t('app.chat_detail.ai_suggestions')}
+                  fontSize={14}
+                  type="Bold"
+                  color={Colors.BRUNSWICK_GREEN}
+                />
+              </View>
+              <BottomSheetScrollView
+                contentContainerStyle={styles.aiFullMessageContent}
+                showsVerticalScrollIndicator={false}
+              >
+                <AppText
+                  text={currentSuggestion?.agent_message}
+                  fontSize={14}
+                  lineHeight={22}
+                  color={Colors.BRUNSWICK_GREEN}
+                />
+              </BottomSheetScrollView>
+            </BottomSheetModal>
+
             {/* Reply Indicator in Input Area */}
             {replyingToMessage && (
               <View style={styles.replyingIndicatorContainer}>
@@ -1382,7 +1433,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 15,
     backgroundColor: '#F9FCFB',
-    position: 'relative',
   },
   aiClose: {
     position: 'absolute',
@@ -1653,6 +1703,16 @@ const styles = StyleSheet.create({
     minHeight: 60,
     maxHeight: 120,
     textAlignVertical: 'top',
+  },
+  aiFullMessageHeader: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEE',
+  },
+  aiFullMessageContent: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
   },
   //   screenContent: {
   //   flex: 1,
