@@ -34,6 +34,66 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 
+const tabs = [
+  { key: 'todo', labelKey: 'app.task_management.tabs.todo' },
+  { key: 'in_progress', labelKey: 'app.task_management.tabs.in_progress' },
+  { key: 'complete', labelKey: 'app.task_management.tabs.complete' },
+  { key: 'template', labelKey: 'app.task_management.tabs.template' },
+];
+
+const ListHeader = ({
+  t,
+  activeTab,
+  handleTabChange,
+  handleOpenFilter,
+}: {
+  t: any;
+  activeTab: string;
+  handleTabChange: (key: string) => void;
+  handleOpenFilter: () => void;
+}) => (
+  <View style={styles.header}>
+    <AppText
+      text={t('app.task_management.title')}
+      fontSize={26}
+      type="Medium"
+      mb={24}
+    />
+    <View style={styles.filterRow}>
+      <View style={styles.tabScrollWrapper}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabContainer}
+        >
+          {tabs.map(tab => (
+            <ButtonView
+              key={tab.key}
+              style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+              onPress={() => handleTabChange(tab.key)}
+            >
+              <AppText
+                text={t(tab.labelKey)}
+                fontSize={14}
+                type={activeTab === tab.key ? 'Bold' : 'Medium'}
+                color={
+                  activeTab === tab.key
+                    ? Colors.WHITE
+                    : Colors.DARK_CHARCOAL_OPACITY_80
+                }
+              />
+            </ButtonView>
+          ))}
+        </ScrollView>
+      </View>
+
+      <ButtonView style={styles.filterIconButton} onPress={handleOpenFilter}>
+        <Svgicons path="filterIcon" size={20} />
+      </ButtonView>
+    </View>
+  </View>
+);
+
 // Native date formatter
 const formatDate = (dateString: string) => {
   if (!dateString) return '';
@@ -66,11 +126,6 @@ const AllTask = () => {
 
   const { resetTaskStore } = useTaskStore();
   const { user } = useAuthStore();
-
-
-  if (!user?.has_listing) {
-    return <NoListingScreen />;
-  }
 
   const filterSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['60%'], []);
@@ -138,13 +193,17 @@ const AllTask = () => {
     [],
   );
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-      </View>
-    );
+  if (!user?.has_listing) {
+    return <NoListingScreen />;
   }
+
+  // if (isLoading) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //       <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+  //     </View>
+  //   );
+  // }
 
   const renderTaskItem = ({ item }: { item: any }) => {
     console.log('Task Itemmm:', item.status);
@@ -237,56 +296,6 @@ const AllTask = () => {
     );
   };
 
-  const ListHeader = ({ t }: any) => (
-    <View style={styles.header}>
-      <AppText
-        text={t('app.task_management.title')}
-        fontSize={26}
-        type="Medium"
-        mb={24}
-      />
-      <View style={styles.filterRow}>
-        <View style={styles.tabScrollWrapper}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabContainer}
-          >
-            {tabs.map(tab => (
-              <ButtonView
-                key={tab.key}
-                style={[styles.tab, activeTab === tab.key && styles.activeTab]}
-                onPress={() => handleTabChange(tab.key)}
-              >
-                <AppText
-                  text={tab.label} 
-                  fontSize={14}
-                  type={activeTab === tab.key ? 'Bold' : 'Medium'}
-                  color={
-                    activeTab === tab.key
-                      ? Colors.WHITE
-                      : Colors.DARK_CHARCOAL_OPACITY_80
-                  }
-                />
-              </ButtonView>
-            ))}
-          </ScrollView>
-        </View>
-
-        <ButtonView style={styles.filterIconButton} onPress={handleOpenFilter}>
-          <Svgicons path="filterIcon" size={20} />
-        </ButtonView>
-      </View>
-    </View>
-  );
-
-  const tabs = [
-    { key: 'todo', label: t('app.task_management.tabs.todo') },
-    { key: 'in_progress', label: t('app.task_management.tabs.in_progress') },
-    { key: 'complete', label: t('app.task_management.tabs.complete') },
-    { key: 'template', label: t('app.task_management.tabs.template') },
-  ];
-
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.safeArea}>
@@ -295,7 +304,14 @@ const AllTask = () => {
           meta={dataQuery}
           isLoading={isLoading || isFetching}
           renderItem={renderTaskItem}
-          ListHeaderComponent={<ListHeader t={t} />}
+          ListHeaderComponent={
+            <ListHeader
+              t={t}
+              activeTab={activeTab}
+              handleTabChange={handleTabChange}
+              handleOpenFilter={handleOpenFilter}
+            />
+          }
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <NoTaskScreen
