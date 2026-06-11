@@ -1996,7 +1996,7 @@
       "connected_booking_platforms": "منصات الحجز\nالمتصلة",
       "connect_ota_title": "ربط منصات\nالحجز OTA",
       "connect_ota_desc": "اربط حسابات Airbnb أو Gathern أو منصات الحجز الأخرى لإدارة جميع عقاراتك في مكان واحد.",
-      "step4_deduction": "سيتم خصم SR187.50 من دفعتك التالية",
+      "step4_deduction": "سيتم خصم SAR {{amount}} من دفعتك التالية",
       "step1_cant_host": "لماذا لا يمكنك استضافة {{name}}؟",
       "this_guest": "هذا الضيف",
       "decline_step1_title": "أخبرنا لماذا لا يمكنك استضافة رحلة {{name}}",

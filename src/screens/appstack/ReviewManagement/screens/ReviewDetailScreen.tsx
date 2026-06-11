@@ -176,6 +176,7 @@ const ReviewDetailScreen = ({ route }: any) => {
       guest_name: guest?.full_name || 'the guest',
       listing_id: guest?.listing_id,
       platform: platform,
+      guest_paid_amount: payment_breakdown?.guest_paid_amount,
     };
 
     if (key === MENU_OPTION_KEYS.CHANGE) {

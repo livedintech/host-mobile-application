@@ -29,7 +29,7 @@ export const changeLanguage = async (lang: string) => {
   saveLanguage(lang);
   if (I18nManager.isRTL !== isRTL) {
     I18nManager.forceRTL(isRTL);
-    RNRestart.restart();
+    RNRestart?.restart();
   }
 };
 
@@ -41,7 +41,7 @@ const shouldBeRTL = savedLang === 'ar';
 // default language is Arabic), restart once so the layout matches the language.
 if (I18nManager.isRTL !== shouldBeRTL) {
   I18nManager.forceRTL(shouldBeRTL);
-  RNRestart.restart();
+  RNRestart?.restart();
 }
 
 i18n

@@ -1999,7 +1999,7 @@
       "connected_booking_platforms": "Connected\nBooking Platforms",
       "connect_ota_title": "Connect OTA\nBooking Platforms",
       "connect_ota_desc": "Connect your Airbnb, Gathern, or other booking platforms to manage all your properties in one place.",
-      "step4_deduction": "SR187.50 will be deducted from your next payout",
+      "step4_deduction": "SAR {{amount}} will be deducted from your next payout",
       "step1_cant_host": "Why can't you host {{name}}?",
       "this_guest": "this guest",
       "decline_step1_title": "Let us know why you can't host {{name}}'s trip",
