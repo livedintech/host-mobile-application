@@ -147,8 +147,35 @@ const AiAutoPilotContainer = () => {
     },
   });
 
+  // const handleSwitchToggle = (nextStatus: boolean) => {
+  //   const currentFormValues = getValues();
+    
+  //   const payload = {
+  //     user_id: user?.id,
+  //     status: nextStatus,
+  //     listings: currentFormValues.properties?.map(Number),
+  //     auto_create: autoCreateAll,
+  //     wait_trigger: Number(currentFormValues.waitTrigger),
+  //   };
+
+  //   updateSwitchStatus(payload);
+  // };
+
+
   const handleSwitchToggle = (nextStatus: boolean) => {
     const currentFormValues = getValues();
+    const hasSelectedProperties = currentFormValues.properties && currentFormValues.properties.length > 0;
+    console.log("nextStatus",nextStatus);
+    console.log("hasSelectedProperties",hasSelectedProperties)
+
+    // VALIDATION: If turning the switch ON, ensure at least one listing is selected
+    if (nextStatus && !hasSelectedProperties) {
+      Toast.show({
+        type: 'error',
+        text1: t('app.autopilot.error_property_required') || 'Please select at least one listing first.',
+      });
+      return; // Stop execution; toggle will not open
+    }
     
     const payload = {
       user_id: user?.id,
