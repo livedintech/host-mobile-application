@@ -574,7 +574,8 @@
       "delete_confirm": "Are you sure you want to delete this AI rule?",
       "confirm_btn": "Confirm",
       "cancel_btn": "Cancel",
-      "ai_allow_label": "Enable AI Auto Reply"
+      "ai_allow_label": "Enable AI Auto Reply",
+      "select_listing_first": "Please select at least one listing before enabling AI Auto Reply."
     },
     "no_ai_auto_reply": {
       "title": "No AI Auto Reply Found",
