@@ -36,9 +36,9 @@ const PasswordField = ({
           placeholder={placeholder}
           error={errors?.[name]?.message as string}
           secureTextEntry={!show}
-          style={{ textAlign: I18nManager.isRTL ? 'right' : 'left' }}
-          leftIcon={show ? <Svgicons path='eye'/> : <Svgicons path='eyeSlash'/>}
-          onLeftIconPress={() => setShow(prev => !prev)}
+          style={I18nManager.isRTL ? { textAlign: 'right' } : undefined}
+          rightIcon={show ? <Svgicons path='eye'/> : <Svgicons path='eyeSlash'/>}
+          onRightIconPress={() => setShow(prev => !prev)}
         />
       )}
     />

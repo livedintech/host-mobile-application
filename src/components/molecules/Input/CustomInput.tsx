@@ -29,7 +29,6 @@ type Props = {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconPress?: () => void;
-  onLeftIconPress?: () => void;
   keyboardType?: KeyboardTypeOptions;
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   secureTextEntry?: boolean;
@@ -52,7 +51,6 @@ const CustomInput = ({
   leftIcon,
   rightIcon,
   onRightIconPress,
-  onLeftIconPress,
   keyboardType = 'default',
   returnKeyType,
   secureTextEntry = false,
@@ -118,15 +116,7 @@ const CustomInput = ({
           wrapperStyle,
         ]}
       >
-        {leftIcon && (
-          onLeftIconPress ? (
-            <ButtonView style={styles.iconWrapper} onPress={onLeftIconPress}>
-              {leftIcon}
-            </ButtonView>
-          ) : (
-            <View style={styles.iconWrapper}>{leftIcon}</View>
-          )
-        )}
+        {leftIcon && <View style={styles.iconWrapper}>{leftIcon}</View>}
 
         <TextInput
           multiline={multiline}
