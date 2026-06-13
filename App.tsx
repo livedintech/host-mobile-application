@@ -55,8 +55,7 @@ const App = () => {
     });
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      const state = navStateRef.current;
-      if (state && state.index > 0) {
+      if (navigationRef.current?.canGoBack()) {
         navigationRef.current?.goBack();
         return true;
       }

@@ -1,5 +1,5 @@
 // useConfirmAddressContainer.ts
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -40,6 +40,7 @@ export default function useConfirmAddressContainer() {
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<AddressFormValues>({
     resolver: ((values: any, _ctx: any, options: any) =>
@@ -50,8 +51,8 @@ export default function useConfirmAddressContainer() {
       state:         listing?.state?.id    ?? undefined,
       city:          listing?.city?.id     ?? undefined,
       district:      listing?.district?.id ?? undefined,
-      address:       listing?.street || listing?.address || '',
-      postalAddress: listing?.apt || '',
+      address:       listing?.street || listing?.address || propertyDetail?.street || '',
+      postalAddress: listing?.apt || propertyDetail?.apt || '',
     },
   });
 
@@ -96,6 +97,34 @@ export default function useConfirmAddressContainer() {
     hasCities:    citiesOptions.length    > 0,
     hasDistricts: districtsOptions.length > 0,
   };
+
+  // ── Auto-select dropdowns from map-geocoded address (create mode only) ───
+  const matchByName = (list: any[], name?: string) =>
+    name ? list.find((item: any) => item.name?.toLowerCase().trim() === name.toLowerCase().trim()) : undefined;
+
+  useEffect(() => {
+    if (isEdit || selectedCountryId) return;
+    const match = matchByName(countriesData, propertyDetail?.country_name);
+    if (match) setValue('country_code', match.id);
+  }, [countriesData]);
+
+  useEffect(() => {
+    if (isEdit || selectedStateId) return;
+    const match = matchByName(statesData, propertyDetail?.state);
+    if (match) setValue('state', match.id);
+  }, [statesData]);
+
+  useEffect(() => {
+    if (isEdit || selectedCityId) return;
+    const match = matchByName(citiesData, propertyDetail?.city);
+    if (match) setValue('city', match.id);
+  }, [citiesData]);
+
+  useEffect(() => {
+    if (isEdit || watch('district')) return;
+    const match = matchByName(districtsData, propertyDetail?.district);
+    if (match) setValue('district', match.id);
+  }, [districtsData]);
 
   // ── Lookup helpers ────────────────────────────────────────────────────────
   const findCountry  = (id: number) => countriesData.find((c: any) => c.id === id);

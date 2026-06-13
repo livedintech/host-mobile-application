@@ -15,6 +15,40 @@ interface GooglePlaceDetail {
   formatted_address: string;
 }
 
+interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+
+interface ParsedAddress {
+  street: string;
+  district: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode: string;
+}
+
+// ── Parse Google geocode address_components into our address fields ────────
+const parseAddressComponents = (components: AddressComponent[] = []): ParsedAddress => {
+  const findByType = (type: string) =>
+    components.find(c => c.types.includes(type))?.long_name || '';
+
+  const streetNumber = findByType('street_number');
+  const route = findByType('route');
+  const street = [streetNumber, route].filter(Boolean).join(' ');
+
+  return {
+    street,
+    district: findByType('sublocality_level_1') || findByType('neighborhood') || findByType('administrative_area_level_2'),
+    city: findByType('locality') || findByType('administrative_area_level_2'),
+    state: findByType('administrative_area_level_1'),
+    country: findByType('country'),
+    postalCode: findByType('postal_code'),
+  };
+};
+
 const GOOGLE_MAPS_APIKEY = 'AIzaSyBFLqCFWozTt6lfoGyNGl95OYsceWSo8LE';
 
 const FALLBACK_REGION: Region = {
@@ -51,6 +85,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
   const [region, setRegion] = useState<Region>(INITIAL_REGION);
   const [currentAddress, setCurrentAddress] = useState('');
+  const [parsedAddress, setParsedAddress] = useState<ParsedAddress | null>(null);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [hasUserLocation, setHasUserLocation] = useState(hasExistingLocation);
@@ -82,6 +117,7 @@ export default function useCreateListingStepOneLocationContainer() {
       if (data.status === 'OK' && data.results?.length > 0) {
         const address: string = data.results[0]?.formatted_address ?? '';
         setCurrentAddress(address);
+        setParsedAddress(parseAddressComponents(data.results[0]?.address_components));
         placesRef.current?.setAddressText(address);
         return address;
       }
@@ -245,6 +281,19 @@ export default function useCreateListingStepOneLocationContainer() {
     }, 600);
   };
 
+  // ── Map parsed geocode address to listing store fields ───────────────────
+  const buildParsedAddressUpdate = () => {
+    if (!parsedAddress) return {};
+    return {
+      ...(parsedAddress.street && { street: parsedAddress.street }),
+      ...(parsedAddress.postalCode && { apt: parsedAddress.postalCode }),
+      ...(parsedAddress.city && { city: parsedAddress.city }),
+      ...(parsedAddress.state && { state: parsedAddress.state }),
+      ...(parsedAddress.district && { district: parsedAddress.district }),
+      ...(parsedAddress.country && { country_name: parsedAddress.country }),
+    };
+  };
+
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleConfirm = () => {
     if (!hasUserLocation) {
@@ -259,7 +308,7 @@ text2: i18n.t('app.location_step.location_required_desc'),
       Toast.show({ type: 'error',text1: i18n.t('app.location_step.address_wait') });
       return;
     }
-    updateListing({ lat: region.latitude, lng: region.longitude });
+    updateListing({ lat: region.latitude, lng: region.longitude, ...buildParsedAddressUpdate() });
 
     // ✅ Edit mode mein paramData forward karo
     navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, {
@@ -276,7 +325,7 @@ text2: i18n.t('app.location_step.location_required_desc'),
       });
       return;
     }
-    updateListing({ lat: region.latitude, lng: region.longitude });
+    updateListing({ lat: region.latitude, lng: region.longitude, ...buildParsedAddressUpdate() });
     navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
   };
 
