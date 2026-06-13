@@ -1,10 +1,17 @@
-import React, { useRef, useMemo, useCallback, useEffect, useState } from 'react';
+import React, {
+  useRef,
+  useMemo,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import {
   StyleSheet,
   View,
   Platform,
   ScrollView,
   BackHandler,
+  ActivityIndicator,
 } from 'react-native';
 import {
   BottomSheetView,
@@ -40,58 +47,60 @@ const tabs = [
   { key: 'template', labelKey: 'app.task_management.tabs.template' },
 ];
 
-const ListHeader = React.memo(({
-  t,
-  activeTab,
-  handleTabChange,
-  handleOpenFilter,
-}: {
-  t: any;
-  activeTab: string;
-  handleTabChange: (key: string) => void;
-  handleOpenFilter: () => void;
-}) => (
-  <View style={styles.header}>
-    <AppText
-      text={t('app.task_management.title')}
-      fontSize={26}
-      type="Medium"
-      mb={24}
-    />
-    <View style={styles.filterRow}>
-      <View style={styles.tabScrollWrapper}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabContainer}
-        >
-          {tabs.map(tab => (
-            <ButtonView
-              key={tab.key}
-              style={[styles.tab, activeTab === tab.key && styles.activeTab]}
-              onPress={() => handleTabChange(tab.key)}
-            >
-              <AppText
-                text={t(tab.labelKey)}
-                fontSize={14}
-                type={activeTab === tab.key ? 'Bold' : 'Medium'}
-                color={
-                  activeTab === tab.key
-                    ? Colors.WHITE
-                    : Colors.DARK_CHARCOAL_OPACITY_80
-                }
-              />
-            </ButtonView>
-          ))}
-        </ScrollView>
-      </View>
+const ListHeader = React.memo(
+  ({
+    t,
+    activeTab,
+    handleTabChange,
+    handleOpenFilter,
+  }: {
+    t: any;
+    activeTab: string;
+    handleTabChange: (key: string) => void;
+    handleOpenFilter: () => void;
+  }) => (
+    <View style={styles.header}>
+      <AppText
+        text={t('app.task_management.title')}
+        fontSize={26}
+        type="Medium"
+        mb={24}
+      />
+      <View style={styles.filterRow}>
+        <View style={styles.tabScrollWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tabContainer}
+          >
+            {tabs.map(tab => (
+              <ButtonView
+                key={tab.key}
+                style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+                onPress={() => handleTabChange(tab.key)}
+              >
+                <AppText
+                  text={t(tab.labelKey)}
+                  fontSize={14}
+                  type={activeTab === tab.key ? 'Bold' : 'Medium'}
+                  color={
+                    activeTab === tab.key
+                      ? Colors.WHITE
+                      : Colors.DARK_CHARCOAL_OPACITY_80
+                  }
+                />
+              </ButtonView>
+            ))}
+          </ScrollView>
+        </View>
 
-      <ButtonView style={styles.filterIconButton} onPress={handleOpenFilter}>
-        <Svgicons path="filterIcon" size={20} />
-      </ButtonView>
+        <ButtonView style={styles.filterIconButton} onPress={handleOpenFilter}>
+          <Svgicons path="filterIcon" size={20} />
+        </ButtonView>
+      </View>
     </View>
-  </View>
-));
+  ),
+);
 
 // Native date formatter
 const formatDate = (dateString: string) => {
@@ -142,13 +151,16 @@ const AllTask = () => {
   }, [route.params?._t]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (isFilterOpen) {
-        filterSheetRef.current?.dismiss();
-        return true;
-      }
-      return false;
-    });
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (isFilterOpen) {
+          filterSheetRef.current?.dismiss();
+          return true;
+        }
+        return false;
+      },
+    );
     return () => backHandler.remove();
   }, [isFilterOpen]);
 
@@ -279,7 +291,9 @@ const AllTask = () => {
               <AppText
                 text={
                   item.assigned_user_name
-                    ? `${t('app.task_management.assigned_to_user')} ${item.assigned_user_name}`
+                    ? `${t('app.task_management.assigned_to_user')} ${
+                        item.assigned_user_name
+                      }`
                     : `${t('app.task_management.unassigned')}`
                 }
                 fontSize={13}
@@ -291,7 +305,9 @@ const AllTask = () => {
               <View style={styles.infoRow}>
                 <Svgicons path="task_calendar" size={16} />
                 <AppText
-                  text={`${t('app.task_management.date_value')} ${item?.date ? formatDate(item.date) : '--'}`}
+                  text={`${t('app.task_management.date_value')} ${
+                    item?.date ? formatDate(item.date) : '--'
+                  }`}
                   fontSize={13}
                   ml={10}
                   color={Colors.DARK_CHARCOAL}
@@ -315,10 +331,22 @@ const AllTask = () => {
           ListHeaderComponent={listHeader}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
-            <NoTaskScreen
-              activeTab={activeTab}
-              hasListings={listingOptions.length > 0}
-            />
+            isLoading || isFetching ? (
+              <View
+                style={{
+                  paddingVertical: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
+              </View>
+            ) : (
+              <NoTaskScreen
+                activeTab={activeTab}
+                hasListings={listingOptions.length > 0}
+              />
+            )
           }
         />
 
@@ -378,18 +406,18 @@ const AllTask = () => {
                 data={listingOptions}
                 control={control as any}
                 errors={errors}
-                dropdownPosition='top'
+                dropdownPosition="top"
               />
 
               <View style={{ marginTop: 10 }}>
                 <MultiSelectDropdownField
                   name="assignees"
-                 label={t('app.task_management.filters.select_task_assignee')}
+                  label={t('app.task_management.filters.select_task_assignee')}
                   placeholder={t('app.task_management.select_multiple')}
                   data={assigneeOptions}
                   control={control as any}
                   errors={errors}
-                  dropdownPosition='top'
+                  dropdownPosition="top"
                 />
               </View>
 
