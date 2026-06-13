@@ -27,6 +27,8 @@ const StepFour = () => {
 
   const [guestMessage, setGuestMessage] = useState('');
 
+  const deductionAmount = Number(bookingData?.guest_paid_amount || 0).toFixed(2);
+
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
       cancelOtaBookingApi(bookingData?.booking_id, {
@@ -52,7 +54,7 @@ const StepFour = () => {
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.mainContainer}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <AppText text={t('app.shared.step4_deduction')} type="Bold" fontSize={24} mb={vs(10)} />
+          <AppText text={t('app.shared.step4_deduction', { amount: deductionAmount })} type="Bold" fontSize={24} mb={vs(10)} />
           <AppText
             text={t('app.cancel_reservation.step4_fee_description')}
             fontSize={13} 

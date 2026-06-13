@@ -51,3 +51,9 @@ export interface markReadChatPayloadType {
 export interface getPendingAgentMessageReviewPayloadType {
   message_thread_id: string | number;
 }
+
+export interface updateAgentMessageReviewPayloadType {
+  id: string | number;
+  feedback: boolean;
+  feedback_review?: string;
+}

@@ -51,6 +51,7 @@ export const SERVICE_CONFIG_URLS = {
     CREATE_CHAT_INBOX_SNOOZE: `${authController}/chat/inbox/{conversation_id}/snooze`,
     CREATE_CHAT_INBOX_UNSNOOZE: `${authController}/chat/inbox/{conversation_id}/unsnooze`,
     AGENT_MESSAGE_REVIEWS_PENDING : `${authController}/agent-message-reviews/pending/{message_thread_id}`,
+    AGENT_MESSAGE_REVIEWS_UPDATE: `${authController}/agent-message-reviews/{id}`,
     CREATE_USER_MANAGEMENT: `${authController}/host/users`,
     GET_USER_MANAGEMENT_LISTING: `${authController}/host/users/listings`,
     GET_VENDOR_SERVICES: `${api}/vendorservices`,

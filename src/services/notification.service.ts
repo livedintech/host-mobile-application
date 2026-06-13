@@ -15,6 +15,7 @@ import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { navigate } from './navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 export class NotificationService {
   static initiated = false;
@@ -101,24 +102,27 @@ export class NotificationService {
     if (this.initiated) return;
     this.initiated = true;
 
-    // Background state
+    // Background state — app already running, navigation is ready quickly
     onNotificationOpenedApp(getMessaging(), remoteMessage => {
-      NotificationService.handleNavigation(remoteMessage);
+      NotificationService.handleNavigation(remoteMessage, 1000);
     });
 
-    // Quit state — Firebase
+    // Quit state — Firebase — app is cold starting, needs more time
     getInitialNotification(getMessaging()).then(remoteMessage => {
       if (remoteMessage) {
-        NotificationService.handleNavigation(remoteMessage);
+        NotificationService.handleNavigation(remoteMessage, 5000);
       }
     });
 
-    // Quit state — Notifee
+    // Quit state — Notifee — app is cold starting, needs more time
     notifee.getInitialNotification().then(initial => {
       if (initial?.notification?.data) {
-        NotificationService.handleNavigation({
-          data: initial.notification.data as Record<string, string>,
-        } as FirebaseMessagingTypes.RemoteMessage);
+        NotificationService.handleNavigation(
+          {
+            data: initial.notification.data as Record<string, string>,
+          } as FirebaseMessagingTypes.RemoteMessage,
+          5000,
+        );
       }
     });
 
@@ -139,6 +143,7 @@ export class NotificationService {
 
   static handleNavigation(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage | null,
+    delay: number = 1000,
   ): void {
     if (!remoteMessage?.data) return;
 
@@ -150,9 +155,14 @@ export class NotificationService {
           navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
           break;
 
+        case 'direct_booking_received':
+          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+            booking_id: `L${id}`,
+          });
+          break;
+
         case 'booking_detail':
         case 'booking_confirmed':
-        case 'direct_booking_received':
         case 'stay_completed':
         case 'checkin_today':
         case 'checkout_today':
@@ -214,10 +224,6 @@ export class NotificationService {
           navigate(NavigationRoutes.APP_STACK.BILLING);
           break;
 
-        case 'password_changed':
-          navigate(NavigationRoutes.APP_STACK.CHANGE_PASSWORD);
-          break;
-
         case 'profile_updated':
         case 'account_created':
           navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
@@ -231,7 +237,8 @@ export class NotificationService {
         case 'listing_mapped':
         case 'listing_unmapped':
         case 'listing_exported':
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+          useCreateListingStore.getState().setListingId(id.toString());
+          navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
           break;
 
         case 'user_invited':
@@ -244,7 +251,7 @@ export class NotificationService {
         default:
           break;
       }
-    }, 5000);
+    }, delay);
   }
 }
 

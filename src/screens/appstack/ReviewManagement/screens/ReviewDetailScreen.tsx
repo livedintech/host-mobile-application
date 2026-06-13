@@ -176,6 +176,7 @@ const ReviewDetailScreen = ({ route }: any) => {
       guest_name: guest?.full_name || 'the guest',
       listing_id: guest?.listing_id,
       platform: platform,
+      guest_paid_amount: payment_breakdown?.guest_paid_amount,
     };
 
     if (key === MENU_OPTION_KEYS.CHANGE) {
@@ -793,7 +794,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                       />
                     </View>
                     <AppText
-                      text={guest.rating}
+                      text={guest?.rating > 0 && guest?.rating}
                       fontSize={14}
                       type="Bold"
                       color={Colors.BLACK}
@@ -850,7 +851,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                 <View style={{ flex: 1 }}>
                   <AppButton
                     // disabled={guest?.rating == 0}
-                    disabled={!isCheckedOut}
+                    disabled={!guest?.rating }
                     title={t('app.review_detail.view_details')}
                     fontSize={14}
                     onPress={() =>
@@ -862,11 +863,11 @@ const ReviewDetailScreen = ({ route }: any) => {
                         },
                       )
                     }
-                    backgroundColor={isCheckedOut ? Colors.PRIMARY_TEAL : ''}
-                    color={isCheckedOut ? Colors.WHITE : ''}
+                    backgroundColor={guest?.rating ? Colors.PRIMARY_TEAL : ''}
+                    color={guest?.rating ? Colors.WHITE : ''}
                     style={[
                       styles.rateGuestBtn,
-                      !isCheckedOut && styles.disabledBtn,
+                      !guest?.rating && styles.disabledBtn,
                     ]}
                     borderRadius={100}
                   />

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -73,14 +73,14 @@ export default function useListingContainer(
   } = formMethods;
   const selectedListingId = watch('listing_selection');
 
-  // Logic: Pre-fill listing selection from params
+  // Logic: Pre-fill listing selection from params (only once on mount)
+  const didInitFromParams = useRef(false);
   useEffect(() => {
-    if (listingIdFromParams) {
-      const targetId = String(listingIdFromParams);
-      if (selectedListingId !== targetId)
-        setValue('listing_selection', targetId);
+    if (listingIdFromParams && !didInitFromParams.current) {
+      didInitFromParams.current = true;
+      setValue('listing_selection', String(listingIdFromParams));
     }
-  }, [listingIdFromParams, setValue, selectedListingId]);
+  }, [listingIdFromParams, setValue]);
 
   // Logic: Clear validation errors when switching booking type
   useEffect(() => {

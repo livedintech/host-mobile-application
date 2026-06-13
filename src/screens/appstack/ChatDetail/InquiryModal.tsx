@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     top: Metrics.verticalScale(80),
     left: Metrics.scale(20),
     right: Metrics.scale(20),
-    zIndex: 100,
+    zIndex: 99999,
     backgroundColor: Colors.WHITE,
     borderRadius: 24,
     borderWidth: 1,
