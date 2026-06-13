@@ -272,7 +272,6 @@ const EditTask = ({ route }: any) => {
 
               {task?.key_code && (
                 <>
-                  {' '}
                   <AppText
                     text={t('app.task_management.door_code')}
                     fontSize={14}
@@ -284,7 +283,7 @@ const EditTask = ({ route }: any) => {
                     fontSize={14}
                     color={Colors.DARK_CHARCOAL}
                     mb={20}
-                  />{' '}
+                  />
                 </>
               )}
               <AppText
