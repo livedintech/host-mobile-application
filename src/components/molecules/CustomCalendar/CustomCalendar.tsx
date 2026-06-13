@@ -164,11 +164,13 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                 ]}
               >
                 {/* {brand.icon !== 'livedin' && ( */}
-                <Svgicons
-                  path={brand.icon as any}
-                  size={ms(9)}
-                  color={iconColor}
-                />
+                {brand.icon && (
+                  <Svgicons
+                    path={brand.icon as any}
+                    size={ms(9)}
+                    color={iconColor}
+                  />
+                )}
                 {/* )} */}
                 {/* <AppText
                   text={displayName}
@@ -222,62 +224,62 @@ const CustomCalendar = ({
   return (
     <View style={styles.glassCard}>
       <View style={{ direction: 'ltr' }}>
-      <Calendar
-        current={currentDate}
-        markingType="custom"
-        markedDates={markedDates}
-        dayComponent={(props: any) => (
-          <CustomDay
-            {...props}
-            defaultPrice={defaultPrice}
-            onPress={onDayPress}
-          />
-        )}
-        renderArrow={(dir: any) =>
-          dir === 'left' ? (
-            <ChevronLeft size={ms(22)} color="#000000" />
-          ) : (
-            <ChevronRight size={ms(22)} color="#000000" />
-          )
-        }
-        style={{ backgroundColor: 'transparent' }}
-        theme={
-          {
-            backgroundColor: 'transparent',
-            calendarBackground: 'transparent',
-            'stylesheet.calendar.main': {
-              container: {
-                paddingLeft: 0,
-                paddingRight: 0,
-                backgroundColor: 'transparent',
+        <Calendar
+          current={currentDate}
+          markingType="custom"
+          markedDates={markedDates}
+          dayComponent={(props: any) => (
+            <CustomDay
+              {...props}
+              defaultPrice={defaultPrice}
+              onPress={onDayPress}
+            />
+          )}
+          renderArrow={(dir: any) =>
+            dir === 'left' ? (
+              <ChevronLeft size={ms(22)} color="#000000" />
+            ) : (
+              <ChevronRight size={ms(22)} color="#000000" />
+            )
+          }
+          style={{ backgroundColor: 'transparent' }}
+          theme={
+            {
+              backgroundColor: 'transparent',
+              calendarBackground: 'transparent',
+              'stylesheet.calendar.main': {
+                container: {
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  backgroundColor: 'transparent',
+                },
+                monthView: {
+                  backgroundColor: 'transparent',
+                  marginHorizontal: 0,
+                },
               },
-              monthView: {
-                backgroundColor: 'transparent',
-                marginHorizontal: 0,
+              'stylesheet.calendar.header': {
+                header: {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: 'transparent',
+                  paddingHorizontal: s(10),
+                },
+                week: {
+                  marginTop: 7,
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  backgroundColor: 'transparent',
+                  marginHorizontal: 0,
+                },
               },
-            },
-            'stylesheet.calendar.header': {
-              header: {
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                paddingHorizontal: s(10),
-              },
-              week: {
-                marginTop: 7,
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                backgroundColor: 'transparent',
-                marginHorizontal: 0,
-              },
-            },
-            monthTextColor: '#000000',
-            textMonthFontWeight: '700',
-            textMonthFontSize: ms(18),
-          } as any
-        }
-      />
+              monthTextColor: '#000000',
+              textMonthFontWeight: '700',
+              textMonthFontSize: ms(18),
+            } as any
+          }
+        />
       </View>
     </View>
   );

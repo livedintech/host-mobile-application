@@ -58,6 +58,7 @@ const CreateListingStepOneLocationScreen = () => {
         onRegionChangeComplete={onRegionChangeComplete}
         showsUserLocation={true}
         showsMyLocationButton={false}
+        onUserLocationChange={() => {}}
       />
 
       {/* ── Fixed Center Pin ──────────────────────────────────────────── */}
