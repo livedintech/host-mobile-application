@@ -26,8 +26,8 @@ const ManageListingScreen = () => {
     refetch,
     UserPermission,
   } = useManageListingContainer();
-  
-    const { user } = useAuthStore();
+
+  const { user } = useAuthStore();
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
@@ -47,10 +47,15 @@ const ManageListingScreen = () => {
     const img = item?.images?.[0]
 
     return (
-      <AppPressable onPress={() => goToPropertyDetail(item)}>
+      <AppPressable onPress={() => item?.channel_type === 'Bookings.com' ? null : goToPropertyDetail(item)}>
         <GlassCard width="100%" style={styles.cardWrapper}>
           <View style={styles.imageContainer}>
-            {img ? (
+            {item?.channel_type === 'Bookings.com' ? (
+              <Image
+                source={require('@/assets/img/bookingComImg.png')}
+                style={styles.propertyImg}
+              />
+            ) : img ? (
               <Image
                 source={{ uri: img }}
                 style={styles.propertyImg}
@@ -65,7 +70,9 @@ const ManageListingScreen = () => {
               </View>
             )}
 
-
+            <GlassCard style={styles.logo}>
+              <Svgicons path={item?.channel_type == 'Bookings.com' ? 'bookingCom' : 'airbnb' } size={15} />
+            </GlassCard>
             {item?.is_sync === 'sync_all' && (
               <View style={styles.badge}>
                 <View style={styles.badgeDot} />
@@ -73,7 +80,7 @@ const ManageListingScreen = () => {
               </View>
             )}
             {/* Percentage Badge */}
-            {item?.listing_steps !== 'completed' && (
+            {item?.listing_steps !== 'completed' && item?.channel_type !== 'Bookings.com' && (
               <GlassCard style={styles.percentageBadge}>
                 <AppText
                   text={t('app.manage_listing_screen.completed_percentage', {
@@ -99,7 +106,9 @@ const ManageListingScreen = () => {
                   numberOfLines={1}
                 />
               )}
-              <Svgicons path="editIconUserManagement" size={18} stroke={Colors.BLACK} />
+              {item?.channel_type !== 'Bookings.com' && (
+                <Svgicons path="editIconUserManagement" size={18} stroke={Colors.BLACK} />
+              )}
             </View>
 
 
@@ -233,6 +242,19 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: Colors.WHITE,
+  },
+  logo: {
+    position: 'absolute',
+    top: Metrics.scale(20),
+    left: Metrics.scale(20),
+    alignItems: 'center',
+    backgroundColor: Colors.GRAY_HINT,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRadius: 100,
+    width:Metrics.scale(30),
+    height:Metrics.scale(30),
+    justifyContent:'center'
   },
   badgeDot: {
     width: 6,

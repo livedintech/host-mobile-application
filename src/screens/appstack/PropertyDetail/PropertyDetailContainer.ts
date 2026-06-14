@@ -7,7 +7,7 @@ import {
   deleteListingApi,
   getManageListingDetailById,
 } from '@/services/ createListingService';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, push } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -354,8 +354,15 @@ export default function usePropertyDetailContainer() {
         );
         break;
       case 'calendar':
-        navigate(NavigationRoutes.APP_STACK.LISTING_STACK, {
-          listing_id: data?.data?.listing?.id,
+        push(NavigationRoutes.APP_STACK.ROOT_STACK, {
+          state: {
+            routes: [
+              {
+                name: NavigationRoutes.APP_STACK.LISTING,
+                params: { listing_id: data?.data?.listing?.id },
+              },
+            ],
+          },
         });
         break;
       default:

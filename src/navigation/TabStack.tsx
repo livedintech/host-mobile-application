@@ -10,6 +10,7 @@ const TabStack = () => {
   return (
     <Tab.Navigator
       tabBar={props => <BottomTab {...props} />}
+      backBehavior="history"
       screenOptions={{
         tabBarStyle: { display: 'none' },
       }}
