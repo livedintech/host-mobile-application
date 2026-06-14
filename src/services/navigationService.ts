@@ -32,6 +32,12 @@ export function navigate(route: string, params?: object) {
     }
 }
 
+export function push(route: string, params?: object) {
+    if (canNavigate()) {
+        navigationRef.current!.dispatch(StackActions.push(route, params))
+    }
+}
+
 export function replace(route: string, params?: object) {
     if (canNavigate()) {
         navigationRef.current!.dispatch(StackActions.replace(route, params))

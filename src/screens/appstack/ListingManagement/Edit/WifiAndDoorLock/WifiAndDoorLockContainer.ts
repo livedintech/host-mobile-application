@@ -1,11 +1,11 @@
 import { useForm } from 'react-hook-form';
 import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import * as yup from 'yup';
 import Toast from 'react-native-toast-message';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -53,7 +53,7 @@ export default function useWifiAndDoorLockContainer() {
     const ota_Account = otaWatch('ota_account');
 
     // ── OTA Accounts ──────────────────────────────────────────────────────────
-    const { data: response } = useQuery({
+    const { data: response, refetch: refetchChannelsUser } = useQuery({
         queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
         queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
         enabled: !!user?.id,
@@ -97,7 +97,7 @@ export default function useWifiAndDoorLockContainer() {
     });
 
     // ── Lock Options ──────────────────────────────────────────────────────────
-    const { data: rawTTLocks = [] } = useQuery({
+    const { data: rawTTLocks = [], refetch: refetchTTLocks, isRefetching: isRefetchingTTLocks } = useQuery({
         queryKey: [STORAGE_CONST.TT_LOCKS],
         queryFn: getTTLOCKSApi,
     });
@@ -106,6 +106,18 @@ export default function useWifiAndDoorLockContainer() {
         label: lock.alias,
         value: String(lock.lock_id),
     }));
+
+    // ── Refetch on screen focus & pull to refresh ───────────────────────────────
+    const onRefresh = useCallback(() => {
+        refetchTTLocks();
+        refetchChannelsUser();
+    }, [refetchTTLocks, refetchChannelsUser]);
+
+    useFocusEffect(
+        useCallback(() => {
+            onRefresh();
+        }, [onRefresh]),
+    );
 
     // ── Payload builder ───────────────────────────────────────────────────────
     const buildPayload = (data: WifiAndDoorLockFormValues) => ({
@@ -162,5 +174,8 @@ export default function useWifiAndDoorLockContainer() {
         handleOtaSubmit,
         listingOptions,
         isPendingExporting,
+        // ✅ Refresh
+        onRefresh,
+        isRefetching: isRefetchingTTLocks,
     };
 }

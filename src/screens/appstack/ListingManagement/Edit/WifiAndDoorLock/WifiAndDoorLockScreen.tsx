@@ -1,6 +1,6 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Modal } from 'react-native';
+import { StyleSheet, View, Modal, RefreshControl } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import InputField from '@/components/molecules/Input/InputField';
@@ -35,6 +35,8 @@ const WifiAndDoorLockScreen = () => {
     handleOtaSubmit,
     listingOptions,
     isPendingExporting,
+    onRefresh,
+    isRefetching,
   } = useWifiAndDoorLockContainer();
   const { t } = useTranslation();
 
@@ -44,6 +46,9 @@ const WifiAndDoorLockScreen = () => {
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor={Colors.MEDIUM_JUNGLE_GREEN} colors={[Colors.MEDIUM_JUNGLE_GREEN]} />
+        }
       >
         {/* Header */}
         <View style={styles.headerRow}>

@@ -25,7 +25,7 @@ import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { useChatContainer, ChatMessage } from './ChatDetailContainer';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import { goBack, navigate } from '@/services/navigationService';
+import { goBack, navigate, push } from '@/services/navigationService';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import {
   BottomSheetBackdrop,
@@ -568,8 +568,17 @@ const ChatScreen = () => {
                   <MenuOption
                     style={styles.menuItem}
                     onSelect={() => {
-                      navigate(NavigationRoutes.APP_STACK.LISTING_STACK, {
-                        listing_id: conversationData?.listing_id || listing_id,
+                      push(NavigationRoutes.APP_STACK.ROOT_STACK, {
+                        state: {
+                          routes: [
+                            {
+                              name: NavigationRoutes.APP_STACK.LISTING,
+                              params: {
+                                listing_id: conversationData?.listing_id || listing_id,
+                              },
+                            },
+                          ],
+                        },
                       });
                     }}
                   >

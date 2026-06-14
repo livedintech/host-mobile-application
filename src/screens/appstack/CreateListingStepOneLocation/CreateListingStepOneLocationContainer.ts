@@ -2,7 +2,7 @@ import i18n from '@/locales/i18n/i18n';
 // useCreateListingStepOneLocationContainer.ts
 import { useState, useRef, useEffect } from 'react';
 import { Region } from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation, { GeolocationResponse, GeolocationError } from '@react-native-community/geolocation';
 import { Platform, PermissionsAndroid, Alert, Linking } from 'react-native';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
@@ -48,6 +48,17 @@ const parseAddressComponents = (components: AddressComponent[] = []): ParsedAddr
     postalCode: findByType('postal_code'),
   };
 };
+
+// iOS: make sure the system permission prompt is shown via requestAuthorization
+// before we ever call getCurrentPosition — otherwise the first call can hang
+// until the prompt is dismissed and hit the GPS timeout (error code 3).
+if (Platform.OS === 'ios') {
+  Geolocation.setRNConfiguration({
+    skipPermissionRequests: false,
+    authorizationLevel: 'whenInUse',
+    locationProvider: 'auto',
+  });
+}
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyBFLqCFWozTt6lfoGyNGl95OYsceWSo8LE';
 
@@ -144,9 +155,38 @@ export default function useCreateListingStepOneLocationContainer() {
       );
       return result === PermissionsAndroid.RESULTS.GRANTED;
     }
-    // iOS: trigger the system permission prompt via getCurrentPosition's own flow;
-    // we resolve true here and let the error handler catch PERMISSION_DENIED (code 1).
-    return true;
+    // iOS: explicitly request authorization and wait for the user's response
+    // before attempting to read the location.
+    return new Promise<boolean>(resolve => {
+      Geolocation.requestAuthorization(
+        () => resolve(true),
+        () => resolve(false)
+      );
+    });
+  };
+
+  // ── GPS fetch with low-accuracy fallback ────────────────────────────────────
+  // High-accuracy GPS fixes often time out indoors / with weak signal.
+  // If that happens, retry once with network-based (low-accuracy) location.
+  const getCurrentPositionWithFallback = (
+    onSuccess: (position: GeolocationResponse) => void,
+    onError: (error: GeolocationError) => void
+  ) => {
+    Geolocation.getCurrentPosition(
+      onSuccess,
+      error => {
+        if (error.code === 1) {
+          onError(error);
+          return;
+        }
+        Geolocation.getCurrentPosition(
+          onSuccess,
+          onError,
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   const showPermissionDeniedAlert = () => {
@@ -169,7 +209,7 @@ export default function useCreateListingStepOneLocationContainer() {
       return;
     }
 
-    Geolocation.getCurrentPosition(
+    getCurrentPositionWithFallback(
       position => {
         const { latitude, longitude } = position.coords;
         const newRegion: Region = {
@@ -200,11 +240,6 @@ export default function useCreateListingStepOneLocationContainer() {
             text2: i18n.t('app.location_step.approximate_location_desc'),
           });
         }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 0,
       }
     );
   };
@@ -224,7 +259,7 @@ export default function useCreateListingStepOneLocationContainer() {
       return;
     }
     setIsLocating(true);
-    Geolocation.getCurrentPosition(
+    getCurrentPositionWithFallback(
       position => {
         const { latitude, longitude } = position.coords;
         const newRegion: Region = {
@@ -248,8 +283,7 @@ export default function useCreateListingStepOneLocationContainer() {
         } else {
           Alert.alert(i18n.t('common.toast.error'), i18n.t('app.location_step.gps_error'));
         }
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      }
     );
   };
 

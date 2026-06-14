@@ -54,9 +54,9 @@ const AddBookingDetailsScreen = () => {
             <View style={styles.fieldGap} />
             <DropdownField name="guest_eligibility" label={t('app.booking_details_edit.guest_eligibility')} control={control as any} errors={errors} data={yesNoOptions} />
             <View style={styles.fieldGap} />
-            <DateTimeInputField name="check_in_time" label={t('app.booking_details_edit.checkin_label')} control={control as any} errors={errors} mode="time" placeholder="09:00" />
-            <DateTimeInputField name="check_in_time_end" label={t('app.booking_details_edit.checkin_end_label')} control={control as any} errors={errors} mode="time" placeholder="12:00" />
-            <DateTimeInputField name="check_out_time" label={t('app.booking_details_edit.checkout_label')} control={control as any} errors={errors} mode="time" placeholder="23:00" />
+            <DateTimeInputField name="check_in_time" label={t('app.booking_details_edit.checkin_label')} control={control as any} errors={errors} mode="time" placeholder="09:00" hourOnly />
+            <DateTimeInputField name="check_in_time_end" label={t('app.booking_details_edit.checkin_end_label')} control={control as any} errors={errors} mode="time" placeholder="12:00" hourOnly />
+            <DateTimeInputField name="check_out_time" label={t('app.booking_details_edit.checkout_label')} control={control as any} errors={errors} mode="time" placeholder="23:00" hourOnly />
             <DropdownField name="allow_same_day" label={t('app.booking_details_edit.same_day_label')} control={control as any} errors={errors} data={yesNoOptions} />
             <View style={styles.fieldGap} />
             <DropdownField name="cleanliness_status" label={t('app.booking_details_edit.cleanliness_label')} control={control as any} errors={errors} data={cleanlinessOptions} placeholder={t('app.booking_details_edit.cleanliness_placeholder')} />

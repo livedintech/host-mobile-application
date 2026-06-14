@@ -12,6 +12,9 @@ import {
   Platform,
   Modal,
   SafeAreaView,
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
@@ -33,6 +36,57 @@ type Props = {
   rules?: object;
   editable?: boolean;
   minimumDate?: Date;
+  /** When true (mode="time"), only the hour and AM/PM can be changed, minutes stay locked to 00 */
+  hourOnly?: boolean;
+};
+
+const ITEM_HEIGHT = 40;
+const VISIBLE_ITEMS = 5;
+const SIDE_PADDING = ITEM_HEIGHT * Math.floor(VISIBLE_ITEMS / 2);
+const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+const PERIODS: Array<'AM' | 'PM'> = ['AM', 'PM'];
+
+const WheelColumn = ({
+  data,
+  selectedValue,
+  onChange,
+}: {
+  data: Array<string | number>;
+  selectedValue: string | number;
+  onChange: (value: string | number) => void;
+}) => {
+  const scrollRef = useRef<ScrollView>(null);
+  const initialIndex = Math.max(0, data.indexOf(selectedValue));
+
+  const handleMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const index = Math.max(0, Math.min(data.length - 1, Math.round(y / ITEM_HEIGHT)));
+    onChange(data[index]);
+    scrollRef.current?.scrollTo({ y: index * ITEM_HEIGHT, animated: true });
+  };
+
+  return (
+    <View style={styles.wheelColumnWrapper}>
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        snapToInterval={ITEM_HEIGHT}
+        decelerationRate="fast"
+        contentOffset={{ x: 0, y: initialIndex * ITEM_HEIGHT }}
+        contentContainerStyle={{ paddingVertical: SIDE_PADDING }}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+      >
+        {data.map((item) => (
+          <View key={String(item)} style={styles.wheelItem}>
+            <Text style={[styles.wheelItemText, item === selectedValue && styles.wheelItemTextSelected]}>
+              {item}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+      <View style={styles.wheelHighlight} pointerEvents="none" />
+    </View>
+  );
 };
 
 const DateTimeInputField = ({
@@ -48,9 +102,12 @@ const DateTimeInputField = ({
   rightIcon,
   rules,
   minimumDate,
+  hourOnly,
 }: Props) => {
   const [showPicker, setShowPicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
+  const [tempHour, setTempHour] = useState<number>(12);
+  const [tempPeriod, setTempPeriod] = useState<'AM' | 'PM'>('AM');
   const animation = useRef(new Animated.Value(0)).current;
   const error = errors[name]?.message as string;
 
@@ -95,6 +152,10 @@ const DateTimeInputField = ({
     return `${hours}:${minutes} ${period}`;
   };
 
+  const formatHourPeriod = (hour: number, period: 'AM' | 'PM'): string => {
+    return `${String(hour).padStart(2, '0')}:00 ${period.toLowerCase()}`;
+  };
+
   const parseTimeToDate = (timeStr: string): Date | null => {
     const h24Match = timeStr.match(/^(\d{1,2}):(\d{2})(:\d{2})?$/);
     if (h24Match) {
@@ -116,6 +177,13 @@ const DateTimeInputField = ({
     return null;
   };
 
+  const dateToHourPeriod = (date: Date): { hour: number; period: 'AM' | 'PM' } => {
+    const h = date.getHours();
+    const hour = h % 12 === 0 ? 12 : h % 12;
+    const period: 'AM' | 'PM' = h >= 12 ? 'PM' : 'AM';
+    return { hour, period };
+  };
+
   const displayValue = (val: string): string => {
     if (mode !== 'time' || !val) return val ?? '';
     const parsed = parseTimeToDate(val);
@@ -125,15 +193,25 @@ const DateTimeInputField = ({
 
   const handleOpenPicker = (currentValue: string) => {
     handleFocus();
+    let baseDate: Date | null = null;
     if (currentValue) {
       const parsed = parseTimeToDate(currentValue) ?? new Date(currentValue);
       if (!isNaN(parsed.getTime())) {
-        setTempDate(parsed);
+        baseDate = parsed;
       }
     } else if (minimumDate && minimumDate > new Date()) {
-      setTempDate(minimumDate);
+      baseDate = minimumDate;
     } else {
-      setTempDate(new Date());
+      baseDate = new Date();
+    }
+
+    if (baseDate) {
+      setTempDate(baseDate);
+      if (hourOnly) {
+        const { hour, period } = dateToHourPeriod(baseDate);
+        setTempHour(hour);
+        setTempPeriod(period);
+      }
     }
     setShowPicker(true);
   };
@@ -193,8 +271,57 @@ const DateTimeInputField = ({
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
+          {/* ─── hour-only picker: custom hour + AM/PM wheel ─── */}
+          {hourOnly && mode === 'time' && (
+            <Modal
+              visible={showPicker}
+              transparent
+              animationType="slide"
+              onRequestClose={handleCancel}
+            >
+              <TouchableOpacity
+                style={styles.modalBackdrop}
+                activeOpacity={1}
+                onPress={handleCancel}
+              />
+              <SafeAreaView style={styles.modalSheet}>
+                <View style={styles.modalHandle} />
+
+                <View style={styles.modalHeader}>
+                  <TouchableOpacity onPress={handleCancel} hitSlop={styles.hitSlop}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      onChange(formatHourPeriod(tempHour, tempPeriod));
+                      handleBlur();
+                      setShowPicker(false);
+                    }}
+                    hitSlop={styles.hitSlop}
+                  >
+                    <Text style={styles.confirmText}>Confirm</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.wheelRow}>
+                  <WheelColumn
+                    data={HOURS}
+                    selectedValue={tempHour}
+                    onChange={(value) => setTempHour(value as number)}
+                  />
+                  <Text style={styles.wheelSeparator}>:00</Text>
+                  <WheelColumn
+                    data={PERIODS}
+                    selectedValue={tempPeriod}
+                    onChange={(value) => setTempPeriod(value as 'AM' | 'PM')}
+                  />
+                </View>
+              </SafeAreaView>
+            </Modal>
+          )}
+
           {/* ─── iOS: Modal bottom sheet ─── */}
-          {Platform.OS === 'ios' && (
+          {!hourOnly && Platform.OS === 'ios' && (
             <Modal
               visible={showPicker}
               transparent
@@ -246,7 +373,7 @@ const DateTimeInputField = ({
           )}
 
           {/* ─── Android: native dialog ─── */}
-          {Platform.OS === 'android' && showPicker && (
+          {!hourOnly && Platform.OS === 'android' && showPicker && (
             <DateTimePicker
               value={tempDate}
               mode={mode}
@@ -343,6 +470,48 @@ const styles = StyleSheet.create({
     bottom: 12,
     left: 12,
     right: 12,
+  },
+
+  // ─── Hour-only wheel picker ───
+  wheelRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: ITEM_HEIGHT * VISIBLE_ITEMS,
+    paddingBottom: 16,
+  },
+  wheelColumnWrapper: {
+    width: 80,
+    height: ITEM_HEIGHT * VISIBLE_ITEMS,
+  },
+  wheelItem: {
+    height: ITEM_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  wheelItemText: {
+    fontSize: 20,
+    color: '#9CA3AF',
+  },
+  wheelItemTextSelected: {
+    color: '#000000',
+    fontWeight: '700',
+  },
+  wheelHighlight: {
+    position: 'absolute',
+    top: SIDE_PADDING,
+    left: 0,
+    right: 0,
+    height: ITEM_HEIGHT,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  wheelSeparator: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000000',
+    marginHorizontal: 8,
   },
 });
 
