@@ -11,7 +11,6 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -47,15 +46,10 @@ const ManageListingScreen = () => {
     const img = item?.images?.[0]
 
     return (
-      <AppPressable onPress={() => item?.channel_type === 'Bookings.com' ? null : goToPropertyDetail(item)}>
+      <AppPressable onPress={() => goToPropertyDetail(item)}>
         <GlassCard width="100%" style={styles.cardWrapper}>
           <View style={styles.imageContainer}>
-            {item?.channel_type === 'Bookings.com' ? (
-              <Image
-                source={require('@/assets/img/bookingComImg.png')}
-                style={styles.propertyImg}
-              />
-            ) : img ? (
+            { img ? (
               <Image
                 source={{ uri: img }}
                 style={styles.propertyImg}
@@ -70,9 +64,7 @@ const ManageListingScreen = () => {
               </View>
             )}
 
-            <GlassCard style={styles.logo}>
-              <Svgicons path={item?.channel_type == 'Bookings.com' ? 'bookingCom' : 'airbnb' } size={15} />
-            </GlassCard>
+        
             {item?.is_sync === 'sync_all' && (
               <View style={styles.badge}>
                 <View style={styles.badgeDot} />
@@ -80,7 +72,7 @@ const ManageListingScreen = () => {
               </View>
             )}
             {/* Percentage Badge */}
-            {item?.listing_steps !== 'completed' && item?.channel_type !== 'Bookings.com' && (
+            {item?.listing_steps !== 'completed' && (
               <GlassCard style={styles.percentageBadge}>
                 <AppText
                   text={t('app.manage_listing_screen.completed_percentage', {
@@ -105,9 +97,6 @@ const ManageListingScreen = () => {
                   style={styles.titleText}
                   numberOfLines={1}
                 />
-              )}
-              {item?.channel_type !== 'Bookings.com' && (
-                <Svgicons path="editIconUserManagement" size={18} stroke={Colors.BLACK} />
               )}
             </View>
 
