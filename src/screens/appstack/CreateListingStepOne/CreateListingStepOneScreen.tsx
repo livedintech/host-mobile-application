@@ -71,12 +71,11 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
                   {propertyOptions.map((item) => {
                     const isSelected = value === item.value;
                     return (
-                      <GlassCard width={'100%'} style={[
+                      <GlassCard key={item.value} width={'100%'} style={[
                             styles.optionItem,
                             isSelected && styles.selectedItem
                           ]} onPress={() => onChange(item.value)}>
                         <ButtonView
-                          key={item.value}
                           style={[
                             styles.optionItem,
                             // isSelected && styles.selectedItem

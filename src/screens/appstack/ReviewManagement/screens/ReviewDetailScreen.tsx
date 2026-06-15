@@ -120,7 +120,7 @@ const ReviewDetailScreen = ({ route }: any) => {
     cancellation_policy,
   } = bookingData;
 
-  console.log('property', property);
+  console.log('cancellation_policy', cancellation_policy);
 
   if (isLoading || !bookingData.property) {
     return (

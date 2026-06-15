@@ -198,7 +198,6 @@ const AddPropertyGuidelinesScreen = () => {
             <AppButton
               title={t('app.property_guidelines.next')}
               variant="secondary"
-              backgroundColor={Colors.WHITE}
               onPress={handleSubmit(onNext)}
               loading={isLoading}
             />
@@ -295,7 +294,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontWeight: 'bold',
   },
-  footer: { bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
+  footer: { bottom: 0, width: '100%', paddingBottom: 40 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
