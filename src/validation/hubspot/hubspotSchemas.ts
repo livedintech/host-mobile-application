@@ -20,7 +20,14 @@ export const meetingDetailsSchema = yup.object({
     actualPhone: yup.string().ensure().notRequired().nullable(),
   }).notRequired(),
 
-  email: yup.string().required('Email is required').email('Enter a valid email address'),
+  email: yup
+    .string()
+    .trim()
+    .required('Email is required')
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      'Enter a valid email address'
+    ),
 
   country: yup.string().required('Please select a country').nullable(),
   city: yup.string().required('Please select a city').nullable(),

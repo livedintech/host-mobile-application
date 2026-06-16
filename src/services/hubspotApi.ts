@@ -354,9 +354,7 @@ export const submitLeadAndBookMeeting = async (
 
     const meetingBooked = await bookHubSpotMeeting(lead, slot, agent);
     if (!meetingBooked) {
-      console.warn(
-        '[submitLeadAndBookMeeting] Meeting booking failed but lead created',
-      );
+      return { success: false, error: 'Failed to book meeting. Please try again.' };
     }
 
     return { success: true };

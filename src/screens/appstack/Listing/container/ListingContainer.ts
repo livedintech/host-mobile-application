@@ -143,13 +143,19 @@ export default function useListingContainer(
         };
 
         if (item.bookings && item.bookings.length > 0) {
-          const booking = normalizeBooking(item.bookings[0]);
+          const allNormalized = item.bookings.map(normalizeBooking);
+          const booking = allNormalized[0];
           const config = getOtaConfig(booking.source);
 
           let type = 'middle';
           if (dateKey === booking.start_date) type = 'starting';
           else if (dateKey === booking.end_date) type = 'ending';
           if (booking.start_date === booking.end_date) type = 'single';
+
+          const isMultiBooking = item.bookings.length > 1;
+          const bookingColors = isMultiBooking
+            ? [...new Set(allNormalized.map((b: any) => getOtaConfig(b.source).color))]
+            : [];
 
           marks[dateKey] = {
             ...marks[dateKey],
@@ -159,6 +165,9 @@ export default function useListingContainer(
             guest: booking.guest,
             showLabel: type === 'starting' || type === 'single',
             bookingData: booking,
+            allBookings: allNormalized,
+            isMultiBooking,
+            bookingColors,
           };
         }
       }

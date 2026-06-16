@@ -256,6 +256,8 @@ const ReviewDetailScreen = ({ route }: any) => {
           </View>
           {/* 1. Calculate filtered options before rendering */}
           {(() => {
+            if (property?.status === 'cancelled') return null;
+
             const platform = property?.booking_platform;
             const checkInDateStr = property?.booking_dates?.from;
 
@@ -335,14 +337,25 @@ const ReviewDetailScreen = ({ route }: any) => {
           })()}
         </View>
 
-        <AppText
-          text={guest?.name || 'Guest Details'}
-          type="Medium"
-          fontSize={28}
-          mb={vs(20)}
-          color={Colors.BLACK}
-          style={{ paddingHorizontal: s(20) }}
-        />
+        <View style={styles.guestNameRow}>
+          <AppText
+            text={guest?.name || 'Guest Details'}
+            type="Medium"
+            fontSize={28}
+            color={Colors.BLACK}
+            style={{ flexShrink: 1 }}
+          />
+          {property?.status === 'cancelled' && (
+            <View style={styles.cancelledPill}>
+              <AppText
+                text="Cancelled"
+                fontSize={12}
+                type="Medium"
+                color={Colors.WHITE}
+              />
+            </View>
+          )}
+        </View>
 
         <View style={styles.card}>
           <View style={styles.cardHeader}>
@@ -853,7 +866,7 @@ const ReviewDetailScreen = ({ route }: any) => {
                     // disabled={guest?.rating == 0}
                     disabled={!guest?.rating }
                     title={t('app.review_detail.view_details')}
-                    fontSize={14}
+                    // fontSize={14}
                     onPress={() =>
                       navigate(
                         NavigationRoutes.APP_STACK
@@ -863,13 +876,14 @@ const ReviewDetailScreen = ({ route }: any) => {
                         },
                       )
                     }
-                    backgroundColor={guest?.rating ? Colors.PRIMARY_TEAL : ''}
-                    color={guest?.rating ? Colors.WHITE : ''}
-                    style={[
-                      styles.rateGuestBtn,
-                      !guest?.rating && styles.disabledBtn,
-                    ]}
-                    borderRadius={100}
+                    // backgroundColor={guest?.rating ? Colors.PRIMARY_TEAL : ''}
+                    // color={guest?.rating ? Colors.WHITE : ''}
+                    // style={[
+                    //   styles.rateGuestBtn,
+                    //   !guest?.rating && styles.disabledBtn,
+                    // ]}
+                    // borderRadius={100}
+                    variant='primary'
                   />
                 </View>
                 {property.booking_platform !== 'bookingcom' &&
@@ -1077,21 +1091,11 @@ const ReviewDetailScreen = ({ route }: any) => {
 
               <AppButton
                 title={t('app.review_detail.create_new_task')}
-                fontSize={14}
-                backgroundColor={'rgba(255, 255, 255, 0.6)'}
-                color={Colors.BLACK}
-                style={[
-                  styles.rateGuestBtn,
-                  {
-                    borderWidth: 1,
-                    borderColor: '#E0E0E0',
-                    marginBottom: 30,
-                  },
-                ]}
-                borderRadius={100}
+                disabled={property?.status === 'cancelled'}
                 onPress={() =>
                   navigate(NavigationRoutes.APP_STACK.CREATE_TASK_NON_CLEANING)
                 }
+                 variant='primary'
               />
             )}
           </View>
@@ -1137,6 +1141,19 @@ const ReviewDetailScreen = ({ route }: any) => {
 };
 
 const styles = StyleSheet.create({
+  guestNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: s(20),
+    marginBottom: vs(20),
+  },
+  cancelledPill: {
+    backgroundColor: Colors.PRIMARY_TEAL,
+    paddingVertical: vs(8),
+    paddingHorizontal: s(16),
+    borderRadius: ms(100),
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',

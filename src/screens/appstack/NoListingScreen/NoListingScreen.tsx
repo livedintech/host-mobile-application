@@ -22,7 +22,8 @@ const NoListingScreen = () => {
 
   const handleCreateListing = () => {
     // Navigate to your Create Listing flow
-    navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+    navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_);
+    
   };
 
   return (
