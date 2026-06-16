@@ -135,11 +135,6 @@ const AllTask = () => {
   const { resetTaskStore } = useTaskStore();
   const { user } = useAuthStore();
 
-
-  if (!user?.has_listing) {
-    return <NoListingScreen />;
-  }
-
   const filterSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['60%'], []);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
