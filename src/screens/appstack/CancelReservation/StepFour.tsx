@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, TextInput } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { vs, s } from 'react-native-size-matters';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTranslation } from 'react-i18next';
@@ -12,11 +12,14 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { Colors } from '@/theme/colors';
 import { cancelOtaBookingApi } from '@/services/calendarBookingManagement';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import STORAGE_CONST from '@/constants/storage';
 
 const StepFour = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const queryClient = useQueryClient();
   
   const { 
     bookingData, 
@@ -39,6 +42,11 @@ const StepFour = () => {
       }),
     onSuccess: () => {
       Toast.show({ type: 'success', text1: i18n.t('common.toast.reservation_cancelled') });
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.CALENDAR_DATA] });
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.RESERVATIONS_LIST] });
+      // navigation.navigate(NavigationRoutes.APP_STACK.ROOT_STACK, {
+      //   screen: NavigationRoutes.APP_STACK.LISTING,
+      // });
       navigation.popToTop();
     },
     onError: (error: any) => {

@@ -34,7 +34,6 @@ const ManageListingScreen = () => {
     return 'fourtothirty'; // Fallback icon
   };
 
-
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <SafeAreaView style={styles.container}>

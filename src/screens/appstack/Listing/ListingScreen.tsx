@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import MultiBookingSheet from '@/components/molecules/MultiBookingSheet/MultiBookingSheet';
 
 import useListingContainer from './container/ListingContainer';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -49,10 +51,11 @@ const ListingScreen = () => {
     bookingType,
     setBookingType,
   } = useListingContainer(route.params?.listing_id, 0); // Fixed to Tab 0 logic
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
-    null,
-  );
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [multiBookings, setMultiBookings] = useState<any[]>([]);
+  const [multiBookingDate, setMultiBookingDate] = useState('');
+  const multiSheetRef = useRef<BottomSheetModal>(null);
 
   if (!user?.has_listing) {
     return (
@@ -73,10 +76,20 @@ const ListingScreen = () => {
       : (dateData?.channels?.length ?? 0) > 0;
 
     if (isBooked) {
-      const bookingCode = selectedListingId
-        ? dateData.bookingData?.booking_id
-        : dateData.bookings?.[0]?.booking_id;
-      if (bookingCode) handleReservationPress(bookingCode);
+      const allBookingsForDate = selectedListingId
+        ? dateData.allBookings
+        : dateData.bookings;
+
+      if (allBookingsForDate && allBookingsForDate.length > 1) {
+        setMultiBookings(allBookingsForDate);
+        setMultiBookingDate(day.dateString);
+        multiSheetRef.current?.present();
+      } else {
+        const bookingCode = selectedListingId
+          ? dateData.bookingData?.booking_id
+          : dateData.bookings?.[0]?.booking_id;
+        if (bookingCode) handleReservationPress(bookingCode);
+      }
     } else {
       if (user?.role_key === 'supervisor') return;
       setValue('start_date', day.dateString);
@@ -141,6 +154,14 @@ const ListingScreen = () => {
         isLoading={isRefreshing}
         onRefresh={handleRefresh}
         onListingPress={id => setValue('listing_selection', String(id))}
+      />
+
+      <MultiBookingSheet
+        ref={multiSheetRef}
+        bookings={multiBookings}
+        date={multiBookingDate}
+        onClose={() => {}}
+        onBookingPress={handleReservationPress}
       />
 
       {isBookingOpen && (

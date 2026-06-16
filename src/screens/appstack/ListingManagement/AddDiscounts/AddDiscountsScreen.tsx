@@ -51,7 +51,6 @@ const AddDiscountsScreen = () => {
                     </View>
                 </KeyboardAwareScrollView>
 
-                // Footer mein Export button add karo (isEdit check ke saath)
                 <View style={styles.footer}>
                     {isEdit && (
                         <AppButton

@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   descriptionWrapper: { marginTop: 25 },
-  footer: { bottom: 0, right: 0, width: '100%', padding: 25, paddingBottom: 35 },
+  footer: { bottom: 0, right: 0, width: '100%', paddingBottom: 35 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',

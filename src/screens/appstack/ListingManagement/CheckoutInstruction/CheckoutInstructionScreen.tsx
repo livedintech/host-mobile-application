@@ -165,7 +165,6 @@ const CheckoutInstructionScreen = () => {
             <AppButton
               title={t('app.checkoutInstruction.next')}
               variant="secondary"
-              backgroundColor={Colors.WHITE}
               onPress={onNext}
               loading={isLoading}
             />
@@ -301,7 +300,7 @@ const styles = StyleSheet.create({
     alignSelf:       'center',
     marginBottom:    25,
   },
-  footer: { bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
+  footer: { bottom: 0, width: '100%',paddingBottom: 40 },
 });
 
 export default CheckoutInstructionScreen;

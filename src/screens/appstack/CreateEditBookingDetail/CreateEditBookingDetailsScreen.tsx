@@ -78,7 +78,6 @@ const AddBookingDetailsScreen = () => {
             <AppButton
               title={t('app.booking_details_edit.next')}
               variant="secondary"
-              backgroundColor={Colors.WHITE}
               onPress={handleSubmit(onNext)}
               loading={isLoading}
             />

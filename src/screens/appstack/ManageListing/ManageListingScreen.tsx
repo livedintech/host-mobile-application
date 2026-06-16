@@ -11,7 +11,6 @@ import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/
 import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -26,6 +25,7 @@ const ManageListingScreen = () => {
     refetch,
     UserPermission,
   } = useManageListingContainer();
+
 
   const { user } = useAuthStore();
   if (!user?.has_listing) {
@@ -71,7 +71,7 @@ const ManageListingScreen = () => {
             )}
 
             <GlassCard style={styles.logo}>
-              <Svgicons path={item?.channel_type == 'Bookings.com' ? 'bookingCom' : 'airbnb' } size={15} />
+              <Svgicons path={item?.channel_type == 'Bookings.com' ? 'bookingCom' : 'airbnb'} size={15} />
             </GlassCard>
             {item?.is_sync === 'sync_all' && (
               <View style={styles.badge}>

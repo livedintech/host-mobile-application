@@ -14,6 +14,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '../AppText/AppText';
 import ButtonView from '../AppButton/ButtonView';
 import { FormatCurrency } from '@/utility/FormatUtils';
+import { Colors } from '@/theme/colors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CALENDAR_PADDING = 0;
@@ -32,6 +33,8 @@ const COLORS = {
   GATHERN_LIGHT: '#E4D1F5',
   DEFAULT_BLUE: '#49A6E9',
   DEFAULT_LIGHT: '#E1F1FD',
+  MULTI_DARK: Colors.MIDNIGHT,
+  MULTI_LIGHT: 'rgba(99, 102, 241, 0.12)',
 };
 
 const getOTASource = (source?: string) => {
@@ -74,6 +77,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
     bookingData,
     color: markingColor,
     isArabic,
+    isMultiBooking,
   } = marking || {};
   const isActive = !!type && type !== 'none';
   // ─── LOGIC: Disable available past dates ───
@@ -84,8 +88,12 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
   // ───────────────────────────────────────────
 
   const brand = getOTASource(ota);
-  const themeColor = brand.color || markingColor || COLORS.DEFAULT_BLUE;
-  const solidLight = brand.light || COLORS.DEFAULT_LIGHT;
+  const themeColor = isMultiBooking
+    ? COLORS.MULTI_DARK
+    : (brand.color || markingColor || COLORS.DEFAULT_BLUE);
+  const solidLight = isMultiBooking
+    ? COLORS.MULTI_LIGHT
+    : (brand.light || COLORS.DEFAULT_LIGHT);
 
   const dateString = date.dateString;
   const arrival = bookingData?.arrival_date;
@@ -164,7 +172,7 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                 ]}
               >
                 {/* {brand.icon !== 'livedin' && ( */}
-                {brand.icon && (
+                {brand.icon && !isMultiBooking && (
                   <Svgicons
                     path={brand.icon as any}
                     size={ms(9)}
@@ -352,6 +360,18 @@ const styles = StyleSheet.create({
     fontSize: ms(7),
     fontWeight: '600',
     color: '#7B8D88',
+  },
+  multiDots: {
+    flexDirection: 'row',
+    gap: s(2),
+    marginTop: vs(2),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  multiDot: {
+    width: ms(4),
+    height: ms(4),
+    borderRadius: ms(2),
   },
 });
 

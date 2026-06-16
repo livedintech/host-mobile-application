@@ -109,7 +109,6 @@ const AirbnblongTermOptions = [
           )}
           {!isEdit && (
             <AppButton
-              backgroundColor={Colors.WHITE}
               title={t('app.booking_cancel_policies.next')}
               variant="secondary"
               onPress={handleSubmit(onNext)}

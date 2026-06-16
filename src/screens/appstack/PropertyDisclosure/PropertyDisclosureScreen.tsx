@@ -79,7 +79,6 @@ const AddPropertyDisclosureScreen = () => {
               variant="secondary"
               onPress={handleSubmit(onNext)}
               loading={isLoading}
-              backgroundColor={Colors.WHITE}
             />
           )}
           <AppButton

@@ -20,6 +20,7 @@ import {
   createBookingSchema,
 } from '@/validation/booking/bookingSchemas';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import STORAGE_CONST from '@/constants/storage';
 import { getOtaConfig } from '@/constants/ota_config';
 import { useTranslation } from 'react-i18next';
 
@@ -89,7 +90,7 @@ export default function useListingContainer(
 
   // Query: Listings
   const { data: listingOptions = [], refetch:refetchListing } = useQuery({
-    queryKey: ['USER_LISTINGS', user?.id],
+    queryKey: [STORAGE_CONST.USER_LISTINGS, user?.id],
     queryFn: () => getUserListingsApi(user?.id || ''),
   });
 
@@ -99,14 +100,14 @@ export default function useListingContainer(
     isLoading: resLoading,
     refetch: refetchReservations,
   } = useQuery({
-    queryKey: ['RESERVATIONS_LIST', appliedListingIds, activeFilter],
+    queryKey: [STORAGE_CONST.RESERVATIONS_LIST, appliedListingIds, activeFilter],
     queryFn: () => getReservationsApi(appliedListingIds, activeFilter),
     enabled: selectedTab === 1,
   });
 
   // Query: Calendar Data
   const { data: calendarResponse, refetch: refetchCalendar, isLoading: isCalendarLoading } = useQuery({
-    queryKey: ['CALENDAR_DATA', selectedListingId],
+    queryKey: [STORAGE_CONST.CALENDAR_DATA, selectedListingId],
     queryFn: () =>
       getCalendarBookingManagementListingsApi(selectedListingId || ''),
     enabled: !!user?.id,
@@ -142,13 +143,19 @@ export default function useListingContainer(
         };
 
         if (item.bookings && item.bookings.length > 0) {
-          const booking = normalizeBooking(item.bookings[0]);
+          const allNormalized = item.bookings.map(normalizeBooking);
+          const booking = allNormalized[0];
           const config = getOtaConfig(booking.source);
 
           let type = 'middle';
           if (dateKey === booking.start_date) type = 'starting';
           else if (dateKey === booking.end_date) type = 'ending';
           if (booking.start_date === booking.end_date) type = 'single';
+
+          const isMultiBooking = item.bookings.length > 1;
+          const bookingColors = isMultiBooking
+            ? [...new Set(allNormalized.map((b: any) => getOtaConfig(b.source).color))]
+            : [];
 
           marks[dateKey] = {
             ...marks[dateKey],
@@ -158,6 +165,9 @@ export default function useListingContainer(
             guest: booking.guest,
             showLabel: type === 'starting' || type === 'single',
             bookingData: booking,
+            allBookings: allNormalized,
+            isMultiBooking,
+            bookingColors,
           };
         }
       }
@@ -318,8 +328,8 @@ export default function useListingContainer(
         });
 
         reset();
-        queryClient.invalidateQueries({ queryKey: ['RESERVATIONS_LIST'] });
-        queryClient.invalidateQueries({ queryKey: ['CALENDAR_DATA'] });
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.RESERVATIONS_LIST] });
+        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.CALENDAR_DATA] });
         setIsBookingOpen(false);
 
         return true;
