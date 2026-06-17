@@ -342,9 +342,11 @@ import cloudRefresh from './cloudRefresh.svg'
 import cloudCross from './cloudCross.svg'
 import thumbsUpIcon from './thumbsUpIcon.svg'
 import thumbsDownIcon from './thumbsDownIcon.svg'
+import multiBookingWhite from './multiBookingWhite.svg'
 
 export const icons = {
   livedinLogoWhite,
+  multiBookingWhite,
   thumbsUpIcon,
   thumbsDownIcon,
   cloudCross,

@@ -171,12 +171,20 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                 ]}
               >
                 {/* {brand.icon !== 'livedin' && ( */}
-                {brand.icon && !isMultiBooking && (
+                {isMultiBooking ? (
                   <Svgicons
-                    path={brand.icon as any}
+                    path="multiBookingWhite"
                     size={ms(9)}
                     color={iconColor}
                   />
+                ) : (
+                  brand.icon && (
+                    <Svgicons
+                      path={brand.icon as any}
+                      size={ms(9)}
+                      color={iconColor}
+                    />
+                  )
                 )}
                 {/* )} */}
                 {/* <AppText
