@@ -1,7 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -14,6 +14,7 @@ import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTranslation } from 'react-i18next';
+import YourSmartLocksSkeleton from '@/components/Skeletons/YourSmartLocksSkeleton';
 
 const YourSmartLocksScreen = () => {
   const {
@@ -36,9 +37,9 @@ const YourSmartLocksScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-      </View>
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <YourSmartLocksSkeleton />
+      </BGImage>
     );
   }
 
@@ -117,7 +118,6 @@ const YourSmartLocksScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   titleContainer: { paddingHorizontal: Metrics.scale(25), paddingTop: Metrics.verticalScale(30), paddingBottom: Metrics.verticalScale(28) },
   listContent: { paddingHorizontal: Metrics.scale(25), paddingBottom: Metrics.verticalScale(120) },
   glassCard: { padding: Metrics.scale(20), marginBottom: Metrics.verticalScale(20) },

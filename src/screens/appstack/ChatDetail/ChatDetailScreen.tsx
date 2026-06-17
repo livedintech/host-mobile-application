@@ -48,6 +48,7 @@ import AlterationRequestModal from './AlterationRequestModal';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { useTranslation } from 'react-i18next';
 import AppButton from '@/components/molecules/AppButton/AppButton';
+import ChatDetailSkeleton from '@/components/Skeletons/ChatDetailSkeleton';
 
 dayjs.extend(advancedFormat);
 
@@ -623,6 +624,7 @@ const ChatScreen = () => {
               ref={flatListRef}
               data={messagesWithTimeLabels}
               isLoading={isLoading}
+              renderSkeleton={() => <ChatDetailSkeleton />}
               renderItem={renderMessage}
               listEmptyText=" "
               keyExtractor={item => item._id.toString()}

@@ -7,7 +7,7 @@ import { aiFeedbackSchema, AiFeedbackFormValues } from '@/validation/chat/chatSc
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
 import { FlatList } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import STORAGE_CONST from '@/constants/storage';
 import {
@@ -133,7 +133,7 @@ const transformApiMessages = (
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
-
+  const isFocused = useIsFocused();
   // Safely get params
   const route = useRoute();
   const params = route?.params as
@@ -191,7 +191,7 @@ export const useChatContainer = () => {
     ],
     queryFn: () => getChatDetailApi({ conversation_id }),
     enabled: Boolean(conversation_id),
-    refetchInterval: 4000,
+    refetchInterval: isFocused ? 4000 : false,
   });
 
   // Get Saved Replies of a conversation

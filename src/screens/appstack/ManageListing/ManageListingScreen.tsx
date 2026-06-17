@@ -13,6 +13,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
 import { useAuthStore } from '@/store/useAuthStore';
+import ManageListingSkeleton from '@/components/Skeletons/ManageListingSkeleton';
 
 const ManageListingScreen = () => {
   const { t } = useTranslation();
@@ -155,6 +156,7 @@ const ManageListingScreen = () => {
         <FlatListSimpleHandler
           data={data}
           isLoading={isLoading}
+          renderSkeleton={() => <ManageListingSkeleton />}
           renderItem={renderProperty}
           listEmptyText={t('app.manage_listing_screen.no_listings')}
           onRefresh={refetch}

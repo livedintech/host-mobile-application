@@ -24,6 +24,7 @@ import { ApiNotificationItem } from '@/services/mobileNotificationsApi';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import NotificationsSkeleton from '@/components/Skeletons/NotificationsSkeleton';
 
 type NotificationItemProps = {
   item: ApiNotificationItem;
@@ -196,6 +197,7 @@ const NotificationsScreen = () => {
             data={flatItems}
             meta={dataQuery}
             isLoading={isLoading}
+            renderSkeleton={() => <NotificationsSkeleton />}
             renderItem={renderItem}
             keyExtractor={(item: FlatItem) => item.key}
             style={styles.flatList}

@@ -17,6 +17,7 @@ import RefreshableScrollView from '../organisms/RefreshableScrollView/Refreshabl
 import ImageViewing from 'react-native-image-viewing';
 import ButtonView from '../molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
+import PhotoUploadTemplateSkeleton from '../Skeletons/PhotoUploadTemplateSkeleton';
 
 const PhotoUploadTemplate = (props: any) => {
   const { t } = useTranslation();
@@ -75,10 +76,7 @@ const PhotoUploadTemplate = (props: any) => {
   if (props.isFetching) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-          <AppText text={t('app.photo_upload.loading')} mt={15} fontSize={14} color={Colors.DARK_CHARCOAL_OPACITY} />
-        </View>
+        <PhotoUploadTemplateSkeleton />
       </BGImage>
     );
   }

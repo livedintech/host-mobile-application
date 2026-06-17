@@ -15,6 +15,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { useTranslation } from 'react-i18next';
+import AssignChatSkeleton from '@/components/Skeletons/AssignChatSkeleton';
 
 const AssignChatScreen = () => {
   const route = useRoute<any>();
@@ -152,6 +153,7 @@ const AssignChatScreen = () => {
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.listContainer}
           isLoading={isLoading}
+          renderSkeleton={() => <AssignChatSkeleton />}
           onRefresh={refetch}
           listEmptyText={t('app.assign_chat.empty_text')}
         />

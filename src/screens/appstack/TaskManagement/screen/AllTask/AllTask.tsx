@@ -11,7 +11,6 @@ import {
   Platform,
   ScrollView,
   BackHandler,
-  ActivityIndicator,
 } from 'react-native';
 import {
   BottomSheetView,
@@ -39,6 +38,7 @@ import { useTaskStore } from '@/store/taskStore';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
+import AllTaskSkeleton from '@/components/Skeletons/AllTaskSkeleton';
 
 const tabs = [
   { key: 'todo', labelKey: 'app.task_management.tabs.todo' },
@@ -326,15 +326,7 @@ const AllTask = () => {
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             isLoading || isFetching ? (
-              <View
-                style={{
-                  paddingVertical: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <ActivityIndicator size="large" color={Colors.PRIMARY_TEAL} />
-              </View>
+              <AllTaskSkeleton />
             ) : (
               <NoTaskScreen
                 activeTab={activeTab}

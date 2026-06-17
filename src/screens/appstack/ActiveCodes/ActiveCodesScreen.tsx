@@ -12,6 +12,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
+import ActiveCodesSkeleton from '@/components/Skeletons/ActiveCodesSkeleton';
 
 const ActiveCodesScreen = () => {
   const {
@@ -134,6 +135,7 @@ const ActiveCodesScreen = () => {
           showsVerticalScrollIndicator={false}
           isLoading={isLoading}
           onRefresh={refetch}
+          renderSkeleton={() => <ActiveCodesSkeleton />}
         />
 
         {/* Footer Action */}

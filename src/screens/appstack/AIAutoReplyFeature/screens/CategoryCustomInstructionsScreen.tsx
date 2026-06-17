@@ -4,7 +4,6 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +19,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import CategoryInstructionsContainer from '../containers/CategoryInstructionsContainer';
+import CategoryCustomInstructionsSkeleton from '@/components/Skeletons/CategoryCustomInstructionsSkeleton';
 
 const CategoryInstructionsScreen = () => {
   const { t } = useTranslation();
@@ -69,9 +69,12 @@ const CategoryInstructionsScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center' }]}>
-        <ActivityIndicator size="large" color={Colors.TEAL_PRIMARY_ALT} />
-      </View>
+      <BGImage
+        source={require('@/assets/img/background/linearBG.png')}
+        style={styles.container}
+      >
+        <CategoryCustomInstructionsSkeleton />
+      </BGImage>
     );
   }
 

@@ -1,7 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground, StatusBar, Platform, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ImageBackground, StatusBar, Platform } from 'react-native';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -9,12 +9,12 @@ import StatCard from '../components/StatCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AnalyticContainers from '../containers/AnalyticContainers';
 import FilterModal from '../components/FilterModal';
-import { Colors } from '@/theme/colors';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import StatisticsSkeleton from '@/components/Skeletons/StatisticsSkeleton';
 
 const StatisticsScreen = () => {
   const { t } = useTranslation();
@@ -87,11 +87,7 @@ const StatisticsScreen = () => {
           isLoading={isLoadingAnalytics}
           refreshing={isRefreshing}
           onRefresh={onHandleRefresh}
-          skeletonComponent={
-            <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-            </View>
-          }
+          skeletonComponent={<StatisticsSkeleton />}
         >
           <AppText
             text={t('app.analytics.statistics')}
@@ -193,12 +189,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  loaderContainer: {
-    flex: 1,
-    marginTop: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   arrowCircleInner: {
     width: 40,

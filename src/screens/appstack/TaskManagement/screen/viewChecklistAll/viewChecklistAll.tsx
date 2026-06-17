@@ -30,6 +30,7 @@ import { getChecklistIcon } from '@/utility/getChecklistIcon';
 import Metrics from '@/utility/Metrics';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import { useTaskStore } from '@/store/taskStore';
+import ViewChecklistAllSkeleton from '@/components/Skeletons/ViewChecklistAllSkeleton';
 
 const ViewChecklistAll = () => {
   const {
@@ -154,6 +155,7 @@ const ViewChecklistAll = () => {
             data={checklistData}
             renderItem={renderItem}
             isLoading={isLoading}
+            renderSkeleton={() => <ViewChecklistAllSkeleton />}
             onRefresh={onRefresh}
             contentContainerStyle={styles.listContent}
             HeaderComponent={<ListHeader />}

@@ -9,6 +9,7 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import useAddCardDetailContainer from './AddCardDetailContainer';
 import { useTranslation } from 'react-i18next';
+import AddCardDetailSkeleton from '@/components/Skeletons/AddCardDetailSkeleton';
 
 const AddCardDetailScreen = () => {
   const {
@@ -26,23 +27,27 @@ const AddCardDetailScreen = () => {
 
   // Loading Overlay Component
   const LoadingOverlay = () => {
-    let loadingText = t('auth.add_payment.loading_payment', { name: 'Secure Payment' });
+    if (isProcessingPayment || isSaving) {
+      const loadingText = isProcessingPayment
+        ? t('auth.add_payment.processing_btn')
+        : t('auth.add_payment.saving_btn');
 
-    if (isProcessingPayment) {
-      loadingText = t('auth.add_payment.processing_btn');
-    } else if (isSaving) {
-      loadingText = t('auth.add_payment.saving_btn');
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+          <AppText
+            text={loadingText}
+            mt={10}
+            color={Colors.SUPER_GREY}
+            textAlign="center"
+          />
+        </View>
+      );
     }
 
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-        <AppText
-          text={loadingText}
-          mt={10}
-          color={Colors.SUPER_GREY}
-          textAlign="center"
-        />
+        <AddCardDetailSkeleton />
       </View>
     );
   };

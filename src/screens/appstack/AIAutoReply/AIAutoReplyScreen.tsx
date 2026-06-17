@@ -15,8 +15,8 @@ import { goBack } from '@/services/navigationService';
 import NoAiAutoReplyScreen from '../NoAiAutoReplyScreen/NoAiAutoReplyScreen';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
 import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
+import AIAutoReplySkeleton from '@/components/Skeletons/AIAutoReplySkeleton';
 
 const AIAutoReplyScreen = () => {
   const { t } = useTranslation();
@@ -44,9 +44,7 @@ const AIAutoReplyScreen = () => {
     if (isLoading) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <SpinnerLoader size={'large'} />
-        </View>
+        <AIAutoReplySkeleton />
       </BGImage>
     );
   }
@@ -128,6 +126,7 @@ const AIAutoReplyScreen = () => {
           data={data}
           meta={dataQuery}
           renderItem={renderItem}
+          renderSkeleton={() => <AIAutoReplySkeleton />}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}

@@ -21,6 +21,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import PropertyDetailSkeleton from '@/components/Skeletons/PropertyDetailSkeleton';
 
 const PropertyDetailScreen = () => {
   const { t } = useTranslation();
@@ -208,6 +209,7 @@ const PropertyDetailScreen = () => {
         {/* Scrollable Content */}
         <RefreshableScrollView
           isLoading={isLoading}
+          skeletonComponent={<PropertyDetailSkeleton />}
           onRefresh={refetch}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}

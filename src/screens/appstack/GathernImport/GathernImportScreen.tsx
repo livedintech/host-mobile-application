@@ -7,7 +7,6 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
@@ -16,6 +15,7 @@ import InputField from '@/components/molecules/Input/InputField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
+import GathernImportSkeleton from '@/components/Skeletons/GathernImportSkeleton';
 
 const { width } = Dimensions.get('window');
 
@@ -154,11 +154,6 @@ const GathernImportScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
       <View style={styles.container}>
-        {isLoading && (
-          <View style={styles.loaderContainer}>
-            <SpinnerLoader />
-          </View>
-        )}
         <View style={styles.headerRow}>
          <ButtonView onPress={() => goBack()}>
                     <Svgicons path="back" size={40} />
@@ -180,16 +175,20 @@ const GathernImportScreen = () => {
           />
         </View>
 
-        <FlatListSimpleHandler
-          onRefresh={refetch}
-          isLoading={false}
-          data={properties}
-          keyExtractor={(item: any) => item.listing_id.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        />
+        {isLoading ? (
+          <GathernImportSkeleton />
+        ) : (
+          <FlatListSimpleHandler
+            onRefresh={refetch}
+            isLoading={false}
+            data={properties}
+            keyExtractor={(item: any) => item.listing_id.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          />
+        )}
 
         <View style={styles.footer}>
           <AppButton
@@ -212,17 +211,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  loaderContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
   },
   header: {
     paddingHorizontal: 20,

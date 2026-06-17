@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { vs, s, ms } from 'react-native-size-matters';
 
 import { Colors } from '@/theme/colors';
@@ -14,6 +14,7 @@ import NoReviewScreen from './NoReviewScreen';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import ReviewManagementSkeleton from '@/components/Skeletons/ReviewManagementSkeleton';
 
 const ReviewManagementScreen = () => {
   const { t } = useTranslation();
@@ -85,9 +86,7 @@ const ReviewManagementScreen = () => {
         )}
 
         {allReviewsLoading ? (
-          <View style={styles.centerContainer}>
-            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-          </View>
+          <ReviewManagementSkeleton />
         ) : reviewsData.length === 0 ? (
           <View style={styles.emptyWrapper}>
             <NoReviewScreen

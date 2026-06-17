@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -20,6 +20,8 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
 import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 import Metrics from '@/utility/Metrics';
+import ListingSkeleton from '@/components/Skeletons/ListingSkeleton';
+import MultiChannelCalendarSkeleton from '@/components/Skeletons/MultiChannelCalendarSkeleton';
 
 const ListingScreen = () => {
   const { t } = useTranslation();
@@ -114,12 +116,6 @@ const ListingScreen = () => {
         onCardPress={handleReservationPress}
       />
 
-      {(isFetchingDetails || isLoading || isCalendarLoading) && (
-        <View style={styles.overlayLoader}>
-          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-        </View>
-      )}
-
       <View style={styles.headerFixed}>
         <View style={styles.headerRow}>
           <AppText
@@ -142,19 +138,23 @@ const ListingScreen = () => {
         </View>
       </View>
 
-      <CalendarSection
-        control={control}
-        errors={errors}
-        listingOptions={listingOptions}
-        selectedListingId={selectedListingId || ''}
-        markedDates={calendarDataMap}
-        bookings={rawData}
-        onDayPress={handleDayPress}
-        defaultPrice={defaultDailyPrice}
-        isLoading={isRefreshing}
-        onRefresh={handleRefresh}
-        onListingPress={id => setValue('listing_selection', String(id))}
-      />
+      {isFetchingDetails || isLoading || isCalendarLoading ? (
+        selectedListingId ? <ListingSkeleton /> : <MultiChannelCalendarSkeleton />
+      ) : (
+        <CalendarSection
+          control={control}
+          errors={errors}
+          listingOptions={listingOptions}
+          selectedListingId={selectedListingId || ''}
+          markedDates={calendarDataMap}
+          bookings={rawData}
+          onDayPress={handleDayPress}
+          defaultPrice={defaultDailyPrice}
+          isLoading={isRefreshing}
+          onRefresh={handleRefresh}
+          onListingPress={id => setValue('listing_selection', String(id))}
+        />
+      )}
 
       <MultiBookingSheet
         ref={multiSheetRef}
@@ -199,13 +199,6 @@ const styles = StyleSheet.create({
     borderRadius: ms(20),
     height: 33,
     justifyContent: 'center',
-  },
-  overlayLoader: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
   },
 });
 

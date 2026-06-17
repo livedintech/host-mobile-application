@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { Colors } from '@/theme/colors';
 import { useAuthStore } from '@/store/useAuthStore';
+import SubscriptionWebViewSkeleton from '@/components/Skeletons/SubscriptionWebViewSkeleton';
 
 const BASE_URL = 'https://livedin.subscriptionflow.com/en/hosted-page/subscribe';
 
@@ -74,7 +75,7 @@ const webViewRef = React.useRef<WebView>(null);
       />
       {loading && (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+          <SubscriptionWebViewSkeleton />
         </View>
       )}
     </View>
@@ -97,8 +98,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.WHITE,
   },
 });

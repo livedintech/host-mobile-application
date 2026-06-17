@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Colors } from '@/theme/colors';
 import useSelectPaymentContainer from './SelectPaymentContainer';
+import SelectPaymentSkeleton from '@/components/Skeletons/SelectPaymentSkeleton';
 
 const SelectPaymentScreen = () => {
   const { webViewUrl } = useSelectPaymentContainer();
@@ -35,7 +36,7 @@ const SelectPaymentScreen = () => {
       />
       {loading && (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+          <SelectPaymentSkeleton />
         </View>
       )}
     </View>
@@ -58,8 +59,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.WHITE,
   },
 });

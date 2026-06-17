@@ -31,6 +31,7 @@ import Metrics from '@/utility/Metrics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import { useTaskStore } from '@/store/taskStore';
+import ChecklistDetailSkeleton from '@/components/Skeletons/ChecklistDetailSkeleton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -202,6 +203,7 @@ const ChecklistDetail = ({ route }: any) => {
             data={localItems}
             renderItem={renderItem}
             isLoading={isLoading}
+            renderSkeleton={() => <ChecklistDetailSkeleton />}
             onRefresh={onRefresh}
             contentContainerStyle={styles.listContent}
             HeaderComponent={

@@ -15,6 +15,7 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import Metrics from '@/utility/Metrics';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useTranslation } from 'react-i18next';
+import AmenitiesSkeleton from '@/components/Skeletons/AmenitiesSkeleton';
 
 const AMENITY_ICON_MAP: Record<string, string> = {
   ac: 'airConditioner', pool: 'pool', tv: 'tv', oven: 'oven',
@@ -103,6 +104,7 @@ const AmenitiesScreen = () => {
           <FlatListSimpleHandler
           onRefresh={refetch}
             isLoading={isLoadingAmenities}
+            renderSkeleton={() => <AmenitiesSkeleton />}
             data={amenitiesList}
             renderItem={renderAmenity}
             keyExtractor={(item) => item.key}
@@ -131,7 +133,6 @@ const AmenitiesScreen = () => {
               loading={isLoading}
               disabled={isLoading || selectedAmenities.length === 0}
               variant="secondary"
-              backgroundColor={Colors.WHITE}
             />
           )}
           <AppButton

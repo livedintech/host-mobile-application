@@ -3,17 +3,16 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   ImageBackground,
 } from 'react-native';
 import AnalyticContainers from '../containers/AnalyticContainers';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Colors } from '@/theme/colors';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
 import AnalyticsChart from '../components/AnalyticsChart';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import ChannelPerformanceSkeleton from '@/components/Skeletons/ChannelPerformanceSkeleton';
 
 const BG_IMAGE = require('@/assets/img/background/channelPerformanceBG.png');
 
@@ -142,9 +141,7 @@ const ChannelPerformanceScreen = () => {
           />
 
           {isLoadingAnalyticsChannelChart ? (
-            <View style={styles.loader}>
-              <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-            </View>
+            <ChannelPerformanceSkeleton />
           ) : (
             <AnalyticsChart
               activeTab={activeTab}
@@ -162,7 +159,6 @@ const styles = StyleSheet.create({
   backgroundImage: { flex: 1, width: '100%', height: '100%' },
   safe: { flex: 1 },
   container: { flex: 1 },
-  loader: { marginTop: 50, alignItems: 'center' },
 });
 
 export default ChannelPerformanceScreen;

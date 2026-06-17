@@ -9,6 +9,7 @@ import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import useAddNewPaymentMethodContainer from './AddNewPaymentMethodContainer';
 import { useTranslation } from 'react-i18next';
+import AddNewPaymentMethodSkeleton from '@/components/Skeletons/AddNewPaymentMethodSkeleton';
 
 const AddNewPaymentMethodScreen = () => {
   const { t } = useTranslation();
@@ -31,23 +32,27 @@ const AddNewPaymentMethodScreen = () => {
 
   // Loading Overlay Component
   const LoadingOverlay = () => {
-    let loadingText = t('auth.add_payment.loading_payment', { name: paymentMethodName || 'Payment' });
+    if (isProcessingPayment || isSaving) {
+      const loadingText = isProcessingPayment
+        ? t('auth.add_payment.processing_payment')
+        : t('auth.add_payment.saving_payment');
 
-    if (isProcessingPayment) {
-      loadingText = t('auth.add_payment.processing_payment')
-    } else if (isSaving) {
-      loadingText = t('auth.add_payment.saving_payment')
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
+          <AppText
+            text={loadingText}
+            mt={10}
+            color={Colors.SUPER_GREY}
+            textAlign="center"
+          />
+        </View>
+      );
     }
 
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-        <AppText
-          text={loadingText}
-          mt={10}
-          color={Colors.SUPER_GREY}
-          textAlign="center"
-        />
+        <AddNewPaymentMethodSkeleton />
       </View>
     );
   };

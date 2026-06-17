@@ -10,6 +10,7 @@ import useSmartLockActivityLogContainer from './SmartLockActivityLogContainer';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { useTranslation } from 'react-i18next';
+import SmartLockActivityLogSkeleton from '@/components/Skeletons/SmartLockActivityLogSkeleton';
 
 const SmartLockActivityLogScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
@@ -85,16 +86,20 @@ const SmartLockActivityLogScreen = ({ navigation }: any) => {
           />
         </View>
 
-        <FlatList
-          data={logs}
-          renderItem={renderLogItem}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          onRefresh={handleRefresh}
-          refreshing={isLoading}
-          ListEmptyComponent={renderEmptyContainer}
-        />
+        {isLoading && logs.length === 0 ? (
+          <SmartLockActivityLogSkeleton />
+        ) : (
+          <FlatList
+            data={logs}
+            renderItem={renderLogItem}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            onRefresh={handleRefresh}
+            refreshing={isLoading}
+            ListEmptyComponent={renderEmptyContainer}
+          />
+        )}
       </View>
     </BGImage>
   );

@@ -12,6 +12,7 @@ import Metrics from '@/utility/Metrics';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import { useTranslation } from 'react-i18next';
+import PropertyTourSkeleton from '@/components/Skeletons/PropertyTourSkeleton';
 
 const PropertyTourScreen = () => {
   const {
@@ -48,6 +49,7 @@ const PropertyTourScreen = () => {
         <FlatListSimpleHandler
           data={tourData}
           isLoading={isFetching}
+          renderSkeleton={() => <PropertyTourSkeleton />}
           onRefresh={refetch}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}

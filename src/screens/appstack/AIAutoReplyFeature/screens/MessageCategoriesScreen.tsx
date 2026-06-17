@@ -16,6 +16,7 @@ import MessageCategoriesContainer from '../containers/MessageCategoriesContainer
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
 import { useAuthStore } from '@/store/useAuthStore';
+import MessageCategoriesSkeleton from '@/components/Skeletons/MessageCategoriesSkeleton';
 
 const MessageCategoriesScreen = () => {
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ const MessageCategoriesScreen = () => {
       <RefreshableScrollView
         contentContainerStyle={styles.scrollContent}
         isLoading={isLoading}
+        skeletonComponent={<MessageCategoriesSkeleton />}
         refreshing={isFetching}
         onRefresh={refetch}
       >
