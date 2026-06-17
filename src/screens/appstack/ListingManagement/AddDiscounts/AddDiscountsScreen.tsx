@@ -13,7 +13,7 @@ import useDiscountsContainer from './DiscountsContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 
 const AddDiscountsScreen = () => {
     const { control, errors, handleSubmit, onSubmit, isLoading, isModalVisible, setModalVisible, isEdit, bottomSheetVisible, handleExport, handleExportSubmit, handleOtaSubmit, isExporting, listingOptions, otaControl, otaErrors, setBottomSheetVisible } = useDiscountsContainer();
@@ -99,35 +99,19 @@ const AddDiscountsScreen = () => {
                     </View>
                 </Modal>
             </View>
-            <Modal
+            <ExportOtaSheet
                 visible={bottomSheetVisible}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setBottomSheetVisible(false)}
-                style={styles.modalContainer}
-            >
-                <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-                    <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-                        <AppText text={t('app.set_pricing.select_ota')} fontSize={18} type="SemiBold" mb={20} />
-                        <DropdownField
-                            name="ota_account"
-                            control={otaControl}
-                            errors={otaErrors}
-                            data={listingOptions}
-                            placeholder={t('app.set_pricing.select_account')}
-                            dropdownPosition='top'
-                        />
-
-                        <AppButton
-                            title={t('app.set_pricing.export')}
-                            onPress={handleOtaSubmit(handleExportSubmit)}
-                            loading={isExporting}
-                            mt={20}
-                        />
-
-                    </AppPressable>
-                </AppPressable>
-            </Modal>
+                onClose={() => setBottomSheetVisible(false)}
+                title={t('app.set_pricing.select_ota')}
+                placeholder={t('app.set_pricing.select_account')}
+                buttonText={t('app.set_pricing.export')}
+                otaControl={otaControl}
+                otaErrors={otaErrors}
+                handleOtaSubmit={handleOtaSubmit}
+                handleExportSubmit={handleExportSubmit}
+                listingOptions={listingOptions}
+                isPending={isExporting}
+            />
         </BGImage>
     );
 };
@@ -144,27 +128,6 @@ const styles = StyleSheet.create({
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
     modalContent: { backgroundColor: 'white', padding: 25, borderTopLeftRadius: 30, borderTopRightRadius: 30, paddingBottom: 50 },
     modalHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-    // styles mein add karo
-    modalContainer: {
-        justifyContent: 'flex-end',
-        margin: 0,          // ✅ left/right space fix
-    },
-    bottomSheet: {
-        backgroundColor: Colors.WHITE,
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        paddingHorizontal: 24,
-        paddingTop: 12,
-        paddingBottom: 40,
-    },
-    handleBar: {
-        width: 40,
-        height: 5,
-        backgroundColor: '#D4D4D4',
-        borderRadius: 3,
-        alignSelf: 'center',
-        marginBottom: 25,
-    },
 });
 
 export default AddDiscountsScreen;

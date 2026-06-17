@@ -1,6 +1,5 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -15,6 +14,7 @@ import usePricingContainer from './SetPricingContainer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
 const SetPricingScreen = () => {
@@ -96,34 +96,19 @@ const SetPricingScreen = () => {
           />
         </View>
       </View>
-      <Modal
+      <ExportOtaSheet
         visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-      >
-        <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-          <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-            <AppText text={t('app.set_pricing.select_ota')} fontSize={18} type="SemiBold" mb={20} />
-            <DropdownField
-              name="ota_account"
-              control={otaControl}
-              errors={otaErrors}
-              data={listingOptions}
-              placeholder={t('app.set_pricing.select_account')}
-              dropdownPosition='top'
-            />
-
-            <AppButton
-              title={t('app.set_pricing.export')}
-              onPress={handleOtaSubmit(handleExportSubmit)}
-              loading={isExporting}
-              mt={20}
-            />
-
-          </AppPressable>
-        </AppPressable>
-      </Modal>
+        onClose={() => setBottomSheetVisible(false)}
+        title={t('app.set_pricing.select_ota')}
+        placeholder={t('app.set_pricing.select_account')}
+        buttonText={t('app.set_pricing.export')}
+        otaControl={otaControl}
+        otaErrors={otaErrors}
+        handleOtaSubmit={handleOtaSubmit}
+        handleExportSubmit={handleExportSubmit}
+        listingOptions={listingOptions}
+        isPending={isExporting}
+      />
     </BGImage>
   );
 };
@@ -141,20 +126,6 @@ const styles = StyleSheet.create({
     padding: 25,
     backgroundColor: 'rgba(255,255,255,0.95)',
     paddingBottom: 40
-  },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-
-  bottomSheet: {
-    backgroundColor: Colors.WHITE,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 40,
-  },
-  modalContainer: {
-    justifyContent: 'flex-end',
-    margin: 0,        // ✅ yahi left/right space ka issue tha
   },
 });
 

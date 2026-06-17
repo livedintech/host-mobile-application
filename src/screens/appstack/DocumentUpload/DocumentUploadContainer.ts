@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DocumentFormValues, documentUploadSchema } from '@/validation/auth/createListingSchemas';
 import { goBack, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -21,39 +20,44 @@ import {
 import RNFS from 'react-native-fs';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
-import * as yup from 'yup';
-import { createListingExportApi } from '@/services/ createListingService';
+import useListingExport from '@/hooks/useListingExport';
 
-import { getChannelsUserbyId } from '@/services/bookingManagementApi';
 import { Control, FieldValues } from 'react-hook-form';
 import { BASE_URL } from '@/services/apiService';
 
-
-const otaAccountSchema = yup.object({
-  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
-});
-
-type OtaAccountFormValues = { ota_account: string };
-
 export default function useDocumentUploadContainer() {
   const [isLoading, setIsLoading] = useState(false);
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const { params } = useRoute<any>();
   const { listing_id, channel_id } = useCreateListingStore();
-  const { user, token } = useAuthStore();
+  const { token } = useAuthStore();
 
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id);
 
-  // ── Fetch OTA Accounts ────────────────────────────────────────────────────
-  const { data: response, isLoading: isLoadingChannelList } = useQuery({
-    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
-    queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-    enabled: !!user?.id,
+  // ── Export ────────────────────────────────────────────────────────────────
+  const {
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    handleExportSubmit,
+    handleOtaSubmit,
+    otaControl: otaControlRaw,
+    otaErrors,
+    listingOptions,
+    isLoadingChannelList,
+    isPendingExporting: isExporting,
+  } = useListingExport({
+    successMessage: i18n.t('common.toast.listing_exported'),
+    onSuccess: () => {
+      resetToRoutes([
+        { name: NavigationRoutes.APP_STACK.ROOT_STACK },
+        { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS },
+      ] as any);
+    },
   });
 
-  const connectedAccounts = response?.data || [];
+  // ✅ Cast for DropdownField — Control<FieldValues> se compatible
+  const otaControl = otaControlRaw as Control<FieldValues>;
 
   // ── Existing doc helper ───────────────────────────────────────────────────
   const getExistingDoc = (type: string) => {
@@ -79,18 +83,6 @@ export default function useDocumentUploadContainer() {
         nationalId: getExistingDoc('national_id'),
       },
     });
-
-  // ── OTA form ──────────────────────────────────────────────────────────────
-  const {
-    control: otaControlRaw,
-    handleSubmit: handleOtaSubmit,
-    formState: { errors: otaErrors },
-  } = useForm<OtaAccountFormValues>({
-    resolver: yupResolver(otaAccountSchema) as any,
-  });
-
-  // ✅ Cast for DropdownField — Control<FieldValues> se compatible
-  const otaControl = otaControlRaw as Control<FieldValues>;
 
   const propertyOwnershipDoc = watch('propertyOwnership');
   const authorityLicenseDoc = watch('authorityLicense');
@@ -240,21 +232,6 @@ export default function useDocumentUploadContainer() {
     }
   };
 
-  // ── Export mutation ───────────────────────────────────────────────────────
-  const { mutate: exportListing, isPending: isExporting } = useMutation({
-    mutationFn: createListingExportApi,
-    onSuccess: () => {
-      setBottomSheetVisible(false);
-      Toast.show({ type: 'success', text1: i18n.t('common.toast.listing_exported') });
-      resetToRoutes([
-        { name: NavigationRoutes.APP_STACK.ROOT_STACK },
-        { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS },
-      ] as any);
-    },
-    onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message }),
-  });
-
   const handleExport = () => {
     if (!propertyOwnershipDoc) {
       Toast.show({ type: 'error', text1: i18n.t('common.toast.upload_ownership') });
@@ -270,20 +247,6 @@ export default function useDocumentUploadContainer() {
     }
     setBottomSheetVisible(true);
   };
-
-  const handleExportSubmit = (data: OtaAccountFormValues) => {
-    exportListing({
-      channel_id: data.ota_account,
-      listing_id: String(listing_id),
-    });
-  };
-
- const listingOptions = connectedAccounts
-  .filter((item: any) => item.connection_type === 'Airbnb') // ✅
-  .map((item: any) => ({
-    label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
-    value: item.ch_channel_id,
-  }));
 
   return {
     control,

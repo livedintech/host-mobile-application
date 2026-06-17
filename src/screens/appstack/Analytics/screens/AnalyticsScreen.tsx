@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useMemo } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Colors } from '@/theme/colors';
 import AnalyticsHeader from '../components/AnalyticsHeader';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
@@ -10,6 +10,7 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
 import AnalyticContainers from '../containers/AnalyticContainers';
 import { KPIItem, ListingPerformanceItem } from '@/types/api/AnalyticsTypes';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import {
   AnalyticsKPISkeleton,
   AnalyticsChartSkeleton,
@@ -42,7 +43,21 @@ const AnalyticsScreen = () => {
     filters,
     channelOptions,
     dateOptions,
+    refetchSummary,
+    refetchPerformance,
+    refetchChannelChart,
   } = AnalyticContainers();
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const onHandleRefresh = async () => {
+    setIsRefreshing(true);
+    await Promise.all([
+      refetchSummary(),
+      refetchPerformance(),
+      refetchChannelChart(),
+    ]);
+    setIsRefreshing(false);
+  };
 
 
 
@@ -111,10 +126,11 @@ const AnalyticsScreen = () => {
 
   return (
     <View style={styles.root}>
-      <ScrollView 
-        style={styles.container} 
+      <RefreshableScrollView
+        style={styles.container}
         contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
+        refreshing={isRefreshing}
+        onRefresh={onHandleRefresh}
       >
         {/* GLOBAL HEADER: Controls Modal Filters */}
         <AnalyticsHeader 
@@ -182,7 +198,7 @@ const AnalyticsScreen = () => {
             ))
           )}
         </View>
-      </ScrollView>
+      </RefreshableScrollView>
     </View>
   );
 };

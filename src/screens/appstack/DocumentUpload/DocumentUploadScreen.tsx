@@ -1,18 +1,17 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 // DocumentUploadScreen.tsx
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import DropdownField from '@/components/molecules/Input/DropdownField';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
 import { goBack, navigateToRoot } from '@/services/navigationService';
-import Metrics from '@/utility/Metrics';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import useDocumentUploadContainer from './DocumentUploadContainer';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 
@@ -144,46 +143,19 @@ const DocumentUploadScreen = () => {
         </ScrollView>
 
         {/* Bottom Sheet Modal — sirf create mode mein */}
-        <Modal
+        <ExportOtaSheet
           visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-
-              <View style={styles.handleBar} />
-
-              <AppText
-                text={t('app.document_upload.select_ota')}
-                fontSize={20}
-                type="SemiBold"
-                color={Colors.PINE_FOREST}
-                mb={20}
-              />
-
-              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder={t('app.document_upload.select_account')}
-                  dropdownPosition="top"
-                />
-              </View>
-
-              <AppButton
-                title={t('app.document_upload.export')}
-                onPress={handleOtaSubmit(handleExportSubmit)}
-                mt={20}
-                loading={isLoadingChannelList || isCreating}
-              />
-            </AppPressable>
-          </AppPressable>
-        </Modal>
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.document_upload.select_ota')}
+          placeholder={t('app.document_upload.select_account')}
+          buttonText={t('app.document_upload.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isLoadingChannelList || isCreating}
+        />
 
       </View>
     </BGImage>
@@ -233,27 +205,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   footer: { marginTop: 10 },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    backgroundColor: Colors.WHITE,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 40,
-  },
-  handleBar: {
-    width: 40,
-    height: 4,
-    backgroundColor: Colors.SMOOTH_GREY,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
 });
 
 export default DocumentUploadScreen;

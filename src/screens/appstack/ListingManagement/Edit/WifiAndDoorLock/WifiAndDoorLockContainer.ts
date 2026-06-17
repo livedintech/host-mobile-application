@@ -5,22 +5,16 @@ import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import * as yup from 'yup';
 import Toast from 'react-native-toast-message';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { editListingApi, getTTLOCKSApi, createListingExportApi } from '@/services/ createListingService';
+import { editListingApi, getTTLOCKSApi } from '@/services/ createListingService';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
-import { getChannelsUserbyId } from '@/services/bookingManagementApi';
-import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
-
-const otaAccountSchema = yup.object({
-    ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
-});
-type OtaAccountFormValues = { ota_account: string };
+import useListingExport from '@/hooks/useListingExport';
 
 export const wifiAndDoorLockSchema = yup.object().shape({
     wifi_username: yup.string().required(i18n.t('app.validation.wifi_username_required')),
@@ -37,54 +31,19 @@ export default function useWifiAndDoorLockContainer() {
 
     const listing = params?.paramData?.listing;
 
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-
-    // ── OTA Form ──────────────────────────────────────────────────────────────
+    // ── Export ────────────────────────────────────────────────────────────────
     const {
-        control: otaControl,
-        handleSubmit: handleOtaSubmit,
-        formState: { errors: otaErrors },
-        watch: otaWatch,
-    } = useForm<OtaAccountFormValues>({
-        resolver: yupResolver(otaAccountSchema) as any,
-        defaultValues: { ota_account: '' },
-    });
-
-    const ota_Account = otaWatch('ota_account');
-
-    // ── OTA Accounts ──────────────────────────────────────────────────────────
-    const { data: response, refetch: refetchChannelsUser } = useQuery({
-        queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
-        queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-        enabled: !!user?.id,
-    });
-
-    const connectedAccounts = response?.data || [];
-    const listingOptions = connectedAccounts
-        .filter((item: any) => item.connection_type === 'Airbnb')
-        .map((item: any) => ({ label: `Airbnb - ${item?.id} - ${item?.channel_name}`, value: item.ch_channel_id }));
-
-    // ── Export Mutation ───────────────────────────────────────────────────────
-    const { mutate: createListingExportPayload, isPending: isPendingExporting } =
-        useMutation<CreateListingDetailsResponse, Error, CreateListingExportPayloadType>({
-            mutationFn: createListingExportApi,
-            onSuccess: ({ message }: any) => {
-                setBottomSheetVisible(false);
-                queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-                Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
-            },
-            onError: (err: any) =>
-                Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
-        });
-
-    const handleExport = () => setBottomSheetVisible(true);
-
-    const handleExportSubmit = (data: OtaAccountFormValues) => {
-        createListingExportPayload({
-            channel_id: ota_Account,
-            listing_id: String(listing_id),
-        });
-    };
+        bottomSheetVisible,
+        setBottomSheetVisible,
+        handleExport,
+        handleExportSubmit,
+        handleOtaSubmit,
+        otaControl,
+        otaErrors,
+        listingOptions,
+        isPendingExporting,
+        refetchListingOptions: refetchChannelsUser,
+    } = useListingExport();
 
     // ── Main Form ─────────────────────────────────────────────────────────────
     const { control, handleSubmit, formState: { errors } } = useForm<WifiAndDoorLockFormValues>({

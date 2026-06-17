@@ -103,6 +103,7 @@ export interface CreateListingDetailsResponse {
   status: string;
   message: string;
   listing_id?: string;
+  popup?: boolean;
   data: {};
 }
 

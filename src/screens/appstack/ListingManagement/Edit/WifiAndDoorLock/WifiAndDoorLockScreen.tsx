@@ -1,6 +1,5 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Modal, RefreshControl } from 'react-native';
+import { StyleSheet, View, RefreshControl } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import InputField from '@/components/molecules/Input/InputField';
@@ -13,7 +12,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import useWifiAndDoorLockContainer from './WifiAndDoorLockContainer';
-import Metrics from '@/utility/Metrics';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 
 const WifiAndDoorLockScreen = () => {
@@ -106,39 +105,19 @@ const WifiAndDoorLockScreen = () => {
       </View>
 
       {/* ✅ Export Modal */}
-      <Modal
+      <ExportOtaSheet
         visible={bottomSheetVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setBottomSheetVisible(false)}
-      >
-        <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-          <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-            <View style={styles.handleBar} />
-            <AppText text={t('app.wifi_door_lock.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
-            <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-              <DropdownField
-                name="ota_account"
-                control={otaControl}
-                errors={otaErrors}
-                label=""
-                data={listingOptions}
-                placeholder={t('app.wifi_door_lock.select_account')}
-                dropdownPosition="top"
-              />
-            </View>
-            <AppButton
-              title={t('app.wifi_door_lock.export')}
-              onPress={handleOtaSubmit(handleExportSubmit)}
-              mt={20}
-              loading={isPendingExporting}
-              backgroundColor="#00A68A"
-              borderColor="transparent"
-              color={Colors.WHITE}
-            />
-          </AppPressable>
-        </AppPressable>
-      </Modal>
+        onClose={() => setBottomSheetVisible(false)}
+        title={t('app.wifi_door_lock.select_ota')}
+        placeholder={t('app.wifi_door_lock.select_account')}
+        buttonText={t('app.wifi_door_lock.export')}
+        otaControl={otaControl}
+        otaErrors={otaErrors}
+        handleOtaSubmit={handleOtaSubmit}
+        handleExportSubmit={handleExportSubmit}
+        listingOptions={listingOptions}
+        isPending={isPendingExporting}
+      />
 
     </BGImage>
   );
@@ -153,23 +132,6 @@ const styles = StyleSheet.create({
   helperTextRow:    { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 },
   smartLockLink:    { textDecorationLine: 'underline' },
   footer:           { position: 'absolute', bottom: 40, left: 22, right: 22 },
-  modalOverlay:     { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  bottomSheet: {
-    backgroundColor:      Colors.WHITE,
-    borderTopLeftRadius:  24,
-    borderTopRightRadius: 24,
-    paddingHorizontal:    24,
-    paddingTop:           12,
-    paddingBottom:        40,
-  },
-  handleBar: {
-    width:           40,
-    height:          5,
-    backgroundColor: '#D4D4D4',
-    borderRadius:    3,
-    alignSelf:       'center',
-    marginBottom:    25,
-  },
 });
 
 export default WifiAndDoorLockScreen;

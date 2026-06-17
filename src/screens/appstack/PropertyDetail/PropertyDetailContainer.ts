@@ -3,7 +3,6 @@ import i18n from '@/locales/i18n/i18n';
 import STORAGE_CONST from '@/constants/storage';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import {
-  createListingExportApi,
   deleteListingApi,
   getManageListingDetailById,
 } from '@/services/ createListingService';
@@ -18,85 +17,28 @@ import Toast from 'react-native-toast-message';
 import { queryClient } from '@/services/api';
 import { DeleteListingPayloadType } from '@/types/api/bookingManagementTypes';
 import { getUser } from '@/services/UserPermission';
-import { useState } from 'react';
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
-import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+import useListingExport from '@/hooks/useListingExport';
 
 dayjs.extend(customParseFormat);
-
-const otaAccountSchema = yup.object({
-  ota_account: yup.string().required(i18n.t('app.validation.ota_required')),
-});
-
-type OtaAccountFormValues = { ota_account: string };
 
 export default function usePropertyDetailContainer() {
   const { user } = useAuthStore();
   const { listing_id } = useCreateListingStore();
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-
-  const {
-    control: otaControl,
-    handleSubmit: handleOtaSubmit,
-    formState: { errors: otaErrors },
-    watch: newWatch,
-  } = useForm<OtaAccountFormValues>({
-    resolver: yupResolver(otaAccountSchema) as any,
-    defaultValues: { ota_account: '' },
-  });
-
-  const ota_Account = newWatch('ota_account');
-
-  // ── OTA Accounts ──────────────────────────────────────────────────────────
-  const { data: response, isLoading: isLoadingChannelList } = useQuery({
-    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
-    queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-    enabled: !!user?.id,
-  });
-
-  const connectedAccounts = response?.data || [];
-  const listingOptions = connectedAccounts
-    .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({
-      label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
-      value: item.ch_channel_id,
-    }));
 
   // ── Export ────────────────────────────────────────────────────────────────
-  const handleExport = () => setBottomSheetVisible(true);
-
-  const { mutate: createListingExportPayload, isPending: isPendingExporting } =
-    useMutation<CreateListingDetailsResponse, Error, CreateListingExportPayloadType>({
-      mutationFn: createListingExportApi,
-      onSuccess: ({ message }) => {
-        setBottomSheetVisible(false);
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS],
-        });
-        // ✅ OTA name dhundho selected account se
-        const selectedAccount = connectedAccounts.find(
-          (item: any) => item.ch_channel_id === ota_Account,
-        );
-        const otaName = selectedAccount?.connection_type || 'OTA Platform';
-        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
-        // navigate(NavigationRoutes.APP_STACK.LISTING_EXPORT_SUCCESS, { otaName });
-      },
-      onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
-    });
-
-  const handleExportSubmit = (data: OtaAccountFormValues) => {
-    createListingExportPayload({
-      channel_id: ota_Account,
-      listing_id: String(listing_id),
-    });
-  };
+  const {
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    handleExport,
+    handleExportSubmit,
+    handleOtaSubmit,
+    otaControl,
+    otaErrors,
+    listingOptions,
+    connectedAccounts,
+    isLoadingChannelList,
+    isPendingExporting,
+  } = useListingExport();
 
   // ── Listing Detail ────────────────────────────────────────────────────────
   const { data, refetch, isLoading } = useQuery({

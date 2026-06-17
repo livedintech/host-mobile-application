@@ -5,6 +5,12 @@
     "search": "Search...",
     "required": "Required",
     "placeholder": "Select",
+    "airbnb_export_popup": {
+      "title": "One last step on Airbnb",
+      "description": "Your listing details have been exported to Airbnb. To go live, open the Airbnb app and complete anything still required there. Since your property is in Saudi Arabia, you'll likely need to add your property licence number before you can submit.",
+      "open_airbnb": "Open Airbnb",
+      "do_it_later": "I'll do it later"
+    },
     "tab": {
       "home": "Home",
       "calendar": "Calendar",

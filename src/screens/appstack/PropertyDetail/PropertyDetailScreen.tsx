@@ -1,6 +1,5 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useState } from 'react';
-import { Modal, StyleSheet, View, Image, Platform } from 'react-native';
+import { StyleSheet, View, Image, Platform } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -16,7 +15,7 @@ import Metrics from '@/utility/Metrics';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import DropdownField from '@/components/molecules/Input/DropdownField';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
@@ -433,39 +432,19 @@ const PropertyDetailScreen = () => {
         </RefreshableScrollView>
 
         {/* Export Modal */}
-        <Modal
+        <ExportOtaSheet
           visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-              <View style={styles.handleBar} />
-              <AppText text={t('app.property_detail.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
-              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder={t('app.property_detail.select_account')}
-                  dropdownPosition="top"
-                />
-              </View>
-              <AppButton
-                title={t('app.property_detail.export')}
-                onPress={handleOtaSubmit(handleExportSubmit)}
-                mt={20}
-                loading={isPendingExporting}
-                backgroundColor="#00A68A"
-                borderColor="transparent"
-                color={Colors.WHITE}
-              />
-            </AppPressable>
-          </AppPressable>
-        </Modal>
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.property_detail.select_ota')}
+          placeholder={t('app.property_detail.select_account')}
+          buttonText={t('app.property_detail.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
 
       </View>
     </BGImage>
@@ -606,32 +585,6 @@ const styles = StyleSheet.create({
   },
   menuText: { flex: 1 },
   disabledMenuItem: { backgroundColor: '#FAFAFA', opacity: 0.6 },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    backgroundColor: Colors.WHITE,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 40,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  handleBar: {
-    width: 40,
-    height: 5,
-    backgroundColor: '#D4D4D4',
-    borderRadius: 3,
-    alignSelf: 'center',
-    marginBottom: 25,
-  },
   map: { ...StyleSheet.absoluteFillObject },
   mapContainer: {
     width: '100%',

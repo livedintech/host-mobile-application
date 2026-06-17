@@ -1,25 +1,19 @@
 import i18n from '@/locales/i18n/i18n';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { createListingDetailsApi, editListingApi, createListingExportApi } from '@/services/ createListingService';
+import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { queryClient } from '@/services/api';
 import STORAGE_CONST from '@/constants/storage';
 import * as yup from 'yup';
-import { getChannelsUserbyId } from '@/services/bookingManagementApi';
-import { CreateListingDetailsResponse, CreateListingExportPayloadType } from '@/types/api/createListingTypes';
-
-const otaAccountSchema = yup.object({
-  ota_account: yup.string().required(i18n.t('app.about_place.validation_ota_required')),
-});
-type OtaAccountFormValues = { ota_account: string };
+import useListingExport from '@/hooks/useListingExport';
 
 export const aboutThePlaceSchema = yup.object().shape({
   size_sqm:    yup.string().typeError(i18n.t('app.about_place.validation_size_type')).required(i18n.t('app.about_place.validation_size_required')),
@@ -39,54 +33,18 @@ export default function useAboutThePlaceContainer() {
   const listing = params?.paramData?.listing;
   const isEdit  = Boolean(listing?.listing_id);
 
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-
-  // ── OTA Form ──────────────────────────────────────────────────────────────
+  // ── Export ────────────────────────────────────────────────────────────────
   const {
-    control: otaControl,
-    handleSubmit: handleOtaSubmit,
-    formState: { errors: otaErrors },
-    watch: otaWatch,
-  } = useForm<OtaAccountFormValues>({
-    resolver: yupResolver(otaAccountSchema) as any,
-    defaultValues: { ota_account: '' },
-  });
-
-  const ota_Account = otaWatch('ota_account');
-
-  // ── OTA Accounts ──────────────────────────────────────────────────────────
-  const { data: response } = useQuery({
-    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
-    queryFn:  () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-    enabled:  !!user?.id,
-  });
-
-  const connectedAccounts = response?.data || [];
-  const listingOptions = connectedAccounts
-    .filter((item: any) => item.connection_type === 'Airbnb')
-    .map((item: any) => ({ label: `Airbnb - ${item?.id} - ${item?.channel_name}`, value: item.ch_channel_id }));
-
-  // ── Export Mutation ───────────────────────────────────────────────────────
-  const { mutate: createListingExportPayload, isPending: isPendingExporting } =
-    useMutation<CreateListingDetailsResponse, Error, CreateListingExportPayloadType>({
-      mutationFn: createListingExportApi,
-      onSuccess: ({ message }: any) => {
-        setBottomSheetVisible(false);
-        queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
-        Toast.show({ type: 'success', text1: message || i18n.t('common.toast.exported') });
-      },
-      onError: (err: any) =>
-        Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
-    });
-
-  const handleExport = () => setBottomSheetVisible(true);
-
-  const handleExportSubmit = (data: OtaAccountFormValues) => {
-    createListingExportPayload({
-      channel_id: ota_Account,
-      listing_id: String(listing_id),
-    });
-  };
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    handleExport,
+    handleExportSubmit,
+    handleOtaSubmit,
+    otaControl,
+    otaErrors,
+    listingOptions,
+    isPendingExporting,
+  } = useListingExport();
 
   // ── Dropdown options ──────────────────────────────────────────────────────
   const numberOptions = useMemo(

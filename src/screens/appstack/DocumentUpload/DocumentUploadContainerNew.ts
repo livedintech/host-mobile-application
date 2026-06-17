@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DocumentFormValues, documentUploadSchema } from '@/validation/auth/createListingSchemas';
 import { goBack, navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -14,37 +13,34 @@ import * as DocumentPicker from '@react-native-documents/picker';
 import RNFS from 'react-native-fs';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
-import * as yup from 'yup';
-import { createListingExportApi } from '@/services/ createListingService';
-import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+import useListingExport from '@/hooks/useListingExport';
 import { BASE_URL } from '@/services/apiService';
-
-
-const otaAccountSchema = yup.object({
-  ota_account: yup.string().required('Please select an OTA account'),
-});
-
-type OtaAccountFormValues = { ota_account: string };
 
 export default function useCreateEditListingDocumentUploadContainer() {
   const [isLoading, setIsLoading] = useState(false);
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const { params } = useRoute<any>();
   const { listing_id, channel_id } = useCreateListingStore();
-  const { user, token } = useAuthStore();
+  const { token } = useAuthStore();
 
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id); // ✅ consistent
 
-  // ── Fetch OTA Accounts ────────────────────────────────────────────────────
-  const { data: response, isLoading: isLoadingChannelList } = useQuery({
-    queryKey: [STORAGE_CONST.GET_CHANNELS_USER, user?.id],
-    queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-    enabled: !!user?.id,
+  // ── Export ────────────────────────────────────────────────────────────────
+  const {
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    handleExportSubmit,
+    handleOtaSubmit,
+    otaControl,
+    otaErrors,
+    listingOptions,
+    isLoadingChannelList,
+    isPendingExporting: isExporting,
+  } = useListingExport({
+    successMessage: 'Property exported successfully',
+    onSuccess: () => navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS),
   });
-
-  const connectedAccounts = response?.data || [];
 
   // ✅ Helper — existing documents se form values banao
   const getExistingDoc = (type: string) => {
@@ -70,15 +66,6 @@ export default function useCreateEditListingDocumentUploadContainer() {
         nationalId: getExistingDoc('national_id'),        // ✅
       },
     });
-
-  // ── OTA form ──────────────────────────────────────────────────────────────
-  const {
-    control: otaControl,
-    handleSubmit: handleOtaSubmit,
-    formState: { errors: otaErrors },
-  } = useForm<OtaAccountFormValues>({
-    resolver: yupResolver(otaAccountSchema) as any,
-  });
 
   const propertyOwnershipDoc = watch('propertyOwnership');
   const authorityLicenseDoc = watch('authorityLicense');
@@ -174,18 +161,6 @@ const onSaveExit = async (data: DocumentFormValues) => {
   }
 };
 
-  // ── Export mutation ───────────────────────────────────────────────────────
-  const { mutate: exportListing, isPending: isExporting } = useMutation({
-    mutationFn: createListingExportApi,
-    onSuccess: () => {
-      setBottomSheetVisible(false);
-      Toast.show({ type: 'success', text1: 'Property exported successfully' });
-      navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-    },
-    onError: (err: any) =>
-      Toast.show({ type: 'error', text1: err.message }),
-  });
-
 const handleExport = () => {
   // ✅ Teeno documents required
   if (!propertyOwnershipDoc) {
@@ -202,18 +177,6 @@ const handleExport = () => {
   }
   setBottomSheetVisible(true);
 };
-
-  const handleExportSubmit = (data: OtaAccountFormValues) => {
-    exportListing({
-      channel_id: data.ota_account,
-      listing_id: String(listing_id),
-    });
-  };
-
-  const listingOptions = connectedAccounts.map((item: any) => ({
-    label: item.connection_type,
-    value: item.ch_channel_id,
-  }));
 
   return {
     control,

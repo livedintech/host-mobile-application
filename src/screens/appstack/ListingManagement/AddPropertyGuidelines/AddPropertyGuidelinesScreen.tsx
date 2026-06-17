@@ -1,7 +1,7 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Modal } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import useGuidelinesContainer from './GuidelinesContainer';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -211,51 +211,19 @@ const AddPropertyGuidelinesScreen = () => {
         </View>
 
         {/* ✅ Export Modal */}
-        <Modal
+        <ExportOtaSheet
           visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <AppPressable
-            style={styles.modalOverlay}
-            onPress={() => setBottomSheetVisible(false)}
-          >
-            <AppPressable
-              style={styles.bottomSheet}
-              onPress={e => e.stopPropagation()}
-            >
-              <View style={styles.handleBar} />
-              <AppText
-                text={t('app.property_guidelines.select_ota')}
-                fontSize={20}
-                type="SemiBold"
-                color={Colors.PINE_FOREST}
-                mb={20}
-              />
-              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder={t('app.property_guidelines.select_account')}
-                  dropdownPosition="top"
-                />
-              </View>
-              <AppButton
-                title={t('app.property_guidelines.export')}
-                onPress={handleOtaSubmit(handleExportSubmit)}
-                mt={20}
-                loading={isPendingExporting}
-                backgroundColor="#00A68A"
-                borderColor="transparent"
-                color={Colors.WHITE}
-              />
-            </AppPressable>
-          </AppPressable>
-        </Modal>
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.property_guidelines.select_ota')}
+          placeholder={t('app.property_guidelines.select_account')}
+          buttonText={t('app.property_guidelines.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
       </View>
     </BGImage>
   );
@@ -295,27 +263,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: { bottom: 0, width: '100%', paddingBottom: 40 },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    backgroundColor: Colors.WHITE,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 40,
-  },
-  handleBar: {
-    width: 40,
-    height: 5,
-    backgroundColor: '#D4D4D4',
-    borderRadius: 3,
-    alignSelf: 'center',
-    marginBottom: 25,
-  },
 });
 
 export default AddPropertyGuidelinesScreen;
