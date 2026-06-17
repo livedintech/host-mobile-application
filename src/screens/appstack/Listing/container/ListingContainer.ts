@@ -310,7 +310,6 @@ export default function useListingContainer(
 
       delete payload.country;
       delete payload.phoneNumber;
-      console.log("bookingType", bookingType)
 
       const res =
         bookingType === 'direct'
@@ -319,7 +318,6 @@ export default function useListingContainer(
             ...payload,
             price: formData.rate || '',
           });
-      console.log("respp", res)
       if (res) {
         Toast.show({
           type: 'success',

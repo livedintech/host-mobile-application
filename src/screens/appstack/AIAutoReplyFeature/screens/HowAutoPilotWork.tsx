@@ -18,7 +18,6 @@ const HowAutoPilotWork = () => {
   const navigation = useNavigation();
   const { t } = useTranslation(); // Added
   const { user } = useAuthStore();
-  console.log('user::', user);
   const HIDE_UPGRADE_PLAN_IDS = [
     'b0964a43-5ff2-49b4-be4e-d75afb665d41',
     '8b49aa16-cc53-4d16-b880-c008acc0ad3c',

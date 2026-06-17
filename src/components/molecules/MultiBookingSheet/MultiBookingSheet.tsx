@@ -118,7 +118,6 @@ const MultiBookingSheet = forwardRef<BottomSheetModal, Props>(
                     ) : null}
                   </View>
 
-                  <AppText text={`#${bookingId}`} fontSize={10} color="#A0ADB8" />
                 </View>
 
                 <ChevronRight size={ms(18)} color="#C0CDD5" />

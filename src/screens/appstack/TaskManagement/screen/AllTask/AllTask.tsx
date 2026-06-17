@@ -221,7 +221,6 @@ const AllTask = () => {
   }
 
   const renderTaskItem = ({ item }: { item: any }) => {
-    console.log('Task Itemmm:', item.status);
     const isCompleted = item.status?.toLowerCase() === 'completed';
     const handlePress = () => {
       // Navigate on every status

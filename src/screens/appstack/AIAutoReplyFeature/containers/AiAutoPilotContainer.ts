@@ -165,8 +165,6 @@ const AiAutoPilotContainer = () => {
   const handleSwitchToggle = (nextStatus: boolean) => {
     const currentFormValues = getValues();
     const hasSelectedProperties = currentFormValues.properties && currentFormValues.properties.length > 0;
-    console.log("nextStatus",nextStatus);
-    console.log("hasSelectedProperties",hasSelectedProperties)
 
     // VALIDATION: If turning the switch ON, ensure at least one listing is selected
     if (nextStatus && !hasSelectedProperties) {

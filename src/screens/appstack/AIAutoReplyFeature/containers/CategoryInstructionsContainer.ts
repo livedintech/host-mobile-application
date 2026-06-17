@@ -38,7 +38,6 @@ const CategoryInstructionsContainer = () => {
     mutationFn: saveAICategoryInstructions,
     onSuccess: (res: any) => {
       const backendMessage = res?.message || t('app.category_instructions.toast_success');
-      console.log("backendMessage",backendMessage)
       Toast.show({
         type: 'success',
       text1: backendMessage,

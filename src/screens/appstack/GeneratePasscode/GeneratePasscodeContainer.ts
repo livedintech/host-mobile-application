@@ -105,8 +105,6 @@ export default function useGeneratePasscodeContainer() {
 
         }
 
-        console.log('FINAL PAYLOAD:', payload);
-
         passcodeGeneratePayload(payload);
     };
 

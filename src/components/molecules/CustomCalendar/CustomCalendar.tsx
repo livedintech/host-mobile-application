@@ -38,7 +38,6 @@ const COLORS = {
 };
 
 const getOTASource = (source?: string) => {
-  console.log('sourcetestt', source);
   const name = source?.toLowerCase() || '';
   if (name.includes('airbnb'))
     return {
@@ -60,7 +59,7 @@ const getOTASource = (source?: string) => {
     };
 
   return {
-    icon: '',
+    icon: 'livedinLogoWhite',
     color: COLORS.LIVEDIN_DARK,
     light: COLORS.LIVEDIN_LIGHT,
   };

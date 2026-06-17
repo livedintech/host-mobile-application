@@ -43,7 +43,6 @@ const webViewRef = React.useRef<WebView>(null);
   ].join('&');
 
   const subscriptionUrl = `${BASE_URL}/${planId}/product/c07c72c2-b5f8-41c7-8f90-fbf8de2d2440?${queryString}`;
-  console.log('subscriptionUrl', subscriptionUrl);
 
   return (
     <View style={styles.container}>

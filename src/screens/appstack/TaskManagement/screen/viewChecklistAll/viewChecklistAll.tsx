@@ -37,17 +37,13 @@ const ViewChecklistAll = () => {
     taskStatus: storeTaskStatus,
     taskType,
   } = useTaskStore();
-  console.log('taskStatustaskStatusmkkk', storeTaskStatus);
-  console.log('testing:::', storeTaskStatus !== 'completed');
   const buttonStatus = storeTaskStatus == "todo" || storeTaskStatus === "inprogress" || storeTaskStatus === "pending" || storeTaskStatus === "template";
-  console.log("buttonStatus", buttonStatus)
 
   const insets = useSafeAreaInsets(); // Hook to get notch height
   const route = useRoute<any>();
   // const { taskId, fromEdit, taskType } = route.params || {};
   const { fromEdit } = route.params || {};
 
-  console.log('taskkbb,taskId', taskId, taskType);
 
   const { checklistData, isLoading, addSection, onRefresh } =
     useViewChecklistAllContainer({ taskId, taskType });

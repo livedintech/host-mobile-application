@@ -146,8 +146,6 @@ const CreateChecklistContainer = () => {
     onSuccess: () => {
       const isFromChat = draft?.fromChat;
       const conversationId = draft?.conversation_id;
-      console.log('isFromChat', isFromChat);
-      console.log('conversationId', conversationId);
 
       clearDraft();
       Toast.show({ type: 'success', text1: i18n.t('app.task_management.task_created_success') });

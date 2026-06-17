@@ -24,12 +24,10 @@ const ActiveCodesScreen = () => {
     handleViewLogs,
   } = useActiveCodesContainer();
   const { t } = useTranslation();
-  console.log('currentData', currentData);
 
   const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
 
   const renderCodeCard = ({ item }: { item: any }) => {
-    console.log('ietmmmncbc', item);
     // 1. Dynamic Color Logic
     const statusLower = item.status?.toLowerCase();
     const isInvalidOrExpired =

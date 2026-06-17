@@ -120,9 +120,6 @@ export default function usePropertyDetailContainer() {
   // ── Data Mapping ──────────────────────────────────────────────────────────
   const listing = data?.data?.listing;
 
-  console.log('listing?.cleaning_instructions', listing);
-
-
   // ✅ Description parsing — API plain string ya object dono handle
   let extractedDescription = '';
   const rawDescription = listing?.listing_descriptions?.[0];

@@ -53,8 +53,6 @@ const EditTaskScreen = () => {
     isSavingVendor,
     isSavingChecklist,
   } = EditTaskContainer();
-  console.log('taskStatus', taskStatus);
-
   const [isImageViewerVisible, setImageViewerVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState<ImageSource[]>([]);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);

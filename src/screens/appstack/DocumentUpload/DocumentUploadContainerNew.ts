@@ -36,8 +36,6 @@ export default function useCreateEditListingDocumentUploadContainer() {
 
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id); // ✅ consistent
-  console.log('listing', listing);
-
 
   // ── Fetch OTA Accounts ────────────────────────────────────────────────────
   const { data: response, isLoading: isLoadingChannelList } = useQuery({

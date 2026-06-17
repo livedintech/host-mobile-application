@@ -15,7 +15,6 @@ const AnalyticsHeader = (props: any) => {
   const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
 
-  console.log("modalVisible",modalVisible)
 
   return (
     <View style={styles.row}>

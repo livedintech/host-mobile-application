@@ -26,7 +26,6 @@ export default function useVerifyPhoneNumberContainer() {
   const [resetKey, setResetKey] = useState(0); // Screen ke liye
 
   const { params } = useRoute();
-  console.log('params', params);
 
   const actualPhone = (params as any)?.phone_number;
   const code = (params as any)?.phone_with_code;
@@ -120,7 +119,6 @@ export default function useVerifyPhoneNumberContainer() {
   }, [isResendDisabled, actualPhone, code, country_code]);
 
   const handleVerifyOtp = async (data: { otpCode: string }) => {
-    console.log("data",data)
     const phoneParams = {
       country_code,
       phone_number: actualPhone,
@@ -133,7 +131,6 @@ export default function useVerifyPhoneNumberContainer() {
     } catch {
       return;
     }
-    console.log("isDeepLink",isDeepLink)
 
     if (isLoginScreen) {
       navigate(NavigationRoutes.AUTH_STACK.ADD_NEW_PASSWORD, {

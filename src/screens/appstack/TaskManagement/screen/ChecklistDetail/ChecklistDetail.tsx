@@ -37,11 +37,7 @@ const { width, height } = Dimensions.get('window');
 const ChecklistDetail = ({ route }: any) => {
   const { t } = useTranslation();
   const { taskId: storeTaskId, taskStatus } = useTaskStore();
-  // console.log("storeTaskStatus",storeTaskStatus);
-  // console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' )
-  // const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' || storeTaskStatus === 'pending';
 
-  // console.log("taskStatus",taskStatus)
   const { title, sectionId, taskId, fromEdit } = route.params;
   const insets = useSafeAreaInsets();
 

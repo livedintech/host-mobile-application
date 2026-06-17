@@ -49,7 +49,6 @@ export default function useBookingDetailsContainer() {
 
   const listing = params?.paramData?.listing;
   const isEdit  = Boolean(listing?.listing_id);
-  console.log("listing",listing)
 
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
@@ -99,8 +98,6 @@ export default function useBookingDetailsContainer() {
       listing_id: String(listing_id),
     });
   };
-  console.log('listing?.instant_booking',listing?.instant_booking);
-  
 
   // ── Main Form ─────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors } } = useForm<BookingDetailsFormValues>({

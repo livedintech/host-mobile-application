@@ -22,7 +22,6 @@ export default function useActiveCodesContainer() {
   const route = useRoute();
   const params = route?.params as { lock_id?: number };
   const lock_id = params?.lock_id;
-  console.log('lock_id', lock_id);
 
   // ======================
   // API CALL

@@ -55,7 +55,6 @@ const ReviewDetailScreen = ({ route }: any) => {
   const [showDirectCancelModal, setShowDirectCancelModal] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const { setTaskInfo } = useTaskStore();
-  console.log('booking_iddd', booking_id);
 
   const handlePress = (item: any) => {
     // Navigate on every status
@@ -119,8 +118,6 @@ const ReviewDetailScreen = ({ route }: any) => {
     ai_chat_summary,
     cancellation_policy,
   } = bookingData;
-
-  console.log('cancellation_policy', cancellation_policy);
 
   if (isLoading || !bookingData.property) {
     return (

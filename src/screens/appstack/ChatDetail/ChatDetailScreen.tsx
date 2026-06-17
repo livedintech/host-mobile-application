@@ -43,6 +43,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
 import InquiryModal from './InquiryModal';
+import AlterationRequestModal from './AlterationRequestModal';
 
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { useTranslation } from 'react-i18next';
@@ -187,7 +188,6 @@ const ChatScreen = () => {
     handleSubmitFeedback,
   } = useChatContainer();
 
-  console.log('conversationData', conversationData);
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
@@ -215,6 +215,7 @@ const ChatScreen = () => {
 
   const [isInquiryDismissed, setIsInquiryDismissed] = useState(false);
   const [isReservationDismissed, setIsReservationDismissed] = useState(false);
+  const [isAlterationDismissed, setIsAlterationDismissed] = useState(false);
 
   const [isAtBottom, setIsAtBottom] = useState(true);
 
@@ -1258,6 +1259,28 @@ const ChatScreen = () => {
               )}`}
               name={data?.conversation?.name}
               onClose={() => setIsReservationDismissed(true)}
+            />
+            <AlterationRequestModal
+              visible={
+                data?.conversation?.thread_type === 'alteration_request' &&
+                !isAlterationDismissed
+              }
+              threadId={data?.conversation?.id}
+              description={`${formatDateRange(
+                data?.conversation?.arrival_date,
+                data?.conversation?.departure_date,
+              )}, ${data?.conversation?.number_of_guests} ${t(
+                'app.chat.guests',
+              )}`}
+              newStartDate={data?.conversation?.arrival_date}
+              newEndDate={data?.conversation?.departure_date}
+              newGuests={data?.conversation?.number_of_guests}
+              newTotal={`SAR ${data?.conversation?.amount}`}
+              originalStartDate={data?.conversation?.original_arrival_date}
+              originalEndDate={data?.conversation?.original_departure_date}
+              originalGuests={data?.conversation?.original_number_of_guests}
+              // originalTotal="PKR 20,000"
+              onClose={() => setIsAlterationDismissed(true)}
             />
           </View>
         </TouchableWithoutFeedback>

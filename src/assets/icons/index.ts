@@ -196,6 +196,7 @@ import guestEmail from './guest_email.svg';
 import guestContact from './guest_contact.svg';
 import guestRating from './guest_rating.svg';
 import livedinLogo from './livedin-new.svg';
+import livedinLogoWhite from './livedin-new-white.svg'
 import baseprice from './base-price.svg';
 import bookingCode from './sms-code.svg';
 import aiChat from './ai-chat-new.svg';
@@ -343,6 +344,7 @@ import thumbsUpIcon from './thumbsUpIcon.svg'
 import thumbsDownIcon from './thumbsDownIcon.svg'
 
 export const icons = {
+  livedinLogoWhite,
   thumbsUpIcon,
   thumbsDownIcon,
   cloudCross,

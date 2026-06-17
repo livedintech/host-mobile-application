@@ -33,6 +33,7 @@ interface DropdownFieldProps {
   mode?: 'default' | 'modal' | 'auto';
   maxHeight?: number;
   listContainerStyle?: object;
+  dropdownStyle?: object;
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
@@ -50,6 +51,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   mode,
   maxHeight,
   listContainerStyle,
+  dropdownStyle,
 }) => {
   const { t } = useTranslation();
   const error = errors[name]?.message as string;
@@ -86,6 +88,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
               styles.dropdown,
               (disabled || !hasData) && styles.disabled,
               !!error && styles.errorBorder,
+              dropdownStyle,
             ]}
             containerStyle={[styles.popupListContainer, listContainerStyle]}
             placeholderStyle={[

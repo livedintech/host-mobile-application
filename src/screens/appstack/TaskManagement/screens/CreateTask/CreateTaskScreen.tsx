@@ -27,7 +27,6 @@ const CreateTaskScreen = () => {
   const { t } = useTranslation();
   const route = useRoute<any>();
   // Extract the listing_id from the navigation params
-  console.log("tetstbbhjs", route.params)
   const preSelectedListingId = route.params?.listing_id;
 
   const {

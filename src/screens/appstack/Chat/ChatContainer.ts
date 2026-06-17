@@ -202,7 +202,6 @@ export const useChatContainer = () => {
     listing_id: string;
     assigned_to_ids: number[];
   }) => {
-    console.log("otemm", item)
     if (item?.latest_message?.id) {
       markRead({
         conversation_id: item.id,

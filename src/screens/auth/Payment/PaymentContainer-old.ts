@@ -22,7 +22,6 @@ const pricing = params?.pricing;
 
   const handleStartTrial = () => {
     const days = selectedPlan === 'annual' ? 14 : 14;
-    console.log(`Starting ${days}-day free trial`);
     navigate(NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD, { 
   plan: selectedPlan, 
   country_code, 
@@ -53,8 +52,6 @@ const pricing = params?.pricing;
     // enabled: !!subscription_id,
   });
 
-  console.log('data::::',data?.addons);
-  
   const addons = data?.addons || []
   const base = data?.base || []
 

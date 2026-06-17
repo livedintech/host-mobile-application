@@ -20,7 +20,6 @@ const ChangeReservationContainer = () => {
   // Get booking_id from navigation params (ReviewDetailScreen passed it)
   const params = route.params?.bookingData || {};
   const booking_id = params?.booking_id;
-  console.log('paramsparams', params);
 
   const {
     control,

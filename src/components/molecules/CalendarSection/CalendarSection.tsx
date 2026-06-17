@@ -38,8 +38,6 @@ export const CalendarSection = ({
     const { t , i18n} = useTranslation();
     const isArabic = i18n.language === 'ar'
   
-  console.log("markedDates",markedDates);
-  console.log("bookingsTest",bookings)
   return (
     <RefreshableScrollView
       isLoading={isLoading}

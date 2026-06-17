@@ -40,9 +40,6 @@ const PhotoUploadTemplate = (props: any) => {
   });
 
   const featuredItem = props.mediaList.find(item => item.isFeatured);
-  console.log('featuredItem', props.mediaList);
-
-
   const renderMediaItem = ({ item, index }: { item: MediaItem; index: number }) => (
     <View style={styles.mediaWrapper}>
       <ButtonView

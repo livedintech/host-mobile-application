@@ -21,7 +21,6 @@ const useChecklistDetailContainer = (
 
   const effectiveTaskId = propTaskId || storeTaskId;
   const effectiveTaskType = taskStatus;
-  console.log('taskStatus', taskStatus);
 
   const [localItems, setLocalItems] = useState<any[]>([]);
 

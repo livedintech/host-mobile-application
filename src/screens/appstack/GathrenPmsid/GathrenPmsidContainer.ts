@@ -42,8 +42,6 @@ export default function useGathrenPMSIdContainer() {
 
   const onNext = (data: { pms_id: string }) => {
     // Remove the return false — it prevents the mutation
-    console.log('Form submitted:', data);
-
     const payload = {
       platform_user_id: data.pms_id
     };

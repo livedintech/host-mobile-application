@@ -57,7 +57,6 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
               bookings.map((item: any, index: number) => {
                 const otaConfig = getOtaConfig(item.source);
                 const platformLabel = (item?.data?.property?.booking_platform === 'livedin' || item?.data?.property?.booking_platform === 'host_booking') ? 'Livedin' : (item?.data?.property?.booking_platform || 'Direct');
-                console.log('Soingle Item Data', item?.data)
                 return (
                   <View key={index} style={styles.cardWrapper}>
                     <ReservationCard

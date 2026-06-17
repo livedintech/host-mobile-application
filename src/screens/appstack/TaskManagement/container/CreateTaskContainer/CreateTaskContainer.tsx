@@ -41,7 +41,6 @@ const CreateTaskContainer = () => {
   const createTaskMutation = useMutation({
     mutationFn: taskManagementCreateTask,
     onSuccess: async res => {
-      console.log("resssmm",res)
 
       const { id, task_type, status, description } = res.data;
 

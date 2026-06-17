@@ -24,8 +24,6 @@ const useViewChecklistAllContainer = ({ taskId: propTaskId, taskType }: Containe
    */
   const effectiveTaskId = propTaskId || storeTaskId;
 
-  console.log("Using Task ID:", effectiveTaskId, propTaskId ? "(from props)" : "(from store)");
-
   const { isLoading: isFetching, refetch, data: remoteData } = useQuery({
     queryKey: [STORAGE_CONST.GET_TASK_CHECKLIST, effectiveTaskId],
     queryFn: () => getTaskChecklist(effectiveTaskId!, taskType || 'cleaning'),

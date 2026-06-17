@@ -142,7 +142,6 @@ const NotificationsScreen = () => {
   const isArabic = localI18n.language === 'ar';
 
   const renderItem = ({ item }: { item: FlatItem }) => {
-    console.log('item', item);
     if (item.type === 'header') {
       return (
         <AppText

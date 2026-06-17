@@ -87,7 +87,6 @@ const AnalyticContainers = () => {
     maximumFractionDigits: 0,
   });
 };
-  console.log("AnalyticChannelChartDatadatabbb",AnalyticChannelChartData)
 
   return {
     listingOptions,
