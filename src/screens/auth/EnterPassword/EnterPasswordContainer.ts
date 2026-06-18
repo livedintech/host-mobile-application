@@ -67,6 +67,7 @@ export default function useEnterPasswordContainer() {
   } = useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginApi,
     onSuccess: async ({ data, message }) => {
+      console.log('dataUser', data);
       if (data?.is_first_login == 1) {
         navigate(NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD, {
           userId: data?.user?.id,
@@ -76,7 +77,7 @@ export default function useEnterPasswordContainer() {
       clearPhoneData();
       if (data?.user?.signup_step === 'step_11') {
         setToken(data?.access_token);
-
+        setUser(data?.user);
         await CrashlyticsService.setUserId(String(data?.user?.id));
         navigate(NavigationRoutes.APP_STACK.PAYMENT, {
           phone_number: data?.user?.phone,

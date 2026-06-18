@@ -206,9 +206,10 @@ const NotificationsScreen = () => {
             ListHeaderComponent={
               <AppText
                 text={t('app.notifications.title')}
-                fontSize={34}
-                type="Bold"
+                fontSize={24}
+                type="Medium"
                 mb={5}
+                color={Colors.BLACK}
               />
             }
           />

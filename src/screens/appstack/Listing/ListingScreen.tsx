@@ -120,7 +120,7 @@ const ListingScreen = () => {
         <View style={styles.headerRow}>
           <AppText
             text={t('app.listing_screen.guest_bookings')}
-            fontSize={26}
+            fontSize={24}
             type="Medium"
             color={Colors.BLACK}
           />

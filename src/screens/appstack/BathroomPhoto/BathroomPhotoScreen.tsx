@@ -38,7 +38,7 @@ const BathroomPhotoScreen = () => {
 
   return (
     <PhotoUploadTemplate
-      step={!isEdit ? t('app.photo_upload.step_4') : undefined}
+      // step={!isEdit ? t('app.photo_upload.step_4') : undefined}
       screenTitle={t('app.photo_upload.exterior_title')}
       sectionTitle={t('app.photo_upload.bathroom_section')}
       maxImages={10}

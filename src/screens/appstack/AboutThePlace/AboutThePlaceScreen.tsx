@@ -14,6 +14,7 @@ import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const AboutThePlaceScreen = () => {
   const {
@@ -93,32 +94,16 @@ const AboutThePlaceScreen = () => {
         </ScrollView>
 
         {/* Footer */}
-        <View style={styles.footer}>
-          {/* ✅ Export — sirf edit mode mein */}
-          {isEdit && (
-            <AppButton
-              title={t('app.about_place.export')}
-              onPress={handleExport}
-              variant='secondary'
-              mb={12}
-            />
-          )}
-          {!isEdit && (
-            <AppButton
-              title={t('app.about_place.next')}
-              variant="secondary"
-              onPress={handleSubmit(onNext)}
-              loading={isLoading}
-            />
-          )}
-          <AppButton
-            title={t('app.about_place.save_exit')}
-            mt={!isEdit ? 15 : 0}
-            onPress={handleSubmit(onSaveExit)}
-            loading={isLoading}
-            disabled={isLoading}
-          />
-        </View>
+       <FormFooterActions
+          // If Edit, show Export; If not, show Next
+          primaryTitle={isEdit ? t('app.about_place.export') : t('app.about_place.next')}
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          
+          secondaryTitle={t('app.about_place.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryDisabled={isLoading}
+        />
 
         {/* ✅ Export Modal */}
         <ExportOtaSheet

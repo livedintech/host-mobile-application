@@ -11,6 +11,7 @@ import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const CreateListingStepOneScreen = ({ navigation }: any) => {
   const {
@@ -21,23 +22,30 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
     onSaveExit,
     isLoading,
     isChannelMissing,
-    isPropertySelected
+    isPropertySelected,
   } = useCreateListingStepOneContainer();
   const { t } = useTranslation();
 
-  return (
-    <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
-      <View style={styles.container}>
+  const isButtonsDisabled = isChannelMissing || !isPropertySelected;
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+  return (
+    <BGImage
+      source={require('@/assets/img/background/linearBG.png')}
+      style={styles.bgContainer}
+    >
+      <View style={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.titleSection}>
-            <AppText
+            {/* <AppText
               text={t('app.create_listing_step1.step_label')}
               fontSize={18}
               type="Medium"
               color={Colors.BLACK}
               mb={10}
-            />
+            /> */}
 
             <AppText
               text={t('app.create_listing_step1.title')}
@@ -47,81 +55,85 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
               style={styles.heading}
             />
           </View>
-          <View style={{
-            marginHorizontal:Metrics.baseMargin
-          }}>
-          <GlassCard width={'100%'} style={styles.cardContainer}>
-            <View style={styles.cardHeader}>
-              <AppText
-                text={t('app.create_listing_step1.select_type')}
-                fontSize={18}
-                type="SemiBold"
-                color={Colors.BLACK}
-              />
-              <GlassCard style={styles.deskIconWrapper}>
-                <Svgicons path="living_room" width={24} height={24} />
-              </GlassCard>
-            </View>
+          <View
+            style={{
+              marginHorizontal: Metrics.baseMargin,
+            }}
+          >
+            <GlassCard width={'100%'} style={styles.cardContainer}>
+              <View style={styles.cardHeader}>
+                <AppText
+                  text={t('app.create_listing_step1.select_type')}
+                  fontSize={18}
+                  type="SemiBold"
+                  color={Colors.BLACK}
+                />
+                <GlassCard style={styles.deskIconWrapper}>
+                  <Svgicons path="living_room" width={24} height={24} />
+                </GlassCard>
+              </View>
 
-            <Controller
-              control={control}
-              name="propertyType"
-              render={({ field: { onChange, value } }) => (
-                <View style={styles.optionsWrapper}>
-                  {propertyOptions.map((item) => {
-                    const isSelected = value === item.value;
-                    return (
-                      <GlassCard key={item.value} width={'100%'} style={[
-                            styles.optionItem,
-                            isSelected && styles.selectedItem
-                          ]} onPress={() => onChange(item.value)}>
-                        <ButtonView
+              <Controller
+                control={control}
+                name="propertyType"
+                render={({ field: { onChange, value } }) => (
+                  <View style={styles.optionsWrapper}>
+                    {propertyOptions.map(item => {
+                      const isSelected = value === item.value;
+                      return (
+                        <GlassCard
+                          key={item.value}
+                          width={'100%'}
                           style={[
                             styles.optionItem,
-                            // isSelected && styles.selectedItem
+                            isSelected && styles.selectedItem,
                           ]}
-                          activeOpacity={0.7}
                           onPress={() => onChange(item.value)}
                         >
-                          <View style={styles.optionIcon}>
-                            <Svgicons path={item.icon} width={20} height={20} stroke={Colors.BLACK} />
-                          </View>
-                          <AppText
-                            text={item.label}
-                            fontSize={16}
-                            type="Regular"
-                            color={Colors.BLACK}
-                          />
-                        </ButtonView>
-                      </GlassCard>
-                    );
-                  })}
-                </View>
-              )}
-            />
-          </GlassCard>
+                          <ButtonView
+                            style={[
+                              styles.optionItem,
+                              // isSelected && styles.selectedItem
+                            ]}
+                            activeOpacity={0.7}
+                            onPress={() => onChange(item.value)}
+                          >
+                            <View style={styles.optionIcon}>
+                              <Svgicons
+                                path={item.icon}
+                                width={20}
+                                height={20}
+                                stroke={Colors.BLACK}
+                              />
+                            </View>
+                            <AppText
+                              text={item.label}
+                              fontSize={16}
+                              type="Regular"
+                              color={Colors.BLACK}
+                            />
+                          </ButtonView>
+                        </GlassCard>
+                      );
+                    })}
+                  </View>
+                )}
+              />
+            </GlassCard>
           </View>
         </ScrollView>
 
-        <View style={styles.footer}>
-          <AppButton
-            title={t('app.create_listing_step1.next')}
-            onPress={handleSubmit(onNext)}
-            fontSize={16}
-            mb={15}
-            loading={isLoading}
-            disabled={isChannelMissing || !isPropertySelected}
-            variant='secondary'
-          />
-
-          <AppButton
-            title={t('app.create_listing_step1.save_exit')}
-            onPress={onSaveExit}
-            fontSize={16}
-            disabled={isLoading || isChannelMissing || !isPropertySelected}
-          />
-        </View>
-
+        <FormFooterActions
+          // Primary "Next" button configs
+          primaryTitle={t('app.create_listing_step1.next')}
+          onPrimaryPress={handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isButtonsDisabled}
+          // Secondary "Save & Exit" button configs
+          secondaryTitle={t('app.create_listing_step1.save_exit')}
+          onSecondaryPress={onSaveExit}
+          isSecondaryDisabled={isLoading || isButtonsDisabled}
+        />
       </View>
     </BGImage>
   );
@@ -198,9 +210,9 @@ const styles = StyleSheet.create({
   optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius:17,
+    borderRadius: 17,
     paddingHorizontal: Metrics.scale(10),
-    paddingVertical: Metrics.verticalScale(10)
+    paddingVertical: Metrics.verticalScale(10),
   },
   selectedItem: {
     backgroundColor: Colors.WHITE,

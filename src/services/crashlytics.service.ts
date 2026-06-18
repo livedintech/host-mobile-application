@@ -24,15 +24,22 @@ export class CrashlyticsService {
     log(getCrashlytics(), message);
   }
 
-  static recordError(error: Error, jsErrorName?: string): void {
-    recordError(getCrashlytics(), error, jsErrorName);
-  }
+static recordError(error: Error, jsErrorName?: string): void {
+  log(
+    getCrashlytics(),
+    `Error Type: ${jsErrorName || 'Unknown'} | Message: ${error.message}`,
+  );
+
+  recordError(getCrashlytics(), error, jsErrorName);
+}
 
   static async setUserId(userId: string): Promise<void> {
     await setCrashlyticsUserId(getCrashlytics(), userId);
   }
 
-  static async setAttributes(attributes: Record<string, string>): Promise<void> {
+  static async setAttributes(
+    attributes: Record<string, string>,
+  ): Promise<void> {
     await setCrashlyticsAttributes(getCrashlytics(), attributes);
   }
 

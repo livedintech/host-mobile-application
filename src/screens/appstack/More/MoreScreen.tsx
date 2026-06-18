@@ -84,6 +84,8 @@ const MoreScreen = () => {
   const toggleModal = () => setModalVisible(!isModalVisible);
 
   const performLocalLogout = useCallback(() => {
+    CrashlyticsService.setUserId('');
+    CrashlyticsService.log('User logged out');
     setModalVisible(false);
     const currentLang = i18n.language || 'ar';
     const rememberMeData = storage.getString('remember-me-storage');
@@ -111,14 +113,6 @@ const MoreScreen = () => {
     user?.phone_with_code && user?.phone
       ? `+${user.phone_with_code} ${user.phone}`
       : user?.phone_with_code || user?.phone || '******';
-
-  const handleCrashTest = () => {
-    console.log('Testing crash user:', user?.id);
-
-    CrashlyticsService.log(`Testing crash for user ${user?.id}`);
-
-    CrashlyticsService.testCrash();
-  };
 
   return (
     <ImageBackground
@@ -263,14 +257,6 @@ const MoreScreen = () => {
             },
           ]}
         /> */}
-
-        <AppPressable onPress={handleCrashTest}>
-          <GlassCard width="100%" style={styles.logoutCard}>
-            <View style={styles.logoutContent}>
-              <AppText text="Test Crashlytics" type="Medium" fontSize={16} />
-            </View>
-          </GlassCard>
-        </AppPressable>
 
         {/* Logout Trigger */}
         <AppPressable onPress={toggleModal}>
