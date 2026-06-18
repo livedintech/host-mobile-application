@@ -24,9 +24,6 @@ import Toast from 'react-native-toast-message';
 const CreateTaskContainer = (preSelectedListingId?: string | number, routeParams?: any) => {
   const { setDraft, isCleaningCategory } = useTaskDraftStore();
 
-  console.log('routeParams::',routeParams?.copyText);
-  
-
   const {
     control,
     handleSubmit,

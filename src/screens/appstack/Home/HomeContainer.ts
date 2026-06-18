@@ -39,8 +39,6 @@ export default function useHomeContainer() {
 
   // ✅ Navigation Fix (bug resolved)
   const onConnect = useCallback((platform: string) => {
-    console.log(`Connecting to ${platform}`);
-
     if (['Airbnb', 'Gathern', 'Booking'].includes(platform)) {
       const tabMap: Record<string, string> = {
         Airbnb: 'Airbnb',

@@ -5,6 +5,7 @@ import { Colors } from '@/theme/colors';
 import useTransactionHistoryContainer from './TransactionHistoryContainer';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useTranslation } from 'react-i18next';
+import TransactionHistorySkeleton from '@/components/Skeletons/TransactionHistorySkeleton';
 
 const TransactionHistoryScreen = () => {
   const { t } = useTranslation();
@@ -55,6 +56,7 @@ const TransactionHistoryScreen = () => {
     <View style={styles.container}>
       <FlatListSimpleHandler
         isLoading={isLoading}
+        renderSkeleton={() => <TransactionHistorySkeleton />}
         onRefresh={refetch}
         data={transactions}
         keyExtractor={(item) => item.id.toString()}

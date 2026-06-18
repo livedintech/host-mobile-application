@@ -211,7 +211,6 @@ const ReviewDetailScreen = ({ route }: any) => {
       </GradientBorder>
     );
   };
-  // console.log('conversation_id',guest?.conversation_id);
 
   // --- Main Header UI ---
   const ListHeader = () => (

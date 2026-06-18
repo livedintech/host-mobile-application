@@ -108,7 +108,6 @@ const { mutate: createMapListingbyUserID, isPending } =
 
 
   const onNext = (data: FormValues) => {
-    console.log('Final form submit:', data);
     navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING);
   };
 

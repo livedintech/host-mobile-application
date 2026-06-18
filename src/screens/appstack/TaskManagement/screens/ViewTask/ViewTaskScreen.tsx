@@ -23,6 +23,8 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import { useTranslation } from 'react-i18next';
+import ViewTaskSkeleton from '@/components/Skeletons/ViewTaskSkeleton';
+import ChecklistSectionsSkeleton from '@/components/Skeletons/ChecklistSectionsSkeleton';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const { width, height } = Dimensions.get('window');
@@ -53,8 +55,6 @@ const EditTaskScreen = () => {
     isSavingVendor,
     isSavingChecklist,
   } = EditTaskContainer();
-  console.log('taskStatus', taskStatus);
-
   const [isImageViewerVisible, setImageViewerVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState<ImageSource[]>([]);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -275,11 +275,7 @@ const EditTaskScreen = () => {
   ]);
 
   if (isLoadingTaskDetail) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-      </View>
-    );
+    return <ViewTaskSkeleton />;
   }
 
   return (
@@ -287,6 +283,7 @@ const EditTaskScreen = () => {
       <FlatListSimpleHandler
         data={checklists}
         isLoading={isLoadingChecklist}
+        renderSkeleton={() => <ChecklistSectionsSkeleton />}
         listEmptyText="No checklists available"
         contentContainerStyle={styles.scrollContent}
         ListHeaderComponent={ListHeader}

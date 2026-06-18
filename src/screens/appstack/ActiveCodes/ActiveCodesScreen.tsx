@@ -12,6 +12,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { useTranslation } from 'react-i18next';
+import ActiveCodesSkeleton from '@/components/Skeletons/ActiveCodesSkeleton';
 
 const ActiveCodesScreen = () => {
   const {
@@ -24,12 +25,10 @@ const ActiveCodesScreen = () => {
     handleViewLogs,
   } = useActiveCodesContainer();
   const { t } = useTranslation();
-  console.log('currentData', currentData);
 
   const TABS: CodeTab[] = ['Permanent', 'One-time', 'Timed'];
 
   const renderCodeCard = ({ item }: { item: any }) => {
-    console.log('ietmmmncbc', item);
     // 1. Dynamic Color Logic
     const statusLower = item.status?.toLowerCase();
     const isInvalidOrExpired =
@@ -136,6 +135,7 @@ const ActiveCodesScreen = () => {
           showsVerticalScrollIndicator={false}
           isLoading={isLoading}
           onRefresh={refetch}
+          renderSkeleton={() => <ActiveCodesSkeleton />}
         />
 
         {/* Footer Action */}

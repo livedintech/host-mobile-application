@@ -16,7 +16,6 @@ export default function useBookingComStep3Container() {
     const route = useRoute<any>();
     const { user } = useAuthStore();
     const { hotelId, listingId, selectedTitle } = route.params || {};
-    console.log('hotelId', hotelId);
 
     const step3Schema = yup.object().shape({
         title: yup.string().required(i18n.t('app.booking_com_step3.validation_name_required')),

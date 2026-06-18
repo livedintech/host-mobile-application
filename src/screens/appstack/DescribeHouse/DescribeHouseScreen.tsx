@@ -1,6 +1,5 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, Modal } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -13,7 +12,7 @@ import { goBack } from '@/services/navigationService';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Metrics from '@/utility/Metrics';
-import DropdownField from '@/components/molecules/Input/DropdownField';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
@@ -146,45 +145,19 @@ const DescribeHouseScreen = () => {
         </View>
 
         {/* ✅ Export Modal */}
-        <Modal
+        <ExportOtaSheet
           visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-              <View style={styles.handleBar} />
-              <AppText
-                text={t('app.describe_house.select_ota')}
-                fontSize={20}
-                type="SemiBold"
-                color={Colors.PINE_FOREST}
-                mb={20}
-              />
-              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder={t('app.describe_house.select_account')}
-                  dropdownPosition="top"
-                />
-              </View>
-              <AppButton
-                title={t('app.describe_house.export')}
-                onPress={handleOtaSubmit(handleExportSubmit)}
-                mt={20}
-                loading={isPendingExporting}
-                backgroundColor="#00A68A"
-                borderColor="transparent"
-                color={Colors.WHITE}
-              />
-            </AppPressable>
-          </AppPressable>
-        </Modal>
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.describe_house.select_ota')}
+          placeholder={t('app.describe_house.select_account')}
+          buttonText={t('app.describe_house.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
 
       </View>
     </BGImage>
@@ -208,27 +181,6 @@ const styles = StyleSheet.create({
   },
   descriptionWrapper: { marginTop: 25 },
   footer: { bottom: 0, right: 0, width: '100%', paddingBottom: 35 },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    backgroundColor: Colors.WHITE,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 40,
-  },
-  handleBar: {
-    width: 40,
-    height: 5,
-    backgroundColor: '#D4D4D4',
-    borderRadius: 3,
-    alignSelf: 'center',
-    marginBottom: 25,
-  },
 });
 
 export default DescribeHouseScreen;

@@ -13,6 +13,7 @@ import NoUserScreen from './NoUserScreen';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import UserManagementSkeleton from '@/components/Skeletons/UserManagementSkeleton';
 
 const UserManagementScreen = () => {
   const { t } = useTranslation();
@@ -119,6 +120,7 @@ const UserManagementScreen = () => {
         <FlatListSimpleHandler
           data={userManagement}
           isLoading={isLoading}
+          renderSkeleton={() => <UserManagementSkeleton />}
           renderItem={renderUser}
           listEmptyText={t('app.user_management.empty_text')}
           onRefresh={refetch}

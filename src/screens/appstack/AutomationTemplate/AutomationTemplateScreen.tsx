@@ -15,8 +15,8 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import { goBack } from '@/services/navigationService';
 import NoAutomationScreen from '../NoAutomationScreen/NoAutomationScreen';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
 import { useTranslation } from 'react-i18next';
+import AutomationTemplateSkeleton from '@/components/Skeletons/AutomationTemplateSkeleton';
 
 const AutomationTemplatesScreen = () => {
   const {
@@ -41,9 +41,8 @@ const AutomationTemplatesScreen = () => {
   if (isLoading) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <SpinnerLoader size={'large'} />
-        </View>
+        <HeaderApp isGoBackAfterLogo />
+        <AutomationTemplateSkeleton />
       </BGImage>
     );
   }
@@ -146,6 +145,7 @@ const AutomationTemplatesScreen = () => {
             <NoAutomationScreen onCreatePress={createNewTemplate} />
           }
           renderItem={renderItem}
+          renderSkeleton={() => <AutomationTemplateSkeleton />}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}

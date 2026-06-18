@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useMemo } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Colors } from '@/theme/colors';
 import AnalyticsHeader from '../components/AnalyticsHeader';
 import AnalyticsTabBar from '../components/AnalyticsTabBar';
@@ -10,7 +10,12 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppText from '@/components/molecules/AppText/AppText';
 import AnalyticContainers from '../containers/AnalyticContainers';
 import { KPIItem, ListingPerformanceItem } from '@/types/api/AnalyticsTypes';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import {
+  AnalyticsKPISkeleton,
+  AnalyticsChartSkeleton,
+  AnalyticsPerformanceSkeleton,
+} from '@/components/Skeletons/AnalyticsScreenSkeleton';
 
 type TabType = 'reservation' | 'revenue' | 'nights';
 interface ChannelData { 
@@ -38,7 +43,21 @@ const AnalyticsScreen = () => {
     filters,
     channelOptions,
     dateOptions,
+    refetchSummary,
+    refetchPerformance,
+    refetchChannelChart,
   } = AnalyticContainers();
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const onHandleRefresh = async () => {
+    setIsRefreshing(true);
+    await Promise.all([
+      refetchSummary(),
+      refetchPerformance(),
+      refetchChannelChart(),
+    ]);
+    setIsRefreshing(false);
+  };
 
 
 
@@ -107,10 +126,11 @@ const AnalyticsScreen = () => {
 
   return (
     <View style={styles.root}>
-      <ScrollView 
-        style={styles.container} 
+      <RefreshableScrollView
+        style={styles.container}
         contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
+        refreshing={isRefreshing}
+        onRefresh={onHandleRefresh}
       >
         {/* GLOBAL HEADER: Controls Modal Filters */}
         <AnalyticsHeader 
@@ -125,7 +145,7 @@ const AnalyticsScreen = () => {
         {/* MODULE 1: KPI Summary (Linked to Modal Filters) */}
         <View style={styles.grid}>
           {isLoadingAnalytics ? (
-            <View style={styles.loaderFullWidth}><SpinnerLoader /></View>
+            <AnalyticsKPISkeleton />
           ) : (
             AnalyticsSummary?.data
               ?.filter((i: KPIItem) => i.key !== 'rental_revenue' && i.key !== 'nights_booked')
@@ -147,7 +167,7 @@ const AnalyticsScreen = () => {
         {/* MODULE 2: Analytics Chart (Linked to TabBar Selection) */}
         <View style={styles.chartSection}>
           {isLoadingAnalyticsChannelChart ? (
-            <SpinnerLoader containerStyles={{ height: 200 }} />
+            <AnalyticsChartSkeleton />
           ) : (
             <AnalyticsChart 
               activeTab={activeTab} 
@@ -171,14 +191,14 @@ const AnalyticsScreen = () => {
         {/* MODULE 3: Listing Performance List */}
         <View style={styles.performanceSection}>
           {isLoadingAnalyticsPerformance ? (
-            <SpinnerLoader />
+            <AnalyticsPerformanceSkeleton />
           ) : (
             AnalyticsPerformance?.data?.map((l: ListingPerformanceItem, idx: number) => (
               <AnalyticsCard key={idx} item={l} variant="listing" />
             ))
           )}
         </View>
-      </ScrollView>
+      </RefreshableScrollView>
     </View>
   );
 };
@@ -201,13 +221,7 @@ const styles = StyleSheet.create({
     minHeight: 120,
     marginTop: 10
   },
-  loaderFullWidth: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20
-  },
-  chartSection: { 
+  chartSection: {
     minHeight: 250,
     marginVertical: 10
   },

@@ -13,6 +13,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
 import { useTranslation } from 'react-i18next';
+import ManageListingSelectSkeleton from '@/components/Skeletons/ManageListingSelectSkeleton';
 
 const FIGMA_TEAL = '#333333';
 
@@ -39,6 +40,7 @@ const ManageListingScreen = () => {
       <SafeAreaView style={styles.container}>
         <RefreshableScrollView
           isLoading={isLoading}
+          skeletonComponent={<ManageListingSelectSkeleton />}
           onRefresh={refetch}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}

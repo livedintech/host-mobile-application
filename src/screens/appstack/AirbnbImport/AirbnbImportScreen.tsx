@@ -8,13 +8,13 @@ import DropdownField from '@/components/molecules/Input/DropdownField';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { goBack } from '@/services/navigationService';
 import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
+import AirbnbImportSkeleton from '@/components/Skeletons/AirbnbImportSkeleton';
 
 const PropertyCard = ({
   id,
@@ -149,12 +149,6 @@ const AirbnbImportScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.bgContainer}>
       <View style={styles.container}>
-        {isMutating && (
-          <View style={styles.loaderContainer}>
-            <SpinnerLoader />
-          </View>
-        )}
-
         <View style={styles.headerRow}>
           <ButtonView onPress={() => goBack()}>
             <Svgicons path="back" size={40} />
@@ -183,16 +177,21 @@ const AirbnbImportScreen = () => {
           />
         </View>
 
-        <FlatListSimpleHandler
-          onRefresh={refetch}
-          isLoading={isLoading}
-          data={properties}
-          keyExtractor={(item: any) => item.id.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        />
+        {isMutating ? (
+          <AirbnbImportSkeleton />
+        ) : (
+          <FlatListSimpleHandler
+            onRefresh={refetch}
+            isLoading={isLoading}
+            renderSkeleton={() => <AirbnbImportSkeleton />}
+            data={properties}
+            keyExtractor={(item: any) => item.id.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          />
+        )}
 
         {/* <View style={styles.footer}>
           <AppButton
@@ -213,17 +212,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  loaderContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
   },
   header: {
     paddingHorizontal: 20,

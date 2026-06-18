@@ -13,6 +13,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NoSavedRepliesScreen from '../NoSavedRepliesScreen/NoSavedRepliesScreen';
 import { useTranslation } from 'react-i18next';
+import SavedRepliesSkeleton from '@/components/Skeletons/SavedRepliesSkeleton';
 
 const SavedRepliesScreen = () => {
   const {
@@ -127,6 +128,7 @@ const SavedRepliesScreen = () => {
           ListEmptyComponent={
             <NoSavedRepliesScreen onCreatePress={createNewReply} />
           }
+          renderSkeleton={() => <SavedRepliesSkeleton />}
           renderItem={renderItem}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.listContent}

@@ -8,7 +8,6 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
   const { t } = useTranslation();
-  // console.log("analyticsanalyticsItem",item)
 
   const numericDelta = parseFloat(item?.delta_pct || item?.trend || 0);
   const isPositive = numericDelta > 0;

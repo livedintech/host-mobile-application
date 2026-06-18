@@ -16,6 +16,7 @@ import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import useCreateListingStepOneLocationContainer from './CreateListingStepOneLocationContainer';
 import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
+import CreateListingStepOneLocationSkeleton from '@/components/Skeletons/CreateListingStepOneLocationSkeleton';
 
 const CreateListingStepOneLocationScreen = () => {
   const { t } = useTranslation();
@@ -38,12 +39,7 @@ const CreateListingStepOneLocationScreen = () => {
 
   // ── First-mount full screen loader ─────────────────────────────────────────
   if (isInitializing) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-        <Text style={styles.loaderText}>{t('app.location_step.loading')}</Text>
-      </View>
-    );
+    return <CreateListingStepOneLocationSkeleton />;
   }
 
   return (

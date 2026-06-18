@@ -15,6 +15,7 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
 import ConfirmAction from '@/components/molecules/ConfirmAction/ConfirmAction';
+import { SubscriptionPriceSkeleton, SubscriptionPropertiesSkeleton } from '@/components/Skeletons/SubscriptionHistorySkeleton';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { goBack, navigate } from '@/services/navigationService';
@@ -122,7 +123,7 @@ const SubscriptionHistoryScreen = () => {
         {/* Monthly Price Card */}
         <GlassCard width="100%" style={styles.card}>
           {isLoadingGetSubscrptionUserPlan ? (
-            <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} />
+            <SubscriptionPriceSkeleton />
           ) : hasSubscription ? (
             <>
               <AppText
@@ -166,9 +167,7 @@ const SubscriptionHistoryScreen = () => {
             mb={12}
           />
           {isLoading ? (
-            <View style={styles.loadingBox}>
-              <ActivityIndicator color={Colors.MEDIUM_JUNGLE_GREEN} />
-            </View>
+            <SubscriptionPropertiesSkeleton />
           ) : listingCount === 0 ? (
             <View style={styles.emptyRow}>
               <Svgicons path="listingIcon" size={36} />
@@ -394,7 +393,6 @@ const styles = StyleSheet.create({
   propertyImage: { width: THUMB_SIZE, height: THUMB_SIZE },
   propertyInfo: { marginLeft: 12, flex: 1 },
   emptyRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
-  loadingBox: { paddingVertical: Metrics.scale(20), alignItems: 'center' },
   planHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

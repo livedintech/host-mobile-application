@@ -18,6 +18,7 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
+import TaskListSkeleton from '@/components/Skeletons/TaskListSkeleton';
 
 const TaskListScreen: React.FC = () => {
     const { t } = useTranslation();
@@ -150,6 +151,7 @@ const TaskListScreen: React.FC = () => {
           data={tasks}
           meta={taskQuery}
           isLoading={taskQuery.isLoading}
+          renderSkeleton={() => <TaskListSkeleton />}
           renderItem={renderTaskItem}
           listEmptyText="No tasks found"
           contentContainerStyle={styles.listPadding}

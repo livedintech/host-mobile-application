@@ -68,7 +68,7 @@ const AnalyticContainers = () => {
     queryFn: () => getListingPerformance(),
   });
 
-  const { data: AnalyticChannelChartData, isLoading: isLoadingAnalyticsChannelChart } = useQuery({
+  const { data: AnalyticChannelChartData, isLoading: isLoadingAnalyticsChannelChart, refetch: refetchChannelChart } = useQuery({
     queryKey: [STORAGE_CONST.GET_ANALYTICS_CHANNEL, chartListingIds],
     queryFn: () => getAnalyticsChannel({
       listing_ids: chartListingIds.join(','), 
@@ -87,7 +87,6 @@ const AnalyticContainers = () => {
     maximumFractionDigits: 0,
   });
 };
-  console.log("AnalyticChannelChartDatadatabbb",AnalyticChannelChartData)
 
   return {
     listingOptions,
@@ -105,6 +104,7 @@ const AnalyticContainers = () => {
     isLoadingAnalyticsPerformance,
     AnalyticChannelChartData,
     isLoadingAnalyticsChannelChart,
+    refetchChannelChart,
     listingsLoading,
     refetchPerformance,
     formatNumber

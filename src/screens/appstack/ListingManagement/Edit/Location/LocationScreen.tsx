@@ -1,6 +1,5 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { Platform, StyleSheet, View, Modal } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -12,8 +11,7 @@ import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import DropdownField from '@/components/molecules/Input/DropdownField';
-import Metrics from '@/utility/Metrics';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import useLocationContainer from './LocationContainer';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
@@ -110,45 +108,19 @@ const LocationScreen = () => {
         </View>
 
         {/* ✅ Export Modal */}
-        <Modal
+        <ExportOtaSheet
           visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-              <View style={styles.handleBar} />
-              <AppText
-                text={t('app.location_edit.select_ota')}
-                fontSize={20}
-                type="SemiBold"
-                color={Colors.PINE_FOREST}
-                mb={20}
-              />
-              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder={t('app.location_edit.select_account')}
-                  dropdownPosition="top"
-                />
-              </View>
-              <AppButton
-                title={t('app.location_edit.export')}
-                onPress={handleOtaSubmit(handleExportSubmit)}
-                mt={20}
-                loading={isPendingExporting}
-                backgroundColor="#00A68A"
-                borderColor="transparent"
-                color={Colors.WHITE}
-              />
-            </AppPressable>
-          </AppPressable>
-        </Modal>
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.location_edit.select_ota')}
+          placeholder={t('app.location_edit.select_account')}
+          buttonText={t('app.location_edit.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
 
       </View>
     </BGImage>
@@ -166,23 +138,6 @@ const styles = StyleSheet.create({
   pinIconWrapper: { marginRight: 12, marginTop: 2 },
   addressTextCol: { flex: 1 },
   footer:         { position: 'absolute', bottom: 40, left: 20, right: 20 },
-  modalOverlay:   { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.4)', justifyContent: 'flex-end' },
-  bottomSheet: {
-    backgroundColor:      Colors.WHITE,
-    borderTopLeftRadius:  24,
-    borderTopRightRadius: 24,
-    paddingHorizontal:    24,
-    paddingTop:           12,
-    paddingBottom:        40,
-  },
-  handleBar: {
-    width:           40,
-    height:          5,
-    backgroundColor: '#D4D4D4',
-    borderRadius:    3,
-    alignSelf:       'center',
-    marginBottom:    25,
-  },
 });
 
 export default LocationScreen;

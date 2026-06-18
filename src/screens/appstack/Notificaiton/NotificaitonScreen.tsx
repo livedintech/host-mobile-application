@@ -24,6 +24,7 @@ import { ApiNotificationItem } from '@/services/mobileNotificationsApi';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../NoListingScreen/NoListingScreen';
+import NotificationsSkeleton from '@/components/Skeletons/NotificationsSkeleton';
 
 type NotificationItemProps = {
   item: ApiNotificationItem;
@@ -142,7 +143,6 @@ const NotificationsScreen = () => {
   const isArabic = localI18n.language === 'ar';
 
   const renderItem = ({ item }: { item: FlatItem }) => {
-    console.log('item', item);
     if (item.type === 'header') {
       return (
         <AppText
@@ -197,6 +197,7 @@ const NotificationsScreen = () => {
             data={flatItems}
             meta={dataQuery}
             isLoading={isLoading}
+            renderSkeleton={() => <NotificationsSkeleton />}
             renderItem={renderItem}
             keyExtractor={(item: FlatItem) => item.key}
             style={styles.flatList}

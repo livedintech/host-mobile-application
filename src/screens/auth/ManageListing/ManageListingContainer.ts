@@ -12,7 +12,6 @@ export default function useManageListingContainer() {
   const confirmedRef = useRef(false);
   const navigation = useNavigation();
   const { params } = useRoute();
-  console.log("managelistingparams",params)
 
   const dlName     = (params as any)?.name     || '';
   const dlEmail    = (params as any)?.email    || '';

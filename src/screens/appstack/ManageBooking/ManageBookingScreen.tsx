@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
   StyleSheet,
   View,
-  ActivityIndicator,
   FlatList,
   TouchableOpacity,
 } from 'react-native';
@@ -24,6 +23,7 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import ManageBookingSkeleton from '@/components/Skeletons/ManageBookingSkeleton';
 
 const TABS = ['Airbnb', 'Gathern', 'Booking.com'] as const;
 type TabType = typeof TABS[number];
@@ -275,12 +275,11 @@ const ManageBookingScreen = ({ route }: any) => {
         {/* CONTENT */}
         <RefreshableScrollView
           isLoading={isLoading}
+          skeletonComponent={<ManageBookingSkeleton />}
           onRefresh={refetch}
           contentContainerStyle={styles.scrollContent}
         >
-          {isLoading ? (
-            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} style={styles.loader} />
-          ) : hasAccounts ? (
+          {hasAccounts ? (
             <FlatList
               data={currentTabAccounts}
               keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
@@ -391,7 +390,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     flexGrow: 1,
   },
-  loader: { marginTop: 50 },
   connectedCard: { padding: 24, borderRadius: 24 },
   cardHeader: {
     flexDirection: 'row',

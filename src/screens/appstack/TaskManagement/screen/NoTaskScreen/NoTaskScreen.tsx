@@ -19,7 +19,6 @@ interface NoTaskProps {
 
 const NoTaskScreen = ({ activeTab, hasListings }: NoTaskProps) => {
   const { t } = useTranslation();
-  console.log("activeTab",activeTab)
   const emptyText =
     activeTab === 'complete' ? t('app.no_task.completed') : t('app.no_task.available');
   const { resetTaskStore } = useTaskStore();

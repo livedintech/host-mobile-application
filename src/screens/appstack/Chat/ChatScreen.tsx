@@ -43,8 +43,8 @@ import NoChatScreen from '../NoChatScreen/NoChatScreen';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 import MultiSelectDropdownField from '@/components/molecules/Input/MultiSelectDropdownField';
-import SpinnerLoader from '@/components/molecules/SmallLoader';
 import { useTranslation } from 'react-i18next';
+import ChatSkeleton from '@/components/Skeletons/ChatSkeleton';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -298,11 +298,7 @@ const ChatScreen = () => {
   if (isLoading) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <SpinnerLoader size={'large'} />
-        </View>
+        <ChatSkeleton />
       </BGImage>
     );
   }

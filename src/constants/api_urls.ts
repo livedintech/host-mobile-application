@@ -129,6 +129,7 @@ export const SERVICE_CONFIG_URLS = {
     SET_CALENDAR_PRICING: `${authController}/calendar/pricing`,
     GET_BOOKINGS_DETAILS: `${authController}/bookings/details/{booking_id}`,
     BOOKING_REQUEST_SUBMIT: `${authController}/booking-request-submit`,
+    ALTERATION_REQUEST_RESPOND: `${authController}/bookings/alteration-request/respond`,
     RATE_YOUR_GUEST: `${authController}/guest/reviews`,
     SUBSCRIPTION_SAVED_CARDS: `${authController}/subscription/saved-cards`,
     SUBSCRIPTION_PAYMENT_METHODS: `${authController}/subscription/payment-methods`,

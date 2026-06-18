@@ -1,6 +1,5 @@
-import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -11,7 +10,7 @@ import CircularProgress from '@/components/molecules/CircularProgress/CircularPr
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import { goBack } from '@/services/navigationService';
 import useBookingCancelPoliciesContainer from './BookingCancelPoliciesContainer';
-import Metrics from '@/utility/Metrics';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 
@@ -124,39 +123,19 @@ const AirbnblongTermOptions = [
         </View>
 
         {/* ✅ Export Modal */}
-        <Modal
+        <ExportOtaSheet
           visible={bottomSheetVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setBottomSheetVisible(false)}
-        >
-          <AppPressable style={styles.modalOverlay} onPress={() => setBottomSheetVisible(false)}>
-            <AppPressable style={styles.bottomSheet} onPress={(e) => e.stopPropagation()}>
-              <View style={styles.handleBar} />
-              <AppText text={t('app.booking_cancel_policies.select_ota')} fontSize={20} type="SemiBold" color={Colors.PINE_FOREST} mb={20} />
-              <View style={{ paddingBottom: Metrics.verticalScale(30) }}>
-                <DropdownField
-                  name="ota_account"
-                  control={otaControl}
-                  errors={otaErrors}
-                  label=""
-                  data={listingOptions}
-                  placeholder={t('app.booking_cancel_policies.select_account')}
-                  dropdownPosition="top"
-                />
-              </View>
-              <AppButton
-                title={t('app.booking_cancel_policies.export')}
-                onPress={handleOtaSubmit(handleExportSubmit)}
-                mt={20}
-                loading={isPendingExporting}
-                backgroundColor="#00A68A"
-                borderColor="transparent"
-                color={Colors.WHITE}
-              />
-            </AppPressable>
-          </AppPressable>
-        </Modal>
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.booking_cancel_policies.select_ota')}
+          placeholder={t('app.booking_cancel_policies.select_account')}
+          buttonText={t('app.booking_cancel_policies.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
 
       </View>
     </BGImage>
@@ -171,23 +150,6 @@ const styles = StyleSheet.create({
   formGroup:      { marginTop: 40 },
   fieldGap:       { height: 25 },
   footer:         { position: 'absolute', bottom: 0, width: '100%', padding: 25, paddingBottom: 40 },
-  modalOverlay:   { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  bottomSheet: {
-    backgroundColor:      Colors.WHITE,
-    borderTopLeftRadius:  24,
-    borderTopRightRadius: 24,
-    paddingHorizontal:    24,
-    paddingTop:           12,
-    paddingBottom:        40,
-  },
-  handleBar: {
-    width:           40,
-    height:          5,
-    backgroundColor: '#D4D4D4',
-    borderRadius:    3,
-    alignSelf:       'center',
-    marginBottom:    25,
-  },
 });
 
 export default AddBookingCancelPoliciesScreen;

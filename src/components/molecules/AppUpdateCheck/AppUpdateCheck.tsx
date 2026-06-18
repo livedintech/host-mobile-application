@@ -55,7 +55,6 @@ const AppUpdateCheck = () => {
         try {
             const version = await checkVersion();
 
-            console.log('Version check result:', version);
 
             // ✅ TEST (force open) — comment after testing
             // setIsUpdateRequired(true);

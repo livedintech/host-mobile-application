@@ -24,6 +24,7 @@ import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import EscalationSettingSkeleton from '@/components/Skeletons/EscalationSettingSkeleton';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CHART_HEIGHT = 120;
@@ -227,7 +228,7 @@ const EscalationSettingScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-        <RefreshableScrollView contentContainerStyle={styles.scrollContent} isLoading={isLoading} refreshing={isFetching} onRefresh={refetch}>
+        <RefreshableScrollView contentContainerStyle={styles.scrollContent} isLoading={isLoading} skeletonComponent={<EscalationSettingSkeleton />} refreshing={isFetching} onRefresh={refetch}>
           <AppText text={t('app.escalation.title', 'Escalation Settings')} fontSize={26} type="Bold" mt={20} mb={10} />
           <AppText text={t('app.escalation.description', 'Controls when the AI replies automatically vs. when messages are sent to you for review.')} fontSize={13} color={Colors.BLACK_60_PERCENT} lineHeight={18} mb={24} />
 

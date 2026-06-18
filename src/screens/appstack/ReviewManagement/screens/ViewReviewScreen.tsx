@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  ActivityIndicator,
   Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
@@ -25,6 +24,7 @@ import useReviewDetail from '../containers/useReviewDetail';
 import BGImage from '@/components/molecules/BGImage/BGImage';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import ViewReviewSkeleton from '@/components/Skeletons/ViewReviewSkeleton';
 
 const ViewReviewScreen = () => {
   const { t } = useTranslation();
@@ -150,9 +150,9 @@ const ViewReviewScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-      </View>
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <ViewReviewSkeleton />
+      </BGImage>
     );
   }
 

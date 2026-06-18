@@ -31,7 +31,6 @@ export default function useCreateAccountContainer() {
   const navigation = useNavigation();
 
   const { params } = useRoute<any>();
-  console.log("paramss",params)
   const country_code = params?.payload?.country_code;
   const phone_number = params?.payload?.phone_number;
   const phone_with_code = params?.payload?.phone_with_code;

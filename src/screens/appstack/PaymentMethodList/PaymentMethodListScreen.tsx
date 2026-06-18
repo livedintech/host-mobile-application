@@ -9,6 +9,7 @@ import AppButton from '@/components/molecules/AppButton/AppButton';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import Metrics from '@/utility/Metrics';
+import PaymentMethodListSkeleton from '@/components/Skeletons/PaymentMethodListSkeleton';
 
 const PaymentMethodListScreen = () => {
   const { t } = useTranslation();
@@ -99,6 +100,7 @@ const PaymentMethodListScreen = () => {
         data={cards}
         isLoading={isLoading}
         onRefresh={refetch}
+        renderSkeleton={() => <PaymentMethodListSkeleton />}
         renderItem={renderCard}
         keyExtractor={item => item.id}
         listEmptyText="No Payment Methods Found"

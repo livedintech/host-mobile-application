@@ -26,10 +26,6 @@ export default function useUserManagementContainer(mode?: 'create' | 'edit') {
   const queryClient = useQueryClient();
   const { params } = useRoute<any>();
   const editUser = params?.editUser;
-  console.log('editUser:s:',editUser);
-  
-
-  
 
   // 1. Fetch Roles & Listings
   const { data: roles = [] } = useQuery({

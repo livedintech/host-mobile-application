@@ -31,17 +31,14 @@ import Metrics from '@/utility/Metrics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HeaderApp from '@/components/molecules/Header/HeaderApp';
 import { useTaskStore } from '@/store/taskStore';
+import ChecklistDetailSkeleton from '@/components/Skeletons/ChecklistDetailSkeleton';
 
 const { width, height } = Dimensions.get('window');
 
 const ChecklistDetail = ({ route }: any) => {
   const { t } = useTranslation();
   const { taskId: storeTaskId, taskStatus } = useTaskStore();
-  // console.log("storeTaskStatus",storeTaskStatus);
-  // console.log("mmm",storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' )
-  // const taskStatus = storeTaskStatus === 'todo' || storeTaskStatus === 'template' || storeTaskStatus === 'inprogress' || storeTaskStatus === 'pending';
 
-  // console.log("taskStatus",taskStatus)
   const { title, sectionId, taskId, fromEdit } = route.params;
   const insets = useSafeAreaInsets();
 
@@ -206,6 +203,7 @@ const ChecklistDetail = ({ route }: any) => {
             data={localItems}
             renderItem={renderItem}
             isLoading={isLoading}
+            renderSkeleton={() => <ChecklistDetailSkeleton />}
             onRefresh={onRefresh}
             contentContainerStyle={styles.listContent}
             HeaderComponent={

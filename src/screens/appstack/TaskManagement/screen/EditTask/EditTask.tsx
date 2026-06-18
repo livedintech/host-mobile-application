@@ -30,6 +30,7 @@ import EditTaskContainer from '../../container/EditTaskContainer/EditTaskContain
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import Metrics from '@/utility/Metrics';
 import Toast from 'react-native-toast-message';
+import TaskDetailSkeleton from '@/components/Skeletons/TaskDetailSkeleton';
 
 // Helper to convert "09:00 pm" to "21:00" or just strip "pm/am"
 const convertTo24Hour = (timeStr: string) => {
@@ -173,15 +174,21 @@ const EditTask = ({ route }: any) => {
     setIsEditMode(false);
   };
 
-  if (isLoading || isDeleting) {
+  if (isDeleting) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-          {isDeleting && (
-            <AppText text={t('app.task_management.deleting_task')} mt={10} />
-          )}
+          <AppText text={t('app.task_management.deleting_task')} mt={10} />
         </View>
+      </BGImage>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <TaskDetailSkeleton />
       </BGImage>
     );
   }

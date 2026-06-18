@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import HubspotCalendarSkeleton from '@/components/Skeletons/HubspotCalendarSkeleton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { s, vs, ms } from 'react-native-size-matters';
@@ -102,15 +103,7 @@ const CalendarScreen = ({ route }: any) => {
           {/* Calendar */}
           <View style={styles.calendarWrapper}>
             {loadingDates ? (
-              <View style={styles.calendarLoader}>
-                <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-                <AppText
-                  text={t('auth.hubspot_calendar.loading_dates')}
-                  fontSize={13}
-                  color="#666"
-                  style={{ marginTop: vs(8) }}
-                />
-              </View>
+              <HubspotCalendarSkeleton />
             ) : (
               <Calendar
                 current={`${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}-01`}
@@ -272,11 +265,6 @@ const styles = StyleSheet.create({
     borderRadius: ms(16),
     paddingVertical: vs(10),
     marginHorizontal: s(10),
-  },
-  calendarLoader: {
-    height: vs(320),
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   calendar: { backgroundColor: 'transparent' },
   mainFooter: {

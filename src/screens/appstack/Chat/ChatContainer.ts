@@ -27,9 +27,11 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useIsFocused } from '@react-navigation/native';
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
+    const isFocused = useIsFocused();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%'], []);
   const [activeTab, setActiveTab] = useState<ChatStatus>('All');
@@ -111,7 +113,7 @@ export const useChatContainer = () => {
         limit: PAGE_SIZE,
         ...finalFilters,
       }),
-    refetchInterval: 4000,
+     refetchInterval: isFocused ? 4000 : false,
     initialPageParam: 1,
     getNextPageParam: lastPage =>
       lastPage?.current_page < lastPage?.total_pages
@@ -202,7 +204,6 @@ export const useChatContainer = () => {
     listing_id: string;
     assigned_to_ids: number[];
   }) => {
-    console.log("otemm", item)
     if (item?.latest_message?.id) {
       markRead({
         conversation_id: item.id,

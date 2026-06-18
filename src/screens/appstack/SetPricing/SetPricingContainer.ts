@@ -3,18 +3,17 @@ import { useForm } from 'react-hook-form';
 import i18n from '@/locales/i18n/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useRoute } from '@react-navigation/native';
 import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { createListingExportApi, createListingPricingApi } from '@/services/ createListingService'; // ✅ correct API
+import { createListingPricingApi } from '@/services/ createListingService'; // ✅ correct API
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import Toast from 'react-native-toast-message';
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
-import { useState } from 'react';
-import { getChannelsUserbyId } from '@/services/bookingManagementApi';
+import useListingExport from '@/hooks/useListingExport';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const pricingSchema = yup.object().shape({
@@ -81,60 +80,22 @@ export default function usePricingContainer() {
   const { params } = useRoute<any>();
   const { updateListing, listing_id, channel_id, listing: propertyDetail } = useCreateListingStore();
   const { user } = useAuthStore();
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const listing = params?.paramData?.listing;
   const isEdit = Boolean(listing?.listing_id); // ✅ consistent
 
-  type OtaAccountFormValues = {
-  ota_account: string;
-};
-
-const {
-  control: otaControl,
-  handleSubmit: handleOtaSubmit,
-  formState: { errors: otaErrors },
-} = useForm<OtaAccountFormValues>({
-  defaultValues: {
-    ota_account: '',
-  },
-});
-
-const { data: response } = useQuery({
-  queryKey: ['GET_CHANNELS_USER', user?.id],
-  queryFn: () => getChannelsUserbyId({ user_id: Number(user?.id) }),
-  enabled: !!user?.id,
-});
-
-const connectedAccounts = response?.data || [];
-
-const listingOptions = connectedAccounts
-  .filter((item: any) => item.connection_type === 'Airbnb')
-  .map((item: any) => ({
-    label: `Airbnb - ${item?.id} - ${item?.channel_name}`,
-    value: item.ch_channel_id,
-  }));
-
-  const { mutate: exportListing, isPending: isExporting } = useMutation({
-  mutationFn: createListingExportApi,
-  onSuccess: () => {
-    setBottomSheetVisible(false);
-    Toast.show({ type: 'success', text1: i18n.t('common.toast.exported') });
-  },
-  onError: (err: any) =>
-    Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.export_failed') }),
-});
-
-const handleExport = () => {
-  setBottomSheetVisible(true);
-};
-
-const handleExportSubmit = (data: OtaAccountFormValues) => {
-  exportListing({
-    channel_id: data.ota_account,
-    listing_id: String(listing_id),
-  });
-};
+  // ── Export ────────────────────────────────────────────────────────────────
+  const {
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    handleExport,
+    handleExportSubmit,
+    handleOtaSubmit,
+    otaControl,
+    otaErrors,
+    listingOptions,
+    isPendingExporting: isExporting,
+  } = useListingExport();
 
   // ── Form ──────────────────────────────────────────────────────────────────
   const normalized = isEdit ? normalizePrices(listing) : null;

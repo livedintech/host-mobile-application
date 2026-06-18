@@ -13,6 +13,7 @@ import PerformanceCard from '../components/PerformanceCard';
 import FlatListSimpleHandler from '@/components/molecules/FlatListSimpleHandler/FlatListSimpleHandler';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '../../NoListingScreen/NoListingScreen';
+import { AnalyticsPerformanceSkeleton } from '@/components/Skeletons/AnalyticsScreenSkeleton';
 
 const ListingPerformanceScreen = () => {
   const { t } = useTranslation();
@@ -65,6 +66,7 @@ const ListingPerformanceScreen = () => {
         <FlatListSimpleHandler
           data={performanceData}
           isLoading={isLoadingAnalyticsPerformance}
+          renderSkeleton={() => <AnalyticsPerformanceSkeleton />}
           listEmptyText="No performance data found."
           contentContainerStyle={styles.listContent}
           HeaderComponent={ListHeader}

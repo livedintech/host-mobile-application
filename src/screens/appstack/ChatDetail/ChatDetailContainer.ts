@@ -7,7 +7,7 @@ import { aiFeedbackSchema, AiFeedbackFormValues } from '@/validation/chat/chatSc
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { pick, types } from '@react-native-documents/picker';
 import { FlatList } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import STORAGE_CONST from '@/constants/storage';
 import {
@@ -133,7 +133,7 @@ const transformApiMessages = (
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
-
+  const isFocused = useIsFocused();
   // Safely get params
   const route = useRoute();
   const params = route?.params as
@@ -146,8 +146,6 @@ export const useChatContainer = () => {
   const conversation_id = params?.conversation_id;
   const listing_id = params?.listing_id;
   const assigned_to_ids = params?.assigned_to_ids;
-  console.log('assigned_to_ids', assigned_to_ids);
-  console.log('conversation_id', conversation_id);
 
   // Core Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -193,7 +191,7 @@ export const useChatContainer = () => {
     ],
     queryFn: () => getChatDetailApi({ conversation_id }),
     enabled: Boolean(conversation_id),
-    refetchInterval: 4000,
+    refetchInterval: isFocused ? 4000 : false,
   });
 
   // Get Saved Replies of a conversation
@@ -697,7 +695,6 @@ export const useChatContainer = () => {
   }, [pendingReviewData]);
 
   const currentSuggestion = aiSuggestion;
-  console.log('currentSuggestion', currentSuggestion);
 
   // Send AI suggestion
   // const sendAiSuggestion = useCallback(() => {

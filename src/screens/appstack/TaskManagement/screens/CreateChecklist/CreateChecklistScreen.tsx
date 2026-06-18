@@ -16,6 +16,7 @@ import { useTaskDraftStore } from '@/store/taskDraftStore';
 import CreateChecklistContainer from '../../containers/CreateChecklist/CreateChecklistContainer';
 import Metrics from '@/utility/Metrics';
 import { useTranslation } from 'react-i18next';
+import CreateChecklistSkeleton from '@/components/Skeletons/CreateChecklistSkeleton';
 
 const ChecklistItemsList = ({
   sectionId,
@@ -164,11 +165,7 @@ const CreateChecklistScreen = () => {
   return (
     <View style={styles.container}>
       {isLoadingSections ? (
-        <ActivityIndicator
-          size="large"
-          style={{ flex: 1 }}
-          color={Colors.MEDIUM_JUNGLE_GREEN}
-        />
+        <CreateChecklistSkeleton />
       ) : (
         <FlatList
           ListHeaderComponent={renderHeader}

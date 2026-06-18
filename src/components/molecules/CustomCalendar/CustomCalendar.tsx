@@ -38,7 +38,6 @@ const COLORS = {
 };
 
 const getOTASource = (source?: string) => {
-  console.log('sourcetestt', source);
   const name = source?.toLowerCase() || '';
   if (name.includes('airbnb'))
     return {
@@ -60,7 +59,7 @@ const getOTASource = (source?: string) => {
     };
 
   return {
-    icon: '',
+    icon: 'livedinLogoWhite',
     color: COLORS.LIVEDIN_DARK,
     light: COLORS.LIVEDIN_LIGHT,
   };
@@ -172,12 +171,20 @@ const CustomDay = ({ date, marking, onPress, defaultPrice }: any) => {
                 ]}
               >
                 {/* {brand.icon !== 'livedin' && ( */}
-                {brand.icon && !isMultiBooking && (
+                {isMultiBooking ? (
                   <Svgicons
-                    path={brand.icon as any}
+                    path="multiBookingWhite"
                     size={ms(9)}
                     color={iconColor}
                   />
+                ) : (
+                  brand.icon && (
+                    <Svgicons
+                      path={brand.icon as any}
+                      size={ms(9)}
+                      color={iconColor}
+                    />
+                  )
                 )}
                 {/* )} */}
                 {/* <AppText

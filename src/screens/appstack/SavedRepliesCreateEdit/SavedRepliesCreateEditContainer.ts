@@ -40,7 +40,6 @@ export default function useSavedRepliesCreateEditContainer() {
   const { user } = useAuthStore();
   const route = useRoute<any>();
   const editData = route?.params?.editData as SavedReply;
-  console.log('editData', editData);
   const queryClient = useQueryClient();
 
   const {
@@ -159,9 +158,6 @@ listing_ids: editData?.listing_ids ? editData.listing_ids.map(id => String(id)) 
       })) || []
     );
   }, [listing]);
-
-  console.log('listing::', listing);
-  console.log('transformedListing', transformedListing);
 
   return {
     control,

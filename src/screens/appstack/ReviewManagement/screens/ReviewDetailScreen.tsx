@@ -1,7 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import i18n from '@/locales/i18n/i18n';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import {
   Menu,
@@ -30,6 +30,7 @@ import { useTaskStore } from '@/store/taskStore';
 import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import DirectCancelModal from '@/components/molecules/DirectCancelModal/DirectCancelModal';
+import ReviewDetailSkeleton from '@/components/Skeletons/ReviewDetailSkeleton';
 const FIGMA_TEAL = '#21AA8F';
 
 const MENU_OPTION_KEYS = {
@@ -55,7 +56,6 @@ const ReviewDetailScreen = ({ route }: any) => {
   const [showDirectCancelModal, setShowDirectCancelModal] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const { setTaskInfo } = useTaskStore();
-  console.log('booking_iddd', booking_id);
 
   const handlePress = (item: any) => {
     // Navigate on every status
@@ -120,13 +120,11 @@ const ReviewDetailScreen = ({ route }: any) => {
     cancellation_policy,
   } = bookingData;
 
-  console.log('cancellation_policy', cancellation_policy);
-
   if (isLoading || !bookingData.property) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-      </View>
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <ReviewDetailSkeleton />
+      </BGImage>
     );
   }
   const cleanliness = Number(guest_property_ratings?.cleanliness) || 0;

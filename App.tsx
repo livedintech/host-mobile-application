@@ -30,6 +30,8 @@ import i18n from '@/locales/i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
 import { NotificationService } from '@/services/notification.service';
 import { userEventService } from '@/services/userEventService';
+import AirbnbExportPopup from '@/components/molecules/AirbnbExportPopup/AirbnbExportPopup';
+import { airbnbExportPopupRef } from '@/services/airbnbExportPopupService';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
@@ -217,6 +219,7 @@ const App = () => {
                       <AppUpdateCheck />
                     </MenuProvider>
                     <Toast config={toastConfig} />
+                    <AirbnbExportPopup ref={airbnbExportPopupRef} />
                   </SafeAreaView>
                 </NavigationContainer>
               </BottomSheetModalProvider>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { useRoute } from '@react-navigation/native';
 
@@ -17,6 +17,7 @@ import { getOtaConfig } from '@/constants/ota_config';
 import Metrics from '@/utility/Metrics';
 import { goBack } from '@/services/navigationService';
 import { useTranslation } from 'react-i18next';
+import ReservationCalendarSkeleton from '@/components/Skeletons/ReservationCalendarSkeleton';
 
 const ReservationCalendarScreen = () => {
   const route = useRoute<any>();
@@ -86,9 +87,7 @@ const ReservationCalendarScreen = () => {
 
       <View style={{ flex: 1 }}>
         {resLoading ? (
-          <View style={styles.centerContainer}>
-            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-          </View>
+          <ReservationCalendarSkeleton />
         ) : (
           <FlatListSimpleHandler
             isLoading={isRefreshing}

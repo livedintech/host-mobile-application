@@ -309,6 +309,24 @@ export const submitBookingRequestApi = async (payload: {
   throw response || data;
 };
 
+export const alterationRequestRespondApi = async (payload: {
+  thread_id: string | number;
+  accept: boolean;
+  reason?: string | null;
+  decline_message_to_guest?: string | null;
+  decline_message_to_airbnb?: string | null;
+}) => {
+  const url = SERVICE_CONFIG_URLS.APP.ALTERATION_REQUEST_RESPOND;
+
+  const { ok, data, response } = await apiService.post(url, payload);
+
+  if (ok) {
+    return data?.data || data;
+  }
+
+  throw response || data;
+};
+
 
 // Update Agent Message Review (thumbs up / down feedback)
 export const updateAgentMessageReviewApi = async (

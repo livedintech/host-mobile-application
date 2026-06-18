@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, ActivityIndicator, SafeAreaView } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, SafeAreaView } from 'react-native';
 import { s, vs, ms } from 'react-native-size-matters';
 import { X } from 'lucide-react-native';
 import { useQuery } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import ReservationCard from '@/components/molecules/ReservationCard/ReservationC
 import { getOtaConfig } from '@/constants/ota_config';
 import { getBookingDetailsApi } from '@/services/calendarBookingManagement';
 import { useTranslation } from 'react-i18next';
+import BookingDetailsViewSkeleton from '@/components/Skeletons/BookingDetailsViewSkeleton';
 
 interface Props {
   isVisible: boolean;
@@ -40,10 +41,7 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
         </View>
 
         {isLoading ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" color={Colors.MEDIUM_JUNGLE_GREEN} />
-            <AppText text={t('app.booking_details.fetching')} mt={10} color="#666" />
-          </View>
+          <BookingDetailsViewSkeleton />
         ) : isError ? (
           <View style={styles.center}>
             <AppText text={t('app.booking_details.failed')} color="red" />
@@ -57,7 +55,6 @@ export const BookingDetailsView = ({ isVisible, onClose, bookingId, onCardPress 
               bookings.map((item: any, index: number) => {
                 const otaConfig = getOtaConfig(item.source);
                 const platformLabel = (item?.data?.property?.booking_platform === 'livedin' || item?.data?.property?.booking_platform === 'host_booking') ? 'Livedin' : (item?.data?.property?.booking_platform || 'Direct');
-                console.log('Soingle Item Data', item?.data)
                 return (
                   <View key={index} style={styles.cardWrapper}>
                     <ReservationCard

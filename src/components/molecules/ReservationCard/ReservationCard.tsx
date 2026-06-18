@@ -35,7 +35,6 @@ const ReservationCard = ({
   onPress,
   t,
 }: ReservationCardProps) => {
-  console.log('platform', platform);
 
   const getPlatformIcon = (platformName: string) => {
     const normalized = platformName.toLowerCase();

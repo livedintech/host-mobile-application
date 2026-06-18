@@ -13,6 +13,7 @@ import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { navigate } from '@/services/navigationService';
 import { useTranslation } from 'react-i18next';
+import HomeSkeleton from '@/components/Skeletons/HomeSkeleton';
 
 // ==========================================
 // Reusable Components
@@ -525,6 +526,7 @@ const updatesItems = [
           showsVerticalScrollIndicator={false}
           onRefresh={refetch}
           isLoading={isLoading}
+          skeletonComponent={<HomeSkeleton />}
         >
           {/* Conditional Layout Rendering */}
           {isNewLayout ? (
