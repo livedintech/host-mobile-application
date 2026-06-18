@@ -1,5 +1,4 @@
 import i18n from '@/locales/i18n/i18n';
-// ChatContainer.tsx - Complete Code with improved scroll management
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,7 +11,6 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import STORAGE_CONST from '@/constants/storage';
 import {
   ChatMessageSendApi,
-  ChatMessageSendWithMediaApi,
   getChatDetailApi,
   getChatDetailSavedRepliesApi,
   deleteChatMessageApi,
@@ -27,6 +25,7 @@ import {
   createChatSnoozeByConversationIdResponseType,
   sendMessagePayloadType,
 } from '@/types/api/chatTypes';
+import { subscribeToChatThreadChannel } from '@/services/socketService';
 
 export interface ChatMessage {
   _id: string | number;
@@ -50,44 +49,6 @@ export interface ChatMessage {
     userName: string;
   };
 }
-
-interface SavedReply {
-  id: number;
-  label: string;
-  value: string;
-}
-
-// const SAVED_REPLIES: SavedReply[] = [
-//   {
-//     id: 1,
-//     label: 'Wifi Pass',
-//     value: 'Here is the Wi-Fi password for your stay: 12345678',
-//   },
-//   {
-//     id: 2,
-//     label: 'Cleaning',
-//     value: 'Cleaning will be done daily between 10 AM and 12 PM.',
-//   },
-//   {
-//     id: 3,
-//     label: 'Check in',
-//     value: 'You can check in anytime after 3:00 PM.',
-//   },
-//   { id: 4, label: 'Check out', value: 'Please check out before 11:00 AM.' },
-//   {
-//     id: 5,
-//     label: 'Bathroom',
-//     value: 'Fresh towels and toiletries are provided in the bathroom.',
-//   },
-//   { id: 6, label: 'Bedsheet', value: 'Bedsheets are changed every 3 days.' },
-//   { id: 7, label: 'Timings', value: 'Breakfast is served from 8 AM to 10 AM.' },
-//   { id: 8, label: 'Booking', value: 'Your booking has been confirmed.' },
-//   {
-//     id: 9,
-//     label: 'Microwave',
-//     value: 'The microwave is available in the kitchen.',
-//   },
-// ];
 
 // Helper function to transform API data to ChatMessage format
 const transformApiMessages = (
@@ -191,8 +152,32 @@ export const useChatContainer = () => {
     ],
     queryFn: () => getChatDetailApi({ conversation_id }),
     enabled: Boolean(conversation_id),
-    refetchInterval: isFocused ? 4000 : false,
   });
+
+  /* ------------------------------- REALTIME SOCKET ------------------------------ */
+
+  useEffect(() => {
+    if (!conversation_id || !isFocused) return;
+
+    // Re-sync on every focus in case a socket event was missed while away
+    // (app backgrounded, brief disconnect, etc) — same effect as pull-to-refresh.
+    queryClient.invalidateQueries({
+      queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, conversation_id],
+    });
+
+    let unsubscribe: (() => void) | undefined;
+    subscribeToChatThreadChannel(conversation_id, () => {
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, conversation_id],
+      });
+    }).then(unsub => {
+      unsubscribe = unsub;
+    }).catch(error => {
+      console.warn('Chat thread socket subscription failed', error);
+    });
+
+    return () => unsubscribe?.();
+  }, [conversation_id, isFocused]);
 
   // Get Saved Replies of a conversation
   const { data: savedReplies } = useQuery({
@@ -230,8 +215,6 @@ export const useChatContainer = () => {
       });
     },
   });
-
-  console.log('API Data:', data);
 
   // Delete Message Mutation
   const { mutate: deleteChatMessage } = useMutation({
@@ -283,16 +266,24 @@ export const useChatContainer = () => {
     setMessages(prev => [message, ...prev]);
   }, []);
 
-  // ✅ Enhanced send message with auto-scroll flag
+  // Scrolls to the latest message after sending, then clears the "just sent" flag
+  const scrollToBottomAfterSend = useCallback(() => {
+    setJustSentMessage(true);
+    setTimeout(() => {
+      flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+      setTimeout(() => setJustSentMessage(false), 500);
+    }, 100);
+  }, []);
+
   const sendMessage = useCallback(() => {
     if (!inputText.trim() || !conversation_id) return;
 
-    const tempId = `temp-${Date.now()}`;
+    const bodyText = inputText.trim();
 
-    // 👇 optimistic message (UI smooth)
-    const optimisticMessage: ChatMessage = {
-      _id: tempId,
-      text: inputText.trim(),
+    // Optimistic message so the UI updates instantly, before the API responds
+    addMessage({
+      _id: `temp-${Date.now()}`,
+      text: bodyText,
       createdAt: new Date(),
       user: {
         _id: Number(user?.id),
@@ -305,35 +296,15 @@ export const useChatContainer = () => {
             userName: replyingToMessage.user.name,
           }
         : undefined,
-    };
+    });
 
-    // ✅ UI instantly update
-    addMessage(optimisticMessage);
-
-    // ✅ Set flag that user just sent message (for auto-scroll in ChatScreen)
-    setJustSentMessage(true);
-
-    const bodyText = inputText.trim();
+    scrollToBottomAfterSend();
 
     setInputText('');
     setReplyingToMessage(null);
     setShowAiSuggestion(false);
     setShowSavedReplies(false);
     setShowAttachmentMenu(false);
-
-    // ✅ Auto scroll to bottom after sending
-    setTimeout(() => {
-      flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-      // Reset flag after scroll
-      setTimeout(() => setJustSentMessage(false), 500);
-    }, 100);
-
-    // ✅ API CALL
-    // chatMessagesSend({
-    //   conversation_id,
-    //   body: bodyText,
-    //   reply_to: replyingToMessage?._id,
-    // });
 
     const payload: any = {
       conversation_id,
@@ -350,15 +321,17 @@ export const useChatContainer = () => {
     inputText,
     conversation_id,
     replyingToMessage,
+    selectedAiSuggestionId,
     user,
     addMessage,
+    scrollToBottomAfterSend,
     chatMessagesSend,
   ]);
 
   // Send saved reply
   const sendSavedReply = useCallback(
     (replyText: string) => {
-      const newMessage: ChatMessage = {
+      addMessage({
         _id: `temp-${Date.now()}`,
         text: replyText,
         createdAt: new Date(),
@@ -373,27 +346,18 @@ export const useChatContainer = () => {
               userName: replyingToMessage.user.name,
             }
           : undefined,
-      };
+      });
 
-      addMessage(newMessage);
-
-      // ✅ Set flag for auto-scroll
-      setJustSentMessage(true);
+      scrollToBottomAfterSend();
 
       setInputText('');
       setReplyingToMessage(null);
       setShowSavedReplies(false);
       setShowAttachmentMenu(false);
 
-      // ✅ Auto scroll
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-        setTimeout(() => setJustSentMessage(false), 500);
-      }, 100);
-
-      // TODO: Call API to send message
+      // TODO: Call API to send the saved reply
     },
-    [addMessage, replyingToMessage, user],
+    [addMessage, replyingToMessage, scrollToBottomAfterSend, user],
   );
 
   // Message Actions
@@ -470,6 +434,37 @@ export const useChatContainer = () => {
     [deleteChatMessage],
   );
 
+  // Builds the shared message fields (sender + reply quote) for locally-composed messages
+  const buildOutgoingMessageBase = useCallback(
+    (): Pick<ChatMessage, '_id' | 'createdAt' | 'user' | 'replyTo'> => ({
+      _id: `temp-${Date.now()}`,
+      createdAt: new Date(),
+      user: {
+        _id: Number(user?.id),
+        name: user?.name || 'You',
+      },
+      replyTo: replyingToMessage
+        ? {
+            _id: replyingToMessage._id,
+            text: replyingToMessage.text || 'Media message',
+            userName: replyingToMessage.user.name,
+          }
+        : undefined,
+    }),
+    [user, replyingToMessage],
+  );
+
+  // Adds the message optimistically, scrolls to it, and resets reply/attachment-menu state
+  const sendOutgoingMedia = useCallback(
+    (mediaFields: Partial<ChatMessage>) => {
+      addMessage({ ...buildOutgoingMessageBase(), text: '', ...mediaFields });
+      scrollToBottomAfterSend();
+      setReplyingToMessage(null);
+      setShowAttachmentMenu(false);
+    },
+    [addMessage, buildOutgoingMessageBase, scrollToBottomAfterSend],
+  );
+
   // Media Handlers
   const handleCamera = useCallback(async () => {
     try {
@@ -482,43 +477,12 @@ export const useChatContainer = () => {
         mediaType: 'photo',
       });
 
-      const message: ChatMessage = {
-        _id: `temp-${Date.now()}`,
-        text: '',
-        createdAt: new Date(),
-        user: {
-          _id: Number(user?.id),
-          name: user?.name || 'You',
-        },
-        image: image.path,
-        replyTo: replyingToMessage
-          ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
-          : undefined,
-      };
-
-      addMessage(message);
-
-      // ✅ Set flag for auto-scroll
-      setJustSentMessage(true);
-
-      setReplyingToMessage(null);
-      setShowAttachmentMenu(false);
-
-      // ✅ Auto scroll
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-        setTimeout(() => setJustSentMessage(false), 500);
-      }, 100);
-
+      sendOutgoingMedia({ image: image.path });
       // TODO: Upload image and call API
     } catch (error) {
-      console.log('Camera Error:', error);
+      console.warn('Camera Error:', error);
     }
-  }, [addMessage, replyingToMessage, user]);
+  }, [sendOutgoingMedia]);
 
   const handleVideo = useCallback(async () => {
     try {
@@ -528,46 +492,15 @@ export const useChatContainer = () => {
         compressVideoQuality: 0.8,
       });
 
-      const message: ChatMessage = {
-        _id: `temp-${Date.now()}`,
-        text: '',
-        createdAt: new Date(),
-        user: {
-          _id: Number(user?.id),
-          name: user?.name || 'You',
-        },
-        video: video.path,
-        replyTo: replyingToMessage
-          ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
-          : undefined,
-      };
-
-      addMessage(message);
-
-      // ✅ Set flag for auto-scroll
-      setJustSentMessage(true);
-
-      setReplyingToMessage(null);
-      setShowAttachmentMenu(false);
-
-      // ✅ Auto scroll
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-        setTimeout(() => setJustSentMessage(false), 500);
-      }, 100);
-
+      sendOutgoingMedia({ video: video.path });
       // TODO: Upload video and call API
     } catch (error: any) {
       if (error?.code === 'E_PICKER_CANCELLED') {
         return;
       }
-      console.log('Video Error:', error);
+      console.warn('Video Error:', error);
     }
-  }, [addMessage, replyingToMessage, user]);
+  }, [sendOutgoingMedia]);
 
   const handleGallery = useCallback(async () => {
     try {
@@ -580,44 +513,16 @@ export const useChatContainer = () => {
         mediaType: 'any',
       });
 
-      const message: ChatMessage = {
-        _id: `temp-${Date.now()}`,
-        text: '',
-        createdAt: new Date(),
-        user: {
-          _id: Number(user?.id),
-          name: user?.name || 'You',
-        },
-        image: media.mime?.includes('video') ? undefined : media.path,
-        video: media.mime?.includes('video') ? media.path : undefined,
-        replyTo: replyingToMessage
-          ? {
-              _id: replyingToMessage._id,
-              text: replyingToMessage.text || 'Media message',
-              userName: replyingToMessage.user.name,
-            }
-          : undefined,
-      };
-
-      addMessage(message);
-
-      // ✅ Set flag for auto-scroll
-      setJustSentMessage(true);
-
-      setReplyingToMessage(null);
-      setShowAttachmentMenu(false);
-
-      // ✅ Auto scroll
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-        setTimeout(() => setJustSentMessage(false), 500);
-      }, 100);
-
+      const isVideo = media.mime?.includes('video');
+      sendOutgoingMedia({
+        image: isVideo ? undefined : media.path,
+        video: isVideo ? media.path : undefined,
+      });
       // TODO: Upload media and call API
     } catch (error) {
-      console.log('Gallery Error:', error);
+      console.warn('Gallery Error:', error);
     }
-  }, [addMessage, replyingToMessage, user]);
+  }, [sendOutgoingMedia]);
 
   const handleDocument = useCallback(async () => {
     try {
@@ -626,53 +531,23 @@ export const useChatContainer = () => {
       });
 
       if (res) {
-        const message: ChatMessage = {
-          _id: `temp-${Date.now()}`,
+        sendOutgoingMedia({
           text: `📄 ${res.name}`,
-          createdAt: new Date(),
-          user: {
-            _id: Number(user?.id),
-            name: user?.name || 'You',
-          },
           document: {
             uri: res.uri,
             name: res.name || 'Document',
             type: res.type || 'application/octet-stream',
             size: res.size || 0,
           },
-          replyTo: replyingToMessage
-            ? {
-                _id: replyingToMessage._id,
-                text: replyingToMessage.text || 'Media message',
-                userName: replyingToMessage.user.name,
-              }
-            : undefined,
-        };
-
-        addMessage(message);
-
-        // ✅ Set flag for auto-scroll
-        setJustSentMessage(true);
-
-        setReplyingToMessage(null);
-        setShowAttachmentMenu(false);
-
-        // ✅ Auto scroll
-        setTimeout(() => {
-          flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-          setTimeout(() => setJustSentMessage(false), 500);
-        }, 100);
-
+        });
         // TODO: Upload document and call API
       }
     } catch (error) {
-      console.log('Document Error:', error);
+      console.warn('Document Error:', error);
     }
-  }, [addMessage, replyingToMessage, user]);
+  }, [sendOutgoingMedia]);
 
-  console.log('messages');
-
-  const { data: pendingReviewData, isLoading: pendingReviewLoading } = useQuery(
+  const { data: pendingReviewData } = useQuery(
     {
       queryKey: [STORAGE_CONST.GET_AI_SUGGESTIONS, conversation_id],
       queryFn: () =>
@@ -682,7 +557,6 @@ export const useChatContainer = () => {
       enabled: Boolean(conversation_id),
     },
   );
-  console.log('pendingReviewData', pendingReviewData);
 
   useEffect(() => {
     if (pendingReviewData?.agent_message) {
@@ -696,40 +570,13 @@ export const useChatContainer = () => {
 
   const currentSuggestion = aiSuggestion;
 
-  // Send AI suggestion
-  // const sendAiSuggestion = useCallback(() => {
-  //   const aiMessage: ChatMessage = {
-  //     _id: `temp-${Date.now()}`,
-  //     text: 'Welcome! Your check-in is from 3:00PM to 10:00PM. Your name is shared with the gate guard. Door code and entry instructions will be sent 1 hour before arrival. Wi-Fi and other details are inside.',
-  //     createdAt: new Date(),
-  //     user: {
-  //       _id: Number(user?.id),
-  //       name: user?.name || 'You',
-  //     },
-  //   };
-  //   addMessage(aiMessage);
-
-  //   // ✅ Set flag for auto-scroll
-  //   setJustSentMessage(true);
-
-  //   setShowAiSuggestion(false);
-
-  //   // ✅ Auto scroll
-  //   setTimeout(() => {
-  //     flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-  //     setTimeout(() => setJustSentMessage(false), 500);
-  //   }, 100);
-
-  //   // TODO: Call API to send message
-  // }, [addMessage, user]);
-
   const sendAiSuggestion = useCallback((customText?: string) => {
     const textToSend = customText ?? currentSuggestion?.agent_message;
     if (!textToSend || !conversation_id) {
       return;
     }
 
-    const aiMessage: ChatMessage = {
+    addMessage({
       _id: `temp-${Date.now()}`,
       text: textToSend,
       createdAt: new Date(),
@@ -737,28 +584,17 @@ export const useChatContainer = () => {
         _id: Number(user?.id),
         name: user?.name || 'You',
       },
-    };
+    });
 
-    addMessage(aiMessage);
-
-    setJustSentMessage(true);
+    scrollToBottomAfterSend();
     setShowAiSuggestion(false);
-
-    setTimeout(() => {
-      flatListRef.current?.scrollToIndex({
-        index: 0,
-        animated: true,
-      });
-
-      setTimeout(() => setJustSentMessage(false), 500);
-    }, 100);
 
     chatMessagesSend({
       conversation_id,
       body: textToSend,
       agent_message_reviews_id: currentSuggestion?.id,
     });
-  }, [currentSuggestion, conversation_id, addMessage, chatMessagesSend, user]);
+  }, [currentSuggestion, conversation_id, addMessage, scrollToBottomAfterSend, chatMessagesSend, user]);
 
   const feedback = pendingReviewData?.feedback
 

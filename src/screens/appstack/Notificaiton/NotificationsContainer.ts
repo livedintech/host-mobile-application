@@ -212,8 +212,8 @@ export default function useNotificationsContainer() {
       case 'booking':
         navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
         break;
-         case 'direct_booking_received':
-         navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `L${id}` });
+      case 'direct_booking_received':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `L${id}` });
         break;
       case 'booking_detail':
       case 'booking_confirmed':
@@ -269,7 +269,7 @@ export default function useNotificationsContainer() {
       case 'listing_deleted':
         navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
         break;
-        case 'listing_exported_created':
+      case 'listing_exported_created':
       case 'listing_added':
       case 'listing_mapped':
       case 'listing_unmapped':

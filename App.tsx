@@ -34,6 +34,7 @@ import { configureGoogleSignIn } from '@/services/googleConfig';
 import NavigationRoutes from './src/navigation/NavigationRoutes';
 import SpinnerLoader from '@/components/molecules/SmallLoader';
 import AppUpdateCheck from '@/components/molecules/AppUpdateCheck/AppUpdateCheck';
+import NoInternet from '@/components/molecules/NoInternet/NoInternet';
 import i18n from '@/locales/i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
 import { NotificationService } from '@/services/notification.service';
@@ -284,6 +285,7 @@ const App = () => {
                     </MenuProvider>
                     <Toast config={toastConfig} />
                     <AirbnbExportPopup ref={airbnbExportPopupRef} />
+                    <NoInternet />
                   </SafeAreaView>
                 </NavigationContainer>
               </BottomSheetModalProvider>

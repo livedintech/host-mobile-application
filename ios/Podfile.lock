@@ -3514,6 +3514,34 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-netinfo (12.0.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - react-native-restart (0.0.27):
     - React-Core
   - react-native-safe-area-context (5.7.0):
@@ -4983,6 +5011,7 @@ DEPENDENCIES:
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-keyboard-controller (from `../node_modules/react-native-keyboard-controller`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -5182,6 +5211,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keyboard-controller"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-restart:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
@@ -5382,6 +5413,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: 95e48fe2687e5a8280103085372fa62c2297c5d6
   react-native-keyboard-controller: 686d5aa0d02bfe7f83d733b98dd17de76463b01d
   react-native-maps: b5af575a371e57847c6d8490e726c08036f7c80f
+  react-native-netinfo: a0be8c77f8420a60ddf07eb87be1a36f02a1bd65
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: befb5404eb8a16fdc07fa2bebab3568ecabcbb8a
   react-native-video: f8e9788554c53a1852166cd119d6e7c324b16dfe

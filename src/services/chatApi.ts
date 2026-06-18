@@ -107,6 +107,27 @@ export const createInboxUnSnoozeApi = async (
 };
 
 // Chat Detail Api
+export type ChatBroadcastConfig = {
+  broadcaster: string;
+  key: string;
+  wsHost: string;
+  wsPort: number;
+  wssPort: number;
+  forceTLS: boolean;
+  auth_endpoint: string;
+  auth_header: string;
+};
+
+export const getChatBroadcastConfigApi = async (): Promise<ChatBroadcastConfig> => {
+  const { ok, response, data } = await apiService.get(
+    SERVICE_CONFIG_URLS.APP.GET_CHAT_BROADCAST_CONFIG,
+  );
+  if (ok) {
+    return (data as any).data;
+  }
+  throw new Error(response.message || 'Failed to fetch broadcast config');
+};
+
 export const getChatDetailApi = async (
   payload: createChatArchiveByConversationIdPayloadType,
 ) => {
