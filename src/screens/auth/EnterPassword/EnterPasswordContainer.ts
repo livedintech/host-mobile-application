@@ -18,6 +18,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
 import { usePhoneStore } from '@/store/usePhoneStore';
 import { NotificationService } from '@/services/notification.service';
+import { CrashlyticsService } from '@/services/crashlytics.service';
 
 // Validation Schema
 const signInSchema = yup.object().shape({
@@ -41,7 +42,7 @@ export default function useEnterPasswordContainer() {
     setPassword,
   } = useRememberMeStore();
   const { setToken, setUser } = useAuthStore();
-  const { clearPhoneData } = usePhoneStore()
+  const { clearPhoneData } = usePhoneStore();
 
   const { params } = useRoute();
   const { phone_number, phone_with_code, country_code } = params;
@@ -65,17 +66,18 @@ export default function useEnterPasswordContainer() {
     isIdle,
   } = useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginApi,
-    onSuccess: ({ data, message }) => {
+    onSuccess: async ({ data, message }) => {
       if (data?.is_first_login == 1) {
         navigate(NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD, {
           userId: data?.user?.id,
         });
         return;
       }
-      clearPhoneData()
+      clearPhoneData();
       if (data?.user?.signup_step === 'step_11') {
         setToken(data?.access_token);
-        setUser(data?.user);
+
+        await CrashlyticsService.setUserId(String(data?.user?.id));
         navigate(NavigationRoutes.APP_STACK.PAYMENT, {
           phone_number: data?.user?.phone,
           phone_with_code: data?.user?.phone_with_code,
@@ -84,14 +86,14 @@ export default function useEnterPasswordContainer() {
           email: data?.user?.email,
           full_name: data?.user?.name,
         });
-      }
-      else if (data?.user?.signup_step === 'step_2') {
+      } else if (data?.user?.signup_step === 'step_2') {
         setToken(data?.access_token);
         setUser(data?.user);
-      }
-      else {
+        await CrashlyticsService.setUserId(String(data?.user?.id));
+      } else {
         setToken(data?.access_token);
         setUser(data?.user);
+        await CrashlyticsService.setUserId(String(data?.user?.id));
       }
       Toast.show({ type: 'success', text1: message });
     },
@@ -100,7 +102,10 @@ export default function useEnterPasswordContainer() {
         gotToVerifyOTP();
         return;
       }
-      Toast.show({ type: 'error', text1: error?.message || i18n.t('auth.enter_password.login_failed') });
+      Toast.show({
+        type: 'error',
+        text1: error?.message || i18n.t('auth.enter_password.login_failed'),
+      });
     },
   });
 
@@ -119,19 +124,21 @@ export default function useEnterPasswordContainer() {
         phone_with_code: phone_with_code,
         country_code: country_code,
       });
-
     },
     onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || i18n.t('auth.enter_password.login_failed') });
+      Toast.show({
+        type: 'error',
+        text1: message || i18n.t('auth.enter_password.login_failed'),
+      });
     },
   });
 
   const onSubmit = async (data: any) => {
     const token = await NotificationService.getToken();
     const payload = {
-      country_code: country_code,        // previous screen se aya
-      phone_number: phone_number,        // previous screen se aya
-      phone_with_code: phone_with_code,  // previous screen se aya
+      country_code: country_code, // previous screen se aya
+      phone_number: phone_number, // previous screen se aya
+      phone_with_code: phone_with_code, // previous screen se aya
       password: data?.password,
       fcm_token: token,
       language: getStoredLanguage(),
