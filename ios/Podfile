@@ -24,6 +24,8 @@ target 'HostMobileApp' do
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseFirestoreInternal', :modular_headers => true
   pod 'FirebaseFirestore', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],

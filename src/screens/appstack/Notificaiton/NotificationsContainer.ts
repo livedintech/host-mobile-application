@@ -269,6 +269,7 @@ export default function useNotificationsContainer() {
       case 'listing_deleted':
         navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
         break;
+        case 'listing_exported_created':
       case 'listing_added':
       case 'listing_mapped':
       case 'listing_unmapped':
