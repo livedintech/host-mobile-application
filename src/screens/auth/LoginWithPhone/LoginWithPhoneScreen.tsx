@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { CrashlyticsService } from '@/services/crashlytics.service';
 
 
 const FIGMA_TEAL = Colors.PRIMARY_TEAL;
@@ -99,6 +100,19 @@ const LoginWithPhoneScreen = () => {
             fontSize={16}
             type="Regular"
           />
+
+          {__DEV__ && (
+            <AppButton
+              title="Test Crash"
+              onPress={() => CrashlyticsService.testCrash()}
+              backgroundColor={Colors.INDIAN_RED}
+              color={Colors.WHITE}
+              borderRadius={100}
+              mb={vs(15)}
+              fontSize={14}
+              type="Regular"
+            />
+          )}
 
           <View style={styles.separatorRow}>
             <View style={styles.line} />

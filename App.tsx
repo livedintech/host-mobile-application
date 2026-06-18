@@ -29,6 +29,7 @@ import AppUpdateCheck from '@/components/molecules/AppUpdateCheck/AppUpdateCheck
 import i18n from '@/locales/i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
 import { NotificationService } from '@/services/notification.service';
+import { CrashlyticsService } from '@/services/crashlytics.service';
 import { userEventService } from '@/services/userEventService';
 import AirbnbExportPopup from '@/components/molecules/AirbnbExportPopup/AirbnbExportPopup';
 import { airbnbExportPopupRef } from '@/services/airbnbExportPopupService';
@@ -127,6 +128,7 @@ const App = () => {
       console.log(`🌍 Country: Saudi Arabia`);
     } catch (error: any) {
       console.error('❌ App initialization failed:', error);
+      CrashlyticsService.recordError(error, 'AppInitializationError');
       setInitializationError(error.message || 'Initialization failed');
       setIsSDKInitialized(true);
     }
@@ -149,6 +151,7 @@ const App = () => {
       return success;
     } catch (error: any) {
       console.error('❌ MyFatoorah SDK initialization error:', error);
+      CrashlyticsService.recordError(error, 'MyFatoorahInitializationError');
       throw new Error('Failed to initialize payment system');
     }
   };
