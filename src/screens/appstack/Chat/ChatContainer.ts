@@ -28,10 +28,11 @@ import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useIsFocused } from '@react-navigation/native';
+import { subscribeToUserChatChannel } from '@/services/socketService';
 
 export const useChatContainer = () => {
   const { user } = useAuthStore();
-    const isFocused = useIsFocused();
+  const isFocused = useIsFocused();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%'], []);
   const [activeTab, setActiveTab] = useState<ChatStatus>('All');
@@ -113,7 +114,6 @@ export const useChatContainer = () => {
         limit: PAGE_SIZE,
         ...finalFilters,
       }),
-     refetchInterval: isFocused ? 4000 : false,
     initialPageParam: 1,
     getNextPageParam: lastPage =>
       lastPage?.current_page < lastPage?.total_pages
@@ -131,6 +131,22 @@ export const useChatContainer = () => {
     }
   }, [dataQuery.isSuccess]);
 
+  /* ------------------------------- REALTIME SOCKET ------------------------------ */
+
+  useEffect(() => {
+    if (!user?.id || !isFocused) return;
+
+    let unsubscribe: (() => void) | undefined;
+    subscribeToUserChatChannel(user.id, () => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.GET_CHAT_LIST] });
+    }).then(unsub => {
+      unsubscribe = unsub;
+    }).catch(error => {
+      console.warn('Chat socket subscription failed', error);
+    });
+
+    return () => unsubscribe?.();
+  }, [user?.id, isFocused]);
 
   /* --------------------------------- MUTATIONS --------------------------------- */
 
@@ -234,7 +250,6 @@ export const useChatContainer = () => {
     enabled: !!user?.id,
   });
 
-
   const transformedCities = citiesData.map(
     (item: { name: string; id: string }) => ({
       label: item.name,
@@ -242,23 +257,23 @@ export const useChatContainer = () => {
     })
   );
 
-const transformedListings =
-  listings?.data?.map((item: { title: string; listing_id: string }) => ({
-    label: item?.title || `Property #${item?.listing_id}`,
-    value: item?.listing_id ? String(item.listing_id) : '',
-  }))?.filter((item: { label: string; value: string }) => item.value !== '') || [];
-    
+  const transformedListings =
+    listings?.data
+      ?.map((item: { title: string; listing_id: string }) => ({
+        label: item?.title || `Property #${item?.listing_id}`,
+        value: item?.listing_id ? String(item.listing_id) : '',
+      }))
+      ?.filter((item: { label: string; value: string }) => item.value !== '') || [];
 
   const transformedApartmentTypes = [
     { label: i18n.t('common.dropdown.apartment'), value: 'apartment' },
   ];
 
-  // MENU OPTIONS
-const MENU_OPTIONS = [
-  { id: 'saved_replies', label: i18n.t('common.dropdown.saved_replies'), icon: 'expandIcon' },
-  { id: 'automation_template', label: i18n.t('common.dropdown.automation_template'), icon: 'automationTemplateIcon' },
-  { id: 'ai_auto_reply', label: i18n.t('common.dropdown.ai_auto_reply'), icon: 'aiAutoReplyIcon' },
-];
+  const MENU_OPTIONS = [
+    { id: 'saved_replies', label: i18n.t('common.dropdown.saved_replies'), icon: 'expandIcon' },
+    { id: 'automation_template', label: i18n.t('common.dropdown.automation_template'), icon: 'automationTemplateIcon' },
+    { id: 'ai_auto_reply', label: i18n.t('common.dropdown.ai_auto_reply'), icon: 'aiAutoReplyIcon' },
+  ];
 
   const handleOpenFilter = () => {
     bottomSheetRef.current?.present();
@@ -268,19 +283,17 @@ const MENU_OPTIONS = [
     bottomSheetRef.current?.close();
   };
 
-
+  const handlePopupMenu = (selectedId: string) => {
+    if (selectedId === 'saved_replies') {
+      navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES);
+    } else if (selectedId === 'automation_template') {
+      navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE);
+    } else if (selectedId === 'ai_auto_reply') {
+      navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES);
+    }
+  };
 
   /* -------------------------------- RETURN -------------------------------- */
-
-const handlePopupMenu = (selectedId: string) => {
-  if (selectedId === 'saved_replies') {
-    navigate(NavigationRoutes.APP_STACK.SAVED_REPLIES);
-  } else if (selectedId === 'automation_template') {
-    navigate(NavigationRoutes.APP_STACK.AUTOMATION_TEMPLATE);
-  } else if (selectedId === 'ai_auto_reply') {
-    navigate(NavigationRoutes.APP_STACK.MESSAGE_CATEGORIES);
-  }
-};
 
   return {
     data,
@@ -290,7 +303,7 @@ const handlePopupMenu = (selectedId: string) => {
     activeTab,
     setActiveTab,
     handleAction,
-    handlePopupMenu, // 👈 ye add karo
+    handlePopupMenu,
     filterAssigned,
     setFilterAssigned,
     handleResetAll,
@@ -306,8 +319,6 @@ const handlePopupMenu = (selectedId: string) => {
     handleCloseFilter,
     handleOpenFilter,
     bottomSheetRef,
-    snapPoints
+    snapPoints,
   };
-
-
 };
