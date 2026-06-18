@@ -37,7 +37,7 @@ const ExteriorPhotoScreen = () => {
 
   return (
     <PhotoUploadTemplate
-      step={!isEdit ? t('app.photo_upload.step_3') : undefined}
+      // step={!isEdit ? t('app.photo_upload.step_3') : undefined}
       screenTitle={t('app.photo_upload.exterior_title')}
       sectionTitle={t('app.photo_upload.exterior_section')}
       maxImages={10}

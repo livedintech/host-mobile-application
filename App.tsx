@@ -47,32 +47,38 @@ const App = () => {
   const [initializationError, setInitializationError] = useState<string | null>(
     null,
   );
-  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK);
+  const [safeAreaBg, setSafeAreaBg] = useState(Colors.WHITE);
   const appState = useRef<AppStateStatus>(AppState.currentState);
   const navStateRef = useRef<any>(null);
 
   useEffect(() => {
-    const initCrashlytics = async () => {
+    const bootstrap = async () => {
       await CrashlyticsService.init();
-
       CrashlyticsService.log('App Started');
+
+      await initializeApp();
+      configureGoogleSignIn();
+
+      const token = await setupNotifications();
+      if (token)
+        CrashlyticsService.log(
+          `FCM Token registered: ${token.slice(0, 20)}...`,
+        );
+
+      userEventService.logEvent('app_open', 'app');
     };
 
-    initCrashlytics();
-
-    initializeApp();
-    configureGoogleSignIn();
-    setupNotifications();
-
-    userEventService.logEvent('app_open', 'app');
+    bootstrap();
 
     const subscription = AppState.addEventListener(
       'change',
       (nextState: AppStateStatus) => {
         if (appState.current === 'active' && nextState === 'background') {
           userEventService.logEvent('app_background', 'app');
+          CrashlyticsService.log('App moved to background');
         } else if (appState.current !== 'active' && nextState === 'active') {
           userEventService.logEvent('app_open', 'app');
+          CrashlyticsService.log('App resumed to foreground');
         }
         appState.current = nextState;
       },
@@ -95,11 +101,12 @@ const App = () => {
     };
   }, []);
 
-  const setupNotifications = async () => {
+  const setupNotifications = async (): Promise<string | null> => {
     await NotificationService.requestUserPermission();
     await NotificationService.createNotificationListeners();
     const token = await NotificationService.getToken();
     console.log('🔔 FCM Token:', token);
+    return token;
   };
 
   const getActiveRouteName = (state: any): string => {
@@ -114,6 +121,7 @@ const App = () => {
 
   const handleNavigationStateChange = (state: any) => {
     navStateRef.current = state;
+
     try {
       const currentRouteName = getActiveRouteName(state);
 
@@ -126,9 +134,13 @@ const App = () => {
       }
 
       if (currentRouteName) {
+        CrashlyticsService.log(`Screen opened: ${currentRouteName}`);
+
         userEventService.logEvent('screen_view', currentRouteName);
       }
-    } catch (e) {}
+    } catch (e) {
+      CrashlyticsService.recordError(e as Error, 'NavigationStateChangeError');
+    }
   };
 
   const initializeApp = async () => {
@@ -238,8 +250,19 @@ const App = () => {
                   theme={MyTheme}
                   linking={linking}
                   onReady={() => {
-                    navStateRef.current =
-                      navigationRef.current?.getRootState() ?? null;
+                    const state = navigationRef.current?.getRootState();
+                    navStateRef.current = state ?? null;
+
+                    // Sync safe area color on first load
+                    if (state) {
+                      const currentRouteName = getActiveRouteName(state);
+                      setSafeAreaBg(
+                        currentRouteName ===
+                          NavigationRoutes.AUTH_STACK.ON_BOARDING
+                          ? Colors.GRAY_HINT
+                          : Colors.WHITE,
+                      );
+                    }
                   }}
                   onStateChange={handleNavigationStateChange}
                 >

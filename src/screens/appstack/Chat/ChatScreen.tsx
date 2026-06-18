@@ -50,6 +50,7 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
+import { vs } from 'react-native-size-matters';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -349,9 +350,9 @@ const ChatScreen = () => {
               {/* <View style={styles.headerLeft} /> */}
               <AppText
                 text={t('app.chat.title')}
-                type="Bold"
-                fontSize={28}
-                color={Colors.MIDNIGHT}
+                type="Medium"
+                fontSize={24}
+                color={Colors.BLACK}
               />
               <Menu>
                 <MenuTrigger
@@ -557,8 +558,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Metrics.scale(22),
-    paddingTop: Metrics.verticalScale(16),
+    // paddingTop: Metrics.verticalScale(16),
     paddingBottom: Metrics.verticalScale(30),
+    marginTop: vs(15)
   },
   headerLeft: {
     width: 40,

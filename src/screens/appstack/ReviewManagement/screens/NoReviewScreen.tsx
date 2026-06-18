@@ -20,7 +20,7 @@ const NoReviewScreen = ({
       <View style={styles.content}>
         {/* Using the noReview icon/image path as requested */}
         <View style={styles.imageContainer}>
-          <Svgicons path="noReview" size={250} />
+          <Svgicons path="noReview" size={280} />
         </View>
 
         <AppText

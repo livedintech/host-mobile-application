@@ -27,10 +27,10 @@ const MessageCategoriesScreen = () => {
     isFetching,
     refetch,
     updatingId, // <-- Grab the specific ID being updated
-    navigation
+    navigation,
   } = MessageCategoriesContainer();
 
-          const { user } = useAuthStore();
+  const { user } = useAuthStore();
   if (!user?.has_listing) {
     return <NoListingScreen />;
   }
@@ -53,7 +53,12 @@ const MessageCategoriesScreen = () => {
         refreshing={isFetching}
         onRefresh={refetch}
       >
-        <AppText text={t('app.categories.title')} fontSize={32} type="Bold" mb={12} />
+        <AppText
+          text={t('app.categories.title')}
+          fontSize={32}
+          type="Bold"
+          mb={12}
+        />
         <AppText
           text={t('app.categories.description')}
           fontSize={14}
@@ -62,7 +67,7 @@ const MessageCategoriesScreen = () => {
           mb={24}
         />
 
-        {categories.map((item) => (
+        {categories.map(item => (
           <GlassCard key={item.id} style={styles.card}>
             <View style={styles.topRow}>
               <AppText text={item.category_name} fontSize={17} type="Bold" />
@@ -73,7 +78,7 @@ const MessageCategoriesScreen = () => {
                   onPress={() =>
                     navigation.navigate(
                       NavigationRoutes.APP_STACK.CATEGORY_CUSTOM_INSTRUCTIONS,
-                      { title: item.category_name , category_id: item.id}
+                      { title: item.category_name, category_id: item.id },
                     )
                   }
                 >
@@ -98,7 +103,9 @@ const MessageCategoriesScreen = () => {
                   />
                 </AppText>
                 <AppText
-                  text={t('app.categories.message_percentage', { percentage: item.message_percentage })}
+                  text={t('app.categories.message_percentage', {
+                    percentage: item.message_percentage,
+                  })}
                   fontSize={13}
                   color={Colors.BLACK}
                   mt={2}
@@ -110,7 +117,7 @@ const MessageCategoriesScreen = () => {
                 value={item.status}
                 isLoading={updatingId === item.id}
                 disabled={updatingId !== null} // Disables other switches while one is updating
-                onToggle={(nextValue) => toggleSwitch(item.id, nextValue)}
+                onToggle={nextValue => toggleSwitch(item.id, nextValue)}
               />
             </View>
           </GlassCard>
@@ -121,14 +128,43 @@ const MessageCategoriesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: Metrics.verticalScale(50) },
-  scrollContent: { paddingHorizontal: Metrics.scale(24), paddingBottom: Metrics.verticalScale(40) },
-  card: { padding: Metrics.scale(16), borderRadius: 24, marginBottom: Metrics.verticalScale(14), width: '100%' },
-  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Metrics.verticalScale(8) },
-  bottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
+  container: { flex: 1, paddingTop: Metrics.verticalScale(40) },
+  scrollContent: {
+    paddingHorizontal: Metrics.scale(24),
+    paddingBottom: Metrics.verticalScale(40),
+  },
+  card: {
+    padding: Metrics.scale(16),
+    borderRadius: 24,
+    marginBottom: Metrics.verticalScale(14),
+    width: '100%',
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Metrics.verticalScale(8),
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
   statsContainer: { flex: 1 },
-  pencilGlassWrapper: { padding: 0, borderRadius: 8, backgroundColor: 'rgba(255, 255, 255, 0.4)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.6)', width: Metrics.scale(40) },
-  editIcon: { width: Metrics.scale(40), height: Metrics.scale(40), justifyContent: 'center', alignItems: 'center' },
+  pencilGlassWrapper: {
+    padding: 0,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    width: Metrics.scale(40),
+  },
+  editIcon: {
+    width: Metrics.scale(40),
+    height: Metrics.scale(40),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default MessageCategoriesScreen;
