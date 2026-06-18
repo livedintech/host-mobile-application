@@ -904,7 +904,10 @@
       "unknown_guest": "Unknown",
       "no_message_preview": "No message",
       "not_available": "N/A",
-      "guests": "guests"
+      "guests": "guests",
+      "media_photo": "Photo",
+      "media_video": "Video",
+      "media_document": "Document"
     },
     "subscription": {
       "title": "Property Cost",
@@ -1048,6 +1051,10 @@
       "description": "A new version of Livedin is available. Please update to continue using the app with the latest features and improvements.",
       "update_btn": "Update Now",
       "mandatory": "You must update to continue using the app."
+    },
+    "no_internet": {
+      "title": "No Internet Connection",
+      "description": "Please check your internet connection. The app will resume automatically once you're back online."
     },
     "booking_details": {
       "title": "Reservation Details",

@@ -159,6 +159,12 @@ export const useChatContainer = () => {
   useEffect(() => {
     if (!conversation_id || !isFocused) return;
 
+    // Re-sync on every focus in case a socket event was missed while away
+    // (app backgrounded, brief disconnect, etc) — same effect as pull-to-refresh.
+    queryClient.invalidateQueries({
+      queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, conversation_id],
+    });
+
     let unsubscribe: (() => void) | undefined;
     subscribeToChatThreadChannel(conversation_id, () => {
       queryClient.invalidateQueries({

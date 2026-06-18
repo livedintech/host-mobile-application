@@ -53,6 +53,14 @@ export const CHAT_SOCKET_EVENTS = {
   THREAD_RECEIVED: 'thread.received',
 };
 
+// Pusher channels don't replay events missed while disconnected (network blip,
+// app backgrounded, etc). Re-running `onUpdate` whenever the socket (re)connects
+// closes that gap so a reconnect always re-syncs instead of silently going stale.
+const bindReconnectSync = (client: Pusher, onUpdate: () => void) => {
+  client.connection.bind('connected', onUpdate);
+  return () => client.connection.unbind('connected', onUpdate);
+};
+
 export const subscribeToUserChatChannel = async (
   userId: number,
   onUpdate: () => void,
@@ -62,10 +70,12 @@ export const subscribeToUserChatChannel = async (
 
   channel.bind(CHAT_SOCKET_EVENTS.MESSAGE_RECEIVED, onUpdate);
   channel.bind(CHAT_SOCKET_EVENTS.THREAD_RECEIVED, onUpdate);
+  const unbindReconnectSync = bindReconnectSync(client, onUpdate);
 
   return () => {
     channel.unbind(CHAT_SOCKET_EVENTS.MESSAGE_RECEIVED, onUpdate);
     channel.unbind(CHAT_SOCKET_EVENTS.THREAD_RECEIVED, onUpdate);
+    unbindReconnectSync();
     client.unsubscribe(`private-App.Models.User.${userId}`);
   };
 };
@@ -79,10 +89,12 @@ export const subscribeToChatThreadChannel = async (
 
   channel.bind(CHAT_SOCKET_EVENTS.MESSAGE_RECEIVED, onUpdate);
   channel.bind(CHAT_SOCKET_EVENTS.MESSAGE_READ, onUpdate);
+  const unbindReconnectSync = bindReconnectSync(client, onUpdate);
 
   return () => {
     channel.unbind(CHAT_SOCKET_EVENTS.MESSAGE_RECEIVED, onUpdate);
     channel.unbind(CHAT_SOCKET_EVENTS.MESSAGE_READ, onUpdate);
+    unbindReconnectSync();
     client.unsubscribe(`messages.${conversationId}`);
   };
 };

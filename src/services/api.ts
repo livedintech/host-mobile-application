@@ -1,4 +1,5 @@
-import { QueryClient } from "@tanstack/react-query"
+import { QueryClient, onlineManager } from "@tanstack/react-query"
+import NetInfo from "@react-native-community/netinfo"
 
 export const API_CONFIG = {
   GET: 'get',
@@ -65,4 +66,12 @@ export const queryClient = new QueryClient({
       },
     },
   },
+})
+
+// Lets react-query know the real connectivity state, so queries auto-refetch
+// (refetchOnReconnect is on by default) once the internet comes back.
+onlineManager.setEventListener(setOnline => {
+  return NetInfo.addEventListener(state => {
+    setOnline(!!state.isConnected && state.isInternetReachable !== false)
+  })
 })

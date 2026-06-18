@@ -113,6 +113,28 @@ const SwipeActions = ({
   );
 };
 
+const MEDIA_PREVIEW = {
+  image: { icon: 'imageIcon', labelKey: 'app.chat.media_photo' },
+  video: { icon: 'videoIcon', labelKey: 'app.chat.media_video' },
+  document: { icon: 'docIcon', labelKey: 'app.chat.media_document' },
+} as const;
+
+// When the last message has no text (media-only), show an icon + label
+// instead of the misleading "No message" fallback.
+const getLastMessagePreview = (item: ChatMessage, t: (key: string) => string) => {
+  if (item.last_message) {
+    return { icon: undefined, text: item.last_message };
+  }
+
+  const mediaType = item.last_message_media?.type as keyof typeof MEDIA_PREVIEW | undefined;
+  const mediaPreview = mediaType && MEDIA_PREVIEW[mediaType];
+  if (mediaPreview) {
+    return { icon: mediaPreview.icon, text: t(mediaPreview.labelKey) };
+  }
+
+  return { icon: undefined, text: t('app.chat.no_message_preview') };
+};
+
 type ChatRowProps = {
   item: ChatMessage;
   openSwipeableRef: { current: SwipeableMethods | null };
@@ -139,6 +161,7 @@ const ChatRow = ({
   const swipeableRef = useRef<SwipeableMethods>(null);
   const { i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
+  const lastMessagePreview = getLastMessagePreview(item, t);
 
   return (
     <Swipeable
@@ -206,13 +229,22 @@ const ChatRow = ({
             />
           </View>
           <View style={styles.infoBottom}>
-            <AppText
-              text={item.last_message || t('app.chat.no_message_preview')}
-              fontSize={13}
-              color={Colors.GREY_SHADOW}
-              numberOfLines={1}
-              style={{ flex: 0.85 }}
-            />
+            <View style={styles.lastMessagePreview}>
+              {lastMessagePreview.icon && (
+                <Svgicons
+                  path={lastMessagePreview.icon}
+                  size={14}
+                  color={Colors.GREY_SHADOW}
+                />
+              )}
+              <AppText
+                text={lastMessagePreview.text}
+                fontSize={13}
+                color={Colors.GREY_SHADOW}
+                numberOfLines={1}
+                style={{ flex: 1 }}
+              />
+            </View>
             {item.unread_count ? (
               <View style={styles.unreadBadge}>
                 <AppText
@@ -663,6 +695,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  lastMessagePreview: {
+    flex: 0.85,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   unreadBadge: {
     backgroundColor: Colors.TEAL_PRIMARY_ALT,
