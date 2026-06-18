@@ -258,14 +258,8 @@ const styles = StyleSheet.create({
     marginVertical: Metrics.verticalScale(30),
   },
   footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: Metrics.scale(24),
-    paddingBottom: Metrics.verticalScale(40),
-    paddingTop: Metrics.verticalScale(10),
-    backgroundColor: 'transparent',
+    paddingHorizontal: Metrics.scale(22),
+    paddingVertical: Metrics.verticalScale(16),
   },
 });
 

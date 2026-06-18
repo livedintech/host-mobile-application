@@ -1410,7 +1410,7 @@
       "add_listing": "إضافة عقار جديد",
       "create_listing": "إنشاء عقار جديد",
       "listed": "منشور",
-      "no_image": "لا توجد صورة",
+      "no_image": "لم تتم إضافة صورة",
       "no_listings": "لا توجد قوائم",
       "completed_percentage": "مكتمل {{percentage}}٪"
     },

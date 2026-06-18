@@ -2,7 +2,15 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { processColor, StatusBar, View, StyleSheet, AppState, AppStateStatus, BackHandler } from 'react-native';
+import {
+  processColor,
+  StatusBar,
+  View,
+  StyleSheet,
+  AppState,
+  AppStateStatus,
+  BackHandler,
+} from 'react-native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -37,34 +45,56 @@ import { airbnbExportPopupRef } from '@/services/airbnbExportPopupService';
 
 const App = () => {
   const [isSDKInitialized, setIsSDKInitialized] = useState(false);
-  const [initializationError, setInitializationError] = useState<string | null>(null);
-  const [safeAreaBg, setSafeAreaBg] = useState(Colors.BLACK);
+  const [initializationError, setInitializationError] = useState<string | null>(
+    null,
+  );
+  const [safeAreaBg, setSafeAreaBg] = useState(Colors.WHITE);
   const appState = useRef<AppStateStatus>(AppState.currentState);
   const navStateRef = useRef<any>(null);
 
   useEffect(() => {
-    initializeApp();
-    configureGoogleSignIn();
-    setupNotifications();
+    const bootstrap = async () => {
+      await CrashlyticsService.init();
+      CrashlyticsService.log('App Started');
 
-    userEventService.logEvent('app_open', 'app');
+      await initializeApp();
+      configureGoogleSignIn();
 
-    const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
-      if (appState.current === 'active' && nextState === 'background') {
-        userEventService.logEvent('app_background', 'app');
-      } else if (appState.current !== 'active' && nextState === 'active') {
-        userEventService.logEvent('app_open', 'app');
-      }
-      appState.current = nextState;
-    });
+      const token = await setupNotifications();
+      if (token)
+        CrashlyticsService.log(
+          `FCM Token registered: ${token.slice(0, 20)}...`,
+        );
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (navigationRef.current?.canGoBack()) {
-        navigationRef.current?.goBack();
-        return true;
-      }
-      return false;
-    });
+      userEventService.logEvent('app_open', 'app');
+    };
+
+    bootstrap();
+
+    const subscription = AppState.addEventListener(
+      'change',
+      (nextState: AppStateStatus) => {
+        if (appState.current === 'active' && nextState === 'background') {
+          userEventService.logEvent('app_background', 'app');
+          CrashlyticsService.log('App moved to background');
+        } else if (appState.current !== 'active' && nextState === 'active') {
+          userEventService.logEvent('app_open', 'app');
+          CrashlyticsService.log('App resumed to foreground');
+        }
+        appState.current = nextState;
+      },
+    );
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (navigationRef.current?.canGoBack()) {
+          navigationRef.current?.goBack();
+          return true;
+        }
+        return false;
+      },
+    );
 
     return () => {
       subscription.remove();
@@ -72,11 +102,12 @@ const App = () => {
     };
   }, []);
 
-  const setupNotifications = async () => {
+  const setupNotifications = async (): Promise<string | null> => {
     await NotificationService.requestUserPermission();
     await NotificationService.createNotificationListeners();
     const token = await NotificationService.getToken();
     console.log('🔔 FCM Token:', token);
+    return token;
   };
 
   const getActiveRouteName = (state: any): string => {
@@ -91,6 +122,7 @@ const App = () => {
 
   const handleNavigationStateChange = (state: any) => {
     navStateRef.current = state;
+
     try {
       const currentRouteName = getActiveRouteName(state);
 
@@ -103,10 +135,13 @@ const App = () => {
       }
 
       if (currentRouteName) {
+        CrashlyticsService.log(`Screen opened: ${currentRouteName}`);
+
         userEventService.logEvent('screen_view', currentRouteName);
       }
-
-    } catch (e) { }
+    } catch (e) {
+      CrashlyticsService.recordError(e as Error, 'NavigationStateChangeError');
+    }
   };
 
   const initializeApp = async () => {
@@ -146,7 +181,9 @@ const App = () => {
       console.log('✅ MyFatoorah SDK initialized:', success);
 
       if (isProduction() && __DEV__) {
-        console.warn('⚠️ WARNING: Using PRODUCTION environment in development mode!');
+        console.warn(
+          '⚠️ WARNING: Using PRODUCTION environment in development mode!',
+        );
       }
 
       return success;
@@ -188,7 +225,10 @@ const App = () => {
   }
 
   if (initializationError) {
-    console.warn('⚠️ Payment system may not work properly:', initializationError);
+    console.warn(
+      '⚠️ Payment system may not work properly:',
+      initializationError,
+    );
   }
 
   const MyTheme = {
@@ -210,11 +250,32 @@ const App = () => {
                   ref={navigationRef}
                   theme={MyTheme}
                   linking={linking}
-                  onReady={() => { navStateRef.current = navigationRef.current?.getRootState() ?? null; }}
-                  onStateChange={handleNavigationStateChange}>
-                  <SafeAreaView style={{ flex: 1, backgroundColor: safeAreaBg }}>
+                  onReady={() => {
+                    const state = navigationRef.current?.getRootState();
+                    navStateRef.current = state ?? null;
+
+                    // Sync safe area color on first load
+                    if (state) {
+                      const currentRouteName = getActiveRouteName(state);
+                      setSafeAreaBg(
+                        currentRouteName ===
+                          NavigationRoutes.AUTH_STACK.ON_BOARDING
+                          ? Colors.GRAY_HINT
+                          : Colors.WHITE,
+                      );
+                    }
+                  }}
+                  onStateChange={handleNavigationStateChange}
+                >
+                  <SafeAreaView
+                    style={{ flex: 1, backgroundColor: safeAreaBg }}
+                  >
                     <StatusBar
-                      barStyle={safeAreaBg === Colors.BLACK ? 'light-content' : 'dark-content'}
+                      barStyle={
+                        safeAreaBg === Colors.BLACK
+                          ? 'light-content'
+                          : 'dark-content'
+                      }
                       backgroundColor={safeAreaBg}
                       translucent={safeAreaBg === Colors.BLACK}
                     />

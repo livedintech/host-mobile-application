@@ -15,6 +15,7 @@ import Metrics from '@/utility/Metrics';
 import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const DescribeHouseScreen = () => {
   const {
@@ -59,10 +60,19 @@ const DescribeHouseScreen = () => {
             <ButtonView onPress={() => goBack()}>
               <Svgicons path="back" size={40} />
             </ButtonView>
-            {!isEdit && <CircularProgress percentage={40} size={48} strokeWidth={4} />}
+            {!isEdit && (
+              <CircularProgress percentage={40} size={48} strokeWidth={4} />
+            )}
           </View>
 
-          <AppText text={t('app.describe_house.title')} fontSize={32} type="Bold" mt={35} mb={28} pr={60} />
+          <AppText
+            text={t('app.describe_house.title')}
+            fontSize={32}
+            type="Bold"
+            mt={35}
+            mb={28}
+            pr={60}
+          />
           <AppText
             text={t('app.describe_house.subtitle')}
             fontSize={12}
@@ -106,43 +116,23 @@ const DescribeHouseScreen = () => {
         </KeyboardAwareScrollView>
 
         {/* Footer */}
-        <View style={styles.footer}>
-          {!isEdit && (
-            <>
-              <AppButton
-                title={t('app.describe_house.next')}
-                onPress={handleSubmit(onNext)}
-                loading={isLoading}
-                variant='secondary'
-              />
-              <AppButton
-                title={t('app.describe_house.save_exit')}
-                onPress={handleSubmit(onSaveExit)}
-                mt={15}
-                loading={isLoading}
-                disabled={isLoading}
-              />
-            </>
-          )}
-
-          {isEdit && (
-            <>
-              {/* ✅ Export button — sirf edit mode mein */}
-              <AppButton
-                title={t('app.describe_house.export')}
-                onPress={handleExport}
-                variant='secondary'
-                mb={12}
-                disabled={isLoading}
-              />
-              <AppButton
-                title={t('app.describe_house.save_exit')}
-                onPress={handleSubmit(onSaveExit)}
-                loading={isLoading}
-              />
-            </>
-          )}
-        </View>
+        <FormFooterActions
+          // If Edit, show Export; If not, show Next
+          primaryTitle={
+            isEdit
+              ? t('app.describe_house.export')
+              : t('app.describe_house.next')
+          }
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+          // Secondary Action (Save & Exit)
+          secondaryTitle={t('app.describe_house.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
 
         {/* ✅ Export Modal */}
         <ExportOtaSheet
@@ -158,7 +148,6 @@ const DescribeHouseScreen = () => {
           listingOptions={listingOptions}
           isPending={isPendingExporting}
         />
-
       </View>
     </BGImage>
   );
@@ -181,6 +170,11 @@ const styles = StyleSheet.create({
   },
   descriptionWrapper: { marginTop: 25 },
   footer: { bottom: 0, right: 0, width: '100%', paddingBottom: 35 },
+  footerOverride: {
+    width: '100%',
+    paddingBottom: 35,
+    paddingHorizontal: 0, // resetting to adjust with the screen layout padding
+  },
 });
 
 export default DescribeHouseScreen;

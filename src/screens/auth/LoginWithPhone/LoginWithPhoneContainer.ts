@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   checkUserisExistFormValues,
-  checkUserisExistSchema
+  checkUserisExistSchema,
 } from '@/validation/auth/authSchemas';
 import { useMutation } from '@tanstack/react-query';
 import {
   CheckUserExistPayload,
-  CheckUserExistResponse
+  CheckUserExistResponse,
 } from '@/types/api/authTypes';
 import { CheckUserApi, resendOtpApi, socialAuthApi } from '@/services/authApi'; // Import resendOtpApi
 import Toast from 'react-native-toast-message';
@@ -17,18 +17,29 @@ import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useState, useRef } from 'react';
 import { usePhoneStore } from '@/store/usePhoneStore';
 import { useRememberMeStore } from '@/store/useRememberMeStore';
-import { GoogleSignin, isSuccessResponse, statusCodes } from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  isSuccessResponse,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import { Alert } from 'react-native';
 import { useAuthStore } from '@/store/useAuthStore';
 import appleAuth from '@invertase/react-native-apple-authentication';
 
 import { storage } from '@/storage/mmkv';
+import { CrashlyticsService } from '@/services/crashlytics.service';
 
 export default function useLoginWithPhoneContainer() {
-  const { cca2, callingCode, phoneNumber: storePhoneNo, rememberMe, setRememberMe } = useRememberMeStore();
-  const setPhoneData = usePhoneStore((state) => state.setPhoneData);
+  const {
+    cca2,
+    callingCode,
+    phoneNumber: storePhoneNo,
+    rememberMe,
+    setRememberMe,
+  } = useRememberMeStore();
+  const setPhoneData = usePhoneStore(state => state.setPhoneData);
   const [phoneNumber, setphoneNumber] = useState('');
-  const { setToken, setUser } = useAuthStore()
+  const { setToken, setUser } = useAuthStore();
   const isDeletedUserFlow = useRef(false);
 
   const {
@@ -65,7 +76,7 @@ export default function useLoginWithPhoneContainer() {
         type: 'error',
         text1: error?.message || 'Failed to send verification code',
       });
-    }
+    },
   });
 
   // --- 2. Mutation to Check User Existence ---
@@ -124,7 +135,9 @@ export default function useLoginWithPhoneContainer() {
   // ----------------- Google Sign In -----------------
   const handleGoogleSignIn = async () => {
     try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
       await GoogleSignin.signOut();
       const response = await GoogleSignin.signIn();
 
@@ -138,6 +151,8 @@ export default function useLoginWithPhoneContainer() {
         });
         setToken(result?.access_token);
         setUser(result?.user);
+        await CrashlyticsService.setUserId(String(result?.user?.id));
+
         Toast.show({
           type: 'success',
           text1: result?.message || i18n.t('auth.login.logged_in_success'),
@@ -154,16 +169,16 @@ export default function useLoginWithPhoneContainer() {
   const handleAppleSignIn = async () => {
     try {
       if (!appleAuth.isSupported) {
-        Alert.alert(i18n.t('auth.login.apple_signin_title'), i18n.t('auth.login.apple_signin_unsupported'));
+        Alert.alert(
+          i18n.t('auth.login.apple_signin_title'),
+          i18n.t('auth.login.apple_signin_unsupported'),
+        );
         return;
       }
 
       const appleAuthResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
-        requestedScopes: [
-          appleAuth.Scope.FULL_NAME,
-          appleAuth.Scope.EMAIL,
-        ],
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
 
       const credentialState = await appleAuth.getCredentialStateForUser(
@@ -171,7 +186,10 @@ export default function useLoginWithPhoneContainer() {
       );
 
       if (credentialState !== appleAuth.State.AUTHORIZED) {
-        Alert.alert(i18n.t('auth.login.apple_signin_title'), i18n.t('auth.login.apple_signin_auth_failed'));
+        Alert.alert(
+          i18n.t('auth.login.apple_signin_title'),
+          i18n.t('auth.login.apple_signin_auth_failed'),
+        );
         return;
       }
 
@@ -179,7 +197,9 @@ export default function useLoginWithPhoneContainer() {
 
       let email = appleAuthResponse.email || '';
       let name = appleAuthResponse.fullName
-        ? `${appleAuthResponse.fullName.givenName || ''} ${appleAuthResponse.fullName.familyName || ''}`.trim()
+        ? `${appleAuthResponse.fullName.givenName || ''} ${
+            appleAuthResponse.fullName.familyName || ''
+          }`.trim()
         : '';
 
       if (email) {
@@ -214,14 +234,17 @@ export default function useLoginWithPhoneContainer() {
 
       setToken(result?.access_token);
       setUser(result?.user);
+      await CrashlyticsService.setUserId(String(result?.user?.id));
       Toast.show({
         type: 'success',
         text1: result?.message || i18n.t('auth.login.logged_in_success'),
       });
-
     } catch (error: any) {
       if (error.code === '1000' || error.code === 'ERR_CANCELED') return;
-      Alert.alert(i18n.t('auth.login.apple_signin_error_title'), error?.message || i18n.t('common.toast.something_went_wrong'));
+      Alert.alert(
+        i18n.t('auth.login.apple_signin_error_title'),
+        error?.message || i18n.t('common.toast.something_went_wrong'),
+      );
     }
   };
 
@@ -236,6 +259,6 @@ export default function useLoginWithPhoneContainer() {
     rememberMe,
     setRememberMe,
     handleGoogleSignIn,
-    handleAppleSignIn
+    handleAppleSignIn,
   };
 }

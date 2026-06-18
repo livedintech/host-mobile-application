@@ -101,18 +101,18 @@ const LoginWithPhoneScreen = () => {
             type="Regular"
           />
 
-          {__DEV__ && (
-            <AppButton
+          {/* {__DEV__ && ( */}
+            {/* <AppButton
               title="Test Crash"
               onPress={() => CrashlyticsService.testCrash()}
               backgroundColor={Colors.INDIAN_RED}
+              mb={vs(15)}
               color={Colors.WHITE}
               borderRadius={100}
-              mb={vs(15)}
               fontSize={14}
               type="Regular"
-            />
-          )}
+            /> */}
+          {/* )} */}
 
           <View style={styles.separatorRow}>
             <View style={styles.line} />

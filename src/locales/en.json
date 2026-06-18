@@ -1412,7 +1412,7 @@
       "add_listing": "Add New Property",
       "create_listing": "Create New Property",
       "listed": "Listed",
-      "no_image": "No Image Found",
+      "no_image": "No Image Added",
       "no_listings": "No properties found",
       "completed_percentage": "{{percentage}}% Completed"
     },

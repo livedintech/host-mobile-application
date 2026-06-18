@@ -2,8 +2,9 @@ import { create, ApisauceConfig, ApiResponse } from 'apisauce';
 import Utils from '../utility/Utils';
 import { CONTENT_TYPE, HTTP_STATUS } from './api';
 import { useAuthStore } from '@/store/useAuthStore';
-import { BASE_URL_DEV,BASE_URL_LIVE } from '@env';
+import { BASE_URL_DEV, BASE_URL_LIVE } from '@env';
 import { getStoredLanguage } from '@/locales/i18n/i18n';
+import { CrashlyticsService } from './crashlytics.service';
 
 export const BASE_URL = BASE_URL_LIVE;
 
@@ -33,12 +34,13 @@ interface ApiResult<T = any> {
 async function get<T = any>(
   url: string,
   queryParams?: Record<string, any>,
-  config?: Partial<ApisauceConfig>
+  config?: Partial<ApisauceConfig>,
 ): Promise<ApiResult<T>> {
   try {
     const response = await apiSauceInstance.get<T>(url, queryParams, config);
     return handleResponse<T>(response);
   } catch (error) {
+    CrashlyticsService.log(`API Failed: GET ${url}`);
     return handleError(error);
   }
 }
@@ -49,12 +51,13 @@ async function get<T = any>(
 async function post<T = any>(
   url: string,
   data: any,
-  config: Partial<ApisauceConfig> = {}
+  config: Partial<ApisauceConfig> = {},
 ): Promise<ApiResult<T>> {
   try {
     const response = await apiSauceInstance.post<T>(url, data, config);
     return handleResponse<T>(response);
   } catch (error) {
+    CrashlyticsService.log(`API Failed: POST ${url}`);
     return handleError(error);
   }
 }
@@ -65,7 +68,7 @@ async function post<T = any>(
 async function put<T = any>(
   url: string,
   data: Record<string, any>,
-  config?: Partial<ApisauceConfig>
+  config?: Partial<ApisauceConfig>,
 ): Promise<ApiResult<T>> {
   try {
     const response = await apiSauceInstance.put<T>(url, data, config);
@@ -81,7 +84,7 @@ async function put<T = any>(
 async function patch<T = any>(
   url: string,
   data: Record<string, any>,
-  config?: Partial<ApisauceConfig>
+  config?: Partial<ApisauceConfig>,
 ): Promise<ApiResult<T>> {
   try {
     const response = await apiSauceInstance.patch<T>(url, data, config);
@@ -97,7 +100,7 @@ async function patch<T = any>(
 async function deleteReq<T = any>(
   url: string,
   queryParams?: Record<string, any>,
-  config?: Partial<ApisauceConfig>
+  config?: Partial<ApisauceConfig>,
 ): Promise<ApiResult<T>> {
   try {
     const response = await apiSauceInstance.delete<T>(url, queryParams, config);
@@ -117,9 +120,21 @@ function handleResponse<T = any>(response: ApiResponse<any>): ApiResult<T> {
     ok: response.ok,
     status: response.status,
     response: {
-      code: Utils.getValue(fullResponseData, 'response.code', HTTP_STATUS.SERVER_ERROR),
-      message: Utils.getValue(fullResponseData, 'message', 'Something went wrong'),
-      errorCode: Utils.getValue(fullResponseData, 'response.errorCode', HTTP_STATUS.BAD_REQUEST),
+      code: Utils.getValue(
+        fullResponseData,
+        'response.code',
+        HTTP_STATUS.SERVER_ERROR,
+      ),
+      message: Utils.getValue(
+        fullResponseData,
+        'message',
+        'Something went wrong',
+      ),
+      errorCode: Utils.getValue(
+        fullResponseData,
+        'response.errorCode',
+        HTTP_STATUS.BAD_REQUEST,
+      ),
     },
     data: null,
   };
@@ -170,7 +185,12 @@ function handleResponse<T = any>(response: ApiResponse<any>): ApiResult<T> {
  */
 function handleError(error: any): ApiResult {
   console.error('API Error:', error);
-  
+
+  CrashlyticsService.recordError(
+    error instanceof Error ? error : new Error(JSON.stringify(error)),
+    'ApiRequestError',
+  );
+
   return {
     ok: false,
     status: undefined,
@@ -186,20 +206,20 @@ function handleError(error: any): ApiResult {
 /**
  * Inject headers in all requests with proper error handling
  */
-apiSauceInstance.addRequestTransform((request) => {
+apiSauceInstance.addRequestTransform(request => {
   try {
     const token = useAuthStore.getState()?.token;
-    
+
     // Initialize headers if not present
     request.headers = request.headers || {};
-    
+
     // Add Authorization header if token exists
     if (token) {
       request.headers['Authorization'] = `Bearer ${token}`;
     }
 
     request.headers['Accept-Language'] = getStoredLanguage();
-    
+
     // Only set JSON header if body is not FormData
     if (!(request.data instanceof FormData)) {
       request.headers['Content-Type'] = CONTENT_TYPE.JSON;
@@ -216,7 +236,7 @@ apiSauceInstance.addRequestTransform((request) => {
  * Response interceptor for logging (optional, remove in production)
  */
 if (__DEV__) {
-  apiSauceInstance.addResponseTransform((response) => {
+  apiSauceInstance.addResponseTransform(response => {
     console.log('API Response:', {
       url: response.config?.url,
       status: response.status,

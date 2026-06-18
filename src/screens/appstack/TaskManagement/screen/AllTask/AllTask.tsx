@@ -39,6 +39,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 import AllTaskSkeleton from '@/components/Skeletons/AllTaskSkeleton';
+import { vs } from 'react-native-size-matters';
 
 const tabs = [
   { key: 'todo', labelKey: 'app.task_management.tabs.todo' },
@@ -62,9 +63,10 @@ const ListHeader = React.memo(
     <View style={styles.header}>
       <AppText
         text={t('app.task_management.title')}
-        fontSize={26}
+        fontSize={24}
         type="Medium"
         mb={24}
+        color={Colors.BLACK}
       />
       <View style={styles.filterRow}>
         <View style={styles.tabScrollWrapper}>
@@ -430,7 +432,7 @@ const styles = StyleSheet.create({
     paddingTop: Metrics.verticalScale(20),
     paddingBottom: Metrics.verticalScale(260),
   },
-  header: { marginBottom: 20 },
+  header: { marginBottom: 20, marginTop: vs(15) },
   filterRow: {
     flexDirection: 'row',
     alignItems: 'center',
