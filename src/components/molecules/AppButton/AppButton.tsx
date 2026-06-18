@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, ViewStyle, TextStyle, View, StyleProp } from 'react-native';
+import { StyleSheet, ViewStyle, TextStyle, View, StyleProp } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { ButtonProps } from './ButtonProps';
@@ -8,6 +8,7 @@ import { Colors } from '@/theme/colors';
 import ButtonView from './ButtonView';
 import AppText from '../AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import DotsLoader from './DotsLoader';
 
 type ButtonVariant = 'primary' | 'secondary';
 
@@ -52,6 +53,8 @@ const AppButton = ({
         paddingRight: pr !== undefined ? Metrics.scale(pr) : px !== undefined ? Metrics.scale(px) : undefined,
     };
 
+    const contentMinHeight = Metrics.generatedFontSize(fontSize) * 1.3;
+
     const isPrimary = variant === 'primary';
     const txtColor = color || (disabled ? '#0000005E' : isPrimary ? Colors.WHITE : Colors.BLACK);
 
@@ -87,33 +90,35 @@ const AppButton = ({
             onPress={onPress}
             disabled={disabled || loading}
         >
-            {loading ? (
-                <ActivityIndicator color={txtColor} />
-            ) : (
-                <>
-                    {leftIcon && (
-                        <View style={{ marginRight: 8 }}>
-                            <Svgicons path={leftIcon} size={iconSize} color={txtColor} />
-                        </View>
-                    )}
+            <View style={[styles.content, { minHeight: contentMinHeight }]}>
+                {loading ? (
+                    <DotsLoader color={txtColor} />
+                ) : (
+                    <>
+                        {leftIcon && (
+                            <View style={{ marginRight: 8 }}>
+                                <Svgicons path={leftIcon} size={iconSize} color={txtColor} />
+                            </View>
+                        )}
 
-                    <AppText
-                        text={title}
-                        fontSize={Metrics.generatedFontSize(fontSize)}
-                        textAlign='center'
-                        color={txtColor}
-                        textTransform={textTransform}
-                        type={type}
-                        style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
-                    />
+                        <AppText
+                            text={title}
+                            fontSize={Metrics.generatedFontSize(fontSize)}
+                            textAlign='center'
+                            color={txtColor}
+                            textTransform={textTransform}
+                            type={type}
+                            style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
+                        />
 
-                    {rightIcon && (
-                        <View style={{ marginLeft: 8 }}>
-                            <Svgicons path={rightIcon} size={iconSize} color={txtColor} />
-                        </View>
-                    )}
-                </>
-            )}
+                        {rightIcon && (
+                            <View style={{ marginLeft: 8 }}>
+                                <Svgicons path={rightIcon} size={iconSize} color={txtColor} />
+                            </View>
+                        )}
+                    </>
+                )}
+            </View>
         </ButtonView>
     );
 
@@ -183,6 +188,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: Metrics.scale(15),
+    },
+    content: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     text: { fontWeight: '500' },
 });
