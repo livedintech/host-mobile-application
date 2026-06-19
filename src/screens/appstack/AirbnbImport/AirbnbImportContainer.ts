@@ -1,6 +1,6 @@
 // AirbnbImportContainer.ts
 import i18n from '@/locales/i18n/i18n';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { resetToRoutes } from '@/services/navigationService';
@@ -113,8 +113,15 @@ export default function useAirbnbImportContainer() {
 
   // Refresh button / pull-to-refresh — sirf queries refetch karo,
   // useEffect khud form reset kar lega
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const refetch = useCallback(async () => {
-    await Promise.all([refetchAirbnb(), refetchListings()]);
+    setIsRefreshing(true);
+    try {
+      await Promise.all([refetchAirbnb(), refetchListings()]);
+    } finally {
+      setIsRefreshing(false);
+    }
   }, [refetchAirbnb, refetchListings]);
 
   const { mutate: createListingImportPayload, isPending } = useMutation<
@@ -169,6 +176,7 @@ export default function useAirbnbImportContainer() {
     listingOptions,
     isLoading: isInitialLoading,
     isMutating: isPending,
+    isRefreshing,
     handleSubmit,
     onNext,
     handleIndividualImport,

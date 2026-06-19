@@ -17,8 +17,12 @@ import { CreateListingDetailsPayload } from '@/types/api/createListingTypes';
 import useListingExport from '@/hooks/useListingExport';
 
 export const describeHouseSchema = yup.object().shape({
-  name:                 yup.string().required(i18n.t('app.describe_house.validation_title_required')),
-  listing_descriptions: yup.string().required(i18n.t('app.describe_house.validation_description_required')),
+  name:                 yup.string()
+    .required(i18n.t('app.describe_house.validation_title_required'))
+    .max(50, i18n.t('app.describe_house.validation_title_max')),
+  listing_descriptions: yup.string()
+    .required(i18n.t('app.describe_house.validation_description_required'))
+    .max(500, i18n.t('app.describe_house.validation_description_max')),
 });
 
 export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;

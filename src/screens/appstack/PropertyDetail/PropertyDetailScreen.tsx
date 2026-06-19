@@ -150,15 +150,17 @@ const PropertyDetailScreen = () => {
                 </MenuOption>
               )}
 
+              {listing?.is_sync !== 'sync_all' && (
+                <MenuOption
+                  disabled={isSupervisor}
+                  onSelect={() => handleMenuAction('delete')}
+                  style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
+                >
+                  <AppText text={t('app.property_detail.delete_listing')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                  <Svgicons path="TrashFull" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
+                </MenuOption>
+              )}
 
-              <MenuOption
-                disabled={isSupervisor}
-                onSelect={() => handleMenuAction('delete')}
-                style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
-              >
-                <AppText text={t('app.property_detail.delete_listing')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="TrashFull" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
-              </MenuOption>
             </MenuOptions>
           </Menu>
         </View>

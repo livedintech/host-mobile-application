@@ -218,15 +218,17 @@ const PhotoUploadTemplate = (props: any) => {
           )}
         </RefreshableScrollView>
 
-        {/* ── Reusable Footer Actions ── */}
-        <FormFooterActions
-          primaryTitle={props.primaryBtnTitle}
-          onPrimaryPress={props.onPrimaryPress}
-          isPrimaryLoading={props.primaryLoading}
-          secondaryTitle={props.secondaryBtnTitle}
-          onSecondaryPress={props.onSecondaryPress}
-          isSecondaryLoading={props.secondaryLoading || props.primaryLoading}
-        />
+        {/* ── Reusable Footer Actions (hidden in edit mode — these only navigate, no API call) ── */}
+        {!props.isEdit && (
+          <FormFooterActions
+            primaryTitle={props.primaryBtnTitle}
+            onPrimaryPress={props.onPrimaryPress}
+            isPrimaryLoading={props.primaryLoading}
+            secondaryTitle={props.secondaryBtnTitle}
+            onSecondaryPress={props.onSecondaryPress}
+            isSecondaryLoading={props.secondaryLoading || props.primaryLoading}
+          />
+        )}
 
         {/* Gallery/Camera Modal */}
         <Modal visible={isPopupVisible} transparent animationType="fade">

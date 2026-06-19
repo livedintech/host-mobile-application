@@ -625,7 +625,9 @@
       "select_account": "اختر الحساب",
       "validation_ota_required": "يرجى اختيار حساب OTA",
       "validation_title_required": "عنوان العقار مطلوب",
-      "validation_description_required": "الوصف مطلوب"
+      "validation_title_max": "يجب أن يكون العنوان 50 حرفاً أو أقل",
+      "validation_description_required": "الوصف مطلوب",
+      "validation_description_max": "يجب أن يكون الوصف 500 حرف أو أقل"
     },
     "assign_chat": {
       "title": "تعيين المحادثة للمستخدمين",
@@ -714,7 +716,9 @@
       "add_discount_title": "إضافة خصم",
       "select_discount_label": "اختر الخصم",
       "last_minute_option": "خصم اللحظة الأخيرة",
-      "save": "حفظ"
+      "save": "حفظ",
+      "validation_discount_range": "يجب أن يكون الخصم بين 1 و 99",
+      "validation_weekly_exceeds_monthly": "يجب أن يكون الخصم الأسبوعي أقل من أو يساوي الخصم الشهري"
     },
     "wifi_door_lock": {
       "title": "الواي فاي والقفل الذكي",
@@ -823,7 +827,9 @@
       "postal_label": "الرمز البريدي",
       "postal_placeholder": "مثال: 12345",
       "next": "التالي",
-      "save_exit": "حفظ والخروج"
+      "save_exit": "حفظ والخروج",
+      "validation_address_max": "يجب أن يكون العنوان 255 حرفاً أو أقل",
+      "validation_postal_max": "يجب أن يكون الرمز البريدي 255 حرفاً أو أقل"
     },
     "no_automation": {
       "title": "لم يتم العثور على قالب أتمتة",
@@ -1014,6 +1020,8 @@
       "validation_ota_required": "يرجى اختيار حساب OTA",
       "validation_size_type": "يجب أن تكون مساحة العقار رقماً",
       "validation_size_required": "مساحة العقار مطلوبة",
+      "validation_size_positive": "يجب أن تكون مساحة العقار أكبر من 0",
+      "validation_size_max_digits": "يجب أن تكون مساحة العقار 9 أرقام كحد أقصى",
       "validation_guests_required": "عدد الضيوف مطلوب",
       "validation_bedrooms_required": "عدد غرف النوم مطلوب",
       "validation_beds_required": "عدد الأسرّة مطلوب",
@@ -1093,6 +1101,7 @@
       "validation_currency_required": "العملة مطلوبة",
       "validation_weekday_required": "سعر أيام الأسبوع الأساسي مطلوب",
       "validation_weekend_required": "سعر عطلة نهاية الأسبوع الأساسي مطلوب",
+      "validation_price_max_digits": "يجب أن تكون القيمة 9 أرقام كحد أقصى (الحد الأقصى 999,999,999)",
       "riyal_sar": "ريال (ر.س)"
     },
     "gathren_pms": {

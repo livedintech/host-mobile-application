@@ -93,6 +93,13 @@ const FALLBACK_REGION: Region = {
 // user staring at the full-screen loader forever.
 const INITIALIZING_SAFETY_TIMEOUT_MS = 15000;
 
+// iOS's requestAuthorization callback has historically been flaky about
+// firing at all (see comment above). If it never calls back, this still
+// resolves so the UI never just sits dead with no feedback.
+const PERMISSION_SAFETY_TIMEOUT_MS = 12000;
+const withTimeout = <T,>(promise: Promise<T>, ms: number, fallback: T): Promise<T> =>
+  Promise.race([promise, new Promise<T>(resolve => setTimeout(() => resolve(fallback), ms))]);
+
 export default function useCreateListingStepOneLocationContainer() {
   const { updateListing } = useCreateListingStore();
   const { params } = useRoute<any>();
@@ -293,7 +300,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
   // ── First mount GPS fetch ─────────────────────────────────────────────────
   const fetchCurrentLocationOnMount = async () => {
-    const ok = await requestPermission();
+    const ok = await withTimeout(requestPermission(), PERMISSION_SAFETY_TIMEOUT_MS, false);
     if (!ok) {
       setIsInitializing(false);
       showPermissionDeniedAlert();
@@ -337,7 +344,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
   // ── Locate Me ─────────────────────────────────────────────────────────────
   const handleLocateMe = async () => {
-    const ok = await requestPermission();
+    const ok = await withTimeout(requestPermission(), PERMISSION_SAFETY_TIMEOUT_MS, false);
     if (!ok) {
       Alert.alert(
         i18n.t('app.location_step.permission_denied_title'),

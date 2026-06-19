@@ -92,6 +92,7 @@ const AddDiscountsScreen = () => {
               errors={errors}
               placeholder={t('app.discounts.weekly_placeholder')}
               keyboardType="numeric"
+              maxLength={2}
             />
             <View style={styles.gap} />
             <InputField
@@ -101,6 +102,7 @@ const AddDiscountsScreen = () => {
               errors={errors}
               placeholder={t('app.discounts.monthly_placeholder')}
               keyboardType="numeric"
+              maxLength={2}
             />
             <View style={styles.gap} />
             <InputField
@@ -110,6 +112,7 @@ const AddDiscountsScreen = () => {
               errors={errors}
               placeholder={t('app.discounts.last_minute_placeholder')}
               keyboardType="numeric"
+              maxLength={2}
             />
             <InputField
               name="early_bird_discount"
@@ -118,6 +121,7 @@ const AddDiscountsScreen = () => {
               errors={errors}
               placeholder={t('app.discounts.early_bird_placeholder')}
               keyboardType="numeric"
+              maxLength={2}
             />
           </View>
         </KeyboardAwareScrollView>

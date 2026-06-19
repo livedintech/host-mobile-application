@@ -52,8 +52,12 @@ export const addressSchema = yup.object({
     otherwise: (s) => s.nullable().optional(),
   }),
 
-  address:       yup.string().required(i18n.t('app.validation.address_required')),
-  postalAddress: yup.string().required(i18n.t('app.validation.postal_required')),
+  address:       yup.string()
+    .required(i18n.t('app.validation.address_required'))
+    .max(255, i18n.t('app.confirm_address.validation_address_max')),
+  postalAddress: yup.string()
+    .required(i18n.t('app.validation.postal_required'))
+    .max(255, i18n.t('app.confirm_address.validation_postal_max')),
 });
 
 export type AddressFormValues = {

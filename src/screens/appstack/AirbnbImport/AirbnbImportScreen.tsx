@@ -129,6 +129,7 @@ const AirbnbImportScreen = () => {
     watch,
     isLoading,
     isMutating,
+    isRefreshing,
     listingOptions,
   } = useAirbnbImportContainer();
 
@@ -177,7 +178,7 @@ const AirbnbImportScreen = () => {
           />
         </View>
 
-        {isMutating ? (
+        {isMutating || isRefreshing ? (
           <AirbnbImportSkeleton />
         ) : (
           <FlatListSimpleHandler
