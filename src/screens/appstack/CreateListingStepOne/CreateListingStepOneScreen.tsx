@@ -26,7 +26,9 @@ const CreateListingStepOneScreen = ({ navigation }: any) => {
   } = useCreateListingStepOneContainer();
   const { t } = useTranslation();
 
-  const isButtonsDisabled = isChannelMissing || !isPropertySelected;
+  // const isButtonsDisabled = isChannelMissing || !isPropertySelected;
+  const isButtonsDisabled =  !isPropertySelected;
+
 
   return (
     <BGImage
