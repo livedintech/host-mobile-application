@@ -15,81 +15,162 @@ import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet
 import { useTranslation } from 'react-i18next';
 import DateTimeInputField from '@/components/molecules/Input/DateTimeInputField';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const AddBookingDetailsScreen = () => {
   const {
-    control, errors, handleSubmit, onNext, onSaveExit, isLoading, isEdit,
-    handleExport, handleExportSubmit, bottomSheetVisible, setBottomSheetVisible,
-    otaControl, otaErrors, handleOtaSubmit, listingOptions, isPendingExporting,
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isLoading,
+    isEdit,
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
   } = useBookingDetailsContainer();
   const { t } = useTranslation();
 
-  const yesNoOptions      = [{ label: t('common.yes'), value: 'Yes' }, { label: t('common.no'), value: 'No' }];
-  const bookingTypeOptions = [{ label: t('app.booking_details_edit.instant'), value: 'everyone' }, { label: t('app.booking_details_edit.manual'), value: 'off' }];
-  const cleanlinessOptions = [{ label: t('app.booking_details_edit.clean'), value: 'Clean' }, { label: t('app.booking_details_edit.dirty'), value: 'Dirty' }];
+  const yesNoOptions = [
+    { label: t('common.yes'), value: 'Yes' },
+    { label: t('common.no'), value: 'No' },
+  ];
+  const bookingTypeOptions = [
+    { label: t('app.booking_details_edit.instant'), value: 'everyone' },
+    { label: t('app.booking_details_edit.manual'), value: 'off' },
+  ];
+  const cleanlinessOptions = [
+    { label: t('app.booking_details_edit.clean'), value: 'Clean' },
+    { label: t('app.booking_details_edit.dirty'), value: 'Dirty' },
+  ];
 
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.headerRow}>
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
+          {!isEdit && (
+            <CircularProgress percentage={60} size={48} strokeWidth={4} />
+          )}
+        </View>
 
-          <View style={styles.headerRow}>
-             <ButtonView onPress={() => goBack()}>
-                        <Svgicons path="back" size={40} />
-                      </ButtonView>
-            {!isEdit && <CircularProgress percentage={60} size={48} strokeWidth={4} />}
-          </View>
-
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
           {isEdit ? (
-            <AppText text={t('app.booking_details_edit.title_edit')} fontSize={32} type="Bold" mt={20} pr={80} />
+            <AppText
+              text={t('app.booking_details_edit.title_edit')}
+              fontSize={32}
+              type="Bold"
+              mt={20}
+              pr={80}
+            />
           ) : (
             <>
-              <AppText text={t('app.booking_details_edit.step_label')} fontSize={18} type="Medium" mt={20} />
-              <AppText text={t('app.booking_details_edit.title_new')} fontSize={32} type="Bold" mt={5} pr={80} />
+              <AppText
+                text={t('app.booking_details_edit.title_new')}
+                fontSize={32}
+                type="Bold"
+                mt={5}
+                pr={80}
+                mt={20}
+              />
             </>
           )}
 
           <View style={styles.formGroup}>
-            <DropdownField name="booking_type" label={t('app.booking_details_edit.booking_type')} control={control as any} errors={errors} data={bookingTypeOptions} />
+            <DropdownField
+              name="booking_type"
+              label={t('app.booking_details_edit.booking_type')}
+              control={control as any}
+              errors={errors}
+              data={bookingTypeOptions}
+            />
             <View style={styles.fieldGap} />
-            <DropdownField name="guest_eligibility" label={t('app.booking_details_edit.guest_eligibility')} control={control as any} errors={errors} data={yesNoOptions} />
+            <DropdownField
+              name="guest_eligibility"
+              label={t('app.booking_details_edit.guest_eligibility')}
+              control={control as any}
+              errors={errors}
+              data={yesNoOptions}
+            />
             <View style={styles.fieldGap} />
-            <DateTimeInputField name="check_in_time" label={t('app.booking_details_edit.checkin_label')} control={control as any} errors={errors} mode="time" placeholder="09:00" hourOnly />
-            <DateTimeInputField name="check_in_time_end" label={t('app.booking_details_edit.checkin_end_label')} control={control as any} errors={errors} mode="time" placeholder="12:00" hourOnly />
-            <DateTimeInputField name="check_out_time" label={t('app.booking_details_edit.checkout_label')} control={control as any} errors={errors} mode="time" placeholder="23:00" hourOnly />
-            <DropdownField name="allow_same_day" label={t('app.booking_details_edit.same_day_label')} control={control as any} errors={errors} data={yesNoOptions} />
+            <DateTimeInputField
+              name="check_in_time"
+              label={t('app.booking_details_edit.checkin_label')}
+              control={control as any}
+              errors={errors}
+              mode="time"
+              placeholder="09:00"
+              hourOnly
+            />
+            <DateTimeInputField
+              name="check_in_time_end"
+              label={t('app.booking_details_edit.checkin_end_label')}
+              control={control as any}
+              errors={errors}
+              mode="time"
+              placeholder="12:00"
+              hourOnly
+            />
+            <DateTimeInputField
+              name="check_out_time"
+              label={t('app.booking_details_edit.checkout_label')}
+              control={control as any}
+              errors={errors}
+              mode="time"
+              placeholder="23:00"
+              hourOnly
+            />
+            <DropdownField
+              name="allow_same_day"
+              label={t('app.booking_details_edit.same_day_label')}
+              control={control as any}
+              errors={errors}
+              data={yesNoOptions}
+            />
             <View style={styles.fieldGap} />
-            <DropdownField name="cleanliness_status" label={t('app.booking_details_edit.cleanliness_label')} control={control as any} errors={errors} data={cleanlinessOptions} placeholder={t('app.booking_details_edit.cleanliness_placeholder')} />
+            <DropdownField
+              name="cleanliness_status"
+              label={t('app.booking_details_edit.cleanliness_label')}
+              control={control as any}
+              errors={errors}
+              data={cleanlinessOptions}
+              placeholder={t(
+                'app.booking_details_edit.cleanliness_placeholder',
+              )}
+            />
           </View>
         </ScrollView>
 
         {/* Footer */}
-        <View style={styles.footer}>
-          {/* ✅ Export — sirf edit mode mein */}
-          {isEdit && (
-            <AppButton
-              title={t('app.booking_details_edit.export')}
-              onPress={handleExport}
-              variant='secondary'
-              mb={12}
-            />
-          )}
-          {!isEdit && (
-            <AppButton
-              title={t('app.booking_details_edit.next')}
-              variant="secondary"
-              onPress={handleSubmit(onNext)}
-              loading={isLoading}
-            />
-          )}
-          <AppButton
-            title={t('app.booking_details_edit.save_exit')}
-            mt={12}
-            onPress={handleSubmit(onSaveExit)}
-            disabled={isLoading}
-          />
-        </View>
-
+        <FormFooterActions
+          // Primary: Export if Edit, otherwise Next
+          primaryTitle={
+            isEdit
+              ? t('app.booking_details_edit.export')
+              : t('app.booking_details_edit.next')
+          }
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+          // Secondary: Save & Exit
+          secondaryTitle={t('app.booking_details_edit.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
         {/* ✅ Export Modal */}
         <ExportOtaSheet
           visible={bottomSheetVisible}
@@ -104,20 +185,41 @@ const AddBookingDetailsScreen = () => {
           listingOptions={listingOptions}
           isPending={isPendingExporting}
         />
-
       </View>
     </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container:      { flex: 1 },
-  content:        { paddingHorizontal: Metrics.baseMargin, paddingTop: Metrics.verticalScale(20), paddingBottom: Metrics.verticalScale(200) },
-  headerRow:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
-  backBtnWrapper: { width: 35, height: 35, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' },
-  formGroup:      { marginTop: 30 },
-  fieldGap:       { height: 20 },
-  footer:         { position: 'absolute', bottom: 0, width: '100%', padding: Metrics.baseMargin, paddingBottom: 40 },
+  container: { flex: 1 },
+  content: {
+    paddingHorizontal: Metrics.baseMargin,
+    paddingTop: Metrics.verticalScale(20),
+    paddingBottom: Metrics.verticalScale(200),
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 25,
+    paddingTop: 10,
+  },
+  backBtnWrapper: {
+    width: 35,
+    height: 35,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  formGroup: { marginTop: 30 },
+  fieldGap: { height: 20 },
+  footerOverride: {
+    // position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: Metrics.baseMargin,
+    paddingBottom: 40,
+  },
 });
 
 export default AddBookingDetailsScreen;

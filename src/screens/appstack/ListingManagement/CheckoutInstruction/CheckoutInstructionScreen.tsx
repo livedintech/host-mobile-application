@@ -23,6 +23,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const TASK_LABEL_KEYS: Record<TaskKey, string> = {
   return_keys: 'app.checkoutInstruction.taskReturnKeys',
@@ -50,7 +51,7 @@ const CheckoutInstructionScreen = () => {
     otaErrors,
     handleOtaSubmit,
     listingOptions,
-    isPendingExporting
+    isPendingExporting,
   } = useCheckoutInstructionContainer();
   const { t } = useTranslation();
 
@@ -158,30 +159,21 @@ const CheckoutInstructionScreen = () => {
           </View>
         </KeyboardAwareScrollView>
 
-        <View style={styles.footer}>
-          {!isEdit && (
-            <AppButton
-              title={t('app.checkoutInstruction.next')}
-              variant="secondary"
-              onPress={onNext}
-              loading={isLoading}
-            />
-          )}
-          {isEdit && (
-            <AppButton
-              title={t('app.amenities.export')}
-              onPress={handleExport}
-              variant="secondary"
-              mb={12}
-            />
-          )}
-          <AppButton
-            title={t('app.checkoutInstruction.saveExit')}
-            mt={12}
-            onPress={onSaveExit}
-            disabled={isLoading}
-          />
-        </View>
+        <FormFooterActions
+          primaryTitle={
+            isEdit
+              ? t('app.amenities.export')
+              : t('app.checkoutInstruction.next')
+          }
+          onPrimaryPress={isEdit ? handleExport : onNext}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+          secondaryTitle={t('app.checkoutInstruction.saveExit')}
+          onSecondaryPress={onSaveExit}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
         {/* ✅ Export Modal */}
         <ExportOtaSheet
           visible={bottomSheetVisible}
@@ -249,7 +241,12 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     minHeight: Metrics.verticalScale(100),
   },
-  footer: { bottom: 0, width: '100%',paddingBottom: 40 },
+  footerOverride: {
+    bottom: 0,
+    width: '100%',
+    paddingBottom: 40,
+    paddingHorizontal: 0,
+  },
 });
 
 export default CheckoutInstructionScreen;
