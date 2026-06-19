@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     width: '100%',
     padding: 0,
+    margin: 0,
     borderRadius: 12,
   },
   dropdown: {

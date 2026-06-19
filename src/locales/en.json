@@ -456,6 +456,7 @@
       "message_required": "Message is required",
       "message_name_required": "Message Name is required",
       "message_content_required": "Message Content is required",
+      "message_property_required": "Please select at least one property",
       "required": "Required",
       "airbnb_policy_required": "Airbnb policy is required",
       "airbnb_longterm_required": "Airbnb long-term policy is required",

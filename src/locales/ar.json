@@ -454,6 +454,7 @@
       "message_required": "الرسالة مطلوبة",
       "message_name_required": "اسم الرسالة مطلوب",
       "message_content_required": "محتوى الرسالة مطلوب",
+      "message_property_required": "يرجى اختيار عقار واحد على الأقل",
       "required": "مطلوب",
       "airbnb_policy_required": "سياسة Airbnb مطلوبة",
       "airbnb_longterm_required": "سياسة Airbnb للإقامة الطويلة مطلوبة",
