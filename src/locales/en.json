@@ -7,7 +7,7 @@
     "placeholder": "Select",
     "airbnb_export_popup": {
       "title": "One last step on Airbnb",
-      "description": "Your listing details have been exported to Airbnb. To go live, open the Airbnb app and complete anything still required there. Since your property is in Saudi Arabia, you'll likely need to add your property licence number before you can submit.",
+      "description": "Your listing details have been exported to Airbnb. To go live, open the Airbnb app and complete anything still required there. Since your property is in Saudi Arabia, you'll likely need to add your property licence number and commercial registration number before you can submit.",
       "open_airbnb": "Open Airbnb",
       "do_it_later": "I'll do it later"
     },
@@ -665,7 +665,7 @@
     },
     "property_guidelines": {
       "title_new": "Add Property Guidelines",
-      "title_edit": "Property Guidelines",
+      "title_edit": "Arrival Guide",
       "subtitle": "Fill these details so AI Auto Reply can assist guests on your behalf.",
       "skip": "Skip for now",
       "arrival_guide_label": "Arrival Guide",
@@ -797,7 +797,7 @@
     "location_step": {
       "loading": "Getting your location...",
       "search_placeholder": "Search Location",
-      "enter_manually": "Enter Manually",
+      "enter_manually": "Next",
       "save_exit": "Save & Exit",
       "location_permission_title": "Location Permission",
       "location_permission_message": "This app needs your location to set the property address.",
@@ -1598,7 +1598,8 @@
       "enter_your": "Enter your ",
       "property_id_highlight": "Property ID",
       "property_id_label": "Property ID*",
-      "description": "Log in to Booking.com → Property tab → Settings → Property details, then copy the Property ID. Paste it in Livedin to connect your property.",
+      "add_channex_first": "Add Channex first",
+      "description": "In Booking.com, go to Account → Connectivity provider, select Channex, and accept the terms.\nThen copy your Property ID from the top of the Extranet and paste it below.",
       "next": "Next",
       "validation_property_id_required": "Property ID is required",
       "invalid_property_id": "Invalid Property ID"

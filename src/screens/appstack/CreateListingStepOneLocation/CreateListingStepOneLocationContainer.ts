@@ -27,6 +27,7 @@ interface ParsedAddress {
   city: string;
   state: string;
   country: string;
+  countryCode: string;
   postalCode: string;
 }
 
@@ -34,6 +35,8 @@ interface ParsedAddress {
 const parseAddressComponents = (components: AddressComponent[] = []): ParsedAddress => {
   const findByType = (type: string) =>
     components.find(c => c.types.includes(type))?.long_name || '';
+  const findShortByType = (type: string) =>
+    components.find(c => c.types.includes(type))?.short_name || '';
 
   const streetNumber = findByType('street_number');
   const route = findByType('route');
@@ -45,8 +48,25 @@ const parseAddressComponents = (components: AddressComponent[] = []): ParsedAddr
     city: findByType('locality') || findByType('administrative_area_level_2'),
     state: findByType('administrative_area_level_1'),
     country: findByType('country'),
+    // ISO country code (e.g. "SA") — far more reliable to match against the
+    // backend's country list than fuzzy-matching localized country names.
+    countryCode: findShortByType('country'),
     postalCode: findByType('postal_code'),
   };
+};
+
+// fetch() has no built-in timeout — on a stalled connection it can hang
+// forever, leaving isGeocoding stuck true and the Next button permanently
+// disabled. Force it to fail fast so the UI always recovers.
+const fetchWithTimeout = (url: string, timeoutMs = 10000, signal?: AbortSignal) => {
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  signal?.addEventListener('abort', onAbort);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { signal: controller.signal }).finally(() => {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
+  });
 };
 
 // iOS: make sure the system permission prompt is shown via requestAuthorization
@@ -69,7 +89,9 @@ const FALLBACK_REGION: Region = {
   longitudeDelta: 0.0121,
 };
 
-let geocodeTimer: ReturnType<typeof setTimeout> | null = null;
+// Hard fallback so a stuck permission prompt / GPS call can never leave the
+// user staring at the full-screen loader forever.
+const INITIALIZING_SAFETY_TIMEOUT_MS = 15000;
 
 export default function useCreateListingStepOneLocationContainer() {
   const { updateListing } = useCreateListingStore();
@@ -94,9 +116,21 @@ export default function useCreateListingStepOneLocationContainer() {
   const placesRef = useRef<any>(null);
   const isPlaceSelected = useRef(false);
 
+  // Per-instance (not module-level) so two mounted instances of this screen
+  // (e.g. one frozen in the stack while another is pushed) never cancel or
+  // overwrite each other's pending geocode work.
+  const geocodeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const geocodeAbortRef = useRef<AbortController | null>(null);
+  const parsedAddressRef = useRef<ParsedAddress | null>(null);
+  const lastGeocodedCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
+  const isMountedRef = useRef(true);
+  // Synchronous re-entrancy guard — blocks a rapid double-tap on Next/Save&Exit
+  // from racing two ensureFreshAddress() calls (the 2nd would abort the 1st's
+  // in-flight request, letting the 1st resolve with stale parsed-address data).
+  const isConfirmingRef = useRef(false);
+
   const [region, setRegion] = useState<Region>(INITIAL_REGION);
   const [currentAddress, setCurrentAddress] = useState('');
-  const [parsedAddress, setParsedAddress] = useState<ParsedAddress | null>(null);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [hasUserLocation, setHasUserLocation] = useState(hasExistingLocation);
@@ -105,39 +139,96 @@ export default function useCreateListingStepOneLocationContainer() {
 
   // ── Auto-fetch ────────────────────────────────────────────────────────────
   useEffect(() => {
+    isMountedRef.current = true;
+
     if (hasExistingLocation) {
       setHasUserLocation(true);
       getAddressFromCoordinates(existingLat, existingLng);
       setTimeout(() => {
         mapRef.current?.animateToRegion(INITIAL_REGION, 500);
       }, 300);
-      return;
+    } else {
+      fetchCurrentLocationOnMount();
     }
-    fetchCurrentLocationOnMount();
+
+    // Defense in depth: no matter what hangs (permission prompt, GPS,
+    // bridge), the loader always resolves within this window.
+    const safetyTimer = setTimeout(() => {
+      if (!isMountedRef.current) return;
+      setIsInitializing(prev => {
+        if (prev) {
+          console.warn('Location: initial fetch timed out, falling back to default region');
+        }
+        return false;
+      });
+    }, INITIALIZING_SAFETY_TIMEOUT_MS);
+
+    return () => {
+      isMountedRef.current = false;
+      clearTimeout(safetyTimer);
+      if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+      geocodeAbortRef.current?.abort();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Geocoding ─────────────────────────────────────────────────────────────
+  // Cancels any in-flight geocode request before starting a new one so a
+  // slow/stale response can never overwrite a newer pin position's result.
   const getAddressFromCoordinates = async (lat: number, lng: number) => {
+    geocodeAbortRef.current?.abort();
+    const controller = new AbortController();
+    geocodeAbortRef.current = controller;
+
     try {
       setIsGeocoding(true);
-      const res = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_APIKEY}`
+      const res = await fetchWithTimeout(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_APIKEY}`,
+        10000,
+        controller.signal,
       );
       const data = await res.json();
+
+      // Superseded by a newer request — ignore this result entirely.
+      if (controller.signal.aborted || geocodeAbortRef.current !== controller) return '';
+
       if (data.status === 'OK' && data.results?.length > 0) {
         const address: string = data.results[0]?.formatted_address ?? '';
-        setCurrentAddress(address);
-        setParsedAddress(parseAddressComponents(data.results[0]?.address_components));
-        placesRef.current?.setAddressText(address);
+        const parsed = parseAddressComponents(data.results[0]?.address_components);
+        parsedAddressRef.current = parsed;
+        lastGeocodedCoordsRef.current = { latitude: lat, longitude: lng };
+        if (isMountedRef.current) {
+          setCurrentAddress(address);
+          placesRef.current?.setAddressText(address);
+        }
         return address;
       }
     } catch (e) {
-      console.error('Geocoding error:', e);
+      if ((e as Error)?.name !== 'AbortError') {
+        console.error('Geocoding error:', e);
+      }
     } finally {
-      setIsGeocoding(false);
+      if (isMountedRef.current && geocodeAbortRef.current === controller) {
+        setIsGeocoding(false);
+      }
     }
     return '';
+  };
+
+  // Guarantees the address used at confirm-time always matches the exact
+  // current pin position — cancels any pending debounce and re-geocodes
+  // on the spot if the last resolved address doesn't match `region` yet.
+  const ensureFreshAddress = async (lat: number, lng: number): Promise<ParsedAddress | null> => {
+    if (geocodeTimerRef.current) {
+      clearTimeout(geocodeTimerRef.current);
+      geocodeTimerRef.current = null;
+    }
+    const last = lastGeocodedCoordsRef.current;
+    if (last && last.latitude === lat && last.longitude === lng && parsedAddressRef.current) {
+      return parsedAddressRef.current;
+    }
+    await getAddressFromCoordinates(lat, lng);
+    return parsedAddressRef.current;
   };
 
   // ── Permission ────────────────────────────────────────────────────────────
@@ -309,48 +400,32 @@ export default function useCreateListingStepOneLocationContainer() {
   const onRegionChangeComplete = (newRegion: Region) => {
     setRegion(newRegion);
     if (isPlaceSelected.current) return;
-    if (geocodeTimer) clearTimeout(geocodeTimer);
-    geocodeTimer = setTimeout(() => {
+    if (geocodeTimerRef.current) clearTimeout(geocodeTimerRef.current);
+    geocodeTimerRef.current = setTimeout(() => {
       getAddressFromCoordinates(newRegion.latitude, newRegion.longitude);
     }, 600);
   };
 
   // ── Map parsed geocode address to listing store fields ───────────────────
-  const buildParsedAddressUpdate = () => {
-    if (!parsedAddress) return {};
+  const buildParsedAddressUpdate = (parsed: ParsedAddress | null) => {
+    if (!parsed) return {};
     return {
-      ...(parsedAddress.street && { street: parsedAddress.street }),
-      ...(parsedAddress.postalCode && { apt: parsedAddress.postalCode }),
-      ...(parsedAddress.city && { city: parsedAddress.city }),
-      ...(parsedAddress.state && { state: parsedAddress.state }),
-      ...(parsedAddress.district && { district: parsedAddress.district }),
-      ...(parsedAddress.country && { country_name: parsedAddress.country }),
+      ...(parsed.street && { street: parsed.street }),
+      ...(parsed.postalCode && { apt: parsed.postalCode }),
+      ...(parsed.city && { city: parsed.city }),
+      ...(parsed.state && { state: parsed.state }),
+      ...(parsed.district && { district: parsed.district }),
+      ...(parsed.country && { country_name: parsed.country }),
+      ...(parsed.countryCode && { country_code: parsed.countryCode }),
     };
   };
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-  const handleConfirm = () => {
-    if (!hasUserLocation) {
-      Toast.show({
-        type: 'error',
-        text1: i18n.t('common.toast.location_required'),
-text2: i18n.t('app.location_step.location_required_desc'),
-      });
-      return;
-    }
-    if (!currentAddress) {
-      Toast.show({ type: 'error',text1: i18n.t('app.location_step.address_wait') });
-      return;
-    }
-    updateListing({ lat: region.latitude, lng: region.longitude, ...buildParsedAddressUpdate() });
-
-    // ✅ Edit mode mein paramData forward karo
-    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, {
-      paramData: params?.paramData,
-    });
-  };
-
-  const handleSetManually = () => {
+  // Both confirm paths force a fresh, synchronous geocode of the *current*
+  // pin position before navigating — this is what guarantees ConfirmAddress
+  // never receives a stale country/state/city tied to a previous pin spot.
+  const handleConfirm = async () => {
+    if (isConfirmingRef.current) return;
     if (!hasUserLocation) {
       Toast.show({
         type: 'error',
@@ -359,8 +434,48 @@ text2: i18n.t('app.location_step.location_required_desc'),
       });
       return;
     }
-    updateListing({ lat: region.latitude, lng: region.longitude, ...buildParsedAddressUpdate() });
-    navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
+    isConfirmingRef.current = true;
+    try {
+      const { latitude, longitude } = region;
+      const fresh = await ensureFreshAddress(latitude, longitude);
+      if (!fresh) {
+        Toast.show({ type: 'error', text1: i18n.t('app.location_step.address_wait') });
+        return;
+      }
+      updateListing({ lat: latitude, lng: longitude, ...buildParsedAddressUpdate(fresh) });
+
+      // ✅ Edit mode mein paramData forward karo
+      navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, {
+        paramData: params?.paramData,
+      });
+    } finally {
+      isConfirmingRef.current = false;
+    }
+  };
+
+  const handleSetManually = async () => {
+    if (isConfirmingRef.current) return;
+    if (!hasUserLocation) {
+      Toast.show({
+        type: 'error',
+        text1: i18n.t('common.toast.location_required'),
+        text2: i18n.t('app.location_step.location_required_desc'),
+      });
+      return;
+    }
+    isConfirmingRef.current = true;
+    try {
+      const { latitude, longitude } = region;
+      const fresh = await ensureFreshAddress(latitude, longitude);
+      if (!fresh) {
+        Toast.show({ type: 'error', text1: i18n.t('app.location_step.address_wait') });
+        return;
+      }
+      updateListing({ lat: latitude, lng: longitude, ...buildParsedAddressUpdate(fresh) });
+      navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS);
+    } finally {
+      isConfirmingRef.current = false;
+    }
   };
 
   return {

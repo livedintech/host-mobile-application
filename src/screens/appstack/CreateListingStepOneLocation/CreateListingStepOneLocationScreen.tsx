@@ -123,7 +123,7 @@ const CreateListingStepOneLocationScreen = () => {
             {/* ✅ Save & Exit sirf create mode mein */}
             {!isEdit && (
               <AppButton
-                disabled={isLocating || !hasUserLocation}
+                disabled={isGeocoding || isLocating || !hasUserLocation}
                 title={t('app.location_step.save_exit')}
                 onPress={handleSetManually}
                 mb={18}

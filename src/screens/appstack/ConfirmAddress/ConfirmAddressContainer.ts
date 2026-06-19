@@ -99,12 +99,42 @@ export default function useConfirmAddressContainer() {
   };
 
   // ── Auto-select dropdowns from map-geocoded address (create mode only) ───
-  const matchByName = (list: any[], name?: string) =>
-    name ? list.find((item: any) => item.name?.toLowerCase().trim() === name.toLowerCase().trim()) : undefined;
+  // Normalize away case/diacritics/extra-whitespace differences between
+  // Google's geocoded names and the backend's list — otherwise a near-miss
+  // (e.g. accented Arabic spelling) silently breaks the whole cascade and
+  // the dropdowns never auto-fill ("data freeze" symptom).
+  const DIACRITICS_REGEX = new RegExp('[\\u0300-\\u036f]', 'g');
+  const normalize = (value?: string) =>
+    (value || '')
+      .normalize('NFD')
+      .replace(DIACRITICS_REGEX, '')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ' ');
+
+  const matchByName = (list: any[], name?: string) => {
+    if (!name) return undefined;
+    const target = normalize(name);
+    return list.find((item: any) => normalize(item.name) === target);
+  };
+
+  // Country is matched by ISO code first (reliable across locales), falling
+  // back to a normalized name match for older payloads that lack a code.
+  const matchCountry = (list: any[], code?: string, name?: string) => {
+    if (code) {
+      const target = code.toLowerCase().trim();
+      const byCode = list.find(
+        (item: any) =>
+          item.sortname?.toLowerCase() === target || item.code?.toLowerCase() === target,
+      );
+      if (byCode) return byCode;
+    }
+    return matchByName(list, name);
+  };
 
   useEffect(() => {
     if (isEdit || selectedCountryId) return;
-    const match = matchByName(countriesData, propertyDetail?.country_name);
+    const match = matchCountry(countriesData, propertyDetail?.country_code, propertyDetail?.country_name);
     if (match) setValue('country_code', match.id);
   }, [countriesData]);
 
