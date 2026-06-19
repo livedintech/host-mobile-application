@@ -91,6 +91,7 @@ const DescribeHouseScreen = () => {
               multiline={true}
               numberOfLines={2}
               wordLimit={50}
+              maxLength={50}
               descriptionLength={titleLength}
               sparkleIcon
               height={65}
@@ -108,6 +109,7 @@ const DescribeHouseScreen = () => {
                 multiline={true}
                 numberOfLines={6}
                 wordLimit={500}
+                maxLength={500}
                 descriptionLength={descriptionLength}
                 sparkleIcon
               />

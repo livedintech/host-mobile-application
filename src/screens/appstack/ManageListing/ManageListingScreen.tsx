@@ -29,9 +29,9 @@ const ManageListingScreen = () => {
 
 
   const { user } = useAuthStore();
-  if (!user?.has_listing) {
-    return <NoListingScreen />;
-  }
+  // if (!user?.has_listing) {
+  //   return <NoListingScreen />;
+  // }
   const data = listings?.data ?? [];
   const isSupervisor = UserPermission?.role_key === 'supervisor';
 
@@ -70,10 +70,11 @@ const ManageListingScreen = () => {
                 />
               </View>
             )}
-
+            {item?.channel_type !== 'Local'  && (
             <GlassCard style={styles.logo}>
               <Svgicons path={item?.channel_type == 'Bookings.com' ? 'bookingCom' : 'airbnb'} size={15} />
             </GlassCard>
+              )}
             {item?.is_sync === 'sync_all' && (
               <View style={styles.badge}>
                 <View style={styles.badgeDot} />

@@ -99,32 +99,126 @@ export default function useConfirmAddressContainer() {
   };
 
   // ── Auto-select dropdowns from map-geocoded address (create mode only) ───
-  const matchByName = (list: any[], name?: string) =>
-    name ? list.find((item: any) => item.name?.toLowerCase().trim() === name.toLowerCase().trim()) : undefined;
+  // Normalize away case/diacritics/extra-whitespace differences between
+  // Google's geocoded names and the backend's list — otherwise a near-miss
+  // (e.g. accented Arabic spelling) silently breaks the whole cascade and
+  // the dropdowns never auto-fill ("data freeze" symptom).
+  const DIACRITICS_REGEX = new RegExp('[\\u0300-\\u036f]', 'g');
+  const normalize = (value?: string) =>
+    (value || '')
+      .normalize('NFD')
+      .replace(DIACRITICS_REGEX, '')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ' ');
+
+  const matchByName = (list: any[], name?: string) => {
+    if (!name) return undefined;
+    const target = normalize(name);
+    return list.find((item: any) => normalize(item.name) === target);
+  };
+
+  // Country is matched by ISO code first (reliable across locales), falling
+  // back to a normalized name match for older payloads that lack a code.
+  const matchCountry = (list: any[], code?: string, name?: string) => {
+    if (code) {
+      const target = code.toLowerCase().trim();
+      const byCode = list.find(
+        (item: any) =>
+          item.sortname?.toLowerCase() === target || item.code?.toLowerCase() === target,
+      );
+      if (byCode) return byCode;
+    }
+    return matchByName(list, name);
+  };
+
+  // Re-sync (not "set once") is what lets the form pick up a pin change made
+  // after this screen has already been visited once. The previous guard
+  // ("only run if this field has never been set") permanently blocked
+  // re-matching after the first successful fill — so going back to the
+  // location screen, moving the pin, and returning kept showing the very
+  // first resolved address no matter how many times you changed it.
+  // Each effect re-fires only when the *source* (propertyDetail) signature
+  // actually changes, and cascades a clear down to the dependent dropdowns
+  // so a country change can't leave a mismatched state/city/district behind.
+  const autoFillRef = useRef({ country: '', state: '', city: '', district: '', street: '', apt: '' });
+
+  // Edit mode's defaultValues come from the original listing (so the
+  // "direct edit address" entry point — which never visits the location
+  // picker — keeps showing the listing's real saved address). Only trust
+  // propertyDetail's geocoded fields in edit mode once there's positive
+  // evidence the pin was actually moved via the picker in this session.
+  const pinMoved =
+    propertyDetail?.lat != null &&
+    propertyDetail?.lng != null &&
+    (Number(propertyDetail.lat) !== Number(listing?.lat) || Number(propertyDetail.lng) !== Number(listing?.lng));
+  const shouldSyncFromPropertyDetail = !isEdit || pinMoved;
 
   useEffect(() => {
-    if (isEdit || selectedCountryId) return;
-    const match = matchByName(countriesData, propertyDetail?.country_name);
-    if (match) setValue('country_code', match.id);
-  }, [countriesData]);
+    if (!shouldSyncFromPropertyDetail) return;
+    const key = propertyDetail?.country_code || propertyDetail?.country_name || '';
+    if (!key || autoFillRef.current.country === key) return;
+    const match = matchCountry(countriesData, propertyDetail?.country_code, propertyDetail?.country_name);
+    if (!match) return;
+    autoFillRef.current.country = key;
+    autoFillRef.current.state = '';
+    autoFillRef.current.city = '';
+    autoFillRef.current.district = '';
+    setValue('country_code', match.id);
+    setValue('state', undefined as any);
+    setValue('city', undefined as any);
+    setValue('district', undefined as any);
+  }, [countriesData, shouldSyncFromPropertyDetail, propertyDetail?.country_code, propertyDetail?.country_name]);
 
   useEffect(() => {
-    if (isEdit || selectedStateId) return;
+    if (!shouldSyncFromPropertyDetail) return;
+    const key = propertyDetail?.state || '';
+    if (!key || autoFillRef.current.state === key) return;
     const match = matchByName(statesData, propertyDetail?.state);
-    if (match) setValue('state', match.id);
-  }, [statesData]);
+    if (!match) return;
+    autoFillRef.current.state = key;
+    autoFillRef.current.city = '';
+    autoFillRef.current.district = '';
+    setValue('state', match.id);
+    setValue('city', undefined as any);
+    setValue('district', undefined as any);
+  }, [statesData, shouldSyncFromPropertyDetail, propertyDetail?.state]);
 
   useEffect(() => {
-    if (isEdit || selectedCityId) return;
+    if (!shouldSyncFromPropertyDetail) return;
+    const key = propertyDetail?.city || '';
+    if (!key || autoFillRef.current.city === key) return;
     const match = matchByName(citiesData, propertyDetail?.city);
-    if (match) setValue('city', match.id);
-  }, [citiesData]);
+    if (!match) return;
+    autoFillRef.current.city = key;
+    autoFillRef.current.district = '';
+    setValue('city', match.id);
+    setValue('district', undefined as any);
+  }, [citiesData, shouldSyncFromPropertyDetail, propertyDetail?.city]);
 
   useEffect(() => {
-    if (isEdit || watch('district')) return;
+    if (!shouldSyncFromPropertyDetail) return;
+    const key = propertyDetail?.district || '';
+    if (!key || autoFillRef.current.district === key) return;
     const match = matchByName(districtsData, propertyDetail?.district);
-    if (match) setValue('district', match.id);
-  }, [districtsData]);
+    if (!match) return;
+    autoFillRef.current.district = key;
+    setValue('district', match.id);
+  }, [districtsData, shouldSyncFromPropertyDetail, propertyDetail?.district]);
+
+  // Same re-sync treatment for the free-text fields — otherwise they're
+  // also frozen on the first geocoded street/postal code forever.
+  useEffect(() => {
+    if (!shouldSyncFromPropertyDetail) return;
+    if (propertyDetail?.street && autoFillRef.current.street !== propertyDetail.street) {
+      autoFillRef.current.street = propertyDetail.street;
+      setValue('address', propertyDetail.street);
+    }
+    if (propertyDetail?.apt && autoFillRef.current.apt !== propertyDetail.apt) {
+      autoFillRef.current.apt = propertyDetail.apt;
+      setValue('postalAddress', propertyDetail.apt);
+    }
+  }, [shouldSyncFromPropertyDetail, propertyDetail?.street, propertyDetail?.apt]);
 
   // ── Lookup helpers ────────────────────────────────────────────────────────
   const findCountry  = (id: number) => countriesData.find((c: any) => c.id === id);

@@ -1,29 +1,50 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Metrics from '@/utility/Metrics';
 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const HEADER_PADDING = 16;
+const PANEL_PADDING = Metrics.scale(20);
+
 const CreateListingStepOneLocationSkeleton = () => {
   return (
-    <SkeletonPlaceholder borderRadius={16}>
-      <View style={styles.container}>
-
+    <View style={styles.container}>
+      {/* ── Map ───────────────────────────────────────────────── */}
+      <SkeletonPlaceholder borderRadius={0}>
         <View style={styles.map} />
+      </SkeletonPlaceholder>
 
-        <View style={styles.markerFixed} />
-
-        <View style={styles.header}>
-          <View style={styles.searchBar} />
-        </View>
-
-        <View style={styles.footer}>
-          <View style={styles.locateMeBtn} />
-          <View style={styles.button} />
-          <View style={styles.button} />
-        </View>
-
+      {/* ── Fixed Center Pin ─────────────────────────────────── */}
+      <View style={styles.markerFixed}>
+        <SkeletonPlaceholder borderRadius={22.5} backgroundColor="#d7dee0" highlightColor="#ffffff">
+          <View style={styles.markerDot} />
+        </SkeletonPlaceholder>
       </View>
-    </SkeletonPlaceholder>
+
+      {/* ── Search Bar (top) ─────────────────────────────────── */}
+      <View style={styles.header}>
+        <SkeletonPlaceholder borderRadius={28} backgroundColor="#d7dee0" highlightColor="#ffffff">
+          <View style={styles.searchBar} />
+        </SkeletonPlaceholder>
+      </View>
+
+      {/* ── Footer (bottom) ──────────────────────────────────── */}
+      <View style={styles.footer}>
+        <SkeletonPlaceholder borderRadius={24} backgroundColor="#d7dee0" highlightColor="#ffffff">
+          <View style={styles.locateMeBtn} />
+        </SkeletonPlaceholder>
+
+        <View style={styles.footerBtnPanel}>
+          <SkeletonPlaceholder borderRadius={16} backgroundColor="#c9cdce" highlightColor="#eef1f1">
+            <View>
+              <View style={[styles.button, { marginBottom: 12 }]} />
+              <View style={styles.button} />
+            </View>
+          </SkeletonPlaceholder>
+        </View>
+      </View>
+    </View>
   );
 };
 
@@ -33,9 +54,8 @@ const styles = StyleSheet.create({
   },
 
   map: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
   },
 
   markerFixed: {
@@ -44,19 +64,25 @@ const styles = StyleSheet.create({
     left: '50%',
     marginLeft: -22.5,
     marginTop: -45,
+  },
+
+  markerDot: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
   },
 
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: HEADER_PADDING,
+    paddingTop: HEADER_PADDING,
   },
 
   searchBar: {
+    width: SCREEN_WIDTH - HEADER_PADDING * 2,
     height: 52,
-    borderRadius: 28,
   },
 
   footer: {
@@ -64,24 +90,26 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: Metrics.scale(20),
-    paddingTop: Metrics.verticalScale(36),
-    paddingBottom: Metrics.verticalScale(18),
   },
 
   locateMeBtn: {
     width: 48,
     height: 48,
-    borderRadius: 24,
     alignSelf: 'flex-end',
     marginRight: 20,
     marginBottom: 25,
   },
 
+  footerBtnPanel: {
+    backgroundColor: '#e2e5e5',
+    paddingHorizontal: PANEL_PADDING,
+    paddingTop: Metrics.verticalScale(36),
+    paddingBottom: Metrics.verticalScale(18),
+  },
+
   button: {
+    width: SCREEN_WIDTH - PANEL_PADDING * 2,
     height: 56,
-    borderRadius: 16,
-    marginBottom: 12,
   },
 });
 

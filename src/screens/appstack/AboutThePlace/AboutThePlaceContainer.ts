@@ -16,7 +16,11 @@ import * as yup from 'yup';
 import useListingExport from '@/hooks/useListingExport';
 
 export const aboutThePlaceSchema = yup.object().shape({
-  size_sqm:    yup.string().typeError(i18n.t('app.about_place.validation_size_type')).required(i18n.t('app.about_place.validation_size_required')),
+  size_sqm: yup.string()
+    .typeError(i18n.t('app.about_place.validation_size_type'))
+    .required(i18n.t('app.about_place.validation_size_required'))
+    .test('max-digits', i18n.t('app.about_place.validation_size_max_digits'), (val) => !val || val.length <= 9)
+    .test('positive', i18n.t('app.about_place.validation_size_positive'), (val) => !val || Number(val) > 0),
   guest_limit: yup.string().required(i18n.t('app.about_place.validation_guests_required')),
   bedrooms:    yup.string().required(i18n.t('app.about_place.validation_bedrooms_required')),
   beds:        yup.string().required(i18n.t('app.about_place.validation_beds_required')),
@@ -47,8 +51,25 @@ export default function useAboutThePlaceContainer() {
   } = useListingExport();
 
   // ── Dropdown options ──────────────────────────────────────────────────────
-  const numberOptions = useMemo(
-    () => Array.from({ length: 10 }, (_, i) => ({ label: `${i + 1}`, value: `${i + 1}` })),
+  // Guests: 1-16, with 16 representing "16+" (Airbnb caps the picker but allows larger parties via the last option)
+  const guestOptions = useMemo(
+    () => Array.from({ length: 16 }, (_, i) => ({ label: i === 15 ? '16+' : `${i + 1}`, value: `${i + 1}` })),
+    [],
+  );
+
+  // Bedrooms / beds: 0-50
+  const roomCountOptions = useMemo(
+    () => Array.from({ length: 51 }, (_, i) => ({ label: `${i}`, value: `${i}` })),
+    [],
+  );
+
+  // Bathrooms: 0-50 in 0.5 increments
+  const bathroomOptions = useMemo(
+    () => Array.from({ length: 101 }, (_, i) => {
+      const value = i * 0.5;
+      const label = value % 1 === 0 ? `${value}` : value.toFixed(1);
+      return { label, value: label };
+    }),
     [],
   );
 
@@ -57,10 +78,10 @@ export default function useAboutThePlaceContainer() {
     resolver: yupResolver(aboutThePlaceSchema),
     defaultValues: {
       size_sqm:    isEdit ? (listing?.property_area != null ? String(listing.property_area) : '') : '',
-      guest_limit: isEdit ? (listing?.guest_limit ? String(listing.guest_limit) : '') : '',
-      bedrooms:    isEdit ? (listing?.bedrooms    ? String(listing.bedrooms)    : '') : '',
-      beds:        isEdit ? (listing?.beds        ? String(listing.beds)        : '') : '',
-      bathrooms:   isEdit ? (listing?.bathrooms   ? String(listing.bathrooms)   : '') : '',
+      guest_limit: isEdit ? (listing?.guest_limit != null ? String(listing.guest_limit) : '') : '',
+      bedrooms:    isEdit ? (listing?.bedrooms    != null ? String(listing.bedrooms)    : '') : '',
+      beds:        isEdit ? (listing?.beds        != null ? String(listing.beds)        : '') : '',
+      bathrooms:   isEdit ? (listing?.bathrooms   != null ? String(listing.bathrooms)   : '') : '',
     },
   });
 
@@ -132,7 +153,9 @@ export default function useAboutThePlaceContainer() {
   return {
     control,
     errors,
-    numberOptions,
+    guestOptions,
+    roomCountOptions,
+    bathroomOptions,
     handleSubmit,
     onNext,
     onSaveExit,

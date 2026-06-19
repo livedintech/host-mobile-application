@@ -17,11 +17,27 @@ import { queryClient } from '@/services/api';
 import useListingExport from '@/hooks/useListingExport';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
+// Each discount, when provided, must fall within 1-99 (percent)
+const discountRange = (schema: yup.StringSchema) =>
+  schema.test('range-1-99', i18n.t('app.discounts.validation_discount_range'), (val) => {
+    if (!val) return true;
+    const num = Number(val);
+    return Number.isFinite(num) && num >= 1 && num <= 99;
+  });
+
 export const discountsSchema = yup.object().shape({
-  weekly_discount: yup.string().optional(),
-  monthly_discount: yup.string().optional(),
-  early_bird_discount: yup.string().optional(),
-  last_minute_discount: yup.string().optional(),
+  weekly_discount: discountRange(yup.string().optional()).test(
+    'weekly-lte-monthly',
+    i18n.t('app.discounts.validation_weekly_exceeds_monthly'),
+    function (val) {
+      const monthly = this.parent?.monthly_discount;
+      if (!val || !monthly) return true;
+      return Number(val) <= Number(monthly);
+    },
+  ),
+  monthly_discount: discountRange(yup.string().optional()),
+  early_bird_discount: discountRange(yup.string().optional()),
+  last_minute_discount: discountRange(yup.string().optional()),
 });
 
 export type DiscountFormValues = yup.InferType<typeof discountsSchema>;

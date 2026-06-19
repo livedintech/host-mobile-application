@@ -288,62 +288,43 @@ const RateYourGuestScreen = ({ route }: any) => {
         {showBackNext ? (
           <View style={styles.actionRow}>
             <View style={styles.btnStyle}>
-              <ButtonView
+              <AppButton
+                variant='secondary'
+                title={t('app.rate_guest.back')}
                 onPress={() => saveAndNavigate(step - 1)}
-                style={styles.buttonInner}
-              >
-                <AppText
-                  text={t('app.rate_guest.back')}
-                  fontSize={16}
-                  type="Medium"
-                  color={Colors.BLACK}
-                />
-              </ButtonView>
+              />
             </View>
 
             <View style={styles.btnStyle}>
               {isLastStep ? (
                 <AppButton
+                  variant='primary'
                   title={t('app.rate_guest.submit')}
                   onPress={handleSubmit(handleFinalSubmit)}
                   loading={isSubmitting}
-                  variant="primary"
-                  backgroundColor={Colors.WHITE}
-                  color={Colors.BLACK}
-                  borderRadius={28}
-                  style={{ paddingVertical: Metrics.verticalScale(11) }}
                 />
               ) : (
-                <ButtonView
+                <AppButton
+                  variant='primary'
+                  title={t('app.rate_guest.next')}
                   onPress={() => saveAndNavigate(step + 1)}
-                  style={styles.buttonInner}
-                >
-                  <AppText
-                    text={t('app.rate_guest.next')}
-                    fontSize={16}
-                    type="Medium"
-                    color={Colors.BLACK}
-                  />
-                </ButtonView>
+                />
               )}
             </View>
           </View>
         ) : (
           <AppButton
+            variant='primary'
             title={t('app.rate_guest.next')}
             onPress={() => saveAndNavigate(1)}
-            color={Colors.WHITE}
-            backgroundColor={Colors.BOTTLE_GREEN}
-            borderColor={Colors.BOTTLE_GREEN}
+            mt={12}
           />
         )}
 
         <AppButton
+          variant='secondary'
           title={t('app.rate_guest.save_exit')}
           onPress={handleSaveAndExit}
-          color={Colors.WHITE}
-          backgroundColor={Colors.BOTTLE_GREEN}
-          borderColor={Colors.BOTTLE_GREEN}
           mt={12}
         />
       </View>
@@ -553,46 +534,12 @@ const RateYourGuestScreen = ({ route }: any) => {
               mt={Metrics.verticalScale(30)}
             />
             <View style={styles.recommendRow}>
-              <GradientBorder
-                colors={
-                  currentValues.recommend === true
-                    ? ['#000', '#000']
-                    : ['rgba(128,128,128,0.6)', '#fff', 'rgba(128,128,128,0.6)']
-                }
-                borderRadius={32}
-                style={styles.choiceGradient}
-              >
-                <ButtonView
-                  onPress={() => setValue('recommend', true)}
-                  style={styles.choiceInner}
-                >
-                  <AppText
-                    text={t('app.rate_guest.yes')}
-                    type="Medium"
-                    color={Colors.BLACK}
-                  />
-                </ButtonView>
-              </GradientBorder>
-              <GradientBorder
-                colors={
-                  currentValues.recommend === false
-                    ? ['#000', '#000']
-                    : ['rgba(128,128,128,0.6)', '#fff', 'rgba(128,128,128,0.6)']
-                }
-                borderRadius={32}
-                style={styles.choiceGradient}
-              >
-                <ButtonView
-                  onPress={() => setValue('recommend', false)}
-                  style={styles.choiceInner}
-                >
-                  <AppText
-                    text={t('app.rate_guest.no')}
-                    type="Medium"
-                    color={Colors.BLACK}
-                  />
-                </ButtonView>
-              </GradientBorder>
+              <View style={styles.choiceGradient}>
+                <AppButton onPress={() => setValue('recommend', true)} title={t('app.rate_guest.yes')} variant='primary' />
+              </View>
+              <View style={styles.choiceGradient}>
+                <AppButton onPress={() => setValue('recommend', false)} title={t('app.rate_guest.no')} variant='secondary' />
+              </View>
             </View>
             {currentValues.recommend === false && (
               <View style={styles.textAreaBox}>

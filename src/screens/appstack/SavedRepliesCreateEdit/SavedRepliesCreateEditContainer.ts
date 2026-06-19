@@ -32,7 +32,11 @@ const savedReplySchema = yup.object().shape({
   body: yup
     .string()
     .required(i18n.t('app.validation.message_content_required')),
-  listing_ids: yup.array().of(yup.string()).optional(),
+  listing_ids: yup
+    .array()
+    .of(yup.string())
+    .min(1, i18n.t('app.validation.message_property_required'))
+    .required(i18n.t('app.validation.message_property_required')),
   auto_apply_new_listings: yup.boolean().default(false),
 });
 

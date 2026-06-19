@@ -18,7 +18,7 @@ import FormFooterActions from '@/components/molecules/FormFooterActions/FormFoot
 
 const AboutThePlaceScreen = () => {
   const {
-    control, errors, numberOptions,
+    control, errors, guestOptions, roomCountOptions, bathroomOptions,
     handleSubmit, onNext, onSaveExit,
     isLoading, isEdit,
     // ✅ Export
@@ -57,6 +57,7 @@ const AboutThePlaceScreen = () => {
               errors={errors}
               placeholder={t('app.about_place.size_placeholder')}
               keyboardType="numeric"
+              maxLength={9}
             />
           </View>
 
@@ -65,7 +66,7 @@ const AboutThePlaceScreen = () => {
               <Svgicons path="guestIcon" size={20} />
               <AppText text={t('app.about_place.guests')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="guest_limit" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.guests_placeholder')} />
+            <DropdownField label="" name="guest_limit" control={control} errors={errors} data={guestOptions} placeholder={t('app.about_place.guests_placeholder')} />
           </View>
 
           <View style={styles.card}>
@@ -73,7 +74,7 @@ const AboutThePlaceScreen = () => {
               <Svgicons path="bedroomIcon" size={20} />
               <AppText text={t('app.about_place.bedrooms')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="bedrooms" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.bedrooms_placeholder')} />
+            <DropdownField label="" name="bedrooms" control={control} errors={errors} data={roomCountOptions} placeholder={t('app.about_place.bedrooms_placeholder')} />
           </View>
 
           <View style={styles.card}>
@@ -81,7 +82,7 @@ const AboutThePlaceScreen = () => {
               <Svgicons path="bedroom" size={20} />
               <AppText text={t('app.about_place.beds')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="beds" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.beds_placeholder')} />
+            <DropdownField label="" name="beds" control={control} errors={errors} data={roomCountOptions} placeholder={t('app.about_place.beds_placeholder')} />
           </View>
 
           <View style={styles.card}>
@@ -89,7 +90,7 @@ const AboutThePlaceScreen = () => {
               <Svgicons path="bathroom" size={20} />
               <AppText text={t('app.about_place.bathrooms')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <DropdownField label="" name="bathrooms" control={control} errors={errors} data={numberOptions} placeholder={t('app.about_place.bathrooms_placeholder')} />
+            <DropdownField label="" name="bathrooms" control={control} errors={errors} data={bathroomOptions} placeholder={t('app.about_place.bathrooms_placeholder')} />
           </View>
         </ScrollView>
 
