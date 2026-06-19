@@ -14,6 +14,8 @@ import useDocumentUploadContainer from './DocumentUploadContainer';
 import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const DocumentUploadScreen = () => {
   const {
@@ -90,17 +92,20 @@ const DocumentUploadScreen = () => {
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.headerRow}>
+          <ButtonView onPress={() => goBack()}>
+            <Svgicons path="back" size={40} />
+          </ButtonView>
+          {!isEdit && (
+            <CircularProgress percentage={95} size={48} strokeWidth={4} />
+          )}
+        </View>
 
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header */}
-          <View style={styles.headerRow}>
-            <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-              <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
-                <Svgicons path="arrowLeftIcon" size={24} />
-              </AppPressable>
-            </GradientBorder>
-            {!isEdit && <CircularProgress percentage={95} size={48} strokeWidth={4} />}
-          </View>
 
           {/* Title */}
           <AppText
@@ -113,34 +118,53 @@ const DocumentUploadScreen = () => {
 
           {/* Info */}
           <View style={styles.infoBox}>
-            <AppText text={t('app.document_upload.format_hint')} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} mb={4} />
-            <AppText text={t('app.document_upload.size_hint')} fontSize={12} color={Colors.DARK_CHARCOAL_OPACITY} />
+            <AppText
+              text={t('app.document_upload.format_hint')}
+              fontSize={12}
+              color={Colors.DARK_CHARCOAL_OPACITY}
+              mb={4}
+            />
+            <AppText
+              text={t('app.document_upload.size_hint')}
+              fontSize={12}
+              color={Colors.DARK_CHARCOAL_OPACITY}
+            />
           </View>
 
           {/* Upload Sections */}
-          {renderUploadButton(t('app.document_upload.property_ownership_label'), 'propertyOwnership', propertyOwnershipDoc)}
-          {renderUploadButton(t('app.document_upload.authority_label'), 'authorityLicense', authorityLicenseDoc)}
-          {renderUploadButton(t('app.document_upload.national_id_label'), 'nationalId', nationalIdDoc)}
+          {renderUploadButton(
+            t('app.document_upload.property_ownership_label'),
+            'propertyOwnership',
+            propertyOwnershipDoc,
+          )}
+          {renderUploadButton(
+            t('app.document_upload.authority_label'),
+            'authorityLicense',
+            authorityLicenseDoc,
+          )}
+          {renderUploadButton(
+            t('app.document_upload.national_id_label'),
+            'nationalId',
+            nationalIdDoc,
+          )}
 
-          {/* Footer */}
-          {/* Footer */}
-          <View style={styles.footer}>
-            {/* ✅ Export — hamesha show karo, create + edit dono mein */}
-            <AppButton
-              title={t('app.document_upload.export')}
-              variant='secondary'
-              onPress={handleExport}
-              disabled={isLoading}
-              mb={12}
-            />
-            <AppButton
-              title={t('app.document_upload.save_exit')}
-              onPress={handleSubmit(onSaveExit)}
-              loading={isLoading}
-            />
-          </View>
-
+   
         </ScrollView>
+
+        <FormFooterActions
+          // Primary Action: Export is always primary here per requirement
+          primaryTitle={t('app.document_upload.export')}
+          onPrimaryPress={handleExport}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+
+          // Secondary Action: Save & Exit
+          secondaryTitle={t('app.document_upload.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
 
         {/* Bottom Sheet Modal — sirf create mode mein */}
         <ExportOtaSheet
@@ -156,7 +180,6 @@ const DocumentUploadScreen = () => {
           listingOptions={listingOptions}
           isPending={isLoadingChannelList || isCreating}
         />
-
       </View>
     </BGImage>
   );
@@ -169,7 +192,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    paddingHorizontal: 25,
+    paddingTop: 10,
   },
   arrowCircleInner: {
     width: 32,
@@ -204,7 +228,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  footer: { marginTop: 10 },
-});
+footerOverride: {
+    // position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: 25,
+    // backgroundColor: 'white',
+    paddingBottom: 40,
+  },});
 
 export default DocumentUploadScreen;

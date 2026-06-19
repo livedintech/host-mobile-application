@@ -18,6 +18,7 @@ import Metrics from '@/utility/Metrics';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const AddPropertyGuidelinesScreen = () => {
   const {
@@ -184,31 +185,20 @@ const AddPropertyGuidelinesScreen = () => {
         </KeyboardAwareScrollView>
 
         {/* Footer */}
-        <View style={styles.footer}>
-          {/* ✅ Export — sirf edit mode mein */}
-          {isEdit && (
-            <AppButton
-              title={t('app.property_guidelines.export')}
-              onPress={handleExport}
-              variant="secondary"
-              mb={12}
-            />
-          )}
-          {!isEdit && (
-            <AppButton
-              title={t('app.property_guidelines.next')}
-              variant="secondary"
-              onPress={handleSubmit(onNext)}
-              loading={isLoading}
-            />
-          )}
-          <AppButton
-            title={t('app.property_guidelines.save_exit')}
-            mt={12}
-            onPress={handleSubmit(onSaveExit)}
-            disabled={isLoading}
-          />
-        </View>
+     <FormFooterActions
+          // Primary: Export if isEdit is true, otherwise Next
+          primaryTitle={isEdit ? t('app.property_guidelines.export') : t('app.property_guidelines.next')}
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+
+          // Secondary: Always Save & Exit
+          secondaryTitle={t('app.property_guidelines.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
 
         {/* ✅ Export Modal */}
         <ExportOtaSheet
@@ -262,7 +252,12 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontWeight: 'bold',
   },
-  footer: { bottom: 0, width: '100%', paddingBottom: 40 },
+  footerOverride: { 
+    bottom: 0, 
+    width: '100%', 
+    paddingBottom: 40,
+    paddingHorizontal: 0 
+  },
 });
 
 export default AddPropertyGuidelinesScreen;

@@ -15,6 +15,7 @@ import GlassCard from '@/components/molecules/GlassCard/GlassCard';
 import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
 import { useTranslation } from 'react-i18next';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const SelectPropertyPoliciesScreen = () => {
   const { t } = useTranslation();
@@ -93,39 +94,20 @@ const SelectPropertyPoliciesScreen = () => {
         </ScrollView>
 
         {/* Footer */}
-        {isEdit ? (
-          <View style={styles.footer}>
-            <AppButton
-              title={t('app.property_policies.export')}
-              onPress={handleExport}
-              variant='secondary'
-              mb={12}
-              disabled={isLoading}
-            />
-            <AppButton
-              title={t('app.property_policies.save_exit')}
-              mt={12}
-              onPress={handleSubmit(onSaveExit)}
-              disabled={isLoading || !isPolicySelected}
-            />
-          </View>
-        ) : (
-          <View style={styles.footer}>
-            <AppButton
-              title={t('app.property_policies.next')}
-              variant="secondary"
-              onPress={handleSubmit(onNext)}
-              loading={isLoading}
-              disabled={!isPolicySelected}
-            />
-            <AppButton
-              title={t('app.property_policies.save_exit')}
-              mt={12}
-              onPress={handleSubmit(onSaveExit)}
-              disabled={isLoading || !isPolicySelected}
-            />
-          </View>
-        )}
+      <FormFooterActions
+          // Primary: Export if Edit, otherwise Next
+          primaryTitle={isEdit ? t('app.property_policies.export') : t('app.property_policies.next')}
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading || !isPolicySelected}
+
+          // Secondary: Save & Exit
+          secondaryTitle={t('app.property_policies.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading || !isPolicySelected}
+          containerStyle={styles.footerOverride}
+        />
 
         {/* Quiet Hours Modal */}
         <Modal visible={showTimeModal} transparent animationType="slide">
@@ -209,6 +191,14 @@ const styles = StyleSheet.create({
   modalContent: { backgroundColor: 'white', borderTopLeftRadius: 30, borderTopRightRadius: 30, padding: 25, paddingBottom: 50 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
   modalBody: { width: '100%' },
+  footerOverride: { 
+    // position: 'absolute', 
+    bottom: 0, 
+    width: '100%', 
+    padding: 25, 
+    // backgroundColor: 'white', 
+    paddingBottom: 40 
+  },
 });
 
 export default SelectPropertyPoliciesScreen;
