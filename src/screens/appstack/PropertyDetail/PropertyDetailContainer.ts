@@ -115,7 +115,7 @@ export default function usePropertyDetailContainer() {
     },
 
     bookingDetails: {
-      bookingType: listing?.instant_booking === 0 ? 'Instant' : 'Manual', // ✅ Fix
+      bookingType: listing?.instant_booking == 'off' ? 'Manual' : 'Instant', // ✅ Fix
       guestEligibility: listing?.guest_eligibility === 1,
       checkIn: listing?.check_in_time
         ? dayjs(listing.check_in_time, 'HH:mm:ss').format('hh:mm a')

@@ -23,6 +23,7 @@ export interface MediaItem {
   external_id?: string | null; // ✅ null aa sakta hai
   isExisting?: boolean;
   isFeatured?: boolean;
+  isUploading?: boolean; // ✅ optimistic placeholder jab tak server confirm na kare
 }
 
 interface UsePropertyMediaUploadProps {
@@ -138,11 +139,21 @@ export const usePropertyMediaUpload = ({
     },
   });
 
-  // ── Image select — immediately upload ─────────────────────────────────────
+  // ── Image select — show placeholders immediately, then upload ─────────────
   const uploadNewPhotos = async (newItems: MediaItem[]) => {
     if (!newItems.length) return;
 
-    // ✅ Local state mein ADD MAT KARO — sirf API hit karo
+    // ✅ Local file path se turant placeholder dikhao — spinner overlay ke sath
+    const optimisticItems: MediaItem[] = newItems.map(item => ({
+      ...item,
+      isUploading: true,
+    }));
+    setMediaList(prev => [...prev, ...optimisticItems]);
+
+    const removeOptimisticItems = () => {
+      setMediaList(prev => prev.filter(m => !optimisticItems.includes(m)));
+    };
+
     try {
       const photoObjects = await Promise.all(
         newItems.map(async item => {
@@ -155,13 +166,17 @@ export const usePropertyMediaUpload = ({
         })
       );
 
-      uploadMutate({
-        listing_id: effectiveListingId,
-        channel_id,
-        save_and_exit: 0,
-        photos: photoObjects,
-      });
+      uploadMutate(
+        {
+          listing_id: effectiveListingId,
+          channel_id,
+          save_and_exit: 0,
+          photos: photoObjects,
+        },
+        { onError: removeOptimisticItems },
+      );
     } catch (error: any) {
+      removeOptimisticItems();
       Alert.alert('Error', error?.message || 'Something went wrong');
     }
   };

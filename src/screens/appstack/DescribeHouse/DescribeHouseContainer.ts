@@ -16,16 +16,21 @@ import STORAGE_CONST from '@/constants/storage';
 import { CreateListingDetailsPayload } from '@/types/api/createListingTypes';
 import useListingExport from '@/hooks/useListingExport';
 
-export const describeHouseSchema = yup.object().shape({
-  name:                 yup.string()
-    .required(i18n.t('app.describe_house.validation_title_required'))
-    .max(50, i18n.t('app.describe_house.validation_title_max')),
-  listing_descriptions: yup.string()
-    .required(i18n.t('app.describe_house.validation_description_required'))
-    .max(500, i18n.t('app.describe_house.validation_description_max')),
-});
+export const getDescribeHouseSchema = (editType?: string) =>
+  yup.object().shape({
+    name: editType === 'description'
+      ? yup.string().notRequired()
+      : yup.string()
+          .required(i18n.t('app.describe_house.validation_title_required'))
+          .max(50, i18n.t('app.describe_house.validation_title_max')),
+    listing_descriptions: editType === 'title'
+      ? yup.string().notRequired()
+      : yup.string()
+          .required(i18n.t('app.describe_house.validation_description_required'))
+          .max(500, i18n.t('app.describe_house.validation_description_max')),
+  });
 
-export type DescribeHouseFormValues = yup.InferType<typeof describeHouseSchema>;
+export type DescribeHouseFormValues = yup.InferType<ReturnType<typeof getDescribeHouseSchema>>;
 
 const parseDescription = (raw: any): string => {
   if (!raw) return '';
@@ -67,7 +72,7 @@ export default function useDescribeHouseContainer() {
   // ── Main Form ─────────────────────────────────────────────────────────────
   const { control, handleSubmit, formState: { errors }, watch } =
     useForm<DescribeHouseFormValues>({
-      resolver: yupResolver(describeHouseSchema) as any,
+      resolver: yupResolver(getDescribeHouseSchema(editType)) as any,
       defaultValues: {
         name:                 isEdit ? (listing?.name ?? '') : '',
         listing_descriptions: isEdit ? (parseDescription(listing?.listing_descriptions) || '') : '',
@@ -86,9 +91,9 @@ export default function useDescribeHouseContainer() {
     listing_id:    String(listing_id),
     save_and_exit: isSaveAndExit ? 1 : 0,
     listing: {
-      name:                 data.name,
-      listing_desc:         data.listing_descriptions,
-      listing_descriptions: [{ description: data.listing_descriptions }],
+      name:                 data.name ?? '',
+      listing_desc:         data.listing_descriptions ?? '',
+      listing_descriptions: [{ description: data.listing_descriptions ?? '' }],
     },
   });
 
@@ -120,12 +125,12 @@ export default function useDescribeHouseContainer() {
   });
 
   const onNext = (data: DescribeHouseFormValues) => {
-    updateListing({ name: data.name, listing_desc: data.listing_descriptions });
+    updateListing({ name: data.name ?? '', listing_desc: data.listing_descriptions ?? '' });
     createListingDetailsPayload(buildPayload(data, false));
   };
 
   const onSaveExit = (data: DescribeHouseFormValues) => {
-    updateListing({ name: data.name, listing_desc: data.listing_descriptions });
+    updateListing({ name: data.name ?? '', listing_desc: data.listing_descriptions ?? '' });
     if (isEdit) {
       updateListingDetails(buildPayload(data, true));
     } else {

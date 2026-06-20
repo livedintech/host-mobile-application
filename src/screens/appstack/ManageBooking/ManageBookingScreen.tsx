@@ -69,11 +69,9 @@ const ConnectedAccountCard = ({ user, account, selectedTab, onExport, listingOpt
     <GlassCard width="100%" style={styles.connectedCard} onPress={() => onExport(account)}>
       <View style={styles.cardHeader}>
         <AppText text={selectedTab} type="Bold" color={Colors.BLACK} fontSize={18} />
-        {account?.channel_status === 'active' && (
-          <TouchableOpacity onPress={() => onDeactivate(account?.id)} style={styles.trashBtn}>
-            <Svgicons path="trashIcon" size={22} />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity onPress={() => onDeactivate(account?.id)} style={styles.trashBtn}>
+          <Svgicons path="trashIcon" size={22} />
+        </TouchableOpacity>
       </View>
       <InfoRow
         icon={TAB_ICON_MAP[selectedTab as TabType]}
