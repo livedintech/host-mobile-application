@@ -39,21 +39,18 @@ interface RateFormValues {
   feedback: string;
 }
 
-// Maps each step to its API category value
 const STEP_CATEGORY_MAP: Record<number, string> = {
   1: 'cleanliness',
   2: 'communication',
-  3: 'house_rules',
+  3: 'respect_house_rules',
 };
 
-// Maps each step to the form field holding the rating
 const STEP_RATING_FIELD_MAP: Record<number, keyof RateFormValues> = {
   1: 'cleanliness',
   2: 'communication',
   3: 'respect_house_rules',
 };
 
-// Maps each step to the form field holding the selected tags
 const STEP_TAGS_FIELD_MAP: Record<number, keyof RateFormValues> = {
   1: 'clean_tags',
   2: 'comm_tags',
@@ -80,15 +77,17 @@ const RateYourGuestScreen = ({ route }: any) => {
 
   const { submitReply, isSubmitting } = useRateGuest();
 
-  // Holds per-step API data keyed by `${step}-${rating}`
-  const [stepApiData, setStepApiData] = useState<Record<string, StepApiData>>({});
+  const [stepApiData, setStepApiData] = useState<Record<string, StepApiData>>(
+    {},
+  );
   const [isFetchingTags, setIsFetchingTags] = useState(false);
 
   const { control, handleSubmit, watch, setValue } = useForm<RateFormValues>({
     defaultValues: {
       cleanliness: currentReviewData.formValues.cleanliness || 0,
       communication: currentReviewData.formValues.communication || 0,
-      respect_house_rules: currentReviewData.formValues.respect_house_rules || 0,
+      respect_house_rules:
+        currentReviewData.formValues.respect_house_rules || 0,
       clean_tags: currentReviewData.formValues.clean_tags || [],
       comm_tags: currentReviewData.formValues.comm_tags || [],
       house_tags: currentReviewData.formValues.house_tags || [],
@@ -100,12 +99,11 @@ const RateYourGuestScreen = ({ route }: any) => {
 
   const currentValues = watch();
 
-  // Fetch tags from API whenever the rating changes on steps 1-3
   const fetchTagsForRating = async (currentStep: number, rating: number) => {
     if (rating === 0 || !STEP_CATEGORY_MAP[currentStep]) return;
 
     const cacheKey = `${currentStep}-${rating}`;
-    if (stepApiData[cacheKey]) return; // already cached
+    if (stepApiData[cacheKey]) return;
 
     const category = STEP_CATEGORY_MAP[currentStep];
 
@@ -113,7 +111,7 @@ const RateYourGuestScreen = ({ route }: any) => {
     try {
       const response = await getReviewTags({
         category,
-        review_type: 'host_review_guest',
+        review_type: 'host_review',
         rating,
         guest_name: guestName,
       });
@@ -132,7 +130,6 @@ const RateYourGuestScreen = ({ route }: any) => {
     }
   };
 
-  // Re-fetch whenever step or the current rating for that step changes
   useEffect(() => {
     if (step >= 1 && step <= 3) {
       const ratingField = STEP_RATING_FIELD_MAP[step];
@@ -144,17 +141,20 @@ const RateYourGuestScreen = ({ route }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
-  // --- VALIDATION LOGIC (unchanged) ---
+  // --- VALIDATION LOGIC ---
   const validateStep = (currentStep: number): boolean => {
     switch (currentStep) {
       case 1:
         if (currentValues.cleanliness === 0) {
-          Toast.show({ type: 'error', text1: t('app.rate_guest.select_cleanliness_rating') });
+          Toast.show({
+            type: 'error',
+            text1: t('app.rate_guest.select_cleanliness_rating'),
+          });
           return false;
         }
+        // ✅ FIX: removed < 5 check — API returns tags for all ratings including 5
         if (
           currentValues.cleanliness > 0 &&
-          currentValues.cleanliness < 5 &&
           currentValues.clean_tags.length === 0
         ) {
           Toast.show({ type: 'error', text1: t('app.rate_guest.select_tag') });
@@ -163,12 +163,15 @@ const RateYourGuestScreen = ({ route }: any) => {
         break;
       case 2:
         if (currentValues.communication === 0) {
-          Toast.show({ type: 'error', text1: t('app.rate_guest.select_communication_rating') });
+          Toast.show({
+            type: 'error',
+            text1: t('app.rate_guest.select_communication_rating'),
+          });
           return false;
         }
+        // ✅ FIX: removed < 5 check
         if (
           currentValues.communication > 0 &&
-          currentValues.communication < 5 &&
           currentValues.comm_tags.length === 0
         ) {
           Toast.show({ type: 'error', text1: t('app.rate_guest.select_tag') });
@@ -177,12 +180,15 @@ const RateYourGuestScreen = ({ route }: any) => {
         break;
       case 3:
         if (currentValues.respect_house_rules === 0) {
-          Toast.show({ type: 'error', text1: t('app.rate_guest.select_house_rules_rating') });
+          Toast.show({
+            type: 'error',
+            text1: t('app.rate_guest.select_house_rules_rating'),
+          });
           return false;
         }
+        // ✅ FIX: removed < 5 check
         if (
           currentValues.respect_house_rules > 0 &&
-          currentValues.respect_house_rules < 5 &&
           currentValues.house_tags.length === 0
         ) {
           Toast.show({ type: 'error', text1: t('app.rate_guest.select_tag') });
@@ -190,21 +196,33 @@ const RateYourGuestScreen = ({ route }: any) => {
         }
         break;
       case 4:
-        if (!currentValues.public_review || currentValues.public_review.trim().length < 10) {
-          Toast.show({ type: 'error', text1: t('app.rate_guest.write_at_least_10_chars') });
+        if (
+          !currentValues.public_review ||
+          currentValues.public_review.trim().length < 10
+        ) {
+          Toast.show({
+            type: 'error',
+            text1: t('app.rate_guest.write_at_least_10_chars'),
+          });
           return false;
         }
         break;
       case 5:
         if (currentValues.recommend === null) {
-          Toast.show({ type: 'error', text1: t('app.rate_guest.choose_recommend') });
+          Toast.show({
+            type: 'error',
+            text1: t('app.rate_guest.choose_recommend'),
+          });
           return false;
         }
         if (
           currentValues.recommend === false &&
           (!currentValues.feedback || currentValues.feedback.trim() === '')
         ) {
-          Toast.show({ type: 'error', text1: t('app.rate_guest.provide_feedback') });
+          Toast.show({
+            type: 'error',
+            text1: t('app.rate_guest.provide_feedback'),
+          });
           return false;
         }
         break;
@@ -249,6 +267,8 @@ const RateYourGuestScreen = ({ route }: any) => {
       private_review: data.feedback,
     };
 
+    console.log("payload",payload)
+
     submitReply(payload, {
       onSuccess: () => {
         Toast.show({
@@ -268,7 +288,6 @@ const RateYourGuestScreen = ({ route }: any) => {
     });
   };
 
-  // --- RENDER RATING STEPS 1-3 with API data ---
   const renderRatingStep = () => {
     const ratingField = STEP_RATING_FIELD_MAP[step];
     const tagsField = STEP_TAGS_FIELD_MAP[step];
@@ -277,7 +296,6 @@ const RateYourGuestScreen = ({ route }: any) => {
     const cacheKey = `${step}-${ratingValue}`;
     const apiData = stepApiData[cacheKey];
 
-    // Fallback static titles while API hasn't responded yet
     const staticTitles: Record<number, { title: string; sub: string }> = {
       1: {
         title: `How clean did ${guestName} leave your place?`,
@@ -296,13 +314,18 @@ const RateYourGuestScreen = ({ route }: any) => {
     const title = apiData?.title ?? staticTitles[step].title;
     const sub = apiData?.sub ?? staticTitles[step].sub;
     const ratingLabel = apiData?.rating_label ?? '';
-    // Tags from API — only shown when rating > 0 && rating < 5
     const apiTags = apiData?.tags ?? [];
 
     return (
       <View style={styles.stepContainer}>
         <Svgicons path="cleanWaterIcon" size={40} mb={20} mt={30} />
-        <AppText text={title} fontSize={28} type="Bold" color={Colors.BLACK} mb={10} />
+        <AppText
+          text={title}
+          fontSize={28}
+          type="Bold"
+          color={Colors.BLACK}
+          mb={10}
+        />
         <AppText
           text={sub}
           fontSize={15}
@@ -310,23 +333,24 @@ const RateYourGuestScreen = ({ route }: any) => {
           mb={30}
         />
 
-        {/* Star Row */}
         <View style={styles.starRow}>
           {[1, 2, 3, 4, 5].map(s => (
             <ButtonView
               key={s}
               onPress={() => {
-                // Clear tags if rating bucket changes
                 if (ratingValue !== s) {
                   setValue(tagsField, [] as any);
                 }
                 setValue(ratingField, s as any);
-                // Trigger API fetch for new rating
                 fetchTagsForRating(step, s);
               }}
             >
               <Svgicons
-                path={s <= ratingValue ? 'reviewStarIcon' : 'reviewStartUnfilledIcon'}
+                path={
+                  s <= ratingValue
+                    ? 'reviewStarIcon'
+                    : 'reviewStartUnfilledIcon'
+                }
                 size={45}
                 mr={10}
               />
@@ -334,28 +358,25 @@ const RateYourGuestScreen = ({ route }: any) => {
           ))}
         </View>
 
-        {/* Rating Label from API */}
-        {ratingValue > 0 && (
-          isFetchingTags ? (
+        {/* Rating Label */}
+        {ratingValue > 0 &&
+          (isFetchingTags ? (
             <ActivityIndicator
               size="small"
               color={Colors.PRIMARY_TEAL}
               style={{ marginTop: 25 }}
             />
-          ) : (
-            ratingLabel ? (
-              <AppText
-                text={ratingLabel}
-                fontSize={16}
-                color={Colors.BLACK}
-                mt={25}
-              />
-            ) : null
-          )
-        )}
+          ) : ratingLabel ? (
+            <AppText
+              text={ratingLabel}
+              fontSize={16}
+              color={Colors.BLACK}
+              mt={25}
+            />
+          ) : null)}
 
-        {/* Tags from API — shown when rating > 0 and < 5 */}
-        {ratingValue > 0 && ratingValue < 5 && (
+        {/* ✅ FIX: ratingValue > 0 && apiTags.length > 0 — no longer excludes rating 5 */}
+        {ratingValue > 0 && apiTags.length > 0 && (
           <View style={styles.tagSection}>
             {isFetchingTags ? (
               <ActivityIndicator
@@ -363,7 +384,7 @@ const RateYourGuestScreen = ({ route }: any) => {
                 color={Colors.PRIMARY_TEAL}
                 style={{ marginTop: 20 }}
               />
-            ) : apiTags.length > 0 ? (
+            ) : (
               <>
                 <AppText
                   text={t('app.rate_guest.tell_what_happened')}
@@ -382,13 +403,17 @@ const RateYourGuestScreen = ({ route }: any) => {
                       ]}
                     >
                       <ButtonView onPress={() => toggleTag(tagsField, tag.key)}>
-                        <AppText text={tag.label} fontSize={13} color={Colors.BLACK} />
+                        <AppText
+                          text={tag.label}
+                          fontSize={13}
+                          color={Colors.BLACK}
+                        />
                       </ButtonView>
                     </GlassCard>
                   ))}
                 </View>
               </>
-            ) : null}
+            )}
           </View>
         )}
       </View>
@@ -405,23 +430,22 @@ const RateYourGuestScreen = ({ route }: any) => {
           <View style={styles.actionRow}>
             <View style={styles.btnStyle}>
               <AppButton
-                variant='secondary'
+                variant="secondary"
                 title={t('app.rate_guest.back')}
                 onPress={() => saveAndNavigate(step - 1)}
               />
             </View>
-
             <View style={styles.btnStyle}>
               {isLastStep ? (
                 <AppButton
-                  variant='primary'
+                  variant="primary"
                   title={t('app.rate_guest.submit')}
                   onPress={handleSubmit(handleFinalSubmit)}
                   loading={isSubmitting}
                 />
               ) : (
                 <AppButton
-                  variant='primary'
+                  variant="primary"
                   title={t('app.rate_guest.next')}
                   onPress={() => saveAndNavigate(step + 1)}
                 />
@@ -430,7 +454,7 @@ const RateYourGuestScreen = ({ route }: any) => {
           </View>
         ) : (
           <AppButton
-            variant='primary'
+            variant="primary"
             title={t('app.rate_guest.next')}
             onPress={() => saveAndNavigate(1)}
             mt={12}
@@ -438,7 +462,7 @@ const RateYourGuestScreen = ({ route }: any) => {
         )}
 
         <AppButton
-          variant='secondary'
+          variant="secondary"
           title={t('app.rate_guest.save_exit')}
           onPress={handleSaveAndExit}
           mt={12}
@@ -506,7 +530,9 @@ const RateYourGuestScreen = ({ route }: any) => {
               maxLength={1000}
             />
             <AppText
-              text={`${currentValues.public_review?.length || 0}${t('app.shared.chars_of_1000')}`}
+              text={`${currentValues.public_review?.length || 0}${t(
+                'app.shared.chars_of_1000',
+              )}`}
               fontSize={12}
               color={Colors.SUPER_GREY}
               mt={Metrics.verticalScale(-10)}
@@ -529,7 +555,7 @@ const RateYourGuestScreen = ({ route }: any) => {
               <GradientBorder
                 colors={
                   currentValues.recommend === true
-                    ? ['#000', '#000']
+                    ? [Colors.MEDIUM_JUNGLE_GREEN, Colors.MEDIUM_JUNGLE_GREEN]
                     : ['rgba(128,128,128,0.6)', '#fff', 'rgba(128,128,128,0.6)']
                 }
                 borderRadius={32}
@@ -537,16 +563,32 @@ const RateYourGuestScreen = ({ route }: any) => {
               >
                 <ButtonView
                   onPress={() => setValue('recommend', true)}
-                  style={styles.choiceInner}
+                  style={[
+                    styles.choiceInner,
+                    {
+                      backgroundColor:
+                        currentValues.recommend === true
+                          ? Colors.MEDIUM_JUNGLE_GREEN
+                          : Colors.WHITE,
+                    },
+                  ]}
                 >
-                  <AppText text={t('app.rate_guest.yes')} type="Medium" color={Colors.BLACK} />
+                  <AppText
+                    text={t('app.rate_guest.yes')}
+                    type="Medium"
+                    color={
+                      currentValues.recommend === true
+                        ? Colors.WHITE
+                        : Colors.BLACK
+                    }
+                  />
                 </ButtonView>
               </GradientBorder>
 
               <GradientBorder
                 colors={
                   currentValues.recommend === false
-                    ? ['#000', '#000']
+                    ? [Colors.MEDIUM_JUNGLE_GREEN, Colors.MEDIUM_JUNGLE_GREEN]
                     : ['rgba(128,128,128,0.6)', '#fff', 'rgba(128,128,128,0.6)']
                 }
                 borderRadius={32}
@@ -554,9 +596,25 @@ const RateYourGuestScreen = ({ route }: any) => {
               >
                 <ButtonView
                   onPress={() => setValue('recommend', false)}
-                  style={styles.choiceInner}
+                  style={[
+                    styles.choiceInner,
+                    {
+                      backgroundColor:
+                        currentValues.recommend === false
+                          ? Colors.MEDIUM_JUNGLE_GREEN
+                          : Colors.WHITE,
+                    },
+                  ]}
                 >
-                  <AppText text={t('app.rate_guest.no')} type="Medium" color={Colors.BLACK} />
+                  <AppText
+                    text={t('app.rate_guest.no')}
+                    type="Medium"
+                    color={
+                      currentValues.recommend === false
+                        ? Colors.WHITE
+                        : Colors.BLACK
+                    }
+                  />
                 </ButtonView>
               </GradientBorder>
             </View>
