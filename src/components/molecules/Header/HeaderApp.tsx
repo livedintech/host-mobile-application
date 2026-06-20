@@ -1,4 +1,5 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import React, { useCallback, useEffect, useState } from 'react';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
@@ -103,7 +104,7 @@ const HeaderApp = ({
         {isShowProfile && (
           <GlassCard width="auto" style={styles.profilePill} onPress={() => navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING)}>
             {user?.profile_picture ? (
-              <Image
+              <AppImage
                 source={{ uri: user.profile_picture }}
                 style={styles.profileImage}
               />

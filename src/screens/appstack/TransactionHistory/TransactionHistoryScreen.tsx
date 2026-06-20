@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useTransactionHistoryContainer from './TransactionHistoryContainer';
@@ -24,13 +25,14 @@ const TransactionHistoryScreen = () => {
       <View style={styles.transactionCard}>
         <View style={styles.rowBetween}>
           <View style={styles.cardInfo}>
-            <Image
+            <AppImage
               source={
                 item.cardType === 'mastercard'
                   ? require('@/assets/img/mastercard.png')
                   : require('@/assets/img/visa.png')
               }
               style={styles.cardLogo}
+              resizeMode="contain"
             />
             <AppText
               text={`****${item.cardNumber}`}
@@ -111,7 +113,6 @@ const styles = StyleSheet.create({
   cardLogo: {
     width: 35,
     height: 22,
-    resizeMode: 'contain',
     borderWidth: 1,
     borderColor: '#F0F0F0',
     borderRadius: 4,

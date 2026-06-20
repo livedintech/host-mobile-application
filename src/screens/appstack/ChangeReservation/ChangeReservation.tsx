@@ -78,6 +78,8 @@ const ChangeReservation = () => {
     setShowDetailsSheet(true);
   };
 
+  const today = new Date();
+  const minStartDate = today;
   return (
     <BGImage source={require('@/assets/img/background/linearBG.png')}>
       <View style={styles.container}>
@@ -183,9 +185,11 @@ const ChangeReservation = () => {
                 control={control as any}
                 errors={errors}
                 rightIcon={<Svgicons path="CalendarBlack" size={18} />}
+                minimumDate={minStartDate}
               />
 
               <DateTimeInputField
+                minimumDate={minStartDate}
                 name="end_date"
                 label={t('app.change_reservation.end_date')}
                 mode="date"

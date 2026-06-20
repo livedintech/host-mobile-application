@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { StyleSheet, View, Image, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ImageBackground, TouchableOpacity } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import usePaymentMethodListContainer from './PaymentMethodListContainer';
@@ -42,9 +43,10 @@ const PaymentMethodListScreen = () => {
   const renderCard = ({ item }: { item: any }) => (
     <GlassCard width="100%" style={styles.card} >
       {/* Mastercard logo */}
-      <Image
+      <AppImage
         source={require('@/assets/img/mastercard.png')}
         style={styles.cardLogo}
+        resizeMode="contain"
       />
 
       {/* Card info */}
@@ -136,7 +138,6 @@ const styles = StyleSheet.create({
   cardLogo: {
     width: 46,
     height: 32,
-    resizeMode: 'contain',
     marginRight: 14,
     alignSelf: 'center',
   },

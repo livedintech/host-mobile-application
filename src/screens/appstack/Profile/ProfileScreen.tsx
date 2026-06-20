@@ -1,6 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Modal } from 'react-native';
+import { StyleSheet, View, Modal } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'; import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import DropdownField from '@/components/molecules/Input/DropdownField';
@@ -91,7 +92,7 @@ const ProfileScreen = () => {
             <View style={styles.avatarInner}>
               {displayImage ? (
                 <AppPressable onPress={() => setFullViewVisible(true)} style={{ width: '100%', height: '100%' }}>
-                  <Image
+                  <AppImage
                     source={{ uri: displayImage }}
                     style={{ width: '100%', height: '100%', borderRadius: 100 }}
                   />

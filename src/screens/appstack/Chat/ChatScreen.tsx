@@ -5,13 +5,13 @@ import {
   View,
   FlatList,
   TextInput,
-  Image,
   ListRenderItemInfo,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import Swipeable, {
   SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -198,7 +198,7 @@ const ChatRow = ({
       }}
     >
       <View style={styles.chatRow}>
-        <Image
+        <AppImage
           source={sourceLogos[getOtaKey((item as any).booking?.ota_name)]}
           style={styles.avatar}
         />

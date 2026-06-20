@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { FlatList, View, Image, StyleSheet, ScrollView, Platform, Dimensions } from 'react-native';
+import { FlatList, View, StyleSheet, ScrollView, Platform, Dimensions } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import { vs, ms, s } from 'react-native-size-matters';
 import { useTranslation } from 'react-i18next';
 
@@ -99,7 +100,7 @@ const IntroSlidesScreen = () => {
     <View style={styles.slide}>
       <View style={styles.calendarMainContent}>
         <View style={styles.calendarCardContainer}>
-          <Image source={require('@/assets/img/calendar_view.png')} style={styles.calendarImg} resizeMode="contain" />
+          <AppImage source={require('@/assets/img/calendar_view.png')} style={styles.calendarImg} resizeMode="contain" />
         </View>
         <View style={styles.calendarTitleSection}>
           <AppText text={t('auth.connect_calendars.title_1')} fontSize={26} type="Regular" textAlign="center" color="#000000" />
@@ -125,7 +126,7 @@ const IntroSlidesScreen = () => {
         <AppText text={t('auth.agent_intro.description')} textAlign="left" color={Colors.DARK_1C} mt={29} fontSize={12} lineHeight={17} />
       </View>
       <View style={styles.agentGraphicContainer}>
-        <Image source={require('@/assets/img/agent_ali.png')} style={styles.agentSphereImage} resizeMode="contain" />
+        <AppImage source={require('@/assets/img/agent_ali.png')} style={styles.agentSphereImage} resizeMode="contain" />
       </View>
       <AppButton
         mt={62}
