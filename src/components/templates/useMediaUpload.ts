@@ -6,6 +6,7 @@ export interface MediaItem {
   path: string;
   type: string;
   size?: number;
+  isUploading?: boolean;
 }
 
 interface UseMediaUploadProps {

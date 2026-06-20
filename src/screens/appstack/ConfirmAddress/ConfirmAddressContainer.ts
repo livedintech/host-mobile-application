@@ -41,6 +41,7 @@ export default function useConfirmAddressContainer() {
     handleSubmit,
     watch,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<AddressFormValues>({
     resolver: ((values: any, _ctx: any, options: any) =>
@@ -101,8 +102,8 @@ export default function useConfirmAddressContainer() {
   // ── Auto-select dropdowns from map-geocoded address (create mode only) ───
   // Normalize away case/diacritics/extra-whitespace differences between
   // Google's geocoded names and the backend's list — otherwise a near-miss
-  // (e.g. accented Arabic spelling) silently breaks the whole cascade and
-  // the dropdowns never auto-fill ("data freeze" symptom).
+  // silently breaks the whole cascade and the dropdowns never auto-fill
+  // ("data freeze" symptom).
   const DIACRITICS_REGEX = new RegExp('[\\u0300-\\u036f]', 'g');
   const normalize = (value?: string) =>
     (value || '')
@@ -112,10 +113,57 @@ export default function useConfirmAddressContainer() {
       .trim()
       .replace(/\s+/g, ' ');
 
+  // Google's geocoder and this backend's place list disagree far more than
+  // case/diacritics — confirmed live: Google returns "Al Qassim Province"
+  // for the exact same region the backend lists only as "Qasim". That's a
+  // real spelling variant (Qasim vs Qassim) plus an added "Al " article and
+  // " Province" descriptor — normalize() alone can never bridge that.
+  // Strip common geographic descriptor words/articles, then allow a small
+  // edit-distance ("Levenshtein") tolerance for genuine transliteration
+  // spelling variants (Hail/Ha'il, Asir/Aseer, Qasim/Qassim, etc.).
+  const GEO_DESCRIPTOR_WORDS = new Set([
+    'province', 'region', 'governorate', 'emirate', 'state',
+    'prefecture', 'county', 'district', 'municipality', 'area',
+  ]);
+  const stripGeoWords = (value: string) => {
+    const words = value.split(' ').filter(w => w && !GEO_DESCRIPTOR_WORDS.has(w));
+    if (words[0] === 'al') words.shift();
+    return words.join(' ');
+  };
+  const levenshteinDistance = (a: string, b: string) => {
+    if (a === b) return 0;
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    let prevRow = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const currRow = [i];
+      for (let j = 1; j <= b.length; j++) {
+        currRow[j] = a[i - 1] === b[j - 1]
+          ? prevRow[j - 1]
+          : 1 + Math.min(prevRow[j - 1], prevRow[j], currRow[j - 1]);
+      }
+      prevRow = currRow;
+    }
+    return prevRow[b.length];
+  };
+  const namesAreCloseEnough = (normalizedA: string, normalizedB: string) => {
+    if (!normalizedA || !normalizedB) return false;
+    if (normalizedA === normalizedB) return true;
+    const strippedA = stripGeoWords(normalizedA);
+    const strippedB = stripGeoWords(normalizedB);
+    if (strippedA === strippedB) return true;
+    const longest = Math.max(strippedA.length, strippedB.length);
+    const tolerance = Math.max(1, Math.floor(longest * 0.25));
+    return levenshteinDistance(strippedA, strippedB) <= tolerance;
+  };
+
   const matchByName = (list: any[], name?: string) => {
     if (!name) return undefined;
     const target = normalize(name);
-    return list.find((item: any) => normalize(item.name) === target);
+    return (
+      list.find((item: any) => normalize(item.name) === target) ??
+      list.find((item: any) => namesAreCloseEnough(normalize(item.name), target))
+    );
   };
 
   // Country is matched by ISO code first (reliable across locales), falling
@@ -146,14 +194,39 @@ export default function useConfirmAddressContainer() {
   // Edit mode's defaultValues come from the original listing (so the
   // "direct edit address" entry point — which never visits the location
   // picker — keeps showing the listing's real saved address). Only trust
-  // propertyDetail's geocoded fields in edit mode once there's positive
-  // evidence the pin was actually moved via the picker in this session.
-  const pinMoved =
-    propertyDetail?.lat != null &&
-    propertyDetail?.lng != null &&
-    (Number(propertyDetail.lat) !== Number(listing?.lat) || Number(propertyDetail.lng) !== Number(listing?.lng));
+  // propertyDetail's geocoded fields in edit mode once there's positive,
+  // EXPLICIT proof the picker just ran for this listing right now.
+  //
+  // This used to be inferred by comparing propertyDetail.lat/lng against
+  // the original listing's lat/lng — but propertyDetail is a single GLOBAL
+  // store shared across the whole app session (ManageListingContainer's
+  // goToPropertyDetail only sets `name` when opening a listing, never
+  // resets lat/lng/country/state/city/district). If the user had previously
+  // edited a *different* listing's location in this same session, that
+  // listing's leftover coordinates would almost certainly differ from this
+  // one's, making "pin moved" look true and overwriting this listing's
+  // correct, saved address with another listing's unrelated geocoded data.
+  // The location picker now tags its navigation with this flag explicitly,
+  // so there's zero ambiguity about whose data propertyDetail holds.
+  const pinMoved = Boolean(params?.paramData?._locationPickerConfirmed);
   const shouldSyncFromPropertyDetail = !isEdit || pinMoved;
 
+  // clearErrors(name) deletes that field's error directly and synchronously
+  // — no schema re-run involved at all. That's deliberate: trigger()/
+  // setValue(..., {shouldValidate:true}) both re-run the *entire* yup
+  // schema asynchronously, and when up to 4 of these effects fire within
+  // the same render commit, multiple overlapping async validation passes
+  // can race each other. Since we already know the value we just set is
+  // valid — we just matched it against the live options list — there's
+  // nothing to "validate"; we just need that one field's stale error gone.
+  //
+  // Each cascade-clear (state/city/district) below is gated on the new
+  // match actually *differing* from what's currently selected. Confirmed
+  // live: a fresh mount always runs the country match once regardless of
+  // whether the country really changed, and unconditionally wiping its
+  // dependents every time meant a single downstream match failure (e.g.
+  // the Qasim/Qassim case above) permanently erased a perfectly valid
+  // existing state/city/district that never needed to be touched.
   useEffect(() => {
     if (!shouldSyncFromPropertyDetail) return;
     const key = propertyDetail?.country_code || propertyDetail?.country_name || '';
@@ -161,14 +234,18 @@ export default function useConfirmAddressContainer() {
     const match = matchCountry(countriesData, propertyDetail?.country_code, propertyDetail?.country_name);
     if (!match) return;
     autoFillRef.current.country = key;
-    autoFillRef.current.state = '';
-    autoFillRef.current.city = '';
-    autoFillRef.current.district = '';
+    const countryChanged = String(selectedCountryId ?? '') !== String(match.id);
     setValue('country_code', match.id);
-    setValue('state', undefined as any);
-    setValue('city', undefined as any);
-    setValue('district', undefined as any);
-  }, [countriesData, shouldSyncFromPropertyDetail, propertyDetail?.country_code, propertyDetail?.country_name]);
+    clearErrors('country_code');
+    if (countryChanged) {
+      autoFillRef.current.state = '';
+      autoFillRef.current.city = '';
+      autoFillRef.current.district = '';
+      setValue('state', undefined as any);
+      setValue('city', undefined as any);
+      setValue('district', undefined as any);
+    }
+  }, [countriesData, shouldSyncFromPropertyDetail, propertyDetail?.country_code, propertyDetail?.country_name, selectedCountryId]);
 
   useEffect(() => {
     if (!shouldSyncFromPropertyDetail) return;
@@ -177,12 +254,16 @@ export default function useConfirmAddressContainer() {
     const match = matchByName(statesData, propertyDetail?.state);
     if (!match) return;
     autoFillRef.current.state = key;
-    autoFillRef.current.city = '';
-    autoFillRef.current.district = '';
+    const stateChanged = String(selectedStateId ?? '') !== String(match.id);
     setValue('state', match.id);
-    setValue('city', undefined as any);
-    setValue('district', undefined as any);
-  }, [statesData, shouldSyncFromPropertyDetail, propertyDetail?.state]);
+    clearErrors('state');
+    if (stateChanged) {
+      autoFillRef.current.city = '';
+      autoFillRef.current.district = '';
+      setValue('city', undefined as any);
+      setValue('district', undefined as any);
+    }
+  }, [statesData, shouldSyncFromPropertyDetail, propertyDetail?.state, selectedStateId]);
 
   useEffect(() => {
     if (!shouldSyncFromPropertyDetail) return;
@@ -191,10 +272,14 @@ export default function useConfirmAddressContainer() {
     const match = matchByName(citiesData, propertyDetail?.city);
     if (!match) return;
     autoFillRef.current.city = key;
-    autoFillRef.current.district = '';
+    const cityChanged = String(selectedCityId ?? '') !== String(match.id);
     setValue('city', match.id);
-    setValue('district', undefined as any);
-  }, [citiesData, shouldSyncFromPropertyDetail, propertyDetail?.city]);
+    clearErrors('city');
+    if (cityChanged) {
+      autoFillRef.current.district = '';
+      setValue('district', undefined as any);
+    }
+  }, [citiesData, shouldSyncFromPropertyDetail, propertyDetail?.city, selectedCityId]);
 
   useEffect(() => {
     if (!shouldSyncFromPropertyDetail) return;
@@ -204,6 +289,7 @@ export default function useConfirmAddressContainer() {
     if (!match) return;
     autoFillRef.current.district = key;
     setValue('district', match.id);
+    clearErrors('district');
   }, [districtsData, shouldSyncFromPropertyDetail, propertyDetail?.district]);
 
   // Same re-sync treatment for the free-text fields — otherwise they're
@@ -227,6 +313,14 @@ export default function useConfirmAddressContainer() {
   const findDistrict = (id: number) => districtsData.find((d: any) => d.id === id);
 
   // ── Build Payload ─────────────────────────────────────────────────────────
+  // In edit mode, only trust propertyDetail's lat/lng if the picker just
+  // confirmed them for *this* listing (same reasoning as shouldSyncFromPropertyDetail
+  // above) — otherwise propertyDetail may hold a different listing's leftover
+  // coordinates from earlier in this app session, and saving would silently
+  // corrupt this listing's real location with someone else's.
+  const payloadLat = isEdit && !pinMoved ? Number(listing?.lat) : propertyDetail?.lat;
+  const payloadLng = isEdit && !pinMoved ? Number(listing?.lng) : propertyDetail?.lng;
+
   const buildPayload = (
     data: AddressFormValues,
     isSaveAndExit: boolean = false,
@@ -250,8 +344,8 @@ export default function useConfirmAddressContainer() {
         state:        stateObj?.name    || '',
         district:     districtObj?.name || '',
         country_code: countryObj?.sortname || countryObj?.code || '',
-        lat:          propertyDetail?.lat ?? 24.7136,
-        lng:          propertyDetail?.lng ?? 46.6753,
+        lat:          Number.isFinite(payloadLat) ? payloadLat : 24.7136,
+        lng:          Number.isFinite(payloadLng) ? payloadLng : 46.6753,
       },
     };
   };

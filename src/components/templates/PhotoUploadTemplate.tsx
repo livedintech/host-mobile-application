@@ -54,6 +54,7 @@ const PhotoUploadTemplate = (props: any) => {
     <View style={styles.mediaWrapper}>
       <ButtonView
         activeOpacity={0.9}
+        disabled={item.isUploading}
         onPress={() => {
           setSelectedImage(item.path);
           setIsViewerVisible(true);
@@ -62,21 +63,27 @@ const PhotoUploadTemplate = (props: any) => {
         <AppImage source={{ uri: item.path }} style={styles.thumbnail} />
       </ButtonView>
 
-      {deletingIndex === index && props.isDeleting ? (
+      {item.isUploading ? (
+        <View style={styles.deletingOverlay}>
+          <ActivityIndicator size="small" color={Colors.WHITE} />
+        </View>
+      ) : deletingIndex === index && props.isDeleting ? (
         <View style={styles.deletingOverlay}>
           <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
         </View>
       ) : null}
 
-      <ButtonView
-        style={styles.moreBtn}
-        onPress={() => {
-          setSelectedItemIndex(index);
-          setShowOptions(true);
-        }}
-      >
-        <Svgicons path="threeDots" size={16} color={Colors.BLACK} />
-      </ButtonView>
+      {!item.isUploading && (
+        <ButtonView
+          style={styles.moreBtn}
+          onPress={() => {
+            setSelectedItemIndex(index);
+            setShowOptions(true);
+          }}
+        >
+          <Svgicons path="threeDots" size={16} color={Colors.BLACK} />
+        </ButtonView>
+      )}
     </View>
   );
 

@@ -481,8 +481,14 @@ export default function useCreateListingStepOneLocationContainer() {
       updateListing({ lat: latitude, lng: longitude, ...buildParsedAddressUpdate(fresh) });
 
       // ✅ Edit mode mein paramData forward karo
+      // _locationPickerConfirmed: explicit, unambiguous signal for
+      // ConfirmAddress to know this geocoded data was just produced for
+      // *this* listing right now — see the matching comment in
+      // ConfirmAddressContainer.ts for why comparing lat/lng against the
+      // global store directly is unsafe (it can hold a different listing's
+      // leftover coordinates).
       navigate(NavigationRoutes.APP_STACK.CONFIRM_ADDRESS, {
-        paramData: params?.paramData,
+        paramData: { ...params?.paramData, _locationPickerConfirmed: true },
       });
     } finally {
       isConfirmingRef.current = false;
