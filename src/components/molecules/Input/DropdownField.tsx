@@ -141,7 +141,8 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
 
 const styles = StyleSheet.create({
   dropdown: {
-    height: Metrics.verticalScale(54),
+    minHeight: Metrics.verticalScale(54),
+    paddingVertical: Metrics.verticalScale(10),
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 10,
     paddingHorizontal: 16,

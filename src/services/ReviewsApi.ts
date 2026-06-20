@@ -65,3 +65,29 @@ export const rateYourGuest = async (
   throw response;
 };
 
+
+export const getReviewTags = async ({
+  category,
+  review_type,
+  rating,
+  guest_name,
+}: {
+  category: string;
+  review_type: string;
+  rating: number;
+  guest_name: string;
+}) => {
+  const endpoint = `${SERVICE_CONFIG_URLS.APP.GET_REVIEW_TAGS}?category=${encodeURIComponent(
+    category,
+  )}&review_type=${encodeURIComponent(
+    review_type,
+  )}&rating=${rating}&guest_name=${encodeURIComponent(guest_name)}`;
+
+  const { ok, response, data } = await apiService.get(endpoint);
+
+  if (ok) {
+    return data;
+  }
+
+  throw response;
+};
