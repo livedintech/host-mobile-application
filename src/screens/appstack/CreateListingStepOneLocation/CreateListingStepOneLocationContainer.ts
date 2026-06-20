@@ -93,12 +93,29 @@ const FALLBACK_REGION: Region = {
 // user staring at the full-screen loader forever.
 const INITIALIZING_SAFETY_TIMEOUT_MS = 15000;
 
-// iOS's requestAuthorization callback has historically been flaky about
-// firing at all (see comment above). If it never calls back, this still
-// resolves so the UI never just sits dead with no feedback.
+// iOS's requestAuthorization() callback is only ever invoked via the native
+// "authorization status changed" delegate event (see RNCGeolocation.mm:
+// locationManagerDidChangeAuthorization). iOS does NOT re-fire that delegate
+// once status is already determined and unchanged — so calling
+// requestAuthorization() a *second* time in the same session (e.g. leaving
+// this screen and coming back) never resolves at all and hangs forever.
+// Permission status is genuinely global for the app session, so caching the
+// first definitive answer — and never asking again — is what fixes this
+// (as opposed to timing out and guessing "denied", which would be wrong).
 const PERMISSION_SAFETY_TIMEOUT_MS = 12000;
-const withTimeout = <T,>(promise: Promise<T>, ms: number, fallback: T): Promise<T> =>
-  Promise.race([promise, new Promise<T>(resolve => setTimeout(() => resolve(fallback), ms))]);
+let cachedIOSLocationPermission: boolean | null = null;
+const TIMED_OUT = Symbol('timed-out');
+
+const requestIOSAuthorization = (): Promise<boolean | typeof TIMED_OUT> =>
+  Promise.race([
+    new Promise<boolean>(resolve => {
+      Geolocation.requestAuthorization(
+        () => resolve(true),
+        () => resolve(false)
+      );
+    }),
+    new Promise<typeof TIMED_OUT>(resolve => setTimeout(() => resolve(TIMED_OUT), PERMISSION_SAFETY_TIMEOUT_MS)),
+  ]);
 
 export default function useCreateListingStepOneLocationContainer() {
   const { updateListing } = useCreateListingStore();
@@ -253,14 +270,21 @@ export default function useCreateListingStepOneLocationContainer() {
       );
       return result === PermissionsAndroid.RESULTS.GRANTED;
     }
-    // iOS: explicitly request authorization and wait for the user's response
-    // before attempting to read the location.
-    return new Promise<boolean>(resolve => {
-      Geolocation.requestAuthorization(
-        () => resolve(true),
-        () => resolve(false)
-      );
-    });
+    // iOS: once we have a definitive answer for this session, never call
+    // requestAuthorization() again — see comment above on why a repeat call
+    // hangs forever instead of resolving.
+    if (cachedIOSLocationPermission !== null) {
+      return cachedIOSLocationPermission;
+    }
+    const result = await requestIOSAuthorization();
+    if (result === TIMED_OUT) {
+      // No definitive answer from the OS — don't report "denied" on a
+      // guess. getCurrentPosition() does its own synchronous, reliable
+      // permission check and will surface a real denial correctly if so.
+      return true;
+    }
+    cachedIOSLocationPermission = result;
+    return result;
   };
 
   // ── GPS fetch with low-accuracy fallback ────────────────────────────────────
@@ -300,7 +324,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
   // ── First mount GPS fetch ─────────────────────────────────────────────────
   const fetchCurrentLocationOnMount = async () => {
-    const ok = await withTimeout(requestPermission(), PERMISSION_SAFETY_TIMEOUT_MS, false);
+    const ok = await requestPermission();
     if (!ok) {
       setIsInitializing(false);
       showPermissionDeniedAlert();
@@ -328,7 +352,10 @@ export default function useCreateListingStepOneLocationContainer() {
         console.error('GPS error code:', error.code, error.message);
         setIsInitializing(false);
         if (error.code === 1) {
-          // PERMISSION_DENIED — don't mark as located, show settings
+          // PERMISSION_DENIED — this is getCurrentPosition's own synchronous,
+          // always-reliable check, so trust it over any cached optimistic
+          // result and let a future request re-check for real.
+          cachedIOSLocationPermission = null;
           showPermissionDeniedAlert();
         } else {
           // Timeout / unavailable — fall back to default region but warn user
@@ -344,7 +371,7 @@ export default function useCreateListingStepOneLocationContainer() {
 
   // ── Locate Me ─────────────────────────────────────────────────────────────
   const handleLocateMe = async () => {
-    const ok = await withTimeout(requestPermission(), PERMISSION_SAFETY_TIMEOUT_MS, false);
+    const ok = await requestPermission();
     if (!ok) {
       Alert.alert(
         i18n.t('app.location_step.permission_denied_title'),
@@ -376,7 +403,9 @@ export default function useCreateListingStepOneLocationContainer() {
         console.error('GPS error:', error.code, error.message);
         setIsLocating(false);
         if (error.code === 1) {
-          // PERMISSION_DENIED
+          // PERMISSION_DENIED — trust this real, synchronous check over any
+          // cached optimistic result.
+          cachedIOSLocationPermission = null;
           showPermissionDeniedAlert();
         } else {
           Alert.alert(i18n.t('common.toast.error'), i18n.t('app.location_step.gps_error'));
