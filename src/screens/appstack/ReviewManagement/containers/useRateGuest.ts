@@ -1,6 +1,6 @@
 import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
-import { getAllReviews, rateYourGuest } from '@/services/ReviewsApi';
+import { getAllReviews, rateYourGuest , getReviewTags} from '@/services/ReviewsApi';
 import { RateYourGuestPayload } from '@/types/api/reviewManagementTypes';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
