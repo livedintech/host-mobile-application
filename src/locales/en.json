@@ -7,7 +7,7 @@
     "placeholder": "Select",
     "airbnb_export_popup": {
       "title": "One last step on Airbnb",
-      "description": "Your listing details have been exported to Airbnb. To go live, open the Airbnb app and complete anything still required there. Since your property is in Saudi Arabia, you'll likely need to add your property licence number before you can submit.",
+      "description": "Your listing details have been exported to Airbnb. To go live, open the Airbnb app and complete anything still required there. Since your property is in Saudi Arabia, you'll likely need to add your property licence number and commercial registration number before you can submit.",
       "open_airbnb": "Open Airbnb",
       "do_it_later": "I'll do it later"
     },
@@ -456,6 +456,7 @@
       "message_required": "Message is required",
       "message_name_required": "Message Name is required",
       "message_content_required": "Message Content is required",
+      "message_property_required": "Please select at least one property",
       "required": "Required",
       "airbnb_policy_required": "Airbnb policy is required",
       "airbnb_longterm_required": "Airbnb long-term policy is required",
@@ -626,7 +627,9 @@
       "select_account": "Select Account",
       "validation_ota_required": "Please select an OTA account",
       "validation_title_required": "Property title is required",
-      "validation_description_required": "Description is required"
+      "validation_title_max": "Title must be 50 characters or fewer",
+      "validation_description_required": "Description is required",
+      "validation_description_max": "Description must be 500 characters or fewer"
     },
     "assign_chat": {
       "title": "Assign chat to users",
@@ -715,7 +718,9 @@
       "add_discount_title": "Add Discount",
       "select_discount_label": "Select Discount",
       "last_minute_option": "Last Minute Discount",
-      "save": "Save"
+      "save": "Save",
+      "validation_discount_range": "Discount must be between 1 and 99",
+      "validation_weekly_exceeds_monthly": "Weekly discount must be less than or equal to monthly discount"
     },
     "wifi_door_lock": {
       "title": "Wifi & Door Lock",
@@ -796,7 +801,7 @@
     "location_step": {
       "loading": "Getting your location...",
       "search_placeholder": "Search Location",
-      "enter_manually": "Enter Manually",
+      "enter_manually": "Next",
       "save_exit": "Save & Exit",
       "location_permission_title": "Location Permission",
       "location_permission_message": "This app needs your location to set the property address.",
@@ -824,7 +829,9 @@
       "postal_label": "Postal Address",
       "postal_placeholder": "e.g. 12345",
       "next": "Next",
-      "save_exit": "Save & Exit"
+      "save_exit": "Save & Exit",
+      "validation_address_max": "Address must be 255 characters or fewer",
+      "validation_postal_max": "Postal address must be 255 characters or fewer"
     },
     "no_automation": {
       "title": "No Automation Template Found",
@@ -958,8 +965,8 @@
       "gathern_connected_desc": "Your Gathern account is already connected.",
       "bookingcom_connected": "Booking.com Already Connected",
       "bookingcom_connected_desc": "Your Booking.com account is already connected.",
-      "deactivate_title": "Deactivate Account",
-      "deactivate_desc": "Are you sure you want to deactivate this account? You can reconnect it later."
+      "deactivate_title": "Remove Account",
+      "deactivate_desc": "Are you sure you want to remove this account? You can reconnect it later."
     },
     "no_listing_smart_lock": {
       "title": "No Property Found",
@@ -1015,6 +1022,8 @@
       "validation_ota_required": "Please select an OTA account",
       "validation_size_type": "Property size must be a number",
       "validation_size_required": "Property size is required",
+      "validation_size_positive": "Property size must be greater than 0",
+      "validation_size_max_digits": "Property size must be at most 9 digits",
       "validation_guests_required": "Number of guests is required",
       "validation_bedrooms_required": "Number of bedrooms is required",
       "validation_beds_required": "Number of beds is required",
@@ -1094,6 +1103,7 @@
       "validation_currency_required": "Currency is required",
       "validation_weekday_required": "Weekday base price is required",
       "validation_weekend_required": "Weekend base price is required",
+      "validation_price_max_digits": "Value must be at most 9 digits (max 999,999,999)",
       "riyal_sar": "Riyal (SAR)"
     },
     "gathren_pms": {
@@ -1597,7 +1607,8 @@
       "enter_your": "Enter your ",
       "property_id_highlight": "Property ID",
       "property_id_label": "Property ID*",
-      "description": "Log in to Booking.com → Property tab → Settings → Property details, then copy the Property ID. Paste it in Livedin to connect your property.",
+      "add_channex_first": "Add Channex first",
+      "description": "In Booking.com, go to Account → Connectivity provider, select Channex, and accept the terms.\nThen copy your Property ID from the top of the Extranet and paste it below.",
       "next": "Next",
       "validation_property_id_required": "Property ID is required",
       "invalid_property_id": "Invalid Property ID"

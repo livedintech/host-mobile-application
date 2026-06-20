@@ -1,7 +1,8 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -29,9 +30,9 @@ const ManageListingScreen = () => {
 
 
   const { user } = useAuthStore();
-  if (!user?.has_listing) {
-    return <NoListingScreen />;
-  }
+  // if (!user?.has_listing) {
+  //   return <NoListingScreen />;
+  // }
   const data = listings?.data ?? [];
   const isSupervisor = UserPermission?.role_key === 'supervisor';
 
@@ -45,21 +46,23 @@ const ManageListingScreen = () => {
       .filter(Boolean)
       .join(', ');
 
-    const img = item?.images?.[0]
+    const img = item?.images?.[0]?.split('?')[0];
 
     return (
       <AppPressable onPress={() => item?.channel_type === 'Bookings.com' ? null : goToPropertyDetail(item)}>
         <GlassCard width="100%" style={styles.cardWrapper}>
           <View style={styles.imageContainer}>
             {item?.channel_type === 'Bookings.com' ? (
-              <Image
+              <AppImage
                 source={require('@/assets/img/bookingComImg.png')}
                 style={styles.propertyImg}
+                resizeMode="cover"
               />
             ) : img ? (
-              <Image
+              <AppImage
                 source={{ uri: img }}
                 style={styles.propertyImg}
+                resizeMode="cover"
               />
             ) : (
               <View style={styles.noImg}>
@@ -70,10 +73,11 @@ const ManageListingScreen = () => {
                 />
               </View>
             )}
-
+            {item?.channel_type !== 'Local'  && (
             <GlassCard style={styles.logo}>
               <Svgicons path={item?.channel_type == 'Bookings.com' ? 'bookingCom' : 'airbnb'} size={15} />
             </GlassCard>
+              )}
             {item?.is_sync === 'sync_all' && (
               <View style={styles.badge}>
                 <View style={styles.badgeDot} />
@@ -230,7 +234,6 @@ const styles = StyleSheet.create({
   propertyImg: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
   badge: {
     position: 'absolute',

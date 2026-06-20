@@ -34,6 +34,15 @@ const TASK_LABEL_KEYS: Record<TaskKey, string> = {
   additional_requests: 'app.checkoutInstruction.taskAdditionalRequests',
 };
 
+const TASK_MAX_LENGTH: Record<TaskKey, number> = {
+  return_keys: 140,
+  turn_things_off: 140,
+  throw_trash: 140,
+  lock_up: 140,
+  gather_towels: 140,
+  additional_requests: 400,
+};
+
 const CheckoutInstructionScreen = () => {
   const {
     tasks,
@@ -149,9 +158,18 @@ const CheckoutInstructionScreen = () => {
                         )}
                         placeholderTextColor="rgba(0, 0, 0, 0.3)"
                         multiline
+                        maxLength={TASK_MAX_LENGTH[key]}
                         selectionColor={Colors.BOTTLE_GREEN}
                       />
                     </View>
+                  )}
+                  {task.checked && (
+                    <AppText
+                      text={`${task.detail.length}/${TASK_MAX_LENGTH[key]}`}
+                      fontSize={11}
+                      color={Colors.DARK_CHARCOAL}
+                      style={styles.charCount}
+                    />
                   )}
                 </View>
               );
@@ -219,6 +237,10 @@ const styles = StyleSheet.create({
   taskLabel: {
     flex: 1,
     color: Colors.PINE_FOREST,
+  },
+  charCount: {
+    alignSelf: 'flex-end',
+    marginBottom: Metrics.verticalScale(8),
   },
   textareaContainer: {
     borderRadius: 10,

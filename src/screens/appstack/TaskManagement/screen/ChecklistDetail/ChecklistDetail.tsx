@@ -3,11 +3,11 @@ import React, { useRef, useMemo, useCallback, useState } from 'react';
 import {
   StyleSheet,
   View,
-  Image,
   Modal,
   Dimensions,
   Keyboard,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -143,7 +143,7 @@ const ChecklistDetail = ({ route }: any) => {
                   </View>
                 </View>
               ) : (
-                <Image
+                <AppImage
                   source={{ uri: media.file_path }}
                   style={styles.imageAsset}
                 />

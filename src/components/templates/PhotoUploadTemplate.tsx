@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
-  Image,
   FlatList,
   Modal,
   ActivityIndicator,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
@@ -59,7 +59,7 @@ const PhotoUploadTemplate = (props: any) => {
           setIsViewerVisible(true);
         }}
       >
-        <Image source={{ uri: item.path }} style={styles.thumbnail} />
+        <AppImage source={{ uri: item.path }} style={styles.thumbnail} />
       </ButtonView>
 
       {deletingIndex === index && props.isDeleting ? (
@@ -200,7 +200,7 @@ const PhotoUploadTemplate = (props: any) => {
                   }}
                   style={{ marginBottom: 20 }}
                 >
-                  <Image
+                  <AppImage
                     source={{ uri: featuredItem.path }}
                     style={{ width: '100%', height: 200, borderRadius: 12 }}
                   />
@@ -218,15 +218,17 @@ const PhotoUploadTemplate = (props: any) => {
           )}
         </RefreshableScrollView>
 
-        {/* ── Reusable Footer Actions ── */}
-        <FormFooterActions
-          primaryTitle={props.primaryBtnTitle}
-          onPrimaryPress={props.onPrimaryPress}
-          isPrimaryLoading={props.primaryLoading}
-          secondaryTitle={props.secondaryBtnTitle}
-          onSecondaryPress={props.onSecondaryPress}
-          isSecondaryLoading={props.secondaryLoading || props.primaryLoading}
-        />
+        {/* ── Reusable Footer Actions (hidden in edit mode — these only navigate, no API call) ── */}
+        {!props.isEdit && (
+          <FormFooterActions
+            primaryTitle={props.primaryBtnTitle}
+            onPrimaryPress={props.onPrimaryPress}
+            isPrimaryLoading={props.primaryLoading}
+            secondaryTitle={props.secondaryBtnTitle}
+            onSecondaryPress={props.onSecondaryPress}
+            isSecondaryLoading={props.secondaryLoading || props.primaryLoading}
+          />
+        )}
 
         {/* Gallery/Camera Modal */}
         <Modal visible={isPopupVisible} transparent animationType="fade">

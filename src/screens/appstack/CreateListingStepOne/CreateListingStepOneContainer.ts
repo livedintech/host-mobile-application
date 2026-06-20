@@ -74,10 +74,10 @@ export default function useCreateListingStepOneContainer() {
       name: '',
     });
     
-    channelID && setChannelId(channelID);
+    // channelID && setChannelId(channelID);
     
     const payload = {
-      channel_id: channelID,
+      // channel_id: channelID,
       user_id: Number(user?.id),
       payload: {
         listing: {

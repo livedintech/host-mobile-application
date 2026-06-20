@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -57,13 +58,14 @@ const PropertyTourScreen = () => {
           renderItem={({ item }: any) => (
             <GlassCard width="48%" style={styles.cardWrapper}>
               <ButtonView onPress={() => handleCardPress(item.title)}>
-                <Image
+                <AppImage
                   source={
                     item.image
                       ? { uri: item.image?.split('?')[0] }
                       : require('@/assets/img/background/linearBG.png')
                   }
                   style={styles.cardImage}
+                  resizeMode="cover"
                 />
                 <View style={styles.cardTextContainer}>
                   <AppText text={item.title} fontSize={16} type="SemiBold" color={Colors.BLACK} />
@@ -123,7 +125,6 @@ const styles = StyleSheet.create({
     width:        '100%',
     height:       130,
     borderRadius: 16,
-    resizeMode:   'cover',
   },
   cardTextContainer: {
     marginTop:      12,

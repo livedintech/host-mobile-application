@@ -1,6 +1,7 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React, { useCallback } from 'react';
-import { StyleSheet, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import Pagination from '@/components/molecules/Pagination/Pagination';
@@ -71,7 +72,7 @@ const AgentIntroScreen = () => {
 
           {/* Agent/Sphere Graphic */}
           <View style={styles.graphicContainer}>
-            <Image
+            <AppImage
               source={require('@/assets/img/agent_ali.png')}
               style={styles.sphereImage}
               resizeMode="contain"

@@ -15,17 +15,25 @@ import STORAGE_CONST from '@/constants/storage';
 import { queryClient } from '@/services/api';
 import useListingExport from '@/hooks/useListingExport';
 
+// Caps a fee/price string to 9 digits max (i.e. <= 999,999,999), matching the platform's listing limits
+const maxNineDigits = (schema: yup.StringSchema) =>
+  schema.test('max-9-digits', i18n.t('app.set_pricing.validation_price_max_digits'), (val) => !val || /^\d{1,9}$/.test(val));
+
 // ── Schema ────────────────────────────────────────────────────────────────────
 export const pricingSchema = yup.object().shape({
   currency: yup.string().required(i18n.t('app.set_pricing.validation_currency_required')),
-  weekday_price: yup.string().required(i18n.t('app.set_pricing.validation_weekday_required')).min(1, i18n.t('app.set_pricing.validation_weekday_required')),
-  weekend_price: yup.string().required(i18n.t('app.set_pricing.validation_weekend_required')).min(1, i18n.t('app.set_pricing.validation_weekend_required')),
+  weekday_price: maxNineDigits(
+    yup.string().required(i18n.t('app.set_pricing.validation_weekday_required')),
+  ),
+  weekend_price: maxNineDigits(
+    yup.string().required(i18n.t('app.set_pricing.validation_weekend_required')),
+  ),
   tax_vat: yup.string().optional(),
   airbnb_markup: yup.string().optional(),
   gathern_markup: yup.string().optional(),
   booking_com_markup: yup.string().optional(),
-  extra_guest_fee: yup.string().optional(),
-  cleaning_fee: yup.string().optional(),
+  extra_guest_fee: maxNineDigits(yup.string().optional()),
+  cleaning_fee: maxNineDigits(yup.string().optional()),
 });
 
 export type PricingFormValues = yup.InferType<typeof pricingSchema>;

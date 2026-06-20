@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Platform } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import {
   Menu,
   MenuOptions,
@@ -103,9 +104,9 @@ const PropertyDetailScreen = () => {
 
     return (
       <View style={styles.overlapWrapper}>
-        {img2 && <Image source={{ uri: img2 }} style={[styles.tourImg, styles.tourImgLeft]} />}
-        {img3 && <Image source={{ uri: img3 }} style={[styles.tourImg, styles.tourImgRight]} />}
-        {img1 && <Image source={{ uri: img1 }} style={[styles.tourImg, styles.tourImgCenter]} />}
+        {img2 && <AppImage source={{ uri: img2 }} style={[styles.tourImg, styles.tourImgLeft]} />}
+        {img3 && <AppImage source={{ uri: img3 }} style={[styles.tourImg, styles.tourImgRight]} />}
+        {img1 && <AppImage source={{ uri: img1 }} style={[styles.tourImg, styles.tourImgCenter]} />}
       </View>
     );
   };
@@ -150,15 +151,17 @@ const PropertyDetailScreen = () => {
                 </MenuOption>
               )}
 
+              {listing?.is_sync !== 'sync_all' && (
+                <MenuOption
+                  disabled={isSupervisor}
+                  onSelect={() => handleMenuAction('delete')}
+                  style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
+                >
+                  <AppText text={t('app.property_detail.delete_listing')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
+                  <Svgicons path="TrashFull" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
+                </MenuOption>
+              )}
 
-              <MenuOption
-                disabled={isSupervisor}
-                onSelect={() => handleMenuAction('delete')}
-                style={[styles.menuItem, isSupervisor && styles.disabledMenuItem]}
-              >
-                <AppText text={t('app.property_detail.delete_listing')} fontSize={16} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} style={styles.menuText} />
-                <Svgicons path="TrashFull" size={20} color={isSupervisor ? Colors.DISABLED_GREY : Colors.BLACK} />
-              </MenuOption>
             </MenuOptions>
           </Menu>
         </View>

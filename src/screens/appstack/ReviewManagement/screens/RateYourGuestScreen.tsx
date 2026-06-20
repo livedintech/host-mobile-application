@@ -404,62 +404,43 @@ const RateYourGuestScreen = ({ route }: any) => {
         {showBackNext ? (
           <View style={styles.actionRow}>
             <View style={styles.btnStyle}>
-              <ButtonView
+              <AppButton
+                variant='secondary'
+                title={t('app.rate_guest.back')}
                 onPress={() => saveAndNavigate(step - 1)}
-                style={styles.buttonInner}
-              >
-                <AppText
-                  text={t('app.rate_guest.back')}
-                  fontSize={16}
-                  type="Medium"
-                  color={Colors.BLACK}
-                />
-              </ButtonView>
+              />
             </View>
 
             <View style={styles.btnStyle}>
               {isLastStep ? (
                 <AppButton
+                  variant='primary'
                   title={t('app.rate_guest.submit')}
                   onPress={handleSubmit(handleFinalSubmit)}
                   loading={isSubmitting}
-                  variant="primary"
-                  backgroundColor={Colors.WHITE}
-                  color={Colors.BLACK}
-                  borderRadius={28}
-                  style={{ paddingVertical: Metrics.verticalScale(11) }}
                 />
               ) : (
-                <ButtonView
+                <AppButton
+                  variant='primary'
+                  title={t('app.rate_guest.next')}
                   onPress={() => saveAndNavigate(step + 1)}
-                  style={styles.buttonInner}
-                >
-                  <AppText
-                    text={t('app.rate_guest.next')}
-                    fontSize={16}
-                    type="Medium"
-                    color={Colors.BLACK}
-                  />
-                </ButtonView>
+                />
               )}
             </View>
           </View>
         ) : (
           <AppButton
+            variant='primary'
             title={t('app.rate_guest.next')}
             onPress={() => saveAndNavigate(1)}
-            color={Colors.WHITE}
-            backgroundColor={Colors.BOTTLE_GREEN}
-            borderColor={Colors.BOTTLE_GREEN}
+            mt={12}
           />
         )}
 
         <AppButton
+          variant='secondary'
           title={t('app.rate_guest.save_exit')}
           onPress={handleSaveAndExit}
-          color={Colors.WHITE}
-          backgroundColor={Colors.BOTTLE_GREEN}
-          borderColor={Colors.BOTTLE_GREEN}
           mt={12}
         />
       </View>

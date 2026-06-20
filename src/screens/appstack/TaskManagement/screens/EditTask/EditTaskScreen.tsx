@@ -3,10 +3,10 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  Image,
   Modal,
   Dimensions,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import ImageView from 'react-native-image-viewing';
 import Video from 'react-native-video';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
@@ -289,7 +289,7 @@ const EditTaskScreen = () => {
                                         />
                                       </View>
                                     ) : (
-                                      <Image
+                                      <AppImage
                                         source={{ uri: img.file_path }}
                                         style={styles.mediaImage}
                                         onLoad={() => toggleImageLoad(mediaId)}

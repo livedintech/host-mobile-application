@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -14,7 +15,7 @@ const TaskScreen = () => {
         <View style={styles.row}>
           <View style={styles.activeDot} />
           <View style={styles.avatarContainer}>
-            <Image source={require('@/assets/img/img3.png')} style={styles.avatar} />
+            <AppImage source={require('@/assets/img/img3.png')} style={styles.avatar} />
           </View>
           <View style={{ flex: 1, marginLeft: 15 }}>
             <View style={styles.rowBetween}>

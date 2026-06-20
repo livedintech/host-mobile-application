@@ -52,13 +52,20 @@ const BookingComStep1Screen = () => {
                             keyboardType="numeric"
                         />
 
+                         <AppText
+                            text={t('app.booking_com_step1.add_channex_first')}
+                            type="Bold"
+                            mt={15}
+                            style={{ lineHeight: 18 }}
+                        />
+
                         {/* Instructional Text */}
                         <AppText
                             text={t('app.booking_com_step1.description')}
                             type="Regular"
                             fontSize={12}
                             color={Colors.BLACK_53_PERCENT} 
-                            mt={15}
+                            mt={5}
                             style={{ lineHeight: 18 }}
                         />
                     </View>

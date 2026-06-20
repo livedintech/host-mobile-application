@@ -114,6 +114,7 @@ const ConfirmAddressScreen = () => {
               control={control}
               errors={errors}
               placeholder={t('app.confirm_address.address_placeholder')}
+              maxLength={255}
             />
 
             <InputField
@@ -122,6 +123,7 @@ const ConfirmAddressScreen = () => {
               control={control}
               errors={errors}
               placeholder={t('app.confirm_address.postal_placeholder')}
+              maxLength={255}
             />
           </View>
         </KeyboardAwareScrollView>

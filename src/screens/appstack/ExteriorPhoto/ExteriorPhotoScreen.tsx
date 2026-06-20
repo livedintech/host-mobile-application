@@ -47,6 +47,7 @@ const ExteriorPhotoScreen = () => {
       onDelete={deletePhoto}
       onSetCover={setCoverPhoto}
       isFetching={isFetching}
+      isEdit={isEdit}
       primaryBtnTitle={!isEdit ? t('app.photo_upload.next') : undefined}
       onPrimaryPress={handleNext}
       primaryLoading={isLoading}

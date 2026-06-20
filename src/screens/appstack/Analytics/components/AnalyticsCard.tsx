@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import { Colors } from '@/theme/colors';
 import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -56,7 +57,7 @@ const AnalyticsCard = ({ item, variant = 'kpi' }: any) => {
         <GradientBorder borderRadius={20} borderWidth={1}>
           <View style={styles.listingInner}>
             <View style={styles.listingTopRow}>
-              <Image
+              <AppImage
                 source={require('@/assets/img/appartment.png')}
                 style={styles.unitImage}
               />

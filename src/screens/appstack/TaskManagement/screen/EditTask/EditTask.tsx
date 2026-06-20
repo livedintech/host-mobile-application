@@ -174,6 +174,9 @@ const EditTask = ({ route }: any) => {
     setIsEditMode(false);
   };
 
+    const today = new Date();
+  const minStartDate = today;
+
   if (isDeleting) {
     return (
       <BGImage source={require('@/assets/img/background/linearBG.png')}>
@@ -353,6 +356,7 @@ const EditTask = ({ route }: any) => {
               {isEditMode ? (
                 <View>
                   <DateTimeInputField
+                  minimumDate={minStartDate}
                     name="task_date"
                     control={control}
                     errors={errors}

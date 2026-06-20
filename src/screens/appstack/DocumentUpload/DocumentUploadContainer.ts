@@ -29,7 +29,7 @@ export default function useDocumentUploadContainer() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { params } = useRoute<any>();
-  const { listing_id, channel_id } = useCreateListingStore();
+  const { listing_id } = useCreateListingStore();
   const { token } = useAuthStore();
 
   const listing = params?.paramData?.listing;
@@ -186,7 +186,6 @@ export default function useDocumentUploadContainer() {
     return {
       save_and_exit: 0,
       listing_id: String(listing_id),
-      channel_id,
       documents,
     };
   };

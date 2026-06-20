@@ -5,13 +5,13 @@ import {
   StyleSheet,
   View,
   Keyboard,
-  Image,
   TextInput,
   Platform,
   Animated,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import {
   Menu,
   MenuOptions,
@@ -437,7 +437,7 @@ const ChatScreen = () => {
                   setIsImageViewerVisible(true);
                 }}
               >
-                <Image
+                <AppImage
                   source={{ uri: item.image }}
                   style={styles.messageImage}
                   resizeMode="cover"

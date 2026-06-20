@@ -91,6 +91,7 @@ const SetPricingScreen = () => {
               errors={errors}
               placeholder={t('app.set_pricing.price_placeholder')}
               keyboardType="numeric"
+              maxLength={9}
             />
             <View style={styles.fieldGap} />
             <InputField
@@ -100,6 +101,7 @@ const SetPricingScreen = () => {
               errors={errors}
               placeholder={t('app.set_pricing.price_placeholder')}
               keyboardType="numeric"
+              maxLength={9}
             />
             <View style={styles.fieldGap} />
             <InputField
@@ -145,6 +147,7 @@ const SetPricingScreen = () => {
               errors={errors}
               placeholder={t('app.set_pricing.extra_guest_placeholder')}
               keyboardType="numeric"
+              maxLength={9}
             />
             <View style={styles.fieldGap} />
             <InputField
@@ -154,6 +157,7 @@ const SetPricingScreen = () => {
               errors={errors}
               placeholder={t('app.set_pricing.cleaning_fee_placeholder')}
               keyboardType="numeric"
+              maxLength={9}
             />
           </View>
         </KeyboardAwareScrollView>
