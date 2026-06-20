@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
@@ -25,10 +26,10 @@ const ConnectCalendarsIntroScreen = () => {
 
           {/* Calendar Card Area - Reduced height slightly to fit all screens */}
           <View style={styles.cardContainer}>
-            <Image 
-              source={require('@/assets/img/calendar_view.png')} 
-              style={styles.img} 
-              resizeMode="contain" 
+            <AppImage
+              source={require('@/assets/img/calendar_view.png')}
+              style={styles.img}
+              resizeMode="contain"
             />
           </View>
 

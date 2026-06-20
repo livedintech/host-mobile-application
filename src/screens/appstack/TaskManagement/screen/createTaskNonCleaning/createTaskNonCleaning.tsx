@@ -34,6 +34,10 @@ const CreateTaskNonCleaning = () => {
     onNextStep,
   } = CreateTaskContainer();
 
+
+  const today = new Date();
+    const minStartDate = today;
+
   const {
     control,
     handleSubmit,
@@ -109,6 +113,7 @@ const CreateTaskNonCleaning = () => {
               placeholder="mm/dd/yy"
               rightIcon={calendarIcon}
               rules={VALIDATION_RULES.DATE}
+              minimumDate={minStartDate}
             />
 
             <View style={{ flex: 1 }}>

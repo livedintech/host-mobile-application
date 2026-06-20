@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { s, vs, ms } from 'react-native-size-matters';
 import moment from 'moment';
 import { RawBookingData } from '@/types/api/bookingTypes';
@@ -15,8 +17,6 @@ interface CalendarListingCardProps {
   item: RawBookingData;
   onPress?: (id: string | number) => void;
 }
-
-const PLACEHOLDER_IMAGE = require('@/assets/img/property_placeholder.png');
 
 const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
   const renderMonthGrid = () => {
@@ -100,15 +100,17 @@ const CalendarListingCard = ({ item, onPress }: CalendarListingCardProps) => {
     <ButtonView activeOpacity={0.8} onPress={() => onPress?.(item.listing_id)}>
       <View style={styles.cardContainer}>
         {/* Property Image */}
-        <Image
-          source={
-            item?.listing_image
-              ? { uri: item.listing_image }
-              : PLACEHOLDER_IMAGE
-          }
-          style={styles.propertyImage}
-          resizeMode="cover"
-        />
+        {item?.listing_image ? (
+          <AppImage
+            source={{ uri: item.listing_image }}
+            style={styles.propertyImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={[styles.propertyImage, styles.propertyImagePlaceholder]}>
+            <Svgicons path="imageIcon" width={ms(22)} height={ms(20)} />
+          </View>
+        )}
 
         {/* Listing Info */}
         <View style={styles.infoContainer}>
@@ -164,6 +166,10 @@ const styles = StyleSheet.create({
     height: ms(60),
     backgroundColor: '#F5F5F5',
     borderRadius: ms(15),
+  },
+  propertyImagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   infoContainer: {
     flex: 1,

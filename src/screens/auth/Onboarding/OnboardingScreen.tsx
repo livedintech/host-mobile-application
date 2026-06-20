@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, Image } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -56,7 +57,7 @@ const OnboardingScreen = () => {
                 />
             </View>
             <View style={styles.imageContainer}>
-                <Image source={item.bg} style={styles.image} resizeMode='contain' />
+                <AppImage source={item.bg} style={styles.image} resizeMode='contain' />
             </View>
         </View>
     );

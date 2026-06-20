@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import { s, vs, ms } from 'react-native-size-matters';
 import { ChevronRight } from 'lucide-react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -36,10 +37,10 @@ const NoListings = ({ onConnect }: Props) => {
                 
                 {/* Avatar Container */}
                 <View style={styles.avatarContainer}>
-                  <Image 
-                    source={require('@/assets/img/img1.png')} 
-                    style={styles.avatar} 
-                    resizeMode="contain" 
+                  <AppImage
+                    source={require('@/assets/img/img1.png')}
+                    style={styles.avatar}
+                    resizeMode="contain"
                   />
                 </View>
 

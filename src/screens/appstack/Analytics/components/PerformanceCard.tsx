@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
@@ -25,7 +26,7 @@ const PerformanceCard = ({ data, formatNumber }: any) => {
     <GlassCard width="100%" style={styles.cardContainer}>
       <View style={styles.topRow}>
         <GlassCard width={75} style={styles.imageGlassWrapper}>
-          <Image
+          <AppImage
             source={require('@/assets/img/appartment.png')}
             style={styles.listingImage}
             resizeMode="cover"

@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
-  Image,
   FlatList,
   Dimensions,
   Modal,
   ActivityIndicator,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import ImageView from 'react-native-image-viewing';
 import Video from 'react-native-video';
 
@@ -74,7 +74,7 @@ const PreActivity = ({ route }: any) => {
             muted={true}
           />
         ) : (
-          <Image
+          <AppImage
             source={{ uri: item.file_path }}
             style={styles.mediaImage}
             resizeMode="cover"

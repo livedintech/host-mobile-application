@@ -5,10 +5,10 @@ import {
   ScrollView,
   View,
   ImageBackground,
-  Image,
   Modal,
   ActivityIndicator,
 } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import Metrics from '@/utility/Metrics';
 import { navigate } from '@/services/navigationService';
@@ -130,7 +130,7 @@ const MoreScreen = () => {
           <GlassCard width="auto" style={styles.profileCard}>
             <View style={styles.profileInfo}>
               {user?.profile_picture ? (
-                <Image
+                <AppImage
                   source={{ uri: user.profile_picture }}
                   style={styles.avatar}
                 />
