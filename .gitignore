@@ -42,6 +42,8 @@ android/react-native-assets-manifest.json
 ios/Pods/
 ios/build/
 ios/DerivedData/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
 
 # ======================
 # IDE
