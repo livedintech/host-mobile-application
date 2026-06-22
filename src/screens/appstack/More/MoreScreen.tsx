@@ -19,10 +19,12 @@ import { useAuthStore } from '@/store/useAuthStore';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import { Colors } from '@/theme/colors';
 import { useTranslation } from 'react-i18next';
-import { logoutApi } from '@/services/authApi';
+import { logoutApi, deleteAccountApi } from '@/services/authApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { storage } from '@/storage/mmkv';
 import i18n, { saveLanguage } from '@/locales/i18n/i18n';
+import Toast from 'react-native-toast-message';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
 
 import { NotificationService } from '@/services/notification.service';
 import { useFocusEffect } from '@react-navigation/native';
@@ -35,6 +37,7 @@ const MoreScreen = () => {
   const { user, logout, setUser } = useAuthStore();
   const queryClient = useQueryClient();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const eligibleRef = useRef<boolean | null>(null);
 
   useFocusEffect(
@@ -106,6 +109,21 @@ const MoreScreen = () => {
     },
     onError: () => {
       performLocalLogout();
+    },
+  });
+
+  const toggleDeleteModal = () => setDeleteModalVisible(!isDeleteModalVisible);
+
+  const { mutate: handleDeleteAccount, isPending: isDeleting } = useMutation({
+    mutationFn: deleteAccountApi,
+    onSuccess: () => {
+      setDeleteModalVisible(false);
+      Toast.show({ type: 'success', text1: i18n.t('common.toast.account_deleted') });
+      performLocalLogout();
+    },
+    onError: (error: any) => {
+      setDeleteModalVisible(false);
+      Toast.show({ type: 'error', text1: error?.message || i18n.t('common.toast.failed_delete_account') });
     },
   });
 
@@ -273,6 +291,23 @@ const MoreScreen = () => {
             </View>
           </GlassCard>
         </AppPressable>
+
+        {/* Delete Account Trigger */}
+        <AppPressable onPress={toggleDeleteModal}>
+          <GlassCard width="100%" style={styles.logoutCard}>
+            <View style={styles.logoutContent}>
+              <AppText
+                text={t('app.more.delete_account')}
+                type="Medium"
+                fontSize={16}
+                color={Colors.INDIAN_RED}
+              />
+              <GlassCard width={36} style={styles.logoutIconGlass}>
+                <Svgicons path="TrashFull" size={18} />
+              </GlassCard>
+            </View>
+          </GlassCard>
+        </AppPressable>
       </ScrollView>
 
       {/* Logout Confirmation Modal */}
@@ -328,6 +363,16 @@ const MoreScreen = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Delete Account Confirmation Modal */}
+      <AccountDeleteModal
+        isVisible={isDeleteModalVisible}
+        onClose={toggleDeleteModal}
+        onConfirm={() => handleDeleteAccount()}
+        isLoading={isDeleting}
+        title={t('app.more.delete_account_confirm')}
+        description={t('app.more.delete_account_subtitle')}
+      />
     </ImageBackground>
   );
 };

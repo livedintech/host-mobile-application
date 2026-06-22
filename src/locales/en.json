@@ -1195,7 +1195,10 @@
       "chat_settings_section": "Chat Settings",
       "ai_autopilot": "AI Autopilot",
       "escalation_settings": "Escalation Settings",
-      "message_categories": "Message Categories"
+      "message_categories": "Message Categories",
+      "delete_account": "Delete Account",
+      "delete_account_confirm": "Are you sure you want to delete your account?",
+      "delete_account_subtitle": "This action is permanent and cannot be undone."
     },
     "pre_activity_screen": {
       "title": "Pre-activity Preview",
