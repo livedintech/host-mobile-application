@@ -81,8 +81,21 @@ const AppImage = ({
     onError?.(event);
   };
 
+  // Placeholder colour is only meaningful while the loader is actually
+  // showing (remote image still fetching) — applying it unconditionally
+  // bleeds through transparent PNGs (local assets, icons, illustrations)
+  // since they never enter a loading state.
+  const showPlaceholderBg = showLoader && remote && isLoading;
+
   return (
-    <View style={[styles.container, style, containerStyle]}>
+    <View
+      style={[
+        styles.container,
+        showPlaceholderBg && styles.containerLoading,
+        style,
+        containerStyle,
+      ]}
+    >
       <FastImage
         {...rest}
         source={hasError && fallbackSource ? fallbackSource : stableSource}
@@ -106,6 +119,8 @@ const AppImage = ({
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
+  },
+  containerLoading: {
     backgroundColor: Colors.ANTI_FLASH_WHITE,
   },
   loaderOverlay: {
