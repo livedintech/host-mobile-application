@@ -8,13 +8,11 @@ const Stack = createNativeStackNavigator();
 const { Navigator, Screen } = Stack;
 
 const AuthStack = () => {
-  const user = useAuthStore(s => s.user);
   const hasSeenOnboarding = useAuthStore(s => s.hasSeenOnboarding);
-  const initialRoute = user?.signup_step === 'step_11'
-    ? NavigationRoutes.AUTH_STACK.PAYMENT
-    : hasSeenOnboarding
-      ? NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE
-      : NavigationRoutes.AUTH_STACK.ON_BOARDING;
+  // Subscription/payment step is disabled (Apple 3.1.1) — never route into it.
+  const initialRoute = hasSeenOnboarding
+    ? NavigationRoutes.AUTH_STACK.LOGIN_WITH_PHONE
+    : NavigationRoutes.AUTH_STACK.ON_BOARDING;
 
   return (
     <Navigator initialRouteName={initialRoute}>

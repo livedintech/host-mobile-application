@@ -75,27 +75,10 @@ export default function useEnterPasswordContainer() {
         return;
       }
       clearPhoneData();
-      if (data?.user?.signup_step === 'step_11') {
-        setToken(data?.access_token);
-        setUser(data?.user);
-        await CrashlyticsService.setUserId(String(data?.user?.id));
-        navigate(NavigationRoutes.APP_STACK.PAYMENT, {
-          phone_number: data?.user?.phone,
-          phone_with_code: data?.user?.phone_with_code,
-          country_code: data?.user?.country_code,
-          pricing: data?.user?.subscription?.price,
-          email: data?.user?.email,
-          full_name: data?.user?.name,
-        });
-      } else if (data?.user?.signup_step === 'step_2') {
-        setToken(data?.access_token);
-        setUser(data?.user);
-        await CrashlyticsService.setUserId(String(data?.user?.id));
-      } else {
-        setToken(data?.access_token);
-        setUser(data?.user);
-        await CrashlyticsService.setUserId(String(data?.user?.id));
-      }
+      // Subscription/payment step is disabled (Apple 3.1.1) — always go straight into the app.
+      setToken(data?.access_token);
+      setUser(data?.user);
+      await CrashlyticsService.setUserId(String(data?.user?.id));
       Toast.show({ type: 'success', text1: message });
     },
     onError: (error: any) => {

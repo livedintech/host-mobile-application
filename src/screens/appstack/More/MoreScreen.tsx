@@ -1,5 +1,5 @@
 import AppPressable from '@/components/atoms/AppPressable/AppPressable';
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -29,7 +29,6 @@ import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/Accout
 import { NotificationService } from '@/services/notification.service';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUser } from '@/services/UserPermission';
-import { contactEligibilityApi } from '@/services/paymentService';
 import { CrashlyticsService } from '@/services/crashlytics.service';
 
 const MoreScreen = () => {
@@ -38,7 +37,6 @@ const MoreScreen = () => {
   const queryClient = useQueryClient();
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-  const eligibleRef = useRef<boolean | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,41 +46,8 @@ const MoreScreen = () => {
           if (data) setUser(data);
         })
         .catch(() => {});
-
-      // Pre-fetch eligibility only when user has no plan
-      if (user?.sub_plan_id === null || user?.sub_plan_id === undefined) {
-        const email = user?.email ?? '';
-        if (email) {
-          contactEligibilityApi(email)
-            .then(result => {
-              eligibleRef.current = result?.data?.eligible ?? false;
-            })
-            .catch(() => {
-              eligibleRef.current = false;
-            });
-        }
-      }
-    }, [user?.sub_plan_id, user?.email]),
+    }, []),
   );
-
-  const handleSubscriptionPress = () => {
-    if (user?.sub_plan_id !== null && user?.sub_plan_id !== undefined) {
-      navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY);
-      return;
-    }
-    if (eligibleRef.current) {
-      navigate(NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW, {
-        planId: 'df0c79c6-e11e-4215-97b1-249011095c8f',
-        qtyFrom: 1,
-        full_name: user?.name ?? '',
-        email: user?.email ?? '',
-        country_code: user?.country_code ?? '',
-        phone_number: user?.phone ?? '',
-      });
-      return;
-    }
-    navigate(NavigationRoutes.APP_STACK.SELECT_PLAN);
-  };
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
