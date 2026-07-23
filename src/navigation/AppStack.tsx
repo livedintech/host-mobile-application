@@ -32,101 +32,7 @@ const AppStack = ({ initialRouteName = NavigationRoutes.APP_STACK.ROOT_STACK }: 
             .default
         }
       />
-      {/* TASK SCREEN OLD */}
-      {/* <Stack.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
-        name={NavigationRoutes.APP_STACK.TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/TaskList/TaskListScreen')
-            .default
-        }
-      />
-
-
-      
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.CREATE_CHECKLIST}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/CreateChecklist/CreateChecklistScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.EDIT_TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/EditTask/EditTaskScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.VIEW_TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screens/ViewTask/ViewTaskScreen')
-            .default
-        }
-      /> */}
-
-      {/* TASK SCREEN OLD END */}
-
-      <Stack.Screen
-        options={{
-          header: () => <HeaderApp isLogo isGoBack isLang />,
-        }}
-        name={NavigationRoutes.APP_STACK.BILLING}
-        getComponent={() =>
-          require('@/screens/appstack/Billing/BillingScreen').default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.SUBSCRIPTION_HISTORY}
-        getComponent={() =>
-          require('@/screens/appstack/SubscriptionHistory/SubscriptionHistoryScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.SELECT_PLAN}
-        getComponent={() =>
-          require('@/screens/appstack/SelectPlan/SelectPlanScreen').default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.TRANSACTION_HISTORY}
-        getComponent={() =>
-          require('@/screens/appstack/TransactionHistory/TransactionHistoryScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST}
-        getComponent={() =>
-          require('@/screens/appstack/PaymentMethodList/PaymentMethodListScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.ADD_NEW_PAYMENT_METHOD}
-        getComponent={() =>
-          require('@/screens/appstack/AddNewPaymentMethod/AddNewPaymentMethodScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.SELECT_PAYMENT_METHOD}
-        getComponent={() =>
-          require('@/screens/appstack/SelectPayment/SelectPaymentScreen')
-            .default
-        }
-      />
+      {/* Billing/Subscription/Payment screens removed completely — Apple Guideline 3.1.1 (external payment for digital subscription). Do not re-add without native IAP. */}
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.ACCOUNT}
@@ -739,14 +645,6 @@ const AppStack = ({ initialRouteName = NavigationRoutes.APP_STACK.ROOT_STACK }: 
             .default
         }
       />
-      {/* <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack /> }}
-        name={NavigationRoutes.APP_STACK.TASK}
-        getComponent={() =>
-          require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask')
-            .default
-        }
-      /> */}
       <Stack.Screen
         options={{ header: () => <HeaderApp isGoBack /> }}
         name={NavigationRoutes.APP_STACK.EDIT_TASK}
@@ -858,13 +756,6 @@ const AppStack = ({ initialRouteName = NavigationRoutes.APP_STACK.ROOT_STACK }: 
       />
       <Stack.Screen
         options={{ headerShown: false }}
-        name={NavigationRoutes.APP_STACK.SUBSCRIPTION_WEBVIEW}
-        getComponent={() =>
-          require('@/screens/common/Payment/SubscriptionWebViewScreen').default
-        }
-      />
-      <Stack.Screen
-        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.CHECKOUT_INSTRUCTION}
         getComponent={() =>
           require('@/screens/appstack/ListingManagement/CheckoutInstruction/CheckoutInstructionScreen')
@@ -910,13 +801,6 @@ const AppStack = ({ initialRouteName = NavigationRoutes.APP_STACK.ROOT_STACK }: 
         getComponent={() =>
           require('@/screens/appstack/AIAutoReplyFeature/screens/CategoryCustomInstructionsScreen')
             .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp /> }}
-        name={NavigationRoutes.APP_STACK.PAYMENT}
-        getComponent={() =>
-          require('@/screens/auth/Payment/PaymentScreen').default
         }
       />
     </Stack.Navigator>

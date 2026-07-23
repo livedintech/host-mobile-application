@@ -106,11 +106,7 @@ import smileyHappyIcon from './smiley-happy.svg';
 import mailIcon from './mailIcon.svg';
 import starRewardIcon from './starRewardIcon.svg';
 import chatBubbleIcon from './chatBubbleIcon.svg';
-import paymentCardIcon from './paymentCard.svg';
-import paymentIconNew from './payment_icon.svg';
 import reviewStarHalfIcon from './reviewStarHalfIcon.svg';
-import stc_pay_logo from './stc_pay_logo.svg';
-import mada_logo from './mada_logo.svg';
 import airbnb from './airbnb.svg';
 import gathern from './gathern.svg';
 import livedin from './livedin.svg';
@@ -122,7 +118,6 @@ import moneyBagIcon from './moneyBagIcon.svg';
 import sparkleRewardIcon from './sparkleRewardIcon.svg';
 import userOutline from './userOutline.svg';
 import analyticsOutline from './analyticsOutline.svg';
-import cardOutline from './cardOutline.svg';
 import logoutIcon from './logoutIcon.svg';
 import statsIcon from './statsIcon.svg';
 import performanceIcon from './performanceIcon.svg';
@@ -135,18 +130,9 @@ import bookingIcon from './bookingIcon.svg';
 import lockIcon from './lockIcon.svg';
 import reviewManagementIcon from './reviewManagementIcon.svg';
 import userManagementIconNew from './userManagementIcon.svg';
-import paymentIcon from './paymentIcon.svg';
-import transactionIcon from './transactionIcon.svg';
-import subscriptionIcon from './subscriptionIcon.svg';
 const noAccountTask = require('./noAccountTask.png');
 const recurringImg = require('./recurringImg.png');
 import giftImg from './gift.svg';
-import LogoMasterCardIcon from './LogoMasterCard.svg';
-import LogoVisaCardIcon from './LogoVisaCard.svg';
-import LogoMadaCardIcon from './LogoMadaCardIcon.svg';
-import LogoStcCardIcon from './LogoStcCardIcon.svg';
-import LogoAppleCardICon from './LogoAppleCardICon.svg';
-import LogoGooglePayCardIcon from './LogoGooglePayCardIcon.svg';
 import home from './home.svg';
 import onetothree from './1-3.svg';
 import fourtothirty from './4-30.svg';
@@ -213,9 +199,7 @@ import businessCard from './businessCard.svg'
 import databaseRaidStorage from './databaseRaidStorage.svg'
 import multiCalendar from './multiCalendar.svg'
 import targetShopBullseye from './multiCalendar.svg'
-import paymentDollar from './paymentDollar.svg'
 import envelopeResend from './envelopeResend.svg'
-import cardBlack from './cardBlack.svg'
 import chatIcon from './chatIcon.svg'
 import sendWhite from './sendWhite.svg'
 const noReview = require('./noReview.png');
@@ -429,9 +413,7 @@ export const icons = {
   reservationlivedin,
   reservationguests,
   chatIcon,
-  cardBlack,
   targetShopBullseye,
-  paymentDollar,
   envelopeResend,
   multiCalendar,
   envelope,
@@ -551,10 +533,7 @@ export const icons = {
   mailIcon,
   starRewardIcon,
   chatBubbleIcon,
-  paymentCardIcon,
   reviewStarHalfIcon,
-  stc_pay_logo,
-  mada_logo,
   airbnb,
   gathern,
   livedin,
@@ -566,7 +545,6 @@ export const icons = {
   sparkleRewardIcon,
   userOutline,
   analyticsOutline,
-  cardOutline,
   logoutIcon,
   statsIcon,
   performanceIcon,
@@ -579,10 +557,6 @@ export const icons = {
   lockIcon,
   userManagementIconNew,
   reviewManagementIcon,
-  paymentIcon,
-  paymentIconNew,
-  transactionIcon,
-  subscriptionIcon,
   noAccountTask,
   recurringImg,
   edit_pencil_icon,
@@ -612,12 +586,6 @@ export const icons = {
   deleteTask,
   kitchen,
   giftImg,
-  LogoMasterCardIcon,
-  LogoVisaCardIcon,
-  LogoMadaCardIcon,
-  LogoStcCardIcon,
-  LogoAppleCardICon,
-  LogoGooglePayCardIcon,
   home,
   onetothree,
   fourtothirty,

@@ -13,9 +13,138 @@ import {
 } from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { PermissionsAndroid, Platform } from 'react-native';
-import { navigate } from './navigationService';
+import { navigate, navigationRef } from './navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { CrashlyticsService } from '@/services/crashlytics.service';
+
+export type NotificationRoutePayload = {
+  type: string;
+  id?: string;
+};
+
+export function parseNotificationPayload(
+  data: Record<string, string | undefined> | { type?: string; notification_type?: string; id?: string } | null | undefined,
+): NotificationRoutePayload | null {
+  if (!data) return null;
+  const type = data.type || data.notification_type;
+  if (!type) return null;
+  return { type, id: data.id };
+}
+
+export function navigateFromNotificationPayload({
+  type,
+  id,
+}: NotificationRoutePayload): void {
+  try {
+    switch (type) {
+      case 'booking':
+        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+        break;
+
+      case 'direct_booking_received':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+          booking_id: `L${id}`,
+        });
+        break;
+
+      case 'booking_detail':
+      case 'booking_confirmed':
+      case 'stay_completed':
+      case 'checkin_today':
+      case 'checkout_today':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+          booking_id: `O${id}`,
+        });
+        break;
+
+      case 'booking_modification':
+      case 'reservation_updated':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+          booking_id: `O${id}`,
+        });
+        break;
+
+      case 'booking_request':
+      case 'pre_booking_inquiry':
+      case 'new_booking_request':
+        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, {
+          activeFilter: 'booking_request',
+        });
+        break;
+
+      case 'booking_cancellation':
+      case 'reservation_cancelled':
+        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+        break;
+
+      case 'chats_view':
+      case 'new_guest_message':
+      case 'escalation':
+        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
+          conversation_id: id,
+        });
+        break;
+
+      case 'task_update':
+      case 'task_created':
+      case 'task_in_progress':
+      case 'task_completed':
+        navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
+          taskId: id,
+        });
+        break;
+
+      case 'smart_lock':
+      case 'smart_lock_assigned':
+        navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES);
+        break;
+
+      case 'review_recieved':
+        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
+          reviewId: id,
+          showActionSheet: true,
+        });
+        break;
+
+      // 'payment_received' intentionally not routed — Billing/Subscription
+      // screens were removed completely (Apple Guideline 3.1.1).
+
+      case 'profile_updated':
+      case 'account_created':
+        navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
+        break;
+
+      case 'listing_deleted':
+        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+        break;
+
+      case 'listing_exported_created':
+      case 'listing_added':
+      case 'listing_mapped':
+      case 'listing_unmapped':
+      case 'listing_exported':
+        if (id != null) {
+          useCreateListingStore.getState().setListingId(String(id));
+        }
+        navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+        break;
+
+      case 'user_invited':
+      case 'user_invitation_accepted':
+      case 'user_role_updated':
+      case 'user_removed':
+        navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
+        break;
+
+      default:
+        break;
+    }
+  } catch (error) {
+    CrashlyticsService.recordError(error as Error, 'NotificationNavigationError');
+  }
+}
 
 export class NotificationService {
   static initiated = false;
@@ -143,115 +272,33 @@ export class NotificationService {
 
   static handleNavigation(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage | null,
-    delay: number = 1000,
+    initialDelay: number = 1000,
   ): void {
-    if (!remoteMessage?.data) return;
+    const payload = parseNotificationPayload(
+      remoteMessage?.data as Record<string, string | undefined>,
+    );
+    if (!payload) return;
 
-    const { type, id } = remoteMessage.data as Record<string, string>;
+    const maxAttempts = 12;
+    const retryIntervalMs = 500;
+    let attempt = 0;
 
-    setTimeout(() => {
-      switch (type) {
-        case 'booking':
-          navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
-          break;
+    const tryNavigate = () => {
+      attempt += 1;
 
-        case 'direct_booking_received':
-          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: `L${id}`,
-          });
-          break;
+      if (!useAuthStore.getState().isLoggedIn) return;
 
-        case 'booking_detail':
-        case 'booking_confirmed':
-        case 'stay_completed':
-        case 'checkin_today':
-        case 'checkout_today':
-          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: `O${id}`,
-          });
-          break;
-
-        case 'booking_modification':
-        case 'reservation_updated':
-          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            booking_id: `O${id}`,
-          });
-          break;
-
-        case 'booking_request':
-        case 'pre_booking_inquiry':
-        case 'new_booking_request':
-          navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, {
-            activeFilter: 'booking_request',
-          });
-          break;
-
-        case 'booking_cancellation':
-        case 'reservation_cancelled':
-          navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
-          break;
-
-        case 'chats_view':
-        case 'new_guest_message':
-        case 'escalation':
-          navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, {
-            conversation_id: id,
-          });
-          break;
-
-        case 'task_update':
-        case 'task_created':
-        case 'task_in_progress':
-        case 'task_completed':
-          navigate(NavigationRoutes.APP_STACK.EDIT_TASK, {
-            taskId: id,
-          });
-          break;
-
-        case 'smart_lock':
-        case 'smart_lock_assigned':
-          navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES);
-          break;
-
-        case 'review_recieved':
-          navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-            reviewId: id,
-            showActionSheet: true,
-          });
-          break;
-
-        case 'payment_received':
-          navigate(NavigationRoutes.APP_STACK.BILLING);
-          break;
-
-        case 'profile_updated':
-        case 'account_created':
-          navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
-          break;
-
-        case 'listing_deleted':
-          navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-          break;
-        case 'listing_exported_created':
-        case 'listing_added':
-        case 'listing_mapped':
-        case 'listing_unmapped':
-        case 'listing_exported':
-          useCreateListingStore.getState().setListingId(id.toString());
-          navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
-          break;
-
-        case 'user_invited':
-        case 'user_invitation_accepted':
-        case 'user_role_updated':
-        case 'user_removed':
-          navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
-          break;
-
-        default:
-          break;
+      if (navigationRef.current?.isReady()) {
+        navigateFromNotificationPayload(payload);
+        return;
       }
-    }, delay);
+
+      if (attempt < maxAttempts) {
+        setTimeout(tryNavigate, retryIntervalMs);
+      }
+    };
+
+    setTimeout(tryNavigate, initialDelay);
   }
 }
 

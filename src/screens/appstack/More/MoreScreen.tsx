@@ -218,29 +218,6 @@ const MoreScreen = () => {
             },
           ]}
         />
-        {/* <MenuSection
-          title={t('app.billing.title')}
-          headerIcon="paymentCardIcon"
-          items={[
-            {
-              title: t('app.billing.payment_method'),
-              icon: 'paymentIcon',
-              onPress: () => navigate(NavigationRoutes.APP_STACK.PAYMENT_METHOD_LIST),
-            },
-            {
-              title: t('app.billing.subscription'),
-              icon: 'paymentDollar',
-              onPress: handleSubscriptionPress,
-            },
-            {
-              title: t('app.billing.transaction_history'),
-              icon: 'transactionIcon',
-              onPress: () =>
-                navigate(NavigationRoutes.APP_STACK.TRANSACTION_HISTORY),
-            },
-          ]}
-        /> */}
-
         {/* Logout Trigger */}
         <AppPressable onPress={toggleModal}>
           <GlassCard width="100%" style={styles.logoutCard}>

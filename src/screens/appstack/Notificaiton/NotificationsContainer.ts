@@ -3,8 +3,11 @@ import { AppState } from 'react-native';
 import { useInfiniteQuery, useMutation, useQueryClient, InfiniteData } from '@tanstack/react-query';
 import notifee from '@notifee/react-native';
 import STORAGE_CONST from '@/constants/storage';
-import { goBack, navigate } from '@/services/navigationService';
-import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { goBack } from '@/services/navigationService';
+import {
+  navigateFromNotificationPayload,
+  parseNotificationPayload,
+} from '@/services/notification.service';
 import {
   getMobileNotifications,
   markNotificationRead,
@@ -15,7 +18,6 @@ import {
   GetNotificationsResponse,
 } from '@/services/mobileNotificationsApi';
 import { useNotificationStore } from '@/store/useNotificationStore';
-import { useCreateListingStore } from '@/store/useCreateListingStore';
 
 export type FlatItem =
   | { type: 'header'; title: string; key: string; id: string }
@@ -122,7 +124,6 @@ function updateCacheItems(
 export default function useNotificationsContainer() {
   const queryClient = useQueryClient();
   const { setUnreadCount, decrementUnreadCount } = useNotificationStore();
-  const { updateListing, setChannelId, setListingId } = useCreateListingStore();
 
   const dataQuery = useInfiniteQuery({
     queryKey: QUERY_KEY,
@@ -206,86 +207,14 @@ export default function useNotificationsContainer() {
       markReadMutation.mutate(item.notification_id);
     }
 
-    const { type, id } = item.payload;
+    const payload = parseNotificationPayload({
+      type: item.payload?.type,
+      notification_type: item.payload?.notification_type,
+      id: item.payload?.id,
+    });
+    if (!payload) return;
 
-    switch (type) {
-      case 'booking':
-        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
-        break;
-      case 'direct_booking_received':
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `L${id}` });
-        break;
-      case 'booking_detail':
-      case 'booking_confirmed':
-      case 'stay_completed':
-      case 'checkin_today':
-      case 'checkout_today':
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `O${id}` });
-        break;
-      case 'booking_modification':
-      case 'reservation_updated':
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, { booking_id: `O${id}` });
-        break;
-      case 'booking_request':
-      case 'pre_booking_inquiry':
-      case 'new_booking_request':
-        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR, { activeFilter: 'booking_request' });
-        break;
-      case 'booking_cancellation':
-      case 'reservation_cancelled':
-        navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
-        break;
-      case 'chats_view':
-      case 'new_guest_message':
-      case 'escalation':
-        navigate(NavigationRoutes.APP_STACK.CHAT_DETAIL, { conversation_id: id });
-        break;
-      case 'task_update':
-      case 'task_created':
-      case 'task_in_progress':
-      case 'task_completed':
-        navigate(NavigationRoutes.APP_STACK.EDIT_TASK, { taskId: id });
-        break;
-      case 'smart_lock':
-      case 'smart_lock_assigned':
-        navigate(NavigationRoutes.APP_STACK.ACTIVE_CODES);
-        break;
-      case 'review_recieved':
-        navigate(NavigationRoutes.APP_STACK.REVIEW_MANAGEMENT_DETAIL_SCREEN, {
-          reviewId: id,
-          showActionSheet: true,
-        });
-        break;
-      case 'payment_received':
-        navigate(NavigationRoutes.APP_STACK.BILLING);
-        break;
-      // case 'password_changed':
-      //   navigate(NavigationRoutes.APP_STACK.CHANGE_PASSWORD);
-      //   break;
-      case 'profile_updated':
-      case 'account_created':
-        navigate(NavigationRoutes.APP_STACK.PROFILE_SETTING);
-        break;
-      case 'listing_deleted':
-        navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
-        break;
-      case 'listing_exported_created':
-      case 'listing_added':
-      case 'listing_mapped':
-      case 'listing_unmapped':
-      case 'listing_exported':
-        setListingId(id.toString());
-        navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
-        break;
-      case 'user_invited':
-      case 'user_invitation_accepted':
-      case 'user_role_updated':
-      case 'user_removed':
-        navigate(NavigationRoutes.APP_STACK.USER_MANAGEMENT);
-        break;
-      default:
-        break;
-    }
+    navigateFromNotificationPayload(payload);
   }, [markReadMutation]);
 
   const handleMarkAllRead = useCallback(() => {

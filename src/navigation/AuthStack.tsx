@@ -78,43 +78,7 @@ const AuthStack = () => {
           require('@/screens/auth/AddNewPassword/AddNewPasswordScreen').default
         }
       />
-      <Screen
-        options={({ route }) => ({ header: () => <HeaderApp isGoBack={!!route.params?.email} /> })}
-        name={NavigationRoutes.AUTH_STACK.PAYMENT}
-        getComponent={() =>
-          require('@/screens/auth/Payment/PaymentScreen').default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack isLang /> }}
-        name={NavigationRoutes.AUTH_STACK.SELECT_PAYMENT_METHOD}
-        getComponent={() =>
-          require('@/screens/appstack/SelectPayment/SelectPaymentScreen')
-            .default
-        }
-      />
-      <Stack.Screen
-        options={{ header: () => <HeaderApp isGoBack isLang /> }}
-        name={NavigationRoutes.AUTH_STACK.ADD_NEW_PAYMENT_METHOD}
-        getComponent={() =>
-          require('@/screens/appstack/AddNewPaymentMethod/AddNewPaymentMethodScreen')
-            .default
-        }
-      />
-      <Screen
-        options={{ header: () => <HeaderApp isGoBack isLang /> }}
-        name={NavigationRoutes.AUTH_STACK.ADD_CARD_DETAIL}
-        getComponent={() =>
-          require('@/screens/auth/AddCardDetail/AddCardDetailScreen').default
-        }
-      />
-      <Screen
-        options={{ header: () => <HeaderApp /> }}
-        name={NavigationRoutes.AUTH_STACK.TRIAL_SUCCESS}
-        getComponent={() =>
-          require('@/screens/auth/TrialSuccess/TrialSuccessScreen').default
-        }
-      />
+      {/* Payment/Subscription/Card screens removed completely — Apple Guideline 3.1.1 (external payment for digital subscription). Do not re-add without native IAP. */}
       <Screen
         options={{ header: () => <HeaderApp /> }}
         name={NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD}
@@ -141,13 +105,6 @@ const AuthStack = () => {
         name={NavigationRoutes.AUTH_STACK.HUB_SPOT_THANK_YOU}
         getComponent={() =>
           require('@/screens/auth/HubspotThankyou/HubspotThankyouScreen').default
-        }
-      />
-      <Screen
-        options={{ header: () => <HeaderApp isGoBack/> }}
-        name={NavigationRoutes.AUTH_STACK.SUBSCRIPTION_WEBVIEW}
-        getComponent={() =>
-          require('@/screens/common/Payment/SubscriptionWebViewScreen').default
         }
       />
       <Screen

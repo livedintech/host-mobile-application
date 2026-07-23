@@ -174,7 +174,7 @@ const EditTask = ({ route }: any) => {
     setIsEditMode(false);
   };
 
-    const today = new Date();
+  const today = new Date();
   const minStartDate = today;
 
   if (isDeleting) {
@@ -356,7 +356,7 @@ const EditTask = ({ route }: any) => {
               {isEditMode ? (
                 <View>
                   <DateTimeInputField
-                  minimumDate={minStartDate}
+                    minimumDate={minStartDate}
                     name="task_date"
                     control={control}
                     errors={errors}
@@ -416,8 +416,8 @@ const EditTask = ({ route }: any) => {
                       apiStatus === 'todo'
                         ? Colors.ERROR_RED
                         : apiStatus === 'inprogress'
-                        ? Colors.GOLDEN_AMBER
-                        : Colors.PRIMARY_TEAL
+                          ? Colors.GOLDEN_AMBER
+                          : Colors.PRIMARY_TEAL
                     }
                   />
                 </View>

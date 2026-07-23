@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
-  processColor,
   StatusBar,
   View,
   StyleSheet,
@@ -20,14 +19,8 @@ import { Colors } from '@/theme/colors';
 import { navigationRef } from '@/services/navigationService';
 import { CustomSuccessToast } from '@/components/molecules/CustomToast/CustomSuccessToast';
 import { CustomErrorToast } from '@/components/molecules/CustomToast/CustomErrorToast';
-import { MFSDK } from 'myfatoorah-reactnative';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import myFatoorahConfig, {
-  validateConfig,
-  getEnvironmentName,
-  isProduction,
-} from '@/config/myfatoorah.config';
 import linking from '@/navigation/linkingConfig';
 import { MenuProvider } from 'react-native-popup-menu';
 import { configureGoogleSignIn } from '@/services/googleConfig';
@@ -146,68 +139,14 @@ const App = () => {
 
   const initializeApp = async () => {
     try {
-      const { isValid, errors } = validateConfig();
-
-      if (!isValid) {
-        console.error('❌ Configuration validation failed:', errors);
-        throw new Error(`Configuration Error: ${errors.join(', ')}`);
-      }
-
       await userEventService.init();
-      await configureMyFatoorah();
-      await setUpActionBar();
-
       setIsSDKInitialized(true);
-
       console.log('✅ App initialized successfully');
-      console.log(`📱 Environment: ${getEnvironmentName()}`);
-      console.log(`🌍 Country: Saudi Arabia`);
     } catch (error: any) {
       console.error('❌ App initialization failed:', error);
       CrashlyticsService.recordError(error, 'AppInitializationError');
       setInitializationError(error.message || 'Initialization failed');
       setIsSDKInitialized(true);
-    }
-  };
-
-  const configureMyFatoorah = async () => {
-    try {
-      const success = await MFSDK.init(
-        myFatoorahConfig.apiKey,
-        myFatoorahConfig.country,
-        myFatoorahConfig.environment,
-      );
-
-      console.log('✅ MyFatoorah SDK initialized:', success);
-
-      if (isProduction() && __DEV__) {
-        console.warn(
-          '⚠️ WARNING: Using PRODUCTION environment in development mode!',
-        );
-      }
-
-      return success;
-    } catch (error: any) {
-      console.error('❌ MyFatoorah SDK initialization error:', error);
-      CrashlyticsService.recordError(error, 'MyFatoorahInitializationError');
-      throw new Error('Failed to initialize payment system');
-    }
-  };
-
-  const setUpActionBar = async () => {
-    try {
-      const success = await MFSDK.setUpActionBar(
-        myFatoorahConfig.actionBarTitle,
-        processColor(myFatoorahConfig.actionBarTitleColor),
-        processColor(myFatoorahConfig.actionBarBackgroundColor),
-        true,
-      );
-
-      console.log('✅ MyFatoorah ActionBar configured:', success);
-      return success;
-    } catch (error: any) {
-      console.error('⚠️ ActionBar setup error:', error);
-      return null;
     }
   };
 
@@ -225,10 +164,7 @@ const App = () => {
   }
 
   if (initializationError) {
-    console.warn(
-      '⚠️ Payment system may not work properly:',
-      initializationError,
-    );
+    console.warn('⚠️ App initialization warning:', initializationError);
   }
 
   const MyTheme = {
