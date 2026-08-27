@@ -1,44 +1,205 @@
-import React from 'react';
-import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { s, vs, ms } from 'react-native-size-matters';
+import { useRoute } from '@react-navigation/native';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import MultiBookingSheet from '@/components/molecules/MultiBookingSheet/MultiBookingSheet';
+
+import useListingContainer from './container/ListingContainer';
 import AppText from '@/components/molecules/AppText/AppText';
+import { BookingDetailsView } from '@/components/molecules/BookingDetailsView/BookingDetailsView';
+import { CalendarSection } from '@/components/molecules/CalendarSection/CalendarSection';
 import { Colors } from '@/theme/colors';
+import { useAuthStore } from '@/store/useAuthStore';
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import NoListing from './NoListing';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import CreateBookingSheet from '@/components/molecules/CreateBookingSheet/CreateBookingSheet';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
+import NoListingScreen from '@/screens/appstack/NoListingScreen/NoListingScreen';
 import Metrics from '@/utility/Metrics';
+import ListingSkeleton from '@/components/Skeletons/ListingSkeleton';
+import MultiChannelCalendarSkeleton from '@/components/Skeletons/MultiChannelCalendarSkeleton';
 
 const ListingScreen = () => {
+  const { t } = useTranslation();
+  const authStore = useAuthStore();
+  const user = authStore?.user;
+  const route = useRoute<any>();
+
+  const {
+    control,
+    errors,
+    handleSubmit,
+    setValue,
+    selectedListingId,
+    listingOptions,
+    calendarDataMap,
+    rawData,
+    defaultDailyPrice,
+    isFetchingDetails,
+    handleReservationPress,
+    onCreateBooking,
+    handleRefresh,
+    isRefreshing,
+    isBookingOpen,
+    setIsBookingOpen,
+    isLoading,
+    isCalendarLoading,
+    cleaningFee,
+    discount,
+    bookingType,
+    setBookingType,
+  } = useListingContainer(route.params?.listing_id, 0); // Fixed to Tab 0 logic
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [multiBookings, setMultiBookings] = useState<any[]>([]);
+  const [multiBookingDate, setMultiBookingDate] = useState('');
+  const multiSheetRef = useRef<BottomSheetModal>(null);
+
+  if (!user?.has_listing) {
+    return (
+      <View style={{ marginTop: Metrics.verticalScale(-15), flex:1 }}>
+        <NoListingScreen />;
+      </View>
+    );
+  }
+
+  const handleToggleToReservations = () => {
+    navigate(NavigationRoutes.APP_STACK.RESERVATION_CALENDAR);
+  };
+
+  const handleDayPress = (day: any) => {
+    const dateData = calendarDataMap[day.dateString];
+    const isBooked = selectedListingId
+      ? dateData?.type && dateData.type !== 'none'
+      : (dateData?.channels?.length ?? 0) > 0;
+
+    if (isBooked) {
+      const allBookingsForDate = selectedListingId
+        ? dateData.allBookings
+        : dateData.bookings;
+
+      if (allBookingsForDate && allBookingsForDate.length > 1) {
+        setMultiBookings(allBookingsForDate);
+        setMultiBookingDate(day.dateString);
+        multiSheetRef.current?.present();
+      } else {
+        const bookingCode = selectedListingId
+          ? dateData.bookingData?.booking_id
+          : dateData.bookings?.[0]?.booking_id;
+        if (bookingCode) handleReservationPress(bookingCode);
+      }
+    } else {
+      if (user?.role_key === 'supervisor') return;
+      setValue('start_date', day.dateString);
+      setIsBookingOpen(true);
+    }
+  };
+
+  const onBookingSubmit = async (data: any) => {
+    setIsBookingOpen(false);
+    await onCreateBooking(data);
+  };
+
   return (
-    <View style={styles.container}>
-      <AppText text={'No Listings Found'} fontSize={28} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mb={40} />
-      <View style={styles.infoCard}>
-        <View style={styles.row}>
-          <View style={styles.activeDot} />
-          <View style={styles.avatarContainer}>
-            <Image source={require('@/assets/img/img1.png')} style={styles.avatar} />
-          </View>
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <View style={styles.rowBetween}>
-              <AppText text="A.LI - Livedin" type="Bold" color={Colors.PINE_FOREST} />
-              <AppText text="9:36 AM" color="#999" fontSize={12} />
-            </View>
-            <AppText text={'Connect your Airbnb, Gathern, or other platforms to manage all your listings in one place.'} color={Colors.PINE_FOREST} mt={5} lineHeight={20} />
-          </View>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <BookingDetailsView
+        isVisible={isDetailsOpen}
+        onClose={() => {
+          setIsDetailsOpen(false);
+          setSelectedBookingId(null);
+        }}
+        bookingId={selectedBookingId}
+        onCardPress={handleReservationPress}
+      />
+
+      <View style={styles.headerFixed}>
+        <View style={styles.headerRow}>
+          <AppText
+            text={t('app.listing_screen.guest_bookings')}
+            fontSize={24}
+            type="Medium"
+            color={Colors.BLACK}
+          />
+          <ButtonView
+            style={styles.toggleButton}
+            onPress={handleToggleToReservations}
+          >
+            <AppText
+              text={t('app.listing_screen.reservations')}
+              color={Colors.WHITE}
+              fontSize={10}
+              type="SemiBold"
+            />
+          </ButtonView>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.connectBtn}>
-        <AppText text="Connect Account" color={Colors.BRUNSWICK_GREEN} type="Medium" />
-      </TouchableOpacity>
-    </View>
+      {isFetchingDetails || isLoading || isCalendarLoading ? (
+        selectedListingId ? <ListingSkeleton /> : <MultiChannelCalendarSkeleton />
+      ) : (
+        <CalendarSection
+          control={control}
+          errors={errors}
+          listingOptions={listingOptions}
+          selectedListingId={selectedListingId || ''}
+          markedDates={calendarDataMap}
+          bookings={rawData}
+          onDayPress={handleDayPress}
+          defaultPrice={defaultDailyPrice}
+          isLoading={isRefreshing}
+          onRefresh={handleRefresh}
+          onListingPress={id => setValue('listing_selection', String(id))}
+        />
+      )}
+
+      <MultiBookingSheet
+        ref={multiSheetRef}
+        bookings={multiBookings}
+        date={multiBookingDate}
+        onClose={() => {}}
+        onBookingPress={handleReservationPress}
+      />
+
+      {isBookingOpen && (
+        <CreateBookingSheet
+          isVisible={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          bookingType={bookingType}
+          setBookingType={setBookingType}
+          control={control}
+          errors={errors}
+          handleSubmit={handleSubmit}
+          cleaningFee={cleaningFee}
+          discount={discount}
+          listingOptions={listingOptions}
+          selectedListingId={selectedListingId || ''}
+          onSubmit={onBookingSubmit}
+          isLoading={isLoading}
+        />
+      )}
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 25, justifyContent: 'center', backgroundColor: Colors.WHITE },
-  infoCard: { padding: 20, borderRadius: 30, borderWidth: 1, borderColor: '#E0E0E0', backgroundColor: Colors.WHITE },
-  row: { flexDirection: 'row', alignItems: 'center' },
-  avatarContainer: { position: 'relative', backgroundColor: '#BDF0C5', borderRadius: 100, width: Metrics.scale(72), height: Metrics.scale(72), justifyContent: 'center', alignItems: 'center' },
-  avatar: { width: 46, height: 46, borderRadius: 40 },
-  activeDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#1A4D2E', marginRight: 8 },
-  rowBetween: { flexDirection: 'row', justifyContent: 'space-between' },
-  connectBtn: { marginTop: 40, height: 55, borderRadius: 30, borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' }
+  headerFixed: { paddingHorizontal: s(16), marginTop: vs(15) },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(15),
+  },
+  toggleButton: {
+    backgroundColor: '#21AA8F',
+    paddingHorizontal: s(15),
+    borderRadius: ms(20),
+    height: 33,
+    justifyContent: 'center',
+  },
 });
+
 export default ListingScreen;

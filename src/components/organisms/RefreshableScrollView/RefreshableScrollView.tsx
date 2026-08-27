@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react';
-import { ScrollView, RefreshControl, StyleSheet, ViewStyle, ScrollViewProps } from 'react-native';
+import { ScrollView, RefreshControl, StyleSheet, ScrollViewProps } from 'react-native';
 import { Colors } from '@/theme/colors';
+import SpinnerLoader from '@/components/molecules/SmallLoader';
 
 interface RefreshableScrollViewProps extends ScrollViewProps {
     children: ReactNode;
@@ -19,6 +20,14 @@ const RefreshableScrollView: FC<RefreshableScrollViewProps> = ({
     style,
     ...rest
 }) => {
+    const renderContent = () => {
+        if (isLoading) {
+            // Use provided skeletonComponent or default SpinnerLoader
+            return skeletonComponent || <SpinnerLoader />;
+        }
+        return children;
+    };
+
     return (
         <ScrollView
             style={[styles.container, style]}
@@ -28,13 +37,13 @@ const RefreshableScrollView: FC<RefreshableScrollViewProps> = ({
                 <RefreshControl
                     refreshing={refreshing || false}
                     onRefresh={onRefresh}
-                    tintColor={Colors.BLACK}
-                    colors={[Colors.BLACK]}
+                    tintColor={Colors.MEDIUM_JUNGLE_GREEN}
+                    colors={[Colors.MEDIUM_JUNGLE_GREEN]}
                 />
             }
             {...rest}
         >
-            {isLoading ? skeletonComponent : children}
+            {renderContent()}
         </ScrollView>
     );
 };

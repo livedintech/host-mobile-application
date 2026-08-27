@@ -1,95 +1,236 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Controller } from 'react-hook-form';
 import AppText from '@/components/molecules/AppText/AppText';
-import { Colors } from '@/theme/colors';
-import DropdownField from '@/components/molecules/Input/DropdownField';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import { Colors } from '@/theme/colors';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useCreateListingStepOneContainer from './CreateListingStepOneContainer';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
-const CreateListingStepOneScreen = () => {
-  const { control, errors, propertyOptions, handleSubmit, onNext, onSaveExit } = useCreateListingStepOneContainer();
+const CreateListingStepOneScreen = ({ navigation }: any) => {
+  const {
+    control,
+    propertyOptions,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isLoading,
+    isChannelMissing,
+    isPropertySelected,
+  } = useCreateListingStepOneContainer();
+  const { t } = useTranslation();
+
+  // const isButtonsDisabled = isChannelMissing || !isPropertySelected;
+  const isButtonsDisabled =  !isPropertySelected;
+
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        {/* Step Indicator & Icon */}
-        <View style={styles.stepHeader}>
-          <AppText text="Step 1 " fontSize={40} type="Bold" color={Colors.BRUNSWICK_GREEN} />
-          <Svgicons path="property" size={40} /> 
-        </View>
+    <BGImage
+      source={require('@/assets/img/background/linearBG.png')}
+      style={styles.bgContainer}
+    >
+      <View style={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.titleSection}>
+            {/* <AppText
+              text={t('app.create_listing_step1.step_label')}
+              fontSize={18}
+              type="Medium"
+              color={Colors.BLACK}
+              mb={10}
+            /> */}
 
-        <View style={styles.titleSection}>
-          <AppText 
-            text="Select the type of place you own" 
-            fontSize={22} 
-            type="SemiBold" 
-            color={Colors.BRUNSWICK_GREEN} 
-            textAlign="center" 
-          />
-        </View>
-
-        <View style={styles.form}>
-          <DropdownField
-            name="propertyType"
-            control={control}
-            errors={errors}
-            label=""
-            data={propertyOptions}
-            placeholder="Select.."
-          />
-
-          <View style={styles.footer}>
-            <AppButton 
-              title="Next" 
-              onPress={handleSubmit(onNext)} 
-              mt={20}
-            />
-            <AppButton 
-              title="Save & Exit" 
-              onPress={onSaveExit} 
-              mt={15}
+            <AppText
+              text={t('app.create_listing_step1.title')}
+              fontSize={32}
+              type="Bold"
+              color={Colors.BLACK}
+              style={styles.heading}
             />
           </View>
-        </View>
+          <View
+            style={{
+              marginHorizontal: Metrics.baseMargin,
+            }}
+          >
+            <GlassCard width={'100%'} style={styles.cardContainer}>
+              <View style={styles.cardHeader}>
+                <AppText
+                  text={t('app.create_listing_step1.select_type')}
+                  fontSize={18}
+                  type="SemiBold"
+                  color={Colors.BLACK}
+                />
+                <GlassCard style={styles.deskIconWrapper}>
+                  <Svgicons path="living_room" width={24} height={24} />
+                </GlassCard>
+              </View>
+
+              <Controller
+                control={control}
+                name="propertyType"
+                render={({ field: { onChange, value } }) => (
+                  <View style={styles.optionsWrapper}>
+                    {propertyOptions.map(item => {
+                      const isSelected = value === item.value;
+                      return (
+                        <GlassCard
+                          key={item.value}
+                          width={'100%'}
+                          style={[
+                            styles.optionItem,
+                            isSelected && styles.selectedItem,
+                          ]}
+                          onPress={() => onChange(item.value)}
+                        >
+                          <ButtonView
+                            style={[
+                              styles.optionItem,
+                              // isSelected && styles.selectedItem
+                            ]}
+                            activeOpacity={0.7}
+                            onPress={() => onChange(item.value)}
+                          >
+                            <View style={styles.optionIcon}>
+                              <Svgicons
+                                path={item.icon}
+                                width={20}
+                                height={20}
+                                stroke={Colors.BLACK}
+                              />
+                            </View>
+                            <AppText
+                              text={item.label}
+                              fontSize={16}
+                              type="Regular"
+                              color={Colors.BLACK}
+                            />
+                          </ButtonView>
+                        </GlassCard>
+                      );
+                    })}
+                  </View>
+                )}
+              />
+            </GlassCard>
+          </View>
+        </ScrollView>
+
+        <FormFooterActions
+          // Primary "Next" button configs
+          primaryTitle={t('app.create_listing_step1.next')}
+          onPrimaryPress={handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isButtonsDisabled}
+          // Secondary "Save & Exit" button configs
+          secondaryTitle={t('app.create_listing_step1.save_exit')}
+          onSecondaryPress={onSaveExit}
+          isSecondaryDisabled={isLoading || isButtonsDisabled}
+        />
       </View>
-    </View>
+    </BGImage>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  bgCircle: { 
-    position: 'absolute', 
-    top: -50, 
-    alignSelf: 'center', 
-    width: 650, 
-    height: 650, 
-    borderRadius: 325, 
-    borderWidth: 1, 
-    borderColor: '#F8F8F8', 
-    zIndex: -1 
-  },
-  header: { paddingHorizontal: 22, paddingTop: 10 },
-  backBtn: { 
-    width: 44, 
-    height: 44, 
-    borderRadius: 22, 
-    borderWidth: 1, 
-    borderColor: '#EBEBEB', 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  content: { flex: 1, paddingHorizontal: 25, justifyContent: 'center' },
-  stepHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginBottom: 40 
-  },
-  titleSection: { marginBottom: 20 },
-  form: { width: '100%' },
-  footer: { marginTop: 80 }
-});
-
 export default CreateListingStepOneScreen;
+
+const styles = StyleSheet.create({
+  bgContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#D4D4D4',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(0, 166, 138, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 166, 138, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  titleSection: {
+    paddingHorizontal: 20,
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  heading: {
+    marginTop: 10,
+    lineHeight: 40,
+  },
+  cardContainer: {
+    padding: Metrics.scale(20),
+    borderRadius: 21,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  deskIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionsWrapper: {
+    gap: 12,
+  },
+  optionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 17,
+    paddingHorizontal: Metrics.scale(10),
+    paddingVertical: Metrics.verticalScale(10),
+  },
+  selectedItem: {
+    backgroundColor: Colors.WHITE,
+    borderColor: Colors.WHITE,
+    shadowColor: Colors.BLACK,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  optionIcon: {
+    marginRight: 15,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    marginTop: 'auto',
+  },
+});

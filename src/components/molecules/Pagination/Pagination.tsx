@@ -2,26 +2,27 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import { navigate } from '@/services/navigationService'; // Apna navigation service import karein
-import NavigationRoutes from '@/navigation/NavigationRoutes'; // Apne routes import karein
+import { navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
 
 interface PaginationProps {
   activeIndex: number;
+  onDotPress?: (index: number) => void;
 }
 
-const Pagination = ({ activeIndex }: PaginationProps) => {
-  
+const Pagination = ({ activeIndex, onDotPress }: PaginationProps) => {
+
   const handlePress = (index: number) => {
-    // Index ke mutabiq screens link karein
+    if (onDotPress) {
+      onDotPress(index);
+      return;
+    }
     if (index === 0) {
-      // Home screen 1 (Property Earn)
-      navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN); 
+      navigate(NavigationRoutes.AUTH_STACK.PROPERTY_CAN_EARN);
     } else if (index === 1) {
-      // Home screen 2 (Calendar Sync)
-      navigate(NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO); 
+      navigate(NavigationRoutes.AUTH_STACK.CONNECT_CALENDARS_INTRO);
     } else if (index === 2) {
-      // Sign Up screen
-      navigate(NavigationRoutes.AUTH_STACK.AGENT_INTRO); 
+      navigate(NavigationRoutes.AUTH_STACK.AGENT_INTRO);
     }
   };
 
@@ -58,8 +59,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: Metrics.verticalScale(35),
-    backgroundColor: Colors.BRUNSWICK_GREEN_16, // Light background
+    // backgroundColor: Colors.BRUNSWICK_GREEN_16, 
     width: '100%',
+    backgroundColor:Colors.WHITE
   },
   dot: {
     height: Metrics.verticalScale(8),
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: Metrics.scale(53), // Long pill shape for active
-    backgroundColor: Colors.BRUNSWICK_GREEN,
+    backgroundColor: '#21AA8F',
   },
   inactiveDot: {
     width: Metrics.scale(10), // Small dot for inactive

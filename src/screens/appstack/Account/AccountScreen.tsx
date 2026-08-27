@@ -1,5 +1,7 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
+import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useAccountContainer from './AccountContainer';
@@ -8,14 +10,14 @@ import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
 
 const AccountScreen = () => {
   const { accountOptions, handlePress } = useAccountContainer();
-
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* Account Title with Icon */}
         <View style={styles.titleRow}>
-          <AppText text="Account" fontSize={32} type="Bold" color={Colors.PINE_FOREST} mr={10}/>
+          <AppText text={t('app.account_screen.title')} fontSize={32} type="Bold" color={Colors.PINE_FOREST} mr={10}/>
           <Svgicons path='userIcon' size={49}/>
         </View>
 
@@ -23,19 +25,19 @@ const AccountScreen = () => {
         <View style={styles.listContainer}>
           {accountOptions.map((item) => (
             <GradientBorder key={item.id} borderRadius={22} style={styles.optionCardWrapper}>
-              <Pressable 
+              <View 
                 style={styles.optionCardInner} 
-                onPress={() => handlePress(item.route)}
+                
               >
                 <AppText text={item.title} fontSize={20} type="Medium" color={Colors.PINE_FOREST} />
                 
                 {/* Arrow with gradient */}
                 <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
-                  <Pressable onPress={()=>null} style={styles.arrowCircleInner}>
+                  <AppPressable onPress={() => handlePress(item?.route)} style={styles.arrowCircleInner}>
                       <Svgicons path='ArrowUpRightIcon' size={30} />
-                  </Pressable>
+                  </AppPressable>
                 </GradientBorder>
-              </Pressable>
+              </View>
             </GradientBorder>
           ))}
         </View>

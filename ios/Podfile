@@ -17,9 +17,18 @@ end
 target 'HostMobileApp' do
   config = use_native_modules!
 
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'GoogleMaps'
+  pod 'react-native-maps', :path => rn_maps_path
+
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseFirestoreInternal', :modular_headers => true
+  pod 'FirebaseFirestore', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
@@ -28,7 +37,44 @@ target 'HostMobileApp' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
     )
+    installer.pods_project.targets.each do |target|
+      if target.name == 'FirebaseFirestoreInternal'
+        target.build_configurations.each do |config|
+          config.build_settings['DEFINES_MODULE'] = 'YES'
+        end
+      end
+    end
+
+    # Fix: Xcode 26 stricter consteval rules ke saath fmt 11.0.2 incompatible hai
+    fmt_format_inl = File.join(installer.sandbox.root, 'fmt/include/fmt/format-inl.h')
+    if File.exist?(fmt_format_inl)
+      content = File.read(fmt_format_inl)
+      patched = content
+        .gsub('fmt::format_to(it, FMT_STRING("{}{}"), message, SEP)', 'fmt::format_to(it, "{}{}", message, SEP)')
+        .gsub('fmt::format_to(it, FMT_STRING("{}{}"), ERROR_STR, error_code)', 'fmt::format_to(it, "{}{}", ERROR_STR, error_code)')
+        .gsub('fmt::format_to(out, FMT_STRING("{:x}"), value)', 'fmt::format_to(out, "{:x}", value)')
+        .gsub('fmt::format_to(out, FMT_STRING("{:08x}"), value)', 'fmt::format_to(out, "{:08x}", value)')
+        .gsub('fmt::format_to(out, FMT_STRING("p{}")', 'fmt::format_to(out, "p{}"')
+      File.write(fmt_format_inl, patched) if patched != content
+    end
+
+    # Fix: Xcode 16 explicit module build Firebase ke saath break karta hai
+    installer.pods_project.targets.each do |target|
+      if target.name.start_with?('Firebase') || target.name == 'RNFBFirestore'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_ENABLE_EXPLICIT_MODULES'] = 'NO'
+        end
+      end
+    end
+
+    # Fix: -weak_framework "FirebaseFirestoreInternal" linker error
+    Dir.glob(File.join(installer.sandbox.root.to_s, 'Target Support Files', '**', '*.xcconfig')).each do |path|
+      content = File.read(path)
+      if content.include?('FirebaseFirestoreInternal')
+        fixed = content.gsub(/-weak_framework\s+"?FirebaseFirestoreInternal"?/, '')
+        File.write(path, fixed) if fixed != content
+      end
+    end
   end
 end

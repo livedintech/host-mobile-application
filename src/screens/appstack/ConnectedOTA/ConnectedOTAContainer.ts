@@ -8,11 +8,11 @@ export default function useConnectedOTAContainer() {
       name: 'Airbnb',
       status: 'Active',
     },
-    {
-      id: '2',
-      name: 'Gathern',
-      status: 'Active',
-    },
+    // {
+    //   id: '2',
+    //   name: 'Gathern',
+    //   status: 'Active',
+    // },
   ]);
 
   const handlePlatformPress = (platformId: string) => {

@@ -1,3 +1,4 @@
+import i18n from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
@@ -5,10 +6,12 @@ import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { ChangePasswordFormValues, changePasswordSchema } from '@/validation/auth/authSchemas';
 import { goBack } from '@/services/navigationService';
+import { changePasswordApi } from '@/services/authApi';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function useChangePasswordContainer() {
   const navigation = useNavigation();
-
+  const { logout } = useAuthStore();
   const {
     control,
     handleSubmit,
@@ -24,24 +27,23 @@ export default function useChangePasswordContainer() {
   });
 
   const { mutate: changePassword, isPending } = useMutation({
-    mutationFn: async (data: ChangePasswordFormValues) => {
-      // API Call logic here
-      console.log('Changing password...', data);
-    },
-    onSuccess: () => {
-      Toast.show({ type: 'success', text1: 'Password changed successfully' });
-      reset();
-      navigation.goBack();
+    mutationFn: (payload: any) => changePasswordApi(payload),
+    onSuccess: (data) => {
+      Toast.show({
+        type: 'success',
+        text1: data?.message || i18n.t('common.toast.password_updated'),
+      });
+      logout();
     },
     onError: (error: any) => {
-      Toast.show({ type: 'error', text1: error.message || 'Failed to change password' });
+      Toast.show({ type: 'error', text1: error.message || i18n.t('common.toast.failed_change_password') });
     }
   });
 
   const onSubmit = (data: ChangePasswordFormValues) => {
-    // changePassword(data);
-    goBack()
+    changePassword(data);
+    // goBack()
   };
 
-  return { control, errors, handleSubmit, onSubmit, isLoading: false, navigation };
+  return { control, errors, handleSubmit, onSubmit, isLoading: isPending, navigation };
 }

@@ -1,3 +1,4 @@
+import i18n, { getStoredLanguage } from '@/locales/i18n/i18n';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
@@ -14,20 +15,37 @@ import {
 import { navigate } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useRememberMeStore } from '@/store/useRememberMeStore';
+import { usePhoneStore } from '@/store/usePhoneStore';
+import { NotificationService } from '@/services/notification.service';
+import { CrashlyticsService } from '@/services/crashlytics.service';
 
 // Validation Schema
 const signInSchema = yup.object().shape({
   password: yup
     .string()
-    .required('Password is required')
-    .min(6, 'Minimum 6 characters'),
+    .required(i18n.t('auth.enter_password.validation_password_required'))
+    .min(6, i18n.t('auth.enter_password.validation_password_min')),
   rememberMe: yup.boolean().default(false),
 });
 
 export default function useEnterPasswordContainer() {
+  const {
+    callingCode,
+    cca2,
+    clearCredentials,
+    password,
+    phoneNumber,
+    rememberMe,
+    setPhoneData,
+    setRememberMe,
+    setPassword,
+  } = useRememberMeStore();
   const { setToken, setUser } = useAuthStore();
+  const { clearPhoneData } = usePhoneStore();
 
   const { params } = useRoute();
+  const { phone_number, phone_with_code, country_code } = params;
 
   const {
     control,
@@ -36,8 +54,8 @@ export default function useEnterPasswordContainer() {
   } = useForm({
     resolver: yupResolver(signInSchema),
     defaultValues: {
-      password: '',
-      rememberMe: false,
+      password: password || '',
+      rememberMe: rememberMe || false,
     },
   });
 
@@ -48,13 +66,30 @@ export default function useEnterPasswordContainer() {
     isIdle,
   } = useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginApi,
-    onSuccess: ({data, message }) => {
+    onSuccess: async ({ data, message }) => {
+      console.log('dataUser', data);
+      if (data?.is_first_login == 1) {
+        navigate(NavigationRoutes.AUTH_STACK.UPDATE_PASSWORD, {
+          userId: data?.user?.id,
+        });
+        return;
+      }
+      clearPhoneData();
+      // Subscription/payment step is disabled (Apple 3.1.1) — always go straight into the app.
       setToken(data?.access_token);
-      setUser(data?.user)
+      setUser(data?.user);
+      await CrashlyticsService.setUserId(String(data?.user?.id));
       Toast.show({ type: 'success', text1: message });
     },
-    onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
+    onError: (error: any) => {
+      if (error?.is_deleted === 1) {
+        gotToVerifyOTP();
+        return;
+      }
+      Toast.show({
+        type: 'error',
+        text1: error?.message || i18n.t('auth.enter_password.login_failed'),
+      });
     },
   });
 
@@ -69,25 +104,46 @@ export default function useEnterPasswordContainer() {
       Toast.show({ type: 'success', text1: message });
       navigate(NavigationRoutes.AUTH_STACK.VERIFY_PHONE_NUMBER, {
         isLoginScreen: true,
-        phone: params
+        phone_number: phone_number,
+        phone_with_code: phone_with_code,
+        country_code: country_code,
       });
     },
     onError: ({ message }) => {
-      Toast.show({ type: 'error', text1: message || 'Login failed' });
+      Toast.show({
+        type: 'error',
+        text1: message || i18n.t('auth.enter_password.login_failed'),
+      });
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
+    const token = await NotificationService.getToken();
     const payload = {
-      phone_number: params,
+      country_code: country_code, // previous screen se aya
+      phone_number: phone_number, // previous screen se aya
+      phone_with_code: phone_with_code, // previous screen se aya
       password: data?.password,
+      fcm_token: token,
+      language: getStoredLanguage(),
     };
+    // Remember Me logic
+    if (data.rememberMe) {
+      setRememberMe(true);
+      setPhoneData(phone_number, country_code, phone_with_code);
+      setPassword(data.password);
+    } else {
+      setRememberMe(false);
+      clearCredentials();
+    }
     loginPayload(payload);
   };
 
   const gotToVerifyOTP = () => {
     const payload = {
-      phone_number: params,
+      country_code: country_code,
+      phone_number: phone_number,
+      phone_with_code: phone_with_code,
     };
     forgotPayload(payload);
   };

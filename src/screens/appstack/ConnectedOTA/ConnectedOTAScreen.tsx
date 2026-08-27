@@ -3,16 +3,20 @@ import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import useConnectedOTAContainer from './ConnectedOTAContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { useTranslation } from 'react-i18next';
 
 const ConnectedOTAScreen = () => {
+  const { t } = useTranslation();
   const { platforms, handlePlatformPress } = useConnectedOTAContainer();
 
   return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header Title */}
         <AppText 
-          text="Connected OTA Platform" 
+          text={t('app.connected_ota.title')}
           fontSize={32} 
           type="Bold" 
           color={Colors.BRUNSWICK_GREEN} 
@@ -38,7 +42,7 @@ const ConnectedOTAScreen = () => {
             {/* Connection Status Row */}
             <View style={styles.statusRow}>
               <AppText 
-                text="Connection Status: " 
+                text={t('app.connected_ota.status_label')}
                 fontSize={16} 
                 color={Colors.BLACK} 
               />
@@ -52,13 +56,13 @@ const ConnectedOTAScreen = () => {
         ))}
       </ScrollView>
     </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.WHITE,
   },
   scrollContent: {
     padding: 24,

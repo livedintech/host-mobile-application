@@ -1,0 +1,29 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle slightly uneven -->
+  <rect x="1" y="0.8" width="34" height="34.2" rx="16.8"
+    fill="white" fill-opacity="0.02"
+    stroke="url(#paint0_linear_106_20700)"
+    stroke-width="1.2"
+    transform="rotate(-1 18 18)" />
+
+  <!-- Arrow made slightly rough -->
+  <path d="M15.8 12.4L9.9 18.1L15.4 24.3"
+    stroke="#13463C"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- Line slightly tilted -->
+  <path d="M26.3 17.8H9.9"
+    stroke="#13463C"
+    stroke-width="1.6"
+    stroke-linecap="round"/>
+
+  <defs>
+    <linearGradient id="paint0_linear_106_20700" x1="18" y1="0" x2="17" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white"/>
+      <stop offset="0.4" stop-color="#6F6F6F"/>
+      <stop offset="1" stop-color="#F5F5F5"/>
+    </linearGradient>
+  </defs>
+</svg>

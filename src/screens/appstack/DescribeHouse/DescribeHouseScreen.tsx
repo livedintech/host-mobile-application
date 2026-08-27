@@ -1,92 +1,182 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import Metrics from '@/utility/Metrics';
 import useDescribeHouseContainer from './DescribeHouseContainer';
-import InputField from '@/components/molecules/Input/InputField';
-import DropdownField from '@/components/molecules/Input/DropdownField';
 import TextareaField from '@/components/molecules/Input/TextareaField';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
+import { goBack } from '@/services/navigationService';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Metrics from '@/utility/Metrics';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
+import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const DescribeHouseScreen = () => {
-    const { control, errors, handleSubmit, onSubmit, isLoading, descriptionLength } = useDescribeHouseContainer();
+  const {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    isLoading,
+    descriptionLength,
+    titleLength,
+    onSaveExit,
+    isEdit,
+    editType,
+    // ✅ Export
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
+  } = useDescribeHouseContainer();
+  const { t } = useTranslation();
 
-    const bookingData = [{ label: 'Instant Booking', value: 'Instant Booking' }];
-    const guestData = [{ label: 'Any Guest', value: 'Any Guest' }];
-    const timeData = [{ label: '09:00', value: '09:00' }, { label: '22:00', value: '22:00' }];
+  const showTitle = !editType || editType === 'title';
+  const showDescription = !editType || editType === 'description';
 
-    return (
-        <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                <AppText text="Step 4" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={80}
+          scrollIndicatorInsets={{ bottom: 0 }}
+          automaticallyAdjustKeyboardInsets={false}
+        >
+          {/* Header Row */}
+          <View style={styles.headerRow}>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
+            {!isEdit && (
+              <CircularProgress percentage={40} size={48} strokeWidth={4} />
+            )}
+          </View>
 
-                <View style={styles.subTitleRow}>
-                    <AppText text="Describe Your House" fontSize={24} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
-                    <Svgicons path="homeIcon" size={24} />
-                </View>
+          <AppText
+            text={t('app.describe_house.title')}
+            fontSize={32}
+            type="Bold"
+            mt={35}
+            mb={28}
+            pr={60}
+          />
+          <AppText
+            text={t('app.describe_house.subtitle')}
+            fontSize={12}
+            color={Colors.DARK_CHARCOAL_OPACITY}
+            mt={12}
+            mb={35}
+          />
 
-                {/* House Title */}
-                <InputField
-                    name="title"
-                    control={control}
-                    errors={errors}
-                    label="House Title"
-                    placeholder='"Cozy Villa with Pool in Riyadh"'
-                />
+          {showTitle && (
+            <TextareaField
+              name="name"
+              control={control}
+              errors={errors}
+              label={t('app.describe_house.title_label')}
+              placeholder={t('app.describe_house.title_placeholder')}
+              multiline={true}
+              numberOfLines={2}
+              wordLimit={50}
+              maxLength={50}
+              descriptionLength={titleLength}
+              sparkleIcon
+              height={65}
+            />
+          )}
 
-                {/* House Description with Counter */}
-                <View style={styles.descriptionWrapper}>
-                    <TextareaField
-                        name="description"
-                        control={control}
-                        errors={errors}
-                        label="House Description"
-                        placeholder='"Kick back and relax in this calm and stylish space."'
-                        multiline={true}
-                        numberOfLines={6}
-                        descriptionLength={descriptionLength}
-                        wordLimit={250}
-                    />
-                </View>
+          {showDescription && (
+            <View style={styles.descriptionWrapper}>
+              <TextareaField
+                name="listing_descriptions"
+                control={control}
+                errors={errors}
+                label={t('app.describe_house.description_label')}
+                placeholder={t('app.describe_house.description_placeholder')}
+                multiline={true}
+                numberOfLines={6}
+                wordLimit={500}
+                maxLength={500}
+                descriptionLength={descriptionLength}
+                sparkleIcon
+              />
+            </View>
+          )}
+        </KeyboardAwareScrollView>
 
-                {/* Dropdowns */}
-                <View style={styles.row}>
-                    <View style={styles.halfWidth}>
-                        <DropdownField name="bookingType" control={control} errors={errors} label="Booking Type" data={bookingData} />
-                    </View>
-                    <View style={styles.halfWidth}>
-                        <DropdownField name="guestEligibility" control={control} errors={errors} label="Guest Eligibility" data={guestData} />
-                    </View>
-                </View>
+        {/* Footer */}
+        <FormFooterActions
+          // If Edit, show Export; If not, show Next
+          primaryTitle={
+            isEdit
+              ? t('app.describe_house.export')
+              : t('app.describe_house.next')
+          }
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+          // Secondary Action (Save & Exit)
+          secondaryTitle={t('app.describe_house.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
 
-                <View style={styles.row}>
-                    <View style={styles.halfWidth}>
-                        <DropdownField name="checkInTime" control={control} errors={errors} label="Check-in Time" data={timeData} />
-                    </View>
-                    <View style={styles.halfWidth}>
-                        <DropdownField name="checkOutTime" control={control} errors={errors} label="Check-out Time" data={timeData} />
-                    </View>
-                </View>
-
-                <View style={styles.footer}>
-                    <AppButton title="Next" onPress={handleSubmit(onSubmit)} loading={isLoading} />
-                    <AppButton title="Save & Exit" mt={15} onPress={() => { }} />
-                </View>
-            </ScrollView>
-        </View>
-    );
+        {/* ✅ Export Modal */}
+        <ExportOtaSheet
+          visible={bottomSheetVisible}
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.describe_house.select_ota')}
+          placeholder={t('app.describe_house.select_account')}
+          buttonText={t('app.describe_house.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
+      </View>
+    </BGImage>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 },
-    subTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, gap: 8 },
-    descriptionWrapper: { position: 'relative' },
-    row: { flexDirection: 'row', justifyContent: 'space-between', zIndex: 999 },
-    halfWidth: { width: '48%' },
-    footer: { marginTop: 20 },
+  container: { flex: 1, paddingHorizontal: Metrics.baseMargin },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  backBtnWrapper: {
+    width: 35,
+    height: 35,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  descriptionWrapper: { marginTop: 25 },
+  footer: { bottom: 0, right: 0, width: '100%', paddingBottom: 35 },
+  footerOverride: {
+    width: '100%',
+    paddingBottom: 35,
+    paddingHorizontal: 0, // resetting to adjust with the screen layout padding
+  },
 });
 
 export default DescribeHouseScreen;

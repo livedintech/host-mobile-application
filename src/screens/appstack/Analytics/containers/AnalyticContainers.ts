@@ -1,0 +1,114 @@
+import React, { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import STORAGE_CONST from '@/constants/storage';
+import { 
+  getListings, 
+  getAnalyticSummary, 
+  getListingPerformance, 
+  getAnalyticsChannel 
+} from '@/services/AnalyticsApis';
+import { ListingOption } from '@/types/api/AnalyticsTypes';
+import { useQuery } from '@tanstack/react-query';
+
+const AnalyticContainers = () => {
+  const { t } = useTranslation();
+  const [filters, setFilters] = useState({
+    listings: [] as (string | number)[],
+    channel: [] as string[],
+    date: [] as string[],
+  });
+
+  const [chartListingIds, setChartListingIds] = useState<(string | number)[]>([]);
+
+  const { data: listings = [], isLoading: listingsLoading } = useQuery({
+    queryKey: [STORAGE_CONST.GET_USER_MANAGEMENT_LISTING],
+    queryFn: getListings,
+  });
+
+  const listingOptions = listings?.map((item: ListingOption) => ({
+    label: item?.name,
+    value: item?.id,
+  })) || [];
+
+  const channelOptions = [
+    { label: 'Airbnb', value: 'airbnb' },
+    { label: 'Booking.com', value: 'bcom' },
+    { label: 'Gathern', value: 'gathern' },
+    { label: t('app.analytics.channel_direct'), value: 'dashboard' },
+  ];
+
+  const dateOptions = [
+    { label: t('app.analytics.date_today'), value: 'today' },
+    { label: t('app.analytics.date_last_7_days'), value: '7days' },
+    { label: t('app.analytics.date_last_30_days'), value: '30days' },
+  ];
+
+  // STABLE HANDLERS
+  const applyFilters = useCallback((values: any) => setFilters(values), []);
+  const resetFilters = useCallback(() => {
+    setFilters({ listings: [], channel: [], date: [] });
+    setChartListingIds([]);
+  }, []);
+
+  const handleChartListingChange = useCallback((ids: (string | number)[]) => {
+    setChartListingIds(ids);
+  }, []);
+
+  const { data: AnalyticsSummary, isLoading: isLoadingAnalytics, refetch: refetchSummary} = useQuery({
+    queryKey: [STORAGE_CONST.GET_ANALYTICS_SUMMARY, filters],
+    queryFn: () => getAnalyticSummary({
+      listing_ids: filters.listings.join(','),
+      channels: filters.channel.join(','),
+      range: filters.date[0] || '30days',
+    }),
+  });
+
+  const { data: AnalyticsPerformance, isLoading: isLoadingAnalyticsPerformance , refetch: refetchPerformance} = useQuery({
+    queryKey: [STORAGE_CONST.GET_ANALYTICS_PERFORMANCE],
+    queryFn: () => getListingPerformance(),
+  });
+
+  const { data: AnalyticChannelChartData, isLoading: isLoadingAnalyticsChannelChart, refetch: refetchChannelChart } = useQuery({
+    queryKey: [STORAGE_CONST.GET_ANALYTICS_CHANNEL, chartListingIds],
+    queryFn: () => getAnalyticsChannel({
+      listing_ids: chartListingIds.join(','), 
+      // range: filters.date[0] || '30days',
+      range : '30days'
+    }),
+  });
+
+
+  const formatNumber = (num: number | string) => {
+  const value = typeof num === 'string' ? parseFloat(num) : num;
+  if (isNaN(value)) return '0';
+  
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+};
+
+  return {
+    listingOptions,
+    channelOptions,
+    dateOptions,
+    filters,
+    applyFilters,
+    resetFilters,
+    chartListingIds,
+    handleChartListingChange,
+    AnalyticsSummary,
+    isLoadingAnalytics,
+    refetchSummary,
+    AnalyticsPerformance,
+    isLoadingAnalyticsPerformance,
+    AnalyticChannelChartData,
+    isLoadingAnalyticsChannelChart,
+    refetchChannelChart,
+    listingsLoading,
+    refetchPerformance,
+    formatNumber
+  };
+};
+
+export default AnalyticContainers;

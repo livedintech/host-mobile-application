@@ -1,6 +1,6 @@
 import apiService from "./apiService";
 import { SERVICE_CONFIG_URLS } from "@/constants/api_urls";
-import { createChannelsUserIdPayload, createMapListingbyUserIDType, creatGathernChannelType, getChannelsUserIdPayload, getChannexListingsByIdPayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
+import { bookingcomConnectionPayloadType, bookingcomTestConnectionPayloadType, createChannelsUserIdPayload, CreateGathernUserPayloadType, createListingImportGathernType, createListingImportType, createMapListingbyUserIDType, creatGathernChannelType, getChannelsUserIdPayload, getChannexListingsByIdPayload, getUserListingsByUserID } from "@/types/api/bookingManagementTypes";
 import Utils from "@/utility/Utils";
 
 export const createChannelsUserbyId = async (payload: createChannelsUserIdPayload) => {
@@ -9,7 +9,10 @@ export const createChannelsUserbyId = async (payload: createChannelsUserIdPayloa
         { user_id: payload.user_id },
     );
 
-    const { ok, response, data } = await apiService.post(url, {});
+    const body: Record<string, string> = {};
+    if (payload.channel_name) body.channel_name = payload.channel_name;
+    if (payload.redirect_url) body.redirect_url = payload.redirect_url;
+    const { ok, response, data } = await apiService.post(url, body);
     if (ok) {
         return data;
     }
@@ -70,7 +73,7 @@ export const getChannexListingsById = async (payload: getChannexListingsByIdPayl
 
 export const getUserListingsByUserIDApi = async (payload: getUserListingsByUserID) => {
     const url = Utils.createDynamicUrl(
-        SERVICE_CONFIG_URLS.APP.GET_USER_LISTINGS_BY_USER_ID,
+        SERVICE_CONFIG_URLS.APP.GET_FETCH_LISTING_FOR_AIRBNB,
         { user: payload.user },
     );
 
@@ -87,11 +90,35 @@ export const createMapListingbyUserIDApi = async (payload: createMapListingbyUse
         { user: payload.user }, // params
     );
 
-    const { ok, response, data } = await apiService.post(url, {listing_id: payload?.listing_id}); // body
+    const { ok, response, data } = await apiService.post(url, {listing_id: payload?.listing_id }); // body
     if (ok) {
         return data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// Post: Map Listing for new host
+// export const createListingImport = async (payload: createMapListingbyUserIDType) => {
+//     const url = Utils.createDynamicUrl(
+//         SERVICE_CONFIG_URLS.APP.CREATE_MAP_LISTING_BY_USER_ID,
+//         { user: payload.user }, // params
+//     );
+
+//     const { ok, response, data } = await apiService.post(url, {listing_id: payload?.listing_id }); // body
+//     if (ok) {
+//         return data;
+//     }
+//     throw new Error(response.message || 'Failed to fetch sub-categories');
+// };
+export const createListingImportApi = async (payload: createListingImportType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CHANNEL_MANAGEMENT_LISTING_IMPORT,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
 };
 
 // Post: Create Gathern Create Channel
@@ -121,4 +148,86 @@ export const getGathernListingApi = async (payload: getChannexListingsByIdPayloa
         return data?.data;
     }
     throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+// export const createGathernCreateChannel = async (payload: getChannexListingsByIdPayload) => {
+//     const url = Utils.createDynamicUrl(
+//         SERVICE_CONFIG_URLS.APP.GATHERN_CREATE_CHANNEL,
+//         { channel_id: payload.channel_id },
+//     );
+
+//     const { ok, response, data } = await apiService.get(url);
+//     if (ok) {
+//         return data?.data;
+//     }
+//     throw new Error(response.message || 'Failed to fetch sub-categories');
+// };
+
+export const createGathernCreateChannelApi = async (payload: CreateGathernUserPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.GATHERN_CREATE_CHANNEL,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+
+export const getChannexListingsGathernById = async (payload: getChannexListingsByIdPayload) => {
+    const url = Utils.createDynamicUrl(
+        SERVICE_CONFIG_URLS.APP.GET_CHANNEX_GATHERN_LISTINGS,
+        { channel_id: payload.channel_id },
+    );
+
+    const { ok, response, data } = await apiService.get(url);
+    if (ok) {
+        return data?.data;
+    }
+    throw new Error(response.message || 'Failed to fetch sub-categories');
+};
+
+export const createListingImportGathernApi = async (payload: createListingImportGathernType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CHANNEL_MANAGEMENT_LISTING_GATHERN_IMPORT,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const bookingcomTestConnectionApi = async (payload: bookingcomTestConnectionPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.BOOING_COM_TEST_CONNECTION,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const bookingcomConnectionApi = async (payload: bookingcomConnectionPayloadType) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.BOOING_COM_CONNECTION,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
+};
+
+export const updateChannelStatusApi = async (payload: { channel_id: number; status: 'active' | 'inactive' }) => {
+    const { ok, response, data } = await apiService.post(
+        SERVICE_CONFIG_URLS.APP.CHANNEL_STATUS,
+        payload,
+    );
+    if (ok) {
+        return data;
+    }
+    throw response;
 };

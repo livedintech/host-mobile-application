@@ -1,101 +1,175 @@
+import i18n from '@/locales/i18n/i18n';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
-import { StepTwoFormValues, stepTwoSchema } from '@/validation/auth/createListingSchemas';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRoute } from '@react-navigation/native';
 import { useCreateListingStore } from '@/store/useCreateListingStore';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { navigate } from '@/services/navigationService';
+import { goBack, navigate, resetToRoutes } from '@/services/navigationService';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
-import { createListingDetailsApi } from '@/services/ createListingService';
-import { CreateListingDetailsPayload, CreateListingDetailsResponse } from '@/types/api/createListingTypes';
+import { createListingDetailsApi, editListingApi } from '@/services/ createListingService';
 import { useAuthStore } from '@/store/useAuthStore';
+import { queryClient } from '@/services/api';
+import STORAGE_CONST from '@/constants/storage';
+import * as yup from 'yup';
+import useListingExport from '@/hooks/useListingExport';
+
+export const aboutThePlaceSchema = yup.object().shape({
+  size_sqm: yup.string()
+    .typeError(i18n.t('app.about_place.validation_size_type'))
+    .required(i18n.t('app.about_place.validation_size_required'))
+    .test('max-digits', i18n.t('app.about_place.validation_size_max_digits'), (val) => !val || val.length <= 9)
+    .test('positive', i18n.t('app.about_place.validation_size_positive'), (val) => !val || Number(val) > 0),
+  guest_limit: yup.string().required(i18n.t('app.about_place.validation_guests_required')),
+  bedrooms:    yup.string().required(i18n.t('app.about_place.validation_bedrooms_required')),
+  beds:        yup.string().required(i18n.t('app.about_place.validation_beds_required')),
+  bathrooms:   yup.string().required(i18n.t('app.about_place.validation_bathrooms_required')),
+});
+
+export type AboutThePlaceFormValues = yup.InferType<typeof aboutThePlaceSchema>;
 
 export default function useAboutThePlaceContainer() {
-  const {user} = useAuthStore()
-  const { updateListing,listing } = useCreateListingStore();
-  const navigation = useNavigation();
+  const { user }     = useAuthStore();
+  const { listing_id, channel_id, listing: propertyDetail, updateListing } = useCreateListingStore();
+  const { params }   = useRoute<any>();
 
-  const binaryOptions = [
-    { label: 'Yes', value: 'true' }, // string
-    { label: 'No', value: 'false' }  // string
-  ];
+  const listing = params?.paramData?.listing;
+  const isEdit  = Boolean(listing?.listing_id);
 
-  const numberOptions = Array.from({ length: 10 }, (_, i) => ({
-    label: `${i + 1}`,
-    value: `${i + 1}` // string to match form values
-  }));
+  // ── Export ────────────────────────────────────────────────────────────────
+  const {
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    handleExport,
+    handleExportSubmit,
+    handleOtaSubmit,
+    otaControl,
+    otaErrors,
+    listingOptions,
+    isPendingExporting,
+  } = useListingExport();
 
-  const { control, handleSubmit, formState: { errors } } = useForm<StepTwoFormValues>({
-    resolver: yupResolver(stepTwoSchema),
+  // ── Dropdown options ──────────────────────────────────────────────────────
+  // Guests: 1-16, with 16 representing "16+" (Airbnb caps the picker but allows larger parties via the last option)
+  const guestOptions = useMemo(
+    () => Array.from({ length: 16 }, (_, i) => ({ label: i === 15 ? '16+' : `${i + 1}`, value: `${i + 1}` })),
+    [],
+  );
+
+  // Bedrooms / beds: 0-50
+  const roomCountOptions = useMemo(
+    () => Array.from({ length: 51 }, (_, i) => ({ label: `${i}`, value: `${i}` })),
+    [],
+  );
+
+  // Bathrooms: 0-50 in 0.5 increments
+  const bathroomOptions = useMemo(
+    () => Array.from({ length: 101 }, (_, i) => {
+      const value = i * 0.5;
+      const label = value % 1 === 0 ? `${value}` : value.toFixed(1);
+      return { label, value: label };
+    }),
+    [],
+  );
+
+  // ── Main Form ─────────────────────────────────────────────────────────────
+  const { control, handleSubmit, formState: { errors } } = useForm<AboutThePlaceFormValues>({
+    resolver: yupResolver(aboutThePlaceSchema),
     defaultValues: {
-      bedrooms: '',
-      beds: '',
-      bathrooms: '',
-      min_nights: '',
-      check_in_time: '',
-      check_out_time: '',
-      instant_booking: '',
+      size_sqm:    isEdit ? (listing?.property_area != null ? String(listing.property_area) : '') : '',
+      guest_limit: isEdit ? (listing?.guest_limit != null ? String(listing.guest_limit) : '') : '',
+      bedrooms:    isEdit ? (listing?.bedrooms    != null ? String(listing.bedrooms)    : '') : '',
+      beds:        isEdit ? (listing?.beds        != null ? String(listing.beds)        : '') : '',
+      bathrooms:   isEdit ? (listing?.bathrooms   != null ? String(listing.bathrooms)   : '') : '',
     },
   });
 
-    const {
-    mutate: createListingDetailsPayload,
-    isPending,
-    isIdle,
-  } = useMutation<CreateListingDetailsResponse, Error, CreateListingDetailsPayload>({
+  const buildPayload = (data: AboutThePlaceFormValues, isSaveAndExit: boolean = false) => ({
+    user_id:       String(user?.id),
+    channel_id,
+    listing_id:    String(listing_id),
+    save_and_exit: isSaveAndExit ? 1 : 0,
+    listing: {
+      name:          propertyDetail?.name || 'New Property',
+      property_area: Number(data.size_sqm),
+      guest_limit:   Number(data.guest_limit),
+      bedrooms:      Number(data.bedrooms),
+      beds:          Number(data.beds),
+      bathrooms:     Number(data.bathrooms),
+    },
+  });
+
+  const { mutate: createListingDetails, isPending: isCreating } = useMutation({
     mutationFn: createListingDetailsApi,
-    onSuccess: data => {
-      // navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
-      // navigate(NavigationRoutes.AUTH_STACK.ENTER_PASSWORD, phoneNumber);
-    },
-    onError: error => {
-
-      Toast.show({
-        type: 'error',
-        text1: error.message || 'Something went wrong',
-      });
-    },
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
   });
 
-  const onNext = (data: StepTwoFormValues) => {
-  const currentStepData = {
-    bedrooms: Number(data.bedrooms),
-    beds: Number(data.beds),
-    bathrooms: Number(data.bathrooms),
-    min_nights: Number(data.min_nights),
-    check_in_time: data.check_in_time,
-    check_out_time: data.check_out_time,
-    instant_booking: data.instant_booking === 'true',
+  const { mutate: updateListingDetails, isPending: isUpdating } = useMutation({
+    mutationFn: editListingApi,
+    onSuccess: ({ message }: any) => {
+      queryClient.invalidateQueries({ queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS] });
+      queryClient.invalidateQueries({
+        queryKey: [STORAGE_CONST.MANAGE_YOUR_LISTINGS_PROPERTY_DETAIL, listing_id],
+      });
+      Toast.show({ type: 'success', text1: message || i18n.t('common.toast.updated') });
+      goBack();
+    },
+    onError: (err: any) =>
+      Toast.show({ type: 'error', text1: err.message || i18n.t('common.toast.something_went_wrong') }),
+  });
+
+  const onNext = (data: AboutThePlaceFormValues) => {
+    updateListing({
+      property_area: Number(data.size_sqm),
+      guest_limit:   Number(data.guest_limit),
+      bedrooms:      Number(data.bedrooms),
+      beds:          Number(data.beds),
+      bathrooms:     Number(data.bathrooms),
+    });
+    createListingDetails(buildPayload(data, false), {
+      onSuccess: () => navigate(NavigationRoutes.APP_STACK.AMENITIES),
+    });
   };
 
-  const updatedListing = {
-    ...listing,
-    ...currentStepData,
+  const onSaveExit = (data: AboutThePlaceFormValues) => {
+    updateListing({
+      property_area: Number(data.size_sqm),
+      guest_limit:   Number(data.guest_limit),
+      bedrooms:      Number(data.bedrooms),
+      beds:          Number(data.beds),
+      bathrooms:     Number(data.bathrooms),
+    });
+    if (isEdit) {
+      updateListingDetails(buildPayload(data, true));
+    } else {
+      createListingDetails(buildPayload(data, true), {
+        onSuccess: () => resetToRoutes([{ name: NavigationRoutes.APP_STACK.ROOT_STACK }, { name: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS }] as any),
+      });
+    }
   };
-
-  updateListing(currentStepData);
-
-  const payload: CreateListingDetailsPayload = {
-    user_id: user?.id,
-    listing_id: 123,
-    listing: updatedListing,
-  };
-navigate(NavigationRoutes.APP_STACK.INTERIOR_PHOTOS_VIDEOS);
-  // createListingDetailsPayload(payload);
-
-  console.log('Final API Payload:', payload);
-};
-
-
 
   return {
     control,
     errors,
-    binaryOptions,
-    numberOptions,
+    guestOptions,
+    roomCountOptions,
+    bathroomOptions,
     handleSubmit,
     onNext,
-    navigation
+    onSaveExit,
+    isLoading: isCreating || isUpdating,
+    isEdit,
+    // ✅ Export
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
   };
 }

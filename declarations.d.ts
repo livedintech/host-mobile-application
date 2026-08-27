@@ -9,6 +9,8 @@ declare module '*.svg' {
 // For environment variables
 declare module '@env' {
   export const BASE_URL_DEV: string;
-  export const BASE_URL_PROD: string;
+  export const BASE_URL_LIVE: string;
   export const MY_FATOORAH_API: string;
+  export const HUBSPOT_ACCESS_TOKEN: string;
+
 }

@@ -1,0 +1,263 @@
+import React from 'react';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import useGuidelinesContainer from './GuidelinesContainer';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
+import AppText from '@/components/molecules/AppText/AppText';
+import { Colors } from '@/theme/colors';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import AppButton from '@/components/molecules/AppButton/AppButton';
+import InputField from '@/components/molecules/Input/InputField';
+import TextareaField from '@/components/molecules/Input/TextareaField';
+import DropdownField from '@/components/molecules/Input/DropdownField';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { goBack, navigate } from '@/services/navigationService';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import Metrics from '@/utility/Metrics';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
+import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
+
+const AddPropertyGuidelinesScreen = () => {
+  const {
+    control,
+    errors,
+    handleSubmit,
+    onNext,
+    onSaveExit,
+    isLoading,
+    isEdit,
+    hideWifiFields,
+    guidelinesSection,
+    lockOptions,
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
+  } = useGuidelinesContainer();
+  const { t } = useTranslation();
+
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={120}
+          scrollIndicatorInsets={{ bottom: 0 }}
+          automaticallyAdjustKeyboardInsets={false}
+          bounces={false}
+        >
+          <View style={styles.headerRow}>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
+            {!isEdit && (
+              <CircularProgress percentage={45} size={48} strokeWidth={4} />
+            )}
+          </View>
+
+          <AppText
+            text={
+              isEdit
+                ? t('app.property_guidelines.title_edit')
+                : t('app.property_guidelines.title_new')
+            }
+            fontSize={28}
+            type="Bold"
+            mt={30}
+          />
+          <AppText
+            text={t('app.property_guidelines.subtitle')}
+            fontSize={12}
+            color={Colors.DARK_CHARCOAL_OPACITY}
+            mt={10}
+          />
+
+          {!isEdit && (
+            <View style={styles.skipWrapper}>
+              <TouchableOpacity
+                style={styles.skipBtn}
+                onPress={() =>
+                  navigate(NavigationRoutes.APP_STACK.SELECT_PROPERTY_POLICIES)
+                }
+              >
+                <AppText
+                  text={t('app.property_guidelines.skip')}
+                  color={Colors.WHITE}
+                  fontSize={14}
+                  type="Medium"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View
+            style={[
+              styles.formGroup,
+              isEdit && { marginTop: Metrics.verticalScale(20) },
+            ]}
+          >
+            {guidelinesSection !== 'guidelines' && (
+              <>
+                <TextareaField
+                  name="arrival_guide"
+                  control={control as any}
+                  errors={errors}
+                  label={t('app.property_guidelines.arrival_guide_label')}
+                  placeholder={
+                    '• Property Name: Olive Residency\n• Address: Building 12, Al Noor Street, City Center'
+                  }
+                  multiline
+                />
+                <View style={styles.fieldGap} />
+              </>
+            )}
+            {guidelinesSection !== 'arrival' && (
+              <>
+                <TextareaField
+                  name="property_rules"
+                  control={control as any}
+                  errors={errors}
+                  label={t('app.property_guidelines.property_rules_label')}
+                  placeholder={
+                    '• Please maintain a low noise level at all times.'
+                  }
+                  multiline
+                />
+              </>
+            )}
+          </View>
+
+          <View style={styles.bottomSection}>
+            {!hideWifiFields && (
+              <>
+                <InputField
+                  name="wifi_username"
+                  label={t('app.property_guidelines.wifi_username_label')}
+                  control={control as any}
+                  errors={errors}
+                  placeholder={t(
+                    'app.property_guidelines.wifi_username_placeholder',
+                  )}
+                />
+                <InputField
+                  name="wifi_password"
+                  label={t('app.property_guidelines.wifi_password_label')}
+                  control={control as any}
+                  errors={errors}
+                  placeholder={t(
+                    'app.property_guidelines.wifi_password_placeholder',
+                  )}
+                />
+                <DropdownField
+                  name="door_lock_code"
+                  label={t('app.property_guidelines.door_lock_label')}
+                  control={control as any}
+                  errors={errors}
+                  placeholder={t(
+                    'app.property_guidelines.door_lock_placeholder',
+                  )}
+                  data={lockOptions}
+                />
+              </>
+            )}
+            <Text style={styles.lockText}>
+              {t('app.property_guidelines.lock_hint')}{' '}
+              <Text
+                style={styles.linkText}
+                onPress={() =>
+                  navigate(NavigationRoutes.APP_STACK.YOUR_SMART_LOCKS)
+                }
+              >
+                {t('app.property_guidelines.smart_lock_link')}
+              </Text>
+            </Text>
+          </View>
+        </KeyboardAwareScrollView>
+
+        {/* Footer */}
+     <FormFooterActions
+          // Primary: Export if isEdit is true, otherwise Next
+          primaryTitle={isEdit ? t('app.property_guidelines.export') : t('app.property_guidelines.next')}
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          isPrimaryDisabled={isLoading}
+
+          // Secondary: Always Save & Exit
+          secondaryTitle={t('app.property_guidelines.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryLoading={isLoading}
+          isSecondaryDisabled={isLoading}
+          containerStyle={styles.footerOverride}
+        />
+
+        {/* ✅ Export Modal */}
+        <ExportOtaSheet
+          visible={bottomSheetVisible}
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.property_guidelines.select_ota')}
+          placeholder={t('app.property_guidelines.select_account')}
+          buttonText={t('app.property_guidelines.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
+      </View>
+    </BGImage>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingHorizontal: Metrics.baseMargin, paddingTop: 10 },
+  content: { paddingBottom: Metrics.verticalScale(120) },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  arrowCircleInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skipWrapper: { alignItems: 'flex-end', marginVertical: 15 },
+  skipBtn: {
+    backgroundColor: '#00A88E',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  formGroup: { marginTop: 10 },
+  fieldGap: { height: 25 },
+  bottomSection: { marginTop: 10 },
+  lockText: { fontSize: 12, color: '#6B6B6B', marginTop: -5, lineHeight: 18 },
+  linkText: {
+    color: '#00A88E',
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+  },
+  footerOverride: { 
+    bottom: 0, 
+    width: '100%', 
+    paddingBottom: 40,
+    paddingHorizontal: 0 
+  },
+});
+
+export default AddPropertyGuidelinesScreen;

@@ -1,18 +1,23 @@
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { Controller, Control, FieldErrors, RegisterOptions } from 'react-hook-form';
 import CustomInput from './CustomInput';
-import { KeyboardTypeOptions } from 'react-native';
+import { KeyboardTypeOptions, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 type Props = {
     name: string;
     control: Control<any>;
     errors: FieldErrors<any>;
     placeholder: string;
-    rules?: object;
+    rules?: RegisterOptions;
     leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
+    onRightIconPress?: () => void;
     label?: string;
     keyboardType?: KeyboardTypeOptions;
     editable?: boolean;
-    maxLength?: number
+    maxLength?: number;
+    containerStyle?: StyleProp<ViewStyle>;
+    inputStyle?: StyleProp<TextStyle>;
+    placeholderTextColor?:string
 };
 
 const InputField = ({
@@ -22,10 +27,15 @@ const InputField = ({
     placeholder,
     rules,
     leftIcon,
+    rightIcon,
+    onRightIconPress,
     label,
     keyboardType,
     editable,
-    maxLength
+    maxLength,
+    containerStyle,
+    inputStyle,
+    placeholderTextColor
 }: Props) => {
 
     return (
@@ -37,13 +47,21 @@ const InputField = ({
                 <CustomInput
                     label={label}
                     value={value}
-                    onChangeText={onChange}
+                    onChangeText={(text) => {
+                        const finalValue = name === 'email' ? text.toLowerCase() : text;
+                        onChange(finalValue);
+                    }}
                     placeholder={placeholder}
                     error={errors?.[name]?.message as string}
                     leftIcon={leftIcon}
+                    rightIcon={rightIcon}
+                    onRightIconPress={onRightIconPress}
                     keyboardType={keyboardType}
                     editable={editable}
                     maxLength={maxLength}
+                    wrapperStyle={containerStyle}
+                    style={inputStyle}
+                    placeholderTextColor={placeholderTextColor}
                 />
             )}
         />

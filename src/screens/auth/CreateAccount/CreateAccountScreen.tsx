@@ -1,131 +1,186 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import InputField from '@/components/molecules/Input/InputField';
+import PasswordField from '@/components/molecules/Input/PasswordField';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
-import Metrics from '@/utility/Metrics';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 import { Colors } from '@/theme/colors';
+import { s, vs } from 'react-native-size-matters';
 import useCreateAccountContainer from './CreateAccountContainer';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import PasswordField from '@/components/molecules/Input/PasswordField';
+import Checkbox from '@/components/molecules/Input/CheckBox';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Metrics from '@/utility/Metrics';
+import { handleOpenLink } from '@/utility/Utils';
+import { useTranslation } from 'react-i18next';
+
+const FIGMA_TEAL = '#09A389';
 
 const CreateAccountScreen = () => {
-    const { 
-        control, 
-        errors, 
-        handleSubmit, 
-        isLoading, 
-    } = useCreateAccountContainer();
+  const {
+    control,
+    errors,
+    handleSubmit,
+    isLoading,
+    isTermsAccepted,
+    toggleTerms,
+    showBackModal,
+    confirmGoBack,
+    cancelGoBack,
+  } = useCreateAccountContainer();
 
-    return (
-        <SafeAreaView style={styles.container}>
-            {/* Concentric Circles Background */}
-            <View style={styles.circleBgContainer} pointerEvents="none">
-                <View style={styles.circleLarge} />
-                <View style={styles.circleMedium} />
+  const { t } = useTranslation();
+
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.mainContent}>
+            {/* Title Section */}
+            <View style={styles.headerSection}>
+              <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={40}>
+                {t('auth.create_account.title_1')}
+                <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL} lineHeight={40}>
+                  {t('auth.create_account.title_2')}
+                </AppText>
+              </AppText>
+              <AppText
+                text={t('auth.create_account.subtitle')}
+                type="Regular"
+                fontSize={16}
+                color={Colors.DARK_CHARCOAL}
+                mt={vs(10)}
+                lineHeight={24}
+                style={{ opacity: 0.8 }}
+              />
             </View>
 
-            <View style={styles.innerContainer}>
-                {/* Title Section */}
-                <View style={styles.titleSection}>
-                    <AppText
-                        text="Create your free account"
-                        type="Bold"
-                        fontSize={28}
-                        textAlign="center"
-                        color={Colors.BRUNSWICK_GREEN}
-                    />
-                    <AppText
-                        text="Welcome to livedin. Let’s build a brighter hosting journey together."
-                        type="Regular"
-                        textAlign="center"
-                        color={Colors.BLACK}
-                        style={styles.subTitle}
-                    />
-                </View>
-
-                {/* Form Fields using your InputField component */}
-                <View style={styles.form}>
-                    <InputField
-                        label="Full Name *"
-                        name="fullName"
-                        control={control}
-                        errors={errors}
-                        placeholder=""
-                    />
-
-                    <PasswordField
-                     label="Password *"
-                        name="password"
-                        control={control}
-                        errors={errors}
-                        placeholder=""
-                    />
-                    <AppText text='Please choose a stronger password. Try a mix of letters, numbers, and symbols.' color={Colors.SUPER_GREY}/>
-                        
-                </View>
-
-                {/* Submit Button */}
-                <View style={styles.footer}>
-                    <AppButton
-                        onPress={handleSubmit}
-                        title="Next"
-                        loading={isLoading}
-                        style={styles.nextBtn}
-                    />
-                </View>
+            {/* Form Section */}
+            <View style={styles.form}>
+              <InputField
+                label={t('auth.create_account.full_name')}
+                name="fullName"
+                control={control as any}
+                errors={errors}
+                placeholder=""
+              />
+              <View style={styles.passwordWrapper}>
+                <InputField
+                  label={t('auth.create_account.email')}
+                  name="email"
+                  control={control as any}
+                  errors={errors}
+                  placeholder=""
+                  keyboardType="email-address"
+                />
+              </View>
+              <View style={styles.passwordWrapper}>
+                <PasswordField
+                  label={t('auth.create_account.password')}
+                  name="password"
+                  control={control as any}
+                  errors={errors}
+                  placeholder=""
+                />
+              </View>
+              <AppText
+                text={t('auth.create_account.password_hint')}
+                fontSize={13}
+                color={Colors.DARK_CHARCOAL}
+                mt={vs(8)}
+                lineHeight={18}
+                style={{ opacity: 0.6 }}
+              />
             </View>
-        </SafeAreaView>
-    );
+
+            {/* Terms and Conditions */}
+            <View style={styles.termsWrapper}>
+              <Checkbox isChecked={isTermsAccepted} onPress={toggleTerms} />
+              <AppText fontSize={13} color={Colors.NIGHT} style={styles.termsText}>
+                {t('auth.create_account.terms_1')}{' '}
+                <AppText
+                  fontSize={13}
+                  color={Colors.NIGHT}
+                  style={styles.underline}
+                  onPress={() => handleOpenLink('https://livedin.co/privacy-policy')}
+                >
+                  {t('auth.create_account.terms_and_conditions')}
+                </AppText>
+                {' '}{t('auth.create_account.terms_2')}{' '}
+                <AppText
+                  fontSize={12}
+                  color={Colors.NIGHT}
+                  style={styles.underline}
+                  onPress={() => handleOpenLink('https://livedin.co/privacy-policy')}
+                >
+                  {t('auth.create_account.privacy_policy')}
+                </AppText>
+              </AppText>
+            </View>
+
+            {/* Action Button */}
+            <View style={styles.bottomSec}>
+              <AppButton
+                loading={isLoading}
+                onPress={handleSubmit}
+                title={t('auth.create_account.next')}
+                disabled={!isTermsAccepted}
+              />
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
+
+      <AccountDeleteModal
+        isVisible={showBackModal}
+        onClose={cancelGoBack}
+        onConfirm={confirmGoBack}
+        title={t('auth.create_account.exit_modal_title')}
+        description={t('auth.create_account.exit_modal_text')}
+      />
+    </BGImage>
+  );
 };
 
-export default CreateAccountScreen;
-
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: Metrics.scale(20),
-        marginTop: Metrics.verticalScale(10),
-    },
-    headerRight: { flexDirection: 'row', alignItems: 'center' },
-    arBtn: {
-        width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: '#E0E0E0',
-        justifyContent: 'center', alignItems: 'center', marginRight: 10
-    },
-    backBtn: {
-        paddingHorizontal: 25, height: 40, borderRadius: 20, borderWidth: 1, borderColor: '#E0E0E0',
-        justifyContent: 'center'
-    },
-    innerContainer: { flex: 1, paddingHorizontal: Metrics.scale(25), justifyContent: 'center' },
-    titleSection: { marginBottom: Metrics.verticalScale(40) },
-    subTitle: { marginTop: 10, lineHeight: 24, paddingHorizontal: 10 },
-    form: { width: '100%' },
-    inputGap: { marginBottom: 20 },
-    hintText: {
-        fontSize: 12,
-        color: '#707070',
-        marginTop: 8,
-        lineHeight: 18,
-    },
-    footer: { marginTop: Metrics.verticalScale(50) },
-    nextBtn: {
-        backgroundColor: Colors.WHITE,
-        borderWidth: 1,
-        borderColor: '#D1D1D1',
-        borderRadius: 100,
-    },
-    // Background Circles
-    circleBgContainer: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', zIndex: -1 },
-    circleLarge: {
-        width: Metrics.screenWidth * 1.5, height: Metrics.screenWidth * 1.5,
-        borderRadius: 1000, borderWidth: 1, borderColor: '#F9F9F9', position: 'absolute'
-    },
-    circleMedium: {
-        width: Metrics.screenWidth * 0.9, height: Metrics.screenWidth * 0.9,
-        borderRadius: 1000, borderWidth: 1, borderColor: '#F2F2F2', position: 'absolute'
-    },
+  container: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(60),
+  },
+  headerSection: {
+    marginBottom: vs(40),
+  },
+  form: {
+    width: '100%',
+  },
+  passwordWrapper: {
+    marginTop: vs(20),
+  },
+  termsWrapper: {
+    flexDirection: 'row',
+    marginTop: vs(24),
+    width: '100%',
+    paddingRight: s(10),
+  },
+  termsText: { flex: 1, marginLeft: Metrics.scale(12), lineHeight: 18 },
+  underline: { textDecorationLine: 'underline' },
+  bottomSec: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: vs(30),
+    marginTop: vs(20),
+  },
+
 });
+
+export default CreateAccountScreen;

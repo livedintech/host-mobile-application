@@ -1,211 +1,228 @@
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
-import useManageListingContainer, { listingData } from './ManageListingContainer';
+import useManageListingContainer from './ManageListingContainer';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ms, s, vs } from 'react-native-size-matters';
+import BGImage from '@/components/molecules/BGImage/BGImage';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import AppButton from '@/components/molecules/AppButton/AppButton';
+import GlassCard from '@/components/molecules/GlassCard/GlassCard';
+import AccountDeleteModal from '@/components/molecules/AccountDeleteModal/AccoutDeleteModal';
+import RefreshableScrollView from '@/components/organisms/RefreshableScrollView/RefreshableScrollView';
+import { useTranslation } from 'react-i18next';
+import ManageListingSelectSkeleton from '@/components/Skeletons/ManageListingSelectSkeleton';
+
+const FIGMA_TEAL = '#333333';
 
 const ManageListingScreen = () => {
-    const { selectedListing, onSelect, isLoading} = useManageListingContainer();
+  const { t } = useTranslation();
+  const { onSelect, isLoading, listingData, localSelectedId, setLocalSelectedId, refetch, showBackModal, confirmGoBack, cancelGoBack } = useManageListingContainer();
 
-    if (isLoading) {
-    return (
-        <SafeAreaView style={styles.loaderContainer}>
-            <ActivityIndicator
-                size="large" 
-                color={Colors.BRUNSWICK_GREEN} 
-            />
-            <AppText
-                text="Loading listings..."
-                fontSize={14}
-                color={Colors.SUPER_GREY}
-                style={{ marginTop: 10 }}
-            />
-        </SafeAreaView>
-    );
-}
+  const handleNextPress = () => {
+    if (localSelectedId !== null) {
+      onSelect(localSelectedId);
+    }
+  };
 
+  // Helper function to pick correct icon based on label text
+  const getIconForListing = (label: string = '') => {
+    const lowerLabel = label.toLowerCase();
+    if (lowerLabel.includes('1-3')) return 'onetothree'; // Replace with your exact SVG path name
+    if (lowerLabel.includes('30+')) return 'property'; // Replace with your exact SVG path name
+    return 'fourtothirty'; // Fallback icon
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            {/* Background Decorative Circles */}
-            <View style={styles.circleContainer} pointerEvents="none">
-                <View style={styles.circleLarge} />
-                <View style={styles.circleMedium} />
-                <View style={styles.circleSmall} />
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <SafeAreaView style={styles.container}>
+        <RefreshableScrollView
+          isLoading={isLoading}
+          skeletonComponent={<ManageListingSelectSkeleton />}
+          onRefresh={refetch}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          <View style={styles.mainContent}>
+
+            {/* Main Title */}
+            <View style={styles.titleSection}>
+              <AppText type="Regular" fontSize={32} color={Colors.BLACK} lineHeight={40}>
+                {t('auth.manage_listing.title_1')}
+                <AppText type="Bold" fontSize={32} color={Colors.PRIMARY_TEAL}>{t('auth.manage_listing.title_2')}</AppText>{t('auth.manage_listing.title_3')}
+              </AppText>
             </View>
 
-            {/* Main Content */}
-            <View style={styles.content}>
-                <AppText 
-                    text="How many listing do you manage?" 
-                    textAlign="center" 
-                    fontSize={32} 
-                    color={Colors.BLACK}
-                    style={styles.title}
-                />
-
-                <View style={styles.grid}>
-                    {listingData.map((item) => {
-                        const isSelected = selectedListing === item.id;
-                        
-                        return (
-                            <ButtonView 
-                                key={item.id}
-                                activeOpacity={0.9}
-                                style={[styles.card, isSelected && styles.cardActive]}
-                                onPress={() => onSelect(item.id)}
-                                disabled={!item?.isEnable}
-                            >
-                                <Svgicons path='property' size={40}/>
-                                <AppText 
-                                    text={item.label} 
-                                    fontSize={16} 
-                                    type="Medium" 
-                                    color={isSelected ? Colors.BRUNSWICK_GREEN : Colors.BLACK}
-                                    style={styles.cardLabel}
-                                />
-                            </ButtonView>
-                        );
-                    })}
+            {/* Glass Card & Options */}
+            <GlassCard width="100%">
+              <View style={styles.cardHeader}>
+                <AppText text={t('auth.manage_listing.card_header')} fontSize={20} type="Medium" color={Colors.BLACK} />
+                <View style={styles.iconCircle}>
+                  <Svgicons path="home" size={24} />
                 </View>
+              </View>
+              <View style={styles.listWrapper}>
+                {listingData.map((item: { value?: number; label?: string }) => {
+                  const isSelected = localSelectedId === item.value;
+
+                  return (
+                    <ButtonView
+                      key={item.value}
+                      activeOpacity={0.9}
+                      style={[styles.listItem, isSelected && styles.listItemActive]}
+                      onPress={() => setLocalSelectedId(item.value || null)}
+                    >
+                      <View style={styles.itemIconWrapper}>
+                        <Svgicons
+                          path={getIconForListing(item.label)}
+                          size={24}
+                          color={isSelected ? FIGMA_TEAL : Colors.BLACK}
+                        />
+                      </View>
+                      <AppText
+                        text={item.label}
+                        fontSize={16}
+                        type="Regular"
+                        color={isSelected ? FIGMA_TEAL : Colors.BLACK}
+                        style={styles.itemLabel}
+                      />
+                    </ButtonView>
+                  );
+                })}
+              </View>
+            </GlassCard>
+
+            {/* Bottom Button Section */}
+            <View style={styles.bottomSec}>
+              <AppButton
+                title={t('auth.manage_listing.next')}
+                disabled={localSelectedId === null || isLoading}
+                borderRadius={100}
+                fontSize={16}
+                onPress={handleNextPress}
+              />
             </View>
-        </SafeAreaView>
-    );
+          </View>
+        </RefreshableScrollView>
+      </SafeAreaView>
+      <AccountDeleteModal
+        isVisible={showBackModal}
+        onClose={cancelGoBack}
+        onConfirm={confirmGoBack}
+        title={t('auth.manage_listing.exit_modal_title')}
+        description={t('auth.manage_listing.exit_modal_text')}
+      />
+    </BGImage>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: Metrics.scale(20),
-        marginTop: Metrics.verticalScale(10),
-    },
-    headerRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    arBtn: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-    },
-    backBtn: {
-        paddingHorizontal: 25,
-        height: 40,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        justifyContent: 'center',
-    },
-    content: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    title: {
-        marginBottom: Metrics.verticalScale(50),
-        lineHeight: 42,
-    },
-    grid: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    card: {
-        width: (Metrics.screenWidth - 60) / 3,
-        aspectRatio: 1,
-        borderWidth: 1,
-        borderColor: '#EAEAEA',
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFF',
-    },
-    cardActive: {
-        borderColor: Colors.BRUNSWICK_GREEN,
-        borderWidth: 1.5,
-    },
-    cardLabel: {
-        marginTop: 10,
-    },
-    // Background Circles Styling
-    circleContainer: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: -1,
-    },
-    circleLarge: {
-        width: Metrics.screenWidth * 1.5,
-        height: Metrics.screenWidth * 1.5,
-        borderRadius: 1000,
-        borderWidth: 1,
-        borderColor: '#F8F8F8',
-        position: 'absolute',
-    },
-    circleMedium: {
-        width: Metrics.screenWidth * 1.1,
-        height: Metrics.screenWidth * 1.1,
-        borderRadius: 1000,
-        borderWidth: 1,
-        borderColor: '#F4F4F4',
-        position: 'absolute',
-    },
-    circleSmall: {
-        width: Metrics.screenWidth * 0.7,
-        height: Metrics.screenWidth * 0.7,
-        borderRadius: 1000,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
-        position: 'absolute',
-    },
-    iconContainer: {
-        width: 30,
-        height: 35,
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-    },
-    buildingBase: {
-        width: 18,
-        height: 30,
-        borderWidth: 2,
-        borderRadius: 2,
-        padding: 2,
-        justifyContent: 'space-around',
-    },
-    buildingSide: {
-        width: 10,
-        height: 20,
-        borderWidth: 2,
-        borderLeftWidth: 0,
-        borderRadius: 2,
-    },
-    window: {
-        width: '100%',
-        height: 2,
-    },
-    loaderContainer: {
+  container: { flex: 1 },
+  loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-},
-
+  },
+  topHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: s(24),
+    paddingTop: vs(10),
+    paddingBottom: vs(15),
+  },
+  iconBtn: {
+    width: ms(40),
+    height: ms(40),
+    borderRadius: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  langBtn: {
+    paddingHorizontal: s(16),
+    paddingVertical: vs(8),
+    borderRadius: ms(20),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: vs(20),
+  },
+  titleSection: {
+    marginBottom: vs(40),
+  },
+  glassCard: {
+    backgroundColor: 'rgba(212, 223, 221, 0.4)',
+    borderRadius: ms(24),
+    padding: s(20),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(24),
+  },
+  iconCircle: {
+    width: ms(44),
+    height: ms(44),
+    borderRadius: ms(12),
+    backgroundColor: 'rgba(225, 235, 233, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  listWrapper: {
+    gap: vs(12),
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: vs(56),
+    paddingHorizontal: s(16),
+    borderRadius: ms(16),
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: Colors.WHITE,
+  },
+  listItemActive: {
+    borderColor: Colors.WHITE,
+    borderWidth: 1.5,
+    backgroundColor: Colors.WHITE
+  },
+  itemIconWrapper: {
+    width: s(32),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemLabel: {
+    marginLeft: s(10),
+  },
+  bottomSec: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: vs(20),
+    paddingTop: vs(40),
+  },
 });
 
 export default ManageListingScreen;

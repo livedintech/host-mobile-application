@@ -1,24 +1,31 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import AppText from '../AppText/AppText';
+import { useTranslation } from 'react-i18next';
 
 type EmptyComponentProps = {
-    title?: string
-}
+  title?: string;
+};
 
 export default function EmptyComponent(props: EmptyComponentProps) {
-    const { title = "No Data Found" } = props
+  const { title } = props;
+  const { t } = useTranslation();
 
-    return (
-        <View style={styles.container}>
-            <AppText text={title} fontSize={16} type="SemiBold" />
-        </View>
-    )
+  return (
+    <View style={styles.container}>
+      <AppText
+        text={title || t('app.shared.no_data_found')}
+        fontSize={16}
+        type="SemiBold"
+      />
+    </View>
+  );
 }
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-})
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

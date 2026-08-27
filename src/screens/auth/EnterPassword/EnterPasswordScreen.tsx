@@ -1,110 +1,129 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { s, vs } from 'react-native-size-matters';
+
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import PasswordField from '@/components/molecules/Input/PasswordField';
 import { Colors } from '@/theme/colors';
-import Metrics from '@/utility/Metrics';
 import useEnterPasswordContainer from './EnterPasswordContainer';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useTranslation } from 'react-i18next';
+
+const FIGMA_TEAL = Colors.PRIMARY_TEAL;
 
 const EnterPasswordScreen = () => {
-  const { isLoading, control, errors, handleSubmit,gotToVerifyOTP } = useEnterPasswordContainer();
+  const { t } = useTranslation();
+
+  const { isLoading, control, errors, handleSubmit, gotToVerifyOTP } = useEnterPasswordContainer();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.mainContent}>
+            {/* Note: Ensure your Parent Navigation or Header component 
+                handles the Back Arrow and 'العربية' button seen in the image.
+            */}
 
-        {/* Title Section */}
-        <View style={styles.titleSection}>
-          <AppText 
-            text="Please enter your Password to continue." 
-            fontSize={28} 
-            textAlign="center" 
-          />
-        </View>
+            <View style={styles.centerBody}>
+              {/* Title Section */}
+              <View style={styles.headerSection}>
+                <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={42}>
+                  {t('auth.enter_password.title_1')}
+                </AppText>
+                <AppText type="Regular" fontSize={30} color={Colors.BLACK} lineHeight={42}>
+                  {t('auth.enter_password.title_2')}
+                  <AppText type="SemiBold" fontSize={30} color={FIGMA_TEAL}>
+                    {t('auth.enter_password.title_3')}
+                  </AppText>
+                </AppText>
+              </View>
 
-        {/* Form Fields */}
-        <View style={styles.form}>
-          <PasswordField
-            label="Password *"
-            name="password"
-            control={control}
-            errors={errors}
-            placeholder=""
-          />
+              {/* Form Fields */}
+              <View style={styles.form}>
+                <PasswordField
+                  label={t('auth.enter_password.password_label')}
+                  name="password"
+                  control={control as any}
+                  errors={errors}
+                  placeholder=""
+                  // Ensure your PasswordField component uses a transparent/thin underline style per design
+                />
 
-          {/* Remember Me & Forgot Password Row */}
-          <View style={styles.row}>
-            <View style={styles.rememberMe}>
-              <View style={styles.checkbox} />
-              <AppText text="Remember me" fontSize={12} color={Colors.PINE_FOREST} type='Medium'/>
+                {/* Forgot Password Link - Aligned Right */}
+                <View style={styles.forgotRow}>
+                  <ButtonView onPress={gotToVerifyOTP} style={styles.forgotBtn}>
+                    <AppText text={t('auth.enter_password.forgot_password')} color={Colors.BLACK} fontSize={14} />
+                  </ButtonView>
+                </View>
+              </View>
             </View>
-            <ButtonView onPress={gotToVerifyOTP}>
-              <AppText text="Forgot password?" fontSize={12} color={Colors.BRUNSWICK_GREEN} type="Medium"/>
-            </ButtonView>
+
+            {/* Bottom Action Button */}
+            <View style={styles.bottomSec}>
+              <AppButton
+                loading={isLoading}
+                onPress={handleSubmit}
+                title={t('auth.enter_password.continue')}
+                backgroundColor={FIGMA_TEAL}
+                color={Colors.WHITE}
+                borderRadius={100} // Keeps the pill shape
+                type="SemiBold"
+                fontSize={16}
+              />
+            </View>
           </View>
-        </View>
-
-        {/* Action Button */}
-        <View style={styles.bottomSec}>
-          <AppButton
-            loading={isLoading}
-            onPress={handleSubmit}
-            title="Continue"
-          />
-        </View>
-
-      </ScrollView>
-    </SafeAreaView>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-  scrollContainer: { flexGrow: 1, paddingHorizontal: 20 },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    marginTop: 20 
+  container: {
+    flex: 1,
   },
-  headerRight: { flexDirection: 'row', alignItems: 'center' },
-  circleBtn: { 
-    width: 40, height: 40, borderRadius: 20, 
-    borderWidth: 1, borderColor: '#E0E0E0', 
-    justifyContent: 'center', alignItems: 'center', marginRight: 8 
+  scrollContent: {
+    flexGrow: 1,
   },
-  backBtn: { 
-    paddingHorizontal: 25, height: 40, borderRadius: 20, 
-    borderWidth: 1, borderColor: '#E0E0E0', justifyContent: 'center' 
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: s(30),
+    justifyContent: 'space-between', // Pushes bottomSec to the bottom
   },
-  titleSection: { marginTop: Metrics.verticalScale(80), alignItems: 'center' },
-  form: { marginTop: Metrics.verticalScale(40) },
-  row: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    marginTop: 15, 
-    alignItems: 'center' 
+  centerBody: {
+    flex: 1,
+    justifyContent: 'center', // Centers the text and input vertically like the design
+    marginTop: vs(20),
   },
-  rememberMe: { flexDirection: 'row', alignItems: 'center' },
-  checkbox: { 
-    width: 18, height: 18, borderWidth: 1, 
-    borderColor: '#E0E0E0', borderRadius: 4, marginRight: 8 
+  headerSection: {
+    marginBottom: vs(40),
   },
-  bottomSec: { 
-    flex: 1, 
-    justifyContent: 'flex-end', 
-    paddingBottom: Metrics.verticalScale(30) 
+  form: {
+    width: '100%',
   },
-  continueBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.BRUNSWICK_GREEN,
-    borderRadius: 100,
-    height: 56,
-  }
+  forgotRow: {
+    alignItems: 'flex-end',
+    marginTop: vs(8),
+  },
+  forgotBtn: {
+    paddingVertical: 5,
+  },
+  bottomSec: {
+    paddingBottom: vs(100),
+    width: '100%',
+  },
+  buttonHeight: {
+    height: vs(50), // Ensures the button has enough presence
+  },
 });
 
 export default EnterPasswordScreen;

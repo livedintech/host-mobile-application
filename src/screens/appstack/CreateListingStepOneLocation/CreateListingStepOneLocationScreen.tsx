@@ -1,60 +1,86 @@
+// CreateListingStepOneLocationScreen.tsx
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
+import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import useCreateListingStepOneLocationContainer from './CreateListingStepOneLocationContainer';
 import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import useCreateListingStepOneLocationContainer from './CreateListingStepOneLocationContainer';
+import Metrics from '@/utility/Metrics';
+import { useTranslation } from 'react-i18next';
+import CreateListingStepOneLocationSkeleton from '@/components/Skeletons/CreateListingStepOneLocationSkeleton';
 
 const CreateListingStepOneLocationScreen = () => {
+  const { t } = useTranslation();
   const {
     region,
     mapRef,
+    placesRef,
     handleConfirm,
     handleSetManually,
     onRegionChangeComplete,
     handleLocateMe,
     handlePlaceSelect,
     currentAddress,
-    placesRef
+    isGeocoding,
+    isLocating,
+    hasUserLocation,
+    isInitializing,
+    isEdit, // ✅ added
   } = useCreateListingStepOneLocationContainer();
+
+  // ── First-mount full screen loader ─────────────────────────────────────────
+  if (isInitializing) {
+    return <CreateListingStepOneLocationSkeleton />;
+  }
 
   return (
     <View style={styles.container}>
-      {/* Real Google Map Integration */}
+
+      {/* ── Google Map ────────────────────────────────────────────────── */}
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
+       provider={ Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE }
         style={styles.map}
         initialRegion={region}
         onRegionChangeComplete={onRegionChangeComplete}
         showsUserLocation={true}
         showsMyLocationButton={false}
+        onUserLocationChange={() => {}}
       />
 
-      {/* Static Center Marker */}
+      {/* ── Fixed Center Pin ──────────────────────────────────────────── */}
       <View style={styles.markerFixed} pointerEvents="none">
         <Svgicons path="pinLocationFillIcon" size={45} color={Colors.BRUNSWICK_GREEN} />
       </View>
 
+      {/* ── Overlay ───────────────────────────────────────────────────── */}
       <View style={styles.overlay}>
-        {/* Google Places Autocomplete Search Bar */}
+
+        {/* ── Search Bar (top) ──────────────────────────────────────── */}
         <View style={styles.header}>
           <GooglePlacesAutocomplete
-            placeholder="Search Location"
-            onPress={(data, details = null) => {
-              if (details) {
-                handlePlaceSelect(details);
-              }
+            ref={placesRef}
+            placeholder={t('app.location_step.search_placeholder')}
+            onPress={(_data, details = null) => {
+              if (details) handlePlaceSelect(details);
             }}
             query={{
-              key: 'AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao', // Replace with your API key
+              key: 'AIzaSyBFLqCFWozTt6lfoGyNGl95OYsceWSo8LE',
               language: 'en',
             }}
             fetchDetails={true}
             enablePoweredByContainer={false}
+            keyboardShouldPersistTaps="handled"
+            textInputProps={{ placeholderTextColor: '#999' }}
             styles={{
               container: styles.autocompleteContainer,
               textInputContainer: styles.searchBar,
@@ -64,34 +90,46 @@ const CreateListingStepOneLocationScreen = () => {
               description: styles.description,
             }}
             renderLeftButton={() => (
-              <Svgicons 
-                path="pinLocationIcon" 
-                size={18} 
-                style={styles.searchIcon} 
-              />
+              <Svgicons path="pinLocationIcon" size={24} style={styles.searchIcon} />
             )}
-            textInputProps={{
-              placeholderTextColor: '#999',
-            }}
           />
         </View>
 
-        {/* Bottom Actions */}
+        {/* ── Footer (bottom) ───────────────────────────────────────── */}
         <View style={styles.footer}>
-          <ButtonView style={styles.locateMeBtn} onPress={handleLocateMe}>
-            <Svgicons path="locateMeIcon" size={32} color={Colors.BRUNSWICK_GREEN} />
+
+          {/* Locate Me FAB */}
+          <ButtonView
+            style={[styles.locateMeBtn, isLocating && styles.btnDisabled]}
+            onPress={handleLocateMe}
+            disabled={isLocating}
+            mb={25}
+          >
+            {isLocating
+              ? <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
+              : <Svgicons path="locateMeIcon" size={32} color={Colors.BRUNSWICK_GREEN} />
+            }
           </ButtonView>
 
-          <AppButton 
-            title="Confirm" 
-            onPress={handleConfirm} 
-            style={styles.actionBtn}
-          />
-          <AppButton 
-            title="Set Manually" 
-            onPress={handleSetManually} 
-            style={[styles.actionBtn, { marginTop: 12 }]}
-          />
+          <View style={styles.footerBtn}>
+            <AppButton
+              disabled={isGeocoding || isLocating || !hasUserLocation}
+              title={t('app.location_step.enter_manually')}
+              onPress={handleConfirm}
+              mb={12}
+              variant={!isEdit ? 'secondary' : 'primary'}
+            />
+
+            {/* ✅ Save & Exit sirf create mode mein */}
+            {!isEdit && (
+              <AppButton
+                disabled={isGeocoding || isLocating || !hasUserLocation}
+                title={t('app.location_step.save_exit')}
+                onPress={handleSetManually}
+                mb={18}
+              />
+            )}
+          </View>
         </View>
       </View>
     </View>
@@ -101,83 +139,98 @@ const CreateListingStepOneLocationScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { ...StyleSheet.absoluteFillObject },
+
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loaderText: {
+    marginTop: 14,
+    fontSize: 15,
+    color: Colors.BRUNSWICK_GREEN,
+    fontWeight: '500',
+  },
+
   markerFixed: {
+    position: 'absolute',
+    top: '50%',
     left: '50%',
     marginLeft: -22.5,
     marginTop: -45,
-    position: 'absolute',
-    top: '50%',
   },
-  overlay: { flex: 1, justifyContent: 'space-between' },
-  header: { 
-    padding: 20,
+
+  overlay: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
     zIndex: 999,
     elevation: 999,
   },
-  autocompleteContainer: {
-    flex: 0,
-    zIndex: 1000,
-  },
+  autocompleteContainer: { flex: 0, zIndex: 1000 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.WHITE,
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    height: 50,
-    elevation: 5,
+    backgroundColor: Colors.WHITE_OPACITY_60,
+    borderRadius: 28,
+    paddingHorizontal: 14,
+    height: 52,
+    elevation: 6,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 3 },
   },
-  searchIcon: { 
-    marginRight: 10,
-  },
-  input: { 
-    flex: 1, 
-    color: Colors.BLACK, 
-    fontSize: 16,
-    height: 50,
+  searchIcon: { marginRight: 8 },
+  input: {
+    flex: 1,
+    color: '#1a1a1a',
+    fontSize: 15,
+    height: 52,
+    backgroundColor: 'transparent',
   },
   listView: {
-    backgroundColor: Colors.WHITE,
-    borderRadius: 10,
-    marginTop: 5,
-    elevation: 5,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginTop: 6,
+    elevation: 8,
     zIndex: 1001,
     position: 'absolute',
-    top: 55,
+    top: 58,
     left: 0,
     right: 0,
   },
-  row: {
-    padding: 13,
-    height: 44,
-    flexDirection: 'row',
-  },
-  description: {
-    fontSize: 14,
-    color: Colors.BLACK,
-  },
-  footer: { 
-    padding: 20, 
-    paddingBottom: 30,
-  },
+  row: { padding: 13, flexDirection: 'row', alignItems: 'center' },
+  description: { fontSize: 14, color: '#333' },
+
+  footer: {},
+
   locateMeBtn: {
-    width: 45,
-    height: 45,
-    backgroundColor: Colors.WHITE,
-    borderRadius: 22.5,
+    width: 48,
+    height: 48,
+    backgroundColor: Colors.PRIMARY_TEAL,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    marginBottom: 20,
-    elevation: 3,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    marginRight: 20,
   },
-  actionBtn: {
-    backgroundColor: Colors.WHITE,
-    borderColor: '#E0E0E0',
-  }
+  btnDisabled: { opacity: 0.5 },
+
+  footerBtn: {
+    backgroundColor: '#e2e5e5',
+    paddingHorizontal: Metrics.scale(20),
+    paddingTop: Metrics.verticalScale(36),
+  },
 });
 
 export default CreateListingStepOneLocationScreen;

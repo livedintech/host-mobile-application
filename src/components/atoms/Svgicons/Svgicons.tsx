@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { Image, View, ViewStyle } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 import Metrics from '@/utility/Metrics';
 import { icons } from '@/assets/icons';
@@ -39,14 +39,7 @@ export default function Svgicons({
 
   ...rest
 }: IconProps) {
-  const IconComponent = useMemo(() => {
-    const component = icons[path];
-    if (!component) {
-      console.error(`Icon not found: ${path}`);
-      return () => null;
-    }
-    return component;
-  }, [path]);
+  const icon = useMemo(() => icons[path], [path]);
 
   const style: ViewStyle = {
     margin: m,
@@ -62,11 +55,28 @@ export default function Svgicons({
     paddingRight: pr ?? px,
   };
 
+  const resolvedWidth = size ? Metrics.scale(size) : Metrics.scale(width);
+  const resolvedHeight = size ? Metrics.scale(size) : Metrics.verticalScale(height);
+
+  if (typeof icon === 'number') {
+    return (
+      <View style={style}>
+        <Image source={icon} style={{ width: resolvedWidth, height: resolvedHeight }} resizeMode="contain" />
+      </View>
+    );
+  }
+
+  if (!icon) {
+    console.error(`Icon not found: ${path}`);
+    return null;
+  }
+
+  const IconComponent = icon as React.ComponentType<SvgProps>;
   return (
     <View style={style}>
       <IconComponent
-        width={size ? Metrics.scale(size) : Metrics.scale(width)}
-        height={size ? Metrics.scale(size) : Metrics.verticalScale(height)}
+        width={resolvedWidth}
+        height={resolvedHeight}
         {...rest}
       />
     </View>

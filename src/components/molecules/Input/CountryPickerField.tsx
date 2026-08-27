@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
+import { useTranslation } from 'react-i18next';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
@@ -14,6 +15,8 @@ interface CountryPickerFieldProps {
   name: string;
   placeholder?: string;
   defaultCountryCode?: CountryCode;
+  disabled?: boolean;
+  onSelect?: (country: Country) => void;
 }
 
 export interface CountryValue {
@@ -29,7 +32,10 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
   name,
   placeholder = 'Select Country',
   defaultCountryCode = 'SA',
+  disabled,
+  onSelect
 }) => {
+  const { t } = useTranslation();
   const [pickerVisible, setPickerVisible] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -51,12 +57,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
 
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.BRUNSWICK_GREEN, Colors.BRUNSWICK_GREEN],
-  });
-
-  const animatedBackgroundColor = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.WHITE, Colors.WHITE],
+    outputRange: [Colors.WHITE_OPACITY_60, Colors.WHITE_OPACITY_60],
   });
 
   return (
@@ -67,7 +68,6 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
         control={control}
         name={name}
         render={({ field: { onChange, value } }) => {
-          // countryCode always defined to avoid default placeholder
           const countryCode = value?.cca2 || defaultCountryCode;
 
           return (
@@ -76,21 +76,24 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
                 styles.container,
                 {
                   borderColor: errors[name] ? Colors.INDIAN_RED : animatedBorderColor,
-                  backgroundColor: animatedBackgroundColor,
+                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
                 },
+                disabled && { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
               ]}
             >
               <TouchableOpacity
                 style={styles.pickerButton}
                 activeOpacity={0.7}
                 onPress={() => {
+                  if (disabled) return;
                   setPickerVisible(true);
                   handleFocus();
                 }}
               >
                 <CountryPicker
-                  withFlag
-                  withFilter
+                  withFilter={true} // Allows searching
+                  withFlag={true}
+                  withCountryNameButton={false}
                   countryCode={countryCode as CountryCode}
                   visible={pickerVisible}
                   onClose={() => {
@@ -98,11 +101,13 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
                     handleBlur();
                   }}
                   onSelect={(country: Country) => {
-                    onChange({
+                    const selectedData = {
                       cca2: country.cca2,
                       name: country.name,
                       callingCode: country.callingCode[0] || '',
-                    } as CountryValue);
+                    };
+                    onChange(selectedData);
+                    if (onSelect) onSelect(country);
                     setPickerVisible(false);
                     handleBlur();
                   }}
@@ -125,7 +130,7 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
 
       {errors[name] && (
         <AppText
-          text={errors[name]?.message as string}
+          text={errors[name]?.message as string || t('common.required')}
           color={Colors.INDIAN_RED}
           style={styles.errorText}
         />
@@ -135,37 +140,12 @@ const CountryPickerField: React.FC<CountryPickerFieldProps> = ({
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    marginBottom: Metrics.verticalScale(18),
-  },
-  label: {
-    color: Colors.BLACK,
-    marginBottom: 8,
-    fontSize: Metrics.generatedFontSize(14),
-  },
-  container: {
-    borderWidth: 1,
-    borderRadius: 12,
-    height: Metrics.verticalScale(50),
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  pickerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    flex: 1,
-  },
-  text: {
-    color: Colors.BLACK,
-    fontSize: Metrics.generatedFontSize(14),
-    flex: 1,
-  },
-  errorText: {
-    marginTop: Metrics.verticalScale(5),
-    fontSize: Metrics.generatedFontSize(12),
-    marginLeft: Metrics.scale(4),
-  },
+  wrapper: { marginBottom: Metrics.verticalScale(18) },
+  label: { color: Colors.BLACK, marginBottom: 8, fontSize: Metrics.generatedFontSize(14) },
+  container: { borderWidth: 1.5, borderRadius: 10, height: Metrics.verticalScale(54), justifyContent: 'center' },
+  pickerButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, flex: 1 },
+  text: { color: Colors.BLACK, fontSize: Metrics.generatedFontSize(14), flex: 1, marginLeft: 10 },
+  errorText: { marginTop: Metrics.verticalScale(5), fontSize: Metrics.generatedFontSize(12), marginLeft: Metrics.scale(4) },
 });
 
 export default CountryPickerField;

@@ -1,115 +1,198 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import {
+  Controller,
+  Control,
+  FieldErrors,
+  RegisterOptions,
+} from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
+import { useTranslation } from 'react-i18next';
 import AppText from '../AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 
 interface DropdownItem {
-    label: string;
-    value: string | number;
+  label: string;
+  value: string | number;
 }
 interface DropdownFieldProps {
-    name: string;
-    control: Control<any>;
-    errors: FieldErrors;
-    label: string;
-    data: DropdownItem[];
-    placeholder?: string;
-    disabled?: boolean;
+  name: string;
+  control: Control<any>;
+  errors: FieldErrors;
+  label: string;
+  data: DropdownItem[];
+  placeholder?: string;
+  placeholderColor?: string;
+  disabled?: boolean;
+  rules?: RegisterOptions;
+  dropdownPosition?: 'auto' | 'top' | 'bottom';
+  onSelect?: (value: any) => void;
+  extraPayload?: any;
+  mode?: 'default' | 'modal' | 'auto';
+  maxHeight?: number;
+  listContainerStyle?: object;
+  dropdownStyle?: object;
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
-    name,
-    control,
-    errors,
-    label,
-    data,
-    placeholder = 'Select',
-    disabled = false,
+  name,
+  control,
+  errors,
+  label,
+  data,
+  placeholder,
+  placeholderColor,
+  disabled = false,
+  rules,
+  dropdownPosition,
+  onSelect,
+  mode,
+  maxHeight,
+  listContainerStyle,
+  dropdownStyle,
 }) => {
-    const error = errors[name]?.message as string;
+  const { t } = useTranslation();
+  const error = errors[name]?.message as string;
+  const finalPlaceholder = placeholder || t('common.placeholder');
+  const hasData = Array.isArray(data) && data.length > 0;
 
-    return (
-        <View style={styles.wrapper}>
-             {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium'/>}
-            <Controller
-                control={control}
-                name={name}
-                render={({ field: { onChange, value } }) => (
-                    <Dropdown
-                        inputSearchStyle={styles.inputSearchStyle}
-                        search
-                        style={[styles.dropdown, !!error && styles.errorBorder, disabled && styles.disabled]}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        itemTextStyle={styles.itemTextStyle}
-                        data={data}
-                        labelField="label"
-                        valueField="value"
-                        placeholder={placeholder}
-                        value={value}
-                        onChange={item => onChange(item.value)}
-                        disable={disabled}
-                        renderRightIcon={() => <Svgicons path='ChevronDownIcon' width={15} height={15} />}
-                        autoScroll={false}
-                        searchPlaceholder='Search...'
-                    />
-                )}
-            />
-            {error && <AppText text={error} color={Colors.INDIAN_RED} style={styles.errorText} />}
-        </View>
-    );
+  return (
+    <View
+      style={{
+        marginBottom: Metrics.verticalScale(18),
+      }}
+    >
+      {label && (
+        <AppText
+          text={label}
+          mb={8}
+          color={Colors.BLACK}
+          fontSize={14}
+          type="Medium"
+        />
+      )}
+      <Controller
+        control={control}
+        name={name}
+        rules={rules}
+        render={({ field: { onChange, value } }) => (
+          <Dropdown
+            mode={mode}
+            maxHeight={maxHeight}
+            dropdownPosition={dropdownPosition}
+            inputSearchStyle={styles.inputSearchStyle}
+            search
+            style={[
+              styles.dropdown,
+              (disabled || !hasData) && styles.disabled,
+              !!error && styles.errorBorder,
+              dropdownStyle,
+            ]}
+            containerStyle={[styles.popupListContainer, listContainerStyle]}
+            placeholderStyle={[
+              styles.placeholderStyle,
+              placeholderColor ? { color: placeholderColor } : {},
+            ]}
+            selectedTextStyle={styles.selectedTextStyle}
+            itemTextStyle={styles.itemTextStyle}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder={finalPlaceholder}
+            value={value}
+            onChange={item => {
+              onChange(item.value);
+              if (onSelect) {
+                onSelect(item);
+              }
+            }}
+            disable={disabled || !hasData}
+            renderRightIcon={() =>
+              hasData ? (
+                <View style={{ marginRight: 8 }}>
+                  <Svgicons
+                    path="ChevronDownIcon"
+                    width={15}
+                    height={15}
+                    color="#2D3142"
+                  />
+                </View>
+              ) : null
+            }
+            autoScroll={false}
+            searchPlaceholder={t('common.search')}
+          />
+        )}
+      />
+      {error && (
+        <AppText
+          text={error}
+          color={Colors.INDIAN_RED}
+          fontSize={12}
+          mt={5}
+          ml={4}
+        />
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    wrapper: {
-        marginBottom: Metrics.verticalScale(18),
-        zIndex: 9999,
-        overflow: 'visible', 
-    },
-    label: {
-        color: Colors.BRUNSWICK_GREEN,
-        marginBottom: 8,
-        fontSize: Metrics.generatedFontSize(14),
-    },
-    dropdown: {
-        height: Metrics.verticalScale(56),
-        backgroundColor: Colors.WHITE,
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        borderWidth: 1,
-        borderColor: Colors.SMOOTH_GREY,
-    },
-    disabled: {
-        backgroundColor: Colors.ANTI_FLASH_WHITE,
-    },
-    errorBorder: {
-        borderColor: Colors.INDIAN_RED,
-    },
-    placeholderStyle: {
-        fontSize: Metrics.generatedFontSize(14),
-        color: Colors.SUPER_GREY,
-        fontWeight: '500'
-    },
-    selectedTextStyle: {
-        fontSize: Metrics.generatedFontSize(14),
-        color: Colors.MIDNIGHT,
-    },
-    itemTextStyle: {
-        fontSize: Metrics.generatedFontSize(14),
-        color: Colors.MIDNIGHT,
-    },
-    errorText: {
-        marginTop: 5,
-        fontSize: 12,
-        color: Colors.INDIAN_RED,
-    },
-    inputSearchStyle: {
-        color: Colors.MIDNIGHT,
-    },
+  dropdown: {
+    minHeight: Metrics.verticalScale(54),
+    paddingVertical: Metrics.verticalScale(10),
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    borderWidth: 1.5,
+    borderColor: Colors.WHITE_OPACITY_60,
+  },
+  popupListContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    marginTop: 5,
+    borderWidth: 0,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  disabled: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.WHITE_OPACITY_60,
+  },
+  errorBorder: {
+    borderColor: Colors.INDIAN_RED,
+  },
+  placeholderStyle: {
+    fontSize: Metrics.generatedFontSize(14),
+    color: '#7B8D88',
+    fontWeight: '400',
+    paddingRight: 12,
+  },
+  selectedTextStyle: {
+    fontSize: Metrics.generatedFontSize(14),
+    color: '#000000',
+    fontWeight: '400',
+    paddingRight: 12,
+  },
+  itemTextStyle: {
+    fontSize: Metrics.generatedFontSize(14),
+    color: Colors.MIDNIGHT,
+  },
+  errorText: {
+    marginTop: 5,
+    fontSize: 12,
+    color: Colors.INDIAN_RED,
+  },
+  inputSearchStyle: {
+    color: Colors.MIDNIGHT,
+    borderRadius: 10,
+    backgroundColor: '#F8F9FA',
+  },
 });
 
 export default DropdownField;

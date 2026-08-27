@@ -22,11 +22,12 @@ const AppText = ({
   numberOfLines,
   m, mt, mb, ml, mr, mx, my,
   p, pt, pb, pl, pr, px, py,
+  children
 }: AppTextProps) => {
 
   const fontFamily = italic
-    ? `RethinkSans-${type}Italic`
-    : `RethinkSans-${type}`;
+    ? `Inter-${type}Italic`
+    : `Inter-${type}`;
 
   const spacingStyles = {
     margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
@@ -64,6 +65,7 @@ const AppText = ({
       numberOfLines={numberOfLines}
     >
       {text}
+      {children}
     </Text>
   );
 };
@@ -71,5 +73,5 @@ const AppText = ({
 export default AppText;
 
 const styles = StyleSheet.create({
-  AppText: {},
+  AppText: {backgroundColor: 'transparent',},
 });

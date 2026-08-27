@@ -51,11 +51,13 @@ export default function FlatListHandler({
     }
   }, [meta, shouldFetchMore]);
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    meta.refetch().finally(() => {
+    try {
+      await meta.refetch();
+    } finally {
       setIsRefreshing(false);
-    });
+    }
   }, [meta]);
 
   const renderEmpty = () => {
@@ -90,8 +92,8 @@ export default function FlatListHandler({
         <RefreshControl
           title=""
           onRefresh={onRefresh}
-          refreshing={isRefreshing}
-          tintColor={Colors.INDIAN_RED}
+          refreshing={isRefreshing ?? false}  // ← yeh add karo
+          tintColor={Colors.MEDIUM_JUNGLE_GREEN}
         />
       }
       onEndReached={fetchMore}

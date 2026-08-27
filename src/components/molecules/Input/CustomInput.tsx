@@ -9,6 +9,7 @@ import {
   TextStyle,
   KeyboardTypeOptions,
   Animated,
+  Platform,
 } from 'react-native';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
@@ -22,12 +23,14 @@ type Props = {
   wrapperStyle?: StyleProp<ViewStyle>;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
+  onSubmitEditing?: () => void;
   placeholder?: string;
   error?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconPress?: () => void;
   keyboardType?: KeyboardTypeOptions;
+  returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   secureTextEntry?: boolean;
   editable?: boolean;
   label?: string;
@@ -35,18 +38,21 @@ type Props = {
   numberOfLines?: number;
   verticalAlign?: "auto" | "top" | "bottom" | "center";
   maxLength?: number;
+  placeholderTextColor?: string
 };
 
 const CustomInput = ({
   value,
   onChangeText,
   onBlur,
+  onSubmitEditing,
   placeholder,
   error,
   leftIcon,
   rightIcon,
   onRightIconPress,
   keyboardType = 'default',
+  returnKeyType,
   secureTextEntry = false,
   style,
   wrapperStyle,
@@ -56,50 +62,56 @@ const CustomInput = ({
   autoCapitalize = 'none',
   numberOfLines,
   verticalAlign,
-  maxLength
-
+  maxLength,
+  placeholderTextColor = '#7B8D88'
 }: Props) => {
-  // Animated value
   const animation = useRef(new Animated.Value(0)).current;
+
+  // Matching your Dropdown styling exactly
+  const GLASS_BASE = 'rgba(255, 255, 255, 0.25)';
+  const GLASS_RIM = 'rgba(255, 255, 255, 0.6)';
+  const FOCUS_COLOR = Colors.PINE_FOREST || '#000000';
 
   const handleFocus = () => {
     Animated.timing(animation, {
       toValue: 1,
-      duration: 200,
-      useNativeDriver: false, // colors cannot use native driver
+      duration: 250,
+      useNativeDriver: false,
     }).start();
   };
 
   const handleBlur = () => {
     Animated.timing(animation, {
       toValue: 0,
-      duration: 200,
+      duration: 250,
       useNativeDriver: false,
     }).start();
     onBlur?.();
   };
 
-  // Interpolate animated values
   const animatedBorderColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [Colors.SMOOTH_GREY, Colors.BRUNSWICK_GREEN], // grey → coral
-  });
-
-  const animatedBackgroundColor = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.WHITE, Colors.WHITE], // cultured → white
+    outputRange: [GLASS_RIM, FOCUS_COLOR],
   });
 
   return (
     <View style={styles.wrapper}>
-      {label && <AppText text={label} mb={8} color={Colors.PINE_FOREST} fontSize={14} type='Medium'/>}
+      {label && (
+        <AppText
+          text={label}
+          mb={8}
+          color={Colors.BLACK} // Matches Dropdown label color
+          fontSize={14}
+          type="Medium"
+        />
+      )}
 
       <Animated.View
         style={[
-          styles.container,
+          styles.glassContainer,
           {
             borderColor: error ? Colors.INDIAN_RED : animatedBorderColor,
-            backgroundColor: animatedBackgroundColor,
+            backgroundColor: editable ? GLASS_BASE : 'rgba(255, 255, 255, 0.1)',
           },
           wrapperStyle,
         ]}
@@ -108,18 +120,17 @@ const CustomInput = ({
 
         <TextInput
           multiline={multiline}
-          selectionColor={Colors.SUPER_GREY}
+          selectionColor={FOCUS_COLOR}
           secureTextEntry={secureTextEntry}
           style={[
             styles.input,
             style,
             multiline && verticalAlign
               ? { textAlignVertical: verticalAlign }
-              : { textAlignVertical: "center" }
+              : { textAlignVertical: 'center' },
           ]}
-
           placeholder={placeholder}
-          placeholderTextColor={Colors.SUPER_GREY}
+          placeholderTextColor={placeholderTextColor}
           value={value}
           onChangeText={onChangeText}
           onFocus={handleFocus}
@@ -128,8 +139,9 @@ const CustomInput = ({
           editable={editable}
           autoCapitalize={autoCapitalize}
           numberOfLines={numberOfLines}
-          textAlignVertical={multiline ? verticalAlign : 'center'}
           maxLength={maxLength}
+          returnKeyType={returnKeyType}
+          onSubmitEditing={onSubmitEditing}
         />
 
         {rightIcon && (
@@ -139,41 +151,43 @@ const CustomInput = ({
         )}
       </Animated.View>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <AppText text={error} color={Colors.INDIAN_RED} fontSize={12} mt={5} ml={4} />
+      )}
     </View>
   );
 };
-
-export default CustomInput;
 
 const styles = StyleSheet.create({
   wrapper: {
     marginBottom: Metrics.verticalScale(18),
   },
-  container: {
+  glassContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 12, // Matches dropdown's slightly rounded aesthetic
     paddingHorizontal: 16,
-    height: Metrics.verticalScale(58),
-    borderWidth: 1,
+    height: Metrics.verticalScale(54), // Matches dropdown height
+    borderWidth: 1.5,
   },
   input: {
     flex: 1,
-    color: Colors.BLACK,
+    color: '#000000', // Matches dropdown selectedTextStyle
     fontSize: Metrics.generatedFontSize(14),
+    fontWeight: '600',
     paddingVertical: 0,
   },
   iconWrapper: {
     marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     color: Colors.INDIAN_RED,
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 5,
     marginLeft: 4,
   },
-  errorBorder: {
-    borderColor: Colors.INDIAN_RED,
-  },
 });
+
+export default CustomInput;

@@ -9,30 +9,36 @@ const Tab = createBottomTabNavigator();
 const TabStack = () => {
   return (
     <Tab.Navigator
-      tabBar={(props) => <BottomTab {...props} />}
+      tabBar={props => <BottomTab {...props} />}
+      backBehavior="history"
+      screenOptions={{
+        tabBarStyle: { display: 'none' },
+      }}
     >
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ header: () => <HeaderApp isLang isShowProfile isNotification/> }}
         name={NavigationRoutes.APP_STACK.HOME}
         component={require('@/screens/appstack/Home/HomeScreen').default}
       />
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ header: () => <HeaderApp /> }}
         name={NavigationRoutes.APP_STACK.LISTING}
         component={require('@/screens/appstack/Listing/ListingScreen').default}
       />
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
-        name={NavigationRoutes.APP_STACK.MESSAGE}
-        component={require('@/screens/appstack/Message/MessageScreen').default}
+        options={{ headerShown: false }}
+        name={NavigationRoutes.APP_STACK.CHAT}
+        component={require('@/screens/appstack/Chat/ChatScreen').default}
       />
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
         name={NavigationRoutes.APP_STACK.TASK}
-        component={require('@/screens/appstack/Task/TaskScreen').default}
+        component={
+          require('@/screens/appstack/TaskManagement/screen/AllTask/AllTask').default
+        }
+        options={{ headerShown: false }}
       />
       <Tab.Screen
-        options={{ header: () => <HeaderApp isLogo isLang /> }}
+        options={{ headerShown: false }}
         name={NavigationRoutes.APP_STACK.MORE}
         component={require('@/screens/appstack/More/MoreScreen').default}
       />

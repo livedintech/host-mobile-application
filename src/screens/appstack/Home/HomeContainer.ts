@@ -1,6 +1,152 @@
+import { useCallback, useEffect } from 'react';
+import STORAGE_CONST from '@/constants/storage';
+import NavigationRoutes from '@/navigation/NavigationRoutes';
+import { navigate } from '@/services/navigationService';
+import { getUser } from '@/services/UserPermission';
+import { User } from '@/types/api/authTypes';
+import { useQuery } from '@tanstack/react-query';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useTranslation } from 'react-i18next';
+
 export default function useHomeContainer() {
-  const onConnect = (platform: string) => {
-    console.log(`Connecting to ${platform}`);
+  const { setUser } = useAuthStore();
+  const { updateListing, setListingId } = useCreateListingStore();
+  const { t } = useTranslation();
+
+  const {
+    data: UserPermission,
+    isLoading,
+    refetch,
+  } = useQuery<User>({
+    queryKey: [STORAGE_CONST.GET_USER],
+    queryFn: getUser,
+    enabled: true,
+  });
+
+  useEffect(() => {
+    if (UserPermission) {
+      setUser(UserPermission);
+    }
+  }, [UserPermission]);
+
+  const channels = UserPermission?.channels || {};
+  const unexported_listings = UserPermission?.unexported_listings || [];
+  const incomplete_listings = UserPermission?.incomplete_listings || [];
+
+  // const isNewLayout = UserPermission?.unexported_listings.length === 0;
+  const isNewLayout = UserPermission?.has_import_listing;
+
+  // ✅ Navigation Fix (bug resolved)
+  const onConnect = useCallback((platform: string) => {
+    if (['Airbnb', 'Gathern', 'Booking'].includes(platform)) {
+      const tabMap: Record<string, string> = {
+        Airbnb: 'Airbnb',
+        Gathern: 'Gathern',
+        Booking: 'Booking.com',
+      };
+      navigate(NavigationRoutes.APP_STACK.MANAGE_BOOKING, { initialTab: tabMap[platform] });
+    }
+
+    if (platform === 'Manual') {
+      navigate(NavigationRoutes.APP_STACK.CREATE_LISTING_STEP_ONE);
+    }
+  }, []);
+
+const iconMap = {
+    Airbnb: 'airbnb',
+    Gathern: 'gathern',
+    Booking: 'bookingCom',
+    Manual: 'direct',
   };
-  return { onConnect };
+
+  const cardsData = [
+    { key: 'Airbnb' },
+    { key: 'Gathern' },
+    { key: 'Booking' },
+    { key: 'Manual' },
+  ];
+
+  const getCardContent = useCallback(
+  (platform: string) => {
+    const countMap: Record<string, number> = {
+      Airbnb: channels?.airbnb ?? 0,
+      Gathern: channels?.gathern ?? 0,
+      Booking: channels?.bcom ?? 0,
+    };
+
+    if (platform === 'Manual') {
+      return {
+        title: t('app.home.create_listing'),
+        desc:  t('app.home.add_listing_manually'),
+      };
+    }
+
+    const count = countMap[platform] ?? 0;
+    const displayName = platform === 'Booking' ? 'Booking.com' : platform;
+
+    if (count > 0) {
+      return {
+        title: `${UserPermission?.name ?? 'User'}'s ${displayName}`,
+        desc:  t('app.home.import_listings', { name: displayName }),
+      };
+    }
+
+    return {
+      title: t('app.home.connect', { name: displayName }),
+      desc:  t('app.home.import_listings', { name: displayName }),
+    };
+  },
+  [channels, UserPermission, t], // ✅ t add karo
+);
+
+  const goToPropertyDetail = ({
+    id,
+    name,
+  }: {
+    name: string;
+    id: string | number;
+  }) => {
+    updateListing({
+      name,
+    });
+    setListingId(id.toString());
+    navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+  };
+
+  const handleListingNavigation = (
+    listings: any[],
+    type: 'incomplete' | 'unexported',
+  ) => {
+    if (!listings || listings.length === 0) return;
+
+    if (listings.length > 1) {
+      navigate(NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS);
+    } else {
+      const item = listings[0];
+
+      updateListing({
+        name: item?.title,
+      });
+
+      setListingId(item?.listing_id?.toString());
+
+      navigate(NavigationRoutes.APP_STACK.PROPERTY_DETAIL);
+    }
+  };
+
+  return {
+    onConnect,
+    UserPermission,
+    cardsData,
+    getCardContent,
+    iconMap,
+    isLoading,
+    refetch,
+    goToPropertyDetail,
+    incomplete_listings,
+    unexported_listings,
+    isNewLayout,
+    handleListingNavigation,
+  };
 }

@@ -12,7 +12,6 @@ export const useExteriorPhotoContainer = () => {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
 
   const handleNext = () => {
-    console.log("Saving Interior Media...", mediaList);
     navigate(NavigationRoutes.APP_STACK.DESCRIBE_YOUR_HOUSE)
   };
 

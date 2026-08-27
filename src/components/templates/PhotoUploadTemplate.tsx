@@ -1,276 +1,414 @@
-import React from 'react';
-import { StyleSheet, View, Pressable, Image, FlatList, Modal, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
 import { Colors } from '@/theme/colors';
 import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import Metrics from '@/utility/Metrics';
-import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
+import CircularProgress from '../molecules/CircularProgress/CircularProgress';
+import { goBack } from '@/services/navigationService';
+import BGImage from '../molecules/BGImage/BGImage';
 import { useMediaUpload, MediaItem } from './useMediaUpload';
+import Metrics from '@/utility/Metrics';
+import RefreshableScrollView from '../organisms/RefreshableScrollView/RefreshableScrollView';
+import ImageViewing from 'react-native-image-viewing';
+import ButtonView from '../molecules/AppButton/ButtonView';
+import { useTranslation } from 'react-i18next';
+import PhotoUploadTemplateSkeleton from '../Skeletons/PhotoUploadTemplateSkeleton';
+// ── Import Reusable Footer ──
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
-interface PhotoUploadTemplateProps {
-    step?: string;
-    screenTitle: string;
-    sectionTitle: string;
-    maxImages: number;
-    maxVideos: number;
-    mediaList: MediaItem[];
-    onMediaChange: (list: MediaItem[]) => void;
-    loading?: boolean;
-    isFetching?: boolean;
-    secondaryBtnTitle?: string;
-    onSecondaryPress: () => void;
-    secondaryLoading?: boolean;
-    secondaryDisable?: boolean;
-    primaryBtnTitle?: string;
-    onPrimaryPress: () => void;
-    primaryLoading?: boolean;
-    primaryDisable?: boolean;
-}
+const PhotoUploadTemplate = (props: any) => {
+  const { t } = useTranslation();
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(
+    null,
+  );
+  const [showOptions, setShowOptions] = useState(false);
+  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+  const [isViewerVisible, setIsViewerVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-const PhotoUploadTemplate = (props: PhotoUploadTemplateProps) => {
-    const {
-        isPopupVisible,
-        setPopupVisible,
-        uploadActions,
-        removeMedia,
-        handlePick
-    } = useMediaUpload({
-        maxImages: props.maxImages,
-        maxVideos: props.maxVideos,
-        mediaList: props.mediaList,
-        onMediaChange: props.onMediaChange
+  const { isPopupVisible, setPopupVisible, uploadActions, handlePick } =
+    useMediaUpload({
+      maxImages: props.maxImages,
+      maxVideos: props.maxVideos,
+      mediaList: props.mediaList,
+      onMediaChange: props.onMediaChange,
     });
 
-    // Helper to render each image/video thumbnail
-    const renderMediaItem = ({ item, index }: { item: MediaItem; index: number }) => {
-        const isVideo = item.type?.includes('video');
-        return (
-            <View style={styles.mediaWrapper}>
-                <Image source={{ uri: item.path }} style={styles.thumbnail} />
-                {isVideo && (
-                    <View style={styles.videoBadge}>
-                        <Svgicons path="videoIcon" size={12} color={Colors.WHITE} />
-                    </View>
-                )}
-                <Pressable style={styles.deleteBtn} onPress={() => removeMedia(index)}>
-                    <Svgicons path="closeCircleIcon" size={25} />
-                </Pressable>
-            </View>
-        );
-    };
+  const featuredItem = props.mediaList.find(item => item.isFeatured);
 
-    // Agar data fetch ho raha ho (GET API)
-    if (props.isFetching) {
-        return (
-            <View style={[styles.container, { justifyContent: 'center' }]}>
-                <ActivityIndicator size="large" color={Colors.BRUNSWICK_GREEN} />
-                <AppText text="Loading data..." textAlign="center" mt={10} />
-            </View>
-        );
-    }
+  const renderMediaItem = ({
+    item,
+    index,
+  }: {
+    item: MediaItem;
+    index: number;
+  }) => (
+    <View style={styles.mediaWrapper}>
+      <ButtonView
+        activeOpacity={0.9}
+        disabled={item.isUploading}
+        onPress={() => {
+          setSelectedImage(item.path);
+          setIsViewerVisible(true);
+        }}
+      >
+        <AppImage source={{ uri: item.path }} style={styles.thumbnail} />
+      </ButtonView>
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.content}>
-                {/* Step Header */}
-                {props.step && (
-                    <AppText text={props.step} fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} textAlign="center" />
-                )}
-
-                <View style={styles.subTitleRow}>
-                    <AppText text={props.screenTitle} fontSize={24} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
-                    <Svgicons path="imageIcon" size={24} />
-                </View>
-
-                {/* Instructions Section */}
-                <View style={styles.infoSection}>
-                    <View style={styles.bulletRow}>
-                        <View style={styles.bullet} />
-                        <AppText
-                            text={`Upload up to ${props.maxImages} images and ${props.maxVideos} video per section.`}
-                            fontSize={10} color={Colors.PINE_FOREST}
-                        />
-                    </View>
-                    <View style={styles.bulletRow}>
-                        <View style={styles.bullet} />
-                        <AppText text="Allowed formats: jpg, png, mp4." fontSize={10} color={Colors.PINE_FOREST} />
-                    </View>
-                    <View style={styles.bulletRow}>
-                        <View style={styles.bullet} />
-                        <AppText text="Video limit: ≤ 20 MB." fontSize={10} color={Colors.PINE_FOREST} />
-                    </View>
-                </View>
-
-                <AppText text={props.sectionTitle} fontSize={22} type="SemiBold" color={Colors.BRUNSWICK_GREEN} textAlign="center" mt={20} />
-
-                {/* Main Upload Box or Grid */}
-                {props.mediaList.length === 0 ? (
-                    <GradientBorder borderRadius={20} style={styles.uploadBoxWrapper}>
-                        <Pressable style={styles.uploadBoxInner} onPress={handlePick}>
-                            <Svgicons path="fileUploadIcon" size={60} />
-                            <AppText text="Upload Images" fontSize={24} type="SemiBold" mt={10} />
-                        </Pressable>
-                    </GradientBorder>
-                ) : (
-                    <GradientBorder borderRadius={15} style={styles.gridWrapper}>
-                        <View style={styles.gridInner}>
-                            <FlatList
-                                data={[...props.mediaList, { isButton: true }]}
-                                numColumns={4}
-                                keyExtractor={(_, index) => index.toString()}
-                                renderItem={({ item, index }) =>
-                                    (item as any).isButton ? (
-                                        <GradientBorder borderRadius={12} style={styles.plusBtnWrapper}>
-                                            <Pressable style={styles.plusBtnInner} onPress={handlePick}>
-                                                <Svgicons path="plusIcon" size={22} color={Colors.BRUNSWICK_GREEN} />
-                                            </Pressable>
-                                        </GradientBorder>
-                                    ) : renderMediaItem({ item: item as MediaItem, index })
-                                }
-                            />
-                        </View>
-                    </GradientBorder>
-                )}
-
-                {/* Upload Options Modal */}
-                <Modal visible={isPopupVisible} transparent animationType="slide">
-                    <Pressable style={styles.modalOverlay} onPress={() => setPopupVisible(false)}>
-                        <View style={styles.modalContent}>
-                            <AppText text="Select Media" type="Bold" fontSize={18} mb={20} textAlign="center" />
-
-                            <ButtonView style={styles.optionRow} onPress={uploadActions.fromGallery}>
-                                <Svgicons path="imageIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
-                                <AppText text="Gallery (Photo & Video)" ml={15} fontSize={16} />
-                            </ButtonView>
-
-                            <ButtonView style={styles.optionRow} onPress={uploadActions.takePhoto}>
-                                <Svgicons path="cameraIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
-                                <AppText text="Take Photo" ml={15} fontSize={16} />
-                            </ButtonView>
-
-                            <ButtonView style={styles.optionRow} onPress={uploadActions.recordVideo}>
-                                <Svgicons path="videoIcon" size={24} color={Colors.BRUNSWICK_GREEN} />
-                                <AppText text="Record Video" ml={15} fontSize={16} />
-                            </ButtonView>
-
-                            <AppButton title="Cancel" mt={20} onPress={() => setPopupVisible(false)} />
-                        </View>
-                    </Pressable>
-                </Modal>
-
-                {/* Footer Buttons */}
-                <View style={styles.footer}>
-                    <AppButton
-                        title={props.primaryBtnTitle || "Next"}
-                        onPress={props.onPrimaryPress}
-                        loading={props.primaryLoading}
-                        disabled={props.primaryDisable}
-                    />
-                    <AppButton
-                        title={props.secondaryBtnTitle || "Save & Exit"}
-                        onPress={props.onSecondaryPress}
-                        loading={props.secondaryLoading}
-                        disabled={props.secondaryDisable}
-                        mt={15}
-                    />
-                </View>
-            </View>
+      {item.isUploading ? (
+        <View style={styles.deletingOverlay}>
+          <ActivityIndicator size="small" color={Colors.WHITE} />
         </View>
+      ) : deletingIndex === index && props.isDeleting ? (
+        <View style={styles.deletingOverlay}>
+          <ActivityIndicator size="small" color={Colors.MEDIUM_JUNGLE_GREEN} />
+        </View>
+      ) : null}
+
+      {!item.isUploading && (
+        <ButtonView
+          style={styles.moreBtn}
+          onPress={() => {
+            setSelectedItemIndex(index);
+            setShowOptions(true);
+          }}
+        >
+          <Svgicons path="threeDots" size={16} color={Colors.BLACK} />
+        </ButtonView>
+      )}
+    </View>
+  );
+
+  if (props.isFetching) {
+    return (
+      <BGImage source={require('@/assets/img/background/linearBG.png')}>
+        <PhotoUploadTemplateSkeleton />
+      </BGImage>
     );
+  }
+
+  return (
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <RefreshableScrollView
+          style={styles.flex1}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          refreshing={props.isFetching}
+          onRefresh={props.onRefresh}
+        >
+          {/* Header */}
+          <View style={styles.headerRow}>
+            <ButtonView onPress={() => goBack()}>
+              <Svgicons path="back" size={40} />
+            </ButtonView>
+            {props.primaryBtnTitle && (
+              <CircularProgress
+                percentage={props.percentage}
+                size={48}
+                strokeWidth={4}
+              />
+            )}
+          </View>
+
+          {props.step && (
+            <AppText text={props.step} fontSize={18} type="Medium" mb={23} />
+          )}
+          <AppText text={props.screenTitle} fontSize={32} type="Bold" mt={25} />
+
+          <View style={styles.infoSection}>
+            <AppText
+              text={t('app.photo_upload.upload_limit', {
+                maxImages: props.maxImages,
+                maxVideos: props.maxVideos,
+              })}
+              fontSize={14}
+              color="#6B6B6B"
+            />
+            <AppText
+              text={t('app.photo_upload.format_hint')}
+              fontSize={14}
+              color="#6B6B6B"
+            />
+            <AppText
+              text={t('app.photo_upload.size_hint')}
+              fontSize={14}
+              color="#6B6B6B"
+            />
+          </View>
+
+          <AppText
+            text={props.sectionTitle}
+            fontSize={22}
+            type="Bold"
+            mt={30}
+            mb={15}
+          />
+
+          {props.mediaList.length === 0 ? (
+            <View>
+              <ButtonView
+                activeOpacity={0.8}
+                style={styles.glassCard}
+                onPress={() => handlePick()}
+              >
+                <Svgicons path="plusIcon" size={24} />
+                <AppText
+                  text={t('app.photo_upload.add_photos')}
+                  ml={15}
+                  fontSize={16}
+                  type="Medium"
+                />
+              </ButtonView>
+              <ButtonView
+                activeOpacity={0.8}
+                style={styles.glassCard}
+                onPress={() => uploadActions.takePhoto()}
+              >
+                <Svgicons path="cameraIcon" size={24} />
+                <AppText
+                  text={t('app.photo_upload.take_picture')}
+                  ml={15}
+                  fontSize={16}
+                  type="Medium"
+                />
+              </ButtonView>
+            </View>
+          ) : (
+            <View>
+              <View style={{ alignSelf: 'flex-end' }}>
+                <AppButton
+                  title={t('app.photo_upload.add_more')}
+                  leftIcon="plusIcon"
+                  variant="secondary"
+                  fontSize={14}
+                  onPress={() => handlePick()}
+                  style={styles.addMoreMini}
+                  type="SemiBold"
+                  borderRadius={13}
+                  mb={30}
+                />
+              </View>
+
+              {featuredItem && (
+                <ButtonView
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    setSelectedImage(featuredItem.path);
+                    setIsViewerVisible(true);
+                  }}
+                  style={{ marginBottom: 20 }}
+                >
+                  <AppImage
+                    source={{ uri: featuredItem.path }}
+                    style={{ width: '100%', height: 200, borderRadius: 12 }}
+                  />
+                </ButtonView>
+              )}
+              <FlatList
+                data={props.mediaList}
+                renderItem={renderMediaItem}
+                numColumns={2}
+                keyExtractor={(_, i) => i.toString()}
+                scrollEnabled={false}
+                style={{ paddingBottom: Metrics.verticalScale(50) }}
+              />
+            </View>
+          )}
+        </RefreshableScrollView>
+
+        {/* ── Reusable Footer Actions (hidden in edit mode — these only navigate, no API call) ── */}
+        {!props.isEdit && (
+          <FormFooterActions
+            primaryTitle={props.primaryBtnTitle}
+            onPrimaryPress={props.onPrimaryPress}
+            isPrimaryLoading={props.primaryLoading}
+            secondaryTitle={props.secondaryBtnTitle}
+            onSecondaryPress={props.onSecondaryPress}
+            isSecondaryLoading={props.secondaryLoading || props.primaryLoading}
+          />
+        )}
+
+        {/* Gallery/Camera Modal */}
+        <Modal visible={isPopupVisible} transparent animationType="fade">
+          <ButtonView
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setPopupVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalIndicator} />
+              <AppText
+                text={t('app.photo_upload.select_media')}
+                type="Bold"
+                fontSize={18}
+                mb={20}
+                textAlign="center"
+              />
+              <ButtonView
+                style={styles.optionRow}
+                onPress={uploadActions.fromGallery}
+              >
+                <Svgicons path="imageIcon" size={24} color={Colors.BLACK} />
+                <AppText
+                  text={t('app.photo_upload.gallery')}
+                  ml={15}
+                  fontSize={16}
+                />
+              </ButtonView>
+              <ButtonView
+                style={styles.optionRow}
+                onPress={uploadActions.takePhoto}
+              >
+                <Svgicons path="cameraIcon" size={24} color={Colors.BLACK} />
+                <AppText
+                  text={t('app.photo_upload.take_photo')}
+                  ml={15}
+                  fontSize={16}
+                />
+              </ButtonView>
+              <AppButton
+                title={t('app.photo_upload.cancel')}
+                mt={20}
+                onPress={() => setPopupVisible(false)}
+              />
+            </View>
+          </ButtonView>
+        </Modal>
+
+        {/* Actions Modal — Cover/Delete */}
+        <Modal visible={showOptions} transparent animationType="fade">
+          <ButtonView
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowOptions(false)}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalIndicator} />
+              <AppButton
+                title={t('app.photo_upload.set_cover')}
+                variant="secondary"
+                onPress={() => {
+                  props.onSetCover?.(selectedItemIndex!);
+                  setShowOptions(false);
+                }}
+              />
+              <AppButton
+                title={t('app.photo_upload.delete_picture')}
+                mt={15}
+                onPress={() => {
+                  setDeletingIndex(selectedItemIndex!);
+                  props.onDelete?.(selectedItemIndex!);
+                  setShowOptions(false);
+                }}
+              />
+              <AppButton
+                title={t('app.photo_upload.cancel')}
+                mt={15}
+                variant="secondary"
+                onPress={() => setShowOptions(false)}
+              />
+            </View>
+          </ButtonView>
+        </Modal>
+      </View>
+      <ImageViewing
+        images={selectedImage ? [{ uri: selectedImage }] : []}
+        imageIndex={0}
+        visible={isViewerVisible}
+        onRequestClose={() => {
+          setIsViewerVisible(false);
+          setSelectedImage(null);
+        }}
+      />
+    </BGImage>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.WHITE },
-    content: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
-    subTitleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: Metrics.verticalScale(24),
-        marginTop: Metrics.verticalScale(49),
-        gap: Metrics.scale(6)
-    },
-    infoSection: {
-        marginTop: 15,
-        paddingHorizontal: 10,
-        alignSelf: 'flex-start',
-    },
-    bulletRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-    },
-    bullet: {
-        width: 4,
-        height: 4,
-        borderRadius: 2,
-        backgroundColor: Colors.PINE_FOREST,
-        marginRight: 8,
-    },
-    uploadBoxWrapper: { marginTop: 40, height: 250 },
-    uploadBoxInner: {
-        flex: 1,
-        borderRadius: 20,
-        backgroundColor: Colors.WHITE,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    gridWrapper: { marginTop: 30, height: Metrics.verticalScale(220) },
-    gridInner: {
-        flex: 1,
-        borderRadius: 15,
-        backgroundColor: Colors.WHITE,
-        padding: 10,
-    },
-    mediaWrapper: {
-        width: '23%',
-        height: Metrics.verticalScale(88),
-        margin: '1%',
-        borderRadius: 12,
-        position: 'relative',
-        marginTop: Metrics.verticalScale(10)
-    },
-    thumbnail: { width: '100%', height: '100%', borderRadius: 12, backgroundColor: '#EEE' },
-    videoBadge: { position: 'absolute', bottom: 4, left: 4, backgroundColor: Colors.WHITE, borderRadius: 4, padding: 2 },
-    deleteBtn: {
-        position: 'absolute',
-        top: -8,
-        right: -8,
-        backgroundColor: Colors.WHITE,
-        borderRadius: 100,
-        zIndex: 10
-    },
-    plusBtnWrapper: {
-        width: '23%',
-        height: Metrics.verticalScale(88),
-        margin: '1%',
-        marginTop: Metrics.verticalScale(10)
-    },
-    plusBtnInner: {
-        flex: 1,
-        borderRadius: 12,
-        backgroundColor: Colors.WHITE,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-    modalContent: {
-        backgroundColor: 'white',
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        padding: 25,
-        paddingBottom: 40
-    },
-    optionRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0'
-    },
-    footer: { marginTop: 'auto', marginBottom: Metrics.verticalScale(20) },
+  flex1: { flex: 1 },
+  container: { flex: 1 },
+  scrollContent: { paddingHorizontal: 25, paddingBottom: 160 },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  infoSection: { marginTop: 15 },
+  glassCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 16,
+    padding: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  addMoreMini: { paddingVertical: Metrics.verticalScale(10), margin: 0 },
+  mediaWrapper: {
+    width: '48%',
+    aspectRatio: 1,
+    margin: '1%',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  thumbnail: { width: '100%', height: '100%', backgroundColor: '#EEE' },
+  moreBtn: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 10,
+    padding: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: Colors.WHITE,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    padding: 25,
+    paddingBottom: 40,
+  },
+  modalIndicator: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#DDD',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  deletingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+  },
 });
 
 export default PhotoUploadTemplate;

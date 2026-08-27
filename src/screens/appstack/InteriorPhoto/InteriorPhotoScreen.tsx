@@ -1,36 +1,61 @@
 import React from 'react';
+import { useRoute } from '@react-navigation/native';
 import PhotoUploadTemplate from '@/components/templates/PhotoUploadTemplate';
 import NavigationRoutes from '@/navigation/NavigationRoutes';
 import { usePropertyMediaUpload } from '@/hooks/usePropertyMediaUpload';
+import { useCreateListingStore } from '@/store/useCreateListingStore';
+import { useTranslation } from 'react-i18next';
 
 const InteriorPhotoScreen = () => {
-    const { mediaList, setMediaList, handleNext, isLoading, handleSaveAndExit } = usePropertyMediaUpload({
-        listingId: 123,
-        category: 'interior',
-        nextRoute: NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS
-    });
+  const route = useRoute<any>();
+  const { listing_id } = useCreateListingStore();
+  const { t } = useTranslation();
 
-    return (
-        <PhotoUploadTemplate
-            step="Step 3"
-            screenTitle="Add Photos & Videos"
-            sectionTitle="Interior Photos & Videos"
-            maxImages={10}
-            maxVideos={1}
-            mediaList={mediaList}
-            onMediaChange={setMediaList}
-            primaryBtnTitle="Next"
-            onPrimaryPress={handleNext}
-            primaryLoading={isLoading}
-            secondaryBtnTitle="Save & Exit"
-            onSecondaryPress={handleSaveAndExit}
-            secondaryLoading={false}
-            isFetching={false}
-            loading={false}
-            primaryDisable={mediaList.length === 0 || isLoading}
-            secondaryDisable={isLoading}
-        />
-    );
+  const paramListing = route.params?.paramData?.listing;
+  const isEdit = Boolean(paramListing?.listing_id);
+
+  const {
+    mediaList,
+    uploadNewPhotos,
+    deletePhoto,
+    setCoverPhoto,
+    handleNext,
+    handleSaveAndExit,
+    isLoading,
+    isFetching,
+    refetchPhotos,
+    isDeleting
+  } = usePropertyMediaUpload({
+    listingId: String(listing_id),
+    category: 'interior',
+    nextRoute: NavigationRoutes.APP_STACK.EXTERIOR_PHOTOS_VIDEOS,
+    exitRoute: NavigationRoutes.APP_STACK.MANAGE_YOUR_LISTINGS,
+    mode: isEdit ? 'edit' : 'create',
+  });
+
+  return (
+    <PhotoUploadTemplate
+      screenTitle={t('app.photo_upload.interior_title')}
+      sectionTitle={t('app.photo_upload.interior_section')}
+      maxImages={15}
+      maxVideos={1}
+      percentage={20}
+      mediaList={mediaList}
+      onMediaChange={uploadNewPhotos}
+      onDelete={deletePhoto}
+      onSetCover={setCoverPhoto}
+      isFetching={isFetching}
+      isEdit={isEdit} // Passed down to conditionally drive the footer
+      primaryBtnTitle={!isEdit ? t('app.photo_upload.next') : undefined}
+      onPrimaryPress={handleNext}
+      primaryLoading={isLoading}
+      secondaryBtnTitle={t('app.photo_upload.save_exit')}
+      onSecondaryPress={handleSaveAndExit}
+      secondaryLoading={isLoading}
+      onRefresh={refetchPhotos}
+      isDeleting={isDeleting}
+    />
+  );
 };
 
 export default InteriorPhotoScreen;

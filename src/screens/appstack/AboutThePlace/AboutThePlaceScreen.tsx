@@ -1,3 +1,4 @@
+import AppPressable from '@/components/atoms/AppPressable/AppPressable';
 import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import AppText from '@/components/molecules/AppText/AppText';
@@ -7,101 +8,147 @@ import Svgicons from '@/components/atoms/Svgicons/Svgicons';
 import AppButton from '@/components/molecules/AppButton/AppButton';
 import useAboutThePlaceContainer from './AboutThePlaceContainer';
 import InputField from '@/components/molecules/Input/InputField';
-import MaskedInputField from '@/components/molecules/Input/MaskedInputField';
+import GradientBorder from '@/components/atoms/GradientBorder/GradientBorder';
+import CircularProgress from '@/components/molecules/CircularProgress/CircularProgress';
+import { goBack } from '@/services/navigationService';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import ExportOtaSheet from '@/components/molecules/ExportOtaSheet/ExportOtaSheet';
+import { useTranslation } from 'react-i18next';
+import FormFooterActions from '@/components/molecules/FormFooterActions/FormFooterActions';
 
 const AboutThePlaceScreen = () => {
   const {
-    control,
-    errors,
-    binaryOptions,
-    numberOptions,
-    handleSubmit,
-    onNext,
-    navigation
+    control, errors, guestOptions, roomCountOptions, bathroomOptions,
+    handleSubmit, onNext, onSaveExit,
+    isLoading, isEdit,
+    // ✅ Export
+    handleExport,
+    handleExportSubmit,
+    bottomSheetVisible,
+    setBottomSheetVisible,
+    otaControl,
+    otaErrors,
+    handleOtaSubmit,
+    listingOptions,
+    isPendingExporting,
   } = useAboutThePlaceContainer();
+  const { t } = useTranslation();
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.stepTitleRow}>
-          <AppText text="Step 2" fontSize={42} type="Bold" color={Colors.BRUNSWICK_GREEN} />
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        <View style={styles.headerRow}>
+          <GradientBorder borderRadius={16} borderWidth={1} style={styles.arrowCircleInner}>
+            <AppPressable style={styles.arrowCircleInner} onPress={() => goBack()}>
+              <Svgicons path="arrowLeftIcon" size={24} />
+            </AppPressable>
+          </GradientBorder>
+          {!isEdit && <CircularProgress percentage={15} size={48} strokeWidth={4} />}
         </View>
 
-        <View style={styles.subTitleRow}>
-          <AppText text="About the Place " fontSize={24} type="SemiBold" color={Colors.BRUNSWICK_GREEN} />
-          <Svgicons path="homePlusIcon" size={24} />
-        </View>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <AppText text={t('app.about_place.title')} fontSize={28} type="Bold" mb={30} />
 
-        <View style={styles.form}>
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <DropdownField name="bedrooms" label="Bedrooms" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
-            <View style={styles.half}>
-              <DropdownField name="beds" label="Beds" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
+          <View style={styles.inputWrapper}>
+            <InputField
+              name="size_sqm"
+              label={t('app.about_place.size_label')}
+              control={control}
+              errors={errors}
+              placeholder={t('app.about_place.size_placeholder')}
+              keyboardType="numeric"
+              maxLength={9}
+            />
           </View>
 
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <DropdownField name="bathrooms" label="Bathrooms" control={control} errors={errors} data={numberOptions} placeholder="Select" />
+          <View style={styles.card}>
+            <View style={styles.iconRow}>
+              <Svgicons path="guestIcon" size={20} />
+              <AppText text={t('app.about_place.guests')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <View style={styles.half}>
-              <DropdownField name="min_nights" label="Min Nights" control={control} errors={errors} data={numberOptions} placeholder="Select" />
-            </View>
+            <DropdownField label="" name="guest_limit" control={control} errors={errors} data={guestOptions} placeholder={t('app.about_place.guests_placeholder')} />
           </View>
 
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <MaskedInputField
-                name="check_in_time"
-                label="Check-in Time"
-                control={control}
-                errors={errors}
-                placeholder="HH:MM"
-                
-              />
+          <View style={styles.card}>
+            <View style={styles.iconRow}>
+              <Svgicons path="bedroomIcon" size={20} />
+              <AppText text={t('app.about_place.bedrooms')} ml={10} fontSize={14} type="Medium" />
             </View>
-            <View style={styles.half}>
-              <MaskedInputField
-                name="check_out_time"
-                label="Check-out Time"
-                control={control}
-                errors={errors}
-                placeholder="HH:MM"
-              />
-            </View>
+            <DropdownField label="" name="bedrooms" control={control} errors={errors} data={roomCountOptions} placeholder={t('app.about_place.bedrooms_placeholder')} />
           </View>
 
-
-          <DropdownField
-            name="instant_booking"
-            label="Instant Booking"
-            control={control}
-            errors={errors}
-            data={binaryOptions}
-            placeholder="Select Yes/No"
-          />
-
-          <View style={styles.footer}>
-            <AppButton title="Next" onPress={handleSubmit(onNext)} />
-            <AppButton title="Save & Exit" onPress={() => navigation.goBack()} mt={15} />
+          <View style={styles.card}>
+            <View style={styles.iconRow}>
+              <Svgicons path="bedroom" size={20} />
+              <AppText text={t('app.about_place.beds')} ml={10} fontSize={14} type="Medium" />
+            </View>
+            <DropdownField label="" name="beds" control={control} errors={errors} data={roomCountOptions} placeholder={t('app.about_place.beds_placeholder')} />
           </View>
-        </View>
-      </ScrollView>
-    </View>
+
+          <View style={styles.card}>
+            <View style={styles.iconRow}>
+              <Svgicons path="bathroom" size={20} />
+              <AppText text={t('app.about_place.bathrooms')} ml={10} fontSize={14} type="Medium" />
+            </View>
+            <DropdownField label="" name="bathrooms" control={control} errors={errors} data={bathroomOptions} placeholder={t('app.about_place.bathrooms_placeholder')} />
+          </View>
+        </ScrollView>
+
+        {/* Footer */}
+       <FormFooterActions
+          // If Edit, show Export; If not, show Next
+          primaryTitle={isEdit ? t('app.about_place.export') : t('app.about_place.next')}
+          onPrimaryPress={isEdit ? handleExport : handleSubmit(onNext)}
+          isPrimaryLoading={isLoading}
+          
+          secondaryTitle={t('app.about_place.save_exit')}
+          onSecondaryPress={handleSubmit(onSaveExit)}
+          isSecondaryDisabled={isLoading}
+        />
+
+        {/* ✅ Export Modal */}
+        <ExportOtaSheet
+          visible={bottomSheetVisible}
+          onClose={() => setBottomSheetVisible(false)}
+          title={t('app.about_place.select_ota')}
+          placeholder={t('app.about_place.select_account')}
+          buttonText={t('app.about_place.export')}
+          otaControl={otaControl}
+          otaErrors={otaErrors}
+          handleOtaSubmit={handleOtaSubmit}
+          handleExportSubmit={handleExportSubmit}
+          listingOptions={listingOptions}
+          isPending={isPendingExporting}
+        />
+
+      </View>
+    </BGImage>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container:  { flex: 1 },
+  headerRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 10 },
   scrollContent: { paddingHorizontal: 25, paddingBottom: 40 },
-  stepTitleRow: { alignItems: 'center', marginTop: 10 },
-  subTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 25 },
-  form: { flex: 1 },
-  row: { flexDirection: 'row', justifyContent: 'space-between' },
-  half: { width: '48%' },
-  footer: { marginTop: 30 },
+  inputWrapper:  { marginBottom: 15 },
+  card: {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    padding:         12,
+    borderRadius:    16,
+    marginBottom:    15,
+    borderWidth:     1,
+    borderColor:     'rgba(255, 255, 255, 0.5)',
+  },
+  iconRow:       { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
+  footer:        { paddingHorizontal: 25, paddingBottom: 30 },
+  arrowCircleInner: {
+    width:           32,
+    height:          32,
+    borderRadius:    16,
+    backgroundColor: Colors.WHITE,
+    justifyContent:  'center',
+    alignItems:      'center',
+  },
 });
 
 export default AboutThePlaceScreen;

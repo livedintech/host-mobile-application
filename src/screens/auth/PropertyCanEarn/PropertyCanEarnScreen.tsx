@@ -1,281 +1,244 @@
+
+
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { vs, ms, s } from 'react-native-size-matters';
+
 import DropdownField from '@/components/molecules/Input/DropdownField';
 import AppText from '@/components/molecules/AppText/AppText';
 import AppButton from '@/components/molecules/AppButton/AppButton';
-import { Colors } from '@/theme/colors';
 import Pagination from '@/components/molecules/Pagination/Pagination';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import PropertyAreaChart from '../../../components/organisms/PropertyAreaChart/PropertyAreaChart';
+
 import usePropertyCanEarnContainer from './PropertyCanEarnContainer';
 import Metrics from '@/utility/Metrics';
 import { bedroomOptions } from '@/constants/dropdownOptions';
-import PropertyAreaChart from '../../../components/organisms/PropertyAreaChart/PropertyAreaChart';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { Colors } from '@/theme/colors';
+import { useTranslation } from 'react-i18next';
 
 const PropertyCanEarnScreen = () => {
-  const { control, errors, handleSubmit, showResults, isLoading, goTologinWithPhone, availableCityItems, availableDistrictItems, selectedcity, chartPoints, roundedMax,yAxisLabels,xAxisLabels,chartData } =
-    usePropertyCanEarnContainer();
+  const { t } = useTranslation();
+  const {
+    control, errors, handleSubmit, showResults, isLoading,
+    availableCityItems, availableDistrictItems, goToConnectAccountIntro,
+    selectedcity, chartPoints, roundedMax, yAxisLabels, xAxisLabels, chartData
+  } = usePropertyCanEarnContainer();
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        {/* Title */}
-        <View style={styles.titleSection}>
-          <AppText
-            text="See What Your"
-            fontSize={32}
-            textAlign="center"
-            color={Colors.PINE_FOREST}
-            type="Medium"
-          />
-          <AppText
-            text="Property Can Earn"
-            fontSize={32}
-            textAlign="center"
-            color={Colors.PINE_FOREST}
-            type="Bold"
-          />
-          <AppText
-            text="Calculate your estimated monthly revenue with Livedin versus standard listings."
-            textAlign="center"
-            color={Colors.PINE_FOREST}
-            mt={13}
-            mb={58}
-            fontSize={15}
-            px={40}
-          />
-        </View>
+    <BGImage source={require('@/assets/img/background/linearBG.png')}>
+      <View style={styles.container}>
+        {/* <KeyboardAwareScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        > */}
+      <View style={[styles.scrollView, styles.scrollContent]}>
 
-        {/* Card Content Switching */}
-        <View style={styles.card}>
-          {!showResults ? (
-            <View>
+          {/* TITLE SECTION */}
+          <View style={styles.titleSection}>
+            <AppText
+              text={t('auth.property_can_earn.title_1')}
+              fontSize={30}
+              textAlign="left"
+              color={Colors.BLACK}
+              mt={20}
+            />
+
+            <View style={styles.titleRow}>
               <AppText
-                text="Where is your property located?"
-                fontSize={18}
-                type="SemiBold"
-                color={Colors.BRUNSWICK_GREEN}
-                mb={20}
-              />
-
-              <DropdownField
-                name="city"
-                label=""
-                control={control}
-                errors={errors}
-                data={availableCityItems}
-                placeholder="Select your city"
-              />
-              <DropdownField
-                name="district"
-                label=""
-                control={control}
-                errors={errors}
-                data={availableDistrictItems}
-                placeholder="Select District"
-                disabled={!selectedcity?.length}
+                text={t('auth.property_can_earn.title_2') + ' '}
+                fontSize={30}
+                color={Colors.PRIMARY_TEAL}
+                type="Bold"
               />
               <AppText
-                text="Number of Bedrooms"
-                fontSize={18}
-                type="SemiBold"
-                color={Colors.BRUNSWICK_GREEN}
-                mb={11}
-              />
-              <DropdownField
-                name="bedrooms"
-                label=""
-                control={control}
-                errors={errors}
-                data={bedroomOptions}
-                placeholder="Number Of Bedrooms"
-              />
-
-              <AppButton
-                type='Bold'
-                onPress={handleSubmit}
-                title="Next"
-                loading={isLoading}
-                style={styles.nextBtn}
-                textStyle={{ color: Colors.BRUNSWICK_GREEN }}
-                pt={5}
-                pb={5}
+                text={t('auth.property_can_earn.title_3')}
+                fontSize={30}
+                color={Colors.BLACK}
               />
             </View>
-          ) : (
-            <View style={styles.resultContainer}>
-              <AppText
-                text="Your Estimated Earnings"
-                fontSize={18}
-                textAlign="center"
-                color={Colors.BRUNSWICK_GREEN}
-              />
-              <View style={styles.statsRow}>
-                <View style={styles.statBox}>
-                  <AppText
-                    text="Monthly Income"
-                    fontSize={11}
-                    color={Colors.PINE_FOREST}
-                  />
-                  <AppText
-                    text={`SAR ${chartData?.monthly}`}
-                    color={Colors.BRUNSWICK_GREEN}
+
+            <AppText
+              text={t('auth.property_can_earn.description')}
+              textAlign="left"
+              color={"#1C1C1C"}
+              mt={vs(29)}
+              mb={vs(25)}
+              fontSize={15}
+              lineHeight={22}
+            />
+          </View>
+
+          {/* THE GLASS CARD */}
+          <View style={styles.card}>
+            {!showResults ? (
+              <View>
+                <AppText
+                  text={t('auth.property_can_earn.where_located')}
+                  fontSize={18}
+                  type="Medium"
+                  color="#000000"
+                  mb={vs(15)}
+                  textAlign="center"
+                />
+
+                <View style={styles.inputGap}>
+                  <AppText text={t('auth.property_can_earn.city')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
+                  <DropdownField
+                    name="city"
+                    label=""
+                    control={control}
+                    errors={errors}
+                    data={availableCityItems}
+                    placeholder={t('auth.property_can_earn.city_placeholder')}
                   />
                 </View>
-                <View style={styles.statBox}>
-                  <AppText text="Yearly Income" fontSize={11} color={Colors.PINE_FOREST}/>
-                  <AppText
-                     text={`SAR ${chartData?.yearly}`}
-                    color={Colors.BRUNSWICK_GREEN}
+
+                <View style={styles.inputGap}>
+                  <AppText text={t('auth.property_can_earn.district')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
+                  <DropdownField
+                    name="district"
+                    label=""
+                    control={control}
+                    errors={errors}
+                    data={availableDistrictItems}
+                    placeholder={t('auth.property_can_earn.district_placeholder')}
+                    disabled={!selectedcity?.length}
                   />
                 </View>
+
+                <View style={styles.inputGap}>
+                  <AppText text={t('auth.property_can_earn.bedrooms')} type="SemiBold" color="#1C1C1C" mb={8} fontSize={14} />
+                  <DropdownField
+                    name="bedrooms"
+                    label=""
+                    control={control}
+                    errors={errors}
+                    data={bedroomOptions}
+                    placeholder={t('auth.property_can_earn.bedrooms_placeholder')}
+                  />
+                </View>
+
+                <AppButton
+                  type='Bold'
+                  onPress={handleSubmit}
+                  title={t('auth.property_can_earn.next')}
+                  loading={isLoading}
+                  style={styles.nextBtn}
+                  color="#FFFFFF"
+                />
               </View>
+            ) : (
+              <View style={styles.resultContainer}>
+                <AppText text={t('auth.property_can_earn.estimate_earnings')} fontSize={20} textAlign="center" color={Colors.BLACK} type='Medium'/>
+                <View style={styles.statsRow}>
+                  <View style={styles.statBox}>
+                    <AppText text={t('auth.property_can_earn.monthly_income')} fontSize={12} color={Colors.BLACK} />
+                    <AppText text={`SAR ${chartData?.data?.monthly}`}  color={Colors.BLACK}/>
+                  </View>
+                  <View style={styles.statBox}>
+                    <AppText text={t('auth.property_can_earn.yearly_income')} fontSize={12} color={Colors.BLACK} />
+                    <AppText text={`SAR ${chartData?.data?.yearly}`} color={Colors.BLACK} />
+                  </View>
+                </View>
 
-              {/* Placeholder for Graph */}
-              <PropertyAreaChart
-                chartPoints={chartPoints}
-                roundedMax={roundedMax}
-                yAxisLabels={yAxisLabels}
-                xAxisLabels={xAxisLabels}
-              />
+                <PropertyAreaChart
+                  chartPoints={chartPoints}
+                  roundedMax={roundedMax}
+                  yAxisLabels={yAxisLabels}
+                  xAxisLabels={xAxisLabels}
+                />
 
-              <AppButton
-                title="Unlock This Revenue"
-                style={styles.unlockBtn}
-                textStyle={{ color: Colors.BRUNSWICK_GREEN }}
-                onPress={goTologinWithPhone}
-              />
-            </View>
-          )}
-        </View>
-      </ScrollView>
+                <AppButton
+                  title={t('auth.property_can_earn.unlock')}
+                  style={styles.unlockBtn}
+                  textStyle={{ color: '#FFFFFF' }}
+                  onPress={goToConnectAccountIntro}
+                  color='#FFFFFF'
+                />
+              </View>
+            )}
+          </View>
+          </View>
+        {/* </KeyboardAwareScrollView> */}
 
-      {/* Pagination Footer */}
-      <Pagination activeIndex={0} />
-    </View>
+        <Pagination activeIndex={0} />
+      </View>
+    </BGImage>
   );
 };
 
-export default PropertyCanEarnScreen;
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
-scrollContent: { 
-  paddingHorizontal: 20, 
-  paddingBottom: 40,
-  paddingTop: Metrics.verticalScale(20), // add some top padding
-},
-
-  arBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
+  container: {
+    flex: 1,
+    backgroundColor: 'transparent'
   },
-  getStartedBtn: {
-    paddingHorizontal: 15,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
+  scrollView: {
+    flex: 1,
   },
-  titleSection: { alignItems: 'center' },
+  scrollContent: {
+    paddingHorizontal: s(20),
+    paddingBottom: vs(20),
+    paddingTop: vs(15), // Tightened from 40
+  },
+  titleSection: {
+    alignItems: 'flex-start',
+    width: '100%',
+    paddingLeft: Metrics.verticalScale(20)
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
   card: {
-    backgroundColor: Colors.WHITE,
-    borderRadius: 20,
-    padding: 20,
-  
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    elevation: 2,
-    shadowColor: Colors.BLACK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderRadius: ms(24),
+    padding: s(20),
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    elevation: 0,
+    shadowColor: 'transparent',
+  },
+  inputGap: {
+    // marginBottom: vs(12),
   },
   nextBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.BRUNSWICK_GREEN,
-    marginTop: Metrics.verticalScale(19),
+    backgroundColor: '#21AA8F',
+    marginTop: vs(10),
     borderRadius: 100,
-    width: Metrics.scale(128),
-    alignSelf: 'center'
+    width: s(150),
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0,
   },
-  resultContainer: { alignItems: 'center' },
+  resultContainer: {
+    width: '100%',
+  },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginTop: 20,
+    marginTop: vs(15),
+    marginBottom: vs(10),
   },
-  statBox: { alignItems: 'center' },
-  graphPlaceholder: {
-    width: '100%',
-    height: 150,
-    backgroundColor: '#F0F5F4',
-    borderRadius: 10,
-    marginVertical: 20,
+  statBox: {
+    alignItems: 'center'
   },
   unlockBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: Colors.BRUNSWICK_GREEN,
+    backgroundColor: '#21AA8F',
     borderRadius: 100,
-    width: '100%',
-  },
-  customDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#1B3D35', // Dark Forest Green
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  mainWrapper: {
-    marginTop: 20,
-    width: '100%',
-    marginBottom: Metrics.verticalScale(14)
-  },
-  chartRow: {
-    flexDirection: 'row',
-  },
-  yAxis: {
-    justifyContent: 'space-between',
-    paddingRight: 10,
-    width: Metrics.scale(60),
-  },
-  chartContainer: {
-    flex: 1,
-    borderLeftWidth: 1,
-    borderLeftColor: '#E0E0E0',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginLeft: 60,
-    marginTop: 10,
-    paddingHorizontal: 10,
-  },
-  axisText: {
-    fontSize: 10,
-    color: '#707070',
-    fontFamily: 'Medium',
-  },
-  dotIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#1B3D35',
-    borderWidth: 2,
-    borderColor: '#FFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    elevation: 3,
+    width: s(220),
+    marginTop: vs(15),
+    borderWidth: 0,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
+
+export default PropertyCanEarnScreen;

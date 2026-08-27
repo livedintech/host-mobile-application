@@ -19,7 +19,7 @@ export interface SpacingProps {
 
 export interface AppTextProps extends SpacingProps {
   onPress?: () => void;
-  text: string;
+  text?: string;
   color?: string;
   fontSize?: number;
   type?:
@@ -43,4 +43,6 @@ export interface AppTextProps extends SpacingProps {
   opacity?: number;
   style?: TextStyle | TextStyle[];
   numberOfLines?: number;
+  children?: React.ReactNode;
+
 }

@@ -1,51 +1,69 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, ImageBackground } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
+import AppImage from '@/components/atoms/AppImage/AppImage';
 import AppText from '@/components/molecules/AppText/AppText';
-import ButtonView from '@/components/molecules/AppButton/ButtonView';
 import { Colors } from '@/theme/colors';
 import Metrics from '@/utility/Metrics';
-import useOnboardingContainer, { onboardingData } from './OnboardingContainer';
+import useOnboardingContainer from './OnboardingContainer';
+import BGImage from '@/components/molecules/BGImage/BGImage';
+import AppButton from '@/components/molecules/AppButton/AppButton';
 
+const TEAL = '#09A389';
+const BG_COLOR = '#EEF5F3';
 
 const OnboardingScreen = () => {
     const {
         activeIndex,
+        isLastSlide,
         flatListRef,
-        handleMomentumScrollEnd,
+        viewabilityConfig,
+        onViewableItemsChanged,
         handleContinue,
         handleGetStarted,
         loginWithPhone,
-        handleSkip
+        handleSkip,
+        onboardingData,
     } = useOnboardingContainer();
 
-    const isLastSlide = activeIndex === onboardingData.length - 1;
+    const currentSlide = onboardingData[activeIndex];
 
-    const renderItem = ({ item }: any) => (
+    const renderMixedTitle = (item: typeof onboardingData[0]) => {
+        const { title, titleHighlight, isHighlightItalic } = item;
+        const parts = title.split(titleHighlight);
+
+        return (
+            <AppText type='Bold' fontSize={28} color='#1A2421' textAlign='center' style={styles.title}>
+                {parts[0]}
+                <AppText type='Bold' fontSize={28} color={TEAL} italic={isHighlightItalic}>
+                    {titleHighlight}
+                </AppText>
+                {parts[1] ?? ''}
+            </AppText>
+        );
+    };
+
+    const renderItem = ({ item }: { item: typeof onboardingData[0] }) => (
         <View style={styles.slide}>
-            {/* Top Image Area */}
-            <View style={styles.imageSection} />
-
-            {/* Text Content Area */}
-            <View style={styles.textSection}>
-                <AppText
-                    text={item.title}
-                    textAlign='center'
-                    fontSize={30}
-                    color={Colors.BRUNSWICK_GREEN}
-                    type='Bold'
-                />
+            <View style={styles.textContainer}>
+                {renderMixedTitle(item)}
                 <AppText
                     text={item.subtitle}
                     textAlign='center'
-                    color={Colors.BLACK_60_PERCENT}
-                    style={styles.description}
+                    fontSize={14}
+                    color={Colors.EERIE_BLACK}
+                    type='Regular'
+                    lineHeight={22}
+                    style={styles.subtitle}
                 />
+            </View>
+            <View style={styles.imageContainer}>
+                <AppImage source={item.bg} style={styles.image} resizeMode='contain' />
             </View>
         </View>
     );
 
     return (
-        <ImageBackground style={styles.container} source={require('@/assets/img/on-boarding-bg.jpg')} resizeMode='cover'>
+        <BGImage source={require('@/assets/img/background/linearBG.png')} style={styles.container}>
             <FlatList
                 ref={flatListRef}
                 data={onboardingData}
@@ -53,11 +71,18 @@ const OnboardingScreen = () => {
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={handleMomentumScrollEnd}
                 keyExtractor={(item) => item.id}
+                scrollEventThrottle={16}
+                getItemLayout={(_, index) => ({
+                    length: Metrics.screenWidth,
+                    offset: Metrics.screenWidth * index,
+                    index,
+                })}
+                onViewableItemsChanged={onViewableItemsChanged.current}
+                viewabilityConfig={viewabilityConfig.current}
             />
 
-            {/* Custom Pagination Dots */}
+            {/* Pagination Dots */}
             <View style={styles.pagination}>
                 {onboardingData.map((_, i) => (
                     <View
@@ -72,15 +97,20 @@ const OnboardingScreen = () => {
 
             {/* Action Buttons */}
             <View style={styles.footer}>
-                <ButtonView style={styles.btnPrimary} onPress={isLastSlide ? handleGetStarted : handleContinue}>
-                    <AppText text={onboardingData[activeIndex].primaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular'/>
-                </ButtonView>
-
-                <ButtonView style={styles.btnSecondary} onPress={isLastSlide ? loginWithPhone : handleSkip}>
-                    <AppText text={onboardingData[activeIndex].secondaryBtn} color={Colors.BRUNSWICK_GREEN} type='Regular' />
-                </ButtonView>
+                <AppButton
+                    onPress={isLastSlide ? loginWithPhone : handleSkip}
+                    title={isLastSlide ? currentSlide.primaryBtn : currentSlide.secondaryBtn}
+                    variant='secondary'
+                    type='Regular'
+                />
+                <AppButton
+                    onPress={isLastSlide ? handleGetStarted : handleContinue}
+                    title={isLastSlide ? currentSlide.secondaryBtn : currentSlide.primaryBtn}
+                    variant='primary'
+                    type='Regular'
+                />
             </View>
-        </ImageBackground>
+        </BGImage>
     );
 };
 
@@ -89,73 +119,72 @@ export default OnboardingScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8', // Light background to mimic the checkered area
+        backgroundColor: BG_COLOR,
     },
     slide: {
         width: Metrics.screenWidth,
-        flex: 1,
+        paddingBottom: Metrics.verticalScale(220),
     },
-    imageSection: {
-        flex: 0.55,
-    },
-    textSection: {
-        flex: 0.55,
-        paddingHorizontal: Metrics.scale(30),
+    textContainer: {
+        paddingTop: Metrics.verticalScale(72),
+        paddingHorizontal: Metrics.scale(32),
         alignItems: 'center',
     },
-    titleRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
+    title: {
+        marginTop: Metrics.verticalScale(50),
+        marginBottom: Metrics.verticalScale(12),
     },
-    description: {
-        marginTop: Metrics.verticalScale(15),
-        lineHeight: 24,
+    subtitle: {
+        paddingHorizontal: Metrics.scale(20)
+    },
+    imageContainer: {
+        flex: 1,
+        alignItems: 'center',
+        paddingHorizontal: Metrics.scale(20),
+    },
+    image: {
+        width: Metrics.screenWidth * 0.72,
+        height: Metrics.verticalScale(360),
     },
     pagination: {
         flexDirection: 'row',
         position: 'absolute',
-        bottom: Metrics.verticalScale(210),
+        bottom: Metrics.verticalScale(178),
         alignSelf: 'center',
     },
     dot: {
-        height: Metrics.scale(8),
+        height: Metrics.scale(6),
         borderRadius: 100,
-        marginHorizontal: Metrics.scale(3),
+        marginHorizontal: Metrics.scale(4),
     },
     activeDot: {
-        width: Metrics.scale(53),
-        backgroundColor: Colors.BRUNSWICK_GREEN,
-        borderRadius: 100
+        width: Metrics.scale(40),
+        backgroundColor: TEAL,
     },
     inactiveDot: {
         width: Metrics.scale(10),
-        height: Metrics.verticalScale(8),
-        backgroundColor: '#E0E0E0',
+        backgroundColor: 'rgba(9, 163, 137, 0.25)',
     },
     footer: {
         position: 'absolute',
         bottom: Metrics.verticalScale(40),
         width: '100%',
-        paddingHorizontal: Metrics.scale(20),
+        paddingHorizontal: Metrics.scale(24),
+        gap: Metrics.verticalScale(12),
     },
-    btnPrimary: {
-        borderWidth: 1,
-        borderColor: '#D1D1D1',
-        borderRadius: 100,
+    outlineButton: {
         height: Metrics.verticalScale(56),
+        borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: Metrics.verticalScale(12),
-        backgroundColor: 'rgba(255,255,255,0.7)',
-    },
-    btnSecondary: {
         borderWidth: 1,
-        borderColor: '#D1D1D1',
-        borderRadius: 100,
+        borderColor: 'rgba(26, 36, 33, 0.15)',
+    },
+    tealButton: {
         height: Metrics.verticalScale(56),
+        borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.7)',
+        backgroundColor: TEAL,
     },
 });

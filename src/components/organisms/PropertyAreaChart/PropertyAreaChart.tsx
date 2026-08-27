@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, LayoutChangeEvent } from 'react-native';
 import { LineChart } from 'react-native-wagmi-charts';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
+import AppText from '@/components/molecules/AppText/AppText';
 
 interface Props {
   chartPoints: { timestamp: number; value: number }[];
@@ -12,34 +13,45 @@ interface Props {
 }
 
 const chartHeight = 180;
+const yAxisWidth = Metrics.scale(60);
 
 const PropertyAreaChart: React.FC<Props> = ({ chartPoints, roundedMax, yAxisLabels, xAxisLabels }) => {
+  const [chartWidth, setChartWidth] = useState(0);
+
   if (!chartPoints || chartPoints.length === 0) {
     return <Text style={{ textAlign: 'center', marginVertical: 20 }}>No chart data available</Text>;
   }
 
+  const handleChartLayout = (e: LayoutChangeEvent) => {
+    setChartWidth(e.nativeEvent.layout.width);
+  };
+
   return (
-    <View style={{ marginTop: 20, width: '100%', marginBottom: 14 }}>
+    <View style={{ marginTop: 20, width: '100%', marginBottom: 14, }}>
       <View style={{ flexDirection: 'row' }}>
         {/* Y-axis labels */}
-        <View style={{ justifyContent: 'space-between', paddingRight: 10, width: Metrics.scale(60), height: chartHeight }}>
+        <View style={{ justifyContent: 'space-between', width: yAxisWidth, height: chartHeight }}>
           {yAxisLabels.map((label, index) => (
-            <Text key={index} style={{ fontSize: 10, color: '#707070', fontFamily: 'Medium' }}>{label}</Text>
+            <AppText key={index} fontSize={10} color={Colors.BLACK} text={label}/>
           ))}
         </View>
 
-        {/* Chart */}
-        <View style={{ flex: 1, borderLeftWidth: 1, borderLeftColor: '#E0E0E0', borderBottomWidth: 1, borderBottomColor: '#E0E0E0' }}>
+        {/* Chart — direction:ltr forces wagmi gesture coords to always be LTR, fixing RTL/Arabic drag behaviour */}
+        <View
+          onLayout={handleChartLayout}
+          style={{ flex: 1, direction: 'ltr', borderLeftWidth: 1, borderLeftColor: '#E0E0E0', borderBottomWidth: 1, borderBottomColor: '#E0E0E0' }}
+        >
+          {chartWidth > 0 && (
           <LineChart.Provider data={chartPoints}>
-            <LineChart height={chartHeight} width={Metrics.screenWidth - 120}>
+            <LineChart height={chartHeight} width={chartWidth}>
               {/* Horizontal lines */}
               {yAxisLabels.map((_, index) => (
                 <LineChart.HorizontalLine key={index} at={{ value: (roundedMax / 5) * index }} color="#E0E0E0" />
               ))}
 
               {/* Path + Gradient */}
-              <LineChart.Path color={Colors.BRUNSWICK_GREEN} width={2}>
-                <LineChart.Gradient color={Colors.BRUNSWICK_GREEN + '30'} />
+              <LineChart.Path color={Colors.PRIMARY_TEAL} width={2}>
+                <LineChart.Gradient color={Colors.PRIMARY_TEAL + '30'} />
               </LineChart.Path>
 
               {/* Cursor tooltip */}
@@ -48,13 +60,14 @@ const PropertyAreaChart: React.FC<Props> = ({ chartPoints, roundedMax, yAxisLabe
               </LineChart.CursorCrosshair>
             </LineChart>
           </LineChart.Provider>
+          )}
         </View>
       </View>
 
       {/* X-axis labels */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 60, marginTop: 10, paddingHorizontal: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: Metrics.scale(60), marginTop: 10,}}>
         {xAxisLabels.map((month, index) => (
-          <Text key={index} style={{ fontSize: 10, color: '#707070', fontFamily: 'Medium' }}>{month}</Text>
+          <AppText key={index} text={month} fontSize={8}/>
         ))}
       </View>
     </View>

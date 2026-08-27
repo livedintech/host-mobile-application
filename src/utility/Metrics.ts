@@ -48,7 +48,7 @@ export default {
     isTablet,
 
     smallMargin: widthRatio(6),
-    baseMargin: widthRatio(16),
+    baseMargin: widthRatio(20),
     doubleBaseMargin: widthRatio(24),
     xDoubleBaseMargin: heightRatio(32),
     horizontalLineHeight: heightRatio(1),

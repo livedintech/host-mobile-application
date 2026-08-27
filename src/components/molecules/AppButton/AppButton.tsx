@@ -1,27 +1,44 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle, TextStyle, View, StyleProp } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { ButtonProps } from './ButtonProps';
 import Metrics from '@/utility/Metrics';
 import { Colors } from '@/theme/colors';
 import ButtonView from './ButtonView';
 import AppText from '../AppText/AppText';
+import Svgicons from '@/components/atoms/Svgicons/Svgicons';
+import DotsLoader from './DotsLoader';
+
+type ButtonVariant = 'primary' | 'secondary';
 
 const AppButton = ({
     title,
-    fontSize = 14,
+    leftIcon,        // 👈 Left Icon path
+    rightIcon,       // 👈 Right Icon path
+    iconSize = 18,
+    fontSize = 16,
     textTransform,
     onPress,
-    color = Colors.BRUNSWICK_GREEN,
-    borderColor = Colors.ARGENT,
-    backgroundColor = Colors.WHITE,
+    variant = 'primary',
+    color,
+    backgroundColor,
     borderRadius = 100,
     disabled = false,
     loading = false,
     style,
+    textStyle,
     m, mt, mb, ml, mr, mx, my,
     p, pt, pb, pl, pr, px, py,
-    type ='Regular'
-}: ButtonProps) => {
+    type = 'Regular'
+}: ButtonProps & {
+    style?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
+    variant?: ButtonVariant;
+    leftIcon?: string;
+    rightIcon?: string;
+    iconSize?: number;
+}) => {
     const spacingStyles = {
         margin: m !== undefined ? Metrics.verticalScale(m) : undefined,
         marginTop: mt !== undefined ? Metrics.verticalScale(mt) : my !== undefined ? Metrics.verticalScale(my) : undefined,
@@ -36,34 +53,146 @@ const AppButton = ({
         paddingRight: pr !== undefined ? Metrics.scale(pr) : px !== undefined ? Metrics.scale(px) : undefined,
     };
 
-    return (
+    const contentMinHeight = Metrics.generatedFontSize(fontSize) * 1.3;
+
+    const isPrimary = variant === 'primary';
+    const txtColor = color || (disabled ? '#0000005E' : isPrimary ? Colors.WHITE : Colors.BLACK);
+
+    const renderGradientBorder = () => (
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+            <MaskedView
+                style={StyleSheet.absoluteFill}
+                maskElement={
+                    <View style={{ flex: 1, backgroundColor: 'transparent', borderColor: 'white', borderWidth: 1, borderRadius: borderRadius }} />
+                }
+            >
+                <LinearGradient
+                    colors={['rgba(128, 128, 128, 0.66)', 'rgba(255, 255, 255, 0.66)', 'rgba(128, 128, 128, 0.66)']}
+                    locations={[0, 0.5356, 1]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                />
+            </MaskedView>
+        </View>
+    );
+
+    const renderButtonInner = (innerBgColor: string) => (
         <ButtonView
+            activeOpacity={0.1}
+            backgroundColor={innerBgColor}
             style={[
                 styles.button,
-                { backgroundColor, borderRadius, borderColor, borderWidth: 2, ...spacingStyles },
-                disabled && styles.disabledButton,
-                disabled && { borderColor: Colors.SMOOTH_GREY },
+                { borderRadius, flexDirection: 'row' },
+                isPrimary && !disabled && { ...spacingStyles },
                 style,
             ]}
             onPress={onPress}
             disabled={disabled || loading}
         >
-            {loading ? (
-                <ActivityIndicator color={color} />
-            ) : (
-                <AppText text={title} fontSize={Metrics.generatedFontSize(fontSize)} textAlign='center' color={disabled ? Colors.BLACK : color} textTransform={textTransform} type={type}/>
-            )}
+            <View style={[styles.content, { minHeight: contentMinHeight }]}>
+                {loading ? (
+                    <DotsLoader color={txtColor} />
+                ) : (
+                    <>
+                        {leftIcon && (
+                            <View style={{ marginRight: 8 }}>
+                                <Svgicons path={leftIcon} size={iconSize} color={txtColor} />
+                            </View>
+                        )}
+
+                        <AppText
+                            text={title}
+                            fontSize={Metrics.generatedFontSize(fontSize)}
+                            textAlign='center'
+                            color={txtColor}
+                            textTransform={textTransform}
+                            type={type}
+                            style={StyleSheet.flatten([styles.text, textStyle]) as TextStyle}
+                        />
+
+                        {rightIcon && (
+                            <View style={{ marginLeft: 8 }}>
+                                <Svgicons path={rightIcon} size={iconSize} color={txtColor} />
+                            </View>
+                        )}
+                    </>
+                )}
+            </View>
         </ButtonView>
     );
+
+    if (isPrimary && disabled) {
+        return (
+            <View style={[spacingStyles, { borderRadius }]}>
+                {renderGradientBorder()}
+                {renderButtonInner(Colors.TRANSPARENT)}
+            </View>
+        );
+    }
+
+    if (!isPrimary) {
+        // اگر backgroundColor explicitly دیا ہو تو frosted glass skip کرو
+        if (backgroundColor !== undefined) {
+            return (
+                <View style={[spacingStyles]}>
+                    <View style={{ borderRadius, overflow: 'hidden' }}>
+                        {renderGradientBorder()}
+                        {renderButtonInner(backgroundColor)}
+                    </View>
+                </View>
+            );
+        }
+
+        return (
+            <View style={[spacingStyles]}>
+                <View style={{ borderRadius, overflow: 'hidden' }}>
+                    {/* Heavy frosted base */}
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255,255,255,0.45)' }]} />
+                    {/* Strong top-to-bottom diffusion */}
+                    <LinearGradient
+                        colors={['rgba(255,255,255,0.80)', 'rgba(255,255,255,0.30)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    {/* Diagonal shimmer */}
+                    <LinearGradient
+                        colors={['rgba(255,255,255,0.50)', 'rgba(255,255,255,0.00)', 'rgba(255,255,255,0.25)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    {/* Bottom depth */}
+                    <LinearGradient
+                        colors={['rgba(0,0,0,0.00)', 'rgba(0,0,0,0.10)']}
+                        start={{ x: 0, y: 0.5 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    {renderGradientBorder()}
+                    {renderButtonInner(Colors.TRANSPARENT)}
+                </View>
+            </View>
+        );
+    }
+
+    return renderButtonInner(backgroundColor || Colors.MEDIUM_JUNGLE_GREEN);
 };
 
 export default AppButton;
 
 const styles = StyleSheet.create({
     button: {
-        paddingVertical: Metrics.verticalScale(12),
+        paddingVertical: Metrics.verticalScale(14),
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: Metrics.scale(15),
     },
-    disabledButton: {
-        backgroundColor: Colors.SMOOTH_GREY,
+    content: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
+    text: { fontWeight: '500' },
 });
