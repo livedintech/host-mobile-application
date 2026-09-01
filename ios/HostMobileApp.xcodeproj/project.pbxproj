@@ -13,7 +13,6 @@
 		23F57F14456642DF99424E5B /* Inter-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A741FC085D14DF2871A24AE /* Inter-Italic.ttf */; };
 		2521DD1DDC6C458D998AD291 /* RethinkSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 772B4FDAFECF4D81939E756F /* RethinkSans-BoldItalic.ttf */; };
 		2843CCE5B57547E7BC860B2F /* Inter-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 68A4291F19F648409845355F /* Inter-Light.ttf */; };
-		28E778D518DBFCE27EFB4444 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A9CB6B62E754F774E0538E81 /* PrivacyInfo.xcprivacy */; };
 		4510A65406A94AD3ACF5A500 /* Inter-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B55F25C50DB4423EBB3F9F07 /* Inter-MediumItalic.ttf */; };
 		480B152EEB474C13BBD95657 /* RethinkSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 880CB33A74CD43BBA5F3DEF6 /* RethinkSans-Medium.ttf */; };
 		4D1A28C460984CC1885CCB0C /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D9FDAA725313410688C37114 /* Inter-SemiBold.ttf */; };
@@ -64,7 +63,6 @@
 		981B5AC9637E4016B36399A5 /* RethinkSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-SemiBoldItalic.ttf"; path = "../src/assets/fonts/RethinkSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		A71A8715FBA24252B7130CF5 /* Inter-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-LightItalic.ttf"; path = "../src/assets/fonts/Inter-LightItalic.ttf"; sourceTree = "<group>"; };
 		A7E2BA8631A64B82B369D935 /* RethinkSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RethinkSans-Bold.ttf"; path = "../src/assets/fonts/RethinkSans-Bold.ttf"; sourceTree = "<group>"; };
-		A9CB6B62E754F774E0538E81 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = HostMobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B55F25C50DB4423EBB3F9F07 /* Inter-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-MediumItalic.ttf"; path = "../src/assets/fonts/Inter-MediumItalic.ttf"; sourceTree = "<group>"; };
 		C5C8FEAECDA0490881895B83 /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../src/assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		C960C929E1822AB36A3A4AF7 /* libPods-HostMobileApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HostMobileApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,7 +93,6 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				0FEADEE22F695B0500EEE44C /* GoogleService-Info.plist */,
-				A9CB6B62E754F774E0538E81 /* PrivacyInfo.xcprivacy */,
 			);
 			name = HostMobileApp;
 			sourceTree = "<group>";
@@ -265,7 +262,6 @@
 				23F57F14456642DF99424E5B /* Inter-Italic.ttf in Resources */,
 				7302ACD223754DD2B3E4FCCD /* RethinkSans-ExtraBold.ttf in Resources */,
 				4D1A28C460984CC1885CCB0C /* Inter-SemiBold.ttf in Resources */,
-				28E778D518DBFCE27EFB4444 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,7 +420,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = HostMobileApp/HostMobileApp.entitlements;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = B2Q2KJ8428;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = HostMobileApp/Info.plist;
@@ -434,7 +430,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.8;
+				MARKETING_VERSION = 2.1.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -455,7 +451,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = HostMobileApp/HostMobileApp.entitlements;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = B2Q2KJ8428;
 				INFOPLIST_FILE = HostMobileApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Livedin App";
@@ -464,7 +460,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.8;
+				MARKETING_VERSION = 2.1.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
